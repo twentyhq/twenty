@@ -129,7 +129,6 @@ msgstr "Rekeninge"
 
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Aksies"
 
@@ -570,6 +569,10 @@ msgstr "Maak toe"
 msgid "Close command menu"
 msgstr "Sluit opdragkieslys"
 
+#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+msgid "Collapse"
+msgstr "Vou in"
+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
 msgstr "Kleurkode"
@@ -960,6 +963,18 @@ msgstr "Verwyder"
 msgid "Deleted records"
 msgstr "Verwyderde rekords"
 
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Deleted runs"
+msgstr "Verwyderde lopies"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Deleted versions"
+msgstr "Verwyderde weergawes"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Deleted workflows"
+msgstr "Verwyderde werkvloeie"
+
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
@@ -1265,6 +1280,10 @@ msgstr "Bestaande voorwerpe"
 msgid "Exit Settings"
 msgstr "Verlaat Instellings"
 
+#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+msgid "Expand"
+msgstr "Vou uit"
+
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
@@ -1300,24 +1319,38 @@ msgstr "Verval oor"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export"
 msgstr "Voer uit"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Export record"
+msgstr "Voer rekord uit"
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export records"
 msgstr "Voer rekords uit"
 
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Export runs"
+msgstr "Voer lopies uit"
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Export to PDF"
 msgstr "Voer uit na PDF"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Export versions"
+msgstr "Voer weergawes uit"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1328,8 +1361,16 @@ msgid "Export view"
 msgstr "Voer aansig uit"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-msgid "Export Workflows"
-msgstr "Voer Workflows uit"
+msgid "Export workflow"
+msgstr "Voer werkvloei uit"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Export workflows"
+msgstr "Voer werkvloeie uit"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#~ msgid "Export Workflows"
+#~ msgstr "Export Workflows"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1531,9 +1572,20 @@ msgstr "As jy hierdie sleutel verloor het, kan jy dit regenereer, maar wees bewu
 msgid "Impersonate"
 msgstr "Naboots"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Import"
 msgstr "Invoer"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Import records"
+msgstr "Voer rekords in"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Import workflows"
+msgstr "Voer werkvloeie in"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
@@ -1579,7 +1631,6 @@ msgstr "Ongeldige pasgemaakte domein. Voeg asseblief ten minste een subdomein in
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Ongeldige domein. Domeine moet korter as 256 karakters wees, kan nie IP-adresse wees nie, mag geen spasies hê nie, mag nie enige spesiale karakters soos _~`!@#$%^*()=+{}[]|\\;:'\",<>/? bevat nie en mag nie begin of eindig met 'n '-' karakter nie."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1652,10 @@ msgstr "Ongeldige lêer"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Ongeldige vorm waardes"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr "Ongeldige werkruimte"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -1734,7 +1789,7 @@ msgstr "Lyste"
 msgid "Log out"
 msgstr "Teken uit"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Teken uit"
 
@@ -1850,10 +1905,13 @@ msgstr "Naam van jou API-sleutel"
 msgid "Name of your workspace"
 msgstr "Naam van jou werkruimte"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Navigate to next record"
 msgstr "Navigeer na volgende rekord"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Navigate to next run"
+msgstr "Navigeer na volgende lopie"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to next version"
@@ -1863,10 +1921,13 @@ msgstr "Navigeer na volgende weergawe"
 msgid "Navigate to next workflow"
 msgstr "Navigeer na volgende werkstroom"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Navigate to previous record"
 msgstr "Navigeer na vorige rekord"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Navigate to previous run"
+msgstr "Navigeer na vorige lopie"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to previous version"
@@ -2104,7 +2165,6 @@ msgstr "Wagwoord"
 msgid "Password has been updated"
 msgstr "Wagwoord is opgedateer"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Wagwoord herstel skakel is na die e-pos gestuur"
@@ -2288,6 +2348,10 @@ msgstr "Verhouding tipe"
 msgid "Releases"
 msgstr "Vrystellings"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+msgid "Reload"
+msgstr "Herlaai"
+
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Verwyder"
@@ -2331,6 +2395,23 @@ msgstr "Herstel Wagwoord"
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
 msgid "Reset to"
 msgstr "Herstel na"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Restore"
+msgstr "Herstel"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Restore record"
+msgstr "Herstel rekord"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Restore records"
+msgstr "Herstel rekords"
 
 #: src/modules/command-menu/hooks/useSearchRecords.tsx
 msgid "Results"
@@ -2430,6 +2511,18 @@ msgstr "Sien aktiewe weergawe"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "See deleted records"
 msgstr "Sien verwyderde rekords"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "See deleted runs"
+msgstr "Sien verwyderde lopies"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "See deleted versions"
+msgstr "Sien verwyderde weergawes"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "See deleted workflows"
+msgstr "Sien verwyderde werkvloeie"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2755,7 +2848,6 @@ msgstr "Die hele gebeurtenis besonderhede sal met jou span gedeel word."
 msgid "There was an error while updating password."
 msgstr "Daar was 'n fout terwyl die wagwoord opgedateer is."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

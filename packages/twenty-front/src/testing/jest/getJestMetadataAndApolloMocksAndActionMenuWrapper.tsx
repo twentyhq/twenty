@@ -26,6 +26,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   apolloMocks,
   onInitializeRecoilSnapshot,
   contextStoreTargetedRecordsRule,
+  contextStoreCurrentViewId,
   contextStoreNumberOfSelectedRecords,
   contextStoreCurrentObjectMetadataNameSingular,
   componentInstanceId,
@@ -67,6 +68,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
                   }}
                 >
                   <JestContextStoreSetter
+                    contextStoreCurrentViewId={contextStoreCurrentViewId}
                     contextStoreFilters={contextStoreFilters}
                     contextStoreTargetedRecordsRule={
                       contextStoreTargetedRecordsRule

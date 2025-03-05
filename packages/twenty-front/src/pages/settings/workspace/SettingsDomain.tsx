@@ -23,7 +23,6 @@ import {
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
-import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -229,12 +228,7 @@ export const SettingsDomain = () => {
         >
           <SettingsPageContainer>
             <SettingsSubdomain />
-            {isCustomDomainEnabled && (
-              <>
-                <SettingsCustomDomainEffect />
-                <SettingsCustomDomain />
-              </>
-            )}
+            {isCustomDomainEnabled && <SettingsCustomDomain />}
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       </FormProvider>

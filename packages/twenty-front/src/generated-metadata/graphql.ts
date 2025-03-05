@@ -627,7 +627,6 @@ export enum FeatureFlagKey {
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsEnabled = 'IsPermissionsEnabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
-  IsRichTextV2Enabled = 'IsRichTextV2Enabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled',
@@ -995,6 +994,7 @@ export type Mutation = {
   sendTemplate: Scalars['Boolean']['output'];
   signUp: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
+  submitFormStep: Scalars['Boolean']['output'];
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   toggleAgentStatus: Scalars['Boolean']['output'];
@@ -1159,6 +1159,7 @@ export type MutationEditSsoIdentityProviderArgs = {
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String']['input'];
+  workspaceId: Scalars['String']['input'];
 };
 
 export type MutationExecuteOneServerlessFunctionArgs = {
@@ -1519,7 +1520,6 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findAvailableWorkspacesByEmail: Array<AvailableWorkspaceOutput>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
@@ -2002,6 +2002,15 @@ export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
+};
+
+export type SubmitFormStepInput = {
+  /** Form response in JSON format */
+  response: Scalars['JSON']['input'];
+  /** Workflow version ID */
+  stepId: Scalars['String']['input'];
+  /** Workflow run ID */
+  workflowRunId: Scalars['String']['input'];
 };
 
 export enum SubscriptionInterval {

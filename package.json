@@ -57,7 +57,7 @@
     "@stoplight/elements": "^8.0.5",
     "@stripe/stripe-js": "^5.5.0",
     "@swc/jest": "^0.2.29",
-    "@tabler/icons-react": "^2.44.0",
+    "@tabler/icons-react": "^3.31.0",
     "@types/dompurify": "^3.0.5",
     "@types/facepaint": "^1.2.5",
     "@types/lodash.camelcase": "^4.3.7",

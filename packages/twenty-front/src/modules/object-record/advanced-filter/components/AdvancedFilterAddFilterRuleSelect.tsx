@@ -1,7 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
@@ -12,8 +11,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -21,31 +19,29 @@ import { IconLibraryPlus, IconPlus, LightButton, MenuItem } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
-  viewFilterGroup: ViewFilterGroup;
+  recordFilterGroup: RecordFilterGroup;
   lastChildPosition?: number;
 };
 
 export const AdvancedFilterAddFilterRuleSelect = ({
-  viewFilterGroup,
+  recordFilterGroup,
   lastChildPosition = 0,
 }: AdvancedFilterAddFilterRuleSelectProps) => {
-  const dropdownId = `advanced-filter-add-filter-rule-${viewFilterGroup.id}`;
+  const dropdownId = `advanced-filter-add-filter-rule-${recordFilterGroup.id}`;
 
   const { currentViewId } = useGetCurrentView();
 
-  const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
   const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
-  const newPositionInViewFilterGroup = lastChildPosition + 1;
+  const newPositionInRecordFilterGroup = lastChildPosition + 1;
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
-  const objectMetadataId =
-    currentViewWithCombinedFiltersAndSorts?.objectMetadataId;
+  const objectMetadataId = currentView?.objectMetadataId;
 
   if (!isDefined(objectMetadataId)) {
     throw new Error('Object metadata id is missing from current view');
@@ -100,8 +96,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       })[0],
       value: '',
       displayValue: '',
-      viewFilterGroupId: viewFilterGroup.id,
-      positionInViewFilterGroup: newPositionInViewFilterGroup,
+      recordFilterGroupId: recordFilterGroup.id,
+      positionInRecordFilterGroup: newPositionInRecordFilterGroup,
       label: defaultFieldMetadataItem.label,
     });
   };
@@ -115,23 +111,13 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
     const newRecordFilterGroupId = v4();
 
-    const newViewFilterGroup: ViewFilterGroup = {
-      __typename: 'ViewFilterGroup',
-      id: newRecordFilterGroupId,
-      viewId: currentViewId,
-      logicalOperator: ViewFilterGroupLogicalOperator.AND,
-      parentViewFilterGroupId: viewFilterGroup.id,
-      positionInViewFilterGroup: newPositionInViewFilterGroup,
-    };
-
     const newRecordFilterGroup: RecordFilterGroup = {
       id: newRecordFilterGroupId,
       logicalOperator: RecordFilterGroupLogicalOperator.AND,
-      parentRecordFilterGroupId: viewFilterGroup.id,
-      positionInRecordFilterGroup: newPositionInViewFilterGroup,
+      parentRecordFilterGroupId: recordFilterGroup.id,
+      positionInRecordFilterGroup: newPositionInRecordFilterGroup,
     };
 
-    upsertCombinedViewFilterGroup(newViewFilterGroup);
     upsertRecordFilterGroup(newRecordFilterGroup);
 
     const defaultFieldMetadataItem = getDefaultFieldMetadataItem();
@@ -149,14 +135,14 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       })[0],
       value: '',
       displayValue: '',
-      viewFilterGroupId: newViewFilterGroup.id,
-      positionInViewFilterGroup: newPositionInViewFilterGroup,
+      recordFilterGroupId: newRecordFilterGroupId,
+      positionInRecordFilterGroup: newPositionInRecordFilterGroup,
       label: defaultFieldMetadataItem.label,
     });
   };
 
   const isFilterRuleGroupOptionVisible = !isDefined(
-    viewFilterGroup.parentViewFilterGroupId,
+    recordFilterGroup.parentRecordFilterGroupId,
   );
 
   if (!isFilterRuleGroupOptionVisible) {

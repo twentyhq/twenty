@@ -129,7 +129,6 @@ msgstr "Comptes"
 
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Accions"
 
@@ -570,6 +569,10 @@ msgstr "Tanca"
 msgid "Close command menu"
 msgstr "Tanca el menú de comandament"
 
+#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+msgid "Collapse"
+msgstr "Contraure"
+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
 msgstr "Codi de colors"
@@ -960,6 +963,18 @@ msgstr "Eliminat"
 msgid "Deleted records"
 msgstr "Registres suprimits"
 
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Deleted runs"
+msgstr "Execucions eliminades"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Deleted versions"
+msgstr "Versions eliminades"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Deleted workflows"
+msgstr "Fluxos de treball eliminats"
+
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
@@ -1265,6 +1280,10 @@ msgstr "Objectes existents"
 msgid "Exit Settings"
 msgstr "Sortir de la configuració"
 
+#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+msgid "Expand"
+msgstr "Ampliar"
+
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
@@ -1300,24 +1319,38 @@ msgstr "Caduca en"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export"
 msgstr "Exportar"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Export record"
+msgstr "Exportar registre"
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Export records"
 msgstr "Exportar registres"
 
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Export runs"
+msgstr "Exportar execucions"
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Export to PDF"
 msgstr "Exportar a PDF"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Export versions"
+msgstr "Exportar versions"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1328,8 +1361,16 @@ msgid "Export view"
 msgstr "Exportar vista"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-msgid "Export Workflows"
-msgstr "Exportar workflows"
+msgid "Export workflow"
+msgstr "Exportar el flux de treball"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Export workflows"
+msgstr "Exportar fluxos de treball"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#~ msgid "Export Workflows"
+#~ msgstr "Export Workflows"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1531,9 +1572,20 @@ msgstr "Si has perdut aquesta clau, pots regenerar-la, però tingues en compte q
 msgid "Impersonate"
 msgstr "Usurpa"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Import"
 msgstr "Importa"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Import records"
+msgstr "Importar registres"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Import workflows"
+msgstr "Importar fluxos de treball"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
@@ -1579,7 +1631,6 @@ msgstr "Domini personalitzat no vàlid. Si us plau, inclogueu almenys un subdomi
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Domini invàlid. Els dominis han de ser més curts de 256 caràcters, no poden ser adreces IP, no poden contenir espais, ni cap caràcter especial com _~`!@#$%^*()=+{}[]|\\;:'\",<>/? i no poden començar o acabar amb el caràcter '-'."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
@@ -1601,6 +1652,10 @@ msgstr "Fitxer invàlid"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Valors del formulari no vàlids"
+
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+msgid "Invalid workspace"
+msgstr "Espai de treball no vàlid"
 
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -1734,7 +1789,7 @@ msgstr "Llistats"
 msgid "Log out"
 msgstr "Tancar sessió"
 
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Tancar sessió"
 
@@ -1850,10 +1905,13 @@ msgstr "Nom de la teva clau API"
 msgid "Name of your workspace"
 msgstr "Nom del teu espai de treball"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Navigate to next record"
 msgstr "Navegar al següent registre"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Navigate to next run"
+msgstr "Navega a l'execució següent"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to next version"
@@ -1863,10 +1921,13 @@ msgstr "Navega a la versió següent"
 msgid "Navigate to next workflow"
 msgstr "Navega al següent workflow"
 
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Navigate to previous record"
 msgstr "Navega al registre anterior"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Navigate to previous run"
+msgstr "Navega a l'execució anterior"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to previous version"
@@ -2104,7 +2165,6 @@ msgstr "Contrasenya"
 msgid "Password has been updated"
 msgstr "La contrasenya s'ha actualitzat"
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "S'ha enviat l'enllaç de restabliment de la contrasenya al correu electrònic"
@@ -2288,6 +2348,10 @@ msgstr "Tipus de relació"
 msgid "Releases"
 msgstr "Versions"
 
+#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+msgid "Reload"
+msgstr "Tornar a carregar"
+
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Elimina"
@@ -2331,6 +2395,23 @@ msgstr "Restableix la contrasenya"
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
 msgid "Reset to"
 msgstr "Reinicia a"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Restore"
+msgstr "Restaura"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Restore record"
+msgstr "Restaura el registre"
+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+msgid "Restore records"
+msgstr "Restaurar registres"
 
 #: src/modules/command-menu/hooks/useSearchRecords.tsx
 msgid "Results"
@@ -2430,6 +2511,18 @@ msgstr "Veure la versió activa"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "See deleted records"
 msgstr "Veure els registres suprimits"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "See deleted runs"
+msgstr "Veure execucions eliminades"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "See deleted versions"
+msgstr "Veure versions eliminades"
+
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "See deleted workflows"
+msgstr "Veure fluxos de treball eliminats"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2755,7 +2848,6 @@ msgstr "Els detalls complets de l'esdeveniment seran compartits amb el teu equip
 msgid "There was an error while updating password."
 msgstr "S'ha produït un error en actualitzar la contrasenya."
 
-#: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"

@@ -16,7 +16,7 @@ export const SettingsNavigationDrawerItem = ({
   item,
   subItemState,
 }: SettingsNavigationDrawerItemProps) => {
-  const href = getSettingsPath(item.path);
+  const href = item.path ? getSettingsPath(item.path) : '';
   const pathName = useResolvedPath(href).pathname;
   const isActive = !!useMatch({
     path: pathName,
@@ -38,6 +38,7 @@ export const SettingsNavigationDrawerItem = ({
           Icon={item.Icon}
           active={isActive}
           soon={item.soon}
+          onClick={item.onClick}
         />
       </AdvancedSettingsWrapper>
     );
@@ -52,6 +53,7 @@ export const SettingsNavigationDrawerItem = ({
       Icon={item.Icon}
       active={isActive}
       soon={item.soon}
+      onClick={item.onClick}
     />
   );
 };

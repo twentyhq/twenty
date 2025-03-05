@@ -2,10 +2,10 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { IconUser } from 'twenty-ui';
+import { Avatar } from 'twenty-ui';
 
 const StyledSettingsCardContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(6)};
 `;
 
 type RoleAssignmentConfirmationModalSubtitleProps = {
@@ -25,7 +25,15 @@ export const RoleAssignmentConfirmationModalSubtitle = ({
       <StyledSettingsCardContainer>
         <SettingsCard
           title={selectedWorkspaceMember.role?.label || ''}
-          Icon={<IconUser />}
+          Icon={
+            <Avatar
+              avatarUrl={selectedWorkspaceMember.avatarUrl}
+              placeholderColorSeed={selectedWorkspaceMember.id}
+              placeholder={selectedWorkspaceMember.name}
+              size="md"
+              type="rounded"
+            />
+          }
           onClick={() =>
             selectedWorkspaceMember.role &&
             onRoleClick(selectedWorkspaceMember.role.id)

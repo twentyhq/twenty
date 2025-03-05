@@ -22,6 +22,11 @@ const StyledRolePermissionsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(8)};
 `;
 
+const StyledTable = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
 type RolePermissionsProps = {
   role: Pick<
     Role,
@@ -114,25 +119,29 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
           title={t`Objects`}
           description={t`Ability to interact with each object`}
         />
-        <RolePermissionsObjectsTableHeader allPermissions={true} />
-        {objectPermissionsConfig.map((permission) => (
-          <RolePermissionsObjectsTableRow
-            key={permission.key}
-            permission={permission}
-          />
-        ))}
+        <StyledTable>
+          <RolePermissionsObjectsTableHeader allPermissions={true} />
+          {objectPermissionsConfig.map((permission) => (
+            <RolePermissionsObjectsTableRow
+              key={permission.key}
+              permission={permission}
+            />
+          ))}
+        </StyledTable>
       </Section>
       <Section>
         <H2Title title={t`Settings`} description={t`Settings permissions`} />
-        <RolePermissionsSettingsTableHeader
-          allPermissions={role.canUpdateAllSettings}
-        />
-        {settingsPermissionsConfig.map((permission) => (
-          <RolePermissionsSettingsTableRow
-            key={permission.key}
-            permission={permission}
+        <StyledTable>
+          <RolePermissionsSettingsTableHeader
+            allPermissions={role.canUpdateAllSettings}
           />
-        ))}
+          {settingsPermissionsConfig.map((permission) => (
+            <RolePermissionsSettingsTableRow
+              key={permission.key}
+              permission={permission}
+            />
+          ))}
+        </StyledTable>
       </Section>
     </StyledRolePermissionsContainer>
   );

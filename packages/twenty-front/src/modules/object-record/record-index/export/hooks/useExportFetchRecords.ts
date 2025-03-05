@@ -6,6 +6,7 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -14,7 +15,6 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
-import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
