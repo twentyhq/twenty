@@ -2,10 +2,7 @@ import { Entity } from '@microsoft/microsoft-graph-types';
 import { FieldMetadataType, getLogoUrlFromDomainName } from 'twenty-shared';
 import { Brackets } from 'typeorm';
 
-import {
-  ObjectRecord,
-  ObjectRecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -65,7 +62,7 @@ export class GlobalSearchService {
     searchTerms: string;
     searchTermsOr: string;
     limit: number;
-    filter: ObjectRecordFilterInput | undefined;
+    filter: ObjectRecordFilterInput;
   }) {
     const queryBuilder = entityManager.createQueryBuilder();
 
@@ -78,13 +75,10 @@ export class GlobalSearchService {
     queryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataItem.nameSingular,
-      filter ?? ({} as ObjectRecordFilter),
+      filter,
     );
 
-    queryParser.applyDeletedAtToBuilder(
-      queryBuilder,
-      filter ?? ({} as ObjectRecordFilter),
-    );
+    queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
 
     const imageIdentifierField =
       this.getImageIdentifierColumn(objectMetadataItem);

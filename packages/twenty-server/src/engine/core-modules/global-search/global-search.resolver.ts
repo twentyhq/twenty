@@ -3,6 +3,8 @@ import { Args, Query, Resolver } from '@nestjs/graphql';
 
 import chunk from 'lodash.chunk';
 
+import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GlobalSearchArgs } from 'src/engine/core-modules/global-search/dtos/global-search-args';
 import { GlobalSearchRecordDTO } from 'src/engine/core-modules/global-search/dtos/global-search-record-dto';
@@ -107,7 +109,7 @@ export class GlobalSearchResolver {
                 searchTerms: formatSearchTerms(searchInput, 'and'),
                 searchTermsOr: formatSearchTerms(searchInput, 'or'),
                 limit,
-                filter,
+                filter: filter ?? ({} as ObjectRecordFilter),
               }),
           };
         }),

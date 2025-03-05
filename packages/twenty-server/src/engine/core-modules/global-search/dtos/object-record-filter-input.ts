@@ -24,16 +24,16 @@ export class ObjectRecordFilterInput implements Partial<ObjectRecordFilter> {
 
   @Field(() => IDFilterType, { nullable: true })
   @IsOptional()
-  id?: any;
+  id?: IDFilterType | null;
 
   @Field(() => DateFilterType, { nullable: true })
-  createdAt?: any;
+  createdAt?: DateFilterType | null;
 
   @Field(() => DateFilterType, { nullable: true })
-  updatedAt?: any;
+  updatedAt?: DateFilterType | null;
 
   @Field(() => DateFilterType, { nullable: true })
-  deletedAt?: any;
+  deletedAt?: DateFilterType | null;
 }
 
 @InputType('IDFilter')
