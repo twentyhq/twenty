@@ -197,12 +197,18 @@ export const workflowRunOutputSchema = z.object({
 
 export const workflowRunContextSchema = z.record(z.any());
 
-export const workflowRunSchema = z.object({
-  __typename: z.literal('WorkflowRun'),
-  id: z.string(),
-  workflowVersionId: z.string(),
-  output: workflowRunOutputSchema.nullable(),
-  context: workflowRunContextSchema.nullable(),
-});
+export const workflowRunSchema = z
+  .object({
+    __typename: z.literal('WorkflowRun'),
+    id: z.string(),
+    workflowVersionId: z.string(),
+    output: workflowRunOutputSchema.nullable(),
+    context: workflowRunContextSchema.nullable(),
+    createdAt: z.string(),
+    deletedAt: z.string().nullable(),
+    endedAt: z.string().nullable(),
+    name: z.string(),
+  })
+  .passthrough();
 
 export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;
