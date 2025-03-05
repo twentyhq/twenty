@@ -100,28 +100,31 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
       return;
     }
 
+    const type = getFilterTypeFromFieldType(fieldMetadataItem.type);
+
+    const defaultOperand = getRecordFilterOperands({
+      filterType: type,
+      subFieldName: subFieldName,
+    })[0];
+
     if (
       isDefined(advancedFilterViewFilterId) &&
       isDefined(advancedFilterViewFilterGroupId)
     ) {
       closeAdvancedFilterDropdown();
 
-      const type = getFilterTypeFromFieldType(fieldMetadataItem.type);
-
-      const operand = getRecordFilterOperands({
-        filterType: type,
-        subFieldName: subFieldName,
-      })[0];
-
-      const { value, displayValue } = getInitialFilterValue(type, operand);
+      const { value, displayValue } = getInitialFilterValue(
+        type,
+        defaultOperand,
+      );
 
       applyRecordFilter({
         id: advancedFilterViewFilterId,
         fieldMetadataId: fieldMetadataItem.id,
         value,
-        operand,
+        operand: defaultOperand,
         displayValue,
-        type: getFilterTypeFromFieldType(fieldMetadataItem.type),
+        type,
         label: fieldMetadataItem.label,
         recordFilterGroupId: advancedFilterViewFilterGroupId,
         subFieldName: subFieldName,
@@ -129,13 +132,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     }
 
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
-
-    const type = getFilterTypeFromFieldType(fieldMetadataItem.type);
-
-    const defaultOperand = getRecordFilterOperands({
-      filterType: type,
-      subFieldName: subFieldName,
-    })[0];
 
     setSubFieldNameUsedInDropdown(subFieldName);
 

@@ -1,7 +1,7 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { getAdvancedFilterAddFilterRulerSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRulerSelectDropdownId';
+import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
@@ -28,7 +28,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   recordFilterGroup,
   lastChildPosition = 0,
 }: AdvancedFilterAddFilterRuleSelectProps) => {
-  const dropdownId = getAdvancedFilterAddFilterRulerSelectDropdownId(
+  const dropdownId = getAdvancedFilterAddFilterRuleSelectDropdownId(
     recordFilterGroup.id,
   );
 
