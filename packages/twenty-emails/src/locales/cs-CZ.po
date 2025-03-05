@@ -54,6 +54,10 @@ msgstr "Vážený {userName},"
 msgid "Deleted Workspace"
 msgstr "Smazaný pracovní prostor"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "vás pozval do pracovního prostoru s názvem "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Heslo bylo aktualizováno"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Ověřte prosím tuto doménu, aby uživatelé s e-mailovými adresami <0>@{domain}</0> mohli vstoupit do vašeho pracovního prostoru bez nutnosti pozvání."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Ověřte prosím tuto doménu, aby uživatelé s e-mailovými adresami <0>@{domain}</0> mohli vstoupit do vašeho pracovního prostoru bez nutnosti pozvání."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

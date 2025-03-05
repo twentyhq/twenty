@@ -54,6 +54,10 @@ msgstr "Hyvä {userName},"
 msgid "Deleted Workspace"
 msgstr "Poistettu työtila"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "on kutsunut sinut liittymään työtilaan nimeltä "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Salasana päivitetty"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Vahvista tämä verkkotunnus, jotta käyttäjät, joilla on <0>@{domain}</0> sähköpostiosoitteet, voivat liittyä työtilaasi ilman kutsua."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Vahvista tämä verkkotunnus, jotta käyttäjät, joilla on <0>@{domain}</0> sähköpostiosoitteet, voivat liittyä työtilaasi ilman kutsua."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

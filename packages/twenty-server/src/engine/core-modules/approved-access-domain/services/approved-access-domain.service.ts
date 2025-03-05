@@ -78,6 +78,8 @@ export class ApprovedAccessDomainService {
       plainText: true,
     });
 
+    console.log('>>>>>>>>>>>>>>', html);
+
     await this.emailService.send({
       from: `${sender.firstName} ${sender.lastName} (via Twenty) <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to,
@@ -150,6 +152,18 @@ export class ApprovedAccessDomainService {
       );
     }
 
+    if (
+      await this.approvedAccessDomainRepository.findOneBy({
+        domain,
+        workspaceId: inWorkspace.id,
+      })
+    ) {
+      throw new ApprovedAccessDomainException(
+        'Approved access domain already registered.',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED,
+      );
+    }
+
     const approvedAccessDomain = await this.approvedAccessDomainRepository.save(
       {
         workspaceId: inWorkspace.id,
@@ -179,7 +193,9 @@ export class ApprovedAccessDomainService {
 
     approvedAccessDomainValidator.assertIsDefinedOrThrow(approvedAccessDomain);
 
-    await this.approvedAccessDomainRepository.delete(approvedAccessDomain);
+    await this.approvedAccessDomainRepository.delete({
+      id: approvedAccessDomain.id,
+    });
   }
 
   async getApprovedAccessDomains(workspace: Workspace) {

@@ -54,6 +54,10 @@ msgstr "Поштовани {userName},"
 msgid "Deleted Workspace"
 msgstr "Избрисан радни простор"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "вас је позвао да се придружите радном простору под називом "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Шифра је освежена"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Потврдите овај домен да бисте дозволили корисницима са <0>@{domain}</0> имејл адресама да се придруже вашем радном простору без потребе за позивницом."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Потврдите овај домен да бисте дозволили корисницима са <0>@{domain}</0> имејл адресама да се придруже вашем радном простору без потребе за позивницом."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
