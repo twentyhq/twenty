@@ -6,12 +6,12 @@ import { Section } from 'twenty-ui';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
 
 const StyledDetailsContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.quaternary};
-  padding: ${({ theme }) => theme.spacing(6)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${({ theme }) => theme.background.secondary};
+  padding: ${({ theme }) => theme.spacing(4)};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   white-space: pre-wrap;
   font-size: ${({ theme }) => theme.font.size.sm};
-  margin: 0;
 `;
 
 const StyledErrorMessage = styled.div`
