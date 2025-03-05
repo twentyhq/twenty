@@ -16,26 +16,32 @@ const StyledDetailsContainer = styled.pre`
 const StyledErrorMessage = styled.div`
   color: ${({ theme }) => theme.color.red};
   margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const DatabaseAndRedisHealthStatus = () => {
+export const JsonDataIndicatorHealthStatus = () => {
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
 
-  const formattedDetails = indicatorHealth.details
-    ? JSON.stringify(JSON.parse(indicatorHealth.details), null, 2)
+  const parsedDetails = indicatorHealth.details
+    ? JSON.parse(indicatorHealth.details)
     : null;
 
-  const isDatabaseRedisOrAppDown =
+  const formattedDetails = parsedDetails
+    ? JSON.stringify(parsedDetails, null, 2)
+    : null;
+
+  const isDown =
     !indicatorHealth.status ||
     indicatorHealth.status === AdminPanelHealthServiceStatus.OUTAGE;
 
   return (
     <Section>
-      {isDatabaseRedisOrAppDown ? (
+      {isDown && (
         <StyledErrorMessage>
           {`${indicatorHealth.label} information is not available because the service is down`}
         </StyledErrorMessage>
-      ) : (
+      )}
+      {formattedDetails && (
         <StyledDetailsContainer>{formattedDetails}</StyledDetailsContainer>
       )}
     </Section>
