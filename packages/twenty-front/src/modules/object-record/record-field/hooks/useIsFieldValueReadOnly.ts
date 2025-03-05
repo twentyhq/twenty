@@ -24,8 +24,6 @@ export const useIsFieldValueReadOnly = () => {
     useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  console.log('isShowPage', isShowPage);
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: metadata.objectMetadataNameSingular ?? '',
   });

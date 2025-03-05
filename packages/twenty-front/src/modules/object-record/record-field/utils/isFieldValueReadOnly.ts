@@ -29,7 +29,7 @@ export const isFieldValueReadOnly = ({
     !isShowPage &&
     (fieldName === 'noteTargets' || fieldName === 'taskTargets')
   ) {
-    return true; // TODO: remove this, or make it work only for tables
+    return true;
   }
 
   if (isObjectRemote) {
