@@ -3,6 +3,7 @@ import {
   FieldRelationFromManyValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -10,16 +11,18 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { useRecoilCallback } from 'recoil';
 
 export const useOpenRelationFromManyFieldInput = () => {
+  const { performSearch } = useMultipleRecordPickerPerformSearch();
+
   const openRelationFromManyFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
       ({
         fieldName,
-        recordId,
         objectNameSingular,
+        recordId,
       }: {
         fieldName: string;
-        recordId: string;
         objectNameSingular: string;
+        recordId: string;
       }) => {
         const recordPickerInstanceId = `relation-from-many-field-input-${recordId}`;
 
@@ -65,6 +68,8 @@ export const useOpenRelationFromManyFieldInput = () => {
           }),
           pickableMorphItems,
         );
+
+        performSearch();
       },
     [],
   );

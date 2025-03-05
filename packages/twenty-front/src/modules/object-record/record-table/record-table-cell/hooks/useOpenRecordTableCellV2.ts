@@ -155,7 +155,10 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
         setDragSelectionStartEnabled(false);
 
-        openFieldInput(fieldDefinition, recordId);
+        openFieldInput({
+          fieldDefinition,
+          recordId,
+        });
 
         moveEditModeToTableCellPosition(cellPosition);
 
@@ -190,7 +193,6 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
     [
       getClickOutsideListenerIsActivatedState,
       setDragSelectionStartEnabled,
-      openFieldInput,
       moveEditModeToTableCellPosition,
       initDraftValue,
       toggleClickOutsideListener,

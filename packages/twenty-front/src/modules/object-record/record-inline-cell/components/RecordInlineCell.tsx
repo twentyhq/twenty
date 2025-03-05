@@ -134,7 +134,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
     onOpenEditMode:
-      onOpenEditMode ?? (() => openFieldInput(fieldDefinition, recordId)),
+      onOpenEditMode ?? (() => openFieldInput({ fieldDefinition, recordId })),
     onCloseEditMode: onCloseEditMode ?? (() => closeFieldInput()),
   };
 

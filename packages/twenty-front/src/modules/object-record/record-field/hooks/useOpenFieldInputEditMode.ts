@@ -11,10 +11,13 @@ export const useOpenFieldInputEditMode = () => {
   const { openRelationFromManyFieldInput } =
     useOpenRelationFromManyFieldInput();
 
-  const openFieldInput = (
-    fieldDefinition: FieldDefinition<FieldMetadata>,
-    recordId: string,
-  ) => {
+  const openFieldInput = ({
+    fieldDefinition,
+    recordId,
+  }: {
+    fieldDefinition: FieldDefinition<FieldMetadata>;
+    recordId: string;
+  }) => {
     if (isFieldRelationToOneObject(fieldDefinition)) {
       openRelationToOneFieldInput({
         fieldName: fieldDefinition.metadata.fieldName,

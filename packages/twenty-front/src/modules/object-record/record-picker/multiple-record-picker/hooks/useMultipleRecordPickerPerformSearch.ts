@@ -1,8 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-export const useMultipleRecordPickerPerformSearch = (
-  _componentInstanceIdFromProps: string,
-) => {
+export const useMultipleRecordPickerPerformSearch = () => {
   // const instanceId = useAvailableComponentInstanceIdOrThrow(
   //   MultipleRecordPickerComponentInstanceContext,
   //   componentInstanceIdFromProps,
@@ -30,10 +28,11 @@ export const useMultipleRecordPickerPerformSearch = (
   //   });
 
   const performSearch = useRecoilCallback(() => {
-    return (_searchFilter: string) => {
+    return () => {
       //   setRecordMultiSelectMatchesFilterRecordsWithObjectItem(
       //     objectRecordForSelectArray,
       //   );
+      console.log('performSearch');
     };
   }, []);
 
