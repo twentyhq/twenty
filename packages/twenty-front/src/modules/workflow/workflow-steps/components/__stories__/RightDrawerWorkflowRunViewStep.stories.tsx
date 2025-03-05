@@ -4,7 +4,7 @@ import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/wo
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -23,10 +23,6 @@ const StyledWrapper = styled.div`
 const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
   title: 'Modules/Workflow/RightDrawerWorkflowRunViewStep',
   component: RightDrawerWorkflowRunViewStep,
-  args: {
-    onTitleChange: fn(),
-  },
-  argTypes: {},
   decorators: [
     (Story) => (
       <StyledWrapper>
