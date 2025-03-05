@@ -138,7 +138,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       {workspaces.length > 4 && (
         <MenuItem
           LeftIcon={IconSwitchHorizontal}
-          text="Other workspaces"
+          text={t`Other workspaces`}
           onClick={() => setMultiWorkspaceDropdownState('workspaces-list')}
           hasSubMenu={true}
         />
