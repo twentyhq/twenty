@@ -13,6 +13,7 @@ type isFieldValueReadOnlyParams = {
   isObjectRemote?: boolean;
   isRecordDeleted?: boolean;
   hasObjectReadOnlyPermission?: boolean;
+  isShowPage?: boolean;
 };
 
 export const isFieldValueReadOnly = ({
@@ -22,9 +23,13 @@ export const isFieldValueReadOnly = ({
   isObjectRemote = false,
   isRecordDeleted = false,
   hasObjectReadOnlyPermission = false,
+  isShowPage = false,
 }: isFieldValueReadOnlyParams) => {
-  if (fieldName === 'noteTargets' || fieldName === 'taskTargets') {
-    return true;
+  if (
+    !isShowPage &&
+    (fieldName === 'noteTargets' || fieldName === 'taskTargets')
+  ) {
+    return true; // TODO: remove this, or make it work only for tables
   }
 
   if (isObjectRemote) {
