@@ -43,7 +43,7 @@ export class MicrosoftAPIRefreshAccessTokenService {
     z.object({
       access_token: z.string(),
       refresh_token: z.string(),
-    }).parse(response.data)
+    }).parse(response.data);
 
     return {
       accessToken: response.data.access_token,
