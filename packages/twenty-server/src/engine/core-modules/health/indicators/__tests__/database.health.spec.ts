@@ -144,7 +144,9 @@ describe('DatabaseHealthIndicator', () => {
       dataSource.query.mockResolvedValueOnce(response);
     });
 
-    await service.isHealthy();
+    const firstResult = await service.isHealthy();
+
+    expect(firstResult.database.status).toBe('up');
 
     // Second check - error state
     dataSource.query.mockRejectedValueOnce(
@@ -153,9 +155,28 @@ describe('DatabaseHealthIndicator', () => {
 
     const result = await service.isHealthy();
 
-    expect(result.database.details.stateHistory).toBeDefined();
-    expect(result.database.details.stateHistory.age).toBeDefined();
-    expect(result.database.details.stateHistory.timestamp).toBeDefined();
-    expect(result.database.details.stateHistory.details).toBeDefined();
+    expect(result.database.details.stateHistory).toMatchObject({
+      age: expect.any(Number),
+      timestamp: expect.any(Date),
+      details: {
+        system: {
+          version: 'PostgreSQL 15.6',
+          timestamp: expect.any(String),
+          uptime: expect.any(String),
+        },
+        connections: {
+          active: 5,
+          max: 100,
+          utilizationPercent: 5,
+        },
+        performance: {
+          cacheHitRatio: '96%',
+          deadlocks: 0,
+          slowQueries: 0,
+        },
+        databaseSize: '1 GB',
+        top10Tables: [{ table_stats: [] }],
+      },
+    });
   });
 });

@@ -70,7 +70,16 @@ export class AdminPanelHealthService {
     indicatorId: HealthIndicatorId,
   ) {
     if (result.status === 'fulfilled') {
-      const key = Object.keys(result.value)[0];
+      const keys = Object.keys(result.value);
+
+      if (keys.length === 0) {
+        return {
+          ...HEALTH_INDICATORS[indicatorId],
+          status: AdminPanelHealthServiceStatus.OUTAGE,
+          errorMessage: 'No health check result available',
+        };
+      }
+      const key = keys[0];
       const serviceResult = result.value[key];
       const { status, message, ...detailsWithoutStatus } = serviceResult;
       const indicator = HEALTH_INDICATORS[indicatorId];

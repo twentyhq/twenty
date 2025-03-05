@@ -27,10 +27,6 @@ export const JsonDataIndicatorHealthStatus = () => {
     ? JSON.parse(indicatorHealth.details)
     : null;
 
-  const formattedDetails = parsedDetails
-    ? JSON.stringify(parsedDetails, null, 2)
-    : null;
-
   const isDown =
     !indicatorHealth.status ||
     indicatorHealth.status === AdminPanelHealthServiceStatus.OUTAGE;
@@ -43,7 +39,7 @@ export const JsonDataIndicatorHealthStatus = () => {
             `${indicatorHealth.label} service is unreachable`}
         </StyledErrorMessage>
       )}
-      {formattedDetails && (
+      {parsedDetails && (
         <StyledDetailsContainer>
           <JsonTree value={parsedDetails} />
         </StyledDetailsContainer>
