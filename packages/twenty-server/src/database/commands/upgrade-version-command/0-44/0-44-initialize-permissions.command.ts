@@ -215,6 +215,7 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
       if (options.dryRun) {
         return;
       }
+
       await this.userRoleService.assignRoleToUserWorkspace({
         roleId: adminRoleId,
         userWorkspaceId: userWorkspace.id,
