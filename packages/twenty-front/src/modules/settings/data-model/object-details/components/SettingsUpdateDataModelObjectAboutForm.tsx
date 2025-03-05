@@ -1,7 +1,6 @@
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
-import { getDirtyValues } from '@/settings/data-model/utils/getFormDirtyFields';
 import {
   SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
@@ -12,11 +11,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { ZodError, isDirty } from 'zod';
+import { ZodError } from 'zod';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -36,51 +33,23 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
   });
 
-  const getUpdatePayload = (
-    formValues: SettingsDataModelObjectAboutFormValues,
-  ) => {
-    const dirtyFields = getDirtyValues(
-      formConfig.formState.dirtyFields,
-      formValues,
-    );
-    const shouldComputeNamesFromLabels =
-      dirtyFields.isLabelSyncedWithName === true ||
-      objectMetadataItem?.isLabelSyncedWithName === true;
-
-    if (shouldComputeNamesFromLabels) {
-      const nameSingular = isDefined(dirtyFields.labelSingular)
-        ? computeMetadataNameFromLabel(dirtyFields.labelSingular)
-        : undefined;
-      const namePlural = isDefined(dirtyFields.labelPlural)
-        ? computeMetadataNameFromLabel(dirtyFields.labelPlural)
-        : undefined;
-
-      return settingsDataModelObjectAboutFormSchema.parse({
-        ...formValues,
-        namePlural,
-        nameSingular,
-      });
-    }
-
-    return settingsDataModelObjectAboutFormSchema.parse(formValues);
-  };
-
   const handleSave = async (
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
-    if (!isDirty) {
+    if (!formConfig.formState.isDirty) {
       return;
     }
+
+    const objectNamePluralForRedirection =
+      formValues.namePlural ?? objectMetadataItem.namePlural;
+
+    setUpdatedObjectNamePlural(objectNamePluralForRedirection);
+
     try {
-      const updatePayload = getUpdatePayload(formValues);
-      const objectNamePluralForRedirection =
-        updatePayload.namePlural ?? objectMetadataItem.namePlural;
-
-      setUpdatedObjectNamePlural(objectNamePluralForRedirection);
-
+      console.log({ formValues });
       await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
-        updatePayload,
+        updatePayload: formValues,
       });
 
       formConfig.reset(undefined, { keepValues: true });

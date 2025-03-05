@@ -75,7 +75,7 @@ export const SettingsDataModelObjectAboutForm = ({
   onNewDirtyField,
   objectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
-  const { control, watch, setValue, handleSubmit } =
+  const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
   const theme = useTheme();
@@ -96,29 +96,25 @@ export const SettingsDataModelObjectAboutForm = ({
     : t`Input must be in camel case and cannot start with a number`;
 
   const fillLabelPlural = (labelSingular: string) => {
-    const newLabelPluralValue = isDefined(labelSingular)
-      ? plural(labelSingular)
-      : '';
-    setValue('labelPlural', newLabelPluralValue, {
-      shouldDirty: isDefined(labelSingular) ? true : false,
+    const labelPluralFromSingularLabel = plural(labelSingular);
+    setValue('labelPlural', plural(labelPluralFromSingularLabel), {
+      shouldDirty: true,
     });
     if (isLabelSyncedWithName === true) {
-      fillNamePluralFromLabelPlural(newLabelPluralValue);
+      fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
     }
   };
 
   const fillNameSingularFromLabelSingular = (labelSingular: string) => {
-    isDefined(labelSingular) &&
-      setValue('nameSingular', computeMetadataNameFromLabel(labelSingular), {
-        shouldDirty: true,
-      });
+    setValue('nameSingular', computeMetadataNameFromLabel(labelSingular), {
+      shouldDirty: true,
+    });
   };
 
   const fillNamePluralFromLabelPlural = (labelPlural: string) => {
-    isDefined(labelPlural) &&
-      setValue('namePlural', computeMetadataNameFromLabel(labelPlural), {
-        shouldDirty: true,
-      });
+    setValue('namePlural', computeMetadataNameFromLabel(labelPlural), {
+      shouldDirty: true,
+    });
   };
 
   return (

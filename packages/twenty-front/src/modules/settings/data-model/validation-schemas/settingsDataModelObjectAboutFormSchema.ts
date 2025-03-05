@@ -2,18 +2,19 @@ import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/o
 import { z } from 'zod';
 
 const requiredFormFields = objectMetadataItemSchema.pick({
-  description: true,
+  description: true, // what happens if empty string ?
   icon: true,
-  labelPlural: true,
-  labelSingular: true,
 });
-const optionalFormFields = objectMetadataItemSchema
-  .pick({
-    nameSingular: true,
-    namePlural: true,
-    isLabelSyncedWithName: true,
-  })
-  .partial();
+
+// Can ApiNames contains whitespace ?
+const zodNonEmptyString = z.string().min(1);
+const optionalFormFields = z.object({
+  labelSingular: zodNonEmptyString,
+  labelPlural: zodNonEmptyString,
+  namePlural: zodNonEmptyString.optional(),
+  nameSingular: zodNonEmptyString.optional(),
+  isLabelSyncedWithName: z.boolean().optional(),
+});
 export const settingsDataModelObjectAboutFormSchema =
   requiredFormFields.merge(optionalFormFields);
 export type SettingsDataModelObjectAboutFormValues = z.infer<
