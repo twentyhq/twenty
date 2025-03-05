@@ -11,6 +11,5 @@ export type BillingPortalCheckoutSessionParameters = {
   billingPricesPerPlan?: BillingGetPricesPerPlanResult;
   successUrlPath?: string;
   plan: BillingPlanKey;
-  priceId?: string;
   requirePaymentMethod?: boolean;
 };
