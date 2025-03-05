@@ -5,12 +5,20 @@ import axios from 'axios';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { NewTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/refresh-tokens.service';
 
+interface MicrosoftRefreshTokenResponse {
+  access_token: string;
+  refresh_token: string;
+  scope: string;
+  token_type: string;
+  expires_in: number;
+  id_token?: string;
+}
 @Injectable()
 export class MicrosoftAPIRefreshAccessTokenService {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   async refreshTokens(refreshToken: string): Promise<NewTokens> {
-    const response = await axios.post(
+    const response = await axios.post<MicrosoftRefreshTokenResponse>(
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
       new URLSearchParams({
         client_id: this.environmentService.get('AUTH_MICROSOFT_CLIENT_ID'),

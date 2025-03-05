@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { assertUnreachable, ConnectedAccountProvider } from 'twenty-shared';
+
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
@@ -81,7 +83,10 @@ export class RefreshTokensService {
         return newAccessToken;
       }
       default:
-        throw new Error('Provider not supported for access token refresh');
+        return assertUnreachable(
+          connectedAccount.provider,
+          `Provider ${connectedAccount.provider} not supported for access token refresh`,
+        );
     }
   }
 
@@ -90,18 +95,18 @@ export class RefreshTokensService {
     refreshToken: string,
   ): Promise<NewTokens> {
     switch (connectedAccount.provider) {
-      case 'google':
+      case ConnectedAccountProvider.GOOGLE:
         return this.googleAPIRefreshAccessTokenService.refreshAccessToken(
           refreshToken,
         );
-      case 'microsoft':
+      case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftAPIRefreshAccessTokenService.refreshTokens(
           refreshToken,
         );
       default:
-        throw new RefreshAccessTokenException(
-          `Provider ${connectedAccount.provider} is not supported`,
-          RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,
+        return assertUnreachable(
+          connectedAccount.provider,
+          `Provider ${connectedAccount.provider} not supported`,
         );
     }
   }
