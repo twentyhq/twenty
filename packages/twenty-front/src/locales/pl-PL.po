@@ -129,7 +129,6 @@ msgstr "Konta"
 
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Actions"
 msgstr "Akcje"
 
@@ -2402,17 +2401,17 @@ msgstr "Zresetuj do"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Restore"
-msgstr ""
+msgstr "Przywróć"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Restore record"
-msgstr ""
+msgstr "Przywróć rekord"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Restore records"
-msgstr ""
+msgstr "Przywróć wpisy"
 
 #: src/modules/command-menu/hooks/useSearchRecords.tsx
 msgid "Results"

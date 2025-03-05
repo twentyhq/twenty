@@ -11,7 +11,7 @@ const StyledTableHeaderRow = styled(Table)`
 export const RolesTableHeader = () => {
   return (
     <StyledTableHeaderRow>
-      <TableRow>
+      <TableRow gridAutoColumns="3fr 2fr 1fr">
         <TableHeader>
           <Trans>Name</Trans>
         </TableHeader>
