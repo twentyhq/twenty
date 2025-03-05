@@ -119,19 +119,19 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[SettingsPermissions.WORKSPACE_MEMBERS],
         },
         {
-          label: t`Billing`,
-          path: SettingsPath.Billing,
-          Icon: IconCurrencyDollar,
-          isHidden:
-            !isBillingEnabled || !permissionMap[SettingsPermissions.WORKSPACE],
-        },
-        {
           label: t`Roles`,
           path: SettingsPath.Roles,
           Icon: IconLock,
           isHidden:
             !featureFlags[FeatureFlagKey.IsPermissionsEnabled] ||
             !permissionMap[SettingsPermissions.ROLES],
+        },
+        {
+          label: t`Billing`,
+          path: SettingsPath.Billing,
+          Icon: IconCurrencyDollar,
+          isHidden:
+            !isBillingEnabled || !permissionMap[SettingsPermissions.WORKSPACE],
         },
         {
           label: t`Data model`,
