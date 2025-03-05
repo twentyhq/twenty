@@ -162,7 +162,7 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
 
     this.logger.log(
       chalk.green(
-        `Setting member role as default role ${options.dryRun ? '(dry run)' : ''}`,
+        `Setting admin role as default role ${options.dryRun ? '(dry run)' : ''}`,
       ),
     );
 
