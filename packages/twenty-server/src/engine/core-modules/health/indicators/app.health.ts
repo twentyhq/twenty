@@ -5,12 +5,15 @@ import {
 } from '@nestjs/terminus';
 
 import { APP_HEALTH_ISSUE_CATEGORIES } from 'src/engine/core-modules/health/constants/app-health-issue-categories.const';
+import { HealthStateManager } from 'src/engine/core-modules/health/utils/health-state-manager.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 
 @Injectable()
 export class AppHealthIndicator {
+  private stateManager = new HealthStateManager();
+
   constructor(
     private readonly healthIndicatorService: HealthIndicatorService,
     private readonly workspaceHealthService: WorkspaceHealthService,
@@ -59,6 +62,7 @@ export class AppHealthIndicator {
       const details = {
         system: {
           nodeVersion: process.version,
+          timestamp: new Date().toISOString(),
         },
         overview: {
           totalWorkspaces: workspaceIds.length,
@@ -86,18 +90,36 @@ export class AppHealthIndicator {
       };
 
       const isHealthy = workspaceStats.every(
-        (stat) =>
-          (stat.pendingMigrations === 0 && stat.severity === 'healthy') ||
-          stat.severity === 'warning',
+        (stat) => stat.pendingMigrations === 0 && stat.severity === 'healthy',
       );
 
-      return isHealthy
-        ? indicator.up({ details })
-        : indicator.down({
-            errorMessage: 'Pending migrations detected',
-          });
+      if (isHealthy) {
+        this.stateManager.updateState(details);
+
+        return indicator.up({ details });
+      }
+
+      const errorMessage = `Found ${workspaceStats.filter((s) => s.severity === 'warning').length} workspaces with warnings and ${workspaceStats.filter((s) => s.severity === 'critical').length} critical workspaces`;
+
+      this.stateManager.updateState(details);
+
+      return indicator.down({
+        message: errorMessage,
+        details,
+      });
     } catch (error) {
-      return indicator.down(error);
+      const stateWithAge = this.stateManager.getStateWithAge();
+
+      return indicator.down({
+        message: error.message,
+        details: {
+          system: {
+            nodeVersion: process.version,
+            timestamp: new Date().toISOString(),
+          },
+          stateHistory: stateWithAge,
+        },
+      });
     }
   }
 

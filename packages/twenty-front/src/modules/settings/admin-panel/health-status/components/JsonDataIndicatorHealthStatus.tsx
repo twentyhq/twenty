@@ -1,10 +1,11 @@
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
+import { JsonTree } from '@/workflow/components/json-visualizer/components/JsonTree';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { Section } from 'twenty-ui';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
 
-const StyledDetailsContainer = styled.pre`
+const StyledDetailsContainer = styled.div`
   background-color: ${({ theme }) => theme.background.quaternary};
   padding: ${({ theme }) => theme.spacing(6)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -38,11 +39,14 @@ export const JsonDataIndicatorHealthStatus = () => {
     <Section>
       {isDown && (
         <StyledErrorMessage>
-          {`${indicatorHealth.label} information is not available because the service is down`}
+          {indicatorHealth.errorMessage ||
+            `${indicatorHealth.label} service is unreachable`}
         </StyledErrorMessage>
       )}
       {formattedDetails && (
-        <StyledDetailsContainer>{formattedDetails}</StyledDetailsContainer>
+        <StyledDetailsContainer>
+          <JsonTree value={parsedDetails} />
+        </StyledDetailsContainer>
       )}
     </Section>
   );

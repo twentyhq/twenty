@@ -60,6 +60,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
               id: data?.getIndicatorHealthStatus?.id ?? '',
               label: data?.getIndicatorHealthStatus?.label ?? '',
               description: data?.getIndicatorHealthStatus?.description ?? '',
+              errorMessage: data?.getIndicatorHealthStatus?.errorMessage,
               status:
                 data?.getIndicatorHealthStatus?.status ??
                 AdminPanelHealthServiceStatus.OUTAGE,

@@ -49,15 +49,17 @@ export class AdminPanelHealthService {
   private transformServiceDetails(details: any) {
     if (!details) return details;
 
-    if (details.messageSync) {
-      details.messageSync.status = this.transformStatus(
-        details.messageSync.status,
-      );
-    }
-    if (details.calendarSync) {
-      details.calendarSync.status = this.transformStatus(
-        details.calendarSync.status,
-      );
+    if (details.details) {
+      if (details.details.messageSync) {
+        details.details.messageSync.status = this.transformStatus(
+          details.details.messageSync.status,
+        );
+      }
+      if (details.details.calendarSync) {
+        details.details.calendarSync.status = this.transformStatus(
+          details.details.calendarSync.status,
+        );
+      }
     }
 
     return details;
@@ -70,15 +72,22 @@ export class AdminPanelHealthService {
     if (result.status === 'fulfilled') {
       const key = Object.keys(result.value)[0];
       const serviceResult = result.value[key];
-      const details = this.transformServiceDetails(serviceResult.details);
+      const { status, message, ...detailsWithoutStatus } = serviceResult;
       const indicator = HEALTH_INDICATORS[indicatorId];
+
+      const transformedDetails =
+        this.transformServiceDetails(detailsWithoutStatus);
 
       return {
         id: indicatorId,
         label: indicator.label,
         description: indicator.description,
-        status: this.transformStatus(serviceResult.status),
-        details: details ? JSON.stringify(details) : undefined,
+        status: this.transformStatus(status),
+        errorMessage: message,
+        details:
+          Object.keys(transformedDetails).length > 0
+            ? JSON.stringify(transformedDetails)
+            : undefined,
         queues: serviceResult.queues,
       };
     }
@@ -86,7 +95,10 @@ export class AdminPanelHealthService {
     return {
       ...HEALTH_INDICATORS[indicatorId],
       status: AdminPanelHealthServiceStatus.OUTAGE,
-      details: result.reason?.message?.toString(),
+      errorMessage: result.reason?.message?.toString(),
+      details: result.reason?.details
+        ? JSON.stringify(result.reason.details)
+        : undefined,
     };
   }
 
