@@ -219,7 +219,7 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
       );
 
       if (options.dryRun) {
-        return;
+        continue;
       }
 
       await this.userRoleService.assignRoleToUserWorkspace({
