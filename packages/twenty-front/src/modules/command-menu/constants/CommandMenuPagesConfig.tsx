@@ -3,8 +3,8 @@ import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/components/CommandMenuSearchRecordsPage';
+import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
 import { RightDrawerWorkflowEditStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStep';
 import { RightDrawerWorkflowRunViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowRunViewStep';
 import { RightDrawerWorkflowViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStep';
@@ -16,7 +16,7 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   React.ReactNode
 >([
   [CommandMenuPages.Root, <CommandMenu />],
-  [CommandMenuPages.ViewRecord, <RightDrawerRecord />],
+  [CommandMenuPages.ViewRecord, <CommandMenuRecordPage />],
   [CommandMenuPages.ViewEmailThread, <RightDrawerEmailThread />],
   [CommandMenuPages.ViewCalendarEvent, <RightDrawerCalendarEvent />],
   [CommandMenuPages.Copilot, <RightDrawerAIChat />],
