@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import IconMicrosoftRaw from '../assets/microsoft.svg?react';
 
 interface IconMicrosoftProps {
-  size?: number;
+  size?: number | string;
 }
 
 export const IconMicrosoft = (props: IconMicrosoftProps) => {

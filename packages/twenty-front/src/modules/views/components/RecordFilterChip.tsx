@@ -21,7 +21,7 @@ export const RecordFilterChip = ({ recordFilter }: RecordFilterChipProps) => {
   const FieldMetadataItemIcon = getIcon(fieldMetadataItem.icon);
 
   const handleRemoveClick = () => {
-    removeRecordFilter(recordFilter.fieldMetadataId);
+    removeRecordFilter({ recordFilterId: recordFilter.id });
   };
 
   return (

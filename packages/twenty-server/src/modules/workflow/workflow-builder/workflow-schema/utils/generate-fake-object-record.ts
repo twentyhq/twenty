@@ -1,13 +1,11 @@
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import {
   Leaf,
   Node,
   RecordOutputSchema,
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
-import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 const generateObjectRecordFields = (
   objectMetadataEntity: ObjectMetadataEntity,
@@ -17,33 +15,12 @@ const generateObjectRecordFields = (
       if (!shouldGenerateFieldFakeValue(field)) {
         return acc;
       }
-      const compositeType = compositeTypeDefinitions.get(field.type);
 
-      if (!compositeType) {
-        acc[field.name] = {
-          isLeaf: true,
-          type: field.type,
-          icon: field.icon,
-          label: field.label,
-          value: generateFakeValue(field.type, 'FieldMetadataType'),
-        };
-      } else {
-        acc[field.name] = {
-          isLeaf: false,
-          icon: field.icon,
-          label: field.label,
-          value: compositeType.properties.reduce((acc, property) => {
-            acc[property.name] = {
-              isLeaf: true,
-              type: property.type,
-              label: camelToTitleCase(property.name),
-              value: generateFakeValue(property.type, 'FieldMetadataType'),
-            };
-
-            return acc;
-          }, {}),
-        };
-      }
+      acc[field.name] = generateFakeField({
+        type: field.type,
+        label: field.label,
+        icon: field.icon,
+      });
 
       return acc;
     },

@@ -85,7 +85,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
           </>
         }
         onConfirmClick={deleteFunction}
-        deleteButtonText="Delete function"
+        confirmButtonText="Delete function"
       />
     </>
   );

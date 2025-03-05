@@ -21,8 +21,6 @@ import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
@@ -115,10 +113,6 @@ export const ViewBarDetails = ({
   viewBarId,
   objectNamePlural,
 }: ViewBarDetailsProps) => {
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
-
-  const viewId = currentViewWithCombinedFiltersAndSorts?.id;
-
   const isViewBarExpanded = useRecoilComponentValueV2(
     isViewBarExpandedComponentState,
   );
@@ -144,7 +138,6 @@ export const ViewBarDetails = ({
     objectNameSingular: objectNameSingular,
     viewBarId: viewBarId,
   });
-  const { resetUnsavedViewStates } = useResetUnsavedViewStates();
 
   const { viewFilterGroupsAreDifferentFromRecordFilterGroups } =
     useAreViewFilterGroupsDifferentFromRecordFilterGroups();
@@ -170,7 +163,7 @@ export const ViewBarDetails = ({
   const recordFilters = useMemo(() => {
     return currentRecordFilters.filter(
       (recordFilter) =>
-        !recordFilter.viewFilterGroupId &&
+        !recordFilter.recordFilterGroupId &&
         !checkIsSoftDeleteFilter(recordFilter),
     );
   }, [currentRecordFilters, checkIsSoftDeleteFilter]);
@@ -185,13 +178,10 @@ export const ViewBarDetails = ({
     useApplyCurrentViewSortsToCurrentRecordSorts();
 
   const handleCancelClick = () => {
-    if (isDefined(viewId)) {
-      resetUnsavedViewStates(viewId);
-      applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
-      applyCurrentViewFiltersToCurrentRecordFilters();
-      applyCurrentViewSortsToCurrentRecordSorts();
-      toggleSoftDeleteFilterState(false);
-    }
+    applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
+    applyCurrentViewFiltersToCurrentRecordFilters();
+    applyCurrentViewSortsToCurrentRecordSorts();
+    toggleSoftDeleteFilterState(false);
   };
 
   const shouldExpandViewBar =
@@ -207,9 +197,8 @@ export const ViewBarDetails = ({
     return null;
   }
 
-  const showAdvancedFilterDropdownButton =
-    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups &&
-    currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.length > 0;
+  const shouldShowAdvancedFilterDropdownButton =
+    currentRecordFilterGroups.length > 0;
 
   return (
     <StyledBar>
@@ -239,7 +228,9 @@ export const ViewBarDetails = ({
                 <StyledSeperator />
               </StyledSeperatorContainer>
             )}
-          {showAdvancedFilterDropdownButton && <AdvancedFilterDropdownButton />}
+          {shouldShowAdvancedFilterDropdownButton && (
+            <AdvancedFilterDropdownButton />
+          )}
           {recordFilters.map((recordFilter) => (
             <ObjectFilterDropdownComponentInstanceContext.Provider
               key={recordFilter.id}

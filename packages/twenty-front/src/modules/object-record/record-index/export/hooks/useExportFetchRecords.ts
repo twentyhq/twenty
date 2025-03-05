@@ -83,7 +83,6 @@ export const useExportFetchRecords = ({
 
   const findManyRecordsParams = useFindManyRecordIndexTableParams(
     objectMetadataItem.nameSingular,
-    recordIndexId,
   );
 
   const finalColumns = [
