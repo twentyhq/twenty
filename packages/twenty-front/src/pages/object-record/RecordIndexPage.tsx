@@ -2,11 +2,11 @@ import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-s
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
-import { AppPath } from '@/types/AppPath';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { Deactived } from '~/pages/deactivated/Deactived';
 
 export const RecordIndexPage = () => {
   const navigateApp = useNavigateApp();
@@ -27,10 +27,6 @@ export const RecordIndexPage = () => {
     return null;
   }
 
-  if (!objectMetadataItem.isActive) {
-    navigateApp(AppPath.NotFound);
-    return null;
-  }
 
   return (
     <PageContainer>
@@ -39,7 +35,11 @@ export const RecordIndexPage = () => {
           instanceId: 'main-context-store',
         }}
       >
-        <RecordIndexContainerGater />
+        {objectMetadataItem.isActive?(
+              <RecordIndexContainerGater />
+        ):(
+              <Deactived />
+        )}
       </ContextStoreComponentInstanceContext.Provider>
     </PageContainer>
   );
