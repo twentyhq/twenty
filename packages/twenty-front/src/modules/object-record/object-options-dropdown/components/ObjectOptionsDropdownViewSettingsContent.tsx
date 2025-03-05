@@ -10,7 +10,7 @@ import {
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -47,7 +47,10 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
+      <DropdownMenuHeader
+        StartIcon={IconChevronLeft}
+        onStartIconClick={resetContent}
+      >
         {t`View settings`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
