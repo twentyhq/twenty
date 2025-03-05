@@ -97,11 +97,14 @@ describe('AppHealthIndicator', () => {
     const result = await service.isHealthy();
 
     expect(result.app.status).toBe('up');
-    expect(result.app.details.workspaces.totalWorkspaces).toBe(2);
-    expect(result.app.details.workspaces.healthStatus).toHaveLength(2);
-    expect(result.app.details.workspaces.healthStatus[0].severity).toBe(
-      'healthy',
-    );
+    expect(result.app.details.overview.totalWorkspaces).toBe(2);
+    expect(result.app.details.overview.criticalWorkspaces).toBe(0);
+    expect(result.app.details.overview.workspacesWithPendingMigrations).toBe(0);
+    expect(result.app.details.overview.healthDistribution).toEqual({
+      healthy: 2,
+      warning: 0,
+      critical: 0,
+    });
   });
 
   it('should return down status when there are pending migrations', async () => {
@@ -126,10 +129,13 @@ describe('AppHealthIndicator', () => {
         workspaceId: 'workspace1',
       } as any,
     ]);
+
     const result = await service.isHealthy();
 
     expect(result.app.status).toBe('down');
-    expect(result.app.details.workspaces.healthStatus[0].severity).toBe(
+    expect(result.app.details.overview.criticalWorkspaces).toBe(1);
+    expect(result.app.details.overview.workspacesWithPendingMigrations).toBe(1);
+    expect(result.app.details.problematicWorkspaces[0].severity).toBe(
       'critical',
     );
   });
@@ -171,15 +177,15 @@ describe('AppHealthIndicator', () => {
 
     const result = await service.isHealthy();
 
-    expect(result.app.details.workspaces.healthStatus[0].summary).toEqual({
-      structuralIssues: 1,
-      dataIssues: 1,
-      relationshipIssues: 1,
-      pendingMigrations: 0,
+    expect(result.app.details.problematicWorkspaces[0].issuesSummary).toEqual({
+      structural: 1,
+      data: 1,
+      relationship: 1,
     });
+    expect(result.app.details.overview.healthDistribution.warning).toBe(1);
   });
 
-  it('should handle errors gracefully', async () => {
+  it('should handle errors gracefully and maintain state history', async () => {
     objectMetadataService.findMany.mockRejectedValue(
       new Error('Database connection failed'),
     );
@@ -187,7 +193,35 @@ describe('AppHealthIndicator', () => {
     const result = await service.isHealthy();
 
     expect(result.app.status).toBe('down');
-    expect(result.app.error).toBeDefined();
-    expect(result.app.system.nodeVersion).toBeDefined();
+    expect(result.app.message).toBe('Database connection failed');
+    expect(result.app.details.system.nodeVersion).toBeDefined();
+    expect(result.app.details.stateHistory).toBeDefined();
+    expect(result.app.details.system.timestamp).toBeDefined();
+  });
+
+  it('should maintain state history across health checks', async () => {
+    // First check - healthy state
+    objectMetadataService.findMany.mockResolvedValue([
+      {
+        id: '1',
+        workspaceId: 'workspace1',
+      } as any,
+    ]);
+    workspaceHealthService.healthCheck.mockResolvedValue([]);
+    workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
+
+    await service.isHealthy();
+
+    // Second check - error state
+    objectMetadataService.findMany.mockRejectedValue(
+      new Error('Database connection failed'),
+    );
+
+    const result = await service.isHealthy();
+
+    expect(result.app.details.stateHistory).toBeDefined();
+    expect(result.app.details.stateHistory.age).toBeDefined();
+    expect(result.app.details.stateHistory.timestamp).toBeDefined();
+    expect(result.app.details.stateHistory.details).toBeDefined();
   });
 });

@@ -281,7 +281,8 @@ describe('AdminPanelHealthService', () => {
       expect(result).toStrictEqual({
         ...HEALTH_INDICATORS[HealthIndicatorId.database],
         status: AdminPanelHealthServiceStatus.OPERATIONAL,
-        details: JSON.stringify(details),
+        details: JSON.stringify({ details }),
+        errorMessage: undefined,
         queues: undefined,
       });
     });
@@ -314,7 +315,8 @@ describe('AdminPanelHealthService', () => {
       expect(result).toStrictEqual({
         ...HEALTH_INDICATORS[HealthIndicatorId.worker],
         status: AdminPanelHealthServiceStatus.OPERATIONAL,
-        details: undefined,
+        details: JSON.stringify({ queues: mockQueues }),
+        errorMessage: undefined,
         queues: mockQueues.map((queue) => ({
           id: `worker-${queue.queueName}`,
           queueName: queue.queueName,
@@ -338,7 +340,8 @@ describe('AdminPanelHealthService', () => {
       expect(result).toStrictEqual({
         ...HEALTH_INDICATORS[HealthIndicatorId.redis],
         status: AdminPanelHealthServiceStatus.OUTAGE,
-        details: HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED,
+        details: undefined,
+        errorMessage: HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED,
       });
     });
 
