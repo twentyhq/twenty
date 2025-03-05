@@ -38,6 +38,7 @@ import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/sta
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared';
+import { v4 } from 'uuid';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
@@ -76,6 +77,7 @@ export const useCommandMenu = () => {
         set(commandMenuPageInfoState, {
           title: undefined,
           Icon: undefined,
+          instanceId: '',
         });
         set(isCommandMenuOpenedState, false);
         set(commandMenuSearchState, '');
@@ -142,11 +144,14 @@ export const useCommandMenu = () => {
       }: CommandMenuNavigationStackItem & {
         resetNavigationStack?: boolean;
       }) => {
+        const pageComponentInstanceId = v4();
+
         openCommandMenu();
         set(commandMenuPageState, page);
         set(commandMenuPageInfoState, {
           title: pageTitle,
           Icon: pageIcon,
+          instanceId: pageComponentInstanceId,
         });
 
         const isCommandMenuClosing = snapshot
@@ -162,11 +167,13 @@ export const useCommandMenu = () => {
         );
 
         if (resetNavigationStack || itemIsAlreadyInStack) {
-          set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
+          set(commandMenuNavigationStackState, [
+            { page, pageTitle, pageIcon, pageComponentInstanceId },
+          ]);
         } else {
           set(commandMenuNavigationStackState, [
             ...currentNavigationStack,
-            { page, pageTitle, pageIcon },
+            { page, pageTitle, pageIcon, pageComponentInstanceId },
           ]);
         }
       };
@@ -180,6 +187,7 @@ export const useCommandMenu = () => {
       pageTitle: 'Command Menu',
       pageIcon: IconDotsVertical,
       resetNavigationStack: true,
+      pageComponentInstanceId: v4(),
     });
   }, [navigateCommandMenu]);
 
@@ -221,6 +229,7 @@ export const useCommandMenu = () => {
         set(commandMenuPageInfoState, {
           title: lastNavigationStackItem.pageTitle,
           Icon: lastNavigationStackItem.pageIcon,
+          instanceId: lastNavigationStackItem.pageComponentInstanceId,
         });
 
         set(commandMenuNavigationStackState, newNavigationStack);
@@ -252,6 +261,7 @@ export const useCommandMenu = () => {
       set(commandMenuPageInfoState, {
         title: newNavigationStackItem?.pageTitle,
         Icon: newNavigationStackItem?.pageIcon,
+        instanceId: newNavigationStackItem?.pageComponentInstanceId,
       });
 
       set(hasUserSelectedCommandState, false);
@@ -343,8 +353,7 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
-          // TODO: remove this once we can store the navigation stack page states
-          resetNavigationStack: true,
+          pageComponentInstanceId: v4(),
         });
       };
     },
@@ -356,6 +365,7 @@ export const useCommandMenu = () => {
       page: CommandMenuPages.SearchRecords,
       pageTitle: 'Search',
       pageIcon: IconSearch,
+      pageComponentInstanceId: v4(),
     });
   };
 
@@ -401,6 +411,7 @@ export const useCommandMenu = () => {
         set(commandMenuPageInfoState, {
           title: undefined,
           Icon: undefined,
+          instanceId: '',
         });
 
         set(hasUserSelectedCommandState, false);

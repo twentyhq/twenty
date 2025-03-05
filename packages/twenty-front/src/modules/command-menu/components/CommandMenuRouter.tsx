@@ -2,6 +2,8 @@ import { CommandMenuContainer } from '@/command-menu/components/CommandMenuConta
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuPagesConfig';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageContext';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -15,6 +17,8 @@ const StyledCommandMenuContent = styled.div`
 
 export const CommandMenuRouter = () => {
   const commandMenuPage = useRecoilValue(commandMenuPageState);
+
+  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
 
   const commandMenuPageComponent = isDefined(commandMenuPage) ? (
     COMMAND_MENU_PAGES_CONFIG.get(commandMenuPage)
@@ -38,7 +42,11 @@ export const CommandMenuRouter = () => {
         <CommandMenuTopBar />
       </motion.div>
       <StyledCommandMenuContent>
-        {commandMenuPageComponent}
+        <CommandMenuPageComponentInstanceContext.Provider
+          value={{ instanceId: commandMenuPageInfo.instanceId }}
+        >
+          {commandMenuPageComponent}
+        </CommandMenuPageComponentInstanceContext.Provider>
       </StyledCommandMenuContent>
     </CommandMenuContainer>
   );

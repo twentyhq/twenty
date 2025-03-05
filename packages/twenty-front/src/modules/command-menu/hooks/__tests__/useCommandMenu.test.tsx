@@ -10,6 +10,7 @@ import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageT
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { IconList, IconSearch } from 'twenty-ui';
+import { v4 } from 'uuid';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -98,6 +99,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageComponentInstanceId: v4(),
       });
     });
 
@@ -119,6 +121,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
+        pageComponentInstanceId: v4(),
       });
     });
 
@@ -149,6 +152,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageComponentInstanceId: v4(),
       });
     });
 
@@ -157,6 +161,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
+        pageComponentInstanceId: v4(),
       });
     });
 
@@ -212,6 +217,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageComponentInstanceId: v4(),
       });
     });
 
