@@ -7,6 +7,7 @@ import {
   StepOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
+import { isEmptyObject } from '@tiptap/core';
 import { isDefined } from 'twenty-shared';
 
 export const useAvailableVariablesInWorkflowStep = ({
@@ -39,17 +40,25 @@ export const useAvailableVariablesInWorkflowStep = ({
   const availableVariablesInWorkflowStep = [
     ...availableStepsOutputSchema,
     ...triggersOutputSchema,
-  ].map((stepOutputSchema) => {
-    return {
-      id: stepOutputSchema.id,
-      name: stepOutputSchema.name,
-      icon: stepOutputSchema.icon,
-      outputSchema: filterOutputSchema(
+  ]
+    .map((stepOutputSchema) => {
+      const outputSchema = filterOutputSchema(
         stepOutputSchema.outputSchema,
         objectNameSingularToSelect,
-      ) as OutputSchema,
-    };
-  });
+      ) as OutputSchema;
+
+      if (!isDefined(outputSchema) || isEmptyObject(outputSchema)) {
+        return undefined;
+      }
+
+      return {
+        id: stepOutputSchema.id,
+        name: stepOutputSchema.name,
+        icon: stepOutputSchema.icon,
+        outputSchema,
+      };
+    })
+    .filter(isDefined);
 
   return availableVariablesInWorkflowStep;
 };
