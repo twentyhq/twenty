@@ -5,7 +5,7 @@ export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
   pageTitle: string;
   pageIcon: IconComponent;
-  pageComponentInstanceId: string;
+  pageId: string;
 };
 
 export const commandMenuNavigationStackState = createState<

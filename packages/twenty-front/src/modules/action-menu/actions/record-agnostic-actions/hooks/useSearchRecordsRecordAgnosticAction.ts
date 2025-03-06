@@ -1,7 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { IconSearch } from 'twenty-ui';
-import { v4 } from 'uuid';
 
 export const useSearchRecordsRecordAgnosticAction = () => {
   const { navigateCommandMenu } = useCommandMenu();
@@ -11,7 +10,6 @@ export const useSearchRecordsRecordAgnosticAction = () => {
       page: CommandMenuPages.SearchRecords,
       pageTitle: 'Search',
       pageIcon: IconSearch,
-      pageComponentInstanceId: v4(),
     });
   };
 

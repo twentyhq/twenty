@@ -99,7 +99,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
-        pageComponentInstanceId: '1',
+        pageId: '1',
       });
     });
 
@@ -108,7 +108,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
-        pageComponentInstanceId: '1',
+        pageId: '1',
       },
     ]);
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
@@ -123,7 +123,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
-        pageComponentInstanceId: '2',
+        pageId: '2',
       });
     });
 
@@ -132,13 +132,13 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
-        pageComponentInstanceId: '1',
+        pageId: '1',
       },
       {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
-        pageComponentInstanceId: '2',
+        pageId: '2',
       },
     ]);
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.ViewRecord);
@@ -157,7 +157,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
-        pageComponentInstanceId: '1',
+        pageId: '1',
       });
     });
 
@@ -166,7 +166,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
-        pageComponentInstanceId: '2',
+        pageId: '2',
       });
     });
 
@@ -175,13 +175,13 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
-        pageComponentInstanceId: '1',
+        pageId: '1',
       },
       {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
-        pageComponentInstanceId: '2',
+        pageId: '2',
       },
     ]);
 
@@ -194,7 +194,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
-        pageComponentInstanceId: '1',
+        pageId: '1',
       },
     ]);
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
@@ -227,7 +227,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
-        pageComponentInstanceId: '1',
+        pageId: '1',
       });
     });
 

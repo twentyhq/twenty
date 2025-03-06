@@ -26,7 +26,6 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui';
-import { v4 } from 'uuid';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
@@ -101,7 +100,7 @@ const meta: Meta<typeof CommandMenu> = {
           page: CommandMenuPages.Root,
           pageTitle: 'Command Menu',
           pageIcon: IconDotsVertical,
-          pageComponentInstanceId: v4(),
+          pageId: '1',
         },
       ]);
 

@@ -49,7 +49,7 @@ export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
   pageTitle: string;
   pageIcon: IconComponent;
-  pageComponentInstanceId: string;
+  pageId?: string;
 };
 
 export const useCommandMenu = () => {
@@ -151,17 +151,21 @@ export const useCommandMenu = () => {
         page,
         pageTitle,
         pageIcon,
-        pageComponentInstanceId,
+        pageId,
         resetNavigationStack = false,
       }: CommandMenuNavigationStackItem & {
         resetNavigationStack?: boolean;
       }) => {
+        if (!pageId) {
+          pageId = v4();
+        }
+
         openCommandMenu();
         set(commandMenuPageState, page);
         set(commandMenuPageInfoState, {
           title: pageTitle,
           Icon: pageIcon,
-          instanceId: pageComponentInstanceId,
+          instanceId: pageId,
         });
 
         const isCommandMenuClosing = snapshot
@@ -178,7 +182,7 @@ export const useCommandMenu = () => {
               page,
               pageTitle,
               pageIcon,
-              pageComponentInstanceId,
+              pageId,
             },
           ]);
         } else {
@@ -188,7 +192,7 @@ export const useCommandMenu = () => {
               page,
               pageTitle,
               pageIcon,
-              pageComponentInstanceId,
+              pageId,
             },
           ]);
         }
@@ -203,7 +207,6 @@ export const useCommandMenu = () => {
       pageTitle: 'Command Menu',
       pageIcon: IconDotsVertical,
       resetNavigationStack: true,
-      pageComponentInstanceId: v4(),
     });
   }, [navigateCommandMenu]);
 
@@ -245,7 +248,7 @@ export const useCommandMenu = () => {
         set(commandMenuPageInfoState, {
           title: lastNavigationStackItem.pageTitle,
           Icon: lastNavigationStackItem.pageIcon,
-          instanceId: lastNavigationStackItem.pageComponentInstanceId,
+          instanceId: lastNavigationStackItem.pageId,
         });
 
         set(commandMenuNavigationStackState, newNavigationStack);
@@ -277,7 +280,7 @@ export const useCommandMenu = () => {
       set(commandMenuPageInfoState, {
         title: newNavigationStackItem?.pageTitle,
         Icon: newNavigationStackItem?.pageIcon,
-        instanceId: newNavigationStackItem?.pageComponentInstanceId,
+        instanceId: newNavigationStackItem?.pageId,
       });
 
       set(hasUserSelectedCommandState, false);
@@ -382,7 +385,7 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
-          pageComponentInstanceId,
+          pageId: pageComponentInstanceId,
           resetNavigationStack: false,
         });
       };
@@ -395,7 +398,7 @@ export const useCommandMenu = () => {
       page: CommandMenuPages.SearchRecords,
       pageTitle: 'Search',
       pageIcon: IconSearch,
-      pageComponentInstanceId: v4(),
+      pageId: v4(),
     });
   };
 
@@ -415,7 +418,7 @@ export const useCommandMenu = () => {
           page: CommandMenuPages.ViewCalendarEvent,
           pageTitle: 'Calendar Event',
           pageIcon: IconCalendarEvent,
-          pageComponentInstanceId,
+          pageId: pageComponentInstanceId,
         });
       };
     },
@@ -438,7 +441,7 @@ export const useCommandMenu = () => {
           page: CommandMenuPages.ViewEmailThread,
           pageTitle: 'Email Thread',
           pageIcon: IconMail,
-          pageComponentInstanceId,
+          pageId: pageComponentInstanceId,
         });
       };
     },

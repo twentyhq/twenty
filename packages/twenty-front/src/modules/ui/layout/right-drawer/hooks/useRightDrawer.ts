@@ -9,7 +9,6 @@ import { mapRightDrawerPageToCommandMenuPage } from '@/ui/layout/right-drawer/ut
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
 import { IconComponent } from 'twenty-ui';
-import { v4 } from 'uuid';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
@@ -44,7 +43,6 @@ export const useRightDrawer = () => {
             page: commandMenuPage,
             pageTitle: commandMenuPageInfo.title,
             pageIcon: commandMenuPageInfo.Icon,
-            pageComponentInstanceId: v4(),
           });
 
           return;
