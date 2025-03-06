@@ -18,7 +18,7 @@ type ZodTypeSettingsDataModelFormFields = ZodType<
   >
 >;
 const settingsDataModelFormFieldsSchema = z.object({
-  description: z.string().optional(),
+  description: z.string().nullish(),
   icon: z.string().optional(),
   labelSingular: zodNonEmptyString,
   labelPlural: zodNonEmptyString,
