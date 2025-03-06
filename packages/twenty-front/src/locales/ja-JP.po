@@ -1949,7 +1949,7 @@ msgstr "前のワークフローに移動"
 msgid "New"
 msgstr "新規"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "新しい{capitalizedObjectNameSingular}"
 

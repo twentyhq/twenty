@@ -1949,7 +1949,7 @@ msgstr "Siirry edelliseen työnkulkuun"
 msgid "New"
 msgstr "Uusi"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Uusi {capitalizedObjectNameSingular}"
 
