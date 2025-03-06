@@ -7,6 +7,8 @@ import { GmailClientProvider } from 'src/modules/messaging/message-import-manage
 
 interface SendMessageInput {
   body: string;
+  subject: string;
+  to: string;
 }
 
 @Injectable()
@@ -17,15 +19,26 @@ export class MessagingSendMessageService {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountWorkspaceEntity,
   ): Promise<void> {
-    const gmailClient =
-      await this.gmailClientProvider.getGmailClient(connectedAccount);
-
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE: {
+        const gmailClient =
+          await this.gmailClientProvider.getGmailClient(connectedAccount);
+
+        const message = [
+          `To: ${sendMessageInput.to}`,
+          `Subject: ${sendMessageInput.subject || ''}`,
+          'MIME-Version: 1.0',
+          'Content-Type: text/plain; charset="UTF-8"',
+          '',
+          sendMessageInput.body,
+        ].join('\n');
+
+        const encodedMessage = Buffer.from(message).toString('base64');
+
         await gmailClient.users.messages.send({
           userId: 'me',
           requestBody: {
-            raw: sendMessageInput.body,
+            raw: encodedMessage,
           },
         });
         break;

@@ -35,7 +35,7 @@ export class SendEmailWorkflowAction implements WorkflowExecutor {
   constructor(
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly sendMesssageService: MessagingSendMessageService,
+    private readonly sendMessageService: MessagingSendMessageService,
   ) {}
 
   private async getConnectedAccount(connectedAccountId: string) {
@@ -115,20 +115,11 @@ export class SendEmailWorkflowAction implements WorkflowExecutor {
     const safeBody = purify.sanitize(body || '');
     const safeSubject = purify.sanitize(subject || '');
 
-    const message = [
-      `To: ${email}`,
-      `Subject: ${safeSubject || ''}`,
-      'MIME-Version: 1.0',
-      'Content-Type: text/plain; charset="UTF-8"',
-      '',
-      safeBody,
-    ].join('\n');
-
-    const encodedMessage = Buffer.from(message).toString('base64');
-
-    await this.sendMesssageService.sendMessage(
+    await this.sendMessageService.sendMessage(
       {
-        body: encodedMessage,
+        to: email,
+        subject: safeSubject,
+        body: safeBody,
       },
       connectedAccount,
     );
