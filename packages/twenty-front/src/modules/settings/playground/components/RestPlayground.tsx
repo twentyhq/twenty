@@ -107,7 +107,7 @@ export const RestPlayground = ({ onError }: { onError(): void }) => {
     <ApiReferenceReact
       configuration={{
         spec: {
-          //content: openAPIReference,
+          content: openAPIReference,
         },
         authentication: {
           http: {
