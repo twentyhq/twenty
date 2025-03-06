@@ -1,5 +1,4 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isDefined } from 'twenty-shared';
 import { ZodType, z } from 'zod';
 import { ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
@@ -22,23 +21,14 @@ const settingsDataModelFormFieldsSchema = z.object({
   icon: z.string().optional(),
   labelSingular: zodNonEmptyString,
   labelPlural: zodNonEmptyString,
-  namePlural: zodNonEmptyString,
-  nameSingular: zodNonEmptyString,
+  namePlural: zodNonEmptyString.and(camelCaseStringSchema),
+  nameSingular: zodNonEmptyString.and(camelCaseStringSchema),
   isLabelSyncedWithName: z.boolean(),
 }) satisfies ZodTypeSettingsDataModelFormFields;
 
 export const settingsDataModelObjectAboutFormSchema =
   settingsDataModelFormFieldsSchema.superRefine(
-    (
-      {
-        labelPlural,
-        labelSingular,
-        isLabelSyncedWithName,
-        namePlural,
-        nameSingular,
-      },
-      ctx,
-    ) => {
+    ({ labelPlural, labelSingular, namePlural, nameSingular }, ctx) => {
       const labelsAreDifferent =
         labelPlural.toLowerCase() !== labelSingular.toLocaleLowerCase();
       if (!labelsAreDifferent) {
@@ -69,37 +59,6 @@ export const settingsDataModelObjectAboutFormSchema =
             path: [field],
           }),
         );
-      }
-
-      if (
-        !isDefined(isLabelSyncedWithName) ||
-        isLabelSyncedWithName === false
-      ) {
-        if (
-          nameSingular &&
-          !camelCaseStringSchema.safeParse(nameSingular).success
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Should follow camel case',
-            path: [
-              'nameSingular',
-            ] satisfies ReadonlyKeysArray<ObjectMetadataItem>,
-          });
-        }
-
-        if (
-          namePlural &&
-          !camelCaseStringSchema.safeParse(namePlural).success
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Should follow camel case',
-            path: [
-              'namePlural',
-            ] satisfies ReadonlyKeysArray<ObjectMetadataItem>,
-          });
-        }
       }
     },
   );
