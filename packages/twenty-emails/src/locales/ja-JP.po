@@ -56,7 +56,7 @@ msgstr "削除されたワークスペース"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "招待なしでワークスペースに参加するためのメールアドレス。"
 
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
@@ -96,11 +96,11 @@ msgstr "パスワードが更新されました"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with"
-msgstr ""
+msgstr "このドメインを確認して、ユーザーが使用できるようにしてください"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 #~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-#~ msgstr "このドメインを検証して、<0>@{domain}</0> のメールアドレスを持つユーザーが招待なしでワークスペースに参加できるようにしてください。"
+#~ msgstr "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

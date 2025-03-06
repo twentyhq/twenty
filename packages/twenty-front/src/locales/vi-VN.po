@@ -364,11 +364,11 @@ msgstr "Bạn có chắc chắn muốn thay đổi chu kỳ thanh toán của m�
 
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "Bạn có chắc chắn muốn xóa các bản ghi này không? Chúng có thể được phục hồi từ menu Command ({osControlSymbol} + K)."
 
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "Bạn có chắc chắn muốn xóa bản ghi này không? Nó có thể được phục hồi từ menu Command ({osControlSymbol} + K)."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx

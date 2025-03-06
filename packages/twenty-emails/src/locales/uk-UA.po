@@ -56,7 +56,7 @@ msgstr "Видалена робоча область"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "адреси електронної пошти для приєднання до вашого робочого простору без необхідності запрошення."
 
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
@@ -96,11 +96,11 @@ msgstr "Пароль оновлено"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with"
-msgstr ""
+msgstr "Будь ласка, перевірте цей домен, щоб дозволити користувачам з"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 #~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-#~ msgstr "Будь ласка, перевірте цей домен, щоб дозволити користувачам з електронними адресами <0>@{domain}</0> приєднатися до вашого робочого простору без запрошення."
+#~ msgstr "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

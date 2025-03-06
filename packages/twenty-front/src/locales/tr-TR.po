@@ -364,11 +364,11 @@ msgstr "Faturalandırma aralığınızı değiştirmek istediğinizden emin misi
 
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "Bu kayıtları silmek istediğinizden emin misiniz? Komut menüsünden ({osControlSymbol} + K) kurtarılabilirler."
 
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "Bu kaydı silmek istediğinizden emin misiniz? Komut menüsünden ({osControlSymbol} + K) kurtarılabilir."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx

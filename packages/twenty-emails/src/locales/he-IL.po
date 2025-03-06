@@ -56,7 +56,7 @@ msgstr "מרחב עבודה שנמחק"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "כתובות דואר אלקטרוני להצטרפות לחלל העבודה שלך ללא צורך בהזמנה."
 
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
@@ -96,11 +96,11 @@ msgstr "הסיסמה עודכנה"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with"
-msgstr ""
+msgstr "אנא אשר את התחום הזה כדי לאפשר למשתמשים עם"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 #~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-#~ msgstr "אנא אמת דומיין זה כדי לאפשר למשתמשים עם כתובות דוא\"ל <0>@{domain}</0> להצטרף למרחב שלך בלי צורך בהזמנה."
+#~ msgstr "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
