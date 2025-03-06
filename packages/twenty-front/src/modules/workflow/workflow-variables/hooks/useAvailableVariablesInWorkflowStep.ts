@@ -1,6 +1,7 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
+import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import {
   OutputSchema,
   StepOutputSchema,
@@ -15,7 +16,7 @@ export const useAvailableVariablesInWorkflowStep = ({
 }): StepOutputSchema[] => {
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const flow = useFlowOrThrow();
-  const { getStepsOutputSchema } = useStepsOutputSchema();
+  const { getStepsOutputSchema } = useStepsOutputSchema({});
 
   const steps = flow.steps ?? [];
 
@@ -32,7 +33,7 @@ export const useAvailableVariablesInWorkflowStep = ({
     getStepsOutputSchema(previousStepIds).filter(isDefined);
 
   const triggersOutputSchema: StepOutputSchema[] = getStepsOutputSchema([
-    'trigger',
+    TRIGGER_STEP_ID,
   ]).filter(isDefined);
 
   const availableVariablesInWorkflowStep = [

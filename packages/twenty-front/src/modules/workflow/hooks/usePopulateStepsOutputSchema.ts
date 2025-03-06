@@ -3,6 +3,7 @@ import { stepsOutputSchemaComponentFamilyState } from '@/workflow/states/stepsOu
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import {
   OutputSchema,
@@ -12,7 +13,11 @@ import { getTriggerStepName } from '@/workflow/workflow-variables/utils/getTrigg
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
-export const usePopulateStepsOutputSchema = (workflowVersionId: string) => {
+export const usePopulateStepsOutputSchema = ({
+  workflowVersionId,
+}: {
+  workflowVersionId: string;
+}) => {
   const stepsOutputSchemaFamilyState = useRecoilComponentCallbackStateV2(
     stepsOutputSchemaComponentFamilyState,
     workflowVersionId,
@@ -48,7 +53,7 @@ export const usePopulateStepsOutputSchema = (workflowVersionId: string) => {
                 });
 
           const triggerOutputSchema: StepOutputSchema = {
-            id: 'trigger',
+            id: TRIGGER_STEP_ID,
             name: isDefined(trigger.name)
               ? trigger.name
               : getTriggerStepName(trigger),
@@ -56,7 +61,10 @@ export const usePopulateStepsOutputSchema = (workflowVersionId: string) => {
             outputSchema: trigger.settings.outputSchema as OutputSchema,
           };
 
-          set(stepsOutputSchemaFamilyState('trigger'), triggerOutputSchema);
+          set(
+            stepsOutputSchemaFamilyState(TRIGGER_STEP_ID),
+            triggerOutputSchema,
+          );
         }
       },
     [stepsOutputSchemaFamilyState],

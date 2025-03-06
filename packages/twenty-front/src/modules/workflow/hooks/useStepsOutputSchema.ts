@@ -4,7 +4,11 @@ import { stepOutputSchemaFamilySelector } from '@/workflow/states/selectors/step
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
-export const useStepsOutputSchema = (instanceIdFromProps?: string) => {
+export const useStepsOutputSchema = ({
+  instanceIdFromProps,
+}: {
+  instanceIdFromProps?: string;
+}) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     WorkflowVersionComponentInstanceContext,
     instanceIdFromProps,

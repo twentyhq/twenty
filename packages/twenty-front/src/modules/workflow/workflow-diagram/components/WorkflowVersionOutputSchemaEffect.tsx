@@ -7,9 +7,9 @@ export const WorkflowVersionOutputSchemaEffect = ({
 }: {
   workflowVersion: WorkflowVersion;
 }) => {
-  const { populateStepsOutputSchema } = usePopulateStepsOutputSchema(
-    workflowVersion.id,
-  );
+  const { populateStepsOutputSchema } = usePopulateStepsOutputSchema({
+    workflowVersionId: workflowVersion.id,
+  });
 
   useEffect(() => {
     populateStepsOutputSchema(workflowVersion);
