@@ -22,7 +22,7 @@ exports[`settingsDataModelObjectAboutFormSchema fails when labels are empty stri
     "type": "string",
     "inclusive": true,
     "exact": false,
-    "message": "String must contain at least 1 character",
+    "message": "String must contain at least 1 character(s)",
     "path": [
       "labelSingular"
     ]
@@ -33,7 +33,7 @@ exports[`settingsDataModelObjectAboutFormSchema fails when labels are empty stri
     "type": "string",
     "inclusive": true,
     "exact": false,
-    "message": "String must contain at least 1 character",
+    "message": "String must contain at least 1 character(s)",
     "path": [
       "labelPlural"
     ]
