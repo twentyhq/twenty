@@ -38,7 +38,6 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -79,7 +78,6 @@ export class AuthResolver {
     private emailVerificationService: EmailVerificationService,
     // private oauthService: OAuthService,
     private domainManagerService: DomainManagerService,
-    private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
     private sSOService: SSOService,
   ) {}
