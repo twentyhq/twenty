@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import fs from 'fs/promises';
-
 import { DataSource, QueryFailedError } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -178,11 +176,6 @@ export class WorkspaceSyncMetadataService {
         ...workspaceRelationMigrations,
         ...workspaceIndexMigrations,
       ]);
-
-      await fs.writeFile(
-        'workspace-migrations.json',
-        JSON.stringify(workspaceMigrations, null, 2),
-      );
 
       const workspaceMigrationsSaveEnd = performance.now();
 

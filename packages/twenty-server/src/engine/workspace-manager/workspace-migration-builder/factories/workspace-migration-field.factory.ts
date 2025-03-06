@@ -5,6 +5,8 @@ import { FieldMetadataType } from 'twenty-shared';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -27,6 +29,7 @@ export interface FieldMetadataUpdate {
 export class WorkspaceMigrationFieldFactory {
   constructor(
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async create(
@@ -86,6 +89,17 @@ export class WorkspaceMigrationFieldFactory {
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
+    if (fieldMetadataCollection.length === 0) {
+      return [];
+    }
+
+    const workspaceId = fieldMetadataCollection[0]?.workspaceId;
+
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspaceId,
+    );
+
     const fieldMetadataCollectionGroupByObjectMetadataId =
       fieldMetadataCollection.reduce(
         (result, currentFieldMetadata) => {
@@ -110,7 +124,10 @@ export class WorkspaceMigrationFieldFactory {
 
       for (const fieldMetadata of fieldMetadataCollection) {
         // Relations are handled in workspace-migration-relation.factory.ts
-        if (fieldMetadata.type === FieldMetadataType.RELATION) {
+        if (
+          !isNewRelationEnabled &&
+          fieldMetadata.type === FieldMetadataType.RELATION
+        ) {
           continue;
         }
 
@@ -149,9 +166,23 @@ export class WorkspaceMigrationFieldFactory {
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
+    if (fieldMetadataUpdateCollection.length === 0) {
+      return [];
+    }
+
+    const workspaceId = fieldMetadataUpdateCollection[0]?.current.workspaceId;
+
+    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IsNewRelationEnabled,
+      workspaceId,
+    );
+
     for (const fieldMetadataUpdate of fieldMetadataUpdateCollection) {
       // Skip relations, because they're just representation and not real columns
-      if (fieldMetadataUpdate.altered.type === FieldMetadataType.RELATION) {
+      if (
+        !isNewRelationEnabled &&
+        fieldMetadataUpdate.altered.type === FieldMetadataType.RELATION
+      ) {
         continue;
       }
 
