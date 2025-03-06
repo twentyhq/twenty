@@ -1949,7 +1949,7 @@ msgstr "이전 워크플로로 이동"
 msgid "New"
 msgstr "새로운"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "새 {capitalizedObjectNameSingular}"
 

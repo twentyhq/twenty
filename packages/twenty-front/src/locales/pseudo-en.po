@@ -1944,7 +1944,7 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr ""
 

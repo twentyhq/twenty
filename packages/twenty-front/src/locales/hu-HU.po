@@ -1949,7 +1949,7 @@ msgstr "Navigálás az előző munkafolyamatra"
 msgid "New"
 msgstr "Új"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Új {capitalizedObjectNameSingular}"
 

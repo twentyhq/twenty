@@ -1949,7 +1949,7 @@ msgstr "נווט לזרימת עבודה הקודמת"
 msgid "New"
 msgstr "חדש"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "חדש {capitalizedObjectNameSingular}"
 
