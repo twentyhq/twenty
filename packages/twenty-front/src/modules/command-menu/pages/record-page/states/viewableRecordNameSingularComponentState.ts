@@ -4,7 +4,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 export const viewableRecordNameSingularComponentState = createComponentStateV2<
   string | null
 >({
-  key: 'activities/viewable-record-name-singular',
+  key: 'command-menu/viewable-record-name-singular',
   defaultValue: null,
   componentInstanceContext: CommandMenuPageComponentInstanceContext,
 });

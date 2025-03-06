@@ -3,7 +3,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 
 export const isNewViewableRecordLoadingComponentState =
   createComponentStateV2<boolean>({
-    key: 'activities/is-new-viewable-record-loading',
+    key: 'command-menu/is-new-viewable-record-loading',
     defaultValue: false,
     componentInstanceContext: CommandMenuPageComponentInstanceContext,
   });
