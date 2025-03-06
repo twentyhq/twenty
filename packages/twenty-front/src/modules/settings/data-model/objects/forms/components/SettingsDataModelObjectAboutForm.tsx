@@ -153,6 +153,8 @@ export const SettingsDataModelObjectAboutForm = ({
           defaultValue={objectMetadataItem?.labelSingular}
           render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
+              // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
+              noErrorHelper={true}
               error={errors.labelSingular?.message}
               label={t`Singular`}
               placeholder={'Listing'}
@@ -178,6 +180,8 @@ export const SettingsDataModelObjectAboutForm = ({
           defaultValue={objectMetadataItem?.labelPlural}
           render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
+              // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
+              noErrorHelper={true}
               error={errors.labelPlural?.message}
               label={t`Plural`}
               placeholder={t`Listings`}
@@ -261,6 +265,8 @@ export const SettingsDataModelObjectAboutForm = ({
                             maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
                             onBlur={() => onNewDirtyField?.()}
                             error={errors[fieldName]?.message}
+                            // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
+                            noErrorHelper={true}
                             RightIcon={() =>
                               tooltip && (
                                 <>
