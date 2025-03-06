@@ -54,6 +54,10 @@ msgstr "Szanowny {userName},"
 msgid "Deleted Workspace"
 msgstr "Usunięta przestrzeń pracy"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "zaprosił Cię do przyłączenia się do przestrzeni roboczej o nazwie "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Hasło zaktualizowane"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Proszę zweryfikować tę domenę, aby umożliwić użytkownikom z adresami e-mail <0>@{domain}</0> dołączenie do Twojej przestrzeni roboczej bez potrzeby zaproszenia."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Proszę zweryfikować tę domenę, aby umożliwić użytkownikom z adresami e-mail <0>@{domain}</0> dołączenie do Twojej przestrzeni roboczej bez potrzeby zaproszenia."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

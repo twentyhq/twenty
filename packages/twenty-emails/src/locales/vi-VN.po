@@ -54,6 +54,10 @@ msgstr "Kính gửi {userName},"
 msgid "Deleted Workspace"
 msgstr "Không gian làm việc đã bị xóa"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "đã mời bạn tham gia một không gian làm việc có tên là "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Mật khẩu đã được cập nhật"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Vui lòng xác thực tên miền này để cho phép người dùng có địa chỉ email <0>@{domain}</0> tham gia không gian làm việc của bạn mà không cần lời mời."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Vui lòng xác thực tên miền này để cho phép người dùng có địa chỉ email <0>@{domain}</0> tham gia không gian làm việc của bạn mà không cần lời mời."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

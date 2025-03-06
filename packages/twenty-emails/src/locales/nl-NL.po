@@ -54,6 +54,10 @@ msgstr "Beste {userName},"
 msgid "Deleted Workspace"
 msgstr "Verwijderde werkruimte"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "heeft u uitgenodigd om deel te nemen aan een werkruimte genaamd "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Wachtwoord bijgewerkt"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Valideer dit domein om gebruikers met e-mailadressen <0>@{domain}</0> toe te staan uw werkruimte te betreden zonder een uitnodiging nodig te hebben."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Valideer dit domein om gebruikers met e-mailadressen <0>@{domain}</0> toe te staan uw werkruimte te betreden zonder een uitnodiging nodig te hebben."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

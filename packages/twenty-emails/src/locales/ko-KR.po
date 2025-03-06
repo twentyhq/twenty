@@ -54,6 +54,10 @@ msgstr "{userName}님께,"
 msgid "Deleted Workspace"
 msgstr "삭제된 워크스페이스"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "라는 워크스페이스에 초대되었습니다 "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "비밀번호가 업데이트되었습니다"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "<0>@{domain}</0> 이메일 주소를 가진 사용자가 초대 없이 워크스페이스에 참여할 수 있도록 이 도메인을 검증해 주세요."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "<0>@{domain}</0> 이메일 주소를 가진 사용자가 초대 없이 워크스페이스에 참여할 수 있도록 이 도메인을 검증해 주세요."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

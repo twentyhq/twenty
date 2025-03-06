@@ -54,6 +54,10 @@ msgstr "Kära {userName},"
 msgid "Deleted Workspace"
 msgstr "Borttagen arbetsyta"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "har bjudit in dig till ett arbetsutrymme som heter "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Lösenordet uppdaterat"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Var vänlig och validera denna domän för att tillåta användare med <0>@{domain}</0> e-postadresser att ansluta till din arbetsyta utan att behöva en inbjudan."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Var vänlig och validera denna domän för att tillåta användare med <0>@{domain}</0> e-postadresser att ansluta till din arbetsyta utan att behöva en inbjudan."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

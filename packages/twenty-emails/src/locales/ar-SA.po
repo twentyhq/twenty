@@ -54,6 +54,10 @@ msgstr "عزيزي {userName},"
 msgid "Deleted Workspace"
 msgstr "مساحة العمل المحذوفة"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "لقد دُعيت للإنضمام إلى مساحة عمل تسمى "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "تم تحديث كلمة المرور"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "يرجى التحقق من هذا النطاق للسماح للمستخدمين الذين لديهم عناوين بريد إلكتروني <0>@{domain}</0> بالانضمام إلى مساحة العمل الخاصة بك دون الحاجة إلى دعوة."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "يرجى التحقق من هذا النطاق للسماح للمستخدمين الذين لديهم عناوين بريد إلكتروني <0>@{domain}</0> بالانضمام إلى مساحة العمل الخاصة بك دون الحاجة إلى دعوة."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

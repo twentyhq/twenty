@@ -54,6 +54,10 @@ msgstr "Cher {userName},"
 msgid "Deleted Workspace"
 msgstr "Espace de travail supprimé"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "vous a invité à rejoindre un espace de travail appelé "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Mot de passe mis à jour"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Veuillez valider ce domaine pour permettre aux utilisateurs avec des adresses e-mail <0>@{domain}</0> de rejoindre votre espace de travail sans nécessiter d'invitation."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Veuillez valider ce domaine pour permettre aux utilisateurs avec des adresses e-mail <0>@{domain}</0> de rejoindre votre espace de travail sans nécessiter d'invitation."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
