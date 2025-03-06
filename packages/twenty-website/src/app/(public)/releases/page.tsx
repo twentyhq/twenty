@@ -2,8 +2,8 @@ import { desc } from 'drizzle-orm';
 import { Metadata } from 'next';
 
 import {
-    getMdxReleasesContent,
-    getReleases,
+  getMdxReleasesContent,
+  getReleases,
 } from '@/app/(public)/releases/utils/get-releases';
 import { getVisibleReleases } from '@/app/(public)/releases/utils/get-visible-releases';
 import { ReleaseContainer } from '@/app/_components/releases/ReleaseContainer';
