@@ -1949,7 +1949,7 @@ msgstr "Điều hướng đến quy trình trước đó"
 msgid "New"
 msgstr "Mới"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "{capitalizedObjectNameSingular} Mới"
 

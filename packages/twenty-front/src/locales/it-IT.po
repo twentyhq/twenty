@@ -1949,7 +1949,7 @@ msgstr "Vai al workflow precedente"
 msgid "New"
 msgstr "Nuovo"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Nuovo {capitalizedObjectNameSingular}"
 

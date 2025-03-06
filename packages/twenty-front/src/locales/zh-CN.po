@@ -1949,7 +1949,7 @@ msgstr "导航到上一个工作流"
 msgid "New"
 msgstr "新"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "新{capitalizedObjectNameSingular}"
 

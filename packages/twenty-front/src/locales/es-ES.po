@@ -1949,7 +1949,7 @@ msgstr "Navegar al flujo de trabajo anterior"
 msgid "New"
 msgstr "Nuevo"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Nuevo {capitalizedObjectNameSingular}"
 

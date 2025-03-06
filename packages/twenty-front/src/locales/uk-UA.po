@@ -2005,7 +2005,7 @@ msgstr "Перейти до попереднього Workflow"
 msgid "New"
 msgstr "Новий"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Новий {capitalizedObjectNameSingular}"
 

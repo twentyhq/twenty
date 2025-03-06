@@ -1949,7 +1949,7 @@ msgstr "Навигација до претходног радног процес
 msgid "New"
 msgstr "Ново"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Нови {capitalizedObjectNameSingular}"
 
