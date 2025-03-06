@@ -562,6 +562,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   agentId: 'e2dcedef-a3ba-4273-a0d4-b3277f281f78',
   userDocument: '20202020-a1b2-4c3d-9e8f-123456789abc',
   userPhone: '20202020-b2a1-3d4c-8f9e-987654321cba',
+  extensionNumber: '0271a0fa-20de-45e1-9908-b198bd1e7b99',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
