@@ -9,6 +9,9 @@ export function generateFrontConfig(): void {
     window: {
       _env_: {
         REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL,
+        REACT_APP_CHATBOT_BASE_URL: process.env.REACT_APP_CHATBOT_BASE_URL,
+        REACT_APP_STRIPE_PUBLISHABLE_KEY:
+          process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY,
       },
     },
   };
