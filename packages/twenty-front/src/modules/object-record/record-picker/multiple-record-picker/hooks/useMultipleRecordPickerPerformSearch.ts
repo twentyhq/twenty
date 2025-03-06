@@ -7,7 +7,7 @@ import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from 
 import { multipleRecordPickerformatQueryResultAsRecordsWithObjectMetadataId } from '@/object-record/record-picker/multiple-record-picker/utils/multipleRecordPickerformatQueryResultAsRecordWithObjectMetadataId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useApolloClient } from '@apollo/client';
+import { ApolloClient, useApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared';
@@ -21,12 +21,12 @@ export const useMultipleRecordPickerPerformSearch = () => {
         multipleRecordPickerInstanceId,
         forceSearchFilter = '',
         forceSearchableObjectMetadataItems = [],
-        forcePickedMorphItems = [],
+        forcePickableMorphItems = [],
       }: {
         multipleRecordPickerInstanceId: string;
         forceSearchFilter?: string;
         forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
-        forcePickedMorphItems?: RecordPickerPickableMorphItem[];
+        forcePickableMorphItems?: RecordPickerPickableMorphItem[];
       }) => {
         const recordPickerSearchFilter = snapshot
           .getLoadable(
@@ -59,119 +59,26 @@ export const useMultipleRecordPickerPerformSearch = () => {
           )
           .getValue();
 
-        const pickedMorphItems =
-          forcePickedMorphItems.length > 0
-            ? forcePickedMorphItems
+        const pickableMorphItems =
+          forcePickableMorphItems.length > 0
+            ? forcePickableMorphItems
             : recordPickerPickableMorphItems;
 
-        const pickedMorphItemsIds = pickedMorphItems.filter(
-          ({ isSelected }) => isSelected,
-        );
-
-        const combinedSearchRecordsQuery = generateCombinedSearchRecordsQuery({
-          objectMetadataItems: searchableObjectMetadataItems,
-          operationSignatures: searchableObjectMetadataItems.map(
-            (objectMetadataItem) => ({
-              objectNameSingular: objectMetadataItem.nameSingular,
-              variables: {},
-            }),
-          ),
-        });
-
-        const limitPerMetadataItem = Object.fromEntries(
-          searchableObjectMetadataItems
-            .map(({ nameSingular }) => {
-              return [`limit${capitalize(nameSingular)}`, 10];
-            })
-            .filter(isDefined),
-        );
-
-        const filterPerMetadataItemFilteredOnPickedRecordId =
-          Object.fromEntries(
-            searchableObjectMetadataItems
-              .map(({ id, nameSingular }) => {
-                const pickedRecordIdsForMetadataItem = pickedMorphItemsIds
-                  .filter(({ objectMetadataId }) => objectMetadataId === id)
-                  .map(({ recordId }) => recordId);
-
-                if (!isNonEmptyArray(pickedRecordIdsForMetadataItem)) {
-                  return null;
-                }
-
-                return [
-                  `filter${capitalize(nameSingular)}`,
-                  {
-                    id: {
-                      in: pickedRecordIdsForMetadataItem,
-                    },
-                  },
-                ];
-              })
-              .filter(isDefined),
-          );
-
-        const filterPerMetadataItemExcludingPickedRecordId = Object.fromEntries(
-          searchableObjectMetadataItems
-            .map(({ id, nameSingular }) => {
-              const pickedRecordIdsForMetadataItem = pickedMorphItemsIds
-                .filter(({ objectMetadataId }) => objectMetadataId === id)
-                .map(({ recordId }) => recordId);
-
-              if (!isNonEmptyArray(pickedRecordIdsForMetadataItem)) {
-                return null;
-              }
-
-              return [
-                `filter${capitalize(nameSingular)}`,
-                {
-                  not: {
-                    id: {
-                      in: pickedRecordIdsForMetadataItem,
-                    },
-                  },
-                },
-              ];
-            })
-            .filter(isDefined),
-        );
-
-        const { data: combinedSearchRecordFilteredOnPickedRecordsQueryResult } =
-          await client.query<CombinedFindManyRecordsQueryResult>({
-            query: combinedSearchRecordsQuery,
-            variables: {
-              search: searchFilter,
-              ...limitPerMetadataItem,
-              ...filterPerMetadataItemFilteredOnPickedRecordId,
-            },
+        const recordsWithObjectMetadataIdFilteredOnPickedRecords =
+          await performSearchForPickedRecords({
+            client,
+            searchFilter,
+            searchableObjectMetadataItems,
+            pickableMorphItems,
           });
 
-        const { data: combinedSearchRecordExcludingPickedRecordsQueryResult } =
-          await client.query<CombinedFindManyRecordsQueryResult>({
-            query: combinedSearchRecordsQuery,
-            variables: {
-              search: searchFilter,
-              ...limitPerMetadataItem,
-              ...filterPerMetadataItemExcludingPickedRecordId,
-            },
+        const recordsWithObjectMetadataIdExcludingPickedRecords =
+          await performSearchExcludingPickedRecords({
+            client,
+            searchFilter,
+            searchableObjectMetadataItems,
+            pickableMorphItems,
           });
-
-        const {
-          recordsWithObjectMetadataId:
-            recordsWithObjectMetadataIdFilteredOnPickedRecords,
-        } = multipleRecordPickerformatQueryResultAsRecordsWithObjectMetadataId({
-          objectMetadataItems: searchableObjectMetadataItems,
-          searchQueryResult:
-            combinedSearchRecordFilteredOnPickedRecordsQueryResult,
-        });
-
-        const {
-          recordsWithObjectMetadataId:
-            recordsWithObjectMetadataIdExcludingPickedRecords,
-        } = multipleRecordPickerformatQueryResultAsRecordsWithObjectMetadataId({
-          objectMetadataItems: searchableObjectMetadataItems,
-          searchQueryResult:
-            combinedSearchRecordExcludingPickedRecordsQueryResult,
-        });
 
         const recordsWithObjectMetadataIdExcludingPickedRecordsWithoutDuplicates =
           recordsWithObjectMetadataIdExcludingPickedRecords.filter(
@@ -219,4 +126,183 @@ export const useMultipleRecordPickerPerformSearch = () => {
   );
 
   return { performSearch };
+};
+
+const performSearchForPickedRecords = async ({
+  client,
+  searchFilter,
+  searchableObjectMetadataItems,
+  pickableMorphItems,
+}: {
+  client: ApolloClient<object>;
+  searchFilter: string;
+  searchableObjectMetadataItems: ObjectMetadataItem[];
+  pickableMorphItems: RecordPickerPickableMorphItem[];
+}) => {
+  const pickedMorphItems = pickableMorphItems.filter(
+    ({ isSelected }) => isSelected,
+  );
+
+  const filterPerMetadataItemFilteredOnPickedRecordId = Object.fromEntries(
+    searchableObjectMetadataItems
+      .map(({ id, nameSingular }) => {
+        const pickedRecordIdsForMetadataItem = pickedMorphItems
+          .filter(
+            ({ objectMetadataId, isSelected }) =>
+              objectMetadataId === id && isSelected,
+          )
+          .map(({ recordId }) => recordId);
+
+        if (!isNonEmptyArray(pickedRecordIdsForMetadataItem)) {
+          return null;
+        }
+
+        return [
+          `filter${capitalize(nameSingular)}`,
+          {
+            id: {
+              in: pickedRecordIdsForMetadataItem,
+            },
+          },
+        ];
+      })
+      .filter(isDefined),
+  );
+
+  const searchableObjectMetadataItemsFilteredOnPickedRecordId =
+    searchableObjectMetadataItems.filter(({ nameSingular }) =>
+      isDefined(
+        filterPerMetadataItemFilteredOnPickedRecordId[
+          `filter${capitalize(nameSingular)}`
+        ],
+      ),
+    );
+
+  if (!isNonEmptyArray(searchableObjectMetadataItemsFilteredOnPickedRecordId)) {
+    return [];
+  }
+
+  const combinedSearchRecordsQueryFilteredOnPickedRecords =
+    generateCombinedSearchRecordsQuery({
+      objectMetadataItems:
+        searchableObjectMetadataItemsFilteredOnPickedRecordId,
+      operationSignatures:
+        searchableObjectMetadataItemsFilteredOnPickedRecordId.map(
+          (objectMetadataItem) => ({
+            objectNameSingular: objectMetadataItem.nameSingular,
+            variables: {},
+          }),
+        ),
+    });
+
+  const limitPerMetadataItem = Object.fromEntries(
+    searchableObjectMetadataItems
+      .map(({ nameSingular }) => {
+        return [`limit${capitalize(nameSingular)}`, 10];
+      })
+      .filter(isDefined),
+  );
+
+  const { data: combinedSearchRecordFilteredOnPickedRecordsQueryResult } =
+    await client.query<CombinedFindManyRecordsQueryResult>({
+      query: combinedSearchRecordsQueryFilteredOnPickedRecords,
+      variables: {
+        search: searchFilter,
+        ...limitPerMetadataItem,
+        ...filterPerMetadataItemFilteredOnPickedRecordId,
+      },
+    });
+
+  const {
+    recordsWithObjectMetadataId:
+      recordsWithObjectMetadataIdFilteredOnPickedRecords,
+  } = multipleRecordPickerformatQueryResultAsRecordsWithObjectMetadataId({
+    objectMetadataItems: searchableObjectMetadataItems,
+    searchQueryResult: combinedSearchRecordFilteredOnPickedRecordsQueryResult,
+  });
+
+  return recordsWithObjectMetadataIdFilteredOnPickedRecords;
+};
+
+const performSearchExcludingPickedRecords = async ({
+  client,
+  searchFilter,
+  searchableObjectMetadataItems,
+  pickableMorphItems,
+}: {
+  client: ApolloClient<object>;
+  searchFilter: string;
+  searchableObjectMetadataItems: ObjectMetadataItem[];
+  pickableMorphItems: RecordPickerPickableMorphItem[];
+}) => {
+  const pickedMorphItems = pickableMorphItems.filter(
+    ({ isSelected }) => isSelected,
+  );
+
+  const filterPerMetadataItemExcludingPickedRecordId = Object.fromEntries(
+    searchableObjectMetadataItems
+      .map(({ id, nameSingular }) => {
+        const pickedRecordIdsForMetadataItem = pickedMorphItems
+          .filter(
+            ({ objectMetadataId, isSelected }) =>
+              objectMetadataId === id && isSelected,
+          )
+          .map(({ recordId }) => recordId);
+
+        if (!isNonEmptyArray(pickedRecordIdsForMetadataItem)) {
+          return null;
+        }
+
+        return [
+          `filter${capitalize(nameSingular)}`,
+          {
+            not: {
+              id: {
+                in: pickedRecordIdsForMetadataItem,
+              },
+            },
+          },
+        ];
+      })
+      .filter(isDefined),
+  );
+
+  const combinedSearchRecordsQueryExcludingPickedRecords =
+    generateCombinedSearchRecordsQuery({
+      objectMetadataItems: searchableObjectMetadataItems,
+      operationSignatures: searchableObjectMetadataItems.map(
+        (objectMetadataItem) => ({
+          objectNameSingular: objectMetadataItem.nameSingular,
+          variables: {},
+        }),
+      ),
+    });
+
+  const limitPerMetadataItem = Object.fromEntries(
+    searchableObjectMetadataItems
+      .map(({ nameSingular }) => {
+        return [`limit${capitalize(nameSingular)}`, 10];
+      })
+      .filter(isDefined),
+  );
+
+  const { data: combinedSearchRecordExcludingPickedRecordsQueryResult } =
+    await client.query<CombinedFindManyRecordsQueryResult>({
+      query: combinedSearchRecordsQueryExcludingPickedRecords,
+      variables: {
+        search: searchFilter,
+        ...limitPerMetadataItem,
+        ...filterPerMetadataItemExcludingPickedRecordId,
+      },
+    });
+
+  const {
+    recordsWithObjectMetadataId:
+      recordsWithObjectMetadataIdExcludingPickedRecords,
+  } = multipleRecordPickerformatQueryResultAsRecordsWithObjectMetadataId({
+    objectMetadataItems: searchableObjectMetadataItems,
+    searchQueryResult: combinedSearchRecordExcludingPickedRecordsQueryResult,
+  });
+
+  return recordsWithObjectMetadataIdExcludingPickedRecords;
 };

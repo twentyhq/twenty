@@ -54,6 +54,10 @@ export const useUpdateRelationFromManyFieldInput = ({
   const updateRelation = useRecoilCallback(
     ({ snapshot, set }) =>
       async (relatedRecordId: string) => {
+        console.log('DEBUG: updateRelation', {
+          recordId,
+          relatedRecordId,
+        });
         const previouslyPickableMorphItems = snapshot
           .getLoadable(pickableMorphItemsState)
           .getValue();
