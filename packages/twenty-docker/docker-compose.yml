@@ -80,7 +80,6 @@ services:
     container_name: kvoipv2-worker
     image: kvoipcrm/v2:${TAG:-latest}
     command: ["yarn", "worker:prod"]
-    env_file: "server.env"
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE}
       SERVER_URL: ${SERVER_URL}

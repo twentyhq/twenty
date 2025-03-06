@@ -5,7 +5,6 @@ import {
   IsBoolean,
   IsDefined,
   IsEnum,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -1043,8 +1042,9 @@ export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     description: 'Secret key for stripe custom integration',
+    sensitive: true,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   WEBHOOK_STRIPE_SECRETKEY: string;
 
@@ -1088,6 +1088,7 @@ export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     description: 'PABX test server token.',
+    sensitive: true,
   })
   @ValidateIf(
     (data: EnvironmentVariables) =>
@@ -1124,6 +1125,7 @@ export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     description: 'PABX production server token.',
+    sensitive: true,
   })
   @ValidateIf(
     (data: EnvironmentVariables) =>
