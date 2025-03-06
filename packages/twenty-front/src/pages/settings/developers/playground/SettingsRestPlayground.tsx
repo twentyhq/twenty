@@ -1,26 +1,20 @@
-import { RestPlayground } from '@/settings/playground/components/RestPlayground';
+import { apiKeyState } from '@/settings/playground/states/apiKeyState';
+import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundConfig';
 import { SettingsPath } from '@/types/SettingsPath';
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
-import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/components/PageHeader';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
 import { Trans } from '@lingui/react/macro';
+import { lazy } from 'react';
+import { useRecoilValue } from 'recoil';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledNestedContainer = styled.div`
-  height: 100%;
-  width: 100%;
-
-  [data-v-app] {
-    max-height: ${({ theme }) =>
-      `calc(
-        100dvh 
-        - ${PAGE_BAR_MIN_HEIGHT * 3}px 
-        - ${theme.spacing(3)}
-      ) !important`};
-  }
-`;
+const ApiReferenceReact = lazy(() =>
+  import('@scalar/api-reference-react').then((module) => ({
+    default: module.ApiReferenceReact,
+  })),
+);
 
 export const SettingsRestPlayground = () => {
   const navigateSettings = useNavigateSettings();
@@ -29,9 +23,14 @@ export const SettingsRestPlayground = () => {
     navigateSettings(SettingsPath.APIs);
   };
 
-  const handleError = () => {
-    handleExitFullScreen();
-  };
+  const theme = useTheme();
+
+  const schema = PlaygroundSchemas.CORE; // TODO: get schema from url
+  const apiKey = useRecoilValue(apiKeyState);
+
+  if (!apiKey) {
+    navigateSettings(SettingsPath.APIs);
+  }
 
   return (
     <FullScreenContainer
@@ -48,14 +47,24 @@ export const SettingsRestPlayground = () => {
         { children: <Trans>REST</Trans> },
       ]}
     >
-      <ScrollWrapper
-        contextProviderName="playgroundPageContainer"
-        componentInstanceId={'scroll-wrapper-playground-page-container'}
-      >
-        <StyledNestedContainer>
-          <RestPlayground onError={handleError} />
-        </StyledNestedContainer>
-      </ScrollWrapper>
+      <ApiReferenceReact
+        configuration={{
+          spec: {
+            url: `${REACT_APP_SERVER_BASE_URL}/open-api/${schema}?token=${apiKey}`,
+          },
+          authentication: {
+            http: {
+              bearer: apiKey ? { token: apiKey } : undefined,
+            },
+          },
+          baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
+          forceDarkModeState: theme.name === 'dark' ? 'dark' : 'light',
+          hideClientButton: true,
+          pathRouting: {
+            basePath: '/settings/developers/playground',
+          },
+        }}
+      />
     </FullScreenContainer>
   );
 };

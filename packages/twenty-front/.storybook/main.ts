@@ -1,5 +1,4 @@
 import { StorybookConfig } from '@storybook/react-vite';
-import path from 'path';
 
 const computeStoriesGlob = () => {
   if (process.env.STORYBOOK_SCOPE === 'pages') {
@@ -38,7 +37,7 @@ const config: StorybookConfig = {
         '@storybook/addon-docs',
         '@storybook/addon-essentials/docs',
       ],
-    }
+    },
   },
   addons: [
     '@storybook/addon-links',
@@ -57,13 +56,6 @@ const config: StorybookConfig = {
   viteFinal: async (config) => {
     // Merge custom configuration into the default config
     const { mergeConfig } = await import('vite');
-
-    if (config.resolve) {
-      config.resolve.alias = {
-        ...config.resolve?.alias,
-        '@/settings/playground/hooks/usePlaygroundSession': path.resolve(__dirname, '../src/testing/decorators/PlaygroundDecorator.ts')
-      }
-    }
 
     return mergeConfig(config, {
       resolve: {
