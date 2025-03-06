@@ -13,6 +13,7 @@ import { isNull } from '@sniptt/guards';
 import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
+import { getOsControlSymbol } from 'twenty-ui';
 
 export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
@@ -84,9 +85,7 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
         isOpen={isDeleteRecordsModalOpen}
         setIsOpen={setIsDeleteRecordsModalOpen}
         title={'Delete Record'}
-        subtitle={
-          'Are you sure you want to delete this record? It can be recovered from the Options menu.'
-        }
+        subtitle={`Are you sure you want to delete this record? It can be recovered from the Command menu (${getOsControlSymbol()} + K).`}
         onConfirmClick={() => {
           handleDeleteClick();
           if (isInRightDrawer) {
