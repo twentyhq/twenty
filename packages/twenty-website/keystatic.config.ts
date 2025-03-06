@@ -3,7 +3,8 @@ import { wrapper } from '@keystatic/core/content-components';
 
 export default config({
   storage: {
-    kind: 'local',
+    kind: 'github',
+    repo: 'twentyhq/twenty',
   },
   collections: {
     developers: collection({
