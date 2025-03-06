@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerPickableRecordIdsComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsComponentSelector';
 import { multipleRecordPickerSinglePickableMorphItemComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerSinglePickableMorphItemComponentFamilySelector';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
@@ -50,6 +51,12 @@ export const MultipleRecordPickerMenuItems = ({
       componentInstanceId,
     );
 
+  const multipleRecordPickerPickableMorphItemsState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerPickableMorphItemsComponentState,
+      componentInstanceId,
+    );
+
   const handleEnter = useRecoilCallback(
     ({ snapshot }) => {
       return (selectedId: string) => {
@@ -68,6 +75,31 @@ export const MultipleRecordPickerMenuItems = ({
     [onChange, resetSelectedItem, singlePickableMorphItemFamilySelector],
   );
 
+  const handleChange = useRecoilCallback(
+    ({ snapshot, set }) => {
+      return (morphItem: RecordPickerPickableMorphItem) => {
+        const previousMorphItems = snapshot
+          .getLoadable(multipleRecordPickerPickableMorphItemsState)
+          .getValue();
+
+        const existingMorphItemIndex = previousMorphItems.findIndex(
+          (item) => item.recordId === morphItem.recordId,
+        );
+
+        const newMorphItems = [...previousMorphItems];
+
+        if (existingMorphItemIndex === -1) {
+          newMorphItems.push(morphItem);
+        } else {
+          newMorphItems[existingMorphItemIndex] = morphItem;
+        }
+
+        set(multipleRecordPickerPickableMorphItemsState, newMorphItems);
+      };
+    },
+    [multipleRecordPickerPickableMorphItemsState],
+  );
+
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
       <SelectableList
@@ -81,8 +113,9 @@ export const MultipleRecordPickerMenuItems = ({
             <MultipleRecordPickerMenuItem
               key={recordId}
               recordId={recordId}
-              onChange={(recordId) => {
-                onChange?.(recordId);
+              onChange={(morphItem) => {
+                handleChange(morphItem);
+                onChange?.(morphItem);
                 resetSelectedItem();
               }}
             />

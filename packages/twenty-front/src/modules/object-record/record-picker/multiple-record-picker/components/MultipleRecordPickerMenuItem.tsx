@@ -13,7 +13,7 @@ export const StyledSelectableItem = styled(SelectableItem)`
 
 type MultipleRecordPickerMenuItemProps = {
   recordId: string;
-  onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
+  onChange: (morphItem: RecordPickerPickableMorphItem) => void;
 };
 
 export const MultipleRecordPickerMenuItem = ({

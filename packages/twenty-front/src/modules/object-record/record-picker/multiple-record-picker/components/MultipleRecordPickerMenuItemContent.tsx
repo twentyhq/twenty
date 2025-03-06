@@ -23,7 +23,7 @@ export const StyledSelectableItem = styled(SelectableItem)`
 type MultipleRecordPickerMenuItemContentProps = {
   record: ObjectRecord;
   objectMetadataItem: ObjectMetadataItem;
-  onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
+  onChange: (morphItem: RecordPickerPickableMorphItem) => void;
 };
 
 export const MultipleRecordPickerMenuItemContent = ({
@@ -52,11 +52,11 @@ export const MultipleRecordPickerMenuItemContent = ({
     componentInstanceId,
   );
 
-  const handleSelectChange = () => {
-    onChange?.({
+  const handleSelectChange = (isSelected: boolean) => {
+    onChange({
       recordId: record.id,
       objectMetadataId: objectMetadataItem.id,
-      isSelected: true,
+      isSelected,
       isMatchingSearchFilter: true,
     });
   };
@@ -73,7 +73,7 @@ export const MultipleRecordPickerMenuItemContent = ({
   return (
     <StyledSelectableItem itemId={record.id} key={record.id}>
       <MenuItemMultiSelectAvatar
-        onSelectChange={(_isNewlySelectedValue) => handleSelectChange()}
+        onSelectChange={(isSelected) => handleSelectChange(isSelected)}
         isKeySelected={isSelectedByKeyboard}
         selected={isRecordSelectedWithObjectItem}
         avatar={
