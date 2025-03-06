@@ -9,7 +9,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const CommandMenuCalendarEvent = () => {
+export const CommandMenuCalendarEventPage = () => {
   const { upsertRecords } = useUpsertRecordsInStore();
   const viewableRecordId = useRecoilComponentValueV2(
     viewableRecordIdComponentState,

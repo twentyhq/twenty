@@ -1,6 +1,6 @@
 import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { CommandMenuCalendarEvent } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEvent';
+import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
 import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/components/CommandMenuSearchRecordsPage';
 import { CommandMenuEmailThreadPage } from '@/command-menu/pages/email-thread/components/CommandMenuEmailThreadPage';
 import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
@@ -18,7 +18,7 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.Root, <CommandMenu />],
   [CommandMenuPages.ViewRecord, <CommandMenuRecordPage />],
   [CommandMenuPages.ViewEmailThread, <CommandMenuEmailThreadPage />],
-  [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEvent />],
+  [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
   [CommandMenuPages.Copilot, <RightDrawerAIChat />],
   [
     CommandMenuPages.WorkflowStepSelectTriggerType,
