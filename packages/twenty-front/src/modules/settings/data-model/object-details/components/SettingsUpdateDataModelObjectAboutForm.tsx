@@ -1,5 +1,6 @@
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE } from '@/settings/constants/SettingsObjectModel';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import {
   SettingsDataModelObjectAboutFormValues,
@@ -11,6 +12,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { ZodError } from 'zod';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
@@ -41,9 +43,11 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
     defaultValues: {
-      description: description ?? undefined,
+      description,
       icon: icon ?? undefined,
-      isLabelSyncedWithName,
+      isLabelSyncedWithName: isDefined(isLabelSyncedWithName)
+        ? isLabelSyncedWithName
+        : SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE,
       labelPlural,
       labelSingular,
       namePlural,

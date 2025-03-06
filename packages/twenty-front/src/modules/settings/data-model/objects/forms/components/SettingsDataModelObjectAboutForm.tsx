@@ -20,6 +20,7 @@ import {
   IconRefresh,
   TooltipDelay,
 } from 'twenty-ui';
+import { StringKeyOf } from 'type-fest';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 type SettingsDataModelObjectAboutFormProps = {
@@ -71,7 +72,7 @@ const infoCircleElementId = 'info-circle-id';
 export const IS_LABEL_SYNCED_WITH_NAME_LABEL = 'isLabelSyncedWithName';
 
 export const SettingsDataModelObjectAboutForm = ({
-  disableEdition,
+  disableEdition = false,
   onNewDirtyField,
   objectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
@@ -150,7 +151,7 @@ export const SettingsDataModelObjectAboutForm = ({
           key={`object-labelSingular-text-input`}
           name={'labelSingular'}
           control={control}
-          defaultValue={objectMetadataItem?.labelSingular}
+          defaultValue={objectMetadataItem?.labelSingular ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
@@ -177,7 +178,7 @@ export const SettingsDataModelObjectAboutForm = ({
           key={`object-labelPlural-text-input`}
           name={'labelPlural'}
           control={control}
-          defaultValue={objectMetadataItem?.labelPlural}
+          defaultValue={objectMetadataItem?.labelPlural ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
               // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
@@ -203,7 +204,6 @@ export const SettingsDataModelObjectAboutForm = ({
       <Controller
         name="description"
         control={control}
-        defaultValue={objectMetadataItem?.description ?? undefined}
         render={({ field: { onChange, value } }) => (
           <TextArea
             placeholder={t`Write a description`}
@@ -221,28 +221,30 @@ export const SettingsDataModelObjectAboutForm = ({
             {[
               {
                 label: t`API Name (Singular)`,
-                fieldName: 'nameSingular' as const,
+                fieldName:
+                  'nameSingular' as const satisfies StringKeyOf<ObjectMetadataItem>,
                 placeholder: `listing`,
-                defaultValue: objectMetadataItem?.nameSingular,
+                defaultValue: objectMetadataItem?.nameSingular ?? '',
                 disableEdition: disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
               {
                 label: t`API Name (Plural)`,
-                fieldName: 'namePlural' as const,
+                fieldName:
+                  'namePlural' as const satisfies StringKeyOf<ObjectMetadataItem>,
                 placeholder: `listings`,
-                defaultValue: objectMetadataItem?.namePlural,
+                defaultValue: objectMetadataItem?.namePlural ?? '',
                 disableEdition: disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
             ].map(
               ({
-                defaultValue,
                 fieldName,
                 label,
                 placeholder,
                 disableEdition,
                 tooltip,
+                defaultValue,
               }) => (
                 <AdvancedSettingsWrapper key={`object-${fieldName}-text-input`}>
                   <StyledInputContainer>

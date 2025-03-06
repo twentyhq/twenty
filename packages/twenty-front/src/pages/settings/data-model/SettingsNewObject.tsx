@@ -5,6 +5,7 @@ import { H2Title, Section } from 'twenty-ui';
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE } from '@/settings/constants/SettingsObjectModel';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import {
   SettingsDataModelObjectAboutFormValues,
@@ -28,6 +29,10 @@ export const SettingsNewObject = () => {
   const formConfig = useForm<SettingsDataModelObjectAboutFormValues>({
     mode: 'onSubmit',
     resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
+    defaultValues: {
+      isLabelSyncedWithName:
+        SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE,
+    },
   });
 
   const { isValid, isSubmitting } = formConfig.formState;
