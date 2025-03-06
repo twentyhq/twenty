@@ -687,7 +687,7 @@ msgstr "Kopier lenke"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
-msgstr "Kopier denne n\fkelen da den ikke vil v\fre synlig igjen"
+msgstr "Kopier denne nkelen da den ikke vil vre synlig igjen"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -717,11 +717,11 @@ msgstr "Opprett"
 
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
-msgstr "Opprett en arbeidsflyt og kom tilbake her for \fn vise versjonene"
+msgstr "Opprett en arbeidsflyt og kom tilbake her for n vise versjonene"
 
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Create API key"
-msgstr "Opprett API-n\fkkel"
+msgstr "Opprett API-nkkel"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2587,7 +2587,7 @@ msgstr "Serveradministrator"
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #~ msgid "Server Admin Panel"
-#~ msgstr "Serveradministrasjonspanel"
+#~ msgstr "Server Admin Panel"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
