@@ -64,7 +64,7 @@ export const CommandMenuMessageThreadPage = () => {
       return;
     }
     setMessageThread(messages[0]?.messageThread);
-  });
+  }, [messages, setMessageThread]);
 
   const messagesCount = messages.length;
   const is5OrMoreMessages = messagesCount >= 5;
