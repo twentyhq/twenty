@@ -355,7 +355,7 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
   },
 });
 
-describe('useRightDrawerEmailThread', () => {
+describe('useEmailThreadInCommandMenu', () => {
   it('should return correct values', async () => {
     const mockMessages = [
       {
