@@ -10,6 +10,7 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IS_ADVANCED_FILTERS_ENABLED',
   IsCommandMenuV2Enabled = 'IS_COMMAND_MENU_V2_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
+  IsBillingPlansEnabled = 'IS_BILLING_PLANS_ENABLED',
   IsCustomDomainEnabled = 'IS_CUSTOM_DOMAIN_ENABLED',
   IsApprovedAccessDomainsEnabled = 'IS_APPROVED_ACCESS_DOMAINS_ENABLED',
   IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
