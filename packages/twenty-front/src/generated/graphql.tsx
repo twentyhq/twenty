@@ -14,6 +14,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   ConnectionCursor: any;
+  Date: any;
   DateTime: string;
   JSON: any;
   JSONObject: any;
@@ -356,6 +357,17 @@ export type CustomDomainValidRecords = {
   records: Array<CustomDomainRecord>;
 };
 
+export type DateFilter = {
+  eq?: InputMaybe<Scalars['Date']>;
+  gt?: InputMaybe<Scalars['Date']>;
+  gte?: InputMaybe<Scalars['Date']>;
+  in?: InputMaybe<Array<Scalars['Date']>>;
+  is?: InputMaybe<FilterIs>;
+  lt?: InputMaybe<Scalars['Date']>;
+  lte?: InputMaybe<Scalars['Date']>;
+  neq?: InputMaybe<Scalars['Date']>;
+};
+
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['String'];
 };
@@ -579,6 +591,11 @@ export enum FileFolder {
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
+export enum FilterIs {
+  NotNull = 'NotNull',
+  Null = 'Null'
+}
+
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
   id: Scalars['String'];
@@ -630,6 +647,17 @@ export enum HealthIndicatorId {
   redis = 'redis',
   worker = 'worker'
 }
+
+export type IdFilter = {
+  eq?: InputMaybe<Scalars['ID']>;
+  gt?: InputMaybe<Scalars['ID']>;
+  gte?: InputMaybe<Scalars['ID']>;
+  in?: InputMaybe<Array<Scalars['ID']>>;
+  is?: InputMaybe<FilterIs>;
+  lt?: InputMaybe<Scalars['ID']>;
+  lte?: InputMaybe<Scalars['ID']>;
+  neq?: InputMaybe<Scalars['ID']>;
+};
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -1205,6 +1233,16 @@ export type ObjectIndexMetadatasConnection = {
   pageInfo: PageInfo;
 };
 
+export type ObjectRecordFilterInput = {
+  and?: InputMaybe<Array<ObjectRecordFilterInput>>;
+  createdAt?: InputMaybe<DateFilter>;
+  deletedAt?: InputMaybe<DateFilter>;
+  id?: InputMaybe<IdFilter>;
+  not?: InputMaybe<ObjectRecordFilterInput>;
+  or?: InputMaybe<Array<ObjectRecordFilterInput>>;
+  updatedAt?: InputMaybe<DateFilter>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
@@ -1396,6 +1434,8 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 export type QueryGlobalSearchArgs = {
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
+  filter?: InputMaybe<ObjectRecordFilterInput>;
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
   limit: Scalars['Int'];
   searchInput: Scalars['String'];
 };
