@@ -2577,6 +2577,8 @@ msgstr "보낸 및 받은"
 msgid "Serbian (Cyrillic)"
 msgstr "세르비아어 (키릴)"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Server Admin"
@@ -2584,8 +2586,8 @@ msgstr "서버 관리자"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-msgid "Server Admin Panel"
-msgstr "서버 관리자 패널"
+#~ msgid "Server Admin Panel"
+#~ msgstr "서버 관리자 패널"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"

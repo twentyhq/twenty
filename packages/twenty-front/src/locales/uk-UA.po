@@ -2633,6 +2633,8 @@ msgstr "Відправлено та отримано"
 msgid "Serbian (Cyrillic)"
 msgstr "Сербська (кирилиця)"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Server Admin"
@@ -2640,8 +2642,8 @@ msgstr "Адміністратор сервера"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-msgid "Server Admin Panel"
-msgstr "Панель адміністратора сервера"
+#~ msgid "Server Admin Panel"
+#~ msgstr "Панель адміністратора сервера"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"

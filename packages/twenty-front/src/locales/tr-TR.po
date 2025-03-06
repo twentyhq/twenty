@@ -2577,6 +2577,8 @@ msgstr "Gönderildi ve Alındı"
 msgid "Serbian (Cyrillic)"
 msgstr "Sırpça (Kiril)"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Server Admin"
@@ -2584,8 +2586,8 @@ msgstr "Sunucu Yöneticisi"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-msgid "Server Admin Panel"
-msgstr "Sunucu Yönetim Paneli"
+#~ msgid "Server Admin Panel"
+#~ msgstr "Sunucu Yönetim Paneli"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"

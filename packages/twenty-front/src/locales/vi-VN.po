@@ -2577,6 +2577,8 @@ msgstr "Đã gửi và Nhận"
 msgid "Serbian (Cyrillic)"
 msgstr "Tiếng Serbia (Chữ Cyrillic)"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Server Admin"
@@ -2584,8 +2586,8 @@ msgstr "Quản trị viên máy chủ"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-msgid "Server Admin Panel"
-msgstr "Bảng Điều Khiển Admin Máy chủ"
+#~ msgid "Server Admin Panel"
+#~ msgstr "Bảng Điều Khiển Admin Máy chủ"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
