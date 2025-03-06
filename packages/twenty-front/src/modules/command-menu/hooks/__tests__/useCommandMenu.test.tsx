@@ -5,8 +5,8 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { IconList, IconSearch } from 'twenty-ui';
@@ -91,6 +91,7 @@ describe('useCommandMenu', () => {
     expect(result.current.commandMenuPageInfo).toEqual({
       title: undefined,
       Icon: undefined,
+      instanceId: '',
     });
 
     act(() => {
@@ -98,6 +99,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageId: '1',
       });
     });
 
@@ -106,12 +108,14 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageId: '1',
       },
     ]);
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
     expect(result.current.commandMenuPageInfo).toEqual({
       title: 'Search',
       Icon: IconSearch,
+      instanceId: '1',
     });
 
     act(() => {
@@ -119,6 +123,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
+        pageId: '2',
       });
     });
 
@@ -127,17 +132,20 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageId: '1',
       },
       {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
+        pageId: '2',
       },
     ]);
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.ViewRecord);
     expect(result.current.commandMenuPageInfo).toEqual({
       title: 'Company',
       Icon: IconList,
+      instanceId: '2',
     });
   });
 
@@ -149,6 +157,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageId: '1',
       });
     });
 
@@ -157,6 +166,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
+        pageId: '2',
       });
     });
 
@@ -165,11 +175,13 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageId: '1',
       },
       {
         page: CommandMenuPages.ViewRecord,
         pageTitle: 'Company',
         pageIcon: IconList,
+        pageId: '2',
       },
     ]);
 
@@ -182,12 +194,14 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageId: '1',
       },
     ]);
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
     expect(result.current.commandMenuPageInfo).toEqual({
       title: 'Search',
       Icon: IconSearch,
+      instanceId: '1',
     });
 
     act(() => {
@@ -199,6 +213,7 @@ describe('useCommandMenu', () => {
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
     expect(result.current.commandMenuPageInfo).toEqual({
       title: undefined,
+      instanceId: '',
       Icon: undefined,
     });
     expect(result.current.isCommandMenuOpened).toBe(false);
@@ -212,6 +227,7 @@ describe('useCommandMenu', () => {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
         pageIcon: IconSearch,
+        pageId: '1',
       });
     });
 
@@ -223,6 +239,7 @@ describe('useCommandMenu', () => {
     expect(result.current.commandMenuPageInfo).toEqual({
       title: 'Search',
       Icon: IconSearch,
+      instanceId: '1',
     });
   });
 });
