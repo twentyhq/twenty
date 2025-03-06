@@ -1,11 +1,9 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { isDefined } from 'twenty-shared';
 
-export const useCurrentViewViewFilterGroup = ({
+export const useChildRecordFiltersAndRecordFilterGroups = ({
   recordFilterGroupId,
 }: {
   recordFilterGroupId?: string;
@@ -24,11 +22,11 @@ export const useCurrentViewViewFilterGroup = ({
 
   if (!isDefined(currentRecordFilterGroup)) {
     return {
-      currentViewFilterGroup: undefined,
-      childViewFiltersAndViewFilterGroups: [] as (
-        | ViewFilter
-        | ViewFilterGroup
-      )[],
+      currentRecordFilterGroup: undefined,
+      childRecordFiltersAndRecordFilterGroups: [],
+      childRecordFilters: [],
+      childRecordFilterGroups: [],
+      lastChildPosition: 0,
     };
   }
 
@@ -37,15 +35,15 @@ export const useCurrentViewViewFilterGroup = ({
       recordFilterToFilter.recordFilterGroupId === currentRecordFilterGroup.id,
   );
 
-  const childViewFilterGroups = currentRecordFilterGroups.filter(
+  const childRecordFilterGroups = currentRecordFilterGroups.filter(
     (currentRecordGroupToFilter) =>
       currentRecordGroupToFilter.parentRecordFilterGroupId ===
       currentRecordFilterGroup.id,
   );
 
-  const childViewFiltersAndViewFilterGroups = [
-    ...(childViewFilterGroups ?? []),
-    ...(childRecordFilters ?? []),
+  const childRecordFiltersAndRecordFilterGroups = [
+    ...childRecordFilterGroups,
+    ...childRecordFilters,
   ].sort((a, b) => {
     const positionA = a.positionInRecordFilterGroup ?? 0;
     const positionB = b.positionInRecordFilterGroup ?? 0;
@@ -53,13 +51,15 @@ export const useCurrentViewViewFilterGroup = ({
   });
 
   const lastChildPosition =
-    childViewFiltersAndViewFilterGroups[
-      childViewFiltersAndViewFilterGroups.length - 1
+    childRecordFiltersAndRecordFilterGroups[
+      childRecordFiltersAndRecordFilterGroups.length - 1
     ]?.positionInRecordFilterGroup ?? 0;
 
   return {
-    currentViewFilterGroup: currentRecordFilterGroup,
-    childViewFiltersAndViewFilterGroups,
+    currentRecordFilterGroup,
+    childRecordFiltersAndRecordFilterGroups,
+    childRecordFilters,
+    childRecordFilterGroups,
     lastChildPosition,
   };
 };

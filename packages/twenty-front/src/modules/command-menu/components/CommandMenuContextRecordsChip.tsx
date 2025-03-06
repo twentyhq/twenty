@@ -4,7 +4,7 @@ import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordCon
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 
-export const CommandMenuContextRecordChip = ({
+export const CommandMenuContextRecordsChip = ({
   objectMetadataItemId,
   instanceId,
 }: {

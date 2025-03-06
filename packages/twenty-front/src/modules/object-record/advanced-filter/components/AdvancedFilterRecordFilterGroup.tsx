@@ -1,9 +1,11 @@
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
-import { AdvancedFilterRuleOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdown';
+import { AdvancedFilterRecordFilterGroupChildOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupChildOptionsDropdown';
+
 import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilter';
-import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
+import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared';
 
 const StyledRow = styled.div`
   display: flex;
@@ -25,41 +27,45 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   overflow: hidden;
 `;
 
-type AdvancedFilterViewFilterGroupProps = {
-  viewFilterGroupId: string;
+type AdvancedFilterRecordFilterGroupProps = {
+  recordFilterGroupId: string;
 };
 
-export const AdvancedFilterViewFilterGroup = ({
-  viewFilterGroupId,
-}: AdvancedFilterViewFilterGroupProps) => {
+export const AdvancedFilterRecordFilterGroup = ({
+  recordFilterGroupId,
+}: AdvancedFilterRecordFilterGroupProps) => {
   const {
-    currentViewFilterGroup,
-    childViewFiltersAndViewFilterGroups,
+    currentRecordFilterGroup,
+    childRecordFiltersAndRecordFilterGroups,
     lastChildPosition,
-  } = useCurrentViewViewFilterGroup({
-    recordFilterGroupId: viewFilterGroupId,
+  } = useChildRecordFiltersAndRecordFilterGroups({
+    recordFilterGroupId,
   });
 
-  if (!currentViewFilterGroup) {
+  if (!currentRecordFilterGroup) {
     return null;
   }
 
+  const hasParentRecordFilterGroup = isDefined(
+    currentRecordFilterGroup.parentRecordFilterGroupId,
+  );
+
   return (
-    <StyledContainer
-      isGrayBackground={!!currentViewFilterGroup.parentRecordFilterGroupId}
-    >
-      {childViewFiltersAndViewFilterGroups.map((child, i) => (
+    <StyledContainer isGrayBackground={hasParentRecordFilterGroup}>
+      {childRecordFiltersAndRecordFilterGroups.map((child, i) => (
         <StyledRow key={child.id}>
           <AdvancedFilterLogicalOperatorCell
             index={i}
-            recordFilterGroup={currentViewFilterGroup}
+            recordFilterGroup={currentRecordFilterGroup}
           />
           <AdvancedFilterViewFilter viewFilterId={child.id} />
-          <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
+          <AdvancedFilterRecordFilterGroupChildOptionsDropdown
+            recordFilterGroupChild={child}
+          />
         </StyledRow>
       ))}
       <AdvancedFilterAddFilterRuleSelect
-        recordFilterGroup={currentViewFilterGroup}
+        recordFilterGroup={currentRecordFilterGroup}
         lastChildPosition={lastChildPosition}
       />
     </StyledContainer>

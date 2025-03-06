@@ -28,7 +28,7 @@ export const JsonNestedNode = ({
 }: {
   label?: string;
   Icon: IconComponent;
-  elements: Array<{ key: string; value: JsonValue }>;
+  elements: Array<{ id: string | number; label: string; value: JsonValue }>;
   depth: number;
 }) => {
   const hideRoot = !isDefined(label);
@@ -37,8 +37,8 @@ export const JsonNestedNode = ({
 
   const renderedChildren = (
     <JsonList depth={depth}>
-      {elements.map(({ key, value }) => (
-        <JsonNode key={key} label={key} value={value} depth={depth + 1} />
+      {elements.map(({ id, label, value }) => (
+        <JsonNode key={id} label={label} value={value} depth={depth + 1} />
       ))}
     </JsonList>
   );
