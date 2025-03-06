@@ -1949,7 +1949,7 @@ msgstr "crwdns513:0crwdne513:0"
 msgid "New"
 msgstr "crwdns515:0crwdne515:0"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "crwdns4853:0{capitalizedObjectNameSingular}crwdne4853:0"
 
