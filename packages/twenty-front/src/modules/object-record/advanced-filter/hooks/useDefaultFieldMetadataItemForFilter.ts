@@ -1,5 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -30,7 +31,9 @@ export const useDefaultFieldMetadataItemForFilter = () => {
         objectMetadataItem?.labelIdentifierFieldMetadataId,
     );
 
-  const firstFieldMetadataItem = availableFieldMetadataItemsForFilter[0];
+  const firstFieldMetadataItem = availableFieldMetadataItemsForFilter?.[0] as
+    | FieldMetadataItem
+    | undefined;
 
   const defaultFieldMetadataItemForFilter =
     fieldMetadataItemForLabelIdentifier ?? firstFieldMetadataItem;

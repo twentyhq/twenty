@@ -42,6 +42,10 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     useDefaultFieldMetadataItemForFilter();
 
   const handleAddFilter = () => {
+    if (!isDefined(defaultFieldMetadataItemForFilter)) {
+      throw new Error('Missing default field metadata item for filter');
+    }
+
     closeDropdown();
 
     const filterType = getFilterTypeFromFieldType(
@@ -65,6 +69,10 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
   const handleAddFilterGroup = () => {
     closeDropdown();
+
+    if (!isDefined(defaultFieldMetadataItemForFilter)) {
+      throw new Error('Missing default field metadata item for filter');
+    }
 
     if (!isDefined(currentView)) {
       throw new Error('Missing view');
@@ -95,7 +103,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       value: '',
       displayValue: '',
       recordFilterGroupId: newRecordFilterGroupId,
-      positionInRecordFilterGroup: newPositionInRecordFilterGroup,
+      positionInRecordFilterGroup: 1,
       label: defaultFieldMetadataItemForFilter.label,
     });
   };

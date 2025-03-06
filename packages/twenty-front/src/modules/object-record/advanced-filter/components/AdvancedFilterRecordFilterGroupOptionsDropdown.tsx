@@ -22,12 +22,12 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
     recordFilterGroupId,
   });
 
-  const handleRemove = async () => {
-    removeRecordFilterGroup(recordFilterGroupId);
-
+  const handleRemove = () => {
     for (const childRecordFilter of childRecordFilters ?? []) {
       removeRecordFilter({ recordFilterId: childRecordFilter.id });
     }
+
+    removeRecordFilterGroup(recordFilterGroupId);
   };
 
   return (

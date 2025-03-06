@@ -1,7 +1,5 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared';
 
@@ -25,10 +23,10 @@ export const useChildRecordFiltersAndRecordFilterGroups = ({
   if (!isDefined(currentRecordFilterGroup)) {
     return {
       currentRecordFilterGroup: undefined,
-      childRecordFiltersAndRecordFilterGroups: [] as (
-        | RecordFilter
-        | RecordFilterGroup
-      )[],
+      childRecordFiltersAndRecordFilterGroups: [],
+      childRecordFilters: [],
+      childRecordFilterGroups: [],
+      lastChildPosition: 0,
     };
   }
 
@@ -44,8 +42,8 @@ export const useChildRecordFiltersAndRecordFilterGroups = ({
   );
 
   const childRecordFiltersAndRecordFilterGroups = [
-    ...(childRecordFilterGroups ?? []),
-    ...(childRecordFilters ?? []),
+    ...childRecordFilterGroups,
+    ...childRecordFilters,
   ].sort((a, b) => {
     const positionA = a.positionInRecordFilterGroup ?? 0;
     const positionB = b.positionInRecordFilterGroup ?? 0;
