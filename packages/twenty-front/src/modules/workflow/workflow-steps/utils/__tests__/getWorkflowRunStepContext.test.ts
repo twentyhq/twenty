@@ -167,4 +167,100 @@ describe('getWorkflowRunStepContext', () => {
       },
     ]);
   });
+
+  it('should handle multiple steps with the same name', () => {
+    const flow = {
+      trigger: {
+        name: 'Company Created',
+        type: 'DATABASE_EVENT',
+        settings: {
+          eventName: 'company.created',
+          outputSchema: {},
+        },
+      },
+      steps: [
+        {
+          id: 'step1',
+          name: 'Create Note',
+          type: 'CREATE_RECORD',
+          settings: {
+            errorHandlingOptions: {
+              continueOnFailure: { value: false },
+              retryOnFailure: { value: false },
+            },
+            input: {
+              objectName: 'Note',
+              objectRecord: {},
+            },
+            outputSchema: {},
+          },
+          valid: true,
+        },
+        {
+          id: 'step2',
+          name: 'Create Note',
+          type: 'CREATE_RECORD',
+          settings: {
+            errorHandlingOptions: {
+              continueOnFailure: { value: false },
+              retryOnFailure: { value: false },
+            },
+            input: {
+              objectName: 'Note',
+              objectRecord: {},
+            },
+            outputSchema: {},
+          },
+          valid: true,
+        },
+        {
+          id: 'step3',
+          name: 'Create Note',
+          type: 'CREATE_RECORD',
+          settings: {
+            errorHandlingOptions: {
+              continueOnFailure: { value: false },
+              retryOnFailure: { value: false },
+            },
+            input: {
+              objectName: 'Note',
+              objectRecord: {},
+            },
+            outputSchema: {},
+          },
+          valid: true,
+        },
+      ],
+    } satisfies WorkflowRunFlow;
+    const context = {
+      [TRIGGER_STEP_ID]: { company: { id: '123' } },
+      step1: { noteId: '456' },
+      step2: { noteId: '789' },
+      step3: { noteId: '101' },
+    };
+
+    const result = getWorkflowRunStepContext({
+      stepId: 'step3',
+      flow,
+      context,
+    });
+
+    expect(result).toEqual([
+      {
+        id: TRIGGER_STEP_ID,
+        name: 'Company Created',
+        context: { company: { id: '123' } },
+      },
+      {
+        id: 'step1',
+        name: 'Create Note',
+        context: { noteId: '456' },
+      },
+      {
+        id: 'step2',
+        name: 'Create Note',
+        context: { noteId: '789' },
+      },
+    ]);
+  });
 });
