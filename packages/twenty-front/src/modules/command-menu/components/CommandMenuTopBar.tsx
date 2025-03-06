@@ -134,7 +134,6 @@ export const CommandMenuTopBar = () => {
 
       return {
         page,
-        pageComponentInstanceId: page.pageComponentInstanceId,
         Icons: [<page.pageIcon size={theme.icon.size.sm} />],
         text: page.pageTitle,
         onClick: isLastChip
