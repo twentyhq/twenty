@@ -99,7 +99,7 @@ export const SettingsAdminEnvVariablesRow = ({
     <>
       <StyledTableRow
         onClick={() => setIsExpanded(!isExpanded)}
-        gridAutoColumns="4fr 3fr 2fr 1fr"
+        gridAutoColumns="5fr 4fr 3fr 1fr"
         isExpanded={isExpanded}
       >
         <StyledTruncatedCell color={theme.font.color.primary}>
@@ -108,7 +108,7 @@ export const SettingsAdminEnvVariablesRow = ({
         <StyledTruncatedCell>
           <StyledEllipsisLabel>{variable.description}</StyledEllipsisLabel>
         </StyledTruncatedCell>
-        <StyledTruncatedCell>
+        <StyledTruncatedCell align="right">
           <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
         </StyledTruncatedCell>
         <TableCell align="right">
