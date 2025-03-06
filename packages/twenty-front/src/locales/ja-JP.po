@@ -2587,7 +2587,7 @@ msgstr "\\\\u30b5\\\\u30fc\\\\u30d0\\\\u30fc\\\\u7ba1\\\\u7406\\\\u8005"
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #~ msgid "Server Admin Panel"
-#~ msgstr "サーバー管理パネル"
+#~ msgstr "Server Admin Panel"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
