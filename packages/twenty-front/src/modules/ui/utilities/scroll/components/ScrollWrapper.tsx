@@ -4,8 +4,8 @@ import { useOverlayScrollbars } from 'overlayscrollbars-react';
 import { useEffect, useRef } from 'react';
 
 import {
-  ContextProviderName,
-  getContextByProviderName,
+    ContextProviderName,
+    getContextByProviderName,
 } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
@@ -147,9 +147,11 @@ export const ScrollWrapper = ({
 
         if (scrollbarVertical !== null) {
           scrollbarVertical.track.dataset.selectDisable = 'true';
+          scrollbarVertical.handle.dataset.selectDisable = 'true';
         }
         if (scrollbarHorizontal !== null) {
           scrollbarHorizontal.track.dataset.selectDisable = 'true';
+          scrollbarHorizontal.handle.dataset.selectDisable = 'true';
         }
         setScrollBottom(
           target.scrollHeight - target.clientHeight - target.scrollTop,
@@ -161,6 +163,9 @@ export const ScrollWrapper = ({
         // Hide vertical scrollbar by default
         if (scrollbarVertical !== null) {
           scrollbarVertical.track.style.visibility = 'hidden';
+          // Ensure data-select-disable is set on both track and handle
+          scrollbarVertical.track.dataset.selectDisable = 'true';
+          scrollbarVertical.handle.dataset.selectDisable = 'true';
         }
 
         // Show vertical scrollbar based on scroll direction
