@@ -1,22 +1,35 @@
-import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from 'twenty-shared';
-import { z } from 'zod';
+import { ZodType, z } from 'zod';
+import { ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
+import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
-const requiredFormFields = objectMetadataItemSchema.pick({
-  description: true, // what happens if empty string ?
-  icon: true,
-});
-
-// Can ApiNames contains whitespace ?
-const zodNonEmptyString = z.string().min(1);
-const optionalFormFields = z.object({
+const requiredFormFields = z.object({
+  description: z.string(),
+  icon: z.string(),
   labelSingular: zodNonEmptyString,
   labelPlural: zodNonEmptyString,
+}) satisfies ZodType<
+  Pick<
+    ObjectMetadataItem,
+    'labelSingular' | 'labelPlural' | 'description' | 'icon'
+  >
+>;
+
+const optionalFormFields = z.object({
   namePlural: zodNonEmptyString.optional(),
   nameSingular: zodNonEmptyString.optional(),
   isLabelSyncedWithName: z.boolean().optional(),
-});
+}) satisfies ZodType<
+  Partial<
+    Pick<
+      ObjectMetadataItem,
+      'namePlural' | 'nameSingular' | 'isLabelSyncedWithName'
+    >
+  >
+>;
+
 export const settingsDataModelObjectAboutFormSchema = requiredFormFields
   .merge(optionalFormFields)
   .superRefine(
@@ -32,7 +45,11 @@ export const settingsDataModelObjectAboutFormSchema = requiredFormFields
     ) => {
       const labelsAreDifferent = labelPlural !== labelSingular;
       if (!labelsAreDifferent) {
-        ['labelPlural', 'labelSingular'].forEach((field) =>
+        const labelFields: ReadonlyKeysArray<ObjectMetadataItem> = [
+          'labelPlural',
+          'labelSingular',
+        ];
+        labelFields.forEach((field) =>
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Invalid label',
@@ -43,7 +60,11 @@ export const settingsDataModelObjectAboutFormSchema = requiredFormFields
 
       const nameAreDifferent = nameSingular !== namePlural;
       if (!nameAreDifferent) {
-        ['nameSingular', 'namePlural'].forEach((field) =>
+        const nameFields: ReadonlyKeysArray<ObjectMetadataItem> = [
+          'nameSingular',
+          'namePlural',
+        ];
+        nameFields.forEach((field) =>
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Invalid name',
@@ -63,7 +84,9 @@ export const settingsDataModelObjectAboutFormSchema = requiredFormFields
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Should follow camel case',
-            path: ['nameSingular'],
+            path: [
+              'nameSingular',
+            ] satisfies ReadonlyKeysArray<ObjectMetadataItem>,
           });
         }
 
@@ -74,7 +97,9 @@ export const settingsDataModelObjectAboutFormSchema = requiredFormFields
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Should follow camel case',
-            path: ['namePlural'],
+            path: [
+              'namePlural',
+            ] satisfies ReadonlyKeysArray<ObjectMetadataItem>,
           });
         }
       }
