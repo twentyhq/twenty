@@ -6,7 +6,6 @@ import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreat
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
-import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
 import {
   SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
@@ -38,9 +37,7 @@ export const SettingsNewObject = () => {
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
     try {
-      const { data: response } = await createOneObjectMetadataItem(
-        settingsCreateObjectInputSchema.parse(formValues),
-      );
+      const { data: response } = await createOneObjectMetadataItem(formValues);
 
       navigate(
         response ? SettingsPath.ObjectDetail : SettingsPath.Objects,

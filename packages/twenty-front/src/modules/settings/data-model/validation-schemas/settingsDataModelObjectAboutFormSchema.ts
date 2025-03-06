@@ -5,36 +5,30 @@ import { ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
-type ZodTypeRequiredFormFields = ZodType<
+type ZodTypeSettingsDataModelFormFields = ZodType<
   Pick<
     ObjectMetadataItem,
-    'labelSingular' | 'labelPlural' | 'description' | 'icon'
+    | 'labelSingular'
+    | 'labelPlural'
+    | 'description'
+    | 'icon'
+    | 'namePlural'
+    | 'nameSingular'
+    | 'isLabelSyncedWithName'
   >
 >;
-const requiredFormFields = z.object({
-  description: z.string(),
-  icon: z.string(),
+const settingsDataModelFormFieldsSchema = z.object({
+  description: z.string().optional(),
+  icon: z.string().optional(),
   labelSingular: zodNonEmptyString,
   labelPlural: zodNonEmptyString,
-}) satisfies ZodTypeRequiredFormFields;
+  namePlural: zodNonEmptyString,
+  nameSingular: zodNonEmptyString,
+  isLabelSyncedWithName: z.boolean(),
+}) satisfies ZodTypeSettingsDataModelFormFields;
 
-type ZodTypeOptionalFormFields = ZodType<
-  Partial<
-    Pick<
-      ObjectMetadataItem,
-      'namePlural' | 'nameSingular' | 'isLabelSyncedWithName'
-    >
-  >
->;
-const optionalFormFields = z.object({
-  namePlural: zodNonEmptyString.optional(),
-  nameSingular: zodNonEmptyString.optional(),
-  isLabelSyncedWithName: z.boolean().optional(),
-}) satisfies ZodTypeOptionalFormFields;
-
-export const settingsDataModelObjectAboutFormSchema = requiredFormFields
-  .merge(optionalFormFields)
-  .superRefine(
+export const settingsDataModelObjectAboutFormSchema =
+  settingsDataModelFormFieldsSchema.superRefine(
     (
       {
         labelPlural,
@@ -45,7 +39,8 @@ export const settingsDataModelObjectAboutFormSchema = requiredFormFields
       },
       ctx,
     ) => {
-      const labelsAreDifferent = labelPlural !== labelSingular;
+      const labelsAreDifferent =
+        labelPlural.toLowerCase() !== labelSingular.toLocaleLowerCase();
       if (!labelsAreDifferent) {
         const labelFields: ReadonlyKeysArray<ObjectMetadataItem> = [
           'labelPlural',
@@ -60,7 +55,8 @@ export const settingsDataModelObjectAboutFormSchema = requiredFormFields
         );
       }
 
-      const nameAreDifferent = nameSingular !== namePlural;
+      const nameAreDifferent =
+        nameSingular.toLocaleLowerCase() !== namePlural.toLowerCase();
       if (!nameAreDifferent) {
         const nameFields: ReadonlyKeysArray<ObjectMetadataItem> = [
           'nameSingular',

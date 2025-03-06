@@ -203,7 +203,7 @@ export const SettingsDataModelObjectAboutForm = ({
       <Controller
         name="description"
         control={control}
-        defaultValue={objectMetadataItem?.description ?? null}
+        defaultValue={objectMetadataItem?.description ?? undefined}
         render={({ field: { onChange, value } }) => (
           <TextArea
             placeholder={t`Write a description`}

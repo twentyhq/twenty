@@ -41,7 +41,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
     defaultValues: {
-      description,
+      description: description ?? undefined,
       icon: icon ?? undefined,
       isLabelSyncedWithName,
       labelPlural,
@@ -64,7 +64,6 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
     try {
-      console.log({ formValues });
       await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
         updatePayload: formValues,
