@@ -1,49 +1,145 @@
-import { settingsDataModelObjectAboutFormSchema } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { SafeParseSuccess } from 'zod';
-
-import { UpdateObjectPayload } from '~/generated-metadata/graphql';
+import {
+  SettingsDataModelObjectAboutFormValues,
+  settingsDataModelObjectAboutFormSchema,
+} from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { EachTestingContext } from '~/types/EachTestingContext';
 
 describe('settingsDataModelObjectAboutFormSchema', () => {
-  it('validates a valid input and adds name properties', () => {
-    // Given
-    const validInput = {
-      description: 'A valid description',
-      icon: 'IconName',
-      labelPlural: 'Labels Plural    ',
-      labelSingular: '   Label Singular',
-      namePlural: 'namePlural',
-      nameSingular: 'nameSingular',
-    };
+  const validInput: SettingsDataModelObjectAboutFormValues = {
+    description: 'A valid description',
+    icon: 'IconName',
+    labelPlural: 'Labels Plural',
+    labelSingular: 'Label Singular',
+    namePlural: 'labelsPlural',
+    nameSingular: 'labelSingular',
+    isLabelSyncedWithName: false,
+  };
 
-    // When
-    const result = settingsDataModelObjectAboutFormSchema.safeParse(validInput);
+  const passingTestsUseCase: EachTestingContext<{
+    input: SettingsDataModelObjectAboutFormValues;
+    expectedSuccess: true;
+  }>[] = [
+    {
+      title: 'validates a complete valid input',
+      context: {
+        input: validInput,
+        expectedSuccess: true,
+      },
+    },
+    {
+      title: 'validates input with optional fields omitted',
+      context: {
+        input: {
+          labelPlural: 'Labels Plural',
+          labelSingular: 'Label Singular',
+          namePlural: 'labelsPlural',
+          nameSingular: 'labelSingular',
+          isLabelSyncedWithName: false,
+        },
+        expectedSuccess: true,
+      },
+    },
+    {
+      title: 'validates input with trimmed labels',
+      context: {
+        input: {
+          ...validInput,
+          labelPlural: '   Labels Plural   ',
+          labelSingular: '  Label Singular  ',
+        },
+        expectedSuccess: true,
+      },
+    },
+  ];
 
-    // Then
-    expect(result.success).toBe(true);
-    expect((result as SafeParseSuccess<UpdateObjectPayload>).data).toEqual({
-      description: validInput.description,
-      icon: validInput.icon,
-      labelPlural: 'Labels Plural',
-      labelSingular: 'Label Singular',
-      namePlural: 'namePlural',
-      nameSingular: 'nameSingular',
-    });
-  });
+  const failsValidationTestsUseCase: EachTestingContext<{
+    input: Partial<Record<keyof SettingsDataModelObjectAboutFormValues, any>>;
+    expectedSuccess: false;
+  }>[] = [
+    {
+      title: 'fails when required fields are missing',
+      context: {
+        input: {
+          description: 'Only description',
+        },
+        expectedSuccess: false,
+      },
+    },
+    {
+      title: 'fails when names are not in camelCase',
+      context: {
+        input: {
+          ...validInput,
+          namePlural: 'Labels_Plural',
+          nameSingular: 'Label-Singular',
+        },
+        expectedSuccess: false,
+      },
+    },
+    {
+      title: 'fails when labels are empty strings',
+      context: {
+        input: {
+          ...validInput,
+          labelPlural: '',
+          labelSingular: '',
+        },
+        expectedSuccess: false,
+      },
+    },
+    {
+      title: 'fails when singular and plural labels are the same',
+      context: {
+        input: {
+          ...validInput,
+          labelPlural: 'Same Label',
+          labelSingular: 'Same Label',
+        },
+        expectedSuccess: false,
+      },
+    },
+    {
+      title: 'fails when singular and plural names are the same',
+      context: {
+        input: {
+          ...validInput,
+          namePlural: 'sameName',
+          nameSingular: 'sameName',
+        },
+        expectedSuccess: false,
+      },
+    },
+    {
+      title: 'fails when isLabelSyncedWithName is not a boolean',
+      context: {
+        input: {
+          ...validInput,
+          isLabelSyncedWithName: 'true',
+        },
+        expectedSuccess: false,
+      },
+    },
+    {
+      title: 'fails with invalid types for optional fields',
+      context: {
+        input: {
+          ...validInput,
+          description: 123,
+          icon: true,
+        },
+        expectedSuccess: false,
+      },
+    },
+  ];
 
-  it('fails for an invalid input', () => {
-    // Given
-    const invalidInput = {
-      description: 123,
-      icon: true,
-      labelPlural: [],
-      labelSingular: {},
-    };
-
-    // When
-    const result =
-      settingsDataModelObjectAboutFormSchema.safeParse(invalidInput);
-
-    // Then
-    expect(result.success).toBe(false);
-  });
+  test.each([...passingTestsUseCase, ...failsValidationTestsUseCase])(
+    '$title',
+    ({ context: { expectedSuccess, input } }) => {
+      const result = settingsDataModelObjectAboutFormSchema.safeParse(input);
+      expect(result.success).toBe(expectedSuccess);
+      if (!expectedSuccess) {
+        expect(result.error).toMatchSnapshot();
+      }
+    },
+  );
 });
