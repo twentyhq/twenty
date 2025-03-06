@@ -3,8 +3,8 @@ import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAd
 import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import styled from '@emotion/styled';
-import { IconHeart, IconSettings2, IconVariable } from 'twenty-ui';
 import { t } from '@lingui/core/macro';
+import { IconHeart, IconSettings2, IconVariable } from 'twenty-ui';
 
 const StyledTabListContainer = styled.div`
   align-items: center;
@@ -27,8 +27,8 @@ export const SettingsAdminContent = () => {
       Icon: IconVariable,
     },
     {
-      id: SETTINGS_ADMIN_TABS.HEALTH_STATUS,
-      title: t`Health Status`,
+      id: SETTINGS_ADMIN_TABS.HEALTH,
+      title: t`Health`,
       Icon: IconHeart,
     },
   ];
