@@ -7,13 +7,14 @@ import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { isDefined } from 'twenty-shared';
 
 type UseLoadRecordIndexBoardProps = {
@@ -43,6 +44,10 @@ export const useLoadRecordIndexBoardColumn = ({
     recordIndexViewFilterGroupsState,
   );
 
+  const recordFilterGroups = mapViewFilterGroupsToRecordFilterGroups(
+    recordIndexViewFilterGroups,
+  );
+
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
@@ -53,12 +58,12 @@ export const useLoadRecordIndexBoardColumn = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const requestFilters = computeViewRecordGqlOperationFilter(
+  const requestFilters = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    currentRecordFilters,
-    objectMetadataItem?.fields ?? [],
-    recordIndexViewFilterGroups,
-  );
+    recordFilters: currentRecordFilters,
+    recordFilterGroups,
+    fields: objectMetadataItem.fields,
+  });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
 

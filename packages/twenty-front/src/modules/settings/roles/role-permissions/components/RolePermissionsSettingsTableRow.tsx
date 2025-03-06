@@ -18,6 +18,8 @@ const StyledPermissionCell = styled(TableCell)`
   flex: 1;
   gap: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(2)};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledCheckboxCell = styled(TableCell)`
@@ -30,6 +32,12 @@ const StyledCheckboxCell = styled(TableCell)`
 const StyledTableRow = styled(TableRow)`
   align-items: center;
   display: flex;
+`;
+
+const StyledIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 type RolePermissionsSettingsTableRowProps = {
@@ -45,6 +53,9 @@ export const RolePermissionsSettingsTableRow = ({
         <StyledLabel>{permission.label}</StyledLabel>
       </StyledPermissionCell>
       <StyledPermissionCell>
+        <StyledIconContainer>
+          <permission.Icon size={14} />
+        </StyledIconContainer>
         <StyledType>{permission.type}</StyledType>
       </StyledPermissionCell>
       <StyledCheckboxCell>

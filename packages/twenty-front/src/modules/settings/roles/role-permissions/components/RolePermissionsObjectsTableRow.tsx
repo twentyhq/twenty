@@ -57,7 +57,9 @@ export const RolePermissionsObjectsTableRow = ({
     <StyledTableRow key={permission.key}>
       <StyledPermissionCell>
         <StyledIconWrapper>
-          <StyledIcon>{permission.icon}</StyledIcon>
+          <StyledIcon>
+            <permission.Icon size={14} />
+          </StyledIcon>
         </StyledIconWrapper>
         <StyledLabel>{permission.label}</StyledLabel>
       </StyledPermissionCell>

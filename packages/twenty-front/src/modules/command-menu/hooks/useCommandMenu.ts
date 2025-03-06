@@ -22,11 +22,14 @@ import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelect
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { RIGHT_DRAWER_RECORD_INSTANCE_ID } from '@/object-record/record-right-drawer/constants/RightDrawerRecordInstanceId';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
@@ -277,6 +280,56 @@ export const useCommandMenu = () => {
             }),
           )
           .getValue();
+
+        if (!objectMetadataItem) {
+          throw new Error(
+            `No object metadata item found for object name ${objectNameSingular}`,
+          );
+        }
+
+        set(
+          contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+          }),
+          objectMetadataItem,
+        );
+
+        set(
+          contextStoreTargetedRecordsRuleComponentState.atomFamily({
+            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+          }),
+          {
+            mode: 'selection',
+            selectedRecordIds: [recordId],
+          },
+        );
+
+        set(
+          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+          }),
+          1,
+        );
+
+        set(
+          contextStoreCurrentViewTypeComponentState.atomFamily({
+            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+          }),
+          ContextStoreViewType.ShowPage,
+        );
+
+        set(
+          contextStoreCurrentViewIdComponentState.atomFamily({
+            instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
+          }),
+          snapshot
+            .getLoadable(
+              contextStoreCurrentViewIdComponentState.atomFamily({
+                instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+              }),
+            )
+            .getValue(),
+        );
 
         const Icon = objectMetadataItem?.icon
           ? getIcon(objectMetadataItem.icon)

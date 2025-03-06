@@ -65,7 +65,7 @@ export const ObjectFilterDropdownNumberInput = () => {
               fieldMetadataItemUsedInDropdown.type,
             ),
             label: fieldMetadataItemUsedInDropdown.label,
-            viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+            recordFilterGroupId: selectedFilter?.recordFilterGroupId,
           });
         }}
       />
