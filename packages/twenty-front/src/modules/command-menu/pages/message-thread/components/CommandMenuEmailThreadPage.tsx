@@ -1,18 +1,15 @@
 import styled from '@emotion/styled';
 import { useEffect, useMemo } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hooks/useRightDrawerEmailThread';
-import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
-import { CommandMenuEmailThreadIntermediaryMessages } from '@/command-menu/pages/email-thread/components/CommandMenuEmailThreadIntermediaryMessages';
-import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
-import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { CommandMenuEmailThreadIntermediaryMessages } from '@/command-menu/pages/message-thread/components/CommandMenuEmailThreadIntermediaryMessages';
+import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
+import { messageThreadComponentState } from '@/command-menu/pages/message-thread/states/messageThreadComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { ConnectedAccountProvider } from 'twenty-shared';
 import { Button, IconArrowBackUp } from 'twenty-ui';
@@ -44,8 +41,12 @@ const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
 `;
 
 export const CommandMenuEmailThreadPage = () => {
-  const setMessageThread = useSetRecoilState(messageThreadState);
+  const setMessageThread = useSetRecoilComponentStateV2(
+    messageThreadComponentState,
+  );
+
   const isMobile = useIsMobile();
+
   const {
     thread,
     messages,
@@ -56,32 +57,13 @@ export const CommandMenuEmailThreadPage = () => {
     messageChannelLoading,
     connectedAccountProvider,
     lastMessageExternalId,
-  } = useRightDrawerEmailThread();
+  } = useEmailThreadInCommandMenu();
 
   useEffect(() => {
     if (!messages[0]?.messageThread) {
       return;
     }
     setMessageThread(messages[0]?.messageThread);
-  });
-
-  const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
-    RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
-  );
-
-  useRegisterClickOutsideListenerCallback({
-    callbackId:
-      'EmailThreadClickOutsideCallBack-' + (thread?.id ?? 'no-thread-id'),
-    callbackFunction: useRecoilCallback(
-      ({ set }) =>
-        () => {
-          set(
-            emailThreadIdWhenEmailThreadWasClosedState,
-            thread?.id ?? 'no-thread-id',
-          );
-        },
-      [thread],
-    ),
   });
 
   const messagesCount = messages.length;
