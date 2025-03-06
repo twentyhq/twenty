@@ -51,6 +51,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -75,6 +76,7 @@ export class AuthResolver {
     private apiKeyService: ApiKeyService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
+    private signInUpService: SignInUpService,
     private transientTokenService: TransientTokenService,
     private emailVerificationService: EmailVerificationService,
     // private oauthService: OAuthService,
@@ -242,6 +244,28 @@ export class AuthResolver {
       user.email,
       workspace,
       signUpInput.locale ?? SOURCE_LOCALE,
+    );
+
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+      workspace.id,
+    );
+
+    return {
+      loginToken,
+      workspace: {
+        id: workspace.id,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      },
+    };
+  }
+
+  @Mutation(() => SignUpOutput)
+  async signUpInNewWorkspace(
+    @AuthUser() currentUser: User,
+  ): Promise<SignUpOutput> {
+    const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
+      { type: 'existingUser', existingUser: currentUser },
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(

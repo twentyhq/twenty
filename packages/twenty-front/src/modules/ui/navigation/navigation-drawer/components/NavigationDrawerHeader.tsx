@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { workspacesState } from '@/auth/states/workspaces';
-import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdownButton';
+import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -62,7 +62,7 @@ export const NavigationDrawerHeader = ({
   return (
     <StyledContainer>
       {isMultiWorkspace ? (
-        <MultiWorkspaceDropdownButton workspaces={workspaces} />
+        <MultiWorkspaceDropdownButton />
       ) : (
         <StyledSingleWorkspaceContainer>
           <Avatar placeholder={name} avatarUrl={logo} />
