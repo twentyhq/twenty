@@ -10,7 +10,7 @@ const StyledButtonContainer = styled.div`
   padding: 16px 24px;
 `;
 
-export const CommandMenuEmailThreadIntermediaryMessages = ({
+export const CommandMenuMessageThreadIntermediaryMessages = ({
   messages,
 }: {
   messages: EmailThreadMessageWithSender[];

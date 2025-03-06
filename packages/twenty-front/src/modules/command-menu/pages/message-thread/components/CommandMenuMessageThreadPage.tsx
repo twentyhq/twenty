@@ -5,7 +5,7 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { CommandMenuEmailThreadIntermediaryMessages } from '@/command-menu/pages/message-thread/components/CommandMenuEmailThreadIntermediaryMessages';
+import { CommandMenuMessageThreadIntermediaryMessages } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadIntermediaryMessages';
 import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 import { messageThreadComponentState } from '@/command-menu/pages/message-thread/states/messageThreadComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -40,7 +40,7 @@ const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
   box-sizing: border-box;
 `;
 
-export const CommandMenuEmailThreadPage = () => {
+export const CommandMenuMessageThreadPage = () => {
   const setMessageThread = useSetRecoilComponentStateV2(
     messageThreadComponentState,
   );
@@ -136,7 +136,7 @@ export const CommandMenuEmailThreadPage = () => {
                 sentAt={message.receivedAt}
               />
             ))}
-            <CommandMenuEmailThreadIntermediaryMessages
+            <CommandMenuMessageThreadIntermediaryMessages
               messages={intermediaryMessages}
             />
             <EmailThreadMessage
