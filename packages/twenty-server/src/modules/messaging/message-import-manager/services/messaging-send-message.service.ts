@@ -26,7 +26,7 @@ export class MessagingSendMessageService {
 
         const message = [
           `To: ${sendMessageInput.to}`,
-          `Subject: ${sendMessageInput.subject || ''}`,
+          `Subject: ${sendMessageInput.subject}`,
           'MIME-Version: 1.0',
           'Content-Type: text/plain; charset="UTF-8"',
           '',
