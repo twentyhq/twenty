@@ -80,17 +80,44 @@ export const useMultipleRecordPickerPerformSearch = () => {
             pickableMorphItems,
           });
 
+        const pickedMorphItems = pickableMorphItems.filter(
+          ({ isSelected }) => isSelected,
+        );
+
+        // We update the existing pickedMorphItems to be matching the search filter
+        const updatedPickedMorphItems = pickedMorphItems.map((morphItem) => {
+          const record =
+            recordsWithObjectMetadataIdFilteredOnPickedRecords.find(
+              ({ record }) => record.id === morphItem.recordId,
+            );
+
+          return {
+            ...morphItem,
+            isMatchingSearchFilter: isDefined(record),
+          };
+        });
+
+        const recordsWithObjectMetadataIdFilteredOnPickedRecordsWithoutDuplicates =
+          recordsWithObjectMetadataIdFilteredOnPickedRecords.filter(
+            ({ record }) =>
+              !updatedPickedMorphItems.some(
+                ({ recordId }) => recordId === record.id,
+              ),
+          );
+
         const recordsWithObjectMetadataIdExcludingPickedRecordsWithoutDuplicates =
           recordsWithObjectMetadataIdExcludingPickedRecords.filter(
             ({ record }) =>
               !recordsWithObjectMetadataIdFilteredOnPickedRecords.some(
                 ({ record: recordFilteredOnPickedRecords }) =>
                   recordFilteredOnPickedRecords.id === record.id,
-              ),
+              ) &&
+              !pickedMorphItems.some(({ recordId }) => recordId === record.id),
           );
 
         const morphItems = [
-          ...recordsWithObjectMetadataIdFilteredOnPickedRecords.map(
+          ...updatedPickedMorphItems,
+          ...recordsWithObjectMetadataIdFilteredOnPickedRecordsWithoutDuplicates.map(
             ({ record, objectMetadataItem }) => ({
               isMatchingSearchFilter: true,
               isSelected: true,

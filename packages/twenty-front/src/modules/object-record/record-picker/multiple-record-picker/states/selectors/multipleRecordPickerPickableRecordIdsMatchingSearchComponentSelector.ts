@@ -2,9 +2,9 @@ import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/re
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
-export const multipleRecordPickerPickableRecordIdsComponentSelector =
+export const multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector =
   createComponentSelectorV2({
-    key: 'multipleRecordPickerPickableRecordIdsComponentSelector',
+    key: 'multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector',
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
     get:
       ({ instanceId }) =>
@@ -15,6 +15,8 @@ export const multipleRecordPickerPickableRecordIdsComponentSelector =
           }),
         );
 
-        return pickableMorphItems.map(({ recordId }) => recordId);
+        return pickableMorphItems
+          .filter(({ isMatchingSearchFilter }) => isMatchingSearchFilter)
+          .map(({ recordId }) => recordId);
       },
   });
