@@ -93,51 +93,6 @@ exports[`settingsDataModelObjectAboutFormSchema fails when required fields are m
       "labelPlural"
     ],
     "message": "Required"
-  },
-  {
-    "code": "invalid_type",
-    "expected": "string",
-    "received": "undefined",
-    "path": [
-      "namePlural"
-    ],
-    "message": "Required"
-  },
-  {
-    "code": "invalid_type",
-    "expected": "string",
-    "received": "undefined",
-    "path": [
-      "namePlural"
-    ],
-    "message": "Required"
-  },
-  {
-    "code": "invalid_type",
-    "expected": "string",
-    "received": "undefined",
-    "path": [
-      "nameSingular"
-    ],
-    "message": "Required"
-  },
-  {
-    "code": "invalid_type",
-    "expected": "string",
-    "received": "undefined",
-    "path": [
-      "nameSingular"
-    ],
-    "message": "Required"
-  },
-  {
-    "code": "invalid_type",
-    "expected": "boolean",
-    "received": "undefined",
-    "path": [
-      "isLabelSyncedWithName"
-    ],
-    "message": "Required"
   }
 ]]
 `;
@@ -165,14 +120,14 @@ exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural n
 [ZodError: [
   {
     "code": "custom",
-    "message": "Singular and plural names must be different",
+    "message": "Singular and plural names must be different guillaume",
     "path": [
       "nameSingular"
     ]
   },
   {
     "code": "custom",
-    "message": "Singular and plural names must be different",
+    "message": "Singular and plural names must be different guillaume",
     "path": [
       "namePlural"
     ]

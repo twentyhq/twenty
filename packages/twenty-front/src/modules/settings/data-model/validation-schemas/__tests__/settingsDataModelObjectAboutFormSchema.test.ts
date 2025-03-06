@@ -61,6 +61,8 @@ describe('settingsDataModelObjectAboutFormSchema', () => {
       context: {
         input: {
           description: 'Only description',
+          labelPlural: undefined,
+          labelSingular: undefined
         },
         expectedSuccess: false,
       },
@@ -135,7 +137,10 @@ describe('settingsDataModelObjectAboutFormSchema', () => {
   test.each([...passingTestsUseCase, ...failsValidationTestsUseCase])(
     '$title',
     ({ context: { expectedSuccess, input } }) => {
-      const result = settingsDataModelObjectAboutFormSchema.safeParse(input);
+      const result = settingsDataModelObjectAboutFormSchema.safeParse({
+        ...validInput,
+        ...input
+      });
       expect(result.success).toBe(expectedSuccess);
       if (!expectedSuccess) {
         expect(result.error).toMatchSnapshot();
