@@ -51,7 +51,7 @@ export const MultipleRecordPickerMenuItems = ({
           resetSelectedItem();
         }}
       >
-        {pickableRecordIds?.map((recordId) => {
+        {pickableRecordIds.map((recordId) => {
           return (
             <MultipleRecordPickerMenuItem
               key={recordId}

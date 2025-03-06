@@ -64,14 +64,12 @@ export const MultipleRecordPickerMenuItemContent = ({
     return null;
   }
 
-  const selected = isDefined(isRecordSelectedWithObjectItem);
-
   return (
     <StyledSelectableItem itemId={record.id} key={record.id}>
       <MenuItemMultiSelectAvatar
         onSelectChange={(_isNewlySelectedValue) => handleSelectChange()}
         isKeySelected={isSelectedByKeyboard}
-        selected={selected}
+        selected={isRecordSelectedWithObjectItem}
         avatar={
           <Avatar
             avatarUrl={recordIdentifier.avatarUrl}
