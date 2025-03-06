@@ -4,7 +4,6 @@ import {
   HealthIndicatorService,
 } from '@nestjs/terminus';
 
-import { APP_HEALTH_ISSUE_CATEGORIES } from 'src/engine/core-modules/health/constants/app-health-issue-categories.const';
 import { HealthStateManager } from 'src/engine/core-modules/health/utils/health-state-manager.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
@@ -30,31 +29,15 @@ export class AppHealthIndicator {
 
       const workspaceStats = await Promise.all(
         workspaceIds.map(async (workspaceId) => {
-          const [healthIssues, pendingMigrations] = await Promise.all([
-            this.workspaceHealthService.healthCheck(workspaceId),
-            this.workspaceMigrationService.getPendingMigrations(workspaceId),
-          ]);
-
-          const issuesSummary = {
-            structural: healthIssues.filter((issue) =>
-              APP_HEALTH_ISSUE_CATEGORIES.tableIssues(issue.type),
-            ).length,
-            data: healthIssues.filter((issue) =>
-              APP_HEALTH_ISSUE_CATEGORIES.columnIssues(issue.type),
-            ).length,
-            relationship: healthIssues.filter((issue) =>
-              APP_HEALTH_ISSUE_CATEGORIES.relationIssues(issue.type),
-            ).length,
-          };
+          const pendingMigrations =
+            await this.workspaceMigrationService.getPendingMigrations(
+              workspaceId,
+            );
 
           return {
             workspaceId,
-            severity: this.getSeverityLevel(
-              issuesSummary,
-              pendingMigrations.length,
-            ),
             pendingMigrations: pendingMigrations.length,
-            issuesSummary,
+            isCritical: pendingMigrations.length > 0,
           };
         }),
       );
@@ -65,33 +48,23 @@ export class AppHealthIndicator {
           timestamp: new Date().toISOString(),
         },
         overview: {
-          totalWorkspaces: workspaceIds.length,
-          criticalWorkspaces: workspaceStats.filter(
-            (stat) => stat.severity === 'critical',
+          totalWorkspacesCount: workspaceIds.length,
+          criticalWorkspacesCount: workspaceStats.filter(
+            (stat) => stat.isCritical,
           ).length,
-          workspacesWithPendingMigrations: workspaceStats.filter(
-            (stat) => stat.pendingMigrations > 0,
-          ).length,
-          healthDistribution: {
-            healthy: workspaceStats.filter(
-              (stat) => stat.severity === 'healthy',
-            ).length,
-            warning: workspaceStats.filter(
-              (stat) => stat.severity === 'warning',
-            ).length,
-            critical: workspaceStats.filter(
-              (stat) => stat.severity === 'critical',
-            ).length,
-          },
         },
-        problematicWorkspaces: workspaceStats.filter(
-          (stat) => stat.severity !== 'healthy',
-        ),
+        criticalWorkspaces:
+          workspaceStats.filter((stat) => stat.isCritical).length > 0
+            ? workspaceStats
+                .filter((stat) => stat.isCritical)
+                .map((stat) => ({
+                  workspaceId: stat.workspaceId,
+                  pendingMigrations: stat.pendingMigrations,
+                }))
+            : null,
       };
 
-      const isHealthy = workspaceStats.every(
-        (stat) => stat.pendingMigrations === 0 && stat.severity === 'healthy',
-      );
+      const isHealthy = workspaceStats.every((stat) => !stat.isCritical);
 
       if (isHealthy) {
         this.stateManager.updateState(details);
@@ -99,12 +72,10 @@ export class AppHealthIndicator {
         return indicator.up({ details });
       }
 
-      const errorMessage = `Found ${workspaceStats.filter((s) => s.severity === 'warning').length} workspaces with warnings and ${workspaceStats.filter((s) => s.severity === 'critical').length} critical workspaces`;
-
       this.stateManager.updateState(details);
 
       return indicator.down({
-        message: errorMessage,
+        message: `Found ${details.criticalWorkspaces?.length} workspaces with pending migrations`,
         details,
       });
     } catch (error) {
@@ -121,24 +92,5 @@ export class AppHealthIndicator {
         },
       });
     }
-  }
-
-  private getSeverityLevel(
-    issuesSummary: {
-      structural: number;
-      data: number;
-      relationship: number;
-    },
-    pendingMigrations: number,
-  ): 'healthy' | 'warning' | 'critical' {
-    if (pendingMigrations > 0) {
-      return 'critical';
-    }
-
-    if (Object.values(issuesSummary).some((count) => count > 0)) {
-      return 'warning';
-    }
-
-    return 'healthy';
   }
 }

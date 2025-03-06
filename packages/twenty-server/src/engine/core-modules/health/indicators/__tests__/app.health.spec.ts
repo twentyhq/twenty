@@ -1,8 +1,6 @@
 import { HealthIndicatorService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { WorkspaceHealthIssueType } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
-
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
@@ -77,48 +75,34 @@ describe('AppHealthIndicator', () => {
     objectMetadataService.findMany.mockResolvedValue([
       {
         id: '1',
-        standardId: 'std1',
-        dataSourceId: 'ds1',
-        nameSingular: 'test',
         workspaceId: 'workspace1',
       } as any,
       {
         id: '2',
-        standardId: 'std2',
-        dataSourceId: 'ds2',
-        nameSingular: 'test',
         workspaceId: 'workspace2',
       } as any,
     ]);
 
-    workspaceHealthService.healthCheck.mockResolvedValue([]);
     workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
 
     const result = await service.isHealthy();
 
     expect(result.app.status).toBe('up');
-    expect(result.app.details.overview.totalWorkspaces).toBe(2);
-    expect(result.app.details.overview.criticalWorkspaces).toBe(0);
-    expect(result.app.details.overview.workspacesWithPendingMigrations).toBe(0);
-    expect(result.app.details.overview.healthDistribution).toEqual({
-      healthy: 2,
-      warning: 0,
-      critical: 0,
-    });
+    expect(result.app.details.overview.totalWorkspacesCount).toBe(2);
+    expect(result.app.details.overview.criticalWorkspacesCount).toBe(0);
+    expect(result.app.details.criticalWorkspaces).toBe(null);
+    expect(result.app.details.system.nodeVersion).toBeDefined();
+    expect(result.app.details.system.timestamp).toBeDefined();
   });
 
   it('should return down status when there are pending migrations', async () => {
     objectMetadataService.findMany.mockResolvedValue([
       {
         id: '1',
-        standardId: 'std1',
-        dataSourceId: 'ds1',
-        nameSingular: 'test',
         workspaceId: 'workspace1',
       } as any,
     ]);
 
-    workspaceHealthService.healthCheck.mockResolvedValue([]);
     workspaceMigrationService.getPendingMigrations.mockResolvedValue([
       {
         id: '1',
@@ -133,56 +117,13 @@ describe('AppHealthIndicator', () => {
     const result = await service.isHealthy();
 
     expect(result.app.status).toBe('down');
-    expect(result.app.details.overview.criticalWorkspaces).toBe(1);
-    expect(result.app.details.overview.workspacesWithPendingMigrations).toBe(1);
-    expect(result.app.details.problematicWorkspaces[0].severity).toBe(
-      'critical',
-    );
-  });
-
-  it('should categorize health issues correctly', async () => {
-    objectMetadataService.findMany.mockResolvedValue([
+    expect(result.app.details.overview.criticalWorkspacesCount).toBe(1);
+    expect(result.app.details.criticalWorkspaces).toEqual([
       {
-        id: '1',
-        standardId: 'std1',
-        dataSourceId: 'ds1',
-        nameSingular: 'test',
         workspaceId: 'workspace1',
-      } as any,
-    ]);
-
-    workspaceHealthService.healthCheck.mockResolvedValue([
-      {
-        type: WorkspaceHealthIssueType.MISSING_TABLE,
-        message: 'Table missing',
-        objectMetadata: {
-          id: '1',
-          nameSingular: 'test',
-        } as any,
-      },
-      {
-        type: WorkspaceHealthIssueType.MISSING_COLUMN,
-        message: 'Column missing',
-        fieldMetadata: {
-          id: '1',
-          nameSingular: 'test',
-        } as any,
-      },
-      {
-        type: WorkspaceHealthIssueType.RELATION_TYPE_NOT_VALID,
-        message: 'Invalid relation',
+        pendingMigrations: 1,
       },
     ]);
-    workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
-
-    const result = await service.isHealthy();
-
-    expect(result.app.details.problematicWorkspaces[0].issuesSummary).toEqual({
-      structural: 1,
-      data: 1,
-      relationship: 1,
-    });
-    expect(result.app.details.overview.healthDistribution.warning).toBe(1);
   });
 
   it('should handle errors gracefully and maintain state history', async () => {
@@ -195,8 +136,8 @@ describe('AppHealthIndicator', () => {
     expect(result.app.status).toBe('down');
     expect(result.app.message).toBe('Database connection failed');
     expect(result.app.details.system.nodeVersion).toBeDefined();
-    expect(result.app.details.stateHistory).toBeDefined();
     expect(result.app.details.system.timestamp).toBeDefined();
+    expect(result.app.details.stateHistory).toBeDefined();
   });
 
   it('should maintain state history across health checks', async () => {
@@ -207,7 +148,6 @@ describe('AppHealthIndicator', () => {
         workspaceId: 'workspace1',
       } as any,
     ]);
-    workspaceHealthService.healthCheck.mockResolvedValue([]);
     workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
 
     await service.isHealthy();
