@@ -13,6 +13,7 @@ import {
   useIcons,
 } from 'twenty-ui';
 
+import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
@@ -24,8 +25,8 @@ import {
   CommandMenuNavigationStackItem,
   commandMenuNavigationStackState,
 } from '@/command-menu/states/commandMenuNavigationStackState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -37,7 +38,9 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
@@ -84,6 +87,8 @@ export const useCommandMenu = () => {
           title: undefined,
           Icon: undefined,
           instanceId: '',
+          titleInHistory: undefined,
+          IconInHistory: undefined,
         });
         set(isCommandMenuOpenedState, false);
         set(commandMenuSearchState, '');
@@ -146,6 +151,8 @@ export const useCommandMenu = () => {
         page,
         pageTitle,
         pageIcon,
+        pageTitleInHistory,
+        pageIconInHistory,
         pageComponentInstanceId,
         resetNavigationStack = false,
       }: CommandMenuNavigationStackItem & {
@@ -157,6 +164,8 @@ export const useCommandMenu = () => {
           title: pageTitle,
           Icon: pageIcon,
           instanceId: pageComponentInstanceId,
+          titleInHistory: pageTitle,
+          IconInHistory: pageIcon,
         });
 
         const isCommandMenuClosing = snapshot
@@ -169,12 +178,26 @@ export const useCommandMenu = () => {
 
         if (resetNavigationStack) {
           set(commandMenuNavigationStackState, [
-            { page, pageTitle, pageIcon, pageComponentInstanceId },
+            {
+              page,
+              pageTitle,
+              pageIcon,
+              pageTitleInHistory,
+              pageIconInHistory,
+              pageComponentInstanceId,
+            },
           ]);
         } else {
           set(commandMenuNavigationStackState, [
             ...currentNavigationStack,
-            { page, pageTitle, pageIcon, pageComponentInstanceId },
+            {
+              page,
+              pageTitle,
+              pageIcon,
+              pageTitleInHistory,
+              pageIconInHistory,
+              pageComponentInstanceId,
+            },
           ]);
         }
       };
@@ -189,6 +212,8 @@ export const useCommandMenu = () => {
       pageIcon: IconDotsVertical,
       resetNavigationStack: true,
       pageComponentInstanceId: v4(),
+      pageTitleInHistory: 'Command Menu',
+      pageIconInHistory: IconDotsVertical,
     });
   }, [navigateCommandMenu]);
 
@@ -231,6 +256,8 @@ export const useCommandMenu = () => {
           title: lastNavigationStackItem.pageTitle,
           Icon: lastNavigationStackItem.pageIcon,
           instanceId: lastNavigationStackItem.pageComponentInstanceId,
+          titleInHistory: lastNavigationStackItem.pageTitleInHistory,
+          IconInHistory: lastNavigationStackItem.pageIconInHistory,
         });
 
         set(commandMenuNavigationStackState, newNavigationStack);
@@ -263,6 +290,8 @@ export const useCommandMenu = () => {
         title: newNavigationStackItem?.pageTitle,
         Icon: newNavigationStackItem?.pageIcon,
         instanceId: newNavigationStackItem?.pageComponentInstanceId,
+        titleInHistory: newNavigationStackItem?.pageTitleInHistory,
+        IconInHistory: newNavigationStackItem?.pageIconInHistory,
       });
 
       set(hasUserSelectedCommandState, false);
@@ -361,6 +390,10 @@ export const useCommandMenu = () => {
 
         const capitalizedObjectNameSingular = capitalize(objectNameSingular);
 
+        const recordFromCache = snapshot
+          .getLoadable(recordStoreFamilyState(recordId))
+          .getValue();
+
         navigateCommandMenu({
           page: CommandMenuPages.ViewRecord,
           pageTitle: isNewRecord
@@ -369,6 +402,20 @@ export const useCommandMenu = () => {
           pageIcon: Icon,
           pageComponentInstanceId,
           resetNavigationStack: false,
+          pageTitleInHistory: recordFromCache
+            ? getObjectRecordIdentifier({
+                objectMetadataItem,
+                record: recordFromCache,
+              }).name
+            : '',
+          pageIconInHistory: recordFromCache
+            ? () => (
+                <CommandMenuContextRecordChipAvatars
+                  objectMetadataItem={objectMetadataItem}
+                  record={recordFromCache}
+                />
+              )
+            : undefined,
         });
       };
     },
@@ -381,6 +428,8 @@ export const useCommandMenu = () => {
       pageTitle: 'Search',
       pageIcon: IconSearch,
       pageComponentInstanceId: v4(),
+      pageTitleInHistory: 'Search',
+      pageIconInHistory: IconSearch,
     });
   };
 
@@ -401,6 +450,8 @@ export const useCommandMenu = () => {
           pageTitle: 'Calendar Event',
           pageIcon: IconCalendarEvent,
           pageComponentInstanceId,
+          pageTitleInHistory: 'Calendar Event',
+          pageIconInHistory: IconCalendarEvent,
         });
       };
     },
@@ -424,6 +475,8 @@ export const useCommandMenu = () => {
           pageTitle: 'Email Thread',
           pageIcon: IconMail,
           pageComponentInstanceId,
+          pageTitleInHistory: 'Email Thread',
+          pageIconInHistory: IconMail,
         });
       };
     },
@@ -473,6 +526,8 @@ export const useCommandMenu = () => {
           title: undefined,
           Icon: undefined,
           instanceId: '',
+          titleInHistory: undefined,
+          IconInHistory: undefined,
         });
 
         set(hasUserSelectedCommandState, false);

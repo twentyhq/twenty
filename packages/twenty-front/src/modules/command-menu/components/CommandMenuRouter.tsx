@@ -1,8 +1,8 @@
 import { CommandMenuContainer } from '@/command-menu/components/CommandMenuContainer';
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuPagesConfig';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
