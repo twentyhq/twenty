@@ -7,6 +7,7 @@ import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectReco
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerIsSelectedComponentFamilySelector';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
+import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -22,7 +23,7 @@ export const StyledSelectableItem = styled(SelectableItem)`
 type MultipleRecordPickerMenuItemContentProps = {
   record: ObjectRecord;
   objectMetadataItem: ObjectMetadataItem;
-  onChange?: (changedRecordForSelectId: string) => void;
+  onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
 };
 
 export const MultipleRecordPickerMenuItemContent = ({
@@ -52,7 +53,12 @@ export const MultipleRecordPickerMenuItemContent = ({
   );
 
   const handleSelectChange = () => {
-    onChange?.(record.id);
+    onChange?.({
+      recordId: record.id,
+      objectMetadataId: objectMetadataItem.id,
+      isSelected: true,
+      isMatchingSearchFilter: true,
+    });
   };
 
   const recordIdentifier = getObjectRecordIdentifier({

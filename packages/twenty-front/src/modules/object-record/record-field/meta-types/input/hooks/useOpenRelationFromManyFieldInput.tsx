@@ -81,7 +81,7 @@ export const useOpenRelationFromManyFieldInput = () => {
           multipleRecordPickerInstanceId: recordPickerInstanceId,
           forceSearchFilter: '',
           forceSearchableObjectMetadataItems: [objectMetadataItem],
-          forcePickedMorphItems: pickableMorphItems,
+          forcePickableMorphItems: pickableMorphItems,
         });
       },
     [performSearch],

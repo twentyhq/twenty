@@ -8,6 +8,7 @@ import { multipleRecordPickerPickableMorphItemsLengthComponentSelector } from '@
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
+import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
@@ -33,7 +34,7 @@ export const StyledSelectableItem = styled(SelectableItem)`
 `;
 
 type MultipleRecordPickerProps = {
-  onChange?: (changedRecordForSelectId: string) => void;
+  onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
   onSubmit?: () => void;
   onCreate?: ((searchInput?: string) => void) | (() => void);
   layoutDirection?: RecordPickerLayoutDirection;
