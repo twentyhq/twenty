@@ -5,7 +5,6 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ChipFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ChipFieldDisplay';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -23,25 +22,18 @@ const meta: Meta = {
       )!;
 
       return (
-        <RecordTableComponentInstanceContext.Provider
+        <RecordIndexContextProvider
           value={{
-            instanceId,
-            onColumnsChange: () => {},
+            indexIdentifierUrl: () => '',
+            onIndexRecordsLoaded: () => {},
+            objectNamePlural: CoreObjectNamePlural.Company,
+            objectNameSingular: CoreObjectNameSingular.Company,
+            objectMetadataItem: companyObjectMetadataItem,
+            recordIndexId: instanceId,
           }}
         >
-          <RecordIndexContextProvider
-            value={{
-              indexIdentifierUrl: () => '',
-              onIndexRecordsLoaded: () => {},
-              objectNamePlural: CoreObjectNamePlural.Company,
-              objectNameSingular: CoreObjectNameSingular.Company,
-              objectMetadataItem: companyObjectMetadataItem,
-              recordIndexId: instanceId,
-            }}
-          >
-            <Story />
-          </RecordIndexContextProvider>
-        </RecordTableComponentInstanceContext.Provider>
+          <Story />
+        </RecordIndexContextProvider>
       );
     },
     MemoryRouterDecorator,

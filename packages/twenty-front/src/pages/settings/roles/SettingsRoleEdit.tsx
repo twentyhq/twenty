@@ -1,14 +1,7 @@
-import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  H3Title,
-  IconLockOpen,
-  IconSettings,
-  IconUser,
-  IconUserPlus,
-} from 'twenty-ui';
+import { H3Title, IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { RoleAssignment } from '@/settings/roles/role-assignment/components/RoleAssignment';
@@ -18,26 +11,9 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { useTheme } from '@emotion/react';
 import { useGetRolesQuery } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
-const StyledContentContainer = styled.div`
-  flex: 1;
-  width: 100%;
-  padding-left: 0;
-`;
-
-const StyledTitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledIconUser = styled(IconUser)`
-  color: ${({ theme }) => theme.font.color.primary};
-`;
 
 export const SETTINGS_ROLE_DETAIL_TABS = {
   COMPONENT_INSTANCE_ID: 'settings-role-detail-tabs',
@@ -50,7 +26,6 @@ export const SETTINGS_ROLE_DETAIL_TABS = {
 
 export const SettingsRoleEdit = () => {
   const { roleId = '' } = useParams();
-  const theme = useTheme();
   const navigateSettings = useNavigateSettings();
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
     fetchPolicy: 'network-only',
@@ -106,12 +81,7 @@ export const SettingsRoleEdit = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={
-        <StyledTitleContainer>
-          <StyledIconUser size={theme.icon.size.md} />
-          <H3Title title={role.label} />
-        </StyledTitleContainer>
-      }
+      title={<H3Title title={role.label} />}
       links={[
         {
           children: 'Workspace',
@@ -132,9 +102,7 @@ export const SettingsRoleEdit = () => {
           tabs={tabs}
           className="tab-list"
         />
-        <StyledContentContainer>
-          {renderActiveTabContent()}
-        </StyledContentContainer>
+        {renderActiveTabContent()}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

@@ -8,7 +8,6 @@ export type LinkAvatarChipProps = Omit<AvatarChipsCommonProps, 'clickable'> & {
   to: string;
   onClick?: LinkChipProps['onClick'];
   variant?: AvatarChipVariant;
-  isLabelHidden?: boolean;
 };
 
 export const LinkAvatarChip = ({
@@ -25,13 +24,11 @@ export const LinkAvatarChip = ({
   placeholderColorSeed,
   size,
   variant,
-  isLabelHidden,
 }: LinkAvatarChipProps) => (
   <LinkChip
     to={to}
     onClick={onClick}
     label={name}
-    isLabelHidden={isLabelHidden}
     variant={
       //Regular but Highlighted -> missleading
       variant === AvatarChipVariant.Regular

@@ -893,6 +893,7 @@ import {
   IconBroadcastOff,
   IconBrowser,
   IconBrowserCheck,
+  IconBrowserMaximize,
   IconBrowserOff,
   IconBrowserPlus,
   IconBrowserX,
@@ -8393,4 +8394,5 @@ export const ALL_ICONS = {
   IconZoomReset,
   IconZzz,
   IconZzzOff,
+  IconBrowserMaximize,
 };

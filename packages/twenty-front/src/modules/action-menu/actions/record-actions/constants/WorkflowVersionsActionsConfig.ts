@@ -1,5 +1,6 @@
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
@@ -27,6 +28,7 @@ import {
   IconHistory,
   IconHistoryToggle,
   IconPencil,
+  IconRotate2,
 } from 'twenty-ui';
 
 export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
@@ -132,7 +134,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.EXPORT,
-    label: msg`Export records`,
+    label: msg`Export versions`,
     shortLabel: msg`Export`,
     position: 8,
     Icon: IconDatabaseExport,
@@ -143,7 +145,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
   },
   exportView: {
     type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: msg`Export view`,
     shortLabel: msg`Export`,
@@ -153,5 +155,18 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useExportMultipleRecordsAction,
+  },
+  seeDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
+    label: msg`See deleted versions`,
+    shortLabel: msg`Deleted versions`,
+    position: 10,
+    Icon: IconRotate2,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
 };
