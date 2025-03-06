@@ -364,11 +364,11 @@ msgstr "Sunteți sigur că doriți să schimbați intervalul de facturare?"
 
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "Sigur doriți să ștergeți aceste înregistrări? Ele pot fi recuperate din meniul Command ({osControlSymbol} + K)."
 
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "Sigur doriți să ștergeți această înregistrare? Ea poate fi recuperată din meniul Command ({osControlSymbol} + K)."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
