@@ -41,7 +41,6 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
@@ -188,21 +187,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   charges: Relation<ChargeWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.traceable,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Traceable`,
-    description: msg`Company linked to the traceable`,
-    icon: 'IconLink',
-    inverseSideTarget: () => TraceableWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  @OneToMany(() => TraceableWorkspaceEntity, (traceable) => traceable.company, {
-    nullable: true,
-  })
-  traceables: TraceableWorkspaceEntity[];
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.accountOwner,

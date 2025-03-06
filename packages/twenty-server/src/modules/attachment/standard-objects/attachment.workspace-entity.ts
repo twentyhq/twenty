@@ -24,7 +24,6 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
-import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
@@ -155,21 +154,6 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('charge')
   chargeId: string | null;
-
-  @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.traceable,
-    type: RelationMetadataType.MANY_TO_ONE,
-    label: msg`Traceable`,
-    description: msg`Attachment traceable`,
-    icon: 'IconPhone',
-    inverseSideTarget: () => TraceableWorkspaceEntity,
-    inverseSideFieldKey: 'attachments',
-  })
-  @WorkspaceIsNullable()
-  traceable: Relation<TraceableWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('traceable')
-  traceableId: string | null;
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.integration,

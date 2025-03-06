@@ -34,7 +34,6 @@ export const RecordTableEmptyState = () => {
   if (hasObjectReadOnlyPermission) {
     return <RecordTableEmptyStateReadOnly />;
   }
-
   if (isRemote) {
     return <RecordTableEmptyStateRemote />;
   } else if (isSoftDeleteActive === true) {

@@ -70,24 +70,6 @@ export const tracaebleAllView = (
         isVisible: true,
         size: 150,
       },
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
-            TRACEABLE_STANDARD_FIELD_IDS.people
-          ],
-        position: 6,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.traceable].fields[
-            TRACEABLE_STANDARD_FIELD_IDS.integration
-          ],
-        position: 7,
-        isVisible: true,
-        size: 150,
-      },
     ],
   };
 };
