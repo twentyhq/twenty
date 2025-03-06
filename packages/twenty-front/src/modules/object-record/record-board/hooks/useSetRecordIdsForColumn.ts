@@ -2,7 +2,6 @@ import { useRecoilCallback } from 'recoil';
 
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -21,9 +20,6 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
       recordIndexRecordIdsByGroupComponentFamilyState,
       recordBoardId,
     );
-
-  const { setRecordIndexEntityCount } =
-    useSetRecordIndexEntityCount(recordBoardId);
 
   const setRecordIdsForColumn = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -59,18 +55,9 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
             recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
             recordGroupRowIds,
           );
-
-          setRecordIndexEntityCount(
-            recordGroupRowIds.length,
-            currentRecordGroupId,
-          );
         }
       },
-    [
-      recordIndexRecordIdsByGroupFamilyState,
-      recordGroupFieldMetadataState,
-      setRecordIndexEntityCount,
-    ],
+    [recordIndexRecordIdsByGroupFamilyState, recordGroupFieldMetadataState],
   );
 
   return {
