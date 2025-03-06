@@ -54,6 +54,10 @@ msgstr "Gentile {userName},"
 msgid "Deleted Workspace"
 msgstr "Workspace eliminato"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "ti ha invitato a unirti a uno spazio di lavoro chiamato "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Password aggiornata"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Si prega di convalidare questo dominio per consentire agli utenti con indirizzi email <0>@{domain}</0> di unirsi al tuo spazio di lavoro senza richiedere un invito."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Si prega di convalidare questo dominio per consentire agli utenti con indirizzi email <0>@{domain}</0> di unirsi al tuo spazio di lavoro senza richiedere un invito."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

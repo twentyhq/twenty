@@ -54,6 +54,10 @@ msgstr "Sevgili {userName},"
 msgid "Deleted Workspace"
 msgstr "Silinen Çalışma Alanı"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "seni "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Şifre güncellendi"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Bu alan adını doğrulayın, böylece kullanıcılar <0>@{domain}</0> e-posta adresleriyle davet gerektirmeden çalışma alanınıza katılabilir."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Bu alan adını doğrulayın, böylece kullanıcılar <0>@{domain}</0> e-posta adresleriyle davet gerektirmeden çalışma alanınıza katılabilir."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

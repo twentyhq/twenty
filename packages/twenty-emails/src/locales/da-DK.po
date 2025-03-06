@@ -54,6 +54,10 @@ msgstr "Kære {userName},"
 msgid "Deleted Workspace"
 msgstr "Slettet arbejdsområde"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "har inviteret dig til at deltage i et arbejdsområde kaldet "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Adgangskode opdateret"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Bekræft venligst dette domæne for at tillade brugere med <0>@{domain}</0> e-mailadresser at tilslutte sig dit arbejdsområde uden at kræve en invitation."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Bekræft venligst dette domæne for at tillade brugere med <0>@{domain}</0> e-mailadresser at tilslutte sig dit arbejdsområde uden at kræve en invitation."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

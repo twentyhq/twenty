@@ -54,6 +54,10 @@ msgstr "Шановний {userName},"
 msgid "Deleted Workspace"
 msgstr "Видалена робоча область"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "запрошує вас приєднатися до робочого простору під назвою "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Пароль оновлено"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Будь ласка, перевірте цей домен, щоб дозволити користувачам з електронними адресами <0>@{domain}</0> приєднатися до вашого робочого простору без запрошення."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Будь ласка, перевірте цей домен, щоб дозволити користувачам з електронними адресами <0>@{domain}</0> приєднатися до вашого робочого простору без запрошення."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

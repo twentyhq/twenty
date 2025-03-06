@@ -54,6 +54,10 @@ msgstr "亲爱的 {userName},"
 msgid "Deleted Workspace"
 msgstr "删除的工作区"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "邀请您加入名为"
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "密码已更新"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "请验证此域，以允许使用 <0>@{domain}</0> 邮件地址的用户在不需要邀请的情况下加入您的工作区。"
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "请验证此域，以允许使用 <0>@{domain}</0> 邮件地址的用户在不需要邀请的情况下加入您的工作区。"
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

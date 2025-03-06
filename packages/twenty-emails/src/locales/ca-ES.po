@@ -54,6 +54,10 @@ msgstr "Benvolgut {userName},"
 msgid "Deleted Workspace"
 msgstr "Espai de treball esborrat"
 
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "email addresses to join your workspace without requiring an invitation."
+msgstr ""
+
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "t'ha convidat a unir-te a un espai de treball anomenat "
@@ -91,8 +95,12 @@ msgid "Password updated"
 msgstr "Contrasenya actualitzada"
 
 #: src/emails/validate-approved-access-domain.email.tsx
-msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-msgstr "Si us plau, valida aquest domini per permetre als usuaris amb adreces de correu electrònic <0>@{domain}</0> unir-se al teu espai de treball sense requerir una invitació."
+msgid "Please validate this domain to allow users with"
+msgstr ""
+
+#: src/emails/validate-approved-access-domain.email.tsx
+#~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
+#~ msgstr "Si us plau, valida aquest domini per permetre als usuaris amb adreces de correu electrònic <0>@{domain}</0> unir-se al teu espai de treball sense requerir una invitació."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
