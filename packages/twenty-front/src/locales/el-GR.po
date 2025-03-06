@@ -2577,6 +2577,8 @@ msgstr "Αποστέλλονται και Λήφθηκαν"
 msgid "Serbian (Cyrillic)"
 msgstr "Σερβικά (Κυριλλικά)"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Server Admin"
@@ -2584,8 +2586,8 @@ msgstr "Διαχειριστής Διακομιστή"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-msgid "Server Admin Panel"
-msgstr "Διαχειριστής Πίνακας Διακομιστή"
+#~ msgid "Server Admin Panel"
+#~ msgstr "Διαχειριστής Πίνακας Διακομιστή"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
