@@ -61,13 +61,12 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     const objectNamePluralForRedirection =
       formValues.namePlural ?? objectMetadataItem.namePlural;
 
-    setUpdatedObjectNamePlural(objectNamePluralForRedirection);
-
     try {
       await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
         updatePayload: formValues,
       });
+      setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
       formConfig.reset(undefined, { keepValues: true });
 

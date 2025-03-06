@@ -1,4 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { t } from '@lingui/core/macro';
 import { ZodType, z } from 'zod';
 import { ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
@@ -30,7 +31,8 @@ export const settingsDataModelObjectAboutFormSchema =
   settingsDataModelFormFieldsSchema.superRefine(
     ({ labelPlural, labelSingular, namePlural, nameSingular }, ctx) => {
       const labelsAreDifferent =
-        labelPlural.toLowerCase() !== labelSingular.toLocaleLowerCase();
+        labelPlural.trim().toLowerCase() !==
+        labelSingular.trim().toLocaleLowerCase();
       if (!labelsAreDifferent) {
         const labelFields: ReadonlyKeysArray<ObjectMetadataItem> = [
           'labelPlural',
@@ -39,7 +41,7 @@ export const settingsDataModelObjectAboutFormSchema =
         labelFields.forEach((field) =>
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Invalid label',
+            message: t`Singular and plural labels must be different`,
             path: [field],
           }),
         );
@@ -55,7 +57,7 @@ export const settingsDataModelObjectAboutFormSchema =
         nameFields.forEach((field) =>
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Invalid name',
+            message: t`Singular and plural names must be different`,
             path: [field],
           }),
         );

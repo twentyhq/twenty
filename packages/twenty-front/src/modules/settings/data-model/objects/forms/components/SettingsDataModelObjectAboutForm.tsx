@@ -99,7 +99,7 @@ export const SettingsDataModelObjectAboutForm = ({
     if (!isDefined(labelSingular)) return;
 
     const labelPluralFromSingularLabel = plural(labelSingular);
-    setValue('labelPlural', plural(labelPluralFromSingularLabel), {
+    setValue('labelPlural', labelPluralFromSingularLabel, {
       shouldDirty: true,
     });
     if (isLabelSyncedWithName === true) {
