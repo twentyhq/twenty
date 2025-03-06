@@ -2,6 +2,7 @@ import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundConfig'
 import { PlaygroundSessionKeys } from '@/settings/playground/types/SessionKeys';
 import { PlaygroundSessionService } from '@/settings/playground/utils/playgroundSessionService';
 import { PlaygroundSessionSchema } from '@/settings/playground/utils/sessionSchema';
+import { t } from '@lingui/core/macro';
 import { z } from 'zod';
 
 export const setPlaygroundSession = (
@@ -14,7 +15,7 @@ export const setPlaygroundSession = (
   });
 
   if (!result.success) {
-    throw new Error(`Invalid session data`);
+    throw new Error(t`Invalid response. Please check the API key is valid.`);
   }
 
   PlaygroundSessionService.set(PlaygroundSessionKeys.SCHEMA, schema);

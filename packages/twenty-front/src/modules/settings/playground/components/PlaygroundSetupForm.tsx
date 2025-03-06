@@ -23,7 +23,7 @@ import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export const playgroundSetupFormSchema = z.object({
+const playgroundSetupFormSchema = z.object({
   apiKeyForPlayground: z.string(),
   schema: z.nativeEnum(PlaygroundSchemas),
   playgroundType: z.nativeEnum(PlaygroundTypes),
@@ -45,60 +45,91 @@ export const PlaygroundSetupForm = () => {
   const navigateSettings = useNavigateSettings();
   const [, setOpenAPIReference] = useRecoilState(openAPIReferenceState);
 
-  const { control, handleSubmit } = useForm<PlaygroundSetupFormValues>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+    setError,
+  } = useForm<PlaygroundSetupFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(playgroundSetupFormSchema),
+    defaultValues: {
+      schema: PlaygroundSchemas.CORE,
+      playgroundType: PlaygroundTypes.REST,
+    },
   });
 
   const getOpenAPIConfig = async (values: PlaygroundSetupFormValues) => {
-    const response = await fetch(
-      REACT_APP_SERVER_BASE_URL + '/open-api/' + values.schema,
-      {
-        headers: { Authorization: `Bearer ${values.apiKeyForPlayground}` },
-      },
-    );
+    try {
+      const response = await fetch(
+        `${REACT_APP_SERVER_BASE_URL}/open-api/${values.schema}`,
+        {
+          headers: { Authorization: `Bearer ${values.apiKeyForPlayground}` },
+        },
+      );
 
-    const openAPIReference = await response.json();
-    if (!openAPIReference.tags) {
-      throw new Error(t`Invalid API Key`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const openAPIReference = await response.json();
+
+      if (!openAPIReference.tags) {
+        throw new Error('Invalid API Key');
+      }
+
+      return openAPIReference;
+    } catch (error) {
+      throw new Error(
+        t`Failed to fetch API configuration. Please check your API key and try again.`,
+      );
     }
-
-    setOpenAPIReference(openAPIReference);
   };
 
   const onSubmit = async (values: PlaygroundSetupFormValues) => {
-    setPlaygroundSession(values.schema, values.apiKeyForPlayground);
+    try {
+      setPlaygroundSession(values.schema, values.apiKeyForPlayground);
 
-    await getOpenAPIConfig(values);
+      const openAPIReference = await getOpenAPIConfig(values);
+      setOpenAPIReference(openAPIReference);
 
-    const path =
-      values.playgroundType === PlaygroundTypes.GRAPHQL
-        ? SettingsPath.GraphQLPlayground
-        : SettingsPath.RestPlayground;
+      const path =
+        values.playgroundType === PlaygroundTypes.GRAPHQL
+          ? SettingsPath.GraphQLPlayground
+          : SettingsPath.RestPlayground;
 
-    navigateSettings(path, {
-      schema: values.schema.toLowerCase(),
-    });
+      navigateSettings(path, {
+        schema: values.schema.toLowerCase(),
+      });
+    } catch (error) {
+      setError('apiKeyForPlayground', {
+        type: 'manual',
+        message:
+          error instanceof Error
+            ? error.message
+            : t`An unexpected error occurred`,
+      });
+    }
   };
 
   return (
     <StyledForm onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        name={'apiKeyForPlayground'}
+        name="apiKeyForPlayground"
         control={control}
-        render={({ field: { onChange, value } }) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <TextInput
-            label={'API Key'}
-            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzQxMTkyODk5LCJleHAiOjQ4OTQ3OTI4OTgsImp0aSI6ImRjZjhmMGZiLTExMTMtNDhmNC1iZWY2LWQ2N2UxNWM0NGM5ZSJ9.jPvNMtWsjbe-MvAWvqia3MJNtoVDHxhAf9o8BLDNBEc"
+            label={t`API Key`}
+            placeholder="Enter your API key"
             value={value}
-            onChange={(value) => {
-              onChange(value);
-            }}
+            onChange={onChange}
+            error={error?.message}
+            required
           />
         )}
       />
       <Controller
-        name={'schema'}
+        name="schema"
         control={control}
         defaultValue={PlaygroundSchemas.CORE}
         render={({ field: { onChange, value } }) => (
@@ -123,7 +154,7 @@ export const PlaygroundSetupForm = () => {
         )}
       />
       <Controller
-        name={'playgroundType'}
+        name="playgroundType"
         control={control}
         defaultValue={PlaygroundTypes.REST}
         render={({ field: { onChange, value } }) => (
@@ -147,7 +178,13 @@ export const PlaygroundSetupForm = () => {
           />
         )}
       />
-      <Button title={t`Launch`} variant="primary" accent="blue" type="submit" />
+      <Button
+        title={t`Launch`}
+        variant="primary"
+        accent="blue"
+        type="submit"
+        disabled={isSubmitting}
+      />
     </StyledForm>
   );
 };
