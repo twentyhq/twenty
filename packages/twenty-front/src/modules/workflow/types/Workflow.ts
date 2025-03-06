@@ -13,6 +13,7 @@ import {
   workflowManualTriggerSchema,
   workflowRunContextSchema,
   workflowRunOutputSchema,
+  workflowRunOutputStepsOutputSchema,
   workflowRunSchema,
   workflowSendEmailActionSchema,
   workflowSendEmailActionSettingsSchema,
@@ -98,7 +99,9 @@ export type WorkflowVersion = {
 };
 
 export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;
-export type WorkflowRunOutputStepsOutput = WorkflowRunOutput['stepsOutput'];
+export type WorkflowRunOutputStepsOutput = z.infer<
+  typeof workflowRunOutputStepsOutputSchema
+>;
 
 export type WorkflowRunContext = z.infer<typeof workflowRunContextSchema>;
 

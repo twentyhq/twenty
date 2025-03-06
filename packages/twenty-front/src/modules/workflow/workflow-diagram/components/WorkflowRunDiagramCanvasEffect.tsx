@@ -63,7 +63,11 @@ export const WorkflowRunDiagramCanvasEffect = () => {
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
-      if (selectedNode.id === TRIGGER_STEP_ID) {
+      if (
+        selectedNode.id === TRIGGER_STEP_ID ||
+        selectedNodeData.runStatus === 'not-executed' ||
+        selectedNodeData.runStatus === 'running'
+      ) {
         goBackToFirstWorkflowRunRightDrawerTabIfNeeded();
       }
 

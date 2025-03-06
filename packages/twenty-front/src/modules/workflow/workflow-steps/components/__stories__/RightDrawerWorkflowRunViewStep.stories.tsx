@@ -5,13 +5,17 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { graphql, HttpResponse } from 'msw';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { oneWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
+import {
+  oneFailedWorkflowRunQueryResult,
+  oneSucceededWorkflowRunQueryResult,
+} from '~/testing/mock-data/workflow-run';
 import { RightDrawerWorkflowRunViewStep } from '../RightDrawerWorkflowRunViewStep';
 
 const StyledWrapper = styled.div`
@@ -38,11 +42,12 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
       );
       const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
 
-      setFlow(oneWorkflowRunQueryResult.workflowRun.output.flow);
+      setFlow(oneSucceededWorkflowRunQueryResult.workflowRun.output.flow);
       setWorkflowSelectedNode(
-        oneWorkflowRunQueryResult.workflowRun.output.flow.steps[0].id,
+        oneSucceededWorkflowRunQueryResult.workflowRun.output.flow.steps.at(-1)!
+          .id,
       );
-      setWorkflowRunId(oneWorkflowRunQueryResult.workflowRun.id);
+      setWorkflowRunId(oneSucceededWorkflowRunQueryResult.workflowRun.id);
 
       return <Story />;
     },
@@ -83,6 +88,28 @@ export const InputTabDisabledForTrigger: Story = {
       return <Story />;
     },
   ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const inputTab = await canvas.findByRole('button', { name: 'Input' });
+
+    expect(inputTab).toBeDisabled();
+  },
+};
+
+export const InputTabNotExecutedStep: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('FindOneWorkflowRun', () => {
+          return HttpResponse.json({
+            data: oneFailedWorkflowRunQueryResult,
+          });
+        }),
+        ...graphqlMocks.handlers,
+      ],
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

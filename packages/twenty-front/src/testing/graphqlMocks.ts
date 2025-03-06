@@ -30,7 +30,7 @@ import {
   getWorkflowVersionsMock,
   workflowQueryResult,
 } from '~/testing/mock-data/workflow';
-import { oneWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
+import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
@@ -717,7 +717,7 @@ export const graphqlMocks = {
     }),
     graphql.query('FindOneWorkflowRun', () => {
       return HttpResponse.json({
-        data: oneWorkflowRunQueryResult,
+        data: oneSucceededWorkflowRunQueryResult,
       });
     }),
     graphql.query('FindManyWorkflowVersions', () => {
