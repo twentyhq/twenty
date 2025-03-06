@@ -31,8 +31,7 @@ export const settingsDataModelObjectAboutFormSchema =
   settingsDataModelFormFieldsSchema.superRefine(
     ({ labelPlural, labelSingular, namePlural, nameSingular }, ctx) => {
       const labelsAreDifferent =
-        labelPlural.trim().toLowerCase() !==
-        labelSingular.trim().toLocaleLowerCase();
+        labelPlural.trim().toLowerCase() !== labelSingular.trim().toLowerCase();
       if (!labelsAreDifferent) {
         const labelFields: ReadonlyKeysArray<ObjectMetadataItem> = [
           'labelPlural',
@@ -48,7 +47,7 @@ export const settingsDataModelObjectAboutFormSchema =
       }
 
       const nameAreDifferent =
-        nameSingular.toLocaleLowerCase() !== namePlural.toLowerCase();
+        nameSingular.toLowerCase() !== namePlural.toLowerCase();
       if (!nameAreDifferent) {
         const nameFields: ReadonlyKeysArray<ObjectMetadataItem> = [
           'nameSingular',
