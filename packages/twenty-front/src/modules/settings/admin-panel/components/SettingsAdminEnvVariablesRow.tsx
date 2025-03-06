@@ -66,6 +66,7 @@ const StyledValueContainer = styled.div`
 const StyledTableRow = styled(TableRow)<{ isExpanded: boolean }>`
   background-color: ${({ isExpanded, theme }) =>
     isExpanded ? theme.background.transparent.light : 'transparent'};
+  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledTransitionedIconChevronRight = styled(IconChevronRight)`
