@@ -5,7 +5,13 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { IconDotsVertical, IconSearch, useIcons } from 'twenty-ui';
+import {
+  IconCalendarEvent,
+  IconDotsVertical,
+  IconMail,
+  IconSearch,
+  useIcons,
+} from 'twenty-ui';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
@@ -378,6 +384,52 @@ export const useCommandMenu = () => {
     });
   };
 
+  const openCalendarEventInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (calendarEventId: string) => {
+        const pageComponentInstanceId = v4();
+
+        set(
+          viewableRecordIdComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          calendarEventId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.ViewCalendarEvent,
+          pageTitle: 'Calendar Event',
+          pageIcon: IconCalendarEvent,
+          pageComponentInstanceId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
+  const openEmailThreadInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (emailThreadId: string) => {
+        const pageComponentInstanceId = v4();
+
+        set(
+          viewableRecordIdComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          emailThreadId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.ViewEmailThread,
+          pageTitle: 'Email Thread',
+          pageIcon: IconMail,
+          pageComponentInstanceId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
   const setGlobalCommandMenuContext = useRecoilCallback(
     ({ set }) => {
       return () => {
@@ -440,5 +492,7 @@ export const useCommandMenu = () => {
     openRecordInCommandMenu,
     toggleCommandMenu,
     setGlobalCommandMenuContext,
+    openCalendarEventInCommandMenu,
+    openEmailThreadInCommandMenu,
   };
 };
