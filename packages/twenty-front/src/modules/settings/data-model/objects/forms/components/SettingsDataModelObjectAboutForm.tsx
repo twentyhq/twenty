@@ -95,7 +95,9 @@ export const SettingsDataModelObjectAboutForm = ({
     ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
     : t`Input must be in camel case and cannot start with a number`;
 
-  const fillLabelPlural = (labelSingular: string) => {
+  const fillLabelPlural = (labelSingular: string | undefined) => {
+    if (!isDefined(labelSingular)) return;
+
     const labelPluralFromSingularLabel = plural(labelSingular);
     setValue('labelPlural', plural(labelPluralFromSingularLabel), {
       shouldDirty: true,
@@ -105,13 +107,19 @@ export const SettingsDataModelObjectAboutForm = ({
     }
   };
 
-  const fillNameSingularFromLabelSingular = (labelSingular: string) => {
+  const fillNameSingularFromLabelSingular = (
+    labelSingular: string | undefined,
+  ) => {
+    if (!isDefined(labelSingular)) return;
+
     setValue('nameSingular', computeMetadataNameFromLabel(labelSingular), {
       shouldDirty: true,
     });
   };
 
-  const fillNamePluralFromLabelPlural = (labelPlural: string) => {
+  const fillNamePluralFromLabelPlural = (labelPlural: string | undefined) => {
+    if (!isDefined(labelPlural)) return;
+
     setValue('namePlural', computeMetadataNameFromLabel(labelPlural), {
       shouldDirty: true,
     });

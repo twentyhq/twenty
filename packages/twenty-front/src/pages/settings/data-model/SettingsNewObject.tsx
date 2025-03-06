@@ -27,7 +27,7 @@ export const SettingsNewObject = () => {
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
 
   const formConfig = useForm<SettingsDataModelObjectAboutFormValues>({
-    mode: 'onTouched',
+    mode: 'onSubmit',
     resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
   });
 
@@ -88,7 +88,9 @@ export const SettingsNewObject = () => {
               title={t`About`}
               description={t`Define the name and description of your object`}
             />
-            <SettingsDataModelObjectAboutForm />
+            <SettingsDataModelObjectAboutForm
+              onNewDirtyField={() => formConfig.trigger()}
+            />
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
