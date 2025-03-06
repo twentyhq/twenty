@@ -12,10 +12,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import {
-  oneFailedWorkflowRunQueryResult,
-  oneSucceededWorkflowRunQueryResult,
-} from '~/testing/mock-data/workflow-run';
+import { oneFailedWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
 import { RightDrawerWorkflowRunViewStep } from '../RightDrawerWorkflowRunViewStep';
 
 const StyledWrapper = styled.div`
@@ -42,12 +39,11 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
       );
       const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
 
-      setFlow(oneSucceededWorkflowRunQueryResult.workflowRun.output.flow);
+      setFlow(oneFailedWorkflowRunQueryResult.workflowRun.output.flow);
       setWorkflowSelectedNode(
-        oneSucceededWorkflowRunQueryResult.workflowRun.output.flow.steps.at(-1)!
-          .id,
+        oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps[0].id,
       );
-      setWorkflowRunId(oneSucceededWorkflowRunQueryResult.workflowRun.id);
+      setWorkflowRunId(oneFailedWorkflowRunQueryResult.workflowRun.id);
 
       return <Story />;
     },
@@ -56,7 +52,16 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
     WorkspaceDecorator,
   ],
   parameters: {
-    msw: graphqlMocks,
+    msw: {
+      handlers: [
+        graphql.query('FindOneWorkflowRun', () => {
+          return HttpResponse.json({
+            data: oneFailedWorkflowRunQueryResult,
+          });
+        }),
+        ...graphqlMocks.handlers,
+      ],
+    },
   },
 };
 
@@ -98,18 +103,21 @@ export const InputTabDisabledForTrigger: Story = {
 };
 
 export const InputTabNotExecutedStep: Story = {
-  parameters: {
-    msw: {
-      handlers: [
-        graphql.query('FindOneWorkflowRun', () => {
-          return HttpResponse.json({
-            data: oneFailedWorkflowRunQueryResult,
-          });
-        }),
-        ...graphqlMocks.handlers,
-      ],
+  decorators: [
+    (Story) => {
+      const setWorkflowSelectedNode = useSetRecoilState(
+        workflowSelectedNodeState,
+      );
+
+      setWorkflowSelectedNode(
+        oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps.at(-1)!
+          .id,
+      );
+
+      return <Story />;
     },
-  },
+  ],
+
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
