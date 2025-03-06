@@ -2,9 +2,14 @@ import { createState } from '@ui/utilities/state/utils/createState';
 import { IconComponent } from 'twenty-ui';
 
 export const commandMenuPageInfoState = createState<{
-  title: string | undefined;
-  Icon: IconComponent | undefined;
+  title?: string;
+  Icon?: IconComponent;
+  instanceId: string;
 }>({
   key: 'command-menu/commandMenuPageInfoState',
-  defaultValue: { title: undefined, Icon: undefined },
+  defaultValue: {
+    title: undefined,
+    Icon: undefined,
+    instanceId: '',
+  },
 });

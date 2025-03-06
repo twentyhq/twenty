@@ -72,7 +72,7 @@ export const AdvancedFilterDropdownButton = () => {
       }
       dropdownComponents={
         <AdvancedFilterRootLevelViewFilterGroup
-          rootLevelViewFilterGroupId={outermostRecordFilterGroupId}
+          rootLevelRecordFilterGroupId={outermostRecordFilterGroupId}
         />
       }
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}

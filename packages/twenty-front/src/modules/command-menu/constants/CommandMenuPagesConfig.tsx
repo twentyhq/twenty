@@ -1,10 +1,10 @@
-import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/components/RightDrawerCalendarEvent';
 import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
-import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
+import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
 import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/components/CommandMenuSearchRecordsPage';
+import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage';
+import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
 import { RightDrawerWorkflowEditStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStep';
 import { RightDrawerWorkflowRunViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowRunViewStep';
 import { RightDrawerWorkflowViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStep';
@@ -16,9 +16,9 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   React.ReactNode
 >([
   [CommandMenuPages.Root, <CommandMenu />],
-  [CommandMenuPages.ViewRecord, <RightDrawerRecord />],
-  [CommandMenuPages.ViewEmailThread, <RightDrawerEmailThread />],
-  [CommandMenuPages.ViewCalendarEvent, <RightDrawerCalendarEvent />],
+  [CommandMenuPages.ViewRecord, <CommandMenuRecordPage />],
+  [CommandMenuPages.ViewEmailThread, <CommandMenuMessageThreadPage />],
+  [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
   [CommandMenuPages.Copilot, <RightDrawerAIChat />],
   [
     CommandMenuPages.WorkflowStepSelectTriggerType,
