@@ -1,3 +1,4 @@
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { createOneObjectMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-factory.util';
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -12,10 +13,40 @@ const FailingCreationTestsUseCase: EachTestingContext<
   Partial<CreateObjectInputPayload>
 >[] = [
   {
-    title: 'NameSingular is an empty string',
-    context: {
-      nameSingular: '',
-    },
+    title: 'when nameSingular has invalid characters',
+    context: { nameSingular: 'μ' },
+  },
+  {
+    title: 'when namePlural has invalid characters',
+    context: { namePlural: 'μ' },
+  },
+  {
+    title: 'when nameSingular is a reserved keyword',
+    context: { nameSingular: 'user' },
+  },
+  {
+    title: 'when namePlural is a reserved keyword',
+    context: { namePlural: 'users' },
+  },
+  {
+    title: 'when nameSingular is not camelCased',
+    context: { nameSingular: 'Not_Camel_Case' },
+  },
+  {
+    title: 'when namePlural is not camelCased',
+    context: { namePlural: 'Not_Camel_Case' },
+  },
+  {
+    title: 'when namePlural is an empty string',
+    context: { namePlural: '' },
+  },
+  {
+    title: 'when nameSingular is an empty string',
+    context: { nameSingular: '' },
+  },
+  {
+    title: 'when name exceeds maximum length',
+    context: { nameSingular: 'a'.repeat(64) },
   },
 ];
 
@@ -32,7 +63,7 @@ const getMockCreateObjectInput = (
   ...overrides,
 });
 
-describe('Object metadata failing creation', () => {
+describe('Object metadata creation should fail', () => {
   const performFailingObjectMetadataCreation = async (
     args: CreateObjectInputPayload,
   ) => {
@@ -46,18 +77,23 @@ describe('Object metadata failing creation', () => {
 
     const response = await makeMetadataAPIRequest(graphqlOperation);
     if (isDefined(response.body.data)) {
-      const createdId = response.body.data.createOneObject.id;
-      await deleteOneObjectMetadataItem(createdId);
+      try {
+        const createdId = response.body.data.createOneObject.id;
+        await deleteOneObjectMetadataItem(createdId);
+      } catch (e) {
+        console.error(e);
+      }
       fail('Object Metadata Item should have failed but did not');
     }
-
-    return response;
+    expect(response.body.errors.length).toBe(1);
+    return response.body.errors[0];
   };
   it.each(FailingCreationTestsUseCase)('$title', async ({ context }) => {
-    const response = await performFailingObjectMetadataCreation(
+    const error = await performFailingObjectMetadataCreation(
       getMockCreateObjectInput(context),
     );
 
-    expect(response.body.errors).toMatchSnapshot();
+    expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
+    expect(error.message).toMatchSnapshot();
   });
 });

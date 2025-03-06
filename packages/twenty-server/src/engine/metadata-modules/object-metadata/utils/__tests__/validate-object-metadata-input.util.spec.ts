@@ -53,7 +53,7 @@ const validateObjectMetadataTestCases: ValidateObjectNameTestingContext[] = [
   },
 ];
 
-describe('validateObjectMetadataInputOrThrow', () => {
+describe('validateObjectMetadataInputOrThrow should fail', () => {
   it.each(validateObjectMetadataTestCases)('$title', ({ context }) => {
     expect(() =>
       validateObjectMetadataInputOrThrow(getObjectInput(context)),

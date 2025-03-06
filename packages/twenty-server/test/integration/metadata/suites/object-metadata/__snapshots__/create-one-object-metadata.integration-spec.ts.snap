@@ -1,12 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Object metadata failing creation NameSingular is an empty string 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Name is too short",
-  },
-]
-`;
+exports[`Object metadata creation should fail when namePlural has invalid characters 1`] = `"Characters used in name "μ" are not supported"`;
+
+exports[`Object metadata creation should fail when namePlural is a reserved keyword 1`] = `"The name "users" is not available"`;
+
+exports[`Object metadata creation should fail when namePlural is an empty string 1`] = `"Name is too short"`;
+
+exports[`Object metadata creation should fail when namePlural is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;
+
+exports[`Object metadata creation should fail when nameSingular has invalid characters 1`] = `"Characters used in name "μ" are not supported"`;
+
+exports[`Object metadata creation should fail when nameSingular is a reserved keyword 1`] = `"The name "user" is not available"`;
+
+exports[`Object metadata creation should fail when nameSingular is an empty string 1`] = `"Name is too short"`;
+
+exports[`Object metadata creation should fail when nameSingular is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;

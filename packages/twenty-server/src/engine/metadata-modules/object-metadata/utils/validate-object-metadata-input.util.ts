@@ -6,6 +6,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { IDENTIFIER_MAX_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-max-char-length.constants';
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import {
   beneathDatabaseIdentifierMininumLength,
@@ -118,7 +119,7 @@ const validateNameCamelCasedOrThrow = (name?: string) => {
 const validateNameIsNotTooLongOrThrow = (name?: string) => {
   if (isDefined(name) && exceedsDatabaseIdentifierMaximumLength(name)) {
     throw new ObjectMetadataException(
-      `Name exceeds 63 characters: ${name}`,
+      `Name exceeds ${IDENTIFIER_MAX_CHAR_LENGTH} characters: ${name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }
