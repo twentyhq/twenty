@@ -131,14 +131,12 @@ export const CommandMenuTopBar = () => {
     return filteredCommandMenuNavigationStack.map((page, index) => {
       const isLastChip =
         index === filteredCommandMenuNavigationStack.length - 1;
-      const IconComponent = isLastChip ? page.pageIcon : page.pageIconInHistory;
-      const text = isLastChip ? page.pageTitle : page.pageTitleInHistory;
 
       return {
-        Icons: [
-          IconComponent ? <IconComponent size={theme.icon.size.sm} /> : null,
-        ],
-        text,
+        page,
+        pageComponentInstanceId: page.pageComponentInstanceId,
+        Icons: [<page.pageIcon size={theme.icon.size.sm} />],
+        text: page.pageTitle,
         onClick: isLastChip
           ? undefined
           : () => {

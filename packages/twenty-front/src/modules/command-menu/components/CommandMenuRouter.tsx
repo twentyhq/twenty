@@ -30,24 +30,24 @@ export const CommandMenuRouter = () => {
 
   return (
     <CommandMenuContainer>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{
-          duration: theme.animation.duration.instant,
-          delay: 0.1,
-        }}
+      <CommandMenuPageComponentInstanceContext.Provider
+        value={{ instanceId: commandMenuPageInfo.instanceId }}
       >
-        <CommandMenuTopBar />
-      </motion.div>
-      <StyledCommandMenuContent>
-        <CommandMenuPageComponentInstanceContext.Provider
-          value={{ instanceId: commandMenuPageInfo.instanceId }}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            duration: theme.animation.duration.instant,
+            delay: 0.1,
+          }}
         >
+          <CommandMenuTopBar />
+        </motion.div>
+        <StyledCommandMenuContent>
           {commandMenuPageComponent}
-        </CommandMenuPageComponentInstanceContext.Provider>
-      </StyledCommandMenuContent>
+        </StyledCommandMenuContent>
+      </CommandMenuPageComponentInstanceContext.Provider>
     </CommandMenuContainer>
   );
 };
