@@ -20,10 +20,11 @@ describe('GlobalSearchService', () => {
 
   describe('filterObjectMetadataItems', () => {
     it('should return searchable object metadata items', () => {
-      const objectMetadataItems = service.filterObjectMetadataItems(
-        mockObjectMetadataItemsWithFieldMaps,
-        [],
-      );
+      const objectMetadataItems = service.filterObjectMetadataItems({
+        objectMetadataItemWithFieldMaps: mockObjectMetadataItemsWithFieldMaps,
+        includedObjectNameSingulars: [],
+        excludedObjectNameSingulars: [],
+      });
 
       expect(objectMetadataItems).toEqual([
         mockObjectMetadataItemsWithFieldMaps[0],
@@ -32,14 +33,26 @@ describe('GlobalSearchService', () => {
       ]);
     });
     it('should return searchable object metadata items without excluded ones', () => {
-      const objectMetadataItems = service.filterObjectMetadataItems(
-        mockObjectMetadataItemsWithFieldMaps,
-        ['company'],
-      );
+      const objectMetadataItems = service.filterObjectMetadataItems({
+        objectMetadataItemWithFieldMaps: mockObjectMetadataItemsWithFieldMaps,
+        includedObjectNameSingulars: [],
+        excludedObjectNameSingulars: ['company'],
+      });
 
       expect(objectMetadataItems).toEqual([
         mockObjectMetadataItemsWithFieldMaps[0],
         mockObjectMetadataItemsWithFieldMaps[2],
+      ]);
+    });
+    it('should return searchable object metadata items with included ones only', () => {
+      const objectMetadataItems = service.filterObjectMetadataItems({
+        objectMetadataItemWithFieldMaps: mockObjectMetadataItemsWithFieldMaps,
+        includedObjectNameSingulars: ['company'],
+        excludedObjectNameSingulars: [],
+      });
+
+      expect(objectMetadataItems).toEqual([
+        mockObjectMetadataItemsWithFieldMaps[1],
       ]);
     });
   });

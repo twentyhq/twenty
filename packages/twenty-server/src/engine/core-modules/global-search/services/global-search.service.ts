@@ -1,12 +1,16 @@
-import { Entity } from '@microsoft/microsoft-graph-types';
+import { Injectable } from '@nestjs/common';
+
 import { FieldMetadataType, getLogoUrlFromDomainName } from 'twenty-shared';
-import { Brackets } from 'typeorm';
+import { Brackets, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { RESULTS_LIMIT_BY_OBJECT_WITHOUT_SEARCH_TERMS } from 'src/engine/core-modules/global-search/constants/results-limit-by-object-without-search-terms';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/global-search/constants/standard-objects-by-priority-rank';
 import { GlobalSearchRecordDTO } from 'src/engine/core-modules/global-search/dtos/global-search-record-dto';
+import { ObjectRecordFilterInput } from 'src/engine/core-modules/global-search/dtos/object-record-filter-input';
 import {
   GlobalSearchException,
   GlobalSearchExceptionCode,
@@ -14,30 +18,70 @@ import {
 import { RecordsWithObjectMetadataItem } from 'src/engine/core-modules/global-search/types/records-with-object-metadata-item';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
+@Injectable()
 export class GlobalSearchService {
-  filterObjectMetadataItems(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps[],
-    excludedObjectNameSingulars: string[] | undefined,
-  ) {
+  filterObjectMetadataItems({
+    objectMetadataItemWithFieldMaps,
+    includedObjectNameSingulars,
+    excludedObjectNameSingulars,
+  }: {
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps[];
+    includedObjectNameSingulars: string[];
+    excludedObjectNameSingulars: string[];
+  }) {
     return objectMetadataItemWithFieldMaps.filter(
       ({ nameSingular, isSearchable }) => {
-        return (
-          !excludedObjectNameSingulars?.includes(nameSingular) && isSearchable
-        );
+        if (!isSearchable) {
+          return false;
+        }
+        if (excludedObjectNameSingulars.includes(nameSingular)) {
+          return false;
+        }
+        if (includedObjectNameSingulars.length > 0) {
+          return includedObjectNameSingulars.includes(nameSingular);
+        }
+
+        return true;
       },
     );
   }
 
-  async buildSearchQueryAndGetRecords(
-    entityManager: WorkspaceRepository<Entity>,
-    objectMetadataItem: ObjectMetadataItemWithFieldMaps,
-    searchTerms: string,
-    searchTermsOr: string,
-    limit: number,
-  ) {
+  async buildSearchQueryAndGetRecords<Entity extends ObjectLiteral>({
+    entityManager,
+    objectMetadataItem,
+    featureFlagMap,
+    searchTerms,
+    searchTermsOr,
+    limit,
+    filter,
+  }: {
+    entityManager: WorkspaceRepository<Entity>;
+    objectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    featureFlagMap: FeatureFlagMap;
+    searchTerms: string;
+    searchTermsOr: string;
+    limit: number;
+    filter: ObjectRecordFilterInput;
+  }) {
     const queryBuilder = entityManager.createQueryBuilder();
+
+    const queryParser = new GraphqlQueryParser(
+      objectMetadataItem.fieldsByName,
+      generateObjectMetadataMaps([objectMetadataItem]),
+      featureFlagMap,
+    );
+
+    queryParser.applyFilterToBuilder(
+      queryBuilder,
+      objectMetadataItem.nameSingular,
+      filter,
+    );
+
+    queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+
     const imageIdentifierField =
       this.getImageIdentifierColumn(objectMetadataItem);
 
