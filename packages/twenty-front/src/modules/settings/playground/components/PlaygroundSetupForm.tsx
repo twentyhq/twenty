@@ -1,4 +1,3 @@
-import { openAPIReferenceState } from '@/settings/playground/states/openAPIReference';
 import {
   PlaygroundSchemas,
   PlaygroundTypes,
@@ -11,7 +10,6 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
 import {
   Button,
   IconApi,
@@ -43,7 +41,6 @@ const StyledForm = styled.form`
 export const PlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
-  const [, setOpenAPIReference] = useRecoilState(openAPIReferenceState);
 
   const {
     control,
@@ -59,8 +56,9 @@ export const PlaygroundSetupForm = () => {
     },
   });
 
-  const getOpenAPIConfig = async (values: PlaygroundSetupFormValues) => {
+  const validateApiKey = async (values: PlaygroundSetupFormValues) => {
     try {
+      // Validate by fetching the schema (but not storing it)
       const response = await fetch(
         `${REACT_APP_SERVER_BASE_URL}/open-api/${values.schema}`,
         {
@@ -78,21 +76,23 @@ export const PlaygroundSetupForm = () => {
         throw new Error('Invalid API Key');
       }
 
-      return openAPIReference;
+      return true;
     } catch (error) {
       throw new Error(
-        t`Failed to fetch API configuration. Please check your API key and try again.`,
+        t`Failed to validate API key. Please check your API key and try again.`,
       );
     }
   };
 
   const onSubmit = async (values: PlaygroundSetupFormValues) => {
     try {
+      // Validate the API key
+      await validateApiKey(values);
+
+      // Save the session data
       setPlaygroundSession(values.schema, values.apiKeyForPlayground);
 
-      const openAPIReference = await getOpenAPIConfig(values);
-      setOpenAPIReference(openAPIReference);
-
+      // Navigate to the playground
       const path =
         values.playgroundType === PlaygroundTypes.GRAPHQL
           ? SettingsPath.GraphQLPlayground

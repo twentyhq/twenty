@@ -11,6 +11,11 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 export const PLAYGROUND_API_KEY = 'apiKeyForPlayground';
 export const PLAYGROUND_SCHEMA = 'apiSchemaForPlayground';
 
+export const SchemaToPath = {
+  [PlaygroundSchemas.CORE]: 'graphql',
+  [PlaygroundSchemas.METADATA]: 'metadata',
+};
+
 type PlaygroundSessionValid = {
   apiKey: string;
   schema: PlaygroundSchemas;
@@ -28,11 +33,6 @@ type PlaygroundSessionInvalid = {
 export type usePlaygroundSessionResult =
   | PlaygroundSessionValid
   | PlaygroundSessionInvalid;
-
-export const SchemaToPath = {
-  [PlaygroundSchemas.CORE]: 'graphql',
-  [PlaygroundSchemas.METADATA]: 'metadata',
-};
 
 export const usePlaygroundSession = (
   playgroundType: PlaygroundTypes,
