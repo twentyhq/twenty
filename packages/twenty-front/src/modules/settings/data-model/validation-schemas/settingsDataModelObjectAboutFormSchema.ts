@@ -5,23 +5,20 @@ import { ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
-const requiredFormFields = z.object({
-  description: z.string(),
-  icon: z.string(),
-  labelSingular: zodNonEmptyString,
-  labelPlural: zodNonEmptyString,
-}) satisfies ZodType<
+type ZodTypeRequiredFormFields = ZodType<
   Pick<
     ObjectMetadataItem,
     'labelSingular' | 'labelPlural' | 'description' | 'icon'
   >
 >;
+const requiredFormFields = z.object({
+  description: z.string(),
+  icon: z.string(),
+  labelSingular: zodNonEmptyString,
+  labelPlural: zodNonEmptyString,
+}) satisfies ZodTypeRequiredFormFields;
 
-const optionalFormFields = z.object({
-  namePlural: zodNonEmptyString.optional(),
-  nameSingular: zodNonEmptyString.optional(),
-  isLabelSyncedWithName: z.boolean().optional(),
-}) satisfies ZodType<
+type ZodTypeOptionalFormFields = ZodType<
   Partial<
     Pick<
       ObjectMetadataItem,
@@ -29,6 +26,11 @@ const optionalFormFields = z.object({
     >
   >
 >;
+const optionalFormFields = z.object({
+  namePlural: zodNonEmptyString.optional(),
+  nameSingular: zodNonEmptyString.optional(),
+  isLabelSyncedWithName: z.boolean().optional(),
+}) satisfies ZodTypeOptionalFormFields;
 
 export const settingsDataModelObjectAboutFormSchema = requiredFormFields
   .merge(optionalFormFields)
