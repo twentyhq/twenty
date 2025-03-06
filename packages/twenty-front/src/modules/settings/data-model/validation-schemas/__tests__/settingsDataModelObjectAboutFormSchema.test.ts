@@ -62,7 +62,7 @@ describe('settingsDataModelObjectAboutFormSchema', () => {
         input: {
           description: 'Only description',
           labelPlural: undefined,
-          labelSingular: undefined
+          labelSingular: undefined,
         },
         expectedSuccess: false,
       },
@@ -139,7 +139,7 @@ describe('settingsDataModelObjectAboutFormSchema', () => {
     ({ context: { expectedSuccess, input } }) => {
       const result = settingsDataModelObjectAboutFormSchema.safeParse({
         ...validInput,
-        ...input
+        ...input,
       });
       expect(result.success).toBe(expectedSuccess);
       if (!expectedSuccess) {
