@@ -36,7 +36,7 @@ export const RecordTableEmptyStateSoftDelete = () => {
       throw new Error('Deleted filter not found');
     }
 
-    removeRecordFilter(deletedFilter.fieldMetadataId);
+    removeRecordFilter({ recordFilterId: deletedFilter.id });
 
     toggleSoftDeleteFilterState(false);
   };
