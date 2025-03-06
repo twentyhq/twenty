@@ -6,5 +6,5 @@ import {
 export const isRecordOutputSchema = (
   outputSchema: OutputSchema,
 ): outputSchema is RecordOutputSchema => {
-  return outputSchema._outputSchemaType === 'RECORD';
+  return outputSchema?._outputSchemaType === 'RECORD';
 };

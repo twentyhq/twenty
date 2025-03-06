@@ -10,15 +10,21 @@ const StyledContainer = styled.div`
 type VariableChipStandaloneProps = {
   rawVariableName: string;
   onRemove?: () => void;
+  isObject?: boolean;
 };
 
 export const VariableChipStandalone = ({
   rawVariableName,
   onRemove,
+  isObject,
 }: VariableChipStandaloneProps) => {
   return (
     <StyledContainer>
-      <VariableChip rawVariableName={rawVariableName} onRemove={onRemove} />
+      <VariableChip
+        rawVariableName={rawVariableName}
+        onRemove={onRemove}
+        isObject={isObject}
+      />
     </StyledContainer>
   );
 };
