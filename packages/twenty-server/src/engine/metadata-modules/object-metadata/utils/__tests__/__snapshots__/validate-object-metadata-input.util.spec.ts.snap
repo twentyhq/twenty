@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`validateObjectMetadataInputOrThrow when name exceeds maximum length 1`] = `"String "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters limit"`;
+
+exports[`validateObjectMetadataInputOrThrow when namePlural has invalid characters 1`] = `"Characters used in name "μ" are not supported"`;
+
+exports[`validateObjectMetadataInputOrThrow when namePlural is a reserved keyword 1`] = `"The name "users" is not available"`;
+
+exports[`validateObjectMetadataInputOrThrow when namePlural is an empty string 1`] = `"Characters used in name "" are not supported"`;
+
+exports[`validateObjectMetadataInputOrThrow when namePlural is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;
+
+exports[`validateObjectMetadataInputOrThrow when nameSingular has invalid characters 1`] = `"Characters used in name "μ" are not supported"`;
+
+exports[`validateObjectMetadataInputOrThrow when nameSingular is a reserved keyword 1`] = `"The name "user" is not available"`;
+
+exports[`validateObjectMetadataInputOrThrow when nameSingular is an empty string 1`] = `"Characters used in name "" are not supported"`;
+
+exports[`validateObjectMetadataInputOrThrow when nameSingular is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;

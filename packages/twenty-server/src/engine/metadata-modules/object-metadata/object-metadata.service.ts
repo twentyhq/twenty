@@ -80,6 +80,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return result;
   }
 
+  // HERE
   override async createOne(
     objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
@@ -95,6 +96,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       objectMetadataInput.namePlural,
     );
 
+    // Should check by default if undefined ?
     if (objectMetadataInput.isLabelSyncedWithName === true) {
       validateNameAndLabelAreSyncOrThrow(
         objectMetadataInput.labelSingular,

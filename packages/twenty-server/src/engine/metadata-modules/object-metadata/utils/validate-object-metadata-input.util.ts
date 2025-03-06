@@ -7,9 +7,13 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
-import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
+import {
+  beneathDatabaseIdentifierMininumLength,
+  exceedsDatabaseIdentifierMaximumLength,
+} from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
 import { camelCase } from 'src/utils/camel-case';
+import { isDefined } from 'twenty-shared';
 
 const coreObjectNames = [
   'approvedAccessDomain',
@@ -72,26 +76,28 @@ const reservedKeywords = [
   'relations',
 ];
 
+// TODO Unless does not verify that nameSingular and namePlural are different
+// BETTER should not stop on first ?
 export const validateObjectMetadataInputOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
->(
-  objectMetadataInput: T,
-): void => {
-  validateNameCamelCasedOrThrow(objectMetadataInput.nameSingular);
-  validateNameCamelCasedOrThrow(objectMetadataInput.namePlural);
-
-  validateNameCharactersOrThrow(objectMetadataInput.nameSingular);
-  validateNameCharactersOrThrow(objectMetadataInput.namePlural);
-
-  validateNameIsNotReservedKeywordOrThrow(objectMetadataInput.nameSingular);
-  validateNameIsNotReservedKeywordOrThrow(objectMetadataInput.namePlural);
-
-  validateNameIsNotTooLongThrow(objectMetadataInput.nameSingular);
-  validateNameIsNotTooLongThrow(objectMetadataInput.namePlural);
+>({
+  namePlural,
+  nameSingular,
+}: T): void => {
+  const validators = [
+    validateNameCamelCasedOrThrow,
+    validateNameCharactersOrThrow,
+    validateNameCharactersOrThrow,
+    validateNameIsNotReservedKeywordOrThrow,
+    validateNameIsNotTooLongOrThrow,
+    validateNameIsNoTooShortOrThrow,
+  ];
+  const names = [namePlural, nameSingular];
+  names.forEach((name) => validators.forEach((validator) => validator(name)));
 };
 
 const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
-  if (name) {
+  if (isDefined(name)) {
     if (reservedKeywords.includes(name)) {
       throw new ObjectMetadataException(
         `The name "${name}" is not available`,
@@ -102,7 +108,7 @@ const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
 };
 
 const validateNameCamelCasedOrThrow = (name?: string) => {
-  if (name && name !== camelCase(name)) {
+  if (isDefined(name) && name !== camelCase(name)) {
     throw new ObjectMetadataException(
       `Name should be in camelCase: ${name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -110,8 +116,18 @@ const validateNameCamelCasedOrThrow = (name?: string) => {
   }
 };
 
-const validateNameIsNotTooLongThrow = (name?: string) => {
-  if (name && exceedsDatabaseIdentifierMaximumLength(name)) {
+const validateNameIsNotTooLongOrThrow = (name?: string) => {
+  if (isDefined(name) && exceedsDatabaseIdentifierMaximumLength(name)) {
+    throw new ObjectMetadataException(
+      `Name exceeds 63 characters: ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+};
+
+const validateNameIsNoTooShortOrThrow = (name?: string) => {
+  console.log(name);
+  if (isDefined(name) && beneathDatabaseIdentifierMininumLength(name)) {
     throw new ObjectMetadataException(
       `Name exceeds 63 characters: ${name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -121,7 +137,7 @@ const validateNameIsNotTooLongThrow = (name?: string) => {
 
 const validateNameCharactersOrThrow = (name?: string) => {
   try {
-    if (name) {
+    if (isDefined(name)) {
       validateMetadataNameValidityOrThrow(name);
     }
   } catch (error) {
@@ -137,7 +153,7 @@ const validateNameCharactersOrThrow = (name?: string) => {
 };
 
 export const computeMetadataNameFromLabel = (label: string): string => {
-  if (!label) {
+  if (!isDefined(label)) {
     throw new ObjectMetadataException(
       'Label is required',
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -184,6 +200,7 @@ export const validateNameSingularAndNamePluralAreDifferentOrThrow = (
   nameSingular: string,
   namePlural: string,
 ) => {
+  // Not case sensitive // Does not trim either
   if (nameSingular === namePlural) {
     throw new ObjectMetadataException(
       'The singular and plural name cannot be the same for an object',
