@@ -30,7 +30,7 @@ export class CaptchaGuard implements CanActivate {
     } else {
       await this.healthCacheService.incrementInvalidCaptchaCounter();
 
-      // remove me when
+      // remove me when https://twenty-v7.sentry.io/issues/5658170673/events/c88341a221514ca7b23c695300bdf7d8 will be resolved
       this.exceptionHandlerService.captureExceptions([
         new Error(`Invalid Captcha: ${result.error}`),
       ]);
