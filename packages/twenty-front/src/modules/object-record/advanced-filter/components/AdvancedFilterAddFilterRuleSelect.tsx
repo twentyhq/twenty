@@ -1,6 +1,5 @@
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { useDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useDefaultFieldMetadataItemForFilter';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
@@ -12,8 +11,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { IconLibraryPlus, IconPlus, LightButton, MenuItem } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -41,55 +38,19 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const objectMetadataId = currentView?.objectMetadataId;
-
-  if (!isDefined(objectMetadataId)) {
-    throw new Error('Object metadata id is missing from current view');
-  }
-
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataId,
-  });
-
-  const availableFieldMetadataItemsForFilter = useRecoilValue(
-    availableFieldMetadataItemsForFilterFamilySelector({
-      objectMetadataItemId: objectMetadataId,
-    }),
-  );
-
-  const getDefaultFieldMetadataItem = useCallback(() => {
-    const defaultFieldMetadataItem =
-      availableFieldMetadataItemsForFilter.find(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.id ===
-          objectMetadataItem?.labelIdentifierFieldMetadataId,
-      ) ?? availableFieldMetadataItemsForFilter[0];
-
-    if (!isDefined(defaultFieldMetadataItem)) {
-      throw new Error(
-        `Could not find default field metadata item for object ${objectMetadataId}`,
-      );
-    }
-
-    return defaultFieldMetadataItem;
-  }, [
-    availableFieldMetadataItemsForFilter,
-    objectMetadataItem,
-    objectMetadataId,
-  ]);
+  const { defaultFieldMetadataItemForFilter } =
+    useDefaultFieldMetadataItemForFilter();
 
   const handleAddFilter = () => {
     closeDropdown();
 
-    const defaultFieldMetadataItem = getDefaultFieldMetadataItem();
-
     const filterType = getFilterTypeFromFieldType(
-      defaultFieldMetadataItem.type,
+      defaultFieldMetadataItemForFilter.type,
     );
 
     upsertRecordFilter({
       id: v4(),
-      fieldMetadataId: defaultFieldMetadataItem.id,
+      fieldMetadataId: defaultFieldMetadataItemForFilter.id,
       type: filterType,
       operand: getRecordFilterOperands({
         filterType,
@@ -98,7 +59,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       displayValue: '',
       recordFilterGroupId: recordFilterGroup.id,
       positionInRecordFilterGroup: newPositionInRecordFilterGroup,
-      label: defaultFieldMetadataItem.label,
+      label: defaultFieldMetadataItemForFilter.label,
     });
   };
 
@@ -120,15 +81,13 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
     upsertRecordFilterGroup(newRecordFilterGroup);
 
-    const defaultFieldMetadataItem = getDefaultFieldMetadataItem();
-
     const filterType = getFilterTypeFromFieldType(
-      defaultFieldMetadataItem.type,
+      defaultFieldMetadataItemForFilter.type,
     );
 
     upsertRecordFilter({
       id: v4(),
-      fieldMetadataId: defaultFieldMetadataItem.id,
+      fieldMetadataId: defaultFieldMetadataItemForFilter.id,
       type: filterType,
       operand: getRecordFilterOperands({
         filterType,
@@ -137,7 +96,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       displayValue: '',
       recordFilterGroupId: newRecordFilterGroupId,
       positionInRecordFilterGroup: newPositionInRecordFilterGroup,
-      label: defaultFieldMetadataItem.label,
+      label: defaultFieldMetadataItemForFilter.label,
     });
   };
 
