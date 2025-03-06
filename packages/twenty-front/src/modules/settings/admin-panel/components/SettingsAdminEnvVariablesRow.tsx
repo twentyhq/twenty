@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
   AnimatedExpandableContainer,
-  IconChevronDown,
+  IconChevronRight,
   IconEye,
   IconEyeOff,
   LightIconButton,
@@ -41,7 +41,7 @@ const StyledButton = styled(motion.button)`
   cursor: pointer;
 `;
 
-const MotionIconChevronDown = motion(IconChevronDown);
+const MotionIconChevronDown = motion(IconChevronRight);
 
 const StyledExpandedDetails = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -127,7 +127,7 @@ export const SettingsAdminEnvVariablesRow = ({
               size={theme.icon.size.md}
               color={theme.font.color.tertiary}
               initial={false}
-              animate={{ rotate: isExpanded ? -180 : 0 }}
+              animate={{ rotate: isExpanded ? 90 : 0 }}
             />
           </StyledButton>
         </TableCell>
