@@ -2,14 +2,16 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
   AnimatedExpandableContainer,
-  IconChevronRight,
+  IconChevronDown,
   IconEye,
   IconEyeOff,
   LightIconButton,
 } from 'twenty-ui';
+
 type SettingsAdminEnvVariablesRowProps = {
   variable: {
     name: string;
@@ -25,6 +27,21 @@ const StyledTruncatedCell = styled(TableCell)`
   text-overflow: ellipsis;
   cursor: pointer;
 `;
+
+const StyledButton = styled(motion.button)`
+  align-items: center;
+  border: none;
+  display: flex;
+  justify-content: center;
+  padding-inline: ${({ theme }) => theme.spacing(1)};
+  background-color: transparent;
+  height: 24px;
+  width: 24px;
+  box-sizing: border-box;
+  cursor: pointer;
+`;
+
+const MotionIconChevronDown = motion(IconChevronDown);
 
 const StyledExpandedDetails = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -69,14 +86,6 @@ const StyledTableRow = styled(TableRow)<{ isExpanded: boolean }>`
   margin-bottom: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-const StyledTransitionedIconChevronRight = styled(IconChevronRight)`
-  cursor: pointer;
-  transform: ${({ $isExpanded }: { $isExpanded: boolean }) =>
-    $isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'};
-  transition: ${({ theme }) =>
-    `transform ${theme.animation.duration.normal}s ease`};
-`;
-
 export const SettingsAdminEnvVariablesRow = ({
   variable,
 }: SettingsAdminEnvVariablesRowProps) => {
@@ -113,10 +122,14 @@ export const SettingsAdminEnvVariablesRow = ({
           <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
         </StyledTruncatedCell>
         <TableCell align="right">
-          <StyledTransitionedIconChevronRight
-            $isExpanded={isExpanded}
-            size={theme.icon.size.sm}
-          />
+          <StyledButton onClick={() => setIsExpanded(!isExpanded)}>
+            <MotionIconChevronDown
+              size={theme.icon.size.md}
+              color={theme.font.color.tertiary}
+              initial={false}
+              animate={{ rotate: isExpanded ? -180 : 0 }}
+            />
+          </StyledButton>
         </TableCell>
       </StyledTableRow>
       <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
