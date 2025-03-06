@@ -1,6 +1,7 @@
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
-import { stepOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepOutputSchemaFamilySelector';
+import { stepsOutputSchemaComponentFamilyState } from '@/workflow/states/stepsOutputSchemaFamilyState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
@@ -14,25 +15,25 @@ export const useStepsOutputSchema = ({
     instanceIdFromProps,
   );
 
+  const stepsOutputSchemaFamilyState = useRecoilComponentCallbackStateV2(
+    stepsOutputSchemaComponentFamilyState,
+    instanceId,
+  );
+
   const getStepsOutputSchema = useRecoilCallback(
     ({ snapshot }) =>
       (stepIds: string[]) => {
         const stepsOutputSchema = stepIds
           .map((stepId) =>
             snapshot
-              .getLoadable(
-                stepOutputSchemaFamilySelector.selectorFamily({
-                  instanceId,
-                  familyKey: stepId,
-                }),
-              )
+              .getLoadable(stepsOutputSchemaFamilyState(stepId))
               .getValue(),
           )
           .filter(isDefined);
 
         return stepsOutputSchema;
       },
-    [instanceId],
+    [stepsOutputSchemaFamilyState],
   );
 
   return { getStepsOutputSchema };
