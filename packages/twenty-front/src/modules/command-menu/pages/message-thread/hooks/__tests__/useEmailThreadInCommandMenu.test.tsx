@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
-import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import gql from 'graphql-tag';
 import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -348,12 +349,29 @@ const mocks = [
   },
 ];
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: mocks,
-  onInitializeRecoilSnapshot: ({ set }) => {
-    set(viewableRecordIdState, '1');
-  },
-});
+const Wrapper = ({ children }: { children: React.ReactNode }) => {
+  const MetadataWrapper = getJestMetadataAndApolloMocksWrapper({
+    apolloMocks: mocks,
+    onInitializeRecoilSnapshot: ({ set }) => {
+      set(
+        viewableRecordIdComponentState.atomFamily({
+          instanceId: 'test-instance',
+        }),
+        '1',
+      );
+    },
+  });
+
+  return (
+    <MetadataWrapper>
+      <CommandMenuPageComponentInstanceContext.Provider
+        value={{ instanceId: 'test-instance' }}
+      >
+        {children}
+      </CommandMenuPageComponentInstanceContext.Provider>
+    </MetadataWrapper>
+  );
+};
 
 describe('useEmailThreadInCommandMenu', () => {
   it('should return correct values', async () => {
