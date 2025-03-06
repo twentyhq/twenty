@@ -48,7 +48,6 @@
     "@ptc-org/nestjs-query-typeorm": "4.2.1-alpha.2",
     "@react-email/components": "0.0.32",
     "@react-email/render": "0.0.17",
-    "@scalar/api-reference-react": "^0.3.166",
     "@sentry/node": "^8",
     "@sentry/profiling-node": "^8",
     "@sentry/react": "^8",

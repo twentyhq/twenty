@@ -8,15 +8,15 @@ import { Trans } from '@lingui/react/macro';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledNestedContainer = styled.div<{ pageBarHeight: number }>`
+const StyledNestedContainer = styled.div`
   height: 100%;
   width: 100%;
 
   [data-v-app] {
-    max-height: ${({ theme, pageBarHeight }) =>
+    max-height: ${({ theme }) =>
       `calc(
         100dvh 
-        - ${pageBarHeight * 3}px 
+        - ${PAGE_BAR_MIN_HEIGHT * 3}px 
         - ${theme.spacing(3)}
       ) !important`};
   }
@@ -52,7 +52,7 @@ export const SettingsRestPlayground = () => {
         contextProviderName="playgroundPageContainer"
         componentInstanceId={'scroll-wrapper-playground-page-container'}
       >
-        <StyledNestedContainer pageBarHeight={PAGE_BAR_MIN_HEIGHT}>
+        <StyledNestedContainer>
           <RestPlayground onError={handleError} />
         </StyledNestedContainer>
       </ScrollWrapper>

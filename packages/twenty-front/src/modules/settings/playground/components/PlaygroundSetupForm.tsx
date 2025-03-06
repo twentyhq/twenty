@@ -1,8 +1,8 @@
+import { apiKeyState } from '@/settings/playground/states/apiKeyState';
 import {
   PlaygroundSchemas,
   PlaygroundTypes,
 } from '@/settings/playground/types/PlaygroundConfig';
-import { setPlaygroundSession } from '@/settings/playground/utils/setPlaygroundSession';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -10,6 +10,7 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
+import { useRecoilState } from 'recoil';
 import {
   Button,
   IconApi,
@@ -41,6 +42,7 @@ const StyledForm = styled.form`
 export const PlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
+  const [apiKey, setApiKey] = useRecoilState(apiKeyState);
 
   const {
     control,
@@ -53,6 +55,7 @@ export const PlaygroundSetupForm = () => {
     defaultValues: {
       schema: PlaygroundSchemas.CORE,
       playgroundType: PlaygroundTypes.REST,
+      apiKeyForPlayground: apiKey || '',
     },
   });
 
@@ -89,8 +92,7 @@ export const PlaygroundSetupForm = () => {
       // Validate the API key
       await validateApiKey(values);
 
-      // Save the session data
-      setPlaygroundSession(values.schema, values.apiKeyForPlayground);
+      setApiKey(values.apiKeyForPlayground);
 
       // Navigate to the playground
       const path =
@@ -122,7 +124,10 @@ export const PlaygroundSetupForm = () => {
             label={t`API Key`}
             placeholder="Enter your API key"
             value={value}
-            onChange={onChange}
+            onChange={(newValue) => {
+              onChange(newValue);
+              setApiKey(newValue);
+            }}
             error={error?.message}
             required
           />
