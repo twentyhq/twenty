@@ -364,11 +364,11 @@ msgstr "Weet u zeker dat u uw facturatieperiode wilt wijzigen?"
 
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "Weet je zeker dat je deze records wilt verwijderen? Ze kunnen worden hersteld vanuit het Command menu ({osControlSymbol} + K)."
 
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "Weet je zeker dat je dit record wilt verwijderen? Het kan worden hersteld vanuit het Command menu ({osControlSymbol} + K)."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx

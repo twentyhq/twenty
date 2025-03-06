@@ -364,11 +364,11 @@ msgstr "您確定要更改計費間隔嗎？"
 
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "您確定要刪除這些記錄嗎？ 它們可以從命令菜單 ({osControlSymbol} + K) 中恢復。"
 
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "您確定要刪除此記錄嗎？ 它可以從命令菜單 ({osControlSymbol} + K) 中恢復。"
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx

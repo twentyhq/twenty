@@ -364,11 +364,11 @@ msgstr "האם אתה בטוח שברצונך לשנות את מרווח החי�
 
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "האם אתה בטוח שברצונך למחוק את הרשומות הללו? ניתן לשחזר אותן מתפריט Command ({osControlSymbol} + K)."
 
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr ""
+msgstr "האם אתה בטוח שברצונך למחוק את הרשומה הזו? ניתן לשחזר אותה מתפריט Command ({osControlSymbol} + K)."
 
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx

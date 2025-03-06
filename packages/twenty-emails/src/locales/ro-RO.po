@@ -56,7 +56,7 @@ msgstr "Spațiu de lucru șters"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "adrese de email pentru a se alătura spațiului de lucru fără a necesita o invitație."
 
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
@@ -96,11 +96,11 @@ msgstr "Parola a fost actualizată"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with"
-msgstr ""
+msgstr "Vă rugăm să validați acest domeniu pentru a permite utilizatorilor cu"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 #~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-#~ msgstr "Vă rugăm să validați acest domeniu pentru a permite utilizatorilor cu adrese de email <0>@{domain}</0> să se alăture spațiului dumneavoastră de lucru fără a necesita o invitație."
+#~ msgstr "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"

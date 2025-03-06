@@ -56,7 +56,7 @@ msgstr "Borttagen arbetsyta"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "email addresses to join your workspace without requiring an invitation."
-msgstr ""
+msgstr "e-postadresser för att gå med i ditt arbetsutrymme utan att kräva en inbjudan."
 
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
@@ -96,11 +96,11 @@ msgstr "Lösenordet uppdaterat"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with"
-msgstr ""
+msgstr "Var god validera denna domän för att tillåta användare med"
 
 #: src/emails/validate-approved-access-domain.email.tsx
 #~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
-#~ msgstr "Var vänlig och validera denna domän för att tillåta användare med <0>@{domain}</0> e-postadresser att ansluta till din arbetsyta utan att behöva en inbjudan."
+#~ msgstr "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
 
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
