@@ -32,7 +32,6 @@ import {
 } from 'sip.js/lib/platform/web';
 import { IconPhone, useIcons } from 'twenty-ui';
 import defaultCallState from '../constants/defaultCallState';
-import defaultConfig from '../constants/defaultConfig';
 import { useRingTone } from '../hooks/useRingTone';
 import { CallState } from '../types/callState';
 import { CallStatus } from '../types/callStatusEnum';
@@ -159,7 +158,7 @@ const StyledEndButton = styled.div`
 `;
 
 const WebSoftphone: React.FC = () => {
-  const [config, setConfig] = useState<SipConfig>(defaultConfig);
+  const [config, setConfig] = useState<SipConfig>();
   const [callState, setCallState] = useState<CallState>(defaultCallState);
   const [elapsedTime, setElapsedTime] = useState<string>('00:00');
   const [ringingTime, setRingingTime] = useState<string>('00:00');
@@ -201,7 +200,10 @@ const WebSoftphone: React.FC = () => {
 
     if (telephonyExtension) {
       setConfig({
-        ...config,
+        domain: 'suite.pabx.digital',
+        proxy: 'webrtc.dazsoft.com:8080',
+        protocol: 'wss://',
+        authorizationHa1: '',
         username: telephonyExtension.usuario_autenticacao,
         password: telephonyExtension.senha_sip,
       });
@@ -210,14 +212,14 @@ const WebSoftphone: React.FC = () => {
   }, [telephonyExtension]);
 
   useEffect(() => {
-    if (config.username && config.password && config.domain) {
+    if (config?.username && config?.password && config?.domain) {
       updateConfigWithHa1();
     }
     return () => {
       onComponentUnmount();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.username, config.password, config.domain]);
+  }, [config?.username, config?.password, config?.domain]);
 
   const startTimer = (
     startTime: number | null,
@@ -272,9 +274,9 @@ const WebSoftphone: React.FC = () => {
 
   const updateConfigWithHa1 = async () => {
     const authorizationHa1 = await generateAuthorizationHa1(
-      config.username,
-      config.password,
-      config.domain,
+      config?.username || '',
+      config?.password || '',
+      config?.domain || '',
     );
     const updatedConfig = {
       ...config,
@@ -565,7 +567,9 @@ const WebSoftphone: React.FC = () => {
     await cleanupSession();
   };
 
-  const initializeSIP = async (updatedConfig: SipConfig) => {
+  const initializeSIP = async (updatedConfig: SipConfig | undefined) => {
+    if (!updatedConfig) return;
+
     try {
       if (
         !updatedConfig.username ||
@@ -637,7 +641,7 @@ const WebSoftphone: React.FC = () => {
       }));
 
       const target = UserAgent.makeURI(
-        `sip:${callState.currentNumber}@${config.domain}`,
+        `sip:${callState.currentNumber}@${config?.domain}`,
       );
       if (!target) {
         throw new Error('Failed to create target URI');
