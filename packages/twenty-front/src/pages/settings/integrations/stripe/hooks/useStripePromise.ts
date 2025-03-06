@@ -5,6 +5,8 @@ export const useStripePromise = () => {
 
   if (!key) throw new Error('Missing REACT_APP_STRIPE_PUBLISHABLE_KEY .env');
 
+  console.log(key);
+
   const stripePromise = loadStripe(key);
 
   return { stripePromise };
