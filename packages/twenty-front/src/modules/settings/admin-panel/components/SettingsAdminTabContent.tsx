@@ -13,7 +13,7 @@ export const SettingsAdminTabContent = () => {
       return <SettingsAdminGeneral />;
     case SETTINGS_ADMIN_TABS.ENV_VARIABLES:
       return <SettingsAdminEnvVariables />;
-    case SETTINGS_ADMIN_TABS.HEALTH:
+    case SETTINGS_ADMIN_TABS.HEALTH_STATUS:
       return <SettingsAdminHealthStatus />;
     default:
       return null;

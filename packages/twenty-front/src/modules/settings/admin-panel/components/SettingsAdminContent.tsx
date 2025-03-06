@@ -27,8 +27,8 @@ export const SettingsAdminContent = () => {
       Icon: IconVariable,
     },
     {
-      id: SETTINGS_ADMIN_TABS.HEALTH,
-      title: t`Health`,
+      id: SETTINGS_ADMIN_TABS.HEALTH_STATUS,
+      title: t`Health Status`,
       Icon: IconHeart,
     },
   ];

@@ -1,5 +1,5 @@
 export const SETTINGS_ADMIN_TABS = {
   GENERAL: 'general',
   ENV_VARIABLES: 'env-variables',
-  HEALTH: 'health',
+  HEALTH_STATUS: 'health-status',
 };
