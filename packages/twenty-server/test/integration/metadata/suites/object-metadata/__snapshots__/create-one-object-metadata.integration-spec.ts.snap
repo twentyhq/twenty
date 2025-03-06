@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Object metadata failing creation NameSingular is an empty string 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Name is too short",
+  },
+]
+`;

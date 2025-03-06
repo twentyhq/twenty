@@ -2,12 +2,15 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 import { createOneObjectMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-factory.util';
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { EachTestingContext } from 'twenty-shared';
+import { EachTestingContext, isDefined } from 'twenty-shared';
 
-type FailingCreationEachTestingContext = EachTestingContext<
-  Partial<Omit<CreateObjectInput, 'workspaceId' | 'dataSourceId'>>
+type CreateObjectInputPayload = Omit<
+  CreateObjectInput,
+  'workspaceId' | 'dataSourceId'
 >;
-const FailingCreationTestsUseCase: FailingCreationEachTestingContext[] = [
+const FailingCreationTestsUseCase: EachTestingContext<
+  Partial<CreateObjectInputPayload>
+>[] = [
   {
     title: 'NameSingular is an empty string',
     context: {
@@ -16,10 +19,22 @@ const FailingCreationTestsUseCase: FailingCreationEachTestingContext[] = [
   },
 ];
 
+const getMockCreateObjectInput = (
+  overrides?: Partial<CreateObjectInputPayload>,
+): CreateObjectInputPayload => ({
+  namePlural: 'listings',
+  nameSingular: 'toto',
+  labelPlural: 'Listings',
+  labelSingular: 'Listing',
+  description: 'Listing object',
+  icon: 'IconListNumbers',
+  isLabelSyncedWithName: false,
+  ...overrides,
+});
+
 describe('Object metadata failing creation', () => {
-  const createdObjectMetadataIds: string[] = [];
-  const createOneObjectMetadata = async (
-    args: Omit<CreateObjectInput, 'workspaceId' | 'dataSourceId'>,
+  const performFailingObjectMetadataCreation = async (
+    args: CreateObjectInputPayload,
   ) => {
     const graphqlOperation = createOneObjectMetadataFactory({
       input: { object: args },
@@ -30,41 +45,19 @@ describe('Object metadata failing creation', () => {
     });
 
     const response = await makeMetadataAPIRequest(graphqlOperation);
-    const createdObject = response.body.data.createOneObject;
-    createdObjectMetadataIds.push(createdObject.id);
-    return createdObject;
+    if (isDefined(response.body.data)) {
+      const createdId = response.body.data.createOneObject.id;
+      await deleteOneObjectMetadataItem(createdId);
+      fail('Object Metadata Item should have failed but did not');
+    }
+
+    return response;
   };
-  afterEach(async () => {
-    await Promise.all(
-      createdObjectMetadataIds.map(
-        async (id) => await deleteOneObjectMetadataItem(id),
-      ),
+  it.each(FailingCreationTestsUseCase)('$title', async ({ context }) => {
+    const response = await performFailingObjectMetadataCreation(
+      getMockCreateObjectInput(context),
     );
-  });
-  it('1. should create one object metadataItem', async () => {
-    // Arrange
-    const LISTING_OBJECT: Omit<
-      CreateObjectInput,
-      'workspaceId' | 'dataSourceId'
-    > = {
-      namePlural: 'listings',
-      nameSingular: 'toto',
-      labelPlural: 'Listings',
-      labelSingular: 'Listing',
-      description: 'Listing object',
-      icon: 'IconListNumbers',
-      isLabelSyncedWithName: false,
-    };
 
-    // Act
-    const createdObject = await createOneObjectMetadata(LISTING_OBJECT);
-
-    // Assert
-    expect(createdObject).toMatchInlineSnapshot(`
-{
-  "id": "25e904da-5c21-410a-8113-1b751df075c5",
-  "nameSingular": "toto",
-}
-`);
+    expect(response.body.errors).toMatchSnapshot();
   });
 });

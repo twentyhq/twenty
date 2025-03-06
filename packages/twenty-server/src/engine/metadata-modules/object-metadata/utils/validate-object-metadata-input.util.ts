@@ -85,12 +85,11 @@ export const validateObjectMetadataInputOrThrow = <
   nameSingular,
 }: T): void => {
   const validators = [
+    validateNameIsNoTooShortOrThrow,
     validateNameCamelCasedOrThrow,
-    validateNameCharactersOrThrow,
     validateNameCharactersOrThrow,
     validateNameIsNotReservedKeywordOrThrow,
     validateNameIsNotTooLongOrThrow,
-    validateNameIsNoTooShortOrThrow,
   ];
   const names = [namePlural, nameSingular];
   names.forEach((name) => validators.forEach((validator) => validator(name)));
@@ -126,10 +125,9 @@ const validateNameIsNotTooLongOrThrow = (name?: string) => {
 };
 
 const validateNameIsNoTooShortOrThrow = (name?: string) => {
-  console.log(name);
   if (isDefined(name) && beneathDatabaseIdentifierMininumLength(name)) {
     throw new ObjectMetadataException(
-      `Name exceeds 63 characters: ${name}`,
+      `Name is too short`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }
