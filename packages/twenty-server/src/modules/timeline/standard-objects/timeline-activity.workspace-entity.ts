@@ -24,7 +24,6 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
-import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -160,21 +159,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('charge')
   chargeId: string | null;
-
-  @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.traceable,
-    type: RelationMetadataType.MANY_TO_ONE,
-    label: msg`Traceable`,
-    description: msg`Event traceable`,
-    icon: 'IconPhone',
-    inverseSideTarget: () => TraceableWorkspaceEntity,
-    inverseSideFieldKey: 'attachments',
-  })
-  @WorkspaceIsNullable()
-  traceable: Relation<TraceableWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('traceable')
-  traceableId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.integration,

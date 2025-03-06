@@ -1,15 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
-import { ManyToOne } from 'typeorm';
-
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -18,19 +11,12 @@ import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/work
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { TRACEABLE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { IntegrationWorkspaceEntity } from 'src/modules/integrations/standard-objects/integration.workspace-entity';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 const NAME_FIELD_NAME = 'product';
 
@@ -40,12 +26,12 @@ export const SEARCH_FIELDS_FOR_TRACEABLE: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.traceable,
-  namePlural: 'traceable',
+  namePlural: 'traceables',
   labelSingular: msg`Traceable`,
-  labelPlural: msg`Traceable`,
+  labelPlural: msg`Traceables`,
   description: msg`A traceable link`,
   icon: 'IconLink',
-  labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.product,
+  labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.linkName,
 })
 @WorkspaceIsNotAuditLogged()
 export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
@@ -134,84 +120,6 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconLink',
   })
   generatedUrl: string;
-
-  //Relations
-  @WorkspaceRelation({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.customer,
-    type: RelationMetadataType.MANY_TO_ONE,
-    label: msg`Customer`,
-    description: msg`Company linked to the traceable`,
-    icon: 'IconBuildingSkyscraper',
-    inverseSideTarget: () => CompanyWorkspaceEntity,
-    inverseSideFieldKey: 'traceables',
-  })
-  @WorkspaceIsNullable()
-  @ManyToOne(() => CompanyWorkspaceEntity, (company) => company.traceables, {
-    nullable: true,
-  })
-  company: CompanyWorkspaceEntity | null;
-  @WorkspaceJoinColumn('company')
-  companyId: string | null;
-
-  @WorkspaceRelation({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.integration,
-    type: RelationMetadataType.MANY_TO_ONE,
-    label: msg`Payment Gateway`,
-    description: msg`Integration linked to the traceable`,
-    icon: 'IconBuildingSkyscraper',
-    inverseSideTarget: () => IntegrationWorkspaceEntity,
-    inverseSideFieldKey: 'traceables',
-  })
-  @WorkspaceIsNullable()
-  @ManyToOne(
-    () => IntegrationWorkspaceEntity,
-    (integration) => integration.traceables,
-    {
-      nullable: true,
-    },
-  )
-  integration: IntegrationWorkspaceEntity | null;
-  @WorkspaceJoinColumn('integration')
-  integrationId: string | null;
-
-  @WorkspaceRelation({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.people,
-    type: RelationMetadataType.ONE_TO_ONE,
-    label: msg`Contact`,
-    description: msg`Person linked to the traceable`,
-    icon: 'IconUser',
-    inverseSideTarget: () => PersonWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  people: Relation<PersonWorkspaceEntity>;
-  @WorkspaceJoinColumn('people')
-  peopleId: string;
-
-  @WorkspaceRelation({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.timelineActivities,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Events`,
-    description: msg`Events linked to the traceable`,
-    icon: 'IconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.attachments,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Attachments`,
-    description: msg`Attachments linked to the traceable`,
-    icon: 'IconFileImport',
-    inverseSideTarget: () => AttachmentWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.searchVector,
