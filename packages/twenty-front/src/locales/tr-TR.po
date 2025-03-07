@@ -1987,7 +1987,7 @@ msgstr "Önceki iş akışına git"
 msgid "New"
 msgstr "Yeni"
 
-#: src/modules/command-menu/hooks/useCommandMenu.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Yeni {capitalizedObjectNameSingular}"
 
@@ -2600,6 +2600,10 @@ msgstr "Sürümleri gör"
 msgid "See versions history"
 msgstr "Sürüm geçmişini gör"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts
+msgid "Select Action"
+msgstr ""
+
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
 msgstr "Bu boolean alanı için varsayılan değeri seçin"
@@ -2971,6 +2975,7 @@ msgid "Total Users"
 msgstr "Toplam Kullanıcılar"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "Tetikleyici Türü"
 

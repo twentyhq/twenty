@@ -2043,7 +2043,7 @@ msgstr "Перейти до попереднього Workflow"
 msgid "New"
 msgstr "Новий"
 
-#: src/modules/command-menu/hooks/useCommandMenu.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Новий {capitalizedObjectNameSingular}"
 
@@ -2656,6 +2656,10 @@ msgstr "Переглянути версії"
 msgid "See versions history"
 msgstr "Переглянути історію версій"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts
+msgid "Select Action"
+msgstr ""
+
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
 msgstr "Виберіть значення за замовчуванням для цього логічного поля"
@@ -3027,6 +3031,7 @@ msgid "Total Users"
 msgstr "Всього користувачів"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "Тип тригера"
 
