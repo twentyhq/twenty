@@ -105,8 +105,9 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       closeRightDrawer,
       closeCommandMenu,
       isCommandMenuV2Enabled,
-      openWorkflowTriggerTypeInCommandMenu,
+      workflowId,
       t,
+      openWorkflowTriggerTypeInCommandMenu,
       startNodeCreation,
     ],
   );
