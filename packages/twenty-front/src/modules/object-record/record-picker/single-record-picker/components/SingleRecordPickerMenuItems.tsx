@@ -18,7 +18,7 @@ import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/sin
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 
 export type SingleRecordPickerMenuItemsProps = {
@@ -94,7 +94,7 @@ export const SingleRecordPickerMenuItems = ({
   );
 
   const selectableItemIds = recordsInDropdown.map((entity) => entity.id);
-  const selectedRecordId = useRecoilComponentValueV2(
+  const [selectedRecordId, setSelectedRecordId] = useRecoilComponentStateV2(
     singleRecordPickerSelectedIdComponentState,
   );
 
@@ -108,6 +108,7 @@ export const SingleRecordPickerMenuItems = ({
           const recordIndex = recordsInDropdown.findIndex(
             (record) => record.id === itemId,
           );
+          setSelectedRecordId(itemId);
           onRecordSelected(recordsInDropdown[recordIndex]);
           resetSelectedItem();
         }}
@@ -125,7 +126,10 @@ export const SingleRecordPickerMenuItems = ({
                     emptyLabel && (
                       <MenuItemSelect
                         key={record.id}
-                        onClick={() => onRecordSelected()}
+                        onClick={() => {
+                          setSelectedRecordId(undefined);
+                          onRecordSelected();
+                        }}
                         LeftIcon={EmptyIcon}
                         text={emptyLabel}
                         selected={isUndefined(selectedRecordId)}

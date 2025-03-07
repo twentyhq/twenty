@@ -81,9 +81,8 @@ export const ActivityTargetsInlineCell = ({
               <RecordInlineCellContext.Provider
                 value={{
                   buttonIcon: IconPencil,
-                  customEditHotkeyScope: {
-                    scope: ActivityEditorHotkeyScope.ActivityTargets,
-                  },
+                  customEditHotkeyScope:
+                    ActivityEditorHotkeyScope.ActivityTargets,
                   IconLabel: showLabel ? IconArrowUpRight : undefined,
                   showLabel: showLabel,
                   readonly: readonly,

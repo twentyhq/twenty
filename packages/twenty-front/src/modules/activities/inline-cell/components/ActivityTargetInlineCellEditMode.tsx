@@ -21,6 +21,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
@@ -131,7 +132,8 @@ export const ActivityTargetInlineCellEditMode = ({
 
   const handleChange = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (recordId: string) => {
+      async (morphItem: RecordPickerPickableMorphItem) => {
+        const { recordId } = morphItem;
         const existingActivityTargets = activityTargetWithTargetRecords.map(
           (activityTargetObjectRecord) =>
             activityTargetObjectRecord.activityTarget,

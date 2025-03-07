@@ -34,7 +34,7 @@ export const useFilteredSearchRecordQuery = ({
       objectNameSingular,
       filter: selectedIdsFilter,
       skip: !selectedIds.length,
-      searchInput: searchFilter,
+      searchInput: '',
     });
 
   const {

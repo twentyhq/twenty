@@ -75,7 +75,7 @@ const RelationToOneFieldInputWithContext = ({
         recordId={recordId}
       >
         <SingleRecordPickerComponentInstanceContext.Provider
-          value={{ instanceId: 'relation-to-one-field-input' }}
+          value={{ instanceId: 'relation-to-one-field-input-123-Relation' }}
         >
           <RelationWorkspaceSetterEffect />
           <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />

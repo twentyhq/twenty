@@ -37,6 +37,7 @@ export const SingleRecordPickerMenuItem = ({
   );
 
   const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(record.id));
+
   return (
     <StyledSelectableItem itemId={record.id} key={record.id}>
       <MenuItemSelectAvatar

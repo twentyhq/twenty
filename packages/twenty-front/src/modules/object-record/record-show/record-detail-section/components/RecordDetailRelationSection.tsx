@@ -121,9 +121,7 @@ export const RecordDetailRelationSection = ({
     });
   };
 
-  const { updateRelation } = useUpdateRelationFromManyFieldInput({
-    scopeId: dropdownId,
-  });
+  const { updateRelation } = useUpdateRelationFromManyFieldInput();
 
   const indexViewId = useRecoilValue(
     prefetchIndexViewIdFromObjectMetadataItemFamilySelector({

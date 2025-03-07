@@ -25,7 +25,7 @@ export const RelationToOneFieldInput = ({
 
   const persistField = usePersistField();
 
-  const recordPickerInstanceId = `relation-to-one-field-input-${recordId}`;
+  const recordPickerInstanceId = `relation-to-one-field-input-${recordId}-${fieldDefinition.metadata.fieldName}`;
 
   const handleRecordSelected = (
     selectedRecord: SingleRecordPickerRecord | null | undefined,

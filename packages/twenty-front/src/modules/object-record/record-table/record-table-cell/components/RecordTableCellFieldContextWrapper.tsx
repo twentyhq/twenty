@@ -37,6 +37,7 @@ export const RecordTableCellFieldContextWrapper = ({
     return null;
   }
 
+  // TODO: deprecate this and use useOpenFieldInput hooks to set the hotkey scope
   const computedHotkeyScope = (
     columnDefinition: ColumnDefinition<FieldMetadata>,
   ) => {

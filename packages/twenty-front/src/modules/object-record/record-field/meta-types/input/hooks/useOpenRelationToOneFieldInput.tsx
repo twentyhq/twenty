@@ -11,7 +11,7 @@ export const useOpenRelationToOneFieldInput = () => {
   const openRelationToOneFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
       ({ fieldName, recordId }: { fieldName: string; recordId: string }) => {
-        const recordPickerInstanceId = `relation-to-one-field-input-${recordId}`;
+        const recordPickerInstanceId = `relation-to-one-field-input-${recordId}-${fieldName}`;
         const fieldValue = snapshot
           .getLoadable<FieldRelationValue<FieldRelationToOneValue>>(
             recordStoreFamilySelector({
