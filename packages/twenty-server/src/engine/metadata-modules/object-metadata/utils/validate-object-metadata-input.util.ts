@@ -1,4 +1,5 @@
 import { slugify } from 'transliteration';
+import { isDefined } from 'twenty-shared';
 
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -14,7 +15,6 @@ import {
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
 import { camelCase } from 'src/utils/camel-case';
-import { isDefined } from 'twenty-shared';
 
 const coreObjectNames = [
   'approvedAccessDomain',
@@ -98,6 +98,7 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
     validateNameCharactersOrThrow,
     validateNameIsNotReservedKeywordOrThrow,
   ];
+
   validators.forEach((validator) => validator(name));
 };
 
@@ -116,6 +117,7 @@ const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
     validateStringIsNoTooShortOrThrow,
     validateStringIsNotTooLongOrThrow,
   ];
+
   validators.forEach((validator) => validator(name.trim()));
 };
 

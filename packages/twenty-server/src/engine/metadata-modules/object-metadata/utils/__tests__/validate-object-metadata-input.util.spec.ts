@@ -1,6 +1,7 @@
+import { EachTestingContext } from 'twenty-shared';
+
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { validateObjectMetadataInputNamesOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
-import { EachTestingContext } from 'twenty-shared';
 const getObjectInput = (
   overrides?: Partial<UpdateObjectPayload>,
 ): UpdateObjectPayload => ({

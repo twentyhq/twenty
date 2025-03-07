@@ -55,8 +55,7 @@ describe('validateMetadataNameValidityOrThrow', () => {
   });
 
   it('throws if an empty string', () => {
-    const inputWith64Characters =
-      '';
+    const inputWith64Characters = '';
 
     expect(() =>
       validateMetadataNameValidityOrThrow(inputWith64Characters),
