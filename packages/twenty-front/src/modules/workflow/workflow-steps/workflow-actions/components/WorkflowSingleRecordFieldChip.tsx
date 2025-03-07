@@ -50,7 +50,7 @@ export const WorkflowSingleRecordFieldChip = ({
       <VariableChipStandalone
         rawVariableName={draftValue.value}
         onRemove={disabled ? undefined : onRemove}
-        isFullRecord={true}
+        isFullRecord
       />
     );
   }

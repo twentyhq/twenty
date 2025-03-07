@@ -6,5 +6,5 @@ import {
 export const isBaseOutputSchema = (
   outputSchema: OutputSchema,
 ): outputSchema is BaseOutputSchema => {
-  return !outputSchema?._outputSchemaType;
+  return !outputSchema._outputSchemaType;
 };

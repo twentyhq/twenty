@@ -59,7 +59,7 @@ const searchCurrentStepOutputSchema = ({
         nextKey = path[nextKeyIndex + 1];
         variablePathLabel = `${variablePathLabel} > ${currentField?.label}`;
       } else {
-        // If the key is not found in the step, we handle the case where the path has been wrongly splitted
+        // If the key is not found in the step, we handle the case where the path has been wrongly split
         // For example, if there is a dot in the field name
         if (nextKeyIndex + 1 < path.length) {
           nextKey = `${nextKey}.${path[nextKeyIndex + 1]}`;
@@ -67,6 +67,13 @@ const searchCurrentStepOutputSchema = ({
       }
     }
     nextKeyIndex++;
+  }
+
+  if (!isDefined(currentSubStep)) {
+    return {
+      variableLabel: undefined,
+      variablePathLabel: undefined,
+    };
   }
 
   return {
@@ -95,12 +102,10 @@ export const searchVariableThroughOutputSchema = ({
 
   const parts = variableWithoutBrackets.split('.');
 
-  const { stepId, selectedField, path } = {
-    stepId: parts.at(0),
-    selectedField: parts.at(-1),
-    // path is the remaining parts of the variable name
-    path: parts.slice(1, -1),
-  };
+  const stepId = parts.at(0);
+  const selectedField = parts.at(-1);
+  // path is the remaining parts of the variable name
+  const path = parts.slice(1, -1);
 
   if (!isDefined(stepId) || !isDefined(selectedField)) {
     return {
