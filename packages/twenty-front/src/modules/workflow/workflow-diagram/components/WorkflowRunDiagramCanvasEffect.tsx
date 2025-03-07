@@ -28,7 +28,6 @@ export const WorkflowRunDiagramCanvasEffect = () => {
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setHotkeyScope = useSetHotkeyScope();
-  const { closeCommandMenu } = useCommandMenu();
   const { openWorkflowViewRunStepInCommandMenu } = useCommandMenu();
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
@@ -63,7 +62,6 @@ export const WorkflowRunDiagramCanvasEffect = () => {
 
       if (isClosingStep) {
         closeRightDrawer();
-        closeCommandMenu();
         return;
       }
 
@@ -103,7 +101,6 @@ export const WorkflowRunDiagramCanvasEffect = () => {
       openRightDrawer,
       getIcon,
       closeRightDrawer,
-      closeCommandMenu,
       goBackToFirstWorkflowRunRightDrawerTabIfNeeded,
       openWorkflowViewRunStepInCommandMenu,
     ],

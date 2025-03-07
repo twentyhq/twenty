@@ -32,7 +32,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
   const {
-    closeCommandMenu,
     openWorkflowTriggerTypeInCommandMenu,
     openWorkflowEditStepInCommandMenu,
   } = useCommandMenu();
@@ -64,7 +63,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
       if (isClosingStep) {
         closeRightDrawer();
-        closeCommandMenu();
         return;
       }
 
@@ -114,7 +112,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       isCommandMenuV2Enabled,
       setCommandMenuNavigationStack,
       closeRightDrawer,
-      closeCommandMenu,
       workflowId,
       openRightDrawer,
       t,

@@ -25,7 +25,6 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setHotkeyScope = useSetHotkeyScope();
-  const { closeCommandMenu } = useCommandMenu();
   const { openWorkflowViewStepInCommandMenu } = useCommandMenu();
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
@@ -40,7 +39,6 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
 
       if (isClosingStep || selectedNode.type === EMPTY_TRIGGER_STEP_ID) {
         closeRightDrawer();
-        closeCommandMenu();
         return;
       }
 
@@ -68,7 +66,6 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       setHotkeyScope,
       isCommandMenuV2Enabled,
       closeRightDrawer,
-      closeCommandMenu,
       openWorkflowViewStepInCommandMenu,
       workflowId,
       getIcon,
