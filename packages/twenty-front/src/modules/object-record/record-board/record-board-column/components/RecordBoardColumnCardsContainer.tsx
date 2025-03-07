@@ -151,15 +151,13 @@ export const RecordBoardColumnCardsContainer = ({
                 position="last"
               />
             )}
-            <StyledNewButtonContainer>
-              <RecordBoardColumnNewRecordButton
-                columnId={columnDefinition.id}
-              />
-            </StyledNewButtonContainer>
           </div>
         )}
       </Draggable>
       {droppableProvided?.placeholder}
+      <StyledNewButtonContainer>
+        <RecordBoardColumnNewRecordButton columnId={columnDefinition.id} />
+      </StyledNewButtonContainer>
     </StyledColumnCardsContainer>
   );
 };
