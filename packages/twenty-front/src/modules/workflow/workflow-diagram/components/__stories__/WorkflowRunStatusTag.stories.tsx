@@ -27,7 +27,7 @@ export const Catalog: CatalogStory<Story, typeof WorkflowRunStatusTag> = {
     catalog: {
       dimensions: [
         {
-          name: 'version status',
+          name: 'workflow run status',
           values: [
             'NOT_STARTED',
             'RUNNING',
