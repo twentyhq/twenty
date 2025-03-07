@@ -3,7 +3,7 @@ import { JsonList } from '@/workflow/components/json-visualizer/components/inter
 import { JsonNodeLabel } from '@/workflow/components/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNode } from '@/workflow/components/json-visualizer/components/JsonNode';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import { IconComponent } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
@@ -20,15 +20,21 @@ const StyledLabelContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledElementsCount = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
 export const JsonNestedNode = ({
   label,
   Icon,
   elements,
+  renderElementsCount,
   depth,
 }: {
   label?: string;
   Icon: IconComponent;
   elements: Array<{ id: string | number; label: string; value: JsonValue }>;
+  renderElementsCount: (count: number) => React.ReactNode;
   depth: number;
 }) => {
   const hideRoot = !isDefined(label);
@@ -57,6 +63,10 @@ export const JsonNestedNode = ({
         <JsonArrow isOpen={isOpen} onClick={handleArrowClick} />
 
         <JsonNodeLabel label={label} Icon={Icon} />
+
+        <StyledElementsCount>
+          {renderElementsCount(elements.length)}
+        </StyledElementsCount>
       </StyledLabelContainer>
 
       {isOpen && renderedChildren}
