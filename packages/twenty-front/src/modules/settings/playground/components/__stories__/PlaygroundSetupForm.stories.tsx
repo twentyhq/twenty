@@ -30,14 +30,3 @@ type Story = StoryObj<typeof PlaygroundSetupForm>;
 export const Default: Story = {
   args: {},
 };
-
-export const WithPrefilledApiKey: Story = {
-  args: {},
-  parameters: {
-    recoil: {
-      atoms: {
-        apiKeyState: 'test-api-key-123',
-      },
-    },
-  },
-};

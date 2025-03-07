@@ -1,5 +1,5 @@
 import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundConfig';
+import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { SettingsPath } from '@/types/SettingsPath';
 
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';

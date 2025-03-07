@@ -1,22 +1,32 @@
+import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
+import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
+import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, ComponentWithRouterDecorator } from 'twenty-ui';
-import { SettingsGraphQLPlayground } from '~/pages/settings/developers/playground/SettingsGraphQLPlayground';
+import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import {
-  getValidMockSession,
-  PlaygroundDecorator,
-} from '~/testing/decorators/PlaygroundDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-const meta: Meta<any> = {
+const PlaygroundApiKeySetterEffect = () => {
+  const setPlaygroundApiKey = useSetRecoilState(playgroundApiKeyState);
+
+  useEffect(() => {
+    setPlaygroundApiKey('test-api-key-123');
+  }, [setPlaygroundApiKey]);
+
+  return null;
+};
+
+const meta: Meta<typeof GraphQLPlayground> = {
   title: 'Modules/Settings/Playground/GraphQLPlayground',
-  component: SettingsGraphQLPlayground,
+  component: GraphQLPlayground,
   decorators: [
     ComponentDecorator,
     I18nFrontDecorator,
     ComponentWithRouterDecorator,
-    PlaygroundDecorator,
+    ComponentWithRecoilScopeDecorator,
   ],
   parameters: {
     docs: {
@@ -30,27 +40,18 @@ const meta: Meta<any> = {
 };
 export default meta;
 
-type Story = StoryObj<any>;
+type Story = StoryObj<typeof GraphQLPlayground>;
 
 export const Default: Story = {
   args: {
     onError: action('GraphQL Playground encountered unexpected error'),
   },
-  parameters: {
-    session: getValidMockSession(),
-  },
-};
-
-export const Error: Story = {
-  args: {
-    onError: action('GraphQL Playground encountered an error'),
-  },
-  parameters: {
-    session: {
-      apiKey: null,
-      baseUrl: null,
-      schema: null,
-      isValid: false,
-    },
-  },
+  decorators: [
+    (Story) => (
+      <>
+        <PlaygroundApiKeySetterEffect />
+        <Story />
+      </>
+    ),
+  ],
 };

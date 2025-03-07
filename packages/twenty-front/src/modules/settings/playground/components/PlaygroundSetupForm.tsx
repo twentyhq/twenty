@@ -1,8 +1,6 @@
-import { apiKeyState } from '@/settings/playground/states/apiKeyState';
-import {
-  PlaygroundSchemas,
-  PlaygroundTypes,
-} from '@/settings/playground/types/PlaygroundConfig';
+import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
+import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -42,7 +40,9 @@ const StyledForm = styled.form`
 export const PlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
-  const [apiKey, setApiKey] = useRecoilState(apiKeyState);
+  const [playgroundApiKey, setPlaygroundApiKey] = useRecoilState(
+    playgroundApiKeyState,
+  );
 
   const {
     control,
@@ -55,7 +55,7 @@ export const PlaygroundSetupForm = () => {
     defaultValues: {
       schema: PlaygroundSchemas.CORE,
       playgroundType: PlaygroundTypes.REST,
-      apiKeyForPlayground: apiKey || '',
+      apiKeyForPlayground: playgroundApiKey || '',
     },
   });
 
@@ -91,7 +91,7 @@ export const PlaygroundSetupForm = () => {
     try {
       await validateApiKey(values);
 
-      setApiKey(values.apiKeyForPlayground);
+      setPlaygroundApiKey(values.apiKeyForPlayground);
 
       const path =
         values.playgroundType === PlaygroundTypes.GRAPHQL
@@ -124,7 +124,7 @@ export const PlaygroundSetupForm = () => {
             value={value}
             onChange={(newValue) => {
               onChange(newValue);
-              setApiKey(newValue);
+              setPlaygroundApiKey(newValue);
             }}
             error={error?.message}
             required

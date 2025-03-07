@@ -1,5 +1,5 @@
 import { RestPlayground } from '@/settings/playground/components/RestPlayground';
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundConfig';
+import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { SettingsPath } from '@/types/SettingsPath';
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import { Trans } from '@lingui/react/macro';
