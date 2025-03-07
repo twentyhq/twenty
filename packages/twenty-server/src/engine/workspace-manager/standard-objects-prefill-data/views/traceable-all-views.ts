@@ -49,7 +49,7 @@ export const tracaebleAllView = (
             TRACEABLE_STANDARD_FIELD_IDS.generatedUrl
           ],
         position: 3,
-        isVisible: true,
+        isVisible: false,
         size: 150,
       },
       {
