@@ -6,6 +6,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import {
+  IconBolt,
   IconCalendarEvent,
   IconComponent,
   IconDotsVertical,
@@ -21,6 +22,7 @@ import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextSt
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -393,6 +395,27 @@ export const useCommandMenu = () => {
     [getIcon, navigateCommandMenu],
   );
 
+  const openWorkflowTriggerTypeInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowStepSelectTriggerType,
+          pageTitle: t`Trigger Type`,
+          pageIcon: IconBolt,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
   const openRecordsSearchPage = () => {
     navigateCommandMenu({
       page: CommandMenuPages.SearchRecords,
@@ -512,5 +535,6 @@ export const useCommandMenu = () => {
     setGlobalCommandMenuContext,
     openCalendarEventInCommandMenu,
     openEmailThreadInCommandMenu,
+    openWorkflowTriggerTypeInCommandMenu,
   };
 };
