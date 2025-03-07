@@ -80,10 +80,10 @@ export const WorkflowEditActionFormSendEmail = ({
     const hasSendScope = (
       connectedAccount: ConnectedAccount,
       scopes: string[],
-    ) => {
+    ): boolean => {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:
-          return scopes.find((scope) => scope === GMAIL_SEND_SCOPE);
+          return scopes.some((scope) => scope === GMAIL_SEND_SCOPE);
         case ConnectedAccountProvider.MICROSOFT:
           return scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE);
         default:
