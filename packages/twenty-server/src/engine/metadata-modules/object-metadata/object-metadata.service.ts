@@ -28,7 +28,7 @@ import { buildDefaultFieldsForCustomObject } from 'src/engine/metadata-modules/o
 import {
   validateNameAndLabelAreSyncOrThrow,
   validateNameSingularAndNamePluralAreDifferentOrThrow,
-  validateObjectMetadataInputOrThrow,
+  validateObjectMetadataInputNamesOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { SearchService } from 'src/engine/metadata-modules/search/search.service';
@@ -89,7 +89,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.workspaceId,
       );
 
-    validateObjectMetadataInputOrThrow(objectMetadataInput);
+    validateObjectMetadataInputNamesOrThrow(objectMetadataInput);
 
     validateNameSingularAndNamePluralAreDifferentOrThrow(
       objectMetadataInput.nameSingular,
@@ -201,7 +201,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
-    validateObjectMetadataInputOrThrow(input.update);
+    validateObjectMetadataInputNamesOrThrow(input.update);
 
     const existingObjectMetadata = await this.objectMetadataRepository.findOne({
       where: { id: input.id, workspaceId: workspaceId },

@@ -21,7 +21,6 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
-import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -35,6 +34,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
+import { validateObjectMetadataInputNameOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -67,8 +67,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     try {
-      validateMetadataNameValidityOrThrow(relationMetadataInput.fromName);
-      validateMetadataNameValidityOrThrow(relationMetadataInput.toName);
+      validateObjectMetadataInputNameOrThrow(relationMetadataInput.fromName);
+      validateObjectMetadataInputNameOrThrow(relationMetadataInput.toName);
     } catch (error) {
       if (error instanceof InvalidStringException) {
         throw new RelationMetadataException(

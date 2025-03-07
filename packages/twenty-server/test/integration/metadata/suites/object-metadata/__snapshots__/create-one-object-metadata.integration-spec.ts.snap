@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Object metadata creation should fail when name exceeds maximum length 1`] = `"Name exceeds 63 characters: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"`;
+
 exports[`Object metadata creation should fail when namePlural has invalid characters 1`] = `"Characters used in name "μ" are not supported"`;
 
 exports[`Object metadata creation should fail when namePlural is a reserved keyword 1`] = `"The name "users" is not available"`;

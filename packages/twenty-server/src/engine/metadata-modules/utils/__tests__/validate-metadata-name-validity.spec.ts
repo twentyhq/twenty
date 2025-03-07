@@ -53,4 +53,13 @@ describe('validateMetadataNameValidityOrThrow', () => {
       validateMetadataNameValidityOrThrow(inputWith64Characters),
     ).toThrow(NameTooLongException);
   });
+
+  it('throws if an empty string', () => {
+    const inputWith64Characters =
+      '';
+
+    expect(() =>
+      validateMetadataNameValidityOrThrow(inputWith64Characters),
+    ).toThrow(InvalidStringException);
+  });
 });

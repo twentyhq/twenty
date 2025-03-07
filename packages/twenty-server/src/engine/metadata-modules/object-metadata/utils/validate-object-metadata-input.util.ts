@@ -79,21 +79,23 @@ const reservedKeywords = [
 
 // TODO Unless does not verify that nameSingular and namePlural are different
 // BETTER should not stop on first ?
-export const validateObjectMetadataInputOrThrow = <
+export const validateObjectMetadataInputNamesOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
 >({
   namePlural,
   nameSingular,
-}: T): void => {
+}: T): void =>
+  [namePlural, nameSingular].forEach(validateObjectMetadataInputNameOrThrow);
+
+export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
   const validators = [
     validateNameIsNoTooShortOrThrow,
+    validateNameIsNotTooLongOrThrow,
     validateNameCamelCasedOrThrow,
     validateNameCharactersOrThrow,
     validateNameIsNotReservedKeywordOrThrow,
-    validateNameIsNotTooLongOrThrow,
   ];
-  const names = [namePlural, nameSingular];
-  names.forEach((name) => validators.forEach((validator) => validator(name)));
+  validators.forEach((validator) => validator(name));
 };
 
 const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {

@@ -1,5 +1,5 @@
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { validateObjectMetadataInputOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
+import { validateObjectMetadataInputNamesOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { EachTestingContext } from 'twenty-shared';
 const getObjectInput = (
   overrides?: Partial<UpdateObjectPayload>,
@@ -56,7 +56,7 @@ const validateObjectMetadataTestCases: ValidateObjectNameTestingContext[] = [
 describe('validateObjectMetadataInputOrThrow should fail', () => {
   it.each(validateObjectMetadataTestCases)('$title', ({ context }) => {
     expect(() =>
-      validateObjectMetadataInputOrThrow(getObjectInput(context)),
+      validateObjectMetadataInputNamesOrThrow(getObjectInput(context)),
     ).toThrowErrorMatchingSnapshot();
   });
 });
