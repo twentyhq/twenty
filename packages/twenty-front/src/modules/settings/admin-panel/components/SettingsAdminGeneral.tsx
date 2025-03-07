@@ -70,7 +70,7 @@ const StyledVersionContainer = styled.div`
 
 const StyledVersionText = styled.div`
   font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
