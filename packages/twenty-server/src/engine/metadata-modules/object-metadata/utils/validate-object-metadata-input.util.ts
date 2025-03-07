@@ -85,7 +85,12 @@ export const validateObjectMetadataInputNamesOrThrow = <
   namePlural,
   nameSingular,
 }: T): void =>
-  [namePlural, nameSingular].forEach(validateObjectMetadataInputNameOrThrow);
+  [namePlural, nameSingular].forEach((name) => {
+    if (!isDefined(name)) {
+      return;
+    }
+    validateObjectMetadataInputNameOrThrow(name);
+  });
 
 export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
   const validators = [
@@ -98,19 +103,35 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
   validators.forEach((validator) => validator(name));
 };
 
-const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
-  if (isDefined(name)) {
-    if (reservedKeywords.includes(name)) {
-      throw new ObjectMetadataException(
-        `The name "${name}" is not available`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
+export const validateObjectMetadataInputLabelsOrThrow = <
+  T extends CreateObjectInput,
+>({
+  labelPlural,
+  labelSingular,
+}: T): void =>
+  [labelPlural, labelSingular].forEach((label) =>
+    validateObjectMetadataInputLabelOrThrow(label),
+  );
+
+const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
+  const validators = [
+    validateNameIsNoTooShortOrThrow, // Should not ?
+    validateNameIsNotTooLongOrThrow,
+  ];
+  validators.forEach((validator) => validator(name.trim()));
+};
+
+const validateNameIsNotReservedKeywordOrThrow = (name: string) => {
+  if (reservedKeywords.includes(name)) {
+    throw new ObjectMetadataException(
+      `The name "${name}" is not available`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 
-const validateNameCamelCasedOrThrow = (name?: string) => {
-  if (isDefined(name) && name !== camelCase(name)) {
+const validateNameCamelCasedOrThrow = (name: string) => {
+  if (name !== camelCase(name)) {
     throw new ObjectMetadataException(
       `Name should be in camelCase: ${name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -118,8 +139,8 @@ const validateNameCamelCasedOrThrow = (name?: string) => {
   }
 };
 
-const validateNameIsNotTooLongOrThrow = (name?: string) => {
-  if (isDefined(name) && exceedsDatabaseIdentifierMaximumLength(name)) {
+const validateNameIsNotTooLongOrThrow = (name: string) => {
+  if (exceedsDatabaseIdentifierMaximumLength(name)) {
     throw new ObjectMetadataException(
       `Name exceeds ${IDENTIFIER_MAX_CHAR_LENGTH} characters: ${name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -127,8 +148,8 @@ const validateNameIsNotTooLongOrThrow = (name?: string) => {
   }
 };
 
-const validateNameIsNoTooShortOrThrow = (name?: string) => {
-  if (isDefined(name) && beneathDatabaseIdentifierMininumLength(name)) {
+const validateNameIsNoTooShortOrThrow = (name: string) => {
+  if (beneathDatabaseIdentifierMininumLength(name)) {
     throw new ObjectMetadataException(
       `Name is too short`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -136,11 +157,9 @@ const validateNameIsNoTooShortOrThrow = (name?: string) => {
   }
 };
 
-const validateNameCharactersOrThrow = (name?: string) => {
+const validateNameCharactersOrThrow = (name: string) => {
   try {
-    if (isDefined(name)) {
-      validateMetadataNameValidityOrThrow(name);
-    }
+    validateMetadataNameValidityOrThrow(name);
   } catch (error) {
     if (error instanceof InvalidStringException) {
       throw new ObjectMetadataException(
@@ -197,14 +216,19 @@ export const validateNameAndLabelAreSyncOrThrow = (
   }
 };
 
-export const validateNameSingularAndNamePluralAreDifferentOrThrow = (
-  nameSingular: string,
-  namePlural: string,
-) => {
-  // Not case sensitive // Does not trim either
-  if (nameSingular === namePlural) {
+type ValidateLowerCasedAndTrimmedStringAreDifferentOrThrowArgs = {
+  inputs: [string, string];
+  message: string;
+};
+export const validateLowerCasedAndTrimmedStringsAreDifferentOrThrow = ({
+  message,
+  inputs: [firstString, secondString],
+}: ValidateLowerCasedAndTrimmedStringAreDifferentOrThrowArgs) => {
+  if (
+    firstString.trim().toLowerCase() === secondString.trim().toLocaleLowerCase()
+  ) {
     throw new ObjectMetadataException(
-      'The singular and plural name cannot be the same for an object',
+      message,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }

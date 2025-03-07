@@ -26,8 +26,9 @@ import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules
 import { ObjectMetadataRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-relation.service';
 import { buildDefaultFieldsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 import {
+  validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
   validateNameAndLabelAreSyncOrThrow,
-  validateNameSingularAndNamePluralAreDifferentOrThrow,
+  validateObjectMetadataInputLabelsOrThrow,
   validateObjectMetadataInputNamesOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
@@ -90,14 +91,27 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
     validateObjectMetadataInputNamesOrThrow(objectMetadataInput);
+    validateObjectMetadataInputLabelsOrThrow(objectMetadataInput);
 
-    validateNameSingularAndNamePluralAreDifferentOrThrow(
-      objectMetadataInput.nameSingular,
-      objectMetadataInput.namePlural,
-    );
+    validateLowerCasedAndTrimmedStringsAreDifferentOrThrow({
+      inputs: [
+        objectMetadataInput.nameSingular,
+        objectMetadataInput.namePlural,
+      ],
+      message: 'The singular and plural names cannot be the same for an object',
+    });
+    validateLowerCasedAndTrimmedStringsAreDifferentOrThrow({
+      inputs: [
+        objectMetadataInput.labelPlural,
+        objectMetadataInput.labelSingular,
+      ],
+      message:
+        'The singular and plural labels cannot be the same for an object',
+    });
 
     // Should check by default if undefined ?
     if (objectMetadataInput.isLabelSyncedWithName === true) {
+      // Refactor should not infer front shit
       validateNameAndLabelAreSyncOrThrow(
         objectMetadataInput.labelSingular,
         objectMetadataInput.nameSingular,
@@ -244,10 +258,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isDefined(input.update.nameSingular) ||
       isDefined(input.update.namePlural)
     ) {
-      validateNameSingularAndNamePluralAreDifferentOrThrow(
-        existingObjectMetadataCombinedWithUpdateInput.nameSingular,
-        existingObjectMetadataCombinedWithUpdateInput.namePlural,
-      );
+      validateLowerCasedAndTrimmedStringsAreDifferentOrThrow({
+        inputs: [
+          existingObjectMetadataCombinedWithUpdateInput.nameSingular,
+          existingObjectMetadataCombinedWithUpdateInput.namePlural,
+        ],
+        message:
+          'The singular and plural names cannot be the same for an object',
+      });
     }
 
     const updatedObject = await super.updateOne(input.id, input.update);

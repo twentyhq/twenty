@@ -9,9 +9,10 @@ type CreateObjectInputPayload = Omit<
   CreateObjectInput,
   'workspaceId' | 'dataSourceId'
 >;
-const FailingCreationTestsUseCase: EachTestingContext<
-  Partial<CreateObjectInputPayload>
->[] = [
+type CreateOneObjectMetadataItemTestingContext =  EachTestingContext<
+Partial<CreateObjectInputPayload>
+>[]
+const FailingNamesCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext = [
   {
     title: 'when nameSingular has invalid characters',
     context: { nameSingular: 'μ' },
@@ -50,6 +51,62 @@ const FailingCreationTestsUseCase: EachTestingContext<
   },
 ];
 
+const FailingLabelsCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext = [
+  {
+    title: 'when labelSingular contains special characters',
+    context: { labelSingular: '@Special#Label' },
+  },
+  {
+    title: 'when labelPlural contains special characters',
+    context: { labelPlural: '@Special#Labels' },
+  },
+  {
+    title: 'when labelSingular is empty',
+    context: { labelSingular: '' },
+  },
+  {
+    title: 'when labelPlural is empty',
+    context: { labelPlural: '' },
+  },
+  {
+    title: 'when labelSingular exceeds maximum length',
+    context: { labelSingular: 'A'.repeat(64) },
+  },
+  {
+    title: 'when labelPlural exceeds maximum length',
+    context: { labelPlural: 'A'.repeat(64) },
+  },
+  {
+    title: 'when labelSingular contains only numbers',
+    context: { labelSingular: '12345' },
+  },
+  {
+    title: 'when labelPlural contains only numbers',
+    context: { labelPlural: '12345' },
+  },
+  {
+    title: 'when labelSingular contains only whitespace',
+    context: { labelSingular: '   ' },
+  },
+  {
+    title: 'when labelPlural contains only whitespace',
+    context: { labelPlural: '   ' },
+  },
+  {
+    title: 'when labelSingular starts with a number',
+    context: { labelSingular: '1Label' },
+  },
+  {
+    title: 'when labelPlural starts with a number',
+    context: { labelPlural: '1Labels' },
+  }
+];
+
+const allTestsUseCases = [
+  // ...FailingNamesCreationTestsUseCase,
+  ...FailingLabelsCreationTestsUseCase
+]
+
 const getMockCreateObjectInput = (
   overrides?: Partial<CreateObjectInputPayload>,
 ): CreateObjectInputPayload => ({
@@ -83,12 +140,12 @@ describe('Object metadata creation should fail', () => {
       } catch (e) {
         console.error(e);
       }
-      fail('Object Metadata Item should have failed but did not');
+      expect(false).toEqual('Object Metadata Item should have failed but did not');
     }
     expect(response.body.errors.length).toBe(1);
     return response.body.errors[0];
   };
-  it.each(FailingCreationTestsUseCase)('$title', async ({ context }) => {
+  it.each(allTestsUseCases)('$title', async ({ context}) => {
     const error = await performFailingObjectMetadataCreation(
       getMockCreateObjectInput(context),
     );
