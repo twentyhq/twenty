@@ -16,11 +16,11 @@ import { msg } from '@lingui/core/macro';
 import { userEvent, waitFor, within } from '@storybook/test';
 import {
   ComponentDecorator,
-  getCanvasElementForDropdownTesting,
   IconFileExport,
   IconHeart,
   IconTrash,
   MenuItemAccent,
+  getCanvasElementForDropdownTesting,
 } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
@@ -124,19 +124,19 @@ export const WithButtonClicks: Story = {
   play: async () => {
     const canvas = within(getCanvasElementForDropdownTesting());
 
-    let actionButton = await canvas.findByText('Actions');
+    let actionButton = await canvas.findByText('Options');
     await userEvent.click(actionButton);
 
     const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);
 
-    actionButton = await canvas.findByText('Actions');
+    actionButton = await canvas.findByText('Options');
     await userEvent.click(actionButton);
 
     const addToFavoritesButton = await canvas.findByText('Add to favorites');
     await userEvent.click(addToFavoritesButton);
 
-    actionButton = await canvas.findByText('Actions');
+    actionButton = await canvas.findByText('Options');
     await userEvent.click(actionButton);
 
     const exportButton = await canvas.findByText('Export');

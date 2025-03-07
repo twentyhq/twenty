@@ -10,6 +10,7 @@ import { CardType } from '@/object-record/record-show/types/CardType';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
 import { WorkflowRunVisualizer } from '@/workflow/components/WorkflowRunVisualizer';
+import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizerEffect';
 import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVisualizer';
@@ -94,7 +95,11 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   ),
 
   [CardType.WorkflowRunCard]: ({ targetableObject }) => (
-    <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
+    <>
+      <WorkflowRunVisualizerEffect workflowRunId={targetableObject.id} />
+
+      <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
+    </>
   ),
   [CardType.WorkflowRunOutputCard]: ({ targetableObject }) => (
     <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />

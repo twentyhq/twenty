@@ -18,6 +18,8 @@ export class AdminPanelHealthServiceData {
   status: AdminPanelHealthServiceStatus;
 
   @Field(() => String, { nullable: true })
+  errorMessage?: string;
+  @Field(() => String, { nullable: true })
   details?: string;
 
   @Field(() => [AdminPanelWorkerQueueHealth], { nullable: true })

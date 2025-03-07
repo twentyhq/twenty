@@ -1,4 +1,4 @@
-import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
+import { CommandMenuContextRecordsChip } from '@/command-menu/components/CommandMenuContextRecordsChip';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
@@ -46,7 +46,7 @@ export const ResetContextToSelectionCommandButton = () => {
       Icon={IconArrowBackUp}
       label={t`Reset to`}
       RightComponent={
-        <CommandMenuContextRecordChip
+        <CommandMenuContextRecordsChip
           objectMetadataItemId={objectMetadataItem.id}
           instanceId="command-menu-previous"
         />

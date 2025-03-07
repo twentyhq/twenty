@@ -34,7 +34,6 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
 
     const findManyRecordsParams = useFindManyRecordIndexTableParams(
       objectMetadataItem?.nameSingular ?? '',
-      objectMetadataItem?.namePlural ?? '',
     );
 
     const contextStoreFilters = useRecoilComponentValueV2(

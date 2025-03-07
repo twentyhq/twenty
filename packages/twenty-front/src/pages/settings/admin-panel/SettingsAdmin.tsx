@@ -14,9 +14,9 @@ export const SettingsAdmin = () => {
       links={[
         {
           children: t`Other`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
+          href: getSettingsPath(SettingsPath.ServerAdmin),
         },
-        { children: t`Server Admin Panel` },
+        { children: t`Server Admin` },
       ]}
     >
       <SettingsPageContainer>

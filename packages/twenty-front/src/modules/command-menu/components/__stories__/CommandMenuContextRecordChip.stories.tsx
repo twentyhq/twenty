@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 
-import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
+import { CommandMenuContextRecordsChip } from '@/command-menu/components/CommandMenuContextRecordsChip';
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -207,9 +207,9 @@ const ContextStoreDecorator: Decorator = (Story) => {
   );
 };
 
-const meta: Meta<typeof CommandMenuContextRecordChip> = {
+const meta: Meta<typeof CommandMenuContextRecordsChip> = {
   title: 'Modules/CommandMenu/CommandMenuContextRecordChip',
-  component: CommandMenuContextRecordChip,
+  component: CommandMenuContextRecordsChip,
   decorators: [
     ContextStoreDecorator,
     ChipGeneratorsDecorator,
@@ -221,7 +221,7 @@ const meta: Meta<typeof CommandMenuContextRecordChip> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof CommandMenuContextRecordChip>;
+type Story = StoryObj<typeof CommandMenuContextRecordsChip>;
 
 export const Default: Story = {};
 

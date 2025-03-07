@@ -1,7 +1,6 @@
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { WorkflowRun } from '@/workflow/types/Workflow';
 import { WorkflowRunDiagramCanvas } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvas';
-import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizerEffect';
 import { isDefined } from 'twenty-shared';
 
 export const WorkflowRunVisualizerContent = ({
@@ -14,11 +13,5 @@ export const WorkflowRunVisualizerContent = ({
     return null;
   }
 
-  return (
-    <>
-      <WorkflowRunVisualizerEffect workflowRun={workflowRun} />
-
-      <WorkflowRunDiagramCanvas versionStatus={workflowVersion.status} />
-    </>
-  );
+  return <WorkflowRunDiagramCanvas versionStatus={workflowVersion.status} />;
 };

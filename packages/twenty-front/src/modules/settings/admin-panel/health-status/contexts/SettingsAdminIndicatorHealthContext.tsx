@@ -14,6 +14,7 @@ export const SettingsAdminIndicatorHealthContext =
       id: '',
       label: '',
       description: '',
+      errorMessage: '',
       status: AdminPanelHealthServiceStatus.OPERATIONAL,
       details: '',
       queues: [],

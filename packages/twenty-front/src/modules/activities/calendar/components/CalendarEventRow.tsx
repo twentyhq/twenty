@@ -11,6 +11,8 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
 import {
   Avatar,
@@ -22,6 +24,7 @@ import {
 } from 'twenty-ui';
 import {
   CalendarChannelVisibility,
+  FeatureFlagKey,
   TimelineCalendarEvent,
 } from '~/generated-metadata/graphql';
 
@@ -115,6 +118,10 @@ export const CalendarEventRow = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { displayCurrentEventCursor = false } = useContext(CalendarContext);
   const { openCalendarEventRightDrawer } = useOpenCalendarEventRightDrawer();
+  const { openCalendarEventInCommandMenu } = useCommandMenu();
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
 
   const startsAt = getCalendarEventStartDate(calendarEvent);
   const endsAt = getCalendarEventEndDate(calendarEvent);
@@ -137,7 +144,13 @@ export const CalendarEventRow = ({
       showTitle={showTitle}
       onClick={
         showTitle
-          ? () => openCalendarEventRightDrawer(calendarEvent.id)
+          ? () => {
+              if (isCommandMenuV2Enabled) {
+                openCalendarEventInCommandMenu(calendarEvent.id);
+              } else {
+                openCalendarEventRightDrawer(calendarEvent.id);
+              }
+            }
           : undefined
       }
     >

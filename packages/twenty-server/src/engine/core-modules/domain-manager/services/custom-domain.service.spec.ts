@@ -123,6 +123,36 @@ describe('CustomDomainService', () => {
         hostname: customDomain,
       });
     });
+    it('should return even if no record found', async () => {
+      const customDomain = 'example.com';
+      const mockResult = {
+        id: 'custom-id',
+        hostname: customDomain,
+        ownership_verification: undefined,
+        verification_errors: [],
+      };
+      const cloudflareMock = {
+        customHostnames: {
+          list: jest.fn().mockResolvedValueOnce({ result: [mockResult] }),
+        },
+      };
+
+      jest.spyOn(environmentService, 'get').mockReturnValue('test-zone-id');
+
+      jest
+        .spyOn(domainManagerService, 'getFrontUrl')
+        .mockReturnValue(new URL('https://front.domain'));
+      (customDomainService as any).cloudflareClient = cloudflareMock;
+
+      const result =
+        await customDomainService.getCustomDomainDetails(customDomain);
+
+      expect(result).toEqual({
+        id: 'custom-id',
+        customDomain: customDomain,
+        records: expect.any(Array),
+      });
+    });
 
     it('should return domain details if a single result is found', async () => {
       const customDomain = 'example.com';

@@ -22,6 +22,7 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
+      name: 'Record is Created',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
@@ -38,6 +39,7 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
+      name: 'Record is Updated',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.updated`,
         outputSchema: {},
@@ -54,6 +56,7 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
+      name: 'Record is Deleted',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.deleted`,
         outputSchema: {},
@@ -70,6 +73,7 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
+      name: 'Record is Created',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
@@ -86,6 +90,7 @@ describe('getTriggerDefaultDefinition', () => {
       }),
     ).toStrictEqual({
       type: 'MANUAL',
+      name: 'Launch manually',
       settings: {
         objectType: generatedMockObjectMetadataItems[0].nameSingular,
         outputSchema: {},

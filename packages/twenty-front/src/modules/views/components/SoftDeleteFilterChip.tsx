@@ -25,7 +25,7 @@ export const SoftDeleteFilterChip = ({
   const { getIcon } = useIcons();
 
   const handleRemoveClick = () => {
-    removeRecordFilter(recordFilter.fieldMetadataId);
+    removeRecordFilter({ recordFilterId: recordFilter.id });
 
     setIsSoftDeleteFilterActive(false);
   };

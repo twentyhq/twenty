@@ -58,6 +58,7 @@ const formatBillingDatabasePriceToMeteredPriceDTO = (
       })) ?? [],
     recurringInterval: billingPrice?.interval ?? SubscriptionInterval.Month,
     stripePriceId: billingPrice?.stripePriceId,
+    priceUsageType: BillingUsageType.METERED,
   };
 };
 
@@ -68,5 +69,6 @@ const formatBillingDatabasePriceToLicensedPriceDTO = (
     recurringInterval: billingPrice?.interval ?? SubscriptionInterval.Month,
     unitAmount: billingPrice?.unitAmount ?? 0,
     stripePriceId: billingPrice?.stripePriceId,
+    priceUsageType: BillingUsageType.LICENSED,
   };
 };

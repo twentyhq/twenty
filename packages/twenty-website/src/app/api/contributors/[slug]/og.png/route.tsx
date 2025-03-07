@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { ImageResponse } from 'next/og';
 
+import { getContributorActivity } from '@/app/(public)/contributors/utils/get-contributor-activity';
 import {
   backgroundImage,
   container,
@@ -16,7 +17,6 @@ import {
   profileUsernameHeader,
   styledContributorAvatar,
 } from '@/app/api/contributors/[slug]/og.png/style';
-import { getContributorActivity } from '@/app/contributors/utils/get-contributor-activity';
 
 const GABARITO_FONT_CDN_URL =
   'https://fonts.cdnfonts.com/s/105143/Gabarito-Medium-BF651cdf1f3f18e.woff';

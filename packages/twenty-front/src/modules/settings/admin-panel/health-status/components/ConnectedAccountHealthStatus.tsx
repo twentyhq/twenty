@@ -17,11 +17,13 @@ export const ConnectedAccountHealthStatus = () => {
   }
 
   const parsedDetails = JSON.parse(details);
+  const serviceDetails = parsedDetails.details;
 
   const isMessageSyncDown =
-    parsedDetails.messageSync?.status === AdminPanelHealthServiceStatus.OUTAGE;
+    serviceDetails.messageSync?.status === AdminPanelHealthServiceStatus.OUTAGE;
   const isCalendarSyncDown =
-    parsedDetails.calendarSync?.status === AdminPanelHealthServiceStatus.OUTAGE;
+    serviceDetails.calendarSync?.status ===
+    AdminPanelHealthServiceStatus.OUTAGE;
 
   const errorMessages = [];
   if (isMessageSyncDown) {
@@ -39,16 +41,16 @@ export const ConnectedAccountHealthStatus = () => {
         </StyledErrorMessage>
       )}
 
-      {!isMessageSyncDown && parsedDetails.messageSync?.details && (
+      {!isMessageSyncDown && serviceDetails.messageSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
-          details={parsedDetails.messageSync.details}
+          details={serviceDetails.messageSync.details}
           title="Message Sync Status"
         />
       )}
 
-      {!isCalendarSyncDown && parsedDetails.calendarSync?.details && (
+      {!isCalendarSyncDown && serviceDetails.calendarSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
-          details={parsedDetails.calendarSync.details}
+          details={serviceDetails.calendarSync.details}
           title="Calendar Sync Status"
         />
       )}

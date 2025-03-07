@@ -362,6 +362,14 @@ msgstr "هل أنت متأكد أنك تريد تغيير فترة الفوتر�
 #~ msgid "Are you sure you want to assign this role?"
 #~ msgstr "Are you sure you want to assign this role?"
 
+#: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
+msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
+msgstr "هل أنت متأكد أنك تريد حذف هذه السجلات؟ يمكن استرجاعها من قائمة الأوامر ({osControlSymbol} + K)."
+
+#: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
+msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
+msgstr "هل أنت متأكد أنك تريد حذف هذا السجل؟ يمكن استرجاعه من قائمة الأوامر ({osControlSymbol} + K)."
+
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Ascending"
@@ -1941,7 +1949,7 @@ msgstr "الانتقال إلى عملية العمل السابقة"
 msgid "New"
 msgstr "جديد"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "{capitalizedObjectNameSingular} جديد"
 
@@ -2569,6 +2577,8 @@ msgstr "مرسل ومستلم"
 msgid "Serbian (Cyrillic)"
 msgstr "الصربية (السيريلية)"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Server Admin"
@@ -2576,8 +2586,8 @@ msgstr "مشرف الخادم"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-msgid "Server Admin Panel"
-msgstr "\\\\u0627\\\\u0644\\\\u0644\\\\u0648\\\\u062d\\\\u0629 \\\\u0627\\\\u0644\\\\u0625\\\\u062f\\\\u0627\\\\u0631\\\\u064a\\\\u0629 \\\\u0644\\\\u0644\\\\u062e\\\\u0627\\\\u062f\\\\u0645"
+#~ msgid "Server Admin Panel"
+#~ msgstr "Server Admin Panel"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
@@ -2652,6 +2662,14 @@ msgstr "تسجيل الدخول لمرة واحدة (SSO)"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Singular"
 msgstr "فردي"
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural labels must be different"
+msgstr "يجب أن تكون العبارات الفردية والجمع مختلفة"
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural names must be different"
+msgstr "يجب أن تكون الأسماء المفردة والجمع مختلفة"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"

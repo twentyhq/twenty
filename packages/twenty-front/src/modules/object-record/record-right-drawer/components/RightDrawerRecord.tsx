@@ -4,6 +4,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { RIGHT_DRAWER_RECORD_INSTANCE_ID } from '@/object-record/record-right-drawer/constants/RightDrawerRecordInstanceId';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
@@ -52,11 +53,11 @@ export const RightDrawerRecord = () => {
         >
           <ContextStoreComponentInstanceContext.Provider
             value={{
-              instanceId: `record-show-${objectRecordId}`,
+              instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID,
             }}
           >
             <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: `record-show-${objectRecordId}` }}
+              value={{ instanceId: RIGHT_DRAWER_RECORD_INSTANCE_ID }}
             >
               <StyledRightDrawerRecord isMobile={isMobile}>
                 <RecordFieldValueSelectorContextProvider>

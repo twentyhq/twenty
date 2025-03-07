@@ -128,16 +128,21 @@ export const CommandMenuTopBar = () => {
         (page) => page.page !== CommandMenuPages.Root,
       );
 
-    return filteredCommandMenuNavigationStack.map((page, index) => ({
-      Icons: [<page.pageIcon size={theme.icon.size.sm} />],
-      text: page.pageTitle,
-      onClick:
-        index === filteredCommandMenuNavigationStack.length - 1
+    return filteredCommandMenuNavigationStack.map((page, index) => {
+      const isLastChip =
+        index === filteredCommandMenuNavigationStack.length - 1;
+
+      return {
+        page,
+        Icons: [<page.pageIcon size={theme.icon.size.sm} />],
+        text: page.pageTitle,
+        onClick: isLastChip
           ? undefined
           : () => {
               navigateCommandMenuHistory(index);
             },
-    }));
+      };
+    });
   }, [
     commandMenuNavigationStack,
     navigateCommandMenuHistory,

@@ -95,7 +95,6 @@ export const NoteCard = ({
             <ActivityTargetsInlineCell
               activity={note}
               activityObjectNameSingular={CoreObjectNameSingular.Note}
-              readonly
             />
           </NoteTargetsContextProvider>
         )}

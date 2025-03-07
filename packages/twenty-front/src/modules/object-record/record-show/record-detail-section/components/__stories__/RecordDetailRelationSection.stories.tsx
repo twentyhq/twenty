@@ -10,6 +10,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
@@ -31,21 +32,25 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
   component: RecordDetailRelationSection,
   decorators: [
     (Story) => (
-      <FieldContext.Provider
-        value={{
-          recordId: companiesMock[0].id,
-          isLabelIdentifier: false,
-          fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-            field: mockedCompanyObjectMetadataItem.fields.find(
-              ({ name }) => name === 'people',
-            )!,
-            objectMetadataItem: mockedCompanyObjectMetadataItem,
-          }),
-          hotkeyScope: 'hotkey-scope',
-        }}
+      <ContextStoreComponentInstanceContext.Provider
+        value={{ instanceId: 'mock-instance-id' }}
       >
-        <Story />
-      </FieldContext.Provider>
+        <FieldContext.Provider
+          value={{
+            recordId: companiesMock[0].id,
+            isLabelIdentifier: false,
+            fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
+              field: mockedCompanyObjectMetadataItem.fields.find(
+                ({ name }) => name === 'people',
+              )!,
+              objectMetadataItem: mockedCompanyObjectMetadataItem,
+            }),
+            hotkeyScope: 'hotkey-scope',
+          }}
+        >
+          <Story />
+        </FieldContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
     ),
     ComponentDecorator,
     ObjectMetadataItemsDecorator,

@@ -29,10 +29,6 @@ export const AdvancedFilterDropdownButton = () => {
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  const handleDropdownClickOutside = useCallback(() => {}, []);
-
-  const handleDropdownClose = () => {};
-
   const removeAdvancedFilter = useCallback(async () => {
     if (!advancedRecordFilterIds) {
       throw new Error('No advanced view filters to remove');
@@ -48,7 +44,7 @@ export const AdvancedFilterDropdownButton = () => {
     }
 
     for (const recordFilterId of advancedRecordFilterIds) {
-      removeRecordFilter(recordFilterId);
+      removeRecordFilter({ recordFilterId });
     }
   }, [
     advancedRecordFilterIds,
@@ -76,15 +72,13 @@ export const AdvancedFilterDropdownButton = () => {
       }
       dropdownComponents={
         <AdvancedFilterRootLevelViewFilterGroup
-          rootLevelViewFilterGroupId={outermostRecordFilterGroupId}
+          rootLevelRecordFilterGroupId={outermostRecordFilterGroupId}
         />
       }
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
       dropdownMenuWidth={800}
-      onClickOutside={handleDropdownClickOutside}
-      onClose={handleDropdownClose}
     />
   );
 };

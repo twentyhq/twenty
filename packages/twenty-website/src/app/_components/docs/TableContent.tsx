@@ -1,13 +1,13 @@
 'use client';
-import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
+import { useHeadsObserver } from '@/app/(public)/user-guide/hooks/useHeadsObserver';
 import ClientOnly from '@/app/_components/docs/ClientOnly';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { useHeadsObserver } from '@/app/user-guide/hooks/useHeadsObserver';
 
 const StyledContainer = styled.div`
   ${mq({

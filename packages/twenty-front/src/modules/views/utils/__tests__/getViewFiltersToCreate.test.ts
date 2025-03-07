@@ -17,8 +17,11 @@ describe('getViewFiltersToCreate', () => {
   it('should return all filters when current filters array is empty', () => {
     const currentViewFilters: ViewFilter[] = [];
     const newViewFilters: ViewFilter[] = [
-      { ...baseFilter },
-      { ...baseFilter, id: 'filter-2', fieldMetadataId: 'field-2' },
+      { ...baseFilter } satisfies ViewFilter,
+      {
+        ...baseFilter,
+        id: 'filter-2',
+      } satisfies ViewFilter,
     ];
 
     const result = getViewFiltersToCreate(currentViewFilters, newViewFilters);
@@ -40,8 +43,7 @@ describe('getViewFiltersToCreate', () => {
     const newFilterWithDifferentFieldMetadata = {
       ...baseFilter,
       id: 'filter-2',
-      fieldMetadataId: 'field-2',
-    };
+    } satisfies ViewFilter;
 
     const currentViewFilters: ViewFilter[] = [existingFilter];
 
@@ -55,25 +57,6 @@ describe('getViewFiltersToCreate', () => {
     expect(result).toEqual([newFilterWithDifferentFieldMetadata]);
   });
 
-  it('should handle filters with different viewFilterGroupIds', () => {
-    const existingFilter = { ...baseFilter };
-    const filterWithDifferentGroup = {
-      ...baseFilter,
-      viewFilterGroupId: 'group-2',
-    };
-
-    const currentViewFilters: ViewFilter[] = [existingFilter];
-
-    const newViewFilters: ViewFilter[] = [
-      existingFilter,
-      filterWithDifferentGroup,
-    ];
-
-    const result = getViewFiltersToCreate(currentViewFilters, newViewFilters);
-
-    expect(result).toEqual([filterWithDifferentGroup]);
-  });
-
   it('should handle empty arrays for both inputs', () => {
     const currentViewFilters: ViewFilter[] = [];
     const newViewFilters: ViewFilter[] = [];
@@ -81,37 +64,5 @@ describe('getViewFiltersToCreate', () => {
     const result = getViewFiltersToCreate(currentViewFilters, newViewFilters);
 
     expect(result).toEqual([]);
-  });
-
-  it('should consider filters with same fieldMetadataId but different viewFilterGroupId as new', () => {
-    const currentViewFilters: ViewFilter[] = [baseFilter];
-    const filterWithSameFieldMetadataIdButDifferentGroup = {
-      ...baseFilter,
-      id: 'filter-2',
-      viewFilterGroupId: 'group-2',
-    };
-    const newViewFilters: ViewFilter[] = [
-      filterWithSameFieldMetadataIdButDifferentGroup,
-    ];
-
-    const result = getViewFiltersToCreate(currentViewFilters, newViewFilters);
-
-    expect(result).toEqual([filterWithSameFieldMetadataIdButDifferentGroup]);
-  });
-
-  it('should consider filters with same viewFilterGroupId but different fieldMetadataId as new', () => {
-    const currentViewFilters: ViewFilter[] = [baseFilter];
-    const filterWithSameGroupButDifferentFieldMetadata = {
-      ...baseFilter,
-      id: 'filter-2',
-      fieldMetadataId: 'field-2',
-    };
-    const newViewFilters: ViewFilter[] = [
-      filterWithSameGroupButDifferentFieldMetadata,
-    ];
-
-    const result = getViewFiltersToCreate(currentViewFilters, newViewFilters);
-
-    expect(result).toEqual([filterWithSameGroupButDifferentFieldMetadata]);
   });
 });

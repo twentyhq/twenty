@@ -6,8 +6,14 @@ import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  MessageChannelVisibility,
+  TimelineThread,
+} from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
@@ -72,6 +78,10 @@ type EmailThreadPreviewProps = {
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   const { openEmailThread } = useEmailThread();
+  const { openEmailThreadInCommandMenu } = useCommandMenu();
+  const isCommandMenuV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
 
   const visibility = thread.visibility;
 
@@ -111,12 +121,18 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
             emailThreadIdWhenEmailThreadWasClosed !== thread.id);
 
         if (canOpen) {
-          openEmailThread(thread.id);
+          if (isCommandMenuV2Enabled) {
+            openEmailThreadInCommandMenu(thread.id);
+          } else {
+            openEmailThread(thread.id);
+          }
         }
       },
     [
+      isCommandMenuV2Enabled,
       isSameEventThanRightDrawerClose,
       openEmailThread,
+      openEmailThreadInCommandMenu,
       thread.id,
       thread.visibility,
     ],

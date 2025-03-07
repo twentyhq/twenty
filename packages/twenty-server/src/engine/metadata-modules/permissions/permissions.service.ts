@@ -145,10 +145,6 @@ export class PermissionsService {
     return roleOfUserWorkspace?.[roleColumn] === true;
   }
 
-  public async isPermissionsEnabled(): Promise<boolean> {
-    return this.environmentService.get('PERMISSIONS_ENABLED') === true;
-  }
-
   private getRoleColumnForRequiredPermission(
     requiredPermission: PermissionsOnAllObjectRecords,
   ): keyof RoleEntity {

@@ -11,7 +11,7 @@ import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticle
 import { getSectionIcon } from '@/shared-utils/getSectionIcons';
 
 import '@docsearch/css';
-import '../../user-guide/algolia.css';
+import '../../(public)/user-guide/algolia.css';
 
 const StyledContainer = styled.div`
   ${mq({

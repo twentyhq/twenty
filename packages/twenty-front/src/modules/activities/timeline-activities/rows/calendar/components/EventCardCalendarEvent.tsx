@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 
-import { useOpenCalendarEventRightDrawer } from '@/activities/calendar/right-drawer/hooks/useOpenCalendarEventRightDrawer';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -107,8 +106,6 @@ export const EventCardCalendarEvent = ({
     },
   });
 
-  const { openCalendarEventRightDrawer } = useOpenCalendarEventRightDrawer();
-
   const { timeZone } = useContext(UserContext);
 
   if (isDefined(error)) {
@@ -152,9 +149,7 @@ export const EventCardCalendarEvent = ({
     : null;
 
   return (
-    <StyledEventCardCalendarEventContainer
-      onClick={() => openCalendarEventRightDrawer(calendarEvent.id)}
-    >
+    <StyledEventCardCalendarEventContainer>
       <StyledCalendarEventDateCard>
         <StyledCalendarEventDateCardMonth>
           {startsAtMonth}

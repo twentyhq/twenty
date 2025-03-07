@@ -1,0 +1,159 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`settingsDataModelObjectAboutFormSchema fails when isLabelSyncedWithName is not a boolean 1`] = `
+[ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "string",
+    "path": [
+      "isLabelSyncedWithName"
+    ],
+    "message": "Expected boolean, received string"
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when labels are empty strings 1`] = `
+[ZodError: [
+  {
+    "code": "too_small",
+    "minimum": 1,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "String must contain at least 1 character(s)",
+    "path": [
+      "labelSingular"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 1,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "String must contain at least 1 character(s)",
+    "path": [
+      "labelPlural"
+    ]
+  },
+  {
+    "code": "custom",
+    "message": "Singular and plural labels must be different",
+    "path": [
+      "labelPlural"
+    ]
+  },
+  {
+    "code": "custom",
+    "message": "Singular and plural labels must be different",
+    "path": [
+      "labelSingular"
+    ]
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when names are not in camelCase 1`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "message": "String should be camel case",
+    "path": [
+      "namePlural"
+    ]
+  },
+  {
+    "code": "custom",
+    "message": "String should be camel case",
+    "path": [
+      "nameSingular"
+    ]
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when required fields are missing 1`] = `
+[ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "labelSingular"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "labelPlural"
+    ],
+    "message": "Required"
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural labels are the same 1`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "message": "Singular and plural labels must be different",
+    "path": [
+      "labelPlural"
+    ]
+  },
+  {
+    "code": "custom",
+    "message": "Singular and plural labels must be different",
+    "path": [
+      "labelSingular"
+    ]
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural names are the same 1`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "message": "Singular and plural names must be different",
+    "path": [
+      "nameSingular"
+    ]
+  },
+  {
+    "code": "custom",
+    "message": "Singular and plural names must be different",
+    "path": [
+      "namePlural"
+    ]
+  }
+]]
+`;
+
+exports[`settingsDataModelObjectAboutFormSchema fails with invalid types for optional fields 1`] = `
+[ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "number",
+    "path": [
+      "description"
+    ],
+    "message": "Expected string, received number"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "boolean",
+    "path": [
+      "icon"
+    ],
+    "message": "Expected string, received boolean"
+  }
+]]
+`;

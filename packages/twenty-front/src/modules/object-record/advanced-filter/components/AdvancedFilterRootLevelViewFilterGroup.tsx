@@ -1,9 +1,11 @@
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
-import { AdvancedFilterRuleOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdown';
+import { AdvancedFilterRecordFilterGroupChildOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupChildOptionsDropdown';
+
+import { AdvancedFilterRecordFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroup';
 import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilter';
-import { AdvancedFilterViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterGroup';
-import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
+import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
+import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 
@@ -28,49 +30,53 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
 `;
 
 type AdvancedFilterRootLevelViewFilterGroupProps = {
-  rootLevelViewFilterGroupId: string;
+  rootLevelRecordFilterGroupId: string;
 };
 
 export const AdvancedFilterRootLevelViewFilterGroup = ({
-  rootLevelViewFilterGroupId,
+  rootLevelRecordFilterGroupId,
 }: AdvancedFilterRootLevelViewFilterGroupProps) => {
   const {
-    currentViewFilterGroup: rootLevelViewFilterGroup,
-    childViewFiltersAndViewFilterGroups,
+    currentRecordFilterGroup: rootLevelRecordFilterGroup,
+    childRecordFiltersAndRecordFilterGroups,
     lastChildPosition,
-  } = useCurrentViewViewFilterGroup({
-    recordFilterGroupId: rootLevelViewFilterGroupId,
+  } = useChildRecordFiltersAndRecordFilterGroups({
+    recordFilterGroupId: rootLevelRecordFilterGroupId,
   });
 
-  if (!isDefined(rootLevelViewFilterGroup)) {
+  if (!isDefined(rootLevelRecordFilterGroup)) {
     return null;
   }
 
   return (
     <StyledContainer>
-      {childViewFiltersAndViewFilterGroups.map((child, i) =>
-        (child as any).__typename === 'ViewFilterGroup' ? (
+      {childRecordFiltersAndRecordFilterGroups.map((child, i) =>
+        isRecordFilterGroupChildARecordFilterGroup(child) ? (
           <StyledRow key={child.id}>
             <AdvancedFilterLogicalOperatorCell
               index={i}
-              recordFilterGroup={rootLevelViewFilterGroup}
+              recordFilterGroup={rootLevelRecordFilterGroup}
             />
-            <AdvancedFilterViewFilterGroup viewFilterGroupId={child.id} />
-            <AdvancedFilterRuleOptionsDropdown viewFilterGroupId={child.id} />
+            <AdvancedFilterRecordFilterGroup recordFilterGroupId={child.id} />
+            <AdvancedFilterRecordFilterGroupChildOptionsDropdown
+              recordFilterGroupChild={child}
+            />
           </StyledRow>
         ) : (
           <StyledRow key={child.id}>
             <AdvancedFilterLogicalOperatorCell
               index={i}
-              recordFilterGroup={rootLevelViewFilterGroup}
+              recordFilterGroup={rootLevelRecordFilterGroup}
             />
             <AdvancedFilterViewFilter viewFilterId={child.id} />
-            <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
+            <AdvancedFilterRecordFilterGroupChildOptionsDropdown
+              recordFilterGroupChild={child}
+            />
           </StyledRow>
         ),
       )}
       <AdvancedFilterAddFilterRuleSelect
-        recordFilterGroup={rootLevelViewFilterGroup}
+        recordFilterGroup={rootLevelRecordFilterGroup}
         lastChildPosition={lastChildPosition}
       />
     </StyledContainer>

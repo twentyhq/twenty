@@ -6,6 +6,7 @@ import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
+import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -18,8 +19,12 @@ import {
   Loader,
   MainButton,
 } from 'twenty-ui';
-import { SubscriptionInterval } from '~/generated-metadata/graphql';
-import { useGetProductPricesQuery } from '~/generated/graphql';
+import {
+  BillingPlanKey,
+  BillingPriceLicensedDto,
+  SubscriptionInterval,
+  useBillingBaseProductPricesQuery,
+} from '~/generated/graphql';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
@@ -92,13 +97,15 @@ export const ChooseYourPlan = () => {
     t`1 000 workflow node executions`,
   ];
 
-  const { data: prices } = useGetProductPricesQuery({
-    variables: { product: 'base-plan' },
-  });
+  const { data: plans } = useBillingBaseProductPricesQuery();
 
-  const price = prices?.getProductPrices?.productPrices.find(
-    (productPrice) =>
-      productPrice.recurringInterval === SubscriptionInterval.Month,
+  const baseProduct = plans?.plans.find(
+    (plan) => plan.planKey === BillingPlanKey.PRO,
+  )?.baseProduct;
+  const baseProductPrice = baseProduct?.prices.find(
+    (price): price is BillingPriceLicensedDto =>
+      isBillingPriceLicensed(price) &&
+      price.recurringInterval === SubscriptionInterval.Month,
   );
 
   const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
@@ -122,12 +129,12 @@ export const ChooseYourPlan = () => {
   const handleTrialPeriodChange = (withCreditCard: boolean) => {
     return () => {
       if (
-        isDefined(price) &&
+        isDefined(baseProductPrice) &&
         billingCheckoutSession.requirePaymentMethod !== withCreditCard
       ) {
         setBillingCheckoutSession({
           plan: billingCheckoutSession.plan,
-          interval: price.recurringInterval,
+          interval: baseProductPrice.recurringInterval,
           requirePaymentMethod: withCreditCard,
         });
       }
@@ -139,7 +146,7 @@ export const ChooseYourPlan = () => {
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
 
   return (
-    isDefined(price) &&
+    isDefined(baseProductPrice) &&
     isDefined(billing) && (
       <>
         <Title noMarginTop>
@@ -163,8 +170,8 @@ export const ChooseYourPlan = () => {
         >
           <StyledSubscriptionPriceContainer>
             <SubscriptionPrice
-              type={price.recurringInterval}
-              price={price.unitAmount / 100}
+              type={baseProductPrice.recurringInterval}
+              price={baseProductPrice.unitAmount / 100}
             />
           </StyledSubscriptionPriceContainer>
           <StyledBenefitsContainer>

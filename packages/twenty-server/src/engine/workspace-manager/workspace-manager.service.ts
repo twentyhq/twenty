@@ -18,7 +18,9 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
@@ -54,6 +56,10 @@ export class WorkspaceManagerService {
     private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    @InjectRepository(RoleEntity, 'metadata')
+    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
   /**
@@ -99,12 +105,8 @@ export class WorkspaceManagerService {
     );
 
     const permissionsEnabledStart = performance.now();
-    const permissionsEnabled =
-      await this.permissionsService.isPermissionsEnabled();
 
-    if (permissionsEnabled === true) {
-      await this.initPermissions({ workspaceId, userId });
-    }
+    await this.initPermissions({ workspaceId, userId });
 
     const permissionsEnabledEnd = performance.now();
 
@@ -168,12 +170,7 @@ export class WorkspaceManagerService {
       dataSourceId: dataSourceMetadata.id,
     });
 
-    const permissionsEnabled =
-      await this.permissionsService.isPermissionsEnabled();
-
-    if (permissionsEnabled === true) {
-      await this.initPermissionsDev(workspaceId);
-    }
+    await this.initPermissionsDev(workspaceId);
   }
 
   /**
@@ -264,6 +261,12 @@ export class WorkspaceManagerService {
     await this.fieldMetadataRepository.delete({
       workspaceId,
     });
+    await this.userWorkspaceRoleRepository.delete({
+      workspaceId,
+    });
+    await this.roleRepository.delete({
+      workspaceId,
+    });
 
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
@@ -296,12 +299,13 @@ export class WorkspaceManagerService {
       roleId: adminRole.id,
     });
 
-    const memberRole = await this.roleService.createMemberRole({
+    await this.roleService.createMemberRole({
       workspaceId,
     });
 
+    // Temporary - after permissions are rolled-out we will set member role as the default role
     await this.workspaceRepository.update(workspaceId, {
-      defaultRoleId: memberRole.id,
+      defaultRoleId: adminRole.id,
     });
   }
 

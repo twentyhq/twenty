@@ -2,6 +2,7 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
+import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -22,6 +23,10 @@ export const useRequestFreshCaptchaToken = () => {
   const requestFreshCaptchaToken = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
+        if (!isCaptchaRequiredForPath(window.location.pathname)) {
+          return;
+        }
+
         const captcha = snapshot.getLoadable(captchaState).getValue();
 
         if (isUndefinedOrNull(captcha?.provider)) {

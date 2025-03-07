@@ -14,7 +14,7 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 });
 
 describe('useUpsertRecordFilter', () => {
-  it('should add a new filter when fieldMetadataId does not exist', () => {
+  it('should add a new filter when record filter id does not exist', () => {
     const { result } = renderHook(
       () => {
         const currentRecordFilters = useRecoilComponentValueV2(
@@ -48,7 +48,7 @@ describe('useUpsertRecordFilter', () => {
     expect(result.current.currentRecordFilters[0]).toEqual(mockNewRecordFilter);
   });
 
-  it('should update an existing filter when fieldMetadataId exists', () => {
+  it('should update an existing filter when record filter id exists', () => {
     const { result } = renderHook(
       () => {
         const currentRecordFilters = useRecoilComponentValueV2(

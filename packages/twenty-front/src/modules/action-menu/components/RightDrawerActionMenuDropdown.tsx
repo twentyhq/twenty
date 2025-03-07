@@ -70,7 +70,7 @@ export const RightDrawerActionMenuDropdown = () => {
       }}
       data-select-disable
       clickableComponent={
-        <Button title="Actions" hotkeys={[getOsControlSymbol(), 'O']} />
+        <Button title="Options" hotkeys={[getOsControlSymbol(), 'O']} />
       }
       dropdownPlacement="top-end"
       dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}

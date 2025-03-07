@@ -3,11 +3,12 @@ import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { buildRecordGqlFieldsAggregateForView } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForView';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { UserContext } from '@/users/contexts/UserContext';
+import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -26,6 +27,10 @@ export const useAggregateRecordsForHeader = ({
     recordIndexViewFilterGroupsState,
   );
 
+  const recordFilterGroups = mapViewFilterGroupsToRecordFilterGroups(
+    recordIndexViewFilterGroups,
+  );
+
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
 
   const recordIndexKanbanAggregateOperation = useRecoilValue(
@@ -36,12 +41,12 @@ export const useAggregateRecordsForHeader = ({
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
 
-  const requestFilters = computeViewRecordGqlOperationFilter(
+  const requestFilters = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordIndexFilters,
-    objectMetadataItem.fields,
-    recordIndexViewFilterGroups,
-  );
+    recordFilters: recordIndexFilters,
+    recordFilterGroups,
+    fields: objectMetadataItem.fields,
+  });
 
   const recordGqlFieldsAggregate = buildRecordGqlFieldsAggregateForView({
     objectMetadataItem,

@@ -12,7 +12,6 @@ import { Card, CardContent } from 'twenty-ui';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;
-  onBlur: () => void;
 };
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
@@ -35,7 +34,6 @@ const StyledObjectSummaryCardContent = styled(CardContent)`
 
 export const SettingsDataModelObjectSettingsFormCard = ({
   objectMetadataItem,
-  onBlur,
 }: SettingsDataModelObjectSettingsFormCardProps) => {
   const labelIdentifierFieldMetadataItem = useMemo(() => {
     return getLabelIdentifierFieldMetadataItem({
@@ -70,7 +68,6 @@ export const SettingsDataModelObjectSettingsFormCard = ({
       <CardContent>
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}
-          onBlur={onBlur}
         />
       </CardContent>
     </Card>

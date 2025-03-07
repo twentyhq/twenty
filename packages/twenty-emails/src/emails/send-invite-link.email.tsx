@@ -46,7 +46,7 @@ export const SendInviteLinkEmail = ({
           value={sender.email}
           color={emailTheme.font.colors.blue}
         />
-        )<Trans>has invited you to join a workspace called </Trans>
+        ) <Trans>has invited you to join a workspace called </Trans>
         <b>{workspace.name}</b>
         <br />
       </MainText>

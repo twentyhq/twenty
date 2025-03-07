@@ -14,7 +14,8 @@ export const JsonArrayNode = ({
   return (
     <JsonNestedNode
       elements={[...value.entries()].map(([key, value]) => ({
-        key: String(key),
+        id: key,
+        label: String(key),
         value,
       }))}
       label={label}
