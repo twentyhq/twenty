@@ -34,9 +34,9 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { formatError } from '~/pages/settings/data-model/utils/format-error.utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 > &
@@ -182,7 +182,7 @@ export const SettingsObjectNewFieldConfigure = () => {
         include: ['FindManyViews', 'CombinedFindManyRecords'],
       });
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
+      enqueueSnackBar(formatError((error as Error).message), {
         variant: SnackBarVariant.Error,
       });
     }
