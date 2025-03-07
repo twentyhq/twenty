@@ -1218,6 +1218,14 @@ msgstr "Ty\\u00f6ntekij\\u00e4t"
 msgid "Empty"
 msgstr "Tyhj\\u00e4"
 
+#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+msgid "Empty Array"
+msgstr ""
+
+#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+msgid "Empty Object"
+msgstr ""
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
 msgstr "P\\u00e4\\u00e4tetunnisteen URL"

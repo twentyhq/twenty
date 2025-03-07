@@ -31,6 +31,10 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     stepId,
   });
 
+  if (stepContext.length === 0) {
+    throw new Error('The input tab must be rendered with a non-empty context.');
+  }
+
   return (
     <StyledContainer>
       <JsonNestedNode
@@ -40,6 +44,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
           value: context,
         }))}
         Icon={IconBrackets}
+        emptyElementsText=""
         depth={0}
       />
     </StyledContainer>

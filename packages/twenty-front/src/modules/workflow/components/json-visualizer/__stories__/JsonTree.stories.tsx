@@ -51,6 +51,19 @@ export const ArraySimple: Story = {
   },
 };
 
+export const ArrayEmpty: Story = {
+  args: {
+    value: [],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emptyState = await canvas.findByText('Empty Array');
+
+    expect(emptyState).toBeVisible();
+  },
+};
+
 export const ArrayNested: Story = {
   args: {
     value: [1, 2, ['a', 'b', 'c'], 3],
@@ -61,6 +74,23 @@ export const ArrayNested: Story = {
     const nestedArrayElements = await canvas.findByText('[3]');
 
     expect(nestedArrayElements).toBeVisible();
+  },
+};
+
+export const ArrayNestedEmpty: Story = {
+  args: {
+    value: [1, 2, [], 3],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedArrayElements = await canvas.findByText('[0]');
+
+    expect(nestedArrayElements).toBeVisible();
+
+    const emptyState = await canvas.findByText('Empty Array');
+
+    expect(emptyState).toBeVisible();
   },
 };
 
@@ -95,6 +125,19 @@ export const ObjectSimple: Story = {
   },
 };
 
+export const ObjectEmpty: Story = {
+  args: {
+    value: {},
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emptyState = await canvas.findByText('Empty Object');
+
+    expect(emptyState).toBeVisible();
+  },
+};
+
 export const ObjectNested: Story = {
   args: {
     value: {
@@ -114,6 +157,25 @@ export const ObjectNested: Story = {
     const nestedObjectItemsCounts = await canvas.findAllByText('{2}');
 
     expect(nestedObjectItemsCounts).toHaveLength(2);
+  },
+};
+
+export const ObjectNestedEmpty: Story = {
+  args: {
+    value: {
+      person: {},
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedObjectItemsCount = await canvas.findByText('{0}');
+
+    expect(nestedObjectItemsCount).toBeVisible();
+
+    const emptyState = await canvas.findByText('Empty Object');
+
+    expect(emptyState).toBeVisible();
   },
 };
 
