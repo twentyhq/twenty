@@ -25,11 +25,19 @@ export class CacheStorageService {
     return this.cache.del(`${this.namespace}:${key}`);
   }
 
-  async setAdd(key: string, value: string[]) {
+  async setAdd(key: string, value: string[], ttl?: number) {
     if (value.length === 0) {
       return;
     }
+
     if (this.isRedisCache()) {
+      if (ttl) {
+        await (this.cache as RedisCache).store.client.expire(
+          `${this.namespace}:${key}`,
+          ttl / 1000,
+        );
+      }
+
       return (this.cache as RedisCache).store.client.sAdd(
         `${this.namespace}:${key}`,
         value,
@@ -37,11 +45,19 @@ export class CacheStorageService {
     }
     this.get(key).then((res: string[]) => {
       if (res) {
-        this.set(key, [...res, ...value]);
+        this.set(key, [...res, ...value], ttl);
       } else {
-        this.set(key, value);
+        this.set(key, value, ttl);
       }
     });
+  }
+
+  async countAllSetMembers(cacheKeys: string[]) {
+    return (
+      await Promise.all(
+        cacheKeys.map(async (key) => (await this.getSetLength(key)) || 0),
+      )
+    ).reduce((acc, setLength) => acc + setLength, 0);
   }
 
   async setPop(key: string, size = 1) {
@@ -60,6 +76,18 @@ export class CacheStorageService {
       }
 
       return [];
+    });
+  }
+
+  async getSetLength(key: string) {
+    if (this.isRedisCache()) {
+      return await (this.cache as RedisCache).store.client.sCard(
+        `${this.namespace}:${key}`,
+      );
+    }
+
+    return this.get(key).then((res: string[]) => {
+      return res.length;
     });
   }
 
