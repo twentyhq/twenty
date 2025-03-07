@@ -421,7 +421,6 @@ export type CustomDomainValidRecords = {
   records: Array<CustomDomainRecord>;
 };
 
-
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['String']['input'];
 };
@@ -707,7 +706,6 @@ export enum HealthIndicatorId {
   redis = 'redis',
   worker = 'worker'
 }
-
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
