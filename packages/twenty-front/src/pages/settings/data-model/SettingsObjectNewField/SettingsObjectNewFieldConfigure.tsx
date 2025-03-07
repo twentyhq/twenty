@@ -36,7 +36,6 @@ import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constan
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 > &
@@ -182,9 +181,18 @@ export const SettingsObjectNewFieldConfigure = () => {
         include: ['FindManyViews', 'CombinedFindManyRecords'],
       });
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
-      });
+      const isDuplicateFieldNameInObject = (error as Error).message.includes(
+        'duplicate key value violates unique constraint "IndexOnNameObjectMetadataIdAndWorkspaceIdUnique"',
+      );
+
+      enqueueSnackBar(
+        isDuplicateFieldNameInObject
+          ? t`Please use different names for your source and destination fields`
+          : (error as Error).message,
+        {
+          variant: SnackBarVariant.Error,
+        },
+      );
     }
   };
   if (!activeObjectMetadataItem) return null;
