@@ -94,8 +94,8 @@ export const validateObjectMetadataInputNamesOrThrow = <
 
 export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
   const validators = [
-    validateNameIsNoTooShortOrThrow,
-    validateNameIsNotTooLongOrThrow,
+    validateStringIsNoTooShortOrThrow,
+    validateStringIsNotTooLongOrThrow,
     validateNameCamelCasedOrThrow,
     validateNameCharactersOrThrow,
     validateNameIsNotReservedKeywordOrThrow,
@@ -115,8 +115,8 @@ export const validateObjectMetadataInputLabelsOrThrow = <
 
 const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
   const validators = [
-    validateNameIsNoTooShortOrThrow, // Should not ?
-    validateNameIsNotTooLongOrThrow,
+    validateStringIsNoTooShortOrThrow,
+    validateStringIsNotTooLongOrThrow,
   ];
   validators.forEach((validator) => validator(name.trim()));
 };
@@ -139,19 +139,19 @@ const validateNameCamelCasedOrThrow = (name: string) => {
   }
 };
 
-const validateNameIsNotTooLongOrThrow = (name: string) => {
+const validateStringIsNotTooLongOrThrow = (name: string) => {
   if (exceedsDatabaseIdentifierMaximumLength(name)) {
     throw new ObjectMetadataException(
-      `Name exceeds ${IDENTIFIER_MAX_CHAR_LENGTH} characters: ${name}`,
+      `Input exceeds ${IDENTIFIER_MAX_CHAR_LENGTH} characters: ${name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }
 };
 
-const validateNameIsNoTooShortOrThrow = (name: string) => {
+const validateStringIsNoTooShortOrThrow = (name: string) => {
   if (beneathDatabaseIdentifierMininumLength(name)) {
     throw new ObjectMetadataException(
-      `Name is too short`,
+      `Input is too short: ${name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }
