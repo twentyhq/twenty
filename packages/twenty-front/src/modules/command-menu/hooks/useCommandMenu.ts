@@ -459,6 +459,48 @@ export const useCommandMenu = () => {
     [navigateCommandMenu],
   );
 
+  const openWorkflowViewStepInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string, title: string, icon: IconComponent) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowStepView,
+          pageTitle: title,
+          pageIcon: icon,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
+  const openWorkflowViewRunStepInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string, title: string, icon: IconComponent) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowRunStepView,
+          pageTitle: title,
+          pageIcon: icon,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
   const openRecordsSearchPage = () => {
     navigateCommandMenu({
       page: CommandMenuPages.SearchRecords,
@@ -581,5 +623,7 @@ export const useCommandMenu = () => {
     openWorkflowTriggerTypeInCommandMenu,
     openWorkflowActionInCommandMenu,
     openWorkflowEditStepInCommandMenu,
+    openWorkflowViewStepInCommandMenu,
+    openWorkflowViewRunStepInCommandMenu,
   };
 };

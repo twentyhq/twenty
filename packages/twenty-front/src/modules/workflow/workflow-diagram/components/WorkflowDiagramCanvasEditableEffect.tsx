@@ -91,6 +91,8 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
+      setWorkflowSelectedNode(selectedNode.id);
+
       if (isCommandMenuV2Enabled && isDefined(workflowId)) {
         openWorkflowEditStepInCommandMenu(
           workflowId,
@@ -101,7 +103,6 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         return;
       }
 
-      setWorkflowSelectedNode(selectedNode.id);
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
         title: selectedNodeData.name,
