@@ -1,9 +1,8 @@
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import { createOneObjectMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-factory.util';
-import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { EachTestingContext, isDefined } from 'twenty-shared';
+import { getMockCreateObjectInput } from 'test/integration/utils/object-metadata/generate-mock-create-object-metadata-input';
+import { performFailingObjectMetadataCreation } from 'test/integration/utils/object-metadata/perform-failing-object-metadata-creation';
+import { EachTestingContext } from 'twenty-shared';
 
 type CreateObjectInputPayload = Omit<
   CreateObjectInput,
@@ -12,7 +11,7 @@ type CreateObjectInputPayload = Omit<
 type CreateOneObjectMetadataItemTestingContext = EachTestingContext<
   Partial<CreateObjectInputPayload>
 >[];
-const FailingNamesCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext =
+const failingNamesCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext =
   [
     {
       title: 'when nameSingular has invalid characters',
@@ -74,7 +73,7 @@ const FailingNamesCreationTestsUseCase: CreateOneObjectMetadataItemTestingContex
     },
   ];
 
-const FailingLabelsCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext =
+const failingLabelsCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext =
   [
     {
       title: 'when labelSingular is empty',
@@ -117,56 +116,18 @@ const FailingLabelsCreationTestsUseCase: CreateOneObjectMetadataItemTestingConte
   ];
 
 const allTestsUseCases = [
-  ...FailingNamesCreationTestsUseCase,
-  ...FailingLabelsCreationTestsUseCase,
+  ...failingNamesCreationTestsUseCase,
+  ...failingLabelsCreationTestsUseCase,
 ];
 
-const getMockCreateObjectInput = (
-  overrides?: Partial<CreateObjectInputPayload>,
-): CreateObjectInputPayload => ({
-  namePlural: 'listings',
-  nameSingular: 'toto',
-  labelPlural: 'Listings',
-  labelSingular: 'Listing',
-  description: 'Listing object',
-  icon: 'IconListNumbers',
-  isLabelSyncedWithName: false,
-  ...overrides,
-});
-
 describe('Object metadata creation should fail', () => {
-  const performFailingObjectMetadataCreation = async (
-    args: CreateObjectInputPayload,
-  ) => {
-    const graphqlOperation = createOneObjectMetadataFactory({
-      input: { object: args },
-      gqlFields: `
-          id
-          nameSingular
-      `,
-    });
-
-    const response = await makeMetadataAPIRequest(graphqlOperation);
-    if (isDefined(response.body.data)) {
-      try {
-        const createdId = response.body.data.createOneObject.id;
-        await deleteOneObjectMetadataItem(createdId);
-      } catch (e) {
-        console.error(e);
-      }
-      expect(false).toEqual(
-        'Object Metadata Item should have failed but did not',
-      );
-    }
-    expect(response.body.errors.length).toBe(1);
-    return response.body.errors[0];
-  };
   it.each(allTestsUseCases)('$title', async ({ context }) => {
-    const error = await performFailingObjectMetadataCreation(
+    const errors = await performFailingObjectMetadataCreation(
       getMockCreateObjectInput(context),
     );
-
-    expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
-    expect(error.message).toMatchSnapshot();
+    expect(errors.length).toBe(1);
+    const firstError = errors[0];
+    expect(firstError.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
+    expect(firstError.message).toMatchSnapshot();
   });
 });
