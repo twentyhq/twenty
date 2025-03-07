@@ -1,4 +1,3 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
 import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
@@ -207,8 +206,6 @@ export const WorkflowDiagramCanvasBase = ({
     );
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
-  const { closeCommandMenu } = useCommandMenu();
-
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
@@ -249,7 +246,6 @@ export const WorkflowDiagramCanvasBase = ({
         nodesFocusable={false}
         edgesFocusable={false}
         nodesDraggable={false}
-        onPaneClick={closeCommandMenu}
         nodesConnectable={false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
       >
