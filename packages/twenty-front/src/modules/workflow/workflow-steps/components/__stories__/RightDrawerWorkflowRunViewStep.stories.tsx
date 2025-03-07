@@ -137,6 +137,8 @@ export const OutputTab: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('Create Record')).not.toBeInTheDocument();
     });
+
+    expect(await canvas.findByText('result')).toBeVisible();
   },
 };
 
