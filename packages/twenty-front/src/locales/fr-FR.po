@@ -1987,7 +1987,7 @@ msgstr "Aller au workflow précédent"
 msgid "New"
 msgstr "Nouveau"
 
-#: src/modules/command-menu/hooks/useCommandMenu.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Nouveau {capitalizedObjectNameSingular}"
 
@@ -2600,6 +2600,10 @@ msgstr "Voir les versions"
 msgid "See versions history"
 msgstr "Voir l'historique des versions"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts
+msgid "Select Action"
+msgstr ""
+
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
 msgstr "Sélectionnez la valeur par défaut pour ce champ booléen"
@@ -2971,6 +2975,7 @@ msgid "Total Users"
 msgstr "Nombre total d'utilisateurs"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "Type de déclencheur"
 
