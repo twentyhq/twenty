@@ -77,8 +77,6 @@ const reservedKeywords = [
   'relations',
 ];
 
-// TODO Unless does not verify that nameSingular and namePlural are different
-// BETTER should not stop on first ?
 export const validateObjectMetadataInputNamesOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
 >({
