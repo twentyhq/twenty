@@ -10,14 +10,18 @@ runs:
     - name: Cache primary key builder
       id: globals
       shell: bash
+      # yarn workspaces list --json --no-private | jq -r '"!" + .location + "/**"' >> "${GITHUB_OUTPUT}"
       run: |
         echo "ACTION_SHELL=bash" >> "${GITHUB_OUTPUT}"
-        echo "CACHE_KEY_PREFIX=node_modules-cache-node-${{ inputs.node-version }}-${{ hashFiles('yarn.lock') }}"  >> "${GITHUB_OUTPUT}"
+        echo "CACHE_KEY_PREFIX=v1_node_modules-cache-node-${{ inputs.node-version }}-${{ hashFiles('yarn.lock') }}"  >> "${GITHUB_OUTPUT}"
         echo 'PATH_TO_CACHE<<EOF' >> $GITHUB_OUTPUT
-        echo "node_modules" >> $GITHUB_OUTPUT
-        echo "packages/*/node_modules" >> $GITHUB_OUTPUT
+        echo "node_modules/*" >> $GITHUB_OUTPUT
+        echo "packages/**/*/node_modules" >> $GITHUB_OUTPUT
+        echo "!node_modules/twenty-shared" >> $GITHUB_OUTPUT
+        echo "!node_modules/twenty-ui" >> $GITHUB_OUTPUT
+        yarn workspaces list --json --no-private | jq -r '"!" + .location + "/node_modules"' >> "${GITHUB_OUTPUT}"
         echo 'EOF' >> $GITHUB_OUTPUT
-    - name: Setup Node.js and get yarn cache
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
