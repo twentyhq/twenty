@@ -91,13 +91,16 @@ Then you can set the following environment variables:
 
 On Microsoft Azure Console enable the following APIs in "Permissions":
 
-- Microsoft Graph: Mail.Read
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
 - Microsoft Graph: Calendars.Read
 - Microsoft Graph: User.Read.All
 - Microsoft Graph: openid
 - Microsoft Graph: email
 - Microsoft Graph: profile
 - Microsoft Graph: offline_access
+
+Note: "Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
 
 ### Authorized redirect URIs
 
@@ -111,8 +114,9 @@ You need to add the following redirect URIs to your project:
 - 'email'
 - 'profile'
 - 'offline_access'
-- 'Mail.Read'
-- 'Calendars.Read
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
 
 ### If your app is in test mode
 

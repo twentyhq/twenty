@@ -21,11 +21,10 @@ export const SettingsAdminEnvVariablesTable = ({
   variables,
 }: SettingsAdminEnvVariablesTableProps) => (
   <StyledTable>
-    <TableRow gridAutoColumns="4fr 3fr 2fr 1fr 1fr">
+    <TableRow gridAutoColumns="5fr 4fr 3fr 1fr">
       <TableHeader>Name</TableHeader>
       <TableHeader>Description</TableHeader>
-      <TableHeader>Value</TableHeader>
-      <TableHeader align="right"></TableHeader>
+      <TableHeader align="right">Value</TableHeader>
       <TableHeader align="right"></TableHeader>
     </TableRow>
     {variables.map((variable) => (
