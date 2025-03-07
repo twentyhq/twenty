@@ -1,8 +1,8 @@
 import {
+  IconApi,
   IconApps,
   IconAt,
   IconCalendarEvent,
-  IconCode,
   IconColorSwatch,
   IconComponent,
   IconCurrencyDollar,
@@ -18,6 +18,7 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
+  IconWebhook,
 } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
@@ -159,9 +160,16 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
       isAdvanced: true,
       items: [
         {
-          label: t`API & Webhooks`,
-          path: SettingsPath.Developers,
-          Icon: IconCode,
+          label: t`APIs`,
+          path: SettingsPath.APIs,
+          Icon: IconApi,
+          isAdvanced: true,
+          isHidden: !permissionMap[SettingsPermissions.API_KEYS_AND_WEBHOOKS],
+        },
+        {
+          label: t`Webhooks`,
+          path: SettingsPath.Webhooks,
+          Icon: IconWebhook,
           isAdvanced: true,
           isHidden: !permissionMap[SettingsPermissions.API_KEYS_AND_WEBHOOKS],
         },

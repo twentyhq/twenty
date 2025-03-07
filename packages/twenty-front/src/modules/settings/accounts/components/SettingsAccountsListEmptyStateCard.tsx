@@ -6,6 +6,7 @@ import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAut
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
+import { ConnectedAccountProvider } from 'twenty-shared';
 import {
   Button,
   Card,
@@ -60,7 +61,7 @@ export const SettingsAccountsListEmptyStateCard = ({
             Icon={IconGoogle}
             title={t`Connect with Google`}
             variant="secondary"
-            onClick={() => triggerApisOAuth('google')}
+            onClick={() => triggerApisOAuth(ConnectedAccountProvider.GOOGLE)}
           />
         )}
 
@@ -69,7 +70,7 @@ export const SettingsAccountsListEmptyStateCard = ({
             Icon={IconMicrosoft}
             title={t`Connect with Microsoft`}
             variant="secondary"
-            onClick={() => triggerApisOAuth('microsoft')}
+            onClick={() => triggerApisOAuth(ConnectedAccountProvider.MICROSOFT)}
           />
         )}
       </StyledBody>

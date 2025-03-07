@@ -6,6 +6,7 @@ import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
+import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
@@ -38,7 +39,7 @@ export const RightDrawerWorkflowRunViewStep = () => {
       })
     : undefined;
 
-  const isInputTabDisabled =
+  const areInputAndOutputTabsDisabled =
     workflowSelectedNode === TRIGGER_STEP_ID ||
     stepExecutionStatus === 'running' ||
     stepExecutionStatus === 'not-executed';
@@ -49,9 +50,14 @@ export const RightDrawerWorkflowRunViewStep = () => {
       id: 'input',
       title: 'Input',
       Icon: IconLogin2,
-      disabled: isInputTabDisabled,
+      disabled: areInputAndOutputTabsDisabled,
     },
-    { id: 'output', title: 'Output', Icon: IconLogout },
+    {
+      id: 'output',
+      title: 'Output',
+      Icon: IconLogout,
+      disabled: areInputAndOutputTabsDisabled,
+    },
   ];
 
   if (!isDefined(workflowRun)) {
@@ -79,6 +85,10 @@ export const RightDrawerWorkflowRunViewStep = () => {
 
       {activeTabId === 'input' ? (
         <WorkflowRunStepInputDetail stepId={workflowSelectedNode} />
+      ) : null}
+
+      {activeTabId === 'output' ? (
+        <WorkflowRunStepOutputDetail stepId={workflowSelectedNode} />
       ) : null}
     </>
   );
