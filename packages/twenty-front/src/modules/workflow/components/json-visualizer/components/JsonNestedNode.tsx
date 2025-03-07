@@ -3,7 +3,7 @@ import { JsonList } from '@/workflow/components/json-visualizer/components/inter
 import { JsonNodeLabel } from '@/workflow/components/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNode } from '@/workflow/components/json-visualizer/components/JsonNode';
 import styled from '@emotion/styled';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import { IconComponent } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
@@ -34,7 +34,7 @@ export const JsonNestedNode = ({
   label?: string;
   Icon: IconComponent;
   elements: Array<{ id: string | number; label: string; value: JsonValue }>;
-  renderElementsCount: (count: number) => React.ReactNode;
+  renderElementsCount?: (count: number) => string;
   depth: number;
 }) => {
   const hideRoot = !isDefined(label);
@@ -64,9 +64,11 @@ export const JsonNestedNode = ({
 
         <JsonNodeLabel label={label} Icon={Icon} />
 
-        <StyledElementsCount>
-          {renderElementsCount(elements.length)}
-        </StyledElementsCount>
+        {renderElementsCount && (
+          <StyledElementsCount>
+            {renderElementsCount(elements.length)}
+          </StyledElementsCount>
+        )}
       </StyledLabelContainer>
 
       {isOpen && renderedChildren}
