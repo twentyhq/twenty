@@ -2665,11 +2665,11 @@ msgstr "Singular"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural labels must be different"
-msgstr ""
+msgstr "Les etiquetes en singular i plural han de ser diferents"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
-msgstr ""
+msgstr "Els noms en singular i plural han de ser diferents"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"

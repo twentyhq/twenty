@@ -2665,11 +2665,11 @@ msgstr "Ental"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural labels must be different"
-msgstr ""
+msgstr "Entals- og flertalsmærkater skal være forskellige"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
-msgstr ""
+msgstr "Entals- og flertalsnavne skal være forskellige"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"

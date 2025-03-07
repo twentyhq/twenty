@@ -2665,11 +2665,11 @@ msgstr "單數"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural labels must be different"
-msgstr ""
+msgstr "單數和複數標籤必須不同"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
-msgstr ""
+msgstr "單數和複數名稱必須不同"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"

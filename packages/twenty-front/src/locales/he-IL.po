@@ -2665,11 +2665,11 @@ msgstr "יחיד"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural labels must be different"
-msgstr ""
+msgstr "יש לוודא ששמות היחיד והרבים יהיו שונים"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
-msgstr ""
+msgstr "יש לוודא ששמות היחיד והרבים יהיו שונים"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
