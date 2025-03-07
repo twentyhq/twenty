@@ -4,14 +4,24 @@ import { Request } from 'express';
 import { capitalize } from 'twenty-shared';
 
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
+import { buildQueryWithFilters } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/filter-query-builder.utils';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
+interface FormatResultParams<T> {
+  operation: 'delete' | 'create' | 'update' | 'findOne' | 'findMany';
+  objectNameSingular?: string;
+  objectNamePlural?: string;
+  data: T;
+  meta?: any;
+}
 @Injectable()
 export class RestApiCoreServiceV2 {
   constructor(
     private readonly coreQueryBuilderFactory: CoreQueryBuilderFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly limitInputFactory: LimitInputFactory,
   ) {}
 
   async delete(request: Request) {
@@ -29,8 +39,12 @@ export class RestApiCoreServiceV2 {
 
     await repository.delete(recordId);
 
-    return this.formatResult('delete', objectMetadataNameSingular, {
-      id: recordToDelete.id,
+    return this.formatResult({
+      operation: 'delete',
+      objectNameSingular: objectMetadataNameSingular,
+      data: {
+        id: recordToDelete.id,
+      },
     });
   }
 
@@ -41,11 +55,11 @@ export class RestApiCoreServiceV2 {
       await this.getRepositoryAndMetadataOrFail(request);
     const createdRecord = await repository.save(body);
 
-    return this.formatResult(
-      'create',
-      objectMetadataNameSingular,
-      createdRecord,
-    );
+    return this.formatResult({
+      operation: 'create',
+      objectNameSingular: objectMetadataNameSingular,
+      data: createdRecord,
+    });
   }
 
   async update(request: Request) {
@@ -67,21 +81,71 @@ export class RestApiCoreServiceV2 {
       ...request.body,
     });
 
-    return this.formatResult(
-      'update',
-      objectMetadataNameSingular,
-      updatedRecord,
-    );
+    return this.formatResult({
+      operation: 'update',
+      objectNameSingular: objectMetadataNameSingular,
+      data: updatedRecord,
+    });
   }
 
-  private formatResult<T>(
-    operation: 'delete' | 'create' | 'update' | 'find',
-    objectNameSingular: string,
-    data: T,
-  ) {
+  async get(request: Request) {
+    const { id: recordId } = parseCorePath(request);
+    const {
+      objectMetadataNameSingular,
+      objectMetadataNamePlural,
+      repository,
+      // objectMetadata,
+    } = await this.getRepositoryAndMetadataOrFail(request);
+
+    if (recordId) {
+      const record = await repository.findOne({
+        where: { id: recordId },
+      });
+
+      return this.formatResult({
+        operation: 'findOne',
+        objectNameSingular: objectMetadataNameSingular,
+        data: record,
+      });
+    } else {
+      const limit = this.limitInputFactory.create(request);
+      const filter = request.query.filter as string;
+
+      const qb = repository.createQueryBuilder(objectMetadataNameSingular);
+      const finalQuery = buildQueryWithFilters(
+        qb,
+        objectMetadataNameSingular,
+        filter,
+      );
+
+      const records = await finalQuery.take(limit).getMany();
+
+      return this.formatResult({
+        objectNamePlural: objectMetadataNamePlural,
+        operation: 'findMany',
+        data: records,
+      });
+    }
+  }
+
+  private formatResult<T>({
+    operation,
+    objectNameSingular,
+    objectNamePlural,
+    data,
+  }: FormatResultParams<T>) {
+    let prefix;
+
+    if (operation === 'findOne') {
+      prefix = objectNameSingular || '';
+    } else if (operation === 'findMany') {
+      prefix = objectNamePlural || '';
+    } else {
+      prefix = operation + capitalize(objectNameSingular || '');
+    }
     const result = {
       data: {
-        [operation + capitalize(objectNameSingular)]: data,
+        [prefix]: data,
       },
     };
 
@@ -107,12 +171,19 @@ export class RestApiCoreServiceV2 {
 
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
+    const objectMetadataNamePlural =
+      objectMetadata.objectMetadataMapItem.namePlural;
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspace.id,
         objectMetadataNameSingular,
       );
 
-    return { objectMetadataNameSingular, repository };
+    return {
+      objectMetadataNameSingular,
+      objectMetadataNamePlural,
+      objectMetadata,
+      repository,
+    };
   }
 }

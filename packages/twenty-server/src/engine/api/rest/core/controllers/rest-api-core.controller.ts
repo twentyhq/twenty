@@ -39,9 +39,12 @@ export class RestApiCoreController {
   @Get()
   @UseFilters(RestApiExceptionFilter)
   async handleApiGet(@Req() request: Request, @Res() res: Response) {
-    const result = await this.restApiCoreService.get(request);
+    // const result = await this.restApiCoreService.get(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data.data));
+    // res.status(200).send(cleanGraphQLResponse(result.data.data));
+    const result = await this.restApiCoreServiceV2.get(request);
+
+    res.status(200).send(result);
   }
 
   @Delete()
