@@ -7,7 +7,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
+import { capitalize, ConnectedAccountProvider } from 'twenty-shared';
 import {
   Card,
   IconGoogle,
@@ -136,7 +136,9 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 checked={currentWorkspace.isGoogleAuthEnabled}
                 advancedMode
                 divider
-                onChange={() => toggleAuthMethod('google')}
+                onChange={() =>
+                  toggleAuthMethod(ConnectedAccountProvider.GOOGLE)
+                }
               />
             )}
             {authProviders.microsoft === true && (
@@ -147,7 +149,9 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 checked={currentWorkspace.isMicrosoftAuthEnabled}
                 advancedMode
                 divider
-                onChange={() => toggleAuthMethod('microsoft')}
+                onChange={() =>
+                  toggleAuthMethod(ConnectedAccountProvider.MICROSOFT)
+                }
               />
             )}
             {authProviders.password === true && (
