@@ -1,13 +1,13 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { ResponsiveLine } from '@nivo/line';
-
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { ResponsiveLine } from '@nivo/line';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
@@ -142,17 +142,17 @@ export const WorkerMetricsGraph = ({
   const getAxisLabel = () => {
     switch (timeRange) {
       case QueueMetricsTimeRange.OneHour:
-        return 'Last 1 Hour (oldest → newest)';
+        return t`Last 1 Hour (oldest → newest)`;
       case QueueMetricsTimeRange.FourHours:
-        return 'Last 4 Hours (oldest → newest)';
+        return t`Last 4 Hours (oldest → newest)`;
       case QueueMetricsTimeRange.TwelveHours:
-        return 'Last 12 Hours (oldest → newest)';
+        return t`Last 12 Hours (oldest → newest)`;
       case QueueMetricsTimeRange.OneDay:
-        return 'Last 24 Hours (oldest → newest)';
+        return t`Last 24 Hours (oldest → newest)`;
       case QueueMetricsTimeRange.SevenDays:
-        return 'Last 7 Days (oldest → newest)';
+        return t`Last 7 Days (oldest → newest)`;
       default:
-        return 'Recent Events (oldest → newest)';
+        return t`Recent Events (oldest → newest)`;
     }
   };
 
@@ -163,14 +163,14 @@ export const WorkerMetricsGraph = ({
           dropdownId={`timerange-${queueName}`}
           value={timeRange}
           options={[
-            { value: QueueMetricsTimeRange.SevenDays, label: 'This week' },
-            { value: QueueMetricsTimeRange.OneDay, label: 'Today' },
+            { value: QueueMetricsTimeRange.SevenDays, label: t`This week` },
+            { value: QueueMetricsTimeRange.OneDay, label: t`Today` },
             {
               value: QueueMetricsTimeRange.TwelveHours,
-              label: 'Last 12 hours',
+              label: t`Last 12 hours`,
             },
-            { value: QueueMetricsTimeRange.FourHours, label: 'Last 4 hours' },
-            { value: QueueMetricsTimeRange.OneHour, label: 'Last 1 hour' },
+            { value: QueueMetricsTimeRange.FourHours, label: t`Last 4 hours` },
+            { value: QueueMetricsTimeRange.OneHour, label: t`Last 1 hour` },
           ]}
           onChange={onTimeRangeChange}
           needIconCheck
@@ -179,7 +179,7 @@ export const WorkerMetricsGraph = ({
 
       <StyledGraphContainer>
         {loading ? (
-          <StyledNoDataMessage>Loading metrics data...</StyledNoDataMessage>
+          <StyledNoDataMessage>{t`Loading metrics data...`}</StyledNoDataMessage>
         ) : hasData ? (
           <ResponsiveLine
             data={metricsData}
@@ -282,7 +282,7 @@ export const WorkerMetricsGraph = ({
             ]}
           />
         ) : (
-          <StyledNoDataMessage>No metrics data available</StyledNoDataMessage>
+          <StyledNoDataMessage>{t`No metrics data available`}</StyledNoDataMessage>
         )}
       </StyledGraphContainer>
       {metricsDetails && (

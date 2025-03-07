@@ -4,6 +4,8 @@ import { SettingsListItemCardContent } from '@/settings/components/SettingsListI
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+
 import {
   Banner,
   Button,
@@ -66,13 +68,11 @@ export const SettingsAdminEnvVariables = () => {
               color={theme.color.blue}
               size={theme.icon.size.md}
             />
-            <StyledBannerText>
-              Worker variables are not defined here
-            </StyledBannerText>
+            <StyledBannerText>{t`Worker variables are not defined here`}</StyledBannerText>
           </StyledBannerContent>
           <Button
             variant="tertiary"
-            title="Go to Documentation"
+            title={t`Go to Documentation`}
             onClick={() =>
               window.open(
                 'https://twenty.com/developers/section/self-hosting/setup#setup-environment-variables',
@@ -82,9 +82,7 @@ export const SettingsAdminEnvVariables = () => {
             size="small"
             accent="blue"
             Icon={IconExternalLink}
-          >
-            Go to Documentation
-          </Button>
+          />
         </StyledBanner>
       </Section>
       <Section>
@@ -99,7 +97,7 @@ export const SettingsAdminEnvVariables = () => {
 
         <Card rounded>
           <SettingsListItemCardContent
-            label="Other Variables"
+            label={t`Other Variables`}
             to={getSettingsPath(SettingsPath.AdminPanelOtherEnvVariables)}
             rightComponent={<></>}
             LeftIcon={IconHeartRateMonitor}
