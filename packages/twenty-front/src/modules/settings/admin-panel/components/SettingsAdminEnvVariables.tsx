@@ -1,59 +1,56 @@
 import { SettingsAdminEnvVariablesTable } from '@/settings/admin-panel/components/SettingsAdminEnvVariablesTable';
 import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
+import { SettingsListItemCardContent } from '@/settings/components/SettingsListItemCardContent';
+import { SettingsPath } from '@/types/SettingsPath';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
-import { Button, H1Title, H1TitleFontColor, H2Title, Section } from 'twenty-ui';
+import { t } from '@lingui/core/macro';
+
+import {
+  Banner,
+  Card,
+  H2Title,
+  IconHeartRateMonitor,
+  IconInfoCircle,
+  Section,
+} from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledGroupContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledGroupDescription = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledButtonsRow = styled.div`
+const StyledBanner = styled(Banner)`
+  align-items: center;
+  background-color: ${({ theme }) => theme.color.blueAccent20};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
-  flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  justify-content: space-between;
 `;
 
-const StyledShowMoreButton = styled(Button)<{ isSelected?: boolean }>`
-  ${({ isSelected, theme }) =>
-    isSelected &&
-    `
-    background-color: ${theme.background.transparent.light};
-  `}
+const StyledBannerContent = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledBannerText = styled.div`
+  color: ${({ theme }) => theme.color.blue};
 `;
 
 export const SettingsAdminEnvVariables = () => {
+  const theme = useTheme();
   const { data: environmentVariables, loading: environmentVariablesLoading } =
     useGetEnvironmentVariablesGroupedQuery({
       fetchPolicy: 'network-only',
     });
 
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-
-  const toggleGroupVisibility = (groupName: string) => {
-    setSelectedGroup(selectedGroup === groupName ? null : groupName);
-  };
-
-  const hiddenGroups =
-    environmentVariables?.getEnvironmentVariablesGrouped.groups.filter(
-      (group) => group.isHiddenOnLoad,
-    ) ?? [];
-
   const visibleGroups =
     environmentVariables?.getEnvironmentVariablesGrouped.groups.filter(
       (group) => !group.isHiddenOnLoad,
     ) ?? [];
-
-  const selectedGroupData =
-    environmentVariables?.getEnvironmentVariablesGrouped.groups.find(
-      (group) => group.name === selectedGroup,
-    );
 
   if (environmentVariablesLoading) {
     return <SettingsAdminTabSkeletonLoader />;
@@ -62,9 +59,17 @@ export const SettingsAdminEnvVariables = () => {
   return (
     <>
       <Section>
-        These are only the server values. Ensure your worker environment has the
-        same variables and values, this is required for asynchronous tasks like
-        email sync.
+        <StyledBanner>
+          <StyledBannerContent>
+            <IconInfoCircle
+              color={theme.color.blue}
+              size={theme.icon.size.md}
+            />
+            <StyledBannerText>
+              {t`Matching values required in worker environment`}
+            </StyledBannerText>
+          </StyledBannerContent>
+        </StyledBanner>
       </Section>
       <Section>
         {visibleGroups.map((group) => (
@@ -76,42 +81,15 @@ export const SettingsAdminEnvVariables = () => {
           </StyledGroupContainer>
         ))}
 
-        {hiddenGroups.length > 0 && (
-          <>
-            <StyledButtonsRow>
-              {hiddenGroups.map((group) => (
-                <StyledShowMoreButton
-                  key={group.name}
-                  onClick={() => toggleGroupVisibility(group.name)}
-                  title={group.name}
-                  variant="secondary"
-                  isSelected={selectedGroup === group.name}
-                >
-                  {group.name} variables
-                </StyledShowMoreButton>
-              ))}
-            </StyledButtonsRow>
-
-            {selectedGroupData && (
-              <StyledGroupContainer>
-                <H1Title
-                  title={selectedGroupData.name}
-                  fontColor={H1TitleFontColor.Primary}
-                />
-                {selectedGroupData.description !== '' && (
-                  <StyledGroupDescription>
-                    {selectedGroupData.description}
-                  </StyledGroupDescription>
-                )}
-                {selectedGroupData.variables.length > 0 && (
-                  <SettingsAdminEnvVariablesTable
-                    variables={selectedGroupData.variables}
-                  />
-                )}
-              </StyledGroupContainer>
-            )}
-          </>
-        )}
+        <Card rounded>
+          <SettingsListItemCardContent
+            label={t`Other Variables`}
+            to={getSettingsPath(SettingsPath.AdminPanelOtherEnvVariables)}
+            rightComponent={null}
+            LeftIcon={IconHeartRateMonitor}
+            LeftIconColor={theme.font.color.tertiary}
+          />
+        </Card>
       </Section>
     </>
   );

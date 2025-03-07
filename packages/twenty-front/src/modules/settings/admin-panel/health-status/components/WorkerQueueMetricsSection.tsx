@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { H2Title, Section } from 'twenty-ui';
 import {
@@ -17,7 +18,7 @@ export const WorkerQueueMetricsSection = ({
 
   return (
     <Section>
-      <H2Title title={queue.queueName} description="Queue performance" />
+      <H2Title title={queue.queueName} description={t`Queue performance`} />
       <WorkerMetricsGraph
         queueName={queue.queueName}
         timeRange={timeRange}

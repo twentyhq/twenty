@@ -51,15 +51,15 @@ export const SettingsAdminIndicatorHealthStatus = () => {
       links={[
         {
           children: t`Other`,
-          href: getSettingsPath(SettingsPath.ServerAdmin),
+          href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Server Admin`,
-          href: getSettingsPath(SettingsPath.ServerAdmin),
+          children: t`Admin Panel`,
+          href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
           children: t`Health Status`,
-          href: getSettingsPath(SettingsPath.ServerAdminHealthStatus),
+          href: getSettingsPath(SettingsPath.AdminPanelHealthStatus),
         },
         { children: `${data?.getIndicatorHealthStatus?.label}` },
       ]}

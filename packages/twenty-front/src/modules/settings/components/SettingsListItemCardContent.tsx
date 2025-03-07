@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared';
-import { CardContent, IconComponent } from 'twenty-ui';
+import { CardContent, IconChevronRight, IconComponent } from 'twenty-ui';
 
 const StyledRow = styled(CardContent)`
   align-items: center;
@@ -15,6 +15,12 @@ const StyledRow = styled(CardContent)`
   padding: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(3)};
   min-height: ${({ theme }) => theme.spacing(6)};
+`;
+
+const StyledRightContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledContent = styled.div`
@@ -43,6 +49,7 @@ type SettingsListItemCardContentProps = {
   description?: string;
   divider?: boolean;
   LeftIcon?: IconComponent;
+  LeftIconColor?: string;
   onClick?: () => void;
   rightComponent: ReactNode;
   to?: string;
@@ -53,6 +60,7 @@ export const SettingsListItemCardContent = ({
   description,
   divider,
   LeftIcon,
+  LeftIconColor,
   onClick,
   rightComponent,
   to,
@@ -61,12 +69,25 @@ export const SettingsListItemCardContent = ({
 
   const content = (
     <StyledRow onClick={onClick} divider={divider}>
-      {!!LeftIcon && <LeftIcon size={theme.icon.size.md} />}
+      {!!LeftIcon && (
+        <LeftIcon
+          size={theme.icon.size.md}
+          color={LeftIconColor ?? 'currentColor'}
+        />
+      )}
       <StyledContent>
         {label}
         {!!description && <StyledDescription>{description}</StyledDescription>}
       </StyledContent>
-      {rightComponent}
+      <StyledRightContainer>
+        {rightComponent}
+        {!!to && (
+          <IconChevronRight
+            size={theme.icon.size.md}
+            color={theme.font.color.tertiary}
+          />
+        )}
+      </StyledRightContainer>
     </StyledRow>
   );
 

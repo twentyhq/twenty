@@ -16,7 +16,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
-  GithubVersionLink,
   H1Title,
   H1TitleFontColor,
   H2Title,
@@ -27,7 +26,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import packageJson from '../../../../../package.json';
+import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -132,7 +131,7 @@ export const SettingsAdminGeneral = () => {
     <>
       <Section>
         <H2Title title={t`About`} description={t`Version of the application`} />
-        <GithubVersionLink version={packageJson.version} />
+        <SettingsAdminVersionContainer />
       </Section>
 
       <Section>

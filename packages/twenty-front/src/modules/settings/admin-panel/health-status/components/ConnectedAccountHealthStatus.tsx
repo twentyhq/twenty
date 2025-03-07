@@ -1,6 +1,7 @@
 import { SettingsAdminHealthAccountSyncCountersTable } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
 
@@ -44,14 +45,14 @@ export const ConnectedAccountHealthStatus = () => {
       {!isMessageSyncDown && serviceDetails.messageSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
           details={serviceDetails.messageSync.details}
-          title="Message Sync Status"
+          title={t`Message Sync Status`}
         />
       )}
 
       {!isCalendarSyncDown && serviceDetails.calendarSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
           details={serviceDetails.calendarSync.details}
-          title="Calendar Sync Status"
+          title={t`Calendar Sync Status`}
         />
       )}
     </>
