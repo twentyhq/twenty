@@ -1173,6 +1173,14 @@ msgstr "Employees"
 msgid "Empty"
 msgstr "Empty"
 
+#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+msgid "Empty Array"
+msgstr "Empty Array"
+
+#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+msgid "Empty Object"
+msgstr "Empty Object"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
 msgstr "Endpoint URL"
