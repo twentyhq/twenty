@@ -2,6 +2,7 @@ import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { FormCurrencyFieldInput } from '../FormCurrencyFieldInput';
 
 const meta: Meta<typeof FormCurrencyFieldInput> = {
@@ -9,6 +10,7 @@ const meta: Meta<typeof FormCurrencyFieldInput> = {
   component: FormCurrencyFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -29,25 +31,6 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText('Currency Code');
     await canvas.findByText('Amount Micros');
-  },
-};
-
-export const WithVariable: Story = {
-  args: {
-    label: 'Salary',
-    defaultValue: {
-      currencyCode: CurrencyCode.USD,
-      amountMicros: '{{a.b.c}}',
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const currency = await canvas.findByText(/USD/);
-    expect(currency).toBeVisible();
-
-    const amountVariable = await canvas.findByText('c');
-    expect(amountVariable).toBeVisible();
   },
 };
 

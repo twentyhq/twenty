@@ -33,9 +33,9 @@ export const useAvailableVariablesInWorkflowStep = ({
   const availableStepsOutputSchema: StepOutputSchema[] =
     getStepsOutputSchema(previousStepIds).filter(isDefined);
 
-  const triggersOutputSchema: StepOutputSchema[] = getStepsOutputSchema([
-    TRIGGER_STEP_ID,
-  ]).filter(isDefined);
+  const triggersOutputSchema: StepOutputSchema[] = isDefined(flow.trigger)
+    ? getStepsOutputSchema([TRIGGER_STEP_ID]).filter(isDefined)
+    : [];
 
   const availableVariablesInWorkflowStep = [
     ...availableStepsOutputSchema,

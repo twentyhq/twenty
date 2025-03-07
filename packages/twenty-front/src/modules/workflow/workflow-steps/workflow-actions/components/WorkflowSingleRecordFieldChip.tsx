@@ -1,4 +1,3 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -42,8 +41,6 @@ export const WorkflowSingleRecordFieldChip = ({
   onRemove,
   disabled,
 }: WorkflowSingleRecordFieldChipProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-
   if (
     !!draftValue &&
     draftValue.type === 'variable' &&
@@ -51,8 +48,9 @@ export const WorkflowSingleRecordFieldChip = ({
   ) {
     return (
       <VariableChipStandalone
-        rawVariableName={objectMetadataItem.labelSingular}
+        rawVariableName={draftValue.value}
         onRemove={disabled ? undefined : onRemove}
+        isFullRecord
       />
     );
   }

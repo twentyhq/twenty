@@ -1,4 +1,6 @@
-import { extractVariableLabel } from '@/workflow/workflow-variables/utils/extractVariableLabel';
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
+import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
+import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
@@ -60,17 +62,48 @@ const StyledDelete = styled.button`
 type VariableChipProps = {
   rawVariableName: string;
   onRemove?: () => void;
+  isFullRecord?: boolean;
 };
 
 export const VariableChip = ({
   rawVariableName,
   onRemove,
+  isFullRecord = false,
 }: VariableChipProps) => {
   const theme = useTheme();
+  const { getStepsOutputSchema } = useStepsOutputSchema({});
+  const stepId = extractRawVariableNamePart({
+    rawVariableName,
+    part: 'stepId',
+  });
+
+  if (!isDefined(stepId)) {
+    return null;
+  }
+
+  const stepOutputSchema = getStepsOutputSchema([stepId])?.[0];
+
+  if (!isDefined(stepOutputSchema)) {
+    return null;
+  }
+
+  const { variableLabel, variablePathLabel } =
+    searchVariableThroughOutputSchema({
+      stepOutputSchema,
+      rawVariableName,
+      isFullRecord,
+    });
+
+  const label = isDefined(variableLabel)
+    ? variableLabel
+    : extractRawVariableNamePart({
+        rawVariableName,
+        part: 'selectedField',
+      });
 
   return (
     <StyledChip deletable={isDefined(onRemove)}>
-      <StyledLabel>{extractVariableLabel(rawVariableName)}</StyledLabel>
+      <StyledLabel title={variablePathLabel}>{label}</StyledLabel>
 
       {onRemove ? (
         <StyledDelete onClick={onRemove} aria-label="Remove variable">

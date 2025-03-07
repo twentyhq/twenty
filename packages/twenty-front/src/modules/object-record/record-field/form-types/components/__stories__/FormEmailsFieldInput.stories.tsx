@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormEmailsFieldInput } from '../FormEmailsFieldInput';
 
 const meta: Meta<typeof FormEmailsFieldInput> = {
@@ -7,6 +9,7 @@ const meta: Meta<typeof FormEmailsFieldInput> = {
   component: FormEmailsFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -34,7 +37,7 @@ export const WithVariable: Story = {
   args: {
     label: 'Emails',
     defaultValue: {
-      primaryEmail: '{{a.b.c}}',
+      primaryEmail: `{{${MOCKED_STEP_ID}.name}}`,
       additionalEmails: [],
     },
     VariablePicker: () => <div>VariablePicker</div>,
@@ -42,7 +45,7 @@ export const WithVariable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const primaryEmailVariable = await canvas.findByText('c');
+    const primaryEmailVariable = await canvas.findByText('Name');
     expect(primaryEmailVariable).toBeVisible();
 
     const variablePicker = await canvas.findByText('VariablePicker');

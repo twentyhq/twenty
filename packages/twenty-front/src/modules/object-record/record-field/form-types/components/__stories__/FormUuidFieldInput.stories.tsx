@@ -1,3 +1,4 @@
+import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import {
@@ -7,6 +8,7 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormUuidFieldInput } from '../FormUuidFieldInput';
 
 const meta: Meta<typeof FormUuidFieldInput> = {
@@ -14,8 +16,16 @@ const meta: Meta<typeof FormUuidFieldInput> = {
   component: FormUuidFieldInput,
   args: {},
   argTypes: {},
+  decorators: [
+    (Story) => (
+      <WorkflowVersionComponentInstanceContext.Provider
+        value={{ instanceId: 'workflow-version-id' }}
+      >
+        <Story />
+      </WorkflowVersionComponentInstanceContext.Provider>
+    ),
+  ],
 };
-
 export default meta;
 
 type Story = StoryObj<typeof FormUuidFieldInput>;
@@ -159,7 +169,7 @@ export const ReplaceStaticValueWithVariable: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
           }}
         >
           Add variable
@@ -190,7 +200,9 @@ export const ReplaceStaticValueWithVariable: Story = {
         return variableTag;
       }),
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith('{{test}}');
+        expect(args.onPersist).toHaveBeenCalledWith(
+          `{{${MOCKED_STEP_ID}.name}}`,
+        );
       }),
     ]);
 
@@ -222,7 +234,7 @@ export const Disabled: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
           }}
         >
           Add variable
