@@ -55,6 +55,13 @@ export const ArrayNested: Story = {
   args: {
     value: [1, 2, ['a', 'b', 'c'], 3],
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedArrayElements = await canvas.findByText('[3]');
+
+    expect(nestedArrayElements).toBeVisible();
+  },
 };
 
 export const ArrayWithObjects: Story = {
@@ -69,6 +76,13 @@ export const ArrayWithObjects: Story = {
         age: 42,
       },
     ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedObjectItemsCounts = await canvas.findAllByText('{2}');
+
+    expect(nestedObjectItemsCounts).toHaveLength(2);
   },
 };
 
@@ -93,6 +107,13 @@ export const ObjectNested: Story = {
       },
       isActive: true,
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedObjectItemsCounts = await canvas.findAllByText('{2}');
+
+    expect(nestedObjectItemsCounts).toHaveLength(2);
   },
 };
 
