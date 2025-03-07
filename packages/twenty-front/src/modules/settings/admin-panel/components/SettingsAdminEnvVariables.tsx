@@ -99,7 +99,7 @@ export const SettingsAdminEnvVariables = () => {
           <SettingsListItemCardContent
             label={t`Other Variables`}
             to={getSettingsPath(SettingsPath.AdminPanelOtherEnvVariables)}
-            rightComponent={<></>}
+            rightComponent={null}
             LeftIcon={IconHeartRateMonitor}
             LeftIconColor={theme.font.color.tertiary}
           />

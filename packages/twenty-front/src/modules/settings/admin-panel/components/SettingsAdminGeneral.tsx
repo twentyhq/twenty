@@ -11,7 +11,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
@@ -59,6 +59,31 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledVersionContainer = styled.div`
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  display: grid;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledVersionText = styled.div`
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const fetchLatestRelease = async () => {
+  const response = await fetch(
+    'https://api.github.com/repos/twentyhq/twenty/releases/latest',
+  );
+  const data = await response.json();
+  return data.tag_name.replace('v', '');
+};
+
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueSnackBar } = useSnackBar();
@@ -78,6 +103,12 @@ export const SettingsAdminGeneral = () => {
   const canImpersonate = currentUser?.canImpersonate;
 
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
+
+  const [latestVersion, setLatestVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchLatestRelease().then(setLatestVersion);
+  }, []);
 
   const handleSearch = async () => {
     setActiveTabId('');
@@ -132,7 +163,16 @@ export const SettingsAdminGeneral = () => {
     <>
       <Section>
         <H2Title title={t`About`} description={t`Version of the application`} />
-        <GithubVersionLink version={packageJson.version} />
+        <StyledVersionContainer>
+          <StyledVersionText>
+            {t`Current version:`}
+            <GithubVersionLink version={packageJson.version} />
+          </StyledVersionText>
+          <StyledVersionText>
+            {t`Latest version:`}
+            <GithubVersionLink version={latestVersion ?? ''} />
+          </StyledVersionText>
+        </StyledVersionContainer>
       </Section>
 
       <Section>
