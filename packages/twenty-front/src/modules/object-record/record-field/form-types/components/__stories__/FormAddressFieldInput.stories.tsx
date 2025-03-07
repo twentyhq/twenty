@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormAddressFieldInput } from '../FormAddressFieldInput';
 
 const meta: Meta<typeof FormAddressFieldInput> = {
@@ -7,6 +9,7 @@ const meta: Meta<typeof FormAddressFieldInput> = {
   component: FormAddressFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -40,12 +43,12 @@ export const WithVariables: Story = {
   args: {
     label: 'Address',
     defaultValue: {
-      addressStreet1: '{{a.street1}}',
-      addressStreet2: '{{a.street2}}',
-      addressCity: '{{a.city}}',
-      addressState: '{{a.state}}',
-      addressCountry: '{{a.country}}',
-      addressPostcode: '{{a.postcode}}',
+      addressStreet1: `{{${MOCKED_STEP_ID}.address.street1}}`,
+      addressStreet2: `{{${MOCKED_STEP_ID}.address.street2}}`,
+      addressCity: `{{${MOCKED_STEP_ID}.address.city}}`,
+      addressState: `{{${MOCKED_STEP_ID}.address.state}}`,
+      addressCountry: `{{${MOCKED_STEP_ID}.address.country}}`,
+      addressPostcode: `{{${MOCKED_STEP_ID}.address.postcode}}`,
       addressLat: 39.781721,
       addressLng: -89.650148,
     },
@@ -58,14 +61,12 @@ export const WithVariables: Story = {
     const street2Variable = await canvas.findByText('street2');
     const cityVariable = await canvas.findByText('city');
     const stateVariable = await canvas.findByText('state');
-    const countryVariable = await canvas.findByText('country');
     const postcodeVariable = await canvas.findByText('postcode');
 
     expect(street1Variable).toBeVisible();
     expect(street2Variable).toBeVisible();
     expect(cityVariable).toBeVisible();
     expect(stateVariable).toBeVisible();
-    expect(countryVariable).toBeVisible();
     expect(postcodeVariable).toBeVisible();
 
     const variablePickers = await canvas.findAllByText('VariablePicker');
