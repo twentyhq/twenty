@@ -12,6 +12,7 @@ import {
   IconDotsVertical,
   IconMail,
   IconSearch,
+  IconSettingsAutomation,
   useIcons,
 } from 'twenty-ui';
 
@@ -416,6 +417,27 @@ export const useCommandMenu = () => {
     [navigateCommandMenu],
   );
 
+  const openWorkflowActionInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowStepSelectAction,
+          pageTitle: 'Select Action',
+          pageIcon: IconSettingsAutomation,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
   const openRecordsSearchPage = () => {
     navigateCommandMenu({
       page: CommandMenuPages.SearchRecords,
@@ -536,5 +558,6 @@ export const useCommandMenu = () => {
     openCalendarEventInCommandMenu,
     openEmailThreadInCommandMenu,
     openWorkflowTriggerTypeInCommandMenu,
+    openWorkflowActionInCommandMenu,
   };
 };

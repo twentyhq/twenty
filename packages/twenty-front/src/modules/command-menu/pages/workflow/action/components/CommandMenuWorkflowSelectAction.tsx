@@ -1,10 +1,10 @@
+import { CommandMenuWorkflowSelectActionContent } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent';
 import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
-import { CommandMenuWorkflowSelectTriggerTypeContent } from '@/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerTypeContent';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-shared';
 
-export const CommandMenuWorkflowSelectTriggerType = () => {
+export const CommandMenuWorkflowSelectAction = () => {
   const workflowId = useRecoilComponentValueV2(workflowIdComponentState);
   const workflow = useWorkflowWithCurrentVersion(workflowId);
 
@@ -12,5 +12,5 @@ export const CommandMenuWorkflowSelectTriggerType = () => {
     return null;
   }
 
-  return <CommandMenuWorkflowSelectTriggerTypeContent workflow={workflow} />;
+  return <CommandMenuWorkflowSelectActionContent workflow={workflow} />;
 };
