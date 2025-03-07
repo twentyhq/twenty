@@ -120,14 +120,14 @@ exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural n
 [ZodError: [
   {
     "code": "custom",
-    "message": "Singular and plural names must be different guillaume",
+    "message": "Singular and plural names must be different",
     "path": [
       "nameSingular"
     ]
   },
   {
     "code": "custom",
-    "message": "Singular and plural names must be different guillaume",
+    "message": "Singular and plural names must be different",
     "path": [
       "namePlural"
     ]
