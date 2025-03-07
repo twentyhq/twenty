@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconLink, IconRobot, IconSearch, IconSettings } from 'twenty-ui';
 
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
@@ -7,8 +7,10 @@ import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/C
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -20,6 +22,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
@@ -55,6 +58,18 @@ export const MainNavigationDrawerItems = () => {
 
   const viewId = traceableObject?.id;
 
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
+
+  const lastVisitedViewId = lastVisitedViewPerObjectMetadataItem?.[viewId];
+
+  const navigationPath = getAppPath(
+    AppPath.RecordIndexPage,
+    { objectNamePlural: traceableObject?.namePlural ?? '' },
+    lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
+  );
+
   return (
     <>
       {!isMobile && (
@@ -86,8 +101,8 @@ export const MainNavigationDrawerItems = () => {
           />
 
           <NavigationDrawerItem
-            label="Traceable"
-            to={`/objects/traceables?viewId=${viewId ?? ''}`}
+            label="Traceable Link"
+            to={navigationPath}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}
