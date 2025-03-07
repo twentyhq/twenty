@@ -238,6 +238,7 @@ export {
   IconSearch,
   IconSend,
   IconServer,
+  IconServer2,
   IconSettings,
   IconSettings2,
   IconSettingsAutomation,
@@ -263,6 +264,7 @@ export {
   IconTimeDuration30,
   IconTimeDuration60,
   IconTimelineEvent,
+  IconTool,
   IconTrash,
   IconTrashX,
   IconTypography,
@@ -279,7 +281,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';
