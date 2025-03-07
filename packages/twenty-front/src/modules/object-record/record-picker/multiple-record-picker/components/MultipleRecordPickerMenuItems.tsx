@@ -57,24 +57,6 @@ export const MultipleRecordPickerMenuItems = ({
       componentInstanceId,
     );
 
-  const handleEnter = useRecoilCallback(
-    ({ snapshot }) => {
-      return (selectedId: string) => {
-        const pickableMorphItem = snapshot
-          .getLoadable(singlePickableMorphItemFamilySelector(selectedId))
-          .getValue();
-
-        if (!isDefined(pickableMorphItem)) {
-          return;
-        }
-
-        onChange?.(pickableMorphItem);
-        resetSelectedItem();
-      };
-    },
-    [onChange, resetSelectedItem, singlePickableMorphItemFamilySelector],
-  );
-
   const handleChange = useRecoilCallback(
     ({ snapshot, set }) => {
       return (morphItem: RecordPickerPickableMorphItem) => {
@@ -98,6 +80,35 @@ export const MultipleRecordPickerMenuItems = ({
       };
     },
     [multipleRecordPickerPickableMorphItemsState],
+  );
+
+  const handleEnter = useRecoilCallback(
+    ({ snapshot }) => {
+      return (selectedId: string) => {
+        const pickableMorphItem = snapshot
+          .getLoadable(singlePickableMorphItemFamilySelector(selectedId))
+          .getValue();
+
+        if (!isDefined(pickableMorphItem)) {
+          return;
+        }
+
+        const selectedMorphItem = {
+          ...pickableMorphItem,
+          isSelected: !pickableMorphItem.isSelected,
+        };
+
+        handleChange(selectedMorphItem);
+        onChange?.(selectedMorphItem);
+        resetSelectedItem();
+      };
+    },
+    [
+      handleChange,
+      onChange,
+      resetSelectedItem,
+      singlePickableMorphItemFamilySelector,
+    ],
   );
 
   return (
