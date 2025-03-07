@@ -18,6 +18,7 @@ export const JsonObjectNode = ({
         label: key,
         value,
       }))}
+      renderElementsCount={(count) => `{${count}}`}
       label={label}
       Icon={IconCube}
       depth={depth}

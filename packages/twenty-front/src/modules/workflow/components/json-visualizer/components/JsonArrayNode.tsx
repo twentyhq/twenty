@@ -18,6 +18,7 @@ export const JsonArrayNode = ({
         label: String(key),
         value,
       }))}
+      renderElementsCount={(count) => `[${count}]`}
       label={label}
       Icon={IconBrackets}
       depth={depth}
