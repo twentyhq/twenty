@@ -1,8 +1,9 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE } from '@/settings/constants/SettingsObjectModel';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
+import { SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -19,34 +20,13 @@ import {
   IconRefresh,
   TooltipDelay,
 } from 'twenty-ui';
-import { z } from 'zod';
+import { StringKeyOf } from 'type-fest';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-
-export const settingsDataModelObjectAboutFormSchema = objectMetadataItemSchema
-  .pick({
-    description: true,
-    icon: true,
-    labelPlural: true,
-    labelSingular: true,
-  })
-  .merge(
-    objectMetadataItemSchema
-      .pick({
-        nameSingular: true,
-        namePlural: true,
-        isLabelSyncedWithName: true,
-      })
-      .partial(),
-  );
-
-type SettingsDataModelObjectAboutFormValues = z.infer<
-  typeof settingsDataModelObjectAboutFormSchema
->;
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
   objectMetadataItem?: ObjectMetadataItem;
-  onBlur?: () => void;
+  onNewDirtyField?: () => void;
 };
 
 const StyledInputsContainer = styled.div`
@@ -92,21 +72,20 @@ const infoCircleElementId = 'info-circle-id';
 export const IS_LABEL_SYNCED_WITH_NAME_LABEL = 'isLabelSyncedWithName';
 
 export const SettingsDataModelObjectAboutForm = ({
-  disableEdition,
+  disableEdition = false,
+  onNewDirtyField,
   objectMetadataItem,
-  onBlur,
 }: SettingsDataModelObjectAboutFormProps) => {
-  const { t } = useLingui();
-
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
+  const { t } = useLingui();
   const theme = useTheme();
 
   const isLabelSyncedWithName =
     watch(IS_LABEL_SYNCED_WITH_NAME_LABEL) ??
     (isDefined(objectMetadataItem)
       ? objectMetadataItem.isLabelSyncedWithName
-      : true);
+      : SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE);
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
   watch('nameSingular');
@@ -117,30 +96,34 @@ export const SettingsDataModelObjectAboutForm = ({
     ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
     : t`Input must be in camel case and cannot start with a number`;
 
-  const fillLabelPlural = (labelSingular: string) => {
-    const newLabelPluralValue = isDefined(labelSingular)
-      ? plural(labelSingular)
-      : '';
-    setValue('labelPlural', newLabelPluralValue, {
-      shouldDirty: isDefined(labelSingular) ? true : false,
+  const fillLabelPlural = (labelSingular: string | undefined) => {
+    if (!isDefined(labelSingular)) return;
+
+    const labelPluralFromSingularLabel = plural(labelSingular);
+    setValue('labelPlural', labelPluralFromSingularLabel, {
+      shouldDirty: true,
     });
     if (isLabelSyncedWithName === true) {
-      fillNamePluralFromLabelPlural(newLabelPluralValue);
+      fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
     }
   };
 
-  const fillNameSingularFromLabelSingular = (labelSingular: string) => {
-    isDefined(labelSingular) &&
-      setValue('nameSingular', computeMetadataNameFromLabel(labelSingular), {
-        shouldDirty: true,
-      });
+  const fillNameSingularFromLabelSingular = (
+    labelSingular: string | undefined,
+  ) => {
+    if (!isDefined(labelSingular)) return;
+
+    setValue('nameSingular', computeMetadataNameFromLabel(labelSingular), {
+      shouldDirty: true,
+    });
   };
 
-  const fillNamePluralFromLabelPlural = (labelPlural: string) => {
-    isDefined(labelPlural) &&
-      setValue('namePlural', computeMetadataNameFromLabel(labelPlural), {
-        shouldDirty: true,
-      });
+  const fillNamePluralFromLabelPlural = (labelPlural: string | undefined) => {
+    if (!isDefined(labelPlural)) return;
+
+    setValue('namePlural', computeMetadataNameFromLabel(labelPlural), {
+      shouldDirty: true,
+    });
   };
 
   return (
@@ -158,7 +141,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 selectedIconKey={value}
                 onChange={({ iconKey }) => {
                   onChange(iconKey);
-                  onBlur?.();
+                  onNewDirtyField?.();
                 }}
               />
             )}
@@ -168,9 +151,12 @@ export const SettingsDataModelObjectAboutForm = ({
           key={`object-labelSingular-text-input`}
           name={'labelSingular'}
           control={control}
-          defaultValue={objectMetadataItem?.labelSingular}
-          render={({ field: { onChange, value } }) => (
+          defaultValue={objectMetadataItem?.labelSingular ?? ''}
+          render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
+              // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
+              noErrorHelper={true}
+              error={errors.labelSingular?.message}
               label={t`Singular`}
               placeholder={'Listing'}
               value={value}
@@ -181,7 +167,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   fillNameSingularFromLabelSingular(value);
                 }
               }}
-              onBlur={onBlur}
+              onBlur={() => onNewDirtyField?.()}
               disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
@@ -192,9 +178,12 @@ export const SettingsDataModelObjectAboutForm = ({
           key={`object-labelPlural-text-input`}
           name={'labelPlural'}
           control={control}
-          defaultValue={objectMetadataItem?.labelPlural}
-          render={({ field: { onChange, value } }) => (
+          defaultValue={objectMetadataItem?.labelPlural ?? ''}
+          render={({ field: { onChange, value }, formState: { errors } }) => (
             <TextInput
+              // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
+              noErrorHelper={true}
+              error={errors.labelPlural?.message}
               label={t`Plural`}
               placeholder={t`Listings`}
               value={value}
@@ -204,6 +193,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   fillNamePluralFromLabelPlural(value);
                 }
               }}
+              onBlur={() => onNewDirtyField?.()}
               disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
@@ -214,7 +204,6 @@ export const SettingsDataModelObjectAboutForm = ({
       <Controller
         name="description"
         control={control}
-        defaultValue={objectMetadataItem?.description ?? null}
         render={({ field: { onChange, value } }) => (
           <TextArea
             placeholder={t`Write a description`}
@@ -222,7 +211,7 @@ export const SettingsDataModelObjectAboutForm = ({
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             disabled={disableEdition}
-            onBlur={onBlur}
+            onBlur={() => onNewDirtyField?.()}
           />
         )}
       />
@@ -232,28 +221,30 @@ export const SettingsDataModelObjectAboutForm = ({
             {[
               {
                 label: t`API Name (Singular)`,
-                fieldName: 'nameSingular' as const,
+                fieldName:
+                  'nameSingular' as const satisfies StringKeyOf<ObjectMetadataItem>,
                 placeholder: `listing`,
-                defaultValue: objectMetadataItem?.nameSingular,
+                defaultValue: objectMetadataItem?.nameSingular ?? '',
                 disableEdition: disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
               {
                 label: t`API Name (Plural)`,
-                fieldName: 'namePlural' as const,
+                fieldName:
+                  'namePlural' as const satisfies StringKeyOf<ObjectMetadataItem>,
                 placeholder: `listings`,
-                defaultValue: objectMetadataItem?.namePlural,
+                defaultValue: objectMetadataItem?.namePlural ?? '',
                 disableEdition: disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
             ].map(
               ({
-                defaultValue,
                 fieldName,
                 label,
                 placeholder,
                 disableEdition,
                 tooltip,
+                defaultValue,
               }) => (
                 <AdvancedSettingsWrapper key={`object-${fieldName}-text-input`}>
                   <StyledInputContainer>
@@ -261,7 +252,10 @@ export const SettingsDataModelObjectAboutForm = ({
                       name={fieldName}
                       control={control}
                       defaultValue={defaultValue}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        formState: { errors },
+                      }) => (
                         <>
                           <TextInput
                             label={label}
@@ -271,7 +265,10 @@ export const SettingsDataModelObjectAboutForm = ({
                             disabled={disableEdition}
                             fullWidth
                             maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
-                            onBlur={onBlur}
+                            onBlur={() => onNewDirtyField?.()}
+                            error={errors[fieldName]?.message}
+                            // TODO we should discuss on how to notify user about form validation schema issue, from now just displaying red borders
+                            noErrorHelper={true}
                             RightIcon={() =>
                               tooltip && (
                                 <>
@@ -305,7 +302,10 @@ export const SettingsDataModelObjectAboutForm = ({
               <Controller
                 name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
                 control={control}
-                defaultValue={objectMetadataItem?.isLabelSyncedWithName ?? true}
+                defaultValue={
+                  objectMetadataItem?.isLabelSyncedWithName ??
+                  SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE
+                }
                 render={({ field: { onChange, value } }) => (
                   <Card rounded>
                     <SettingsOptionCardContentToggle
@@ -324,7 +324,7 @@ export const SettingsDataModelObjectAboutForm = ({
                           fillNamePluralFromLabelPlural(labelPlural);
                           fillNameSingularFromLabelSingular(labelSingular);
                         }
-                        onBlur?.();
+                        onNewDirtyField?.();
                       }}
                     />
                   </Card>

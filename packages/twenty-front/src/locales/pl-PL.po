@@ -2663,6 +2663,14 @@ msgstr "Jednolite logowanie (SSO)"
 msgid "Singular"
 msgstr "Liczba pojedyncza"
 
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural labels must be different"
+msgstr "Formularz liczby pojedynczej i mnogiej muszą się różnić"
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural names must be different"
+msgstr "Nazwy liczby pojedynczej i mnogiej muszą się różnić"
+
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
 msgstr "Pomiń"
