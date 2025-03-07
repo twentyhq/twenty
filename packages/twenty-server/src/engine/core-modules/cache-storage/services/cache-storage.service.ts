@@ -31,6 +31,11 @@ export class CacheStorageService {
     }
 
     if (this.isRedisCache()) {
+      await (this.cache as RedisCache).store.client.sAdd(
+        `${this.namespace}:${key}`,
+        value,
+      );
+
       if (ttl) {
         await (this.cache as RedisCache).store.client.expire(
           `${this.namespace}:${key}`,
@@ -38,11 +43,9 @@ export class CacheStorageService {
         );
       }
 
-      return (this.cache as RedisCache).store.client.sAdd(
-        `${this.namespace}:${key}`,
-        value,
-      );
+      return;
     }
+
     this.get(key).then((res: string[]) => {
       if (res) {
         this.set(key, [...res, ...value], ttl);
