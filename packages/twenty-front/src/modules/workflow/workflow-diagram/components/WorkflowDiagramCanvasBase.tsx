@@ -1,8 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
-import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
-import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
@@ -16,6 +14,8 @@ import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrgani
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
+  applyEdgeChanges,
+  applyNodeChanges,
   Background,
   EdgeChange,
   EdgeProps,
@@ -23,15 +23,13 @@ import {
   NodeChange,
   NodeProps,
   ReactFlow,
-  applyEdgeChanges,
-  applyNodeChanges,
   useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { THEME_COMMON } from 'twenty-ui';
+import { Tag, TagColor, THEME_COMMON } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -83,12 +81,13 @@ const defaultFitViewOptions = {
 } satisfies FitViewOptions;
 
 export const WorkflowDiagramCanvasBase = ({
-  status,
   nodeTypes,
   edgeTypes,
   children,
+  tagContainerTestId,
+  tagColor,
+  tagText,
 }: {
-  status: WorkflowVersionStatus;
   nodeTypes: Partial<
     Record<
       WorkflowDiagramNodeType,
@@ -112,6 +111,9 @@ export const WorkflowDiagramCanvasBase = ({
     >
   >;
   children?: React.ReactNode;
+  tagContainerTestId: string;
+  tagColor: TagColor;
+  tagText: string;
 }) => {
   const theme = useTheme();
 
@@ -258,8 +260,8 @@ export const WorkflowDiagramCanvasBase = ({
         {children}
       </ReactFlow>
 
-      <StyledStatusTagContainer data-testid="workflow-visualizer-status">
-        <WorkflowVersionStatusTag versionStatus={status} />
+      <StyledStatusTagContainer data-testid={tagContainerTestId}>
+        <Tag color={tagColor} text={tagText} />
       </StyledStatusTagContainer>
     </StyledResetReactflowStyles>
   );

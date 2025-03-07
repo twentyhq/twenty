@@ -197,6 +197,13 @@ export const workflowRunOutputSchema = z.object({
 
 export const workflowRunContextSchema = z.record(z.any());
 
+export const workflowRunStatusSchema = z.enum([
+  'NOT_STARTED',
+  'RUNNING',
+  'COMPLETED',
+  'FAILED',
+]);
+
 export const workflowRunSchema = z
   .object({
     __typename: z.literal('WorkflowRun'),
@@ -204,6 +211,7 @@ export const workflowRunSchema = z
     workflowVersionId: z.string(),
     output: workflowRunOutputSchema.nullable(),
     context: workflowRunContextSchema.nullable(),
+    status: workflowRunStatusSchema,
     createdAt: z.string(),
     deletedAt: z.string().nullable(),
     endedAt: z.string().nullable(),
