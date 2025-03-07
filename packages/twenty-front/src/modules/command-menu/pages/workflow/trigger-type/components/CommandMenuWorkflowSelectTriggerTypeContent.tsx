@@ -19,7 +19,7 @@ import { useSetRecoilState } from 'recoil';
 import { MenuItemCommand, useIcons } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const RightDrawerWorkflowSelectTriggerTypeContent = ({
+export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   workflow,
 }: {
   workflow: WorkflowWithCurrentVersion;
