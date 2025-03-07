@@ -1,7 +1,4 @@
-import {
-  PAGE_BAR_MIN_HEIGHT,
-  PageHeader,
-} from '@/ui/layout/page/components/PageHeader';
+import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import {
   Breadcrumb,
   BreadcrumbProps,
@@ -25,8 +22,7 @@ const StyledFullScreen = styled.div`
   background: ${({ theme }) => theme.background.noisy};
 `;
 
-const StyledMainContainer = styled.div<{ pageBarHeight: number }>`
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+const StyledMainContainer = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.medium};
   height: 100%;
   width: 100%;
@@ -57,9 +53,7 @@ export const FullScreenContainer = ({
           ariaLabel={t`Exit Full Screen`}
         />
       </PageHeader>
-      <StyledMainContainer pageBarHeight={PAGE_BAR_MIN_HEIGHT}>
-        {children}
-      </StyledMainContainer>
+      <StyledMainContainer>{children}</StyledMainContainer>
     </StyledFullScreen>
   );
 };
