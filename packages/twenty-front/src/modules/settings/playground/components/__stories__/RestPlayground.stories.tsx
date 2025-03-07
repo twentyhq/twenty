@@ -102,8 +102,7 @@ const meta: Meta<typeof RestPlayground> = {
     },
     msw: {
       handlers: [
-        http.get('*/open-api/*', ({ request }) => {
-          console.log('MSW intercepted request:', request.url);
+        http.get('*/open-api/*', () => {
           return HttpResponse.json(openApiSpec);
         }),
       ],
