@@ -4,7 +4,7 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import { JSXElementConstructor, ReactElement } from 'react';
 import gfm from 'remark-gfm';
 
-import { ReleaseNote } from '@/app/releases/api/route';
+import { ReleaseNote } from '@/app/(public)/releases/api/route';
 import { compareSemanticVersions } from '@/shared-utils/compareSemanticVersions';
 
 // WARNING: This API is used by twenty-front, not just by twenty-website

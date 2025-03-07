@@ -1,5 +1,5 @@
-import { ReleaseNote } from '@/app/releases/api/route';
-import { getFormattedReleaseNumber } from '@/app/releases/utils/get-formatted-release-number';
+import { ReleaseNote } from '@/app/(public)/releases/api/route';
+import { getFormattedReleaseNumber } from '@/app/(public)/releases/utils/get-formatted-release-number';
 
 export const getVisibleReleases = (
   releaseNotes: ReleaseNote[],

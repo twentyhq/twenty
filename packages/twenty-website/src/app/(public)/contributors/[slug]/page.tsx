@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { Metadata } from 'next';
 
+import { getContributorActivity } from '@/app/(public)/contributors/utils/get-contributor-activity';
 import { ActivityLog } from '@/app/_components/contributors/ActivityLog';
 import { Breadcrumb } from '@/app/_components/contributors/Breadcrumb';
 import { ContentContainer } from '@/app/_components/contributors/ContentContainer';
@@ -11,7 +12,6 @@ import { ProfileSharing } from '@/app/_components/contributors/ProfileSharing';
 import { PullRequests } from '@/app/_components/contributors/PullRequests';
 import { ThankYou } from '@/app/_components/contributors/ThankYou';
 import { Background } from '@/app/_components/oss-friends/Background';
-import { getContributorActivity } from '@/app/contributors/utils/get-contributor-activity';
 
 export function generateMetadata({
   params,

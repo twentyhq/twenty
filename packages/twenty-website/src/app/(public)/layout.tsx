@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
-import { Gabarito, Inter } from 'next/font/google';
 import { PublicEnvScript } from 'next-runtime-env';
+import { Gabarito, Inter } from 'next/font/google';
 
 import { AppHeader } from '@/app/_components/ui/layout/header';
 
-import { FooterDesktop } from './_components/ui/layout/FooterDesktop';
-import EmotionRootStyleRegistry from './emotion-root-style-registry';
+import { FooterDesktop } from '../_components/ui/layout/FooterDesktop';
+import EmotionRootStyleRegistry from '../emotion-root-style-registry';
 
 import './layout.css';
 

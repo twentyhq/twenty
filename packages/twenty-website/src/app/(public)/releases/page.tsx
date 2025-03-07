@@ -1,15 +1,14 @@
-import React from 'react';
 import { desc } from 'drizzle-orm';
 import { Metadata } from 'next';
 
-import { ReleaseContainer } from '@/app/_components/releases/ReleaseContainer';
-import { Title } from '@/app/_components/releases/StyledTitle';
-import { ContentContainer } from '@/app/_components/ui/layout/ContentContainer';
 import {
   getMdxReleasesContent,
   getReleases,
-} from '@/app/releases/utils/get-releases';
-import { getVisibleReleases } from '@/app/releases/utils/get-visible-releases';
+} from '@/app/(public)/releases/utils/get-releases';
+import { getVisibleReleases } from '@/app/(public)/releases/utils/get-visible-releases';
+import { ReleaseContainer } from '@/app/_components/releases/ReleaseContainer';
+import { Title } from '@/app/_components/releases/StyledTitle';
+import { ContentContainer } from '@/app/_components/ui/layout/ContentContainer';
 import { findAll } from '@/database/database';
 import { GithubReleases, githubReleasesModel } from '@/database/model';
 import { pgGithubReleasesModel } from '@/database/schema-postgres';
