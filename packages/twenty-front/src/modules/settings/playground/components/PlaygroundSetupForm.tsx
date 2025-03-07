@@ -89,12 +89,10 @@ export const PlaygroundSetupForm = () => {
 
   const onSubmit = async (values: PlaygroundSetupFormValues) => {
     try {
-      // Validate the API key
       await validateApiKey(values);
 
       setApiKey(values.apiKeyForPlayground);
 
-      // Navigate to the playground
       const path =
         values.playgroundType === PlaygroundTypes.GRAPHQL
           ? SettingsPath.GraphQLPlayground

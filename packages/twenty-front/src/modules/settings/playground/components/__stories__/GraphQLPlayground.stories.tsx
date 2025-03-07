@@ -10,7 +10,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<any> = {
-  title: 'Settings/Playground/GraphQLPlayground',
+  title: 'Modules/Settings/Playground/GraphQLPlayground',
   component: SettingsGraphQLPlayground,
   decorators: [
     ComponentDecorator,
