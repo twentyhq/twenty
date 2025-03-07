@@ -16,8 +16,6 @@ export type Scalars = {
   Float: { input: number; output: number; }
   /** Cursor for paging through collections */
   ConnectionCursor: { input: any; output: any; }
-  /** Date custom scalar type */
-  Date: { input: any; output: any; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
@@ -52,8 +50,10 @@ export enum AdminPanelHealthServiceStatus {
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
   id: Scalars['String']['output'];
+  metrics: WorkerQueueMetrics;
   queueName: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
+  workers: Scalars['Float']['output'];
 };
 
 export type Analytics = {
@@ -421,16 +421,6 @@ export type CustomDomainValidRecords = {
   records: Array<CustomDomainRecord>;
 };
 
-export type DateFilter = {
-  eq?: InputMaybe<Scalars['Date']['input']>;
-  gt?: InputMaybe<Scalars['Date']['input']>;
-  gte?: InputMaybe<Scalars['Date']['input']>;
-  in?: InputMaybe<Array<Scalars['Date']['input']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['Date']['input']>;
-  lte?: InputMaybe<Scalars['Date']['input']>;
-  neq?: InputMaybe<Scalars['Date']['input']>;
-};
 
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['String']['input'];
@@ -559,7 +549,6 @@ export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
   IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
-  IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
@@ -660,11 +649,6 @@ export enum FileFolder {
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
-export enum FilterIs {
-  NotNull = 'NotNull',
-  Null = 'Null'
-}
-
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
   id: Scalars['String']['output'];
@@ -724,16 +708,6 @@ export enum HealthIndicatorId {
   worker = 'worker'
 }
 
-export type IdFilter = {
-  eq?: InputMaybe<Scalars['ID']['input']>;
-  gt?: InputMaybe<Scalars['ID']['input']>;
-  gte?: InputMaybe<Scalars['ID']['input']>;
-  in?: InputMaybe<Array<Scalars['ID']['input']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['ID']['input']>;
-  lte?: InputMaybe<Scalars['ID']['input']>;
-  neq?: InputMaybe<Scalars['ID']['input']>;
-};
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -1367,16 +1341,6 @@ export type ObjectIndexMetadatasConnection = {
   pageInfo: PageInfo;
 };
 
-export type ObjectRecordFilterInput = {
-  and?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  createdAt?: InputMaybe<DateFilter>;
-  deletedAt?: InputMaybe<DateFilter>;
-  id?: InputMaybe<IdFilter>;
-  not?: InputMaybe<ObjectRecordFilterInput>;
-  or?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  updatedAt?: InputMaybe<DateFilter>;
-};
-
 /** Onboarding status */
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
@@ -1470,7 +1434,6 @@ export type Query = {
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
-  getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
@@ -1552,11 +1515,6 @@ export type QueryGetIndicatorHealthStatusArgs = {
 };
 
 
-export type QueryGetQueueMetricsArgs = {
-  queueName: Scalars['String']['input'];
-  timeRange?: InputMaybe<QueueMetricsTimeRange>;
-};
-
 
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
@@ -1593,8 +1551,6 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 export type QueryGlobalSearchArgs = {
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
-  filter?: InputMaybe<ObjectRecordFilterInput>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
   limit: Scalars['Int']['input'];
   searchInput: Scalars['String']['input'];
 };
@@ -1630,35 +1586,6 @@ export type QueryRelationMetadataArgs = {
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String']['input'];
 };
-
-export type QueueMetricsData = {
-  __typename?: 'QueueMetricsData';
-  data: Array<QueueMetricsSeries>;
-  details?: Maybe<WorkerQueueMetrics>;
-  queueName: Scalars['String']['output'];
-  timeRange: QueueMetricsTimeRange;
-  workers: Scalars['Float']['output'];
-};
-
-export type QueueMetricsDataPoint = {
-  __typename?: 'QueueMetricsDataPoint';
-  x: Scalars['Float']['output'];
-  y: Scalars['Float']['output'];
-};
-
-export type QueueMetricsSeries = {
-  __typename?: 'QueueMetricsSeries';
-  data: Array<QueueMetricsDataPoint>;
-  id: Scalars['String']['output'];
-};
-
-export enum QueueMetricsTimeRange {
-  FourHours = 'FourHours',
-  OneDay = 'OneDay',
-  OneHour = 'OneHour',
-  SevenDays = 'SevenDays',
-  TwelveHours = 'TwelveHours'
-}
 
 export type Relation = {
   __typename?: 'Relation';
@@ -2249,11 +2176,9 @@ export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float']['output'];
   completed: Scalars['Float']['output'];
-  completedData?: Maybe<Array<Scalars['Float']['output']>>;
   delayed: Scalars['Float']['output'];
   failed: Scalars['Float']['output'];
-  failedData?: Maybe<Array<Scalars['Float']['output']>>;
-  failureRate: Scalars['Float']['output'];
+  prioritized: Scalars['Float']['output'];
   waiting: Scalars['Float']['output'];
 };
 
