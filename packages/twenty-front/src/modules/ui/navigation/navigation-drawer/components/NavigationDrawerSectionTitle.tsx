@@ -5,6 +5,7 @@ import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navi
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
+import { Label } from '@ui/display/typography/components/Label';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -77,7 +78,7 @@ export const NavigationDrawerSectionTitle = ({
 
   return (
     <StyledTitle className="section-title-container">
-      <StyledLabel onClick={handleTitleClick}>{label}</StyledLabel>
+      <Label onClick={handleTitleClick}>{label}</Label>
       {rightIcon && (
         <StyledRightIcon isMobile={isMobile}>{rightIcon}</StyledRightIcon>
       )}

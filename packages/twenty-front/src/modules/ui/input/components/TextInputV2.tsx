@@ -1,7 +1,7 @@
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Label } from '@ui/display/typography/components/Label';
 import {
   ChangeEvent,
   FocusEventHandler,
@@ -263,11 +263,7 @@ const TextInputV2Component = forwardRef<
 
     return (
       <StyledContainer className={className} fullWidth={fullWidth ?? false}>
-        {label && (
-          <InputLabel htmlFor={inputId}>
-            {label + (required ? '*' : '')}
-          </InputLabel>
-        )}
+        {label && <Label>{label + (required ? '*' : '')}</Label>}
         <StyledInputContainer>
           {leftAdornment && (
             <StyledAdornmentContainer sizeVariant={sizeVariant} position="left">
