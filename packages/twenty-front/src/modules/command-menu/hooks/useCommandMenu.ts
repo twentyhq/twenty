@@ -429,7 +429,7 @@ export const useCommandMenu = () => {
 
         navigateCommandMenu({
           page: CommandMenuPages.WorkflowStepSelectAction,
-          pageTitle: 'Select Action',
+          pageTitle: t`Select Action`,
           pageIcon: IconSettingsAutomation,
           pageId,
         });
