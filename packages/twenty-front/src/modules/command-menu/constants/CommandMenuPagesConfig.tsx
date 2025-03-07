@@ -5,9 +5,9 @@ import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-threa
 import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
 import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/search/components/CommandMenuSearchRecordsPage';
 import { CommandMenuWorkflowSelectAction } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
+import { CommandMenuWorkflowEditStep } from '@/command-menu/pages/workflow/step/edit/components/CommandMenuWorkflowEditStep';
 import { CommandMenuWorkflowSelectTriggerType } from '@/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerType';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { RightDrawerWorkflowEditStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStep';
 import { RightDrawerWorkflowRunViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowRunViewStep';
 import { RightDrawerWorkflowViewStep } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStep';
 
@@ -28,7 +28,7 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
     CommandMenuPages.WorkflowStepSelectAction,
     <CommandMenuWorkflowSelectAction />,
   ],
-  [CommandMenuPages.WorkflowStepEdit, <RightDrawerWorkflowEditStep />],
+  [CommandMenuPages.WorkflowStepEdit, <CommandMenuWorkflowEditStep />],
   [CommandMenuPages.WorkflowStepView, <RightDrawerWorkflowViewStep />],
   [CommandMenuPages.WorkflowRunStepView, <RightDrawerWorkflowRunViewStep />],
   [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],

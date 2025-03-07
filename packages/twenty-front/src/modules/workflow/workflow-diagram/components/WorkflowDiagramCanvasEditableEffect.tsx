@@ -31,8 +31,11 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
   const { startNodeCreation } = useStartNodeCreation();
 
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
-  const { closeCommandMenu, openWorkflowTriggerTypeInCommandMenu } =
-    useCommandMenu();
+  const {
+    closeCommandMenu,
+    openWorkflowTriggerTypeInCommandMenu,
+    openWorkflowEditStepInCommandMenu,
+  } = useCommandMenu();
 
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -88,6 +91,16 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
+      if (isCommandMenuV2Enabled && isDefined(workflowId)) {
+        openWorkflowEditStepInCommandMenu(
+          workflowId,
+          selectedNodeData.name,
+          getIcon(getWorkflowNodeIconKey(selectedNodeData)),
+        );
+
+        return;
+      }
+
       setWorkflowSelectedNode(selectedNode.id);
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
@@ -97,18 +110,19 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
     },
     [
       isInRightDrawer,
-      setWorkflowSelectedNode,
-      setHotkeyScope,
-      openRightDrawer,
-      getIcon,
+      isCommandMenuV2Enabled,
       setCommandMenuNavigationStack,
       closeRightDrawer,
       closeCommandMenu,
-      isCommandMenuV2Enabled,
       workflowId,
+      openRightDrawer,
       t,
       openWorkflowTriggerTypeInCommandMenu,
       startNodeCreation,
+      openWorkflowEditStepInCommandMenu,
+      getIcon,
+      setWorkflowSelectedNode,
+      setHotkeyScope,
     ],
   );
 

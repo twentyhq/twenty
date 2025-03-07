@@ -438,6 +438,27 @@ export const useCommandMenu = () => {
     [navigateCommandMenu],
   );
 
+  const openWorkflowEditStepInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string, title: string, icon: IconComponent) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowStepEdit,
+          pageTitle: title,
+          pageIcon: icon,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
   const openRecordsSearchPage = () => {
     navigateCommandMenu({
       page: CommandMenuPages.SearchRecords,
@@ -559,5 +580,6 @@ export const useCommandMenu = () => {
     openEmailThreadInCommandMenu,
     openWorkflowTriggerTypeInCommandMenu,
     openWorkflowActionInCommandMenu,
+    openWorkflowEditStepInCommandMenu,
   };
 };
