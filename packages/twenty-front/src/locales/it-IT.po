@@ -2663,6 +2663,14 @@ msgstr "Single sign-on (SSO)"
 msgid "Singular"
 msgstr "Singolare"
 
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural labels must be different"
+msgstr "Le etichette singolari e plurali devono essere diverse"
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural names must be different"
+msgstr "I nomi singolari e plurali devono essere diversi"
+
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
 msgstr "Salta"
