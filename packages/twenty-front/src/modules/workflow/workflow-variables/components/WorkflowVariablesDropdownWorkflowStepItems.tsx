@@ -1,4 +1,4 @@
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -37,7 +37,7 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconX} onClick={closeDropdown}>
+      <DropdownMenuHeader StartIcon={IconX} onStartIconClick={closeDropdown}>
         <OverflowingTextWithTooltip text={'Select Step'} />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
