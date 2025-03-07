@@ -172,7 +172,7 @@ export const TRACEABLE_STANDARD_FIELD_IDS = {
   campaignName: '20202020-abcd-ef12-3456-7890abcdef12',
   campaignSource: '20202020-5678-90ab-cdef-1234567890ab',
   meansOfCommunication: '20202020-4321-8765-cba9-fed123456789',
-  product: '20202020-6c5b-4a3a-2b1c-0d9e8f7a6b5c',
+  name: '20202020-6c5b-4a3a-2b1c-0d9e8f7a6b5c',
   keyword: '20202020-8e7d-6c5b-4a3a-2b1c0d9e8f7a',
   position: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
   generatedUrl: '20202020-4d3c-2b1a-0f9e-8d7c6b5a4b3c',

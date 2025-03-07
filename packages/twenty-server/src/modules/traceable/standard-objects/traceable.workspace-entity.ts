@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -31,46 +32,46 @@ export const SEARCH_FIELDS_FOR_TRACEABLE: FieldTypeAndNameMetadata[] = [
   labelPlural: msg`Traceables`,
   description: msg`A traceable link`,
   icon: 'IconLink',
-  labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.linkName,
+  labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
 export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.product,
+    standardId: TRACEABLE_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
-    label: msg`Product`,
-    description: msg`Traceable product`,
-    icon: 'IconSettings',
+    label: msg`Name`,
+    description: msg`Traceable name`,
+    icon: 'IconLink',
   })
   @WorkspaceIsNullable()
   product: string;
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.linkName,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.LINKS,
     label: msg`Link Name`,
     description: msg`The name of the traceable link`,
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
-  linkName: string | null;
+  linkName: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.websiteUrl,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.LINKS,
     label: msg`Website URL`,
     description: msg`The URL of the website to redirect to`,
-    icon: 'IconWorld',
+    icon: 'IconLink',
   })
   @WorkspaceIsUnique()
-  websiteUrl: string;
+  websiteUrl: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.campaignName,
     type: FieldMetadataType.TEXT,
     label: msg`Campaign Name`,
     description: msg`The name of the traceable link associated with the link`,
-    icon: 'IconTarget',
+    icon: 'IconMessage',
   })
   campaignName: string;
 
@@ -79,7 +80,7 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Campaign Source`,
     description: msg`The source of the traceable link (e.g., Google, Facebook)`,
-    icon: 'IconSource',
+    icon: 'IconMessage',
   })
   campaignSource: string;
 
@@ -108,18 +109,18 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Keyword`,
     description: msg`The keyword associated with the traceable link`,
-    icon: 'IconSearch',
+    icon: 'IconKey',
   })
   keyword: string;
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.generatedUrl,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.LINKS,
     label: msg`Generated URL`,
     description: msg`The final URL with UTM parameters`,
     icon: 'IconLink',
   })
-  generatedUrl: string;
+  generatedUrl: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: TRACEABLE_STANDARD_FIELD_IDS.searchVector,
@@ -137,3 +138,6 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: any;
 }
+
+//https://mindconsulting.com.br/?utm_source=google&utm_medium=cpc&utm_campaign=promo_verao
+//{linkName}/?utm_source={campaignSource}&utm_medium=cpf&utm_campaign={campaignSource}
