@@ -62,13 +62,13 @@ const StyledDelete = styled.button`
 type VariableChipProps = {
   rawVariableName: string;
   onRemove?: () => void;
-  isObject?: boolean;
+  isFullRecord?: boolean;
 };
 
 export const VariableChip = ({
   rawVariableName,
   onRemove,
-  isObject = false,
+  isFullRecord = false,
 }: VariableChipProps) => {
   const theme = useTheme();
   const { getStepsOutputSchema } = useStepsOutputSchema({});
@@ -80,16 +80,19 @@ export const VariableChip = ({
   if (!isDefined(stepId)) {
     return null;
   }
+
   const stepOutputSchema = getStepsOutputSchema([stepId])?.[0];
+
   if (!isDefined(stepOutputSchema)) {
     return null;
   }
 
-  const { variableLabel } = searchVariableThroughOutputSchema({
-    stepOutputSchema,
-    rawVariableName,
-    isObject,
-  });
+  const { variableLabel, variablePathLabel } =
+    searchVariableThroughOutputSchema({
+      stepOutputSchema,
+      rawVariableName,
+      isFullRecord,
+    });
 
   const label = isDefined(variableLabel)
     ? variableLabel
@@ -100,7 +103,7 @@ export const VariableChip = ({
 
   return (
     <StyledChip deletable={isDefined(onRemove)}>
-      <StyledLabel>{label}</StyledLabel>
+      <StyledLabel title={variablePathLabel}>{label}</StyledLabel>
 
       {onRemove ? (
         <StyledDelete onClick={onRemove} aria-label="Remove variable">

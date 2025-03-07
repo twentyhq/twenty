@@ -33,12 +33,12 @@ const getDisplayedSubStepFieldLabel = (
 const searchCurrentStepOutputSchema = ({
   stepOutputSchema,
   path,
-  isObject,
+  isFullRecord,
   selectedField,
 }: {
   stepOutputSchema: StepOutputSchema;
   path: string[];
-  isObject: boolean;
+  isFullRecord: boolean;
   selectedField: string;
 }) => {
   let currentSubStep = stepOutputSchema.outputSchema;
@@ -60,6 +60,7 @@ const searchCurrentStepOutputSchema = ({
         variablePathLabel = `${variablePathLabel} > ${currentField?.label}`;
       } else {
         // If the key is not found in the step, we handle the case where the path has been wrongly splitted
+        // For example, if there is a dot in the field name
         if (nextKeyIndex + 1 < path.length) {
           nextKey = `${nextKey}.${path[nextKeyIndex + 1]}`;
         }
@@ -69,7 +70,7 @@ const searchCurrentStepOutputSchema = ({
   }
 
   return {
-    variableLabel: isObject
+    variableLabel: isFullRecord
       ? getDisplayedSubStepObjectLabel(currentSubStep)
       : getDisplayedSubStepFieldLabel(selectedField, currentSubStep),
     variablePathLabel,
@@ -79,11 +80,11 @@ const searchCurrentStepOutputSchema = ({
 export const searchVariableThroughOutputSchema = ({
   stepOutputSchema,
   rawVariableName,
-  isObject = false,
+  isFullRecord = false,
 }: {
   stepOutputSchema: StepOutputSchema;
   rawVariableName: string;
-  isObject?: boolean;
+  isFullRecord?: boolean;
 }) => {
   const variableWithoutBrackets = rawVariableName.replace(
     CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
@@ -103,15 +104,15 @@ export const searchVariableThroughOutputSchema = ({
 
   if (!isDefined(stepId) || !isDefined(selectedField)) {
     return {
-      variableLabel: '',
-      variablePathLabel: '',
+      variableLabel: undefined,
+      variablePathLabel: undefined,
     };
   }
 
   const { variableLabel, variablePathLabel } = searchCurrentStepOutputSchema({
     stepOutputSchema,
     path,
-    isObject,
+    isFullRecord,
     selectedField,
   });
 
