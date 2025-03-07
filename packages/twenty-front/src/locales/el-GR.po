@@ -2665,11 +2665,11 @@ msgstr "Μοναδικός"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural labels must be different"
-msgstr ""
+msgstr "Οι ενικές και πληθυντικές ετικέτες πρέπει να είναι διαφορετικές"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
-msgstr ""
+msgstr "Τα ενικά και πληθυντικά ονόματα πρέπει να είναι διαφορετικά"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"

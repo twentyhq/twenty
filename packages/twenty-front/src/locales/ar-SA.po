@@ -2665,11 +2665,11 @@ msgstr "فردي"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural labels must be different"
-msgstr ""
+msgstr "يجب أن تكون العبارات الفردية والجمع مختلفة"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
-msgstr ""
+msgstr "يجب أن تكون الأسماء المفردة والجمع مختلفة"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"

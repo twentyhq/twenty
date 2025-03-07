@@ -959,7 +959,7 @@ export class EnvironmentVariables {
   @IsNumber()
   @CastToPositiveNumber()
   @IsOptional()
-  HEALTH_MONITORING_TIME_WINDOW_IN_MINUTES = 5;
+  HEALTH_METRICS_TIME_WINDOW_IN_MINUTES = 5;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,

@@ -26,7 +26,7 @@ export class CaptchaGuard implements CanActivate {
     if (result.success) {
       return true;
     } else {
-      await this.healthCacheService.incrementInvalidCaptchaCounter();
+      await this.healthCacheService.updateInvalidCaptchaCache(token);
 
       throw new BadRequestException(
         'Invalid Captcha, please try another device',
