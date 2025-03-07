@@ -149,7 +149,7 @@ msgstr "워크플로 활성화"
 msgid "Active"
 msgstr "활성"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "본인 또는 팀이 생성한 활성 API 키입니다."
 
@@ -296,6 +296,10 @@ msgstr "비밀번호 업데이트 중 오류가 발생했습니다"
 msgid "An optional description"
 msgstr "선택적 설명"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "An unexpected error occurred"
+msgstr ""
+
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
 msgstr "및"
@@ -304,13 +308,17 @@ msgstr "및"
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "이 도메인의 이메일 주소를 가진 사람은 이 작업 공간에 가입할 수 있습니다."
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "API"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
 msgstr "API 및 웹훅"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API Key"
 msgstr "API 키"
 
@@ -318,7 +326,7 @@ msgstr "API 키"
 msgid "API Key copied to clipboard"
 msgstr "API 키가 클립보드에 복사되었습니다"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "API keys"
 msgstr "API 키"
 
@@ -337,6 +345,16 @@ msgstr "API 이름 (단수)"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "API values"
 msgstr "API 값"
+
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "APIs"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -689,6 +707,10 @@ msgstr "링크 복사"
 msgid "Copy this key as it will not be visible again"
 msgstr "이 키는 다시 표시되지 않으므로 복사하세요"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Core"
+msgstr ""
+
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -719,7 +741,7 @@ msgstr "생성"
 msgid "Create a workflow and return here to view its versions"
 msgstr "워크플로를 생성하고 여기로 돌아와 버전을 확인하세요"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
 msgstr "API 키 생성"
 
@@ -745,7 +767,7 @@ msgstr "선택 필드 생성"
 msgid "Create view"
 msgstr "보기 생성"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
 msgstr "Webhook 생성"
 
@@ -1001,11 +1023,6 @@ msgstr "설명"
 msgid "Destroy"
 msgstr "파기"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
-#: src/pages/settings/developers/SettingsDevelopers.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Developers"
 msgstr "개발자"
@@ -1246,7 +1263,7 @@ msgstr "초대 재발송 오류"
 msgid "Error while switching subscription {to}."
 msgstr "구독 전환 중 오류 발생: {to}."
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "비동기 이벤트 알림을 위한 Webhook 엔드포인트 설정."
 
@@ -1283,6 +1300,10 @@ msgstr "다음 사람들과 도메인을 이메일 동기화에서 제외합니�
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
 msgstr "기존 개체"
+
+#: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
+msgid "Exit Full Screen"
+msgstr ""
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
@@ -1379,6 +1400,10 @@ msgstr "워크플로 내보내기"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Failed to validate API key. Please check your API key and try again."
+msgstr ""
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1503,6 +1528,14 @@ msgstr "설정으로 이동"
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Twenty 지원팀에 임시 접근 권한을 부여하여 문제를 해결하거나 콘텐츠를 복구할 수 있도록 하세요. 언제든지 접근 권한을 취소할 수 있습니다."
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "GraphQL"
+msgstr ""
+
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
+msgid "GraphQL API Playground"
+msgstr ""
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
@@ -1776,6 +1809,10 @@ msgstr "최신"
 msgid "Latest date"
 msgstr "최신 날짜"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Launch"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "보다 작음"
@@ -1846,6 +1883,7 @@ msgstr "최대"
 msgid "Members"
 msgstr "회원"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2229,6 +2267,10 @@ msgstr "전화번호가 클립보드에 복사되었습니다"
 msgid "Picture"
 msgstr "사진"
 
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Playground"
+msgstr ""
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
 msgstr "유효한 URL을 입력하세요"
@@ -2297,8 +2339,8 @@ msgid "Pseudo-English"
 msgstr "의사 영어"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
-msgid "Read documentation"
-msgstr "문서 읽기"
+#~ msgid "Read documentation"
+#~ msgstr "문서 읽기"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
@@ -2404,6 +2446,11 @@ msgstr "비밀번호 재설정"
 msgid "Reset to"
 msgstr "다음으로 재설정"
 
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "REST"
+msgstr ""
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
@@ -2450,6 +2497,10 @@ msgstr "저장"
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
 msgstr "새 보기로 저장"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Schema"
+msgstr ""
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2931,6 +2982,10 @@ msgstr "트리거 유형은 수동이어야 합니다 - 선택된 레코드가 �
 msgid "True"
 msgstr "참"
 
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Try our REST or GraphQL API playgrounds."
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "터키어"
@@ -3102,7 +3157,10 @@ msgstr "도메인 소유권을 확인하기 위해 링크를 보내드립니다"
 msgid "Webhook"
 msgstr "Webhook"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -3143,10 +3201,13 @@ msgstr "워크플로우 실행 실패"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx

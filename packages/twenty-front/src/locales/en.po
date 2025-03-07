@@ -144,7 +144,7 @@ msgstr "Activate Workflow"
 msgid "Active"
 msgstr "Active"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "Active API keys created by you or your team."
 
@@ -291,6 +291,10 @@ msgstr "An error occurred while updating password"
 msgid "An optional description"
 msgstr "An optional description"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "An unexpected error occurred"
+msgstr "An unexpected error occurred"
+
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
 msgstr "and"
@@ -299,13 +303,17 @@ msgstr "and"
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "Anyone with an email address at these domains is allowed to sign up for this workspace."
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "API"
+msgstr "API"
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API Key"
 msgstr "API Key"
 
@@ -313,7 +321,7 @@ msgstr "API Key"
 msgid "API Key copied to clipboard"
 msgstr "API Key copied to clipboard"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "API keys"
 msgstr "API keys"
 
@@ -332,6 +340,16 @@ msgstr "API Name (Singular)"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "API values"
 msgstr "API values"
+
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "APIs"
+msgstr "APIs"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -684,6 +702,10 @@ msgstr "Copy link"
 msgid "Copy this key as it will not be visible again"
 msgstr "Copy this key as it will not be visible again"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Core"
+msgstr "Core"
+
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -714,7 +736,7 @@ msgstr "Create"
 msgid "Create a workflow and return here to view its versions"
 msgstr "Create a workflow and return here to view its versions"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
 msgstr "Create API key"
 
@@ -740,7 +762,7 @@ msgstr "Create select field"
 msgid "Create view"
 msgstr "Create view"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
 msgstr "Create Webhook"
 
@@ -996,11 +1018,6 @@ msgstr "Description"
 msgid "Destroy"
 msgstr "Destroy"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
-#: src/pages/settings/developers/SettingsDevelopers.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Developers"
 msgstr "Developers"
@@ -1241,7 +1258,7 @@ msgstr "Error resending invitation"
 msgid "Error while switching subscription {to}."
 msgstr "Error while switching subscription {to}."
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Establish Webhook endpoints for notifications on asynchronous events."
 
@@ -1278,6 +1295,10 @@ msgstr "Exclude the following people and domains from my email sync. Internal co
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
 msgstr "Existing objects"
+
+#: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
+msgid "Exit Full Screen"
+msgstr "Exit Full Screen"
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
@@ -1374,6 +1395,10 @@ msgstr "Export workflows"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Failed to validate API key. Please check your API key and try again."
+msgstr "Failed to validate API key. Please check your API key and try again."
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1498,6 +1523,14 @@ msgstr "Go to Settings"
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "GraphQL"
+msgstr "GraphQL"
+
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
+msgid "GraphQL API Playground"
+msgstr "GraphQL API Playground"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
@@ -1771,6 +1804,10 @@ msgstr "Latest"
 msgid "Latest date"
 msgstr "Latest date"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Launch"
+msgstr "Launch"
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Less than"
@@ -1841,6 +1878,7 @@ msgstr "Max"
 msgid "Members"
 msgstr "Members"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2224,6 +2262,10 @@ msgstr "Phone number copied to clipboard"
 msgid "Picture"
 msgstr "Picture"
 
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Playground"
+msgstr "Playground"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
 msgstr "Please enter a valid URL"
@@ -2292,8 +2334,8 @@ msgid "Pseudo-English"
 msgstr "Pseudo-English"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
-msgid "Read documentation"
-msgstr "Read documentation"
+#~ msgid "Read documentation"
+#~ msgstr "Read documentation"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
@@ -2399,6 +2441,11 @@ msgstr "Reset Password"
 msgid "Reset to"
 msgstr "Reset to"
 
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "REST"
+msgstr "REST"
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
@@ -2445,6 +2492,10 @@ msgstr "Save"
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
 msgstr "Save as new view"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Schema"
+msgstr "Schema"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2926,6 +2977,10 @@ msgstr "Trigger type should be Manual - when no record(s) are selected"
 msgid "True"
 msgstr "True"
 
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Try our REST or GraphQL API playgrounds."
+msgstr "Try our REST or GraphQL API playgrounds."
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "Turkish"
@@ -3097,7 +3152,10 @@ msgstr "We will send your a link to verify domain ownership"
 msgid "Webhook"
 msgstr "Webhook"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -3138,10 +3196,13 @@ msgstr "Workflow run failed"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx

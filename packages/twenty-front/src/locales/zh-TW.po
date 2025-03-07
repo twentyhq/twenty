@@ -149,7 +149,7 @@ msgstr "啟用工作流程"
 msgid "Active"
 msgstr "啟用"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "由您或您的團隊創建的啟用 API 密鑰。"
 
@@ -296,6 +296,10 @@ msgstr "更新密碼時發生錯誤"
 msgid "An optional description"
 msgstr "可選描述"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "An unexpected error occurred"
+msgstr ""
+
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
 msgstr "和"
@@ -304,13 +308,17 @@ msgstr "和"
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "具有這些域電子郵件地址的任何人都可以註冊此工作區。"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "API"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
 msgstr "API 和 Webhooks"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API Key"
 msgstr "API 密鑰"
 
@@ -318,7 +326,7 @@ msgstr "API 密鑰"
 msgid "API Key copied to clipboard"
 msgstr "API 密鑰已複製到剪貼板"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "API keys"
 msgstr "API 密鑰"
 
@@ -337,6 +345,16 @@ msgstr "API 名稱（單數）"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "API values"
 msgstr "API 值"
+
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "APIs"
+msgstr ""
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -689,6 +707,10 @@ msgstr "複製連結"
 msgid "Copy this key as it will not be visible again"
 msgstr "複製此密鑰，因為它將不再可見"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Core"
+msgstr ""
+
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -719,7 +741,7 @@ msgstr "創建"
 msgid "Create a workflow and return here to view its versions"
 msgstr "創建工作流程並返回此處查看其版本"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
 msgstr "創建 API 密鑰"
 
@@ -745,7 +767,7 @@ msgstr "創建選擇字段"
 msgid "Create view"
 msgstr "創建視圖"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
 msgstr "創建 Webhook"
 
@@ -1001,11 +1023,6 @@ msgstr "描述"
 msgid "Destroy"
 msgstr "銷毀"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
-#: src/pages/settings/developers/SettingsDevelopers.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Developers"
 msgstr "開發人員"
@@ -1246,7 +1263,7 @@ msgstr "重新發送邀請時出錯"
 msgid "Error while switching subscription {to}."
 msgstr "切換訂閱 {to} 時出錯。"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "建立 Webhook 端點，用於通知異步事件。"
 
@@ -1283,6 +1300,10 @@ msgstr "排除以下人員和網域自我的電子郵件同步中。內部對話
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
 msgstr "現有對象"
+
+#: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
+msgid "Exit Full Screen"
+msgstr ""
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
@@ -1379,6 +1400,10 @@ msgstr "導出工作流程"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Failed to validate API key. Please check your API key and try again."
+msgstr ""
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1503,6 +1528,14 @@ msgstr "前往設置"
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "授予 Twenty 支持臨時訪問您的工作區，以便我們為您排除故障或恢復內容。您可以隨時撤銷訪問權限。"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "GraphQL"
+msgstr ""
+
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
+msgid "GraphQL API Playground"
+msgstr ""
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
@@ -1776,6 +1809,10 @@ msgstr "最新"
 msgid "Latest date"
 msgstr "最新日期"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Launch"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "小於"
@@ -1846,6 +1883,7 @@ msgstr "最大"
 msgid "Members"
 msgstr "成員"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -2229,6 +2267,10 @@ msgstr "電話號碼已複製到剪貼板"
 msgid "Picture"
 msgstr "圖片"
 
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Playground"
+msgstr ""
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
 msgstr "請輸入有效的 URL"
@@ -2297,8 +2339,8 @@ msgid "Pseudo-English"
 msgstr "偽英語"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
-msgid "Read documentation"
-msgstr "閱讀文檔"
+#~ msgid "Read documentation"
+#~ msgstr "閱讀文檔"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
@@ -2404,6 +2446,11 @@ msgstr "重置密碼"
 msgid "Reset to"
 msgstr "重置為"
 
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "REST"
+msgstr ""
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
@@ -2450,6 +2497,10 @@ msgstr "保存"
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
 msgstr "另存為新視圖"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Schema"
+msgstr ""
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2931,6 +2982,10 @@ msgstr "觸發類型應為手動 - 當未選擇記錄時"
 msgid "True"
 msgstr "真"
 
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Try our REST or GraphQL API playgrounds."
+msgstr ""
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "土耳其語"
@@ -3102,7 +3157,10 @@ msgstr "我們將向您發送一個鏈接來驗證域所有權"
 msgid "Webhook"
 msgstr "Webhook"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -3143,10 +3201,13 @@ msgstr "工作流程運行失敗"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
