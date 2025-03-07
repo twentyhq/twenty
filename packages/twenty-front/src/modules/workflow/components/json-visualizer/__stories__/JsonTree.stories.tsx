@@ -6,7 +6,7 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
-import { ComponentDecorator } from 'twenty-ui';
+import { ComponentDecorator, THEME_COMMON } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof JsonTree> = {
@@ -14,6 +14,9 @@ const meta: Meta<typeof JsonTree> = {
   component: JsonTree,
   args: {},
   argTypes: {},
+  parameters: {
+    container: { width: parseInt(THEME_COMMON.rightDrawerWidth) },
+  },
   decorators: [ComponentDecorator, I18nFrontDecorator],
 };
 
@@ -268,5 +271,131 @@ export const ExpandingElementExpandsAllItsDescendants: Story = {
 
       expect(allCollapseButtons).toHaveLength(3);
     }
+  },
+};
+
+export const OverflowingText: Story = {
+  args: {
+    value: [
+      [
+        [
+          [
+            [
+              [
+                [
+                  [
+                    [
+                      [
+                        [
+                          [
+                            [
+                              [
+                                [
+                                  [
+                                    [
+                                      [
+                                        [
+                                          [
+                                            [
+                                              [
+                                                [
+                                                  [
+                                                    [
+                                                      [
+                                                        [
+                                                          [
+                                                            [
+                                                              [
+                                                                [
+                                                                  [
+                                                                    [
+                                                                      [
+                                                                        [
+                                                                          [
+                                                                            [
+                                                                              [
+                                                                                [
+                                                                                  [
+                                                                                    [
+                                                                                      [
+                                                                                        [
+                                                                                          [
+                                                                                            [
+                                                                                              [
+                                                                                                [
+                                                                                                  [
+                                                                                                    [
+                                                                                                      [
+                                                                                                        [
+                                                                                                          [
+                                                                                                            [
+                                                                                                              [
+                                                                                                                [
+                                                                                                                  [
+                                                                                                                    [
+                                                                                                                      [
+                                                                                                                        [
+                                                                                                                          [
+                                                                                                                            'too long',
+                                                                                                                          ],
+                                                                                                                        ],
+                                                                                                                      ],
+                                                                                                                    ],
+                                                                                                                  ],
+                                                                                                                ],
+                                                                                                              ],
+                                                                                                            ],
+                                                                                                          ],
+                                                                                                        ],
+                                                                                                      ],
+                                                                                                    ],
+                                                                                                  ],
+                                                                                                ],
+                                                                                              ],
+                                                                                            ],
+                                                                                          ],
+                                                                                        ],
+                                                                                      ],
+                                                                                    ],
+                                                                                  ],
+                                                                                ],
+                                                                              ],
+                                                                            ],
+                                                                          ],
+                                                                        ],
+                                                                      ],
+                                                                    ],
+                                                                  ],
+                                                                ],
+                                                              ],
+                                                            ],
+                                                          ],
+                                                        ],
+                                                      ],
+                                                    ],
+                                                  ],
+                                                ],
+                                              ],
+                                            ],
+                                          ],
+                                        ],
+                                      ],
+                                    ],
+                                  ],
+                                ],
+                              ],
+                            ],
+                          ],
+                        ],
+                      ],
+                    ],
+                  ],
+                ],
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
   },
 };
