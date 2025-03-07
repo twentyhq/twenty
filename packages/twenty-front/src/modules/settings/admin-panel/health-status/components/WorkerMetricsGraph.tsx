@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
+import { Label } from 'twenty-ui';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -9,8 +10,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
-  QueueMetricsTimeRange,
-  useGetQueueMetricsQuery,
+    QueueMetricsTimeRange,
+    useGetQueueMetricsQuery,
 } from '~/generated/graphql';
 
 const StyledTableRow = styled(TableRow)`
@@ -52,9 +53,8 @@ const StyledGraphControls = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledNoDataMessage = styled.div`
+const StyledNoDataMessage = styled(Label)`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
   display: flex;
   height: 100%;
   justify-content: center;
