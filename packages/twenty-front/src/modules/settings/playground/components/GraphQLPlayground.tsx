@@ -13,6 +13,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type GraphQLPlaygroundProps = {
   onError(): void;
+  schema: PlaygroundSchemas;
 };
 
 export const schemaToPath = {
@@ -20,9 +21,11 @@ export const schemaToPath = {
   [PlaygroundSchemas.METADATA]: 'metadata',
 };
 
-export const GraphQLPlayground = ({ onError }: GraphQLPlaygroundProps) => {
+export const GraphQLPlayground = ({
+  onError,
+  schema,
+}: GraphQLPlaygroundProps) => {
   const apiKey = useRecoilValue(apiKeyState);
-  const schema = PlaygroundSchemas.CORE; // TODO: get schema from url
   const baseUrl = REACT_APP_SERVER_BASE_URL + '/' + schemaToPath[schema];
 
   const { theme } = useContext(ThemeContext);

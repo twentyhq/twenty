@@ -6,6 +6,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { lazy } from 'react';
+import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -25,6 +26,9 @@ const ApiReferenceReact = lazy(() =>
 
 export const SettingsRestPlayground = () => {
   const navigateSettings = useNavigateSettings();
+  const { schema = PlaygroundSchemas.CORE } = useParams<{
+    schema: PlaygroundSchemas;
+  }>();
 
   const handleExitFullScreen = () => {
     navigateSettings(SettingsPath.APIs);
@@ -32,7 +36,6 @@ export const SettingsRestPlayground = () => {
 
   const theme = useTheme();
 
-  const schema = PlaygroundSchemas.CORE; // TODO: get schema from url
   const apiKey = useRecoilValue(apiKeyState);
 
   if (!apiKey) {
