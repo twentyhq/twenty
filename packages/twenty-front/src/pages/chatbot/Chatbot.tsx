@@ -9,7 +9,7 @@ import { IconRobot } from 'twenty-ui';
 export const Chatbot = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const chatbotBaseUrl = import.meta.env.REACT_APP_CHATBOT_BASE_URL;
+  const chatbotBaseUrl = process.env.REACT_APP_CHATBOT_BASE_URL;
 
   return (
     <ChatbotPageContainer>
