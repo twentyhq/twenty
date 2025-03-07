@@ -2663,6 +2663,14 @@ msgstr "Egyszerű bejelentkezés (SSO)"
 msgid "Singular"
 msgstr "Egyes"
 
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural labels must be different"
+msgstr ""
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural names must be different"
+msgstr ""
+
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
 msgstr "Átugrás"
