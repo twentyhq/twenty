@@ -2663,6 +2663,14 @@ msgstr "crwdns671:0crwdne671:0"
 msgid "Singular"
 msgstr "crwdns5271:0crwdne5271:0"
 
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural labels must be different"
+msgstr "crwdns5431:0crwdne5431:0"
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural names must be different"
+msgstr "crwdns5433:0crwdne5433:0"
+
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
 msgstr "crwdns673:0crwdne673:0"

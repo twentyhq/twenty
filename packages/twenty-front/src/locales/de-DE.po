@@ -2665,11 +2665,11 @@ msgstr "Einzahl"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural labels must be different"
-msgstr ""
+msgstr "Singular- und Pluralbezeichnungen müssen unterschiedlich sein"
 
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
-msgstr ""
+msgstr "Singular- und Pluralnamen müssen unterschiedlich sein"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
