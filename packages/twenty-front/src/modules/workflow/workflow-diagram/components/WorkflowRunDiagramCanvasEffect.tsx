@@ -40,7 +40,10 @@ export const WorkflowRunDiagramCanvasEffect = () => {
           workflowRunRightDrawerListActiveTabIdState,
         ) as WorkflowRunTabId | null;
 
-        if (activeWorkflowRunRightDrawerTab === 'input') {
+        if (
+          activeWorkflowRunRightDrawerTab === 'input' ||
+          activeWorkflowRunRightDrawerTab === 'output'
+        ) {
           set(workflowRunRightDrawerListActiveTabIdState, 'node');
         }
       },

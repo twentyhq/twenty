@@ -10,6 +10,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
+import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -91,6 +92,7 @@ export const useLoadRecordIndexBoardColumn = ({
     fetchMoreRecords,
     queryStateIdentifier,
     hasNextPage,
+    totalCount,
   } = useFindManyRecords({
     objectNameSingular,
     filter,
@@ -98,6 +100,13 @@ export const useLoadRecordIndexBoardColumn = ({
     recordGqlFields,
     limit: 10,
   });
+
+  const { setRecordIndexEntityCount } =
+    useSetRecordIndexEntityCount(recordBoardId);
+
+  useEffect(() => {
+    setRecordIndexEntityCount(totalCount ?? 0, columnId);
+  }, [setRecordIndexEntityCount, totalCount, columnId]);
 
   useEffect(() => {
     setRecordIdsForColumn(columnId, records);
