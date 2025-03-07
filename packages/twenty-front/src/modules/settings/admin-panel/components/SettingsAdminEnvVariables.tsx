@@ -8,10 +8,8 @@ import { t } from '@lingui/core/macro';
 
 import {
   Banner,
-  Button,
   Card,
   H2Title,
-  IconExternalLink,
   IconHeartRateMonitor,
   IconInfoCircle,
   Section,
@@ -30,7 +28,6 @@ const StyledBanner = styled(Banner)`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: space-between;
-  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledBannerContent = styled.div`
@@ -68,21 +65,10 @@ export const SettingsAdminEnvVariables = () => {
               color={theme.color.blue}
               size={theme.icon.size.md}
             />
-            <StyledBannerText>{t`Worker variables are not defined here`}</StyledBannerText>
+            <StyledBannerText>
+              {t`Matching values required in worker environment`}
+            </StyledBannerText>
           </StyledBannerContent>
-          <Button
-            variant="tertiary"
-            title={t`Go to Documentation`}
-            onClick={() =>
-              window.open(
-                'https://twenty.com/developers/section/self-hosting/setup#setup-environment-variables',
-                '_blank',
-              )
-            }
-            size="small"
-            accent="blue"
-            Icon={IconExternalLink}
-          />
         </StyledBanner>
       </Section>
       <Section>

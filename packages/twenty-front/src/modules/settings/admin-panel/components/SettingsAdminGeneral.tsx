@@ -11,12 +11,11 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
-  GithubVersionLink,
   H1Title,
   H1TitleFontColor,
   H2Title,
@@ -27,7 +26,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import packageJson from '../../../../../package.json';
+import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -59,31 +58,6 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledVersionContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: grid;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledVersionText = styled.div`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  display: flex;
-  flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const fetchLatestRelease = async () => {
-  const response = await fetch(
-    'https://api.github.com/repos/twentyhq/twenty/releases/latest',
-  );
-  const data = await response.json();
-  return data.tag_name.replace('v', '');
-};
-
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueSnackBar } = useSnackBar();
@@ -103,12 +77,6 @@ export const SettingsAdminGeneral = () => {
   const canImpersonate = currentUser?.canImpersonate;
 
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
-
-  const [latestVersion, setLatestVersion] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchLatestRelease().then(setLatestVersion);
-  }, []);
 
   const handleSearch = async () => {
     setActiveTabId('');
@@ -163,16 +131,7 @@ export const SettingsAdminGeneral = () => {
     <>
       <Section>
         <H2Title title={t`About`} description={t`Version of the application`} />
-        <StyledVersionContainer>
-          <StyledVersionText>
-            {t`Current version:`}
-            <GithubVersionLink version={packageJson.version} />
-          </StyledVersionText>
-          <StyledVersionText>
-            {t`Latest version:`}
-            <GithubVersionLink version={latestVersion ?? ''} />
-          </StyledVersionText>
-        </StyledVersionContainer>
+        <SettingsAdminVersionContainer />
       </Section>
 
       <Section>

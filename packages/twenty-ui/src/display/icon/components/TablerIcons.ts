@@ -257,6 +257,7 @@ export {
   IconSquareKey,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
+  IconStatusChange,
   IconStepInto,
   IconTable,
   IconTag,
