@@ -76,13 +76,13 @@ export const WorkflowEditActionFormSendEmail = ({
     }
 
     const scopes = connectedAccount.scopes;
-    if (!isDefined(scopes)) {
-      return;
-    }
 
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
-        if (!isDefined(scopes.find((scope) => scope === GMAIL_SEND_SCOPE))) {
+        if (
+          !isDefined(scopes) ||
+          !isDefined(scopes.find((scope) => scope === GMAIL_SEND_SCOPE))
+        ) {
           await triggerApisOAuth(ConnectedAccountProvider.GOOGLE, {
             redirectLocation: redirectUrl,
             loginHint: connectedAccount.handle,
@@ -91,6 +91,7 @@ export const WorkflowEditActionFormSendEmail = ({
         return;
       case ConnectedAccountProvider.MICROSOFT:
         if (
+          !isDefined(scopes) ||
           !isDefined(scopes.find((scope) => scope === MICROSOFT_SEND_SCOPE))
         ) {
           await triggerApisOAuth(ConnectedAccountProvider.MICROSOFT, {
