@@ -3,7 +3,6 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { GraphQLError } from 'graphql';
 import { isDefined } from 'twenty-shared';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
@@ -11,13 +10,11 @@ import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
-import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -47,7 +44,6 @@ export class BillingResolver {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly billingPlanService: BillingPlanService,
-    private readonly stripePriceService: StripePriceService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingService: BillingService,
     private readonly permissionsService: PermissionsService,
@@ -90,11 +86,6 @@ export class BillingResolver {
       userWorkspaceId,
       isExecutedByApiKey: isDefined(apiKey),
     });
-    const isBillingPlansEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsBillingPlansEnabled,
-        workspace.id,
-      );
 
     const checkoutSessionParams: BillingPortalCheckoutSessionParameters = {
       user,
@@ -104,37 +95,16 @@ export class BillingResolver {
       requirePaymentMethod,
     };
 
-    if (isBillingPlansEnabled) {
-      const billingPricesPerPlan =
-        await this.billingPlanService.getPricesPerPlan({
-          planKey: checkoutSessionParams.plan,
-          interval: recurringInterval,
-        });
-      const checkoutSessionURL =
-        await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
-          ...checkoutSessionParams,
-          billingPricesPerPlan,
-        });
-
-      return {
-        url: checkoutSessionURL,
-      };
-    }
-
-    const productPrice = await this.stripePriceService.getStripePrice(
-      AvailableProduct.BasePlan,
-      recurringInterval,
+    const billingPricesPerPlan = await this.billingPlanService.getPricesPerPlan(
+      {
+        planKey: checkoutSessionParams.plan,
+        interval: recurringInterval,
+      },
     );
-
-    if (!productPrice) {
-      throw new GraphQLError(
-        'Product price not found for the given recurring interval',
-      );
-    }
     const checkoutSessionURL =
       await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
         ...checkoutSessionParams,
-        priceId: productPrice.stripePriceId,
+        billingPricesPerPlan,
       });
 
     return {

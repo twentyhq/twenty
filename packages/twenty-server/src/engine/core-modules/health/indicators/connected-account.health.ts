@@ -7,6 +7,7 @@ import {
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { METRICS_FAILURE_RATE_THRESHOLD } from 'src/engine/core-modules/health/constants/metrics-failure-rate-threshold.const';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
+import { HealthCounterCacheKeys } from 'src/engine/core-modules/health/types/health-counter-cache-keys.type';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
 
 @Injectable()
@@ -21,7 +22,9 @@ export class ConnectedAccountHealth {
 
     try {
       const counters = await withHealthCheckTimeout(
-        this.healthCacheService.getMessageChannelSyncJobByStatusCounter(),
+        this.healthCacheService.countChannelSyncJobByStatus(
+          HealthCounterCacheKeys.MessageChannelSyncJobByStatus,
+        ),
         HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_TIMEOUT,
       );
 
@@ -70,7 +73,9 @@ export class ConnectedAccountHealth {
 
     try {
       const counters = await withHealthCheckTimeout(
-        this.healthCacheService.getCalendarChannelSyncJobByStatusCounter(),
+        this.healthCacheService.countChannelSyncJobByStatus(
+          HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
+        ),
         HEALTH_ERROR_MESSAGES.CALENDAR_SYNC_TIMEOUT,
       );
 

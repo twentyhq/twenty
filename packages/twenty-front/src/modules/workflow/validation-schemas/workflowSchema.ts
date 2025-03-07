@@ -181,7 +181,7 @@ const workflowExecutorOutputSchema = z.object({
   error: z.string().optional(),
 });
 
-const workflowRunOutputStepsOutputSchema = z.record(
+export const workflowRunOutputStepsOutputSchema = z.record(
   workflowExecutorOutputSchema,
 );
 
@@ -195,11 +195,18 @@ export const workflowRunOutputSchema = z.object({
   error: z.string().optional(),
 });
 
-export const workflowRunSchema = z.object({
-  __typename: z.literal('WorkflowRun'),
-  id: z.string(),
-  workflowVersionId: z.string(),
-  output: workflowRunOutputSchema.nullable(),
-});
+export const workflowRunContextSchema = z.record(z.any());
 
-export type WorkflowRunOutput = z.infer<typeof workflowRunOutputSchema>;
+export const workflowRunSchema = z
+  .object({
+    __typename: z.literal('WorkflowRun'),
+    id: z.string(),
+    workflowVersionId: z.string(),
+    output: workflowRunOutputSchema.nullable(),
+    context: workflowRunContextSchema.nullable(),
+    createdAt: z.string(),
+    deletedAt: z.string().nullable(),
+    endedAt: z.string().nullable(),
+    name: z.string(),
+  })
+  .passthrough();

@@ -14,7 +14,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { ConnectedAccountProvider, isDefined } from 'twenty-shared';
 import { IconPlus, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
@@ -71,7 +71,7 @@ export const WorkflowEditActionFormSendEmail = ({
       !isDefined(scopes) ||
       !isDefined(scopes.find((scope) => scope === GMAIL_SEND_SCOPE))
     ) {
-      await triggerApisOAuth('google', {
+      await triggerApisOAuth(ConnectedAccountProvider.GOOGLE, {
         redirectLocation: redirectUrl,
         loginHint: connectedAccount.handle,
       });
@@ -200,7 +200,7 @@ export const WorkflowEditActionFormSendEmail = ({
             options={connectedAccountOptions}
             callToActionButton={{
               onClick: () =>
-                triggerApisOAuth('google', {
+                triggerApisOAuth(ConnectedAccountProvider.GOOGLE, {
                   redirectLocation: redirectUrl,
                 }),
               Icon: IconPlus,
