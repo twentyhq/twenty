@@ -77,39 +77,33 @@ export const WorkflowEditActionFormSendEmail = ({
 
     const scopes = connectedAccount.scopes;
 
-    switch (connectedAccount.provider) {
-      case ConnectedAccountProvider.GOOGLE:
-        if (
-          !isDefined(scopes) ||
-          !isDefined(scopes.find((scope) => scope === GMAIL_SEND_SCOPE))
-        ) {
-          await triggerApisOAuth(ConnectedAccountProvider.GOOGLE, {
-            redirectLocation: redirectUrl,
-            loginHint: connectedAccount.handle,
-          });
-        }
-        return;
-      case ConnectedAccountProvider.MICROSOFT:
-        if (
-          !isDefined(scopes) ||
-          !isDefined(scopes.find((scope) => scope === MICROSOFT_SEND_SCOPE))
-        ) {
-          await triggerApisOAuth(ConnectedAccountProvider.MICROSOFT, {
-            redirectLocation: redirectUrl,
-            loginHint: connectedAccount.handle,
-          });
-        }
-        return;
-      default:
-        assertUnreachable(
-          connectedAccount.provider,
-          'Provider not yet supported for sending emails',
-        );
+    const hasSendScope = (
+      connectedAccount: ConnectedAccount,
+      scopes: string[],
+    ) => {
+      switch (connectedAccount.provider) {
+        case ConnectedAccountProvider.GOOGLE:
+          return scopes.find((scope) => scope === GMAIL_SEND_SCOPE);
+        case ConnectedAccountProvider.MICROSOFT:
+          return scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE);
+        default:
+          assertUnreachable(
+            connectedAccount.provider,
+            'Provider not yet supported for sending emails',
+          );
+      }
+    };
+
+    if (!isDefined(scopes) || !hasSendScope(connectedAccount, scopes)) {
+      await triggerApisOAuth(connectedAccount.provider, {
+        redirectLocation: redirectUrl,
+        loginHint: connectedAccount.handle,
+      });
     }
   };
 
   const saveAction = useDebouncedCallback(
-    async (formData: SendEmailFormData, checkScopes = true) => {
+    async (formData: SendEmailFormData) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -127,9 +121,7 @@ export const WorkflowEditActionFormSendEmail = ({
         },
       });
 
-      if (checkScopes === true) {
-        await checkConnectedAccountScopes(formData.connectedAccountId);
-      }
+      await checkConnectedAccountScopes(formData.connectedAccountId);
     },
     1_000,
   );
