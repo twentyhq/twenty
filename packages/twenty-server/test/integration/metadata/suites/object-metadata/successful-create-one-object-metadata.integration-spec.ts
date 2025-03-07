@@ -1,7 +1,7 @@
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/utils/object-metadata/generate-mock-create-object-metadata-input';
-import { performFailingObjectMetadataCreation } from 'test/integration/utils/object-metadata/perform-failing-object-metadata-creation';
+import { performObjectMetadataCreation } from 'test/integration/utils/object-metadata/perform-object-metadata-creation';
 import { EachTestingContext } from 'twenty-shared';
 
 type CreateObjectInputPayload = Omit<
@@ -14,21 +14,23 @@ type CreateOneObjectMetadataItemTestingContext = EachTestingContext<
 const successfulObjectMetadataItemCreateOneUseCase: CreateOneObjectMetadataItemTestingContext =
   [
     {
-      title: 'when nameSingular has invalid characters',
-      context: { nameSingular: 'μ' },
+      title: 'with basic input',
+      context: {},
     },
+    // TODO populate
   ];
 
 const allTestsUseCases = [...successfulObjectMetadataItemCreateOneUseCase];
 
-describe('Object metadata creation should fail', () => {
+describe('Object metadata creation should succeed', () => {
   it.each(allTestsUseCases)('$title', async ({ context }) => {
-    const errors = await performFailingObjectMetadataCreation(
+    const response = await performObjectMetadataCreation(
       getMockCreateObjectInput(context),
     );
-    expect(errors.length).toBe(1);
-    const firstError = errors[0];
-    expect(firstError.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
-    expect(firstError.message).toMatchSnapshot();
+
+    expect(response.body.data.createOneObject.id).toBeDefined();
+    await deleteOneObjectMetadataItem(
+      response.body.data.createOneObject.id,
+    ).catch();
   });
 });
