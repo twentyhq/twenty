@@ -298,7 +298,7 @@ msgstr "Опциони опис"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
-msgstr ""
+msgstr "Дошло је до неочекиване грешке"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
@@ -310,7 +310,7 @@ msgstr "Свако са имејл адресом на овим доменима
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API"
-msgstr ""
+msgstr "АПИ"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "API & Webhooks"
@@ -354,7 +354,7 @@ msgstr "АПИ вредности"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "APIs"
-msgstr ""
+msgstr "АПИ-и"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -709,7 +709,7 @@ msgstr "Копирајте овај кључ пошто неће поново б
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Core"
-msgstr ""
+msgstr "Језгро"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -1303,7 +1303,7 @@ msgstr "Постојећи објекти"
 
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
 msgid "Exit Full Screen"
-msgstr ""
+msgstr "Изађи из целог екрана"
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
@@ -1403,7 +1403,7 @@ msgstr "Извези радне процесе"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Failed to validate API key. Please check your API key and try again."
-msgstr ""
+msgstr "Провера АПИ кључа није успела. Проверите ваш АПИ кључ и покушајте поново."
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1531,11 +1531,11 @@ msgstr "Омогућите Twenty подршци привремени прист
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
-msgstr ""
+msgstr "ГрафКуЕл"
 
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 msgid "GraphQL API Playground"
-msgstr ""
+msgstr "GraphQL API игралиште"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
@@ -1811,7 +1811,7 @@ msgstr "Најновији датум"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
-msgstr ""
+msgstr "Покрени"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -2269,7 +2269,7 @@ msgstr "Слика"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Playground"
-msgstr ""
+msgstr "Плејграунд"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
@@ -2340,7 +2340,7 @@ msgstr "Псеудо-енглески"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
-#~ msgstr "Прочитајте документацију"
+#~ msgstr "Read documentation"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
@@ -2449,7 +2449,7 @@ msgstr "Ресетујте на"
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "REST"
-msgstr ""
+msgstr "РЕСТ"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2500,7 +2500,7 @@ msgstr "Сачувај као ново приказ"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
-msgstr ""
+msgstr "Шема"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2602,7 +2602,7 @@ msgstr "Погледајте историју верзија"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Select Action"
-msgstr ""
+msgstr "Изаберите акцију"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
@@ -2989,7 +2989,7 @@ msgstr "Истина"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Try our REST or GraphQL API playgrounds."
-msgstr ""
+msgstr "Испробајте наше РЕСТ или GraphQL АПИ плејграундове."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"

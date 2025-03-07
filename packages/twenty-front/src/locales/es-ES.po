@@ -298,7 +298,7 @@ msgstr "Descripción opcional"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
-msgstr ""
+msgstr "Se produjo un error inesperado"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
@@ -310,7 +310,7 @@ msgstr "Cualquiera con una dirección de correo electrónico en estos dominios p
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "API & Webhooks"
@@ -354,7 +354,7 @@ msgstr "Valores de la API"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "APIs"
-msgstr ""
+msgstr "API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -709,7 +709,7 @@ msgstr "Copie esta clave ya que no será visible de nuevo"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Core"
-msgstr ""
+msgstr "Núcleo"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -1303,7 +1303,7 @@ msgstr "Objetos existentes"
 
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
 msgid "Exit Full Screen"
-msgstr ""
+msgstr "Salir de pantalla completa"
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
@@ -1403,7 +1403,7 @@ msgstr "Exportar flujos de trabajo"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Failed to validate API key. Please check your API key and try again."
-msgstr ""
+msgstr "Error al validar la clave de API. Por favor, verifica tu clave de API e inténtalo de nuevo."
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1531,11 +1531,11 @@ msgstr "Conceda al soporte de Twenty acceso temporal a su espacio de trabajo par
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
-msgstr ""
+msgstr "GraphQL"
 
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 msgid "GraphQL API Playground"
-msgstr ""
+msgstr "Playground de API de GraphQL"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
@@ -1811,7 +1811,7 @@ msgstr "Última fecha"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
-msgstr ""
+msgstr "Lanzar"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -2269,7 +2269,7 @@ msgstr "Foto"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Playground"
-msgstr ""
+msgstr "Playground"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
@@ -2340,7 +2340,7 @@ msgstr "Pseudoinglés"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
-#~ msgstr "Leer documentación"
+#~ msgstr "Read documentation"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
@@ -2449,7 +2449,7 @@ msgstr "Restablecer a"
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "REST"
-msgstr ""
+msgstr "REST"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2500,7 +2500,7 @@ msgstr "Guardar como nueva vista"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
-msgstr ""
+msgstr "Esquema"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2602,7 +2602,7 @@ msgstr "Ver historial de versiones"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Select Action"
-msgstr ""
+msgstr "Seleccionar acción"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
@@ -2989,7 +2989,7 @@ msgstr "Verdadero"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Try our REST or GraphQL API playgrounds."
-msgstr ""
+msgstr "Prueba nuestros entornos de prueba de API REST o GraphQL."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"

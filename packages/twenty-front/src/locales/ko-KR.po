@@ -298,7 +298,7 @@ msgstr "선택적 설명"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
-msgstr ""
+msgstr "예상치 못한 오류가 발생했습니다"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
@@ -310,7 +310,7 @@ msgstr "이 도메인의 이메일 주소를 가진 사람은 이 작업 공간�
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "API & Webhooks"
@@ -354,7 +354,7 @@ msgstr "API 값"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "APIs"
-msgstr ""
+msgstr "API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -709,7 +709,7 @@ msgstr "이 키는 다시 표시되지 않으므로 복사하세요"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Core"
-msgstr ""
+msgstr "코어"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -1303,7 +1303,7 @@ msgstr "기존 개체"
 
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
 msgid "Exit Full Screen"
-msgstr ""
+msgstr "전체 화면 종료"
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
@@ -1403,7 +1403,7 @@ msgstr "워크플로 내보내기"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Failed to validate API key. Please check your API key and try again."
-msgstr ""
+msgstr "API 키를 검증하지 못했습니다. API 키를 확인하고 다시 시도하십시오."
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1531,11 +1531,11 @@ msgstr "Twenty 지원팀에 임시 접근 권한을 부여하여 문제를 해�
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
-msgstr ""
+msgstr "GraphQL"
 
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 msgid "GraphQL API Playground"
-msgstr ""
+msgstr "GraphQL API 플레이그라운드"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
@@ -1811,7 +1811,7 @@ msgstr "최신 날짜"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
-msgstr ""
+msgstr "시작"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -2269,7 +2269,7 @@ msgstr "사진"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Playground"
-msgstr ""
+msgstr "플레이그라운드"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
@@ -2340,7 +2340,7 @@ msgstr "의사 영어"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
-#~ msgstr "문서 읽기"
+#~ msgstr "Read documentation"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
@@ -2449,7 +2449,7 @@ msgstr "다음으로 재설정"
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "REST"
-msgstr ""
+msgstr "휴식"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2500,7 +2500,7 @@ msgstr "새 보기로 저장"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
-msgstr ""
+msgstr "스키마"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2602,7 +2602,7 @@ msgstr "버전 기록 보기"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Select Action"
-msgstr ""
+msgstr "작업 선택"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
@@ -2989,7 +2989,7 @@ msgstr "참"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Try our REST or GraphQL API playgrounds."
-msgstr ""
+msgstr "REST 또는 GraphQL API 플레이그라운드를 사용해 보십시오."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"

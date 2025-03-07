@@ -298,7 +298,7 @@ msgstr "Valinnainen kuvaus"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
-msgstr ""
+msgstr "Tapahtui odottamaton virhe"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
@@ -310,7 +310,7 @@ msgstr "Kuka tahansa, jolla on sähköpostiosoite näissä tunnusalueissa, saa r
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API"
-msgstr ""
+msgstr "Rajapinta"
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "API & Webhooks"
@@ -354,7 +354,7 @@ msgstr "API-arvot"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "APIs"
-msgstr ""
+msgstr "Rajapinnat"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -709,7 +709,7 @@ msgstr "Kopioi tämä avain, sillä se ei ole enää nähtävissä"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Core"
-msgstr ""
+msgstr "Ydin"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -1303,7 +1303,7 @@ msgstr "Olemassa olevat objektit"
 
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
 msgid "Exit Full Screen"
-msgstr ""
+msgstr "Poistu koko näytöstä"
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
@@ -1403,7 +1403,7 @@ msgstr "Vie työnkulut"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Failed to validate API key. Please check your API key and try again."
-msgstr ""
+msgstr "API-avaimen vahvistus epäonnistui. Tarkista API-avain ja yritä uudelleen."
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1531,11 +1531,11 @@ msgstr "Myönnä Twenty-tuen väliaikainen pääsy työtilaasi, jotta voimme aut
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
-msgstr ""
+msgstr "GraphQL"
 
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 msgid "GraphQL API Playground"
-msgstr ""
+msgstr "GraphQL-API-leikkikenttä"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
@@ -1811,7 +1811,7 @@ msgstr "Viimeisin päivämäärä"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
-msgstr ""
+msgstr "Käynnistä"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -2269,7 +2269,7 @@ msgstr "Kuva"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Playground"
-msgstr ""
+msgstr "Leikkikenttä"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
@@ -2340,7 +2340,7 @@ msgstr "Pseudosuomi"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
-#~ msgstr "Lue dokumentaatio"
+#~ msgstr "Read documentation"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
@@ -2449,7 +2449,7 @@ msgstr "Palauta"
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "REST"
-msgstr ""
+msgstr "REST"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2500,7 +2500,7 @@ msgstr "Tallenna uutena näkymänä"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
-msgstr ""
+msgstr "Skeema"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2602,7 +2602,7 @@ msgstr "Näytä versiohistoria"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Select Action"
-msgstr ""
+msgstr "Valitse toiminto"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
@@ -2989,7 +2989,7 @@ msgstr "Tosi"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Try our REST or GraphQL API playgrounds."
-msgstr ""
+msgstr "Kokeile REST- tai GraphQL-rajapintojen leikkikenttiämme."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"

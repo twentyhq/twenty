@@ -298,7 +298,7 @@ msgstr "可選描述"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
-msgstr ""
+msgstr "發生意外錯誤"
 
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
@@ -354,7 +354,7 @@ msgstr "API 值"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "APIs"
-msgstr ""
+msgstr "API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -709,7 +709,7 @@ msgstr "複製此密鑰，因為它將不再可見"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Core"
-msgstr ""
+msgstr "核心"
 
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -1303,7 +1303,7 @@ msgstr "現有對象"
 
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
 msgid "Exit Full Screen"
-msgstr ""
+msgstr "退出全螢幕"
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
@@ -1403,7 +1403,7 @@ msgstr "導出工作流程"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Failed to validate API key. Please check your API key and try again."
-msgstr ""
+msgstr "驗證API金鑰失敗。請檢查您的API金鑰並重試。"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1531,11 +1531,11 @@ msgstr "授予 Twenty 支持臨時訪問您的工作區，以便我們為您排�
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
-msgstr ""
+msgstr "GraphQL"
 
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 msgid "GraphQL API Playground"
-msgstr ""
+msgstr "GraphQL API 操作臺"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
@@ -1811,7 +1811,7 @@ msgstr "最新日期"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
-msgstr ""
+msgstr "啟動"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -2269,7 +2269,7 @@ msgstr "圖片"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Playground"
-msgstr ""
+msgstr "操場"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
@@ -2340,7 +2340,7 @@ msgstr "偽英語"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
-#~ msgstr "閱讀文檔"
+#~ msgstr "Read documentation"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
@@ -2449,7 +2449,7 @@ msgstr "重置為"
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "REST"
-msgstr ""
+msgstr "REST"
 
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -2500,7 +2500,7 @@ msgstr "另存為新視圖"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
-msgstr ""
+msgstr "結構"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2602,7 +2602,7 @@ msgstr "查看版本歷史"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Select Action"
-msgstr ""
+msgstr "選擇操作"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
@@ -2989,7 +2989,7 @@ msgstr "真"
 
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Try our REST or GraphQL API playgrounds."
-msgstr ""
+msgstr "試試我們的REST或GraphQL API操場。"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
