@@ -29,7 +29,7 @@ import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { THEME_COMMON } from 'twenty-ui';
+import { Tag, TagColor, THEME_COMMON } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -68,6 +68,13 @@ const StyledResetReactflowStyles = styled.div`
   --xy-node-boxshadow-selected: none;
 `;
 
+const StyledStatusTagContainer = styled.div`
+  left: 0;
+  top: 0;
+  position: absolute;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 const defaultFitViewOptions = {
   minZoom: 1,
   maxZoom: 1,
@@ -77,7 +84,9 @@ export const WorkflowDiagramCanvasBase = ({
   nodeTypes,
   edgeTypes,
   children,
-  Tag,
+  tagContainerTestId,
+  tagColor,
+  tagText,
 }: {
   nodeTypes: Partial<
     Record<
@@ -102,7 +111,9 @@ export const WorkflowDiagramCanvasBase = ({
     >
   >;
   children?: React.ReactNode;
-  Tag?: React.ReactNode;
+  tagContainerTestId: string;
+  tagColor: TagColor;
+  tagText: string;
 }) => {
   const theme = useTheme();
 
@@ -249,7 +260,9 @@ export const WorkflowDiagramCanvasBase = ({
         {children}
       </ReactFlow>
 
-      {Tag}
+      <StyledStatusTagContainer data-testid={tagContainerTestId}>
+        <Tag color={tagColor} text={tagText} />
+      </StyledStatusTagContainer>
     </StyledResetReactflowStyles>
   );
 };
