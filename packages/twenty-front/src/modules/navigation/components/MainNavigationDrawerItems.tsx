@@ -8,11 +8,13 @@ import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/C
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useGetUserSoftfone } from '@/settings/service-center/telephony/hooks/useGetUserSoftfone';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -26,6 +28,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import InnerHTML from 'dangerously-set-html-content';
 import { useMemo } from 'react';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
@@ -74,6 +77,18 @@ export const MainNavigationDrawerItems = () => {
 
   const viewId = traceableObject?.id;
 
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
+
+  const lastVisitedViewId = lastVisitedViewPerObjectMetadataItem?.[viewId];
+
+  const navigationPath = getAppPath(
+    AppPath.RecordIndexPage,
+    { objectNamePlural: traceableObject?.namePlural ?? '' },
+    lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
+  );
+
   return (
     <>
       {!loadingSoftfone && telephonyExtension && (
@@ -111,8 +126,8 @@ export const MainNavigationDrawerItems = () => {
           />
 
           <NavigationDrawerItem
-            label="Traceable"
-            to={`/objects/traceables?viewId=${viewId ?? ''}`}
+            label="Traceable Link"
+            to={navigationPath}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}
