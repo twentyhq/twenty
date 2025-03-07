@@ -10,7 +10,7 @@ import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hook
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -18,7 +18,7 @@ import { useRecoilValue } from 'recoil';
 export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
   const { onContentChange } = useOptionsDropdown();
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
   const { setAndPersistOpenRecordIn } = useObjectOptions();
 
   return (
@@ -37,7 +37,7 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
           onClick={() =>
             setAndPersistOpenRecordIn(
               ViewOpenRecordInType.SIDE_PANEL,
-              currentViewWithCombinedFiltersAndSorts,
+              currentView,
             )
           }
         />
@@ -50,7 +50,7 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
           onClick={() =>
             setAndPersistOpenRecordIn(
               ViewOpenRecordInType.RECORD_PAGE,
-              currentViewWithCombinedFiltersAndSorts,
+              currentView,
             )
           }
         />

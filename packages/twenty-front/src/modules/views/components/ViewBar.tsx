@@ -53,7 +53,7 @@ export const ViewBar = ({
       <ViewBarRecordSortEffect />
       <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
       <QueryParamsFiltersEffect />
-      <ViewBarPageTitle viewBarId={viewBarId} />
+      <ViewBarPageTitle />
       <TopBar
         className={className}
         leftComponent={

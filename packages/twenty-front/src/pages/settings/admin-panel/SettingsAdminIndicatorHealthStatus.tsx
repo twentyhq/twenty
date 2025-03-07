@@ -20,6 +20,17 @@ const StyledH2Title = styled(H2Title)`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledTitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledHealthStatusContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
 export const SettingsAdminIndicatorHealthStatus = () => {
   const { t } = useLingui();
   const { indicatorId } = useParams();
@@ -40,15 +51,15 @@ export const SettingsAdminIndicatorHealthStatus = () => {
       links={[
         {
           children: t`Other`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
+          href: getSettingsPath(SettingsPath.ServerAdmin),
         },
         {
-          children: t`Server Admin Panel`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
+          children: t`Server Admin`,
+          href: getSettingsPath(SettingsPath.ServerAdmin),
         },
         {
           children: t`Health Status`,
-          href: getSettingsPath(SettingsPath.AdminPanelHealthStatus),
+          href: getSettingsPath(SettingsPath.ServerAdminHealthStatus),
         },
         { children: `${data?.getIndicatorHealthStatus?.label}` },
       ]}
@@ -60,6 +71,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
               id: data?.getIndicatorHealthStatus?.id ?? '',
               label: data?.getIndicatorHealthStatus?.label ?? '',
               description: data?.getIndicatorHealthStatus?.description ?? '',
+              errorMessage: data?.getIndicatorHealthStatus?.errorMessage,
               status:
                 data?.getIndicatorHealthStatus?.status ??
                 AdminPanelHealthServiceStatus.OUTAGE,
@@ -69,16 +81,20 @@ export const SettingsAdminIndicatorHealthStatus = () => {
           }}
         >
           <Section>
-            <StyledH2Title
-              title={`${data?.getIndicatorHealthStatus?.label}`}
-              description={data?.getIndicatorHealthStatus?.description}
-            />
-            {indicatorId !== HealthIndicatorId.connectedAccount &&
-              data?.getIndicatorHealthStatus?.status && (
-                <SettingsAdminHealthStatusRightContainer
-                  status={data?.getIndicatorHealthStatus.status}
-                />
-              )}
+            <StyledTitleContainer>
+              <StyledH2Title
+                title={`${data?.getIndicatorHealthStatus?.label}`}
+                description={data?.getIndicatorHealthStatus?.description}
+              />
+              {indicatorId !== HealthIndicatorId.connectedAccount &&
+                data?.getIndicatorHealthStatus?.status && (
+                  <StyledHealthStatusContainer>
+                    <SettingsAdminHealthStatusRightContainer
+                      status={data?.getIndicatorHealthStatus.status}
+                    />
+                  </StyledHealthStatusContainer>
+                )}
+            </StyledTitleContainer>
           </Section>
 
           <SettingsAdminIndicatorHealthStatusContent />

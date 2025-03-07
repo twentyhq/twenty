@@ -1,3 +1,4 @@
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -53,6 +54,7 @@ export const SummaryCard = ({
   const isReadOnly = isFieldValueReadOnly({
     objectNameSingular,
     isRecordDeleted: recordFromStore?.isDeleted,
+    contextStoreCurrentViewType: ContextStoreViewType.ShowPage,
   });
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(

@@ -92,7 +92,7 @@ export const useSelectFilterUsedInDropdown = (componentInstanceId?: string) => {
         displayValue,
         operand: firstOperand,
         value,
-        viewFilterGroupId: advancedFilterViewFilterGroupId,
+        recordFilterGroupId: advancedFilterViewFilterGroupId,
         type: filterType,
         label: fieldMetadataItem.label,
       });
