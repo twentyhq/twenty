@@ -450,13 +450,13 @@ export const SettingsRoutes = ({
 
       {isAdminPageEnabled && (
         <>
-          <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
+          <Route path={SettingsPath.ServerAdmin} element={<SettingsAdmin />} />
           <Route
             path={SettingsPath.FeatureFlags}
             element={<SettingsAdminContent />}
           />
           <Route
-            path={SettingsPath.AdminPanelIndicatorHealthStatus}
+            path={SettingsPath.ServerAdminIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
           />
         </>

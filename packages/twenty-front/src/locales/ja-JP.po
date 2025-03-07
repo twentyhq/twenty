@@ -1949,7 +1949,7 @@ msgstr "前のワークフローに移動"
 msgid "New"
 msgstr "新規"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "新しい{capitalizedObjectNameSingular}"
 
@@ -2577,6 +2577,8 @@ msgstr "送信済みおよび受信済み"
 msgid "Serbian (Cyrillic)"
 msgstr "セルビア語（キリル文字）"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Server Admin"
@@ -2584,8 +2586,8 @@ msgstr "\\\\u30b5\\\\u30fc\\\\u30d0\\\\u30fc\\\\u7ba1\\\\u7406\\\\u8005"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-msgid "Server Admin Panel"
-msgstr "サーバー管理パネル"
+#~ msgid "Server Admin Panel"
+#~ msgstr "Server Admin Panel"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
@@ -2660,6 +2662,14 @@ msgstr "シングルサインオン (SSO)"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Singular"
 msgstr "単数形"
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural labels must be different"
+msgstr "単数形と複数形のラベルは異なる必要があります"
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural names must be different"
+msgstr "単数形と複数形の名前は異なる必要があります"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"

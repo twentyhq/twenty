@@ -28,4 +28,9 @@ export const HEALTH_INDICATORS: Record<HealthIndicatorId, HealthIndicatorInfo> =
       label: 'Connected Account Status',
       description: 'Connected accounts status',
     },
+    [HealthIndicatorId.app]: {
+      id: HealthIndicatorId.app,
+      label: 'App Status',
+      description: 'Workspace metadata migration status check',
+    },
   };

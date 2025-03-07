@@ -1949,7 +1949,7 @@ msgstr "Navigeer na vorige werkstroom"
 msgid "New"
 msgstr "Nuut"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useCommandMenu.tsx
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Nuwe {capitalizedObjectNameSingular}"
 
@@ -2577,6 +2577,8 @@ msgstr "Gestuur en Ontvang"
 msgid "Serbian (Cyrillic)"
 msgstr "Serwies (Sirillies)"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Server Admin"
@@ -2584,8 +2586,8 @@ msgstr "Bedieneradministrateur"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-msgid "Server Admin Panel"
-msgstr "Bediener Admin Paneel"
+#~ msgid "Server Admin Panel"
+#~ msgstr "Server Admin Panel"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
@@ -2660,6 +2662,14 @@ msgstr "Enkelteken-aanmelding (SSO)"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Singular"
 msgstr "Enkelfout"
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural labels must be different"
+msgstr "Enkelvoudige en meervoudige etikette moet verskil"
+
+#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
+msgid "Singular and plural names must be different"
+msgstr "Enkelvoudige en meervoudige name moet verskil"
 
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
