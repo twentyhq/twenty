@@ -2,6 +2,7 @@ import { EachTestingContext } from 'twenty-shared';
 
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { validateObjectMetadataInputNamesOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
+import { getMockCreateObjectInput } from 'test/integration/utils/object-metadata/generate-mock-create-object-metadata-input';
 
 type ValidateObjectNameTestingContext = EachTestingContext<
   Partial<UpdateObjectPayload>
@@ -48,7 +49,9 @@ const validateObjectMetadataTestCases: ValidateObjectNameTestingContext[] = [
 describe('validateObjectMetadataInputOrThrow should fail', () => {
   it.each(validateObjectMetadataTestCases)('$title', ({ context }) => {
     expect(() =>
-      validateObjectMetadataInputNamesOrThrow(getObjectInput(context)),
+      validateObjectMetadataInputNamesOrThrow(
+        getMockCreateObjectInput(context),
+      ),
     ).toThrowErrorMatchingSnapshot();
   });
 });
