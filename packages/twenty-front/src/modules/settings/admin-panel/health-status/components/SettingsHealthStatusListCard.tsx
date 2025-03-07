@@ -9,16 +9,16 @@ import {
   IconTool,
   IconUserCircle,
 } from 'twenty-ui';
-import { SystemHealthService } from '~/generated/graphql';
+import { HealthIndicatorId, SystemHealthService } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsAdminHealthStatusRightContainer } from './SettingsAdminHealthStatusRightContainer';
 
-const HealthStatusIcons: { [k: string]: IconComponent } = {
-  database: IconDatabase,
-  redis: IconServer2,
-  worker: IconTool,
-  connectedAccount: IconUserCircle,
-  app: IconAppWindow,
+const HealthStatusIcons: { [k in HealthIndicatorId]: IconComponent } = {
+  [HealthIndicatorId.database]: IconDatabase,
+  [HealthIndicatorId.redis]: IconServer2,
+  [HealthIndicatorId.worker]: IconTool,
+  [HealthIndicatorId.connectedAccount]: IconUserCircle,
+  [HealthIndicatorId.app]: IconAppWindow,
 };
 
 export const SettingsHealthStatusListCard = ({
