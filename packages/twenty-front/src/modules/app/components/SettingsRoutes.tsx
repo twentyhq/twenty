@@ -264,6 +264,14 @@ const SettingsAdminIndicatorHealthStatus = lazy(() =>
   })),
 );
 
+const SettingsAdminSecondaryEnvVariables = lazy(() =>
+  import(
+    '~/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables'
+  ).then((module) => ({
+    default: module.SettingsAdminSecondaryEnvVariables,
+  })),
+);
+
 const SettingsLab = lazy(() =>
   import('~/pages/settings/lab/SettingsLab').then((module) => ({
     default: module.SettingsLab,
@@ -458,6 +466,10 @@ export const SettingsRoutes = ({
           <Route
             path={SettingsPath.ServerAdminIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
+          />
+          <Route
+            path={SettingsPath.ServerAdminOtherEnvVariables}
+            element={<SettingsAdminSecondaryEnvVariables />}
           />
         </>
       )}

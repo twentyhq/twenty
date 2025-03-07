@@ -2,6 +2,7 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import {
+  IconAppWindow,
   IconComponent,
   IconDatabase,
   IconServer2,
@@ -17,6 +18,7 @@ const HealthStatusIcons: { [k: string]: IconComponent } = {
   redis: IconServer2,
   worker: IconTool,
   connectedAccount: IconUserCircle,
+  app: IconAppWindow,
 };
 
 export const SettingsHealthStatusListCard = ({

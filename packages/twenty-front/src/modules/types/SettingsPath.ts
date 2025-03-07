@@ -38,6 +38,7 @@ export enum SettingsPath {
   FeatureFlags = 'server-admin/feature-flags',
   ServerAdminHealthStatus = 'server-admin#health-status',
   ServerAdminIndicatorHealthStatus = 'server-admin/health-status/:indicatorId',
+  ServerAdminOtherEnvVariables = 'server-admin/other-env-variables',
   Lab = 'lab',
   Roles = 'roles',
   RoleDetail = 'roles/:roleId',

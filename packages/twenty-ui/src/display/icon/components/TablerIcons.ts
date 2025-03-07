@@ -6,6 +6,7 @@ export {
   IconAlertTriangle,
   IconApi,
   IconApps,
+  IconAppWindow,
   IconArchive,
   IconArchiveOff,
   IconArrowBackUp,
@@ -155,6 +156,7 @@ export {
   IconHeadphones,
   IconHeart,
   IconHeartOff,
+  IconHeartRateMonitor,
   IconHelpCircle,
   IconHierarchy,
   IconHierarchy2,
@@ -281,7 +283,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX
+  IconX,
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';
