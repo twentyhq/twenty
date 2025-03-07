@@ -54,9 +54,7 @@ export class CacheStorageService {
 
   async countAllSetMembers(cacheKeys: string[]) {
     return (
-      await Promise.all(
-        cacheKeys.map(async (key) => (await this.getSetLength(key)) || 0),
-      )
+      await Promise.all(cacheKeys.map((key) => this.getSetLength(key) || 0))
     ).reduce((acc, setLength) => acc + setLength, 0);
   }
 

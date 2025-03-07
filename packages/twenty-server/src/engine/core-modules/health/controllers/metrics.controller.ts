@@ -5,9 +5,7 @@ import { HealthCounterCacheKeys } from 'src/engine/core-modules/health/types/hea
 
 @Controller('metrics')
 export class MetricsController {
-  constructor(
-    private readonly healthCacheService: HealthCacheService,
-  ) {}
+  constructor(private readonly healthCacheService: HealthCacheService) {}
 
   @Get('/message-channel-sync-job-by-status-counter')
   getMessageChannelSyncJobByStatusCounter() {

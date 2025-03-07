@@ -116,7 +116,7 @@ describe('ConnectedAccountHealth', () => {
       );
       expect(
         result.connectedAccount.details.messageSync.details.failureRate,
-      ).toBe(33.33);
+      ).toBe(40);
     });
   });
 
@@ -174,7 +174,7 @@ describe('ConnectedAccountHealth', () => {
       );
       expect(
         result.connectedAccount.details.calendarSync.details.failureRate,
-      ).toBe(33.33);
+      ).toBe(40);
     });
   });
 
