@@ -13,21 +13,15 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  if (
-    !(
-      isDefined(workflowRun) &&
-      isDefined(workflowRun.context) &&
-      isDefined(workflowRun.output?.flow)
-    )
-  ) {
+  if (!isDefined(workflowRun?.output?.stepsOutput)) {
     return null;
   }
 
-  const stepOutput = workflowRun.output.stepsOutput?.[stepId];
+  const stepOutput = workflowRun.output.stepsOutput[stepId];
 
   return (
     <StyledContainer>
-      <JsonTree value={stepOutput ?? null} />
+      <JsonTree value={stepOutput} />
     </StyledContainer>
   );
 };
