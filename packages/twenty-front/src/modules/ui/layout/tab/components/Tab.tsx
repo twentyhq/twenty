@@ -83,7 +83,9 @@ export const Tab = ({
   const theme = useTheme();
   const iconColor = active
     ? theme.font.color.primary
-    : theme.font.color.secondary;
+    : disabled
+      ? theme.font.color.light
+      : theme.font.color.secondary;
 
   return (
     <StyledTab

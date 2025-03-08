@@ -41,7 +41,6 @@ type Story = StoryObj<typeof WorkflowDiagramCanvasBase>;
 
 export const DefaultEdge: Story = {
   args: {
-    status: 'DRAFT',
     nodeTypes: {
       default: WorkflowDiagramStepNodeReadonly,
       'create-step': WorkflowDiagramCreateStepNode,
@@ -116,7 +115,6 @@ export const DefaultEdge: Story = {
 
 export const SuccessEdge: Story = {
   args: {
-    status: 'DRAFT',
     nodeTypes: {
       default: WorkflowDiagramStepNodeReadonly,
       'create-step': WorkflowDiagramCreateStepNode,

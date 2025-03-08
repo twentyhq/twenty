@@ -11,7 +11,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Developers/ApiKeys/SettingsDevelopersApiKeysNew',
+  title: 'Pages/Settings/ApiKeys/SettingsDevelopersApiKeysNew',
   component: SettingsDevelopersApiKeysNew,
   decorators: [PageDecorator],
   args: { routePath: getSettingsPath(SettingsPath.DevelopersNewApiKey) },
