@@ -1,4 +1,6 @@
 export enum AGGREGATE_OPERATIONS {
+  countTrue = 'COUNT_TRUE',
+  countFalse = 'COUNT_FALSE',
   min = 'MIN',
   max = 'MAX',
   avg = 'AVG',
