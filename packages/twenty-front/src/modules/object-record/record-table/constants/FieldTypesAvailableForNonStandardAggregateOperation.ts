@@ -27,4 +27,10 @@ export const FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION = {
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,
   ],
+  [AGGREGATE_OPERATIONS.countTrue]: [
+    FieldMetadataType.BOOLEAN,
+  ],
+  [AGGREGATE_OPERATIONS.countFalse]: [
+    FieldMetadataType.BOOLEAN,
+  ],
 };

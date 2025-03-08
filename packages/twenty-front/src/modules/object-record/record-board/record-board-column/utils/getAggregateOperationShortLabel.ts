@@ -25,6 +25,10 @@ export const getAggregateOperationShortLabel = (
       return msg`Not empty`;
     case AGGREGATE_OPERATIONS.countUniqueValues:
       return msg`Unique`;
+    case AGGREGATE_OPERATIONS.countTrue:
+      return msg`True`;
+    case AGGREGATE_OPERATIONS.countFalse:
+      return msg`False`;
     case DATE_AGGREGATE_OPERATIONS.earliest:
       return msg`Earliest`;
     case DATE_AGGREGATE_OPERATIONS.latest:

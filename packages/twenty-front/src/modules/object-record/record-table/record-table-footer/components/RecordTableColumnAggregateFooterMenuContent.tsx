@@ -45,6 +45,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   );
 
   const fieldIsDateKind = isFieldMetadataDateKind(fieldMetadataType);
+  const fieldIsBoolean = fieldMetadataType === FieldMetadataType.BOOLEAN;
 
   const nonStandardAvailableAggregateOperation =
     availableAggregateOperation.filter((aggregateOperation) =>
@@ -87,6 +88,15 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
               onContentChange('datesAggregateOperationsOptions');
             }}
             text={t`Date`}
+            hasSubMenu
+          />
+        )}
+        {fieldIsBoolean && (
+          <MenuItem
+            onClick={() => {
+              onContentChange('booleanAggregateOperationsOptions');
+            }}
+            text={t`Boolean`}
             hasSubMenu
           />
         )}

@@ -27,6 +27,10 @@ export const getAggregateOperationLabel = (
       return t`Percent empty`;
     case AGGREGATE_OPERATIONS.percentageNotEmpty:
       return t`Percent not empty`;
+    case AGGREGATE_OPERATIONS.countTrue:
+      return t`Count true`;
+    case AGGREGATE_OPERATIONS.countFalse:
+      return t`Count false`;
     case DATE_AGGREGATE_OPERATIONS.earliest:
       return t`Earliest date`;
     case DATE_AGGREGATE_OPERATIONS.latest:

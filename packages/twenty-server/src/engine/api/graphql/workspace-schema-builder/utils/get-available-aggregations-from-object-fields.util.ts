@@ -2,10 +2,10 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
 import {
-  capitalize,
-  FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION,
-  FieldMetadataType,
-  isFieldMetadataDateKind,
+    capitalize,
+    FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION,
+    FieldMetadataType,
+    isFieldMetadataDateKind,
 } from 'twenty-shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -94,6 +94,26 @@ export const getAvailableAggregationsFromObjectFields = (
           fromField: field.name,
           fromFieldType: field.type,
           aggregateOperation: AGGREGATE_OPERATIONS.max,
+        };
+      }
+
+      if (field.type === FieldMetadataType.BOOLEAN) {
+        acc[`countTrue${capitalize(field.name)}`] = {
+          type: GraphQLInt,
+          description: `Number of true values for ${field.name}`,
+          fromField: field.name,
+          fromFieldType: field.type,
+          fromSubFields,
+          aggregateOperation: AGGREGATE_OPERATIONS.countTrue,
+        };
+
+        acc[`countFalse${capitalize(field.name)}`] = {
+          type: GraphQLInt,
+          description: `Number of false values for ${field.name}`,
+          fromField: field.name,
+          fromFieldType: field.type,
+          fromSubFields,
+          aggregateOperation: AGGREGATE_OPERATIONS.countFalse,
         };
       }
 
