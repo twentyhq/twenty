@@ -4,6 +4,7 @@ import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constant
 import { RecordTableColumnAggregateFooterDropdownSubmenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateDropdownSubmenuContent';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { RecordTableColumnAggregateFooterMenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent';
+import { BOOLEAN_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/booleanAggregateOperationOptions';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { DATE_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/dateAggregateOperationOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
@@ -64,6 +65,20 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
         <RecordTableColumnAggregateFooterDropdownSubmenuContent
           aggregateOperations={aggregateOperations}
           title={t`Percent`}
+        />
+      );
+    }
+    case 'booleanAggregateOperationsOptions': {
+      const aggregateOperations = availableAggregateOperations.filter(
+        (aggregateOperation) =>
+          BOOLEAN_AGGREGATE_OPERATION_OPTIONS.includes(
+            aggregateOperation as AGGREGATE_OPERATIONS,
+          ),
+      );
+      return (
+        <RecordTableColumnAggregateFooterDropdownSubmenuContent
+          aggregateOperations={aggregateOperations}
+          title={t`Boolean`}
         />
       );
     }
