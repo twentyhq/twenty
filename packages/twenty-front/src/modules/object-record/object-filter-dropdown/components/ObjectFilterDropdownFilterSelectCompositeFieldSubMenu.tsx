@@ -26,7 +26,9 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 
-export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({handelAddFilterForActor}:any) => {
+export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({handelAddFilterForActor}:{
+  handelAddFilterForActor: (id: string) => void; 
+}) => {
   const [searchText] = useState('');
 
   const { getIcon } = useIcons();
