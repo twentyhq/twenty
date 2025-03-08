@@ -88,18 +88,18 @@ export class ProcessAggregateHelper {
           );
           break;
         case AGGREGATE_OPERATIONS.countTrue:
-            queryBuilder.addSelect(
-              `CASE WHEN COUNT(*) = 0 THEN NULL ELSE COUNT(CASE WHEN ${columnExpression}::boolean = TRUE THEN 1 ELSE NULL END) END`,
-              `${aggregatedFieldName}`,
-            );
-            break;
-          
+          queryBuilder.addSelect(
+            `CASE WHEN COUNT(*) = 0 THEN NULL ELSE COUNT(CASE WHEN ${columnExpression}::boolean = TRUE THEN 1 ELSE NULL END) END`,
+            `${aggregatedFieldName}`,
+          );
+          break;
+
         case AGGREGATE_OPERATIONS.countFalse:
-            queryBuilder.addSelect(
-              `CASE WHEN COUNT(*) = 0 THEN NULL ELSE COUNT(CASE WHEN ${columnExpression}::boolean = FALSE THEN 1 ELSE NULL END) END`,
-              `${aggregatedFieldName}`,
-            );
-            break;
+          queryBuilder.addSelect(
+            `CASE WHEN COUNT(*) = 0 THEN NULL ELSE COUNT(CASE WHEN ${columnExpression}::boolean = FALSE THEN 1 ELSE NULL END) END`,
+            `${aggregatedFieldName}`,
+          );
+          break;
         default: {
           queryBuilder.addSelect(
             `${aggregatedField.aggregateOperation}("${columnNameForNumericOperation}")`,

@@ -100,7 +100,6 @@ export const getAvailableAggregationsFromObjectFields = (
       switch (field.type) {
 
         case FieldMetadataType.BOOLEAN:
-          console.log("giving Boolean")
           acc[`countTrue${capitalize(field.name)}`] = {
             type: GraphQLInt,
             description: `Count of true values in the field ${field.name}`,

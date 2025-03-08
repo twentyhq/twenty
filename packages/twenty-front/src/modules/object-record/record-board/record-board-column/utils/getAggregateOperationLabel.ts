@@ -32,7 +32,7 @@ export const getAggregateOperationLabel = (
     case DATE_AGGREGATE_OPERATIONS.latest:
       return t`Latest date`;
     case AGGREGATE_OPERATIONS.countTrue:
-    return t`Count true`;
+      return t`Count true`;
     case AGGREGATE_OPERATIONS.countFalse:
       return t`Count false`;
     default:

@@ -9,7 +9,6 @@ export enum AGGREGATE_OPERATIONS {
   countUniqueValues = 'COUNT_UNIQUE_VALUES',
   percentageEmpty = 'PERCENTAGE_EMPTY',
   percentageNotEmpty = 'PERCENTAGE_NOT_EMPTY',
-  countTrue = "COUNT_TRUE",
-  countFalse = "COUNT_FALSE"
-
+  countTrue = 'COUNT_TRUE',
+  countFalse = 'COUNT_FALSE',
 }
