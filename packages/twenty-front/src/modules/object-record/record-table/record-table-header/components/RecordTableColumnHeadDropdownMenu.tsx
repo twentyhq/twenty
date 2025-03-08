@@ -21,6 +21,7 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import { useTableColumns } from '../../hooks/useTableColumns';
@@ -114,7 +115,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     }
   };
 
-  const handleAddFilterForActor = (fieldMetadataId: string, operand?: any) => {
+  const handleAddFilterForActor = (fieldMetadataId: string, operand?: ViewFilterOperand) => {
     setFieldMetadataItemIdUsedInDropdown(null);
     closeDropdown();
     if (isDefined(operand)) {

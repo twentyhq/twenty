@@ -25,12 +25,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({handelAddFilterForActor}:{
-  handelAddFilterForActor: (id: string) => void; 
+  handelAddFilterForActor: (id: string,operand?:ViewFilterOperand) => void; 
 }) => {
   const [searchText] = useState('');
 
