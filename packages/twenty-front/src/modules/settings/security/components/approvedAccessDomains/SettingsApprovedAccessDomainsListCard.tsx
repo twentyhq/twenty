@@ -8,7 +8,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { IconAt, IconMailCog } from 'twenty-ui';
+import { IconAt, IconMailCog, Status } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
@@ -63,9 +63,14 @@ export const SettingsApprovedAccessDomainsListCard = () => {
         getItemDescription={({ createdAt }) => getItemDescription(createdAt)}
         RowIcon={IconAt}
         RowRightComponent={({ item: approvedAccessDomain }) => (
-          <SettingsSecurityApprovedAccessDomainRowDropdownMenu
-            approvedAccessDomain={approvedAccessDomain}
-          />
+          <>
+            {!approvedAccessDomain.isValidated && (
+              <Status color="orange" text="Pending" />
+            )}
+            <SettingsSecurityApprovedAccessDomainRowDropdownMenu
+              approvedAccessDomain={approvedAccessDomain}
+            />
+          </>
         )}
         hasFooter
         footerButtonLabel="Add Approved Access Domain"

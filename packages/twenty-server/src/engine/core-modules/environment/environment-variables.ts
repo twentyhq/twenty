@@ -863,16 +863,6 @@ export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     description:
-      'Use as a feature flag for the new permission feature we are working on.',
-  })
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  PERMISSIONS_ENABLED = false;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Other,
-    description:
       'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',
   })
   @CastToPositiveNumber()
@@ -969,7 +959,7 @@ export class EnvironmentVariables {
   @IsNumber()
   @CastToPositiveNumber()
   @IsOptional()
-  HEALTH_MONITORING_TIME_WINDOW_IN_MINUTES = 5;
+  HEALTH_METRICS_TIME_WINDOW_IN_MINUTES = 5;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,

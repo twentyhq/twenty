@@ -20,6 +20,7 @@ const mockObjectMetadata: ObjectMetadataInterface = {
   isActive: true,
   isRemote: false,
   isAuditLogged: true,
+  isSearchable: true,
 };
 
 describe('objectRecordChangedValues', () => {

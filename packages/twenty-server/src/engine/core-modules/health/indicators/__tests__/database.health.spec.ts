@@ -22,11 +22,8 @@ describe('DatabaseHealthIndicator', () => {
         up: jest.fn().mockImplementation((data) => ({
           database: { status: 'up', ...data },
         })),
-        down: jest.fn().mockImplementation((error) => ({
-          database: {
-            status: 'down',
-            error,
-          },
+        down: jest.fn().mockImplementation((data) => ({
+          database: { status: 'down', ...data },
         })),
       }),
     } as any;
@@ -77,10 +74,20 @@ describe('DatabaseHealthIndicator', () => {
     const result = await service.isHealthy();
 
     expect(result.database.status).toBe('up');
-    expect(result.database.details).toBeDefined();
-    expect(result.database.details.version).toBeDefined();
-    expect(result.database.details.connections).toBeDefined();
-    expect(result.database.details.performance).toBeDefined();
+    expect(result.database.details.system.version).toBe('PostgreSQL 15.6');
+    expect(result.database.details.system.timestamp).toBeDefined();
+    expect(result.database.details.connections).toEqual({
+      active: 5,
+      max: 100,
+      utilizationPercent: 5,
+    });
+    expect(result.database.details.performance).toEqual({
+      cacheHitRatio: '96%',
+      deadlocks: 0,
+      slowQueries: 0,
+    });
+    expect(result.database.details.databaseSize).toBe('1 GB');
+    expect(result.database.details.top10Tables).toEqual([{ table_stats: [] }]);
   });
 
   it('should return down status when database fails', async () => {
@@ -91,9 +98,11 @@ describe('DatabaseHealthIndicator', () => {
     const result = await service.isHealthy();
 
     expect(result.database.status).toBe('down');
-    expect(result.database.error).toBe(
+    expect(result.database.message).toBe(
       HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED,
     );
+    expect(result.database.details.system.timestamp).toBeDefined();
+    expect(result.database.details.stateHistory).toBeDefined();
   });
 
   it('should timeout after specified duration', async () => {
@@ -111,6 +120,63 @@ describe('DatabaseHealthIndicator', () => {
     const result = await healthCheckPromise;
 
     expect(result.database.status).toBe('down');
-    expect(result.database.error).toBe(HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT);
+    expect(result.database.message).toBe(
+      HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT,
+    );
+    expect(result.database.details.stateHistory).toBeDefined();
+  });
+
+  it('should maintain state history across health checks', async () => {
+    // First check - healthy state
+    const mockResponses = [
+      [{ version: 'PostgreSQL 15.6' }],
+      [{ count: '5' }],
+      [{ max_connections: '100' }],
+      [{ uptime: '3600' }],
+      [{ size: '1 GB' }],
+      [{ table_stats: [] }],
+      [{ ratio: '95.5' }],
+      [{ deadlocks: '0' }],
+      [{ count: '0' }],
+    ];
+
+    mockResponses.forEach((response) => {
+      dataSource.query.mockResolvedValueOnce(response);
+    });
+
+    const firstResult = await service.isHealthy();
+
+    expect(firstResult.database.status).toBe('up');
+
+    // Second check - error state
+    dataSource.query.mockRejectedValueOnce(
+      new Error(HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED),
+    );
+
+    const result = await service.isHealthy();
+
+    expect(result.database.details.stateHistory).toMatchObject({
+      age: expect.any(Number),
+      timestamp: expect.any(Date),
+      details: {
+        system: {
+          version: 'PostgreSQL 15.6',
+          timestamp: expect.any(String),
+          uptime: expect.any(String),
+        },
+        connections: {
+          active: 5,
+          max: 100,
+          utilizationPercent: 5,
+        },
+        performance: {
+          cacheHitRatio: '96%',
+          deadlocks: 0,
+          slowQueries: 0,
+        },
+        databaseSize: '1 GB',
+        top10Tables: [{ table_stats: [] }],
+      },
+    });
   });
 });

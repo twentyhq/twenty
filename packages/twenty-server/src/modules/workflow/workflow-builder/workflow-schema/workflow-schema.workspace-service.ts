@@ -9,8 +9,10 @@ import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
+import { FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import {
   WorkflowAction,
   WorkflowActionType,
@@ -76,6 +78,10 @@ export class WorkflowSchemaWorkspaceService {
           objectType: step.settings.input.objectName,
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
+        });
+      case WorkflowActionType.FORM:
+        return this.computeFormActionOutputSchema({
+          formMetadata: step.settings.input,
         });
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
       default:
@@ -173,5 +179,13 @@ export class WorkflowSchemaWorkspaceService {
 
   private computeSendEmailActionOutputSchema(): OutputSchema {
     return { success: { isLeaf: true, type: 'boolean', value: true } };
+  }
+
+  private computeFormActionOutputSchema({
+    formMetadata,
+  }: {
+    formMetadata: FormFieldMetadata[];
+  }): OutputSchema {
+    return generateFakeFormResponse(formMetadata);
   }
 }

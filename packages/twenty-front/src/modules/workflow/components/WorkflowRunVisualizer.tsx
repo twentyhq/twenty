@@ -1,5 +1,5 @@
-import { WorkflowRunVisualizerContent } from '@/workflow/components/WorkflowRunVisualizerContent';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
+import { WorkflowRunDiagramCanvas } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvas';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 
@@ -19,7 +19,7 @@ export const WorkflowRunVisualizer = ({
 
   return (
     <StyledSourceCodeContainer>
-      <WorkflowRunVisualizerContent workflowRun={workflowRun} />
+      <WorkflowRunDiagramCanvas workflowRunStatus={workflowRun.status} />
     </StyledSourceCodeContainer>
   );
 };

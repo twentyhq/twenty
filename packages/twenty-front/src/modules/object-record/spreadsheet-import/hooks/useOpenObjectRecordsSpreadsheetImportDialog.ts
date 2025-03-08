@@ -27,7 +27,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
 
   const { buildAvailableFieldsForImport } = useBuildAvailableFieldsForImport();
 
-  const openObjectRecordsSpreasheetImportDialog = (
+  const openObjectRecordsSpreadsheetImportDialog = (
     options?: Omit<
       SpreadsheetImportDialogOptions<any>,
       'fields' | 'isOpen' | 'onClose'
@@ -78,6 +78,6 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   };
 
   return {
-    openObjectRecordsSpreasheetImportDialog,
+    openObjectRecordsSpreadsheetImportDialog,
   };
 };

@@ -6,7 +6,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { getSearchRecordsQueryResponseField } from '@/object-record/utils/getSearchRecordsQueryResponseField';
-import { isObjectMetadataItemSearchable } from '@/object-record/utils/isObjectMetadataItemSearchable';
 import { capitalize } from 'twenty-shared';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
@@ -55,8 +54,8 @@ export const useGenerateCombinedSearchRecordsQuery = ({
   );
 
   const filteredQueryKeyWithObjectMetadataItemArray =
-    queryKeyWithObjectMetadataItemArray.filter(({ objectMetadataItem }) =>
-      isObjectMetadataItemSearchable(objectMetadataItem),
+    queryKeyWithObjectMetadataItemArray.filter(
+      ({ objectMetadataItem }) => objectMetadataItem.isSearchable,
     );
 
   return gql`

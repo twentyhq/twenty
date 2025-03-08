@@ -9,15 +9,14 @@ import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { getPeopleMock } from '~/testing/mock-data/people';
 
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
 
 const companiesMock = getCompaniesMock();
-
-const peopleMock = getPeopleMock();
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
@@ -33,21 +32,25 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
   component: RecordDetailRelationSection,
   decorators: [
     (Story) => (
-      <FieldContext.Provider
-        value={{
-          recordId: companiesMock[0].id,
-          isLabelIdentifier: false,
-          fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-            field: mockedCompanyObjectMetadataItem.fields.find(
-              ({ name }) => name === 'people',
-            )!,
-            objectMetadataItem: mockedCompanyObjectMetadataItem,
-          }),
-          hotkeyScope: 'hotkey-scope',
-        }}
+      <ContextStoreComponentInstanceContext.Provider
+        value={{ instanceId: 'mock-instance-id' }}
       >
-        <Story />
-      </FieldContext.Provider>
+        <FieldContext.Provider
+          value={{
+            recordId: companiesMock[0].id,
+            isLabelIdentifier: false,
+            fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
+              field: mockedCompanyObjectMetadataItem.fields.find(
+                ({ name }) => name === 'people',
+              )!,
+              objectMetadataItem: mockedCompanyObjectMetadataItem,
+            }),
+            hotkeyScope: 'hotkey-scope',
+          }}
+        >
+          <Story />
+        </FieldContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
     ),
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
@@ -72,9 +75,9 @@ export const WithRecords: Story = {
     records: [
       {
         ...companiesMock[0],
-        people: peopleMock,
+        people: allMockPersonRecords,
       },
-      ...peopleMock,
+      ...allMockPersonRecords,
     ],
   },
 };

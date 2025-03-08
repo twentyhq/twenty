@@ -82,9 +82,7 @@ export const Empty: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const buttons = await canvas.findAllByRole('button', {
-      name: 'Open Dropdown',
-    });
+    const buttons = await canvas.findAllByRole('button');
     userEvent.click(buttons[0]);
 
     await waitFor(async () => {
@@ -225,16 +223,16 @@ export const WithHeaders: Story = {
         <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
         <DropdownMenuItemsContainer hasMaxHeight>
           <>
-            {optionsMock.slice(0, 3).map(({ name }) => (
-              <MenuItem text={name} />
+            {optionsMock.slice(0, 3).map((item) => (
+              <MenuItem key={item.id} text={item.name} />
             ))}
           </>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <StyledDropdownMenuSubheader>Subheader 2</StyledDropdownMenuSubheader>
         <DropdownMenuItemsContainer>
-          {optionsMock.slice(3).map(({ name }) => (
-            <MenuItem text={name} />
+          {optionsMock.slice(3).map((item) => (
+            <MenuItem key={item.id} text={item.name} />
           ))}
         </DropdownMenuItemsContainer>
       </>
@@ -282,7 +280,7 @@ export const WithInput: Story = {
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {optionsMock.map(({ name }) => (
-            <MenuItem text={name} />
+            <MenuItem key={name} text={name} />
           ))}
         </DropdownMenuItemsContainer>
       </>

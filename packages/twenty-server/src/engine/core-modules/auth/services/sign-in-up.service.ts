@@ -31,7 +31,6 @@ import {
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -273,12 +272,7 @@ export class SignInUpService {
       await this.activateOnboardingForUser(user, params.workspace);
     }
 
-    const isPermissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      params.workspace.id,
-    );
-
-    if (isPermissionsEnabled && params.workspace.defaultRoleId) {
+    if (params.workspace.defaultRoleId) {
       await this.userRoleService.assignRoleToUserWorkspace({
         workspaceId: params.workspace.id,
         userWorkspaceId: userWorkspace.id,
