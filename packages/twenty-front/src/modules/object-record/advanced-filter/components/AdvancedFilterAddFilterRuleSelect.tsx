@@ -9,7 +9,6 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { isDefined } from 'twenty-shared';
 import { IconLibraryPlus, IconPlus, LightButton, MenuItem } from 'twenty-ui';
@@ -144,7 +143,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
           )}
         </DropdownMenuItemsContainer>
       }
-      dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
+      dropdownHotkeyScope={{ scope: dropdownId }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
     />

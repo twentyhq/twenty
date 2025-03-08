@@ -134,7 +134,9 @@ export const AdvancedFilterButton = () => {
     }
 
     closeObjectFilterDropdown();
-    openAdvancedFilterDropdown();
+    openAdvancedFilterDropdown({
+      scope: ADVANCED_FILTER_DROPDOWN_ID,
+    });
   };
 
   return (
