@@ -5,7 +5,7 @@ import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { useCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecordsQueryVariables';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import { MultiObjectRecordQueryResult } from '@/object-record/multiple-objects/types/MultiObjectRecordQueryResult';
+import { CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 
 export const useCombinedFindManyRecords = ({
   operationSignatures,
@@ -22,7 +22,7 @@ export const useCombinedFindManyRecords = ({
     operationSignatures,
   });
 
-  const { data, loading } = useQuery<MultiObjectRecordQueryResult>(
+  const { data, loading } = useQuery<CombinedFindManyRecordsQueryResult>(
     findManyQuery ?? EMPTY_QUERY,
     {
       skip,

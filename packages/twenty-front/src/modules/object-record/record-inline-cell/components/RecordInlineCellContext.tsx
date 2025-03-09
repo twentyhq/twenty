@@ -1,4 +1,3 @@
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { createContext, ReactElement, useContext } from 'react';
 import { IconComponent } from 'twenty-ui';
 
@@ -12,7 +11,7 @@ export type RecordInlineCellContextProps = {
   editModeContent?: ReactElement;
   editModeContentOnly?: boolean;
   displayModeContent?: ReactElement;
-  customEditHotkeyScope?: HotkeyScope;
+  customEditHotkeyScope?: string;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
   loading?: boolean;

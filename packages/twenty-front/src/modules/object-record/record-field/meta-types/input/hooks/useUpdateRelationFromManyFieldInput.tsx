@@ -4,16 +4,12 @@ import { useRecoilCallback } from 'recoil';
 import { useAttachRelatedRecordFromRecord } from '@/object-record/hooks/useAttachRelatedRecordFromRecord';
 import { useDetachRelatedRecordFromRecord } from '@/object-record/hooks/useDetachRelatedRecordFromRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const useUpdateRelationFromManyFieldInput = ({
-  scopeId,
-}: {
-  scopeId: string;
-}) => {
+export const useUpdateRelationFromManyFieldInput = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(
@@ -41,49 +37,21 @@ export const useUpdateRelationFromManyFieldInput = ({
     });
 
   const updateRelation = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async (objectRecordId: string) => {
-        const previouslyCheckedRecordsIds = snapshot
-          .getLoadable(
-            objectRecordMultiSelectCheckedRecordsIdsComponentState({
-              scopeId,
-            }),
-          )
-          .getValue();
-
-        const isNewlySelected =
-          !previouslyCheckedRecordsIds.includes(objectRecordId);
-        if (isNewlySelected) {
-          set(
-            objectRecordMultiSelectCheckedRecordsIdsComponentState({
-              scopeId,
-            }),
-            (prev) => [...prev, objectRecordId],
-          );
-        } else {
-          set(
-            objectRecordMultiSelectCheckedRecordsIdsComponentState({
-              scopeId,
-            }),
-            (prev) => prev.filter((id) => id !== objectRecordId),
-          );
-        }
-
-        if (isNewlySelected) {
-          await updateOneRecordAndAttachRelations({
-            recordId,
-            relatedRecordId: objectRecordId,
-          });
-        } else {
-          await updateOneRecordAndDetachRelations({
-            recordId,
-            relatedRecordId: objectRecordId,
-          });
-        }
-      },
+    () => async (morphItem: RecordPickerPickableMorphItem) => {
+      if (morphItem.isSelected) {
+        await updateOneRecordAndAttachRelations({
+          recordId,
+          relatedRecordId: morphItem.recordId,
+        });
+      } else {
+        await updateOneRecordAndDetachRelations({
+          recordId,
+          relatedRecordId: morphItem.recordId,
+        });
+      }
+    },
     [
       recordId,
-      scopeId,
       updateOneRecordAndAttachRelations,
       updateOneRecordAndDetachRelations,
     ],
