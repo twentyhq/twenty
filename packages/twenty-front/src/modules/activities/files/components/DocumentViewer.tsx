@@ -105,7 +105,7 @@ export const DocumentViewer = ({
           },
         ]}
         pluginRenderers={DocViewerRenderers}
-        style={{ height: '100%' }}
+        style={{ height: '100%', color: 'black' }}
         config={{
           header: {
             disableHeader: true,
