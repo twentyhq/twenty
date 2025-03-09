@@ -2,7 +2,7 @@ import {
   SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { EachTestingContext } from '~/types/EachTestingContext';
+import { EachTestingContext } from 'packages/twenty-shared/dist';
 
 describe('settingsDataModelObjectAboutFormSchema', () => {
   const validInput: SettingsDataModelObjectAboutFormValues = {
