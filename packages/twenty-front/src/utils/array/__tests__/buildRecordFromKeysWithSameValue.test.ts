@@ -1,4 +1,4 @@
-import { EachTestingContext } from '~/types/EachTestingContext';
+import { EachTestingContext } from 'twenty-shared';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 type BuildRecordFromKeysWithSameValueTestContext = EachTestingContext<{
