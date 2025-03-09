@@ -9,18 +9,7 @@ export const DOCS_INDEX = {
       { fileName: 'cloud-providers' },
       { fileName: 'troubleshooting' },
     ],
-  },
-  Extending: {
-    'Rest APIs': [
-      { fileName: 'rest-apis' },
-      { fileName: 'core-api-rest' },
-      { fileName: 'metadata-api-rest' },
-    ],
-    'GraphQL APIs': [
-      { fileName: 'graphql-apis' },
-      { fileName: 'core-api-graphql' },
-      { fileName: 'metadata-api-graphql' },
-    ],
+    'API and Webhooks': [{ fileName: 'api' }, { fileName: 'webhooks' }],
   },
   Contributing: {
     'Bugs and Requests': [{ fileName: 'bug-and-requests' }],
