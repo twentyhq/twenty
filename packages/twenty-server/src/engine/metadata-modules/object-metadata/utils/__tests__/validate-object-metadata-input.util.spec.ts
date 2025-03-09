@@ -2,15 +2,6 @@ import { EachTestingContext } from 'twenty-shared';
 
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { validateObjectMetadataInputNamesOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
-const getObjectInput = (
-  overrides?: Partial<UpdateObjectPayload>,
-): UpdateObjectPayload => ({
-  labelPlural: 'Cars',
-  labelSingular: 'Car',
-  nameSingular: 'car',
-  namePlural: 'cars',
-  ...overrides,
-});
 
 type ValidateObjectNameTestingContext = EachTestingContext<
   Partial<UpdateObjectPayload>
