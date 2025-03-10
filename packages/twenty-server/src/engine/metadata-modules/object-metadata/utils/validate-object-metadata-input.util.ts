@@ -10,7 +10,7 @@ import {
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-max-char-length.constants';
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import {
-  beneathDatabaseIdentifierMininumLength,
+  beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
@@ -149,7 +149,7 @@ const validateStringIsNotTooLongOrThrow = (name: string) => {
 };
 
 const validateStringIsNotTooShortOrThrow = (name: string) => {
-  if (beneathDatabaseIdentifierMininumLength(name)) {
+  if (beneathDatabaseIdentifierMinimumLength(name)) {
     throw new ObjectMetadataException(
       `Input is too short: ${name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,

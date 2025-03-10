@@ -5,5 +5,5 @@ export const exceedsDatabaseIdentifierMaximumLength = (string: string) => {
   return string.length > IDENTIFIER_MAX_CHAR_LENGTH;
 };
 
-export const beneathDatabaseIdentifierMininumLength = (string: string) =>
+export const beneathDatabaseIdentifierMinimumLength = (string: string) =>
   string.length < IDENTIFIER_MIN_CHAR_LENGTH;
