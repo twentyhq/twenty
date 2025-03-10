@@ -11,6 +11,8 @@ import { IconDecimal, IconEye, IconNumber9, IconPercentage } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 import { t } from '@lingui/core/macro';
 
+import { SETTINGS_DATA_MODEL_FIELD_NUMBER_FORM_SELECT_OPTIONS } from '../constants/SettingsDataModelFieldNumberFormSelectOptions';
+
 export const settingsDataModelFieldNumberFormSchema = z.object({
   settings: numberFieldDefaultValueSchema,
 });
@@ -61,18 +63,7 @@ export const SettingsDataModelFieldNumberForm = ({
                 onChange={(value) => onChange({ type: value, decimals: count })}
                 disabled={disabled}
                 needIconCheck={false}
-                options={[
-                  {
-                    Icon: IconNumber9,
-                    label: t`Number`,
-                    value: 'number',
-                  },
-                  {
-                    Icon: IconPercentage,
-                    label: t`Percentage`,
-                    value: 'percentage',
-                  },
-                ]}
+                options={SETTINGS_DATA_MODEL_FIELD_NUMBER_FORM_SELECT_OPTIONS}
               />
             </SettingsOptionCardContentSelect>
             <Separator />

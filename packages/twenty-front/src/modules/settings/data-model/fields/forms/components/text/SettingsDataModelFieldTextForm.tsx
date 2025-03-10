@@ -7,6 +7,8 @@ import { IconTextWrap } from 'twenty-ui';
 import { z } from 'zod';
 import { t } from '@lingui/core/macro';
 
+import { SETTINGS_DATA_MODEL_FIELD_TEXT_FORM_SELECT_OPTIONS } from '../constants/SettingsDataModelFieldTextFormSelectOptions';
+
 type SettingsDataModelFieldTextFormProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
@@ -54,28 +56,7 @@ export const SettingsDataModelFieldTextForm = ({
                 value={displayedMaxRows}
                 onChange={(value) => onChange({ displayedMaxRows: value })}
                 disabled={disabled}
-                options={[
-                  {
-                    label: t`Deactivated`,
-                    value: 0,
-                  },
-                  {
-                    label: t`First 2 lines`,
-                    value: 2,
-                  },
-                  {
-                    label: t`First 5 lines`,
-                    value: 5,
-                  },
-                  {
-                    label: t`First 10 lines`,
-                    value: 10,
-                  },
-                  {
-                    label: t`All lines`,
-                    value: 99,
-                  },
-                ]}
+                options={SETTINGS_DATA_MODEL_FIELD_TEXT_FORM_SELECT_OPTIONS}
                 selectSizeVariant="small"
               />
             </SettingsOptionCardContentSelect>
