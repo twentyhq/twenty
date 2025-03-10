@@ -2,6 +2,7 @@ import { EachTestingContext } from 'twenty-shared';
 
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import { NameIsReservedKeywordException } from 'src/engine/metadata-modules/utils/exceptions/name-is-reserved-keyword.exception';
+import { NameIsNotInCamelCase } from 'src/engine/metadata-modules/utils/exceptions/name-not-camel-case.exception';
 import { NameTooLongException } from 'src/engine/metadata-modules/utils/exceptions/name-too-long.exception';
 import { NameTooShortException } from 'src/engine/metadata-modules/utils/exceptions/name-too-short.exception';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
@@ -19,10 +20,17 @@ const validateMetadataNameTestCases: ValidateMetadataNameTestContext[] = [
     },
   },
   {
+    title: 'throw error when string is not in camel case',
+    context: {
+      input: 'TestName',
+      expectedError: NameIsNotInCamelCase,
+    },
+  },
+  {
     title: 'throws error when string has spaces',
     context: {
       input: 'name with spaces',
-      expectedError: InvalidStringException,
+      expectedError: NameIsNotInCamelCase,
     },
   },
   {
@@ -36,7 +44,7 @@ const validateMetadataNameTestCases: ValidateMetadataNameTestContext[] = [
     title: 'throws error when string starts with capital letter',
     context: {
       input: 'StringStartingWithCapitalLetter',
-      expectedError: InvalidStringException,
+      expectedError: NameIsNotInCamelCase,
     },
   },
   {
@@ -50,7 +58,7 @@ const validateMetadataNameTestCases: ValidateMetadataNameTestContext[] = [
     title: 'throws error when starts with digits',
     context: {
       input: '123string',
-      expectedError: InvalidStringException,
+      expectedError: NameIsNotInCamelCase,
     },
   },
   {

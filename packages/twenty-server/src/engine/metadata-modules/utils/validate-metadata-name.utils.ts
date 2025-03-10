@@ -8,8 +8,8 @@ export const validateMetadataNameOrThrow = (name: string): void => {
   const validators = [
     validateMetadataNameIsNotTooLongOrThrow,
     validateMetadataNameIsNotTooShortOrThrow,
-    validateMetadataNameOnlyContainsWhitelistedCharactersOrThrow,
     validateMetadataNameIsCamelCaseOrThrow,
+    validateMetadataNameOnlyContainsWhitelistedCharactersOrThrow,
     validateMetadataNameIsNotReservedKeywordOrThrow,
   ];
 
