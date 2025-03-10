@@ -152,7 +152,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
             const currentUrl = window.location.href;
             navigator.clipboard.writeText(currentUrl);
             enqueueSnackBar('Link copied to clipboard', {
-              variant: SnackBarVariant.Error,
+              variant: SnackBarVariant.Success,
               icon: <IconCopy size={theme.icon.size.md} />,
               duration: 2000,
             });
