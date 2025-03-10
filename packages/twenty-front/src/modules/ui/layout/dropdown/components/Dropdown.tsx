@@ -28,7 +28,7 @@ const StyledDropdownFallbackAnchor = styled.div`
   top: 0;
 `;
 
-type DropdownProps = {
+export type DropdownProps = {
   className?: string;
   clickableComponent?: ReactNode;
   dropdownComponents: ReactNode;

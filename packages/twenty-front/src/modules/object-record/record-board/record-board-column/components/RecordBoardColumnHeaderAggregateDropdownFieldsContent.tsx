@@ -4,7 +4,7 @@ import { aggregateOperationComponentState } from '@/object-record/record-board/r
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
@@ -50,7 +50,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
     <>
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
-        onClick={() =>
+        onStartIconClick={() =>
           previousContentId
             ? onContentChange(previousContentId)
             : resetContent()
