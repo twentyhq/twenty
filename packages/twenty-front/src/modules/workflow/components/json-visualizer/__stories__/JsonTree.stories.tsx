@@ -6,7 +6,6 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
-import { ComponentDecorator, THEME_COMMON } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof JsonTree> = {
@@ -14,10 +13,7 @@ const meta: Meta<typeof JsonTree> = {
   component: JsonTree,
   args: {},
   argTypes: {},
-  parameters: {
-    container: { width: parseInt(THEME_COMMON.rightDrawerWidth) },
-  },
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;
@@ -274,128 +270,122 @@ export const ExpandingElementExpandsAllItsDescendants: Story = {
   },
 };
 
-export const OverflowingText: Story = {
+export const ReallyDeepNestedObject: Story = {
   args: {
-    value: [
-      [
-        [
-          [
-            [
-              [
-                [
-                  [
-                    [
-                      [
-                        [
-                          [
-                            [
-                              [
-                                [
-                                  [
-                                    [
-                                      [
-                                        [
-                                          [
-                                            [
-                                              [
-                                                [
-                                                  [
-                                                    [
-                                                      [
-                                                        [
-                                                          [
-                                                            [
-                                                              [
-                                                                [
-                                                                  [
-                                                                    [
-                                                                      [
-                                                                        [
-                                                                          [
-                                                                            [
-                                                                              [
-                                                                                [
-                                                                                  [
-                                                                                    [
-                                                                                      [
-                                                                                        [
-                                                                                          [
-                                                                                            [
-                                                                                              [
-                                                                                                [
-                                                                                                  [
-                                                                                                    [
-                                                                                                      [
-                                                                                                        [
-                                                                                                          [
-                                                                                                            [
-                                                                                                              [
-                                                                                                                [
-                                                                                                                  [
-                                                                                                                    [
-                                                                                                                      [
-                                                                                                                        [
-                                                                                                                          [
-                                                                                                                            'too long',
-                                                                                                                          ],
-                                                                                                                        ],
-                                                                                                                      ],
-                                                                                                                    ],
-                                                                                                                  ],
-                                                                                                                ],
-                                                                                                              ],
-                                                                                                            ],
-                                                                                                          ],
-                                                                                                        ],
-                                                                                                      ],
-                                                                                                    ],
-                                                                                                  ],
-                                                                                                ],
-                                                                                              ],
-                                                                                            ],
-                                                                                          ],
-                                                                                        ],
-                                                                                      ],
-                                                                                    ],
-                                                                                  ],
-                                                                                ],
-                                                                              ],
-                                                                            ],
-                                                                          ],
-                                                                        ],
-                                                                      ],
-                                                                    ],
-                                                                  ],
-                                                                ],
-                                                              ],
-                                                            ],
-                                                          ],
-                                                        ],
-                                                      ],
-                                                    ],
-                                                  ],
-                                                ],
-                                              ],
-                                            ],
-                                          ],
-                                        ],
-                                      ],
-                                    ],
-                                  ],
-                                ],
-                              ],
-                            ],
-                          ],
-                        ],
-                      ],
-                    ],
-                  ],
-                ],
-              ],
-            ],
-          ],
-        ],
-      ],
-    ],
+    value: {
+      a: {
+        b: {
+          c: {
+            d: {
+              e: {
+                f: {
+                  g: {
+                    h: {
+                      i: {
+                        j: {
+                          k: {
+                            l: {
+                              m: {
+                                n: {
+                                  o: {
+                                    p: {
+                                      q: {
+                                        r: {
+                                          s: {
+                                            t: {
+                                              u: {
+                                                v: {
+                                                  w: {
+                                                    x: {
+                                                      y: {
+                                                        z: {
+                                                          end: true,
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        bis: {
+          c: {
+            d: {
+              e: {
+                f: {
+                  g: {
+                    h: {
+                      i: {
+                        j: {
+                          k: {
+                            l: {
+                              m: {
+                                n: {
+                                  o: {
+                                    p: {
+                                      q: {
+                                        r: {
+                                          s: {
+                                            t: {
+                                              u: {
+                                                v: {
+                                                  w: {
+                                                    x: {
+                                                      y: {
+                                                        z: {
+                                                          end: true,
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const LongText: Story = {
+  args: {
+    value: {
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum iaculis est tincidunt, sagittis neque vitae, sodales purus.':
+        'Ut lobortis ultricies purus, sit amet porta eros. Suspendisse efficitur quam vitae diam imperdiet feugiat. Etiam vel bibendum elit.',
+    },
   },
 };
