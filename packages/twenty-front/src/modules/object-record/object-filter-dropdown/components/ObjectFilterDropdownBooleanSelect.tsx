@@ -24,7 +24,7 @@ const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
   padding: ${({ theme }) =>
     `${theme.spacing(2)} ${theme.spacing(2)} ${theme.spacing(2)} ${theme.spacing(1)}`};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-
+  color: ${({ theme }) => theme.font.color.primary};
   &:hover {
     background: ${({ theme }) => theme.background.transparent.light};
   }
