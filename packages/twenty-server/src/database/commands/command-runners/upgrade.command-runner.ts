@@ -11,7 +11,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { isOneMinorVersionHigher } from 'src/utils/version/versionUtils';
+import { isOneMinorVersionHigher } from 'src/utils/version/is-one-minor-version-higher';
 import { isDefined } from 'twenty-shared';
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
