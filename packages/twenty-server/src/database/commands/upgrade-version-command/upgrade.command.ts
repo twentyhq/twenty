@@ -75,7 +75,7 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
     const currentWorkspaceVersion = workspace.version;
 
     if (!isDefined(currentWorkspaceVersion)) {
-      throw new Error('VERSION NOT DEFINED');
+      throw new Error(`VERSION_NOT_DEFINED to=${appVersion}`);
     }
 
     const isValid = isOneMinorVersionHigher({
@@ -84,7 +84,9 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
     });
 
     if (!isValid) {
-      throw new Error('VERSION MISSMATCH');
+      throw new Error(
+        `WORKSPACE_VERSION_MISSMATCH from=${currentWorkspaceVersion} to=${appVersion}`,
+      );
     }
   }
 
