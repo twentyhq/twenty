@@ -6,7 +6,7 @@ import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previo
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 
-const CLICK_OUTSIDE_DEBUG_MODE = true;
+const CLICK_OUTSIDE_DEBUG_MODE = false;
 
 export enum ClickOutsideMode {
   comparePixels = 'comparePixels',
