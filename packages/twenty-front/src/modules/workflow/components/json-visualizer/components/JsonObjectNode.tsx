@@ -7,10 +7,14 @@ export const JsonObjectNode = ({
   label,
   value,
   depth,
+  keyPath,
+  getNodeHighlighting,
 }: {
   label?: string;
   value: JsonObject;
   depth: number;
+  keyPath: string;
+  getNodeHighlighting?: (keyPath: string) => boolean;
 }) => {
   const { t } = useLingui();
 
@@ -26,6 +30,8 @@ export const JsonObjectNode = ({
       Icon={IconCube}
       depth={depth}
       emptyElementsText={t`Empty Object`}
+      keyPath={keyPath}
+      getNodeHighlighting={getNodeHighlighting}
     />
   );
 };

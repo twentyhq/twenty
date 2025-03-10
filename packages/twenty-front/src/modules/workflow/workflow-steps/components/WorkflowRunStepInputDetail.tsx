@@ -48,6 +48,8 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
         Icon={IconBrackets}
         emptyElementsText=""
         depth={0}
+        keyPath=""
+        getNodeHighlighting={() => true}
       />
     </StyledContainer>
   );

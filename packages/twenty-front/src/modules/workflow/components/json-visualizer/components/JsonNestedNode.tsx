@@ -35,6 +35,8 @@ export const JsonNestedNode = ({
   renderElementsCount,
   emptyElementsText,
   depth,
+  keyPath,
+  getNodeHighlighting,
 }: {
   label?: string;
   Icon: IconComponent;
@@ -42,6 +44,8 @@ export const JsonNestedNode = ({
   renderElementsCount?: (count: number) => string;
   emptyElementsText: string;
   depth: number;
+  keyPath: string;
+  getNodeHighlighting?: (keyPath: string) => boolean;
 }) => {
   const hideRoot = !isDefined(label);
 
@@ -53,7 +57,14 @@ export const JsonNestedNode = ({
         <StyledEmptyState>{emptyElementsText}</StyledEmptyState>
       ) : (
         elements.map(({ id, label, value }) => (
-          <JsonNode key={id} label={label} value={value} depth={depth + 1} />
+          <JsonNode
+            key={id}
+            label={label}
+            value={value}
+            depth={depth + 1}
+            keyPath={keyPath + '.' + id}
+            getNodeHighlighting={getNodeHighlighting}
+          />
         ))
       )}
     </JsonList>
