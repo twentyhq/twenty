@@ -17,6 +17,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
+import { isOneMinorVersionHigher } from 'src/utils/version/versionUtils';
 import { isDefined } from 'twenty-shared';
 
 @Command({
@@ -68,15 +69,23 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
     workspaceId: string;
     appVersion: string;
   }) {
-    const currentWorkspaceVersion = await this.workspaceRepository.findOneBy({
+    const workspace = await this.workspaceRepository.findOneByOrFail({
       id: workspaceId,
     });
+    const currentWorkspaceVersion = workspace.version;
 
     if (!isDefined(currentWorkspaceVersion)) {
-      throw new Error('TODO implem aggreg => VERSION NOT DEFINED');
+      throw new Error('VERSION NOT DEFINED');
     }
 
-    const result = 
+    const isValid = isOneMinorVersionHigher({
+      from: currentWorkspaceVersion,
+      to: appVersion,
+    });
+
+    if (!isValid) {
+      throw new Error('VERSION MISSMATCH');
+    }
   }
 
   // EDIT ONLY ZONE
@@ -95,9 +104,10 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
       args,
     );
 
-    // NOTE SAFE sync metadata
+    // NOTE SAFE sync metadata TODO refactor
     await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
     ///
+
     await this.updateDefaultViewRecordOpeningOnWorkflowObjectsCommand.runOnWorkspace(
       args,
     );
