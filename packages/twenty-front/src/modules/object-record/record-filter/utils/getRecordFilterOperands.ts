@@ -81,7 +81,6 @@ export const getRecordFilterOperands = ({
         return [
           RecordFilterOperand.Is,
           RecordFilterOperand.IsNot,
-          ...emptyOperands,
         ];
       }
 

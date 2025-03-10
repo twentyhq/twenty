@@ -1,3 +1,4 @@
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -23,6 +24,8 @@ export const RecordTableColumnHeadWithDropdown = ({
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
     useToggleScrollWrapper();
 
+    const filterDropdownId = 'view-filter';
+
   const handleDropdownOpen = useCallback(() => {
     toggleScrollXWrapper(false);
     toggleScrollYWrapper(false);
@@ -34,6 +37,9 @@ export const RecordTableColumnHeadWithDropdown = ({
   }, [toggleScrollXWrapper, toggleScrollYWrapper]);
 
   return (
+      <ObjectFilterDropdownComponentInstanceContext.Provider
+          value={{ instanceId: filterDropdownId }}
+        >
     <StyledDropdown
       onOpen={handleDropdownOpen}
       onClose={handleDropdownClose}
@@ -43,6 +49,7 @@ export const RecordTableColumnHeadWithDropdown = ({
       dropdownOffset={{ x: -1 }}
       dropdownPlacement="bottom-start"
       dropdownHotkeyScope={{ scope: column.fieldMetadataId + '-header' }}
-    />
+      />
+      </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };
