@@ -20,7 +20,7 @@ export type ActiveOrSuspendedWorkspacesMigrationCommandOptions = {
 export type RunOnWorkspaceArgs = {
   options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
   workspaceId: string;
-  appVersion: string;
+  appVersion?: string;
   dataSource: WorkspaceDataSource;
   index: number;
   total: number;
@@ -38,7 +38,6 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   private workspaceIds: string[] = [];
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
-  public shouldUpdateWorkspaceVersion: boolean = false;
   private failingWorkspaces: FailingWorkspace[] = [];
 
   constructor(
@@ -155,12 +154,6 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
           total: activeWorkspaceIds.length,
           appVersion,
         });
-        if (this.shouldUpdateWorkspaceVersion) {
-          await this.workspaceRepository.update(
-            { id: workspaceId },
-            { version: appVersion },
-          );
-        }
       } catch (error) {
         this.failingWorkspaces.push({
           error,

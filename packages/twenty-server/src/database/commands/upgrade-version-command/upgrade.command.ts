@@ -25,8 +25,6 @@ import { isDefined } from 'twenty-shared';
   description: 'Upgrade workspaces to the latest version',
 })
 export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
-  override shouldUpdateWorkspaceVersion: boolean = true;
-
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -57,6 +55,10 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
 
     await this.runUpgradeVersionCommands(args);
 
+    await this.workspaceRepository.update(
+      { id: workspaceId },
+      { version: appVersion },
+    );
     this.logger.log(
       chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
     );
@@ -65,17 +67,18 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
   private async validateWorkspaceVersion({
     appVersion,
     workspaceId,
-  }: {
-    workspaceId: string;
-    appVersion: string;
-  }) {
+  }: Pick<RunOnWorkspaceArgs, 'appVersion' | 'workspaceId'>) {
+    if (!isDefined(appVersion)) {
+      throw new Error('Should never occur, APP_VERSION_NOT_DEFINED');
+    }
+
     const workspace = await this.workspaceRepository.findOneByOrFail({
       id: workspaceId,
     });
     const currentWorkspaceVersion = workspace.version;
 
     if (!isDefined(currentWorkspaceVersion)) {
-      throw new Error(`VERSION_NOT_DEFINED to=${appVersion}`);
+      throw new Error(`WORKSPACE_VERSION_NOT_DEFINED to=${appVersion}`);
     }
 
     const isValid = isOneMinorVersionHigher({
