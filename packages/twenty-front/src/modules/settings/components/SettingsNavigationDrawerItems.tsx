@@ -57,7 +57,9 @@ export const SettingsNavigationDrawerItems = () => {
                   getSelectedIndexForSubItems(subItems);
 
                 return (
-                  <NavigationDrawerItemGroup key={item.path}>
+                  <NavigationDrawerItemGroup
+                    key={item.path || `group-${index}`}
+                  >
                     <SettingsNavigationDrawerItem
                       item={item}
                       subItemState={
@@ -72,7 +74,7 @@ export const SettingsNavigationDrawerItems = () => {
                     />
                     {subItems.map((subItem, subIndex) => (
                       <SettingsNavigationDrawerItem
-                        key={subItem.path}
+                        key={subItem.path || `subitem-${subIndex}`}
                         item={subItem}
                         subItemState={
                           subItem.indentationLevel
@@ -90,7 +92,7 @@ export const SettingsNavigationDrawerItems = () => {
               }
               return (
                 <SettingsNavigationDrawerItem
-                  key={item.path}
+                  key={item.path || `item-${index}`}
                   item={item}
                   subItemState={
                     item.indentationLevel

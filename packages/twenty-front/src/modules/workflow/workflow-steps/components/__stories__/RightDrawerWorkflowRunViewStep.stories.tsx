@@ -117,7 +117,6 @@ export const InputTabNotExecutedStep: Story = {
       return <Story />;
     },
   ],
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -138,5 +137,52 @@ export const OutputTab: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('Create Record')).not.toBeInTheDocument();
     });
+
+    expect(await canvas.findByText('result')).toBeVisible();
+  },
+};
+
+export const OutputTabDisabledForTrigger: Story = {
+  decorators: [
+    (Story) => {
+      const setWorkflowSelectedNode = useSetRecoilState(
+        workflowSelectedNodeState,
+      );
+
+      setWorkflowSelectedNode(TRIGGER_STEP_ID);
+
+      return <Story />;
+    },
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const outputTab = await canvas.findByRole('button', { name: 'Output' });
+
+    expect(outputTab).toBeDisabled();
+  },
+};
+
+export const OutputTabNotExecutedStep: Story = {
+  decorators: [
+    (Story) => {
+      const setWorkflowSelectedNode = useSetRecoilState(
+        workflowSelectedNodeState,
+      );
+
+      setWorkflowSelectedNode(
+        oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps.at(-1)!
+          .id,
+      );
+
+      return <Story />;
+    },
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const outputTab = await canvas.findByRole('button', { name: 'Output' });
+
+    expect(outputTab).toBeDisabled();
   },
 };
