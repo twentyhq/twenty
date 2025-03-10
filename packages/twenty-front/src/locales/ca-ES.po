@@ -19,10 +19,12 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid " These are only the server values. Ensure your worker environment has the\n"
+msgid ""
+" These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr " Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les\n"
+msgstr ""
+" Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les\n"
 "        mateixes variables i valors, això és necessari per a tasques asincròniques com la\n"
 "        sincronització de correu electrònic."
 
