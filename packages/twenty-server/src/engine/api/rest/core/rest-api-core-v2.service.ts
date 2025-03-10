@@ -4,11 +4,21 @@ import { Request } from 'express';
 
 import { capitalize } from 'twenty-shared/utils';
 
+import { OrderByCondition } from 'typeorm';
+
+import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
+import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
-import { buildQueryWithFilters } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/filter-query-builder.utils';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
+import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
 import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
+import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
+import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
 
 interface FormatResultParams<T> {
   operation: 'delete' | 'create' | 'update' | 'findOne' | 'findMany';
@@ -23,6 +33,11 @@ export class RestApiCoreServiceV2 {
     private readonly coreQueryBuilderFactory: CoreQueryBuilderFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly limitInputFactory: LimitInputFactory,
+    private readonly filterInputFactory: FilterInputFactory,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly orderByInputFactory: OrderByInputFactory,
+    private readonly startingAfterInputFactory: StartingAfterInputFactory,
+    private readonly endingBeforeInputFactory: EndingBeforeInputFactory,
   ) {}
 
   async delete(request: Request) {
@@ -93,9 +108,10 @@ export class RestApiCoreServiceV2 {
     const { id: recordId } = parseCorePath(request);
     const {
       objectMetadataNameSingular,
-      objectMetadataNamePlural,
       repository,
-      // objectMetadata,
+      objectMetadata,
+      objectMetadataItemWithFieldsMaps,
+      featureFlagsMap,
     } = await this.getRepositoryAndMetadataOrFail(request);
 
     if (recordId) {
@@ -110,21 +126,39 @@ export class RestApiCoreServiceV2 {
       });
     } else {
       const limit = this.limitInputFactory.create(request);
-      const filter = request.query.filter as string;
+      const filter = this.filterInputFactory.create(request, objectMetadata);
+      const orderBy = this.orderByInputFactory.create(request, objectMetadata);
+      // const endingBefore = this.endingBeforeInputFactory.create(request);
+      // const startingAfter = this.startingAfterInputFactory.create(request);
+
+      const fieldMetadataMapByName =
+        objectMetadataItemWithFieldsMaps?.fieldsByName || {};
 
       const qb = repository.createQueryBuilder(objectMetadataNameSingular);
-      const finalQuery = buildQueryWithFilters(
-        qb,
-        objectMetadataNameSingular,
-        filter,
-      );
 
-      const records = await finalQuery.take(limit).getMany();
+      const finalQuery = new GraphqlQueryFilterConditionParser(
+        fieldMetadataMapByName,
+        featureFlagsMap,
+      ).parse(qb, objectMetadataNameSingular, filter);
+
+      const parsedOrderBy = new GraphqlQueryOrderFieldParser(
+        fieldMetadataMapByName,
+        featureFlagsMap,
+      ).parse(orderBy, objectMetadataNameSingular);
+
+      const records = await finalQuery
+        .orderBy(parsedOrderBy as OrderByCondition)
+        .take(limit)
+        .getMany();
 
       return this.formatResult({
-        objectNamePlural: objectMetadataNamePlural,
         operation: 'findMany',
-        data: records,
+        objectNamePlural: objectMetadataNameSingular,
+        data: formatGetManyData(
+          records,
+          objectMetadataItemWithFieldsMaps as any,
+          objectMetadata.objectMetadataMaps,
+        ),
       });
     }
   }
@@ -172,8 +206,16 @@ export class RestApiCoreServiceV2 {
 
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
-    const objectMetadataNamePlural =
-      objectMetadata.objectMetadataMapItem.namePlural;
+
+    const objectMetadataItemWithFieldsMaps =
+      getObjectMetadataMapItemByNameSingular(
+        objectMetadata.objectMetadataMaps,
+        objectMetadataNameSingular,
+      );
+
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
+
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspace.id,
@@ -182,9 +224,10 @@ export class RestApiCoreServiceV2 {
 
     return {
       objectMetadataNameSingular,
-      objectMetadataNamePlural,
       objectMetadata,
       repository,
+      objectMetadataItemWithFieldsMaps,
+      featureFlagsMap,
     };
   }
 }
