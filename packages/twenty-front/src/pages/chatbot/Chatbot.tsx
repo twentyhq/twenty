@@ -5,11 +5,13 @@ import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useRecoilValue } from 'recoil';
 import { IconRobot } from 'twenty-ui';
+import { REACT_APP_CHATBOT_BASE_URL } from '~/config';
 
 export const Chatbot = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const chatbotBaseUrl = process.env.REACT_APP_CHATBOT_BASE_URL;
+  if (!REACT_APP_CHATBOT_BASE_URL)
+    throw new Error('App is missing Chatbot environment configuration.');
 
   return (
     <ChatbotPageContainer>
@@ -19,7 +21,7 @@ export const Chatbot = () => {
           {currentWorkspace?.creatorEmail && (
             <iframe
               title="Chatbot-iframe"
-              src={`${chatbotBaseUrl}/signin?g=${currentWorkspace?.creatorEmail}`}
+              src={`${REACT_APP_CHATBOT_BASE_URL}/signin?g=${currentWorkspace?.creatorEmail}`}
               style={{
                 width: '100%',
                 height: '100%',
