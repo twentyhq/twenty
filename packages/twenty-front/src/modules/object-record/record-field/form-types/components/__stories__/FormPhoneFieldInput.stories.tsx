@@ -139,7 +139,7 @@ export const SelectingVariables: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect(`{{${MOCKED_STEP_ID}.phoneNumber}}`);
+            onVariableSelect(`{{${MOCKED_STEP_ID}.phone.number}}`);
           }}
         >
           Add variable
@@ -162,12 +162,12 @@ export const SelectingVariables: Story = {
 
     await userEvent.click(phoneNumberVariablePicker);
 
-    const phoneNumberVariable = await canvas.findByText('phoneNumber');
+    const phoneNumberVariable = await canvas.findByText('My Number');
     expect(phoneNumberVariable).toBeVisible();
 
     await waitFor(() => {
       expect(args.onPersist).toHaveBeenCalledWith({
-        primaryPhoneNumber: `{{${MOCKED_STEP_ID}.phoneNumber}}`,
+        primaryPhoneNumber: `{{${MOCKED_STEP_ID}.phone.number}}`,
         primaryPhoneCountryCode: '',
         primaryPhoneCallingCode: '',
       });

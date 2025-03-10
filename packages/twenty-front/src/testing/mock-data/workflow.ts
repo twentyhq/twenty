@@ -262,6 +262,22 @@ export const workflowQueryResult = {
                                 },
                               },
                             },
+                            phone: {
+                              isLeaf: false,
+                              label: 'Phone',
+                              value: {
+                                countryCode: {
+                                  isLeaf: true,
+                                  label: 'My Country Code',
+                                  value: '+1',
+                                },
+                                number: {
+                                  isLeaf: true,
+                                  label: 'My Number',
+                                  value: '1234567890',
+                                },
+                              },
+                            },
                           },
                           object: {
                             icon: 'IconTargetArrow',
