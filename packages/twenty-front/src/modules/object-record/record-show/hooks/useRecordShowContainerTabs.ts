@@ -38,7 +38,7 @@ export const useRecordShowContainerTabs = (
       tabs: {
         richText: {
           title: 'Note',
-          position: 0,
+          position: 101,
           Icon: IconNotes,
           cards: [{ type: CardType.RichTextCard }],
           hide: {
@@ -58,7 +58,7 @@ export const useRecordShowContainerTabs = (
       tabs: {
         richText: {
           title: 'Note',
-          position: 0,
+          position: 101,
           Icon: IconNotes,
           cards: [{ type: CardType.RichTextCard }],
           hide: {
