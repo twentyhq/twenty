@@ -8,6 +8,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -26,8 +27,9 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly environmentService: EnvironmentService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, environmentService);
   }
 
   override async runOnWorkspace({

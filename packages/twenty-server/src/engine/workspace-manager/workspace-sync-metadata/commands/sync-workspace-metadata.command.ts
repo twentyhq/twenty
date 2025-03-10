@@ -12,6 +12,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
 
 @Command({
@@ -26,8 +27,9 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly environmentService: EnvironmentService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, environmentService);
   }
 
   override async runOnWorkspace({

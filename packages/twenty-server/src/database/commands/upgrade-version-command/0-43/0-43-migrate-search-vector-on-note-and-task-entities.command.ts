@@ -7,6 +7,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -33,8 +34,9 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveOrSus
     private readonly searchService: SearchService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    protected readonly environmentService: EnvironmentService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, environmentService);
   }
 
   override async runOnWorkspace({
