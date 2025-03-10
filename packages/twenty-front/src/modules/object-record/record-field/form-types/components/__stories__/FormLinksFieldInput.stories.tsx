@@ -1,6 +1,7 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { FormLinksFieldInput } from '../FormLinksFieldInput';
 
@@ -9,7 +10,7 @@ const meta: Meta<typeof FormLinksFieldInput> = {
   component: FormLinksFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator],
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
