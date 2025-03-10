@@ -9,20 +9,19 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: 'upgrade:0-43:migrate-is-searchable-for-custom-object-metadata',
-  description: 'Set isSearchable true for custom object metadata',
+  name: 'upgrade:0-44-set-workspace-version-to-previous-release',
+  description: 'Migrate relations to field metadata',
 })
-export class MigrateIsSearchableForCustomObjectMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class MigrateRelationsToFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
-    protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     protected readonly environmentService: EnvironmentService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, environmentService);
@@ -32,22 +31,15 @@ export class MigrateIsSearchableForCustomObjectMetadataCommand extends ActiveOrS
     index,
     total,
     workspaceId,
-    options,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
       `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
     );
 
-    if (!options.dryRun) {
-      await this.objectMetadataRepository.update(
-        {
-          workspaceId,
-          isCustom: true,
-        },
-        {
-          isSearchable: true,
-        },
-      );
-    }
+    const currentAppVersion = this.environmentService.get('APP_VERSION');
+    await this.workspaceRepository.update(
+      { id: workspaceId },
+      { version: '0.43' },
+    );
   }
 }

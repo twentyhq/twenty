@@ -1,9 +1,10 @@
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -19,9 +20,15 @@ export type ActiveOrSuspendedWorkspacesMigrationCommandOptions = {
 export type RunOnWorkspaceArgs = {
   options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
   workspaceId: string;
+  appVersion?: string;
   dataSource: WorkspaceDataSource;
   index: number;
   total: number;
+};
+
+type FailingWorkspace = {
+  workspaceId: string;
+  error: any;
 };
 
 export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
@@ -31,10 +38,12 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   private workspaceIds: string[] = [];
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
+  private failingWorkspaces: FailingWorkspace[] = [];
 
   constructor(
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly environmentService: EnvironmentService,
   ) {
     super();
   }
@@ -117,39 +126,52 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
-    try {
-      for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
-        this.logger.log(
-          `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
-        );
+    const appVersion = this.environmentService.get('APP_VERSION');
+    // Handle gracefully ?
+    if (!isDefined(appVersion)) {
+      throw new Error(
+        'Cannot run upgrade command when APP_VERSION is not defined ',
+      );
+    }
 
-        try {
-          const dataSource =
-            await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-              workspaceId,
-              false,
-            );
+    for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
+      this.logger.log(
+        `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
+      );
 
-          await this.runOnWorkspace({
-            options,
+      try {
+        const dataSource =
+          await this.twentyORMGlobalManager.getDataSourceForWorkspace(
             workspaceId,
-            dataSource,
-            index: index,
-            total: activeWorkspaceIds.length,
-          });
-        } catch (error) {
-          this.logger.warn(
-            chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
+            false,
           );
-        }
 
-        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+        await this.runOnWorkspace({
+          options,
           workspaceId,
+          dataSource,
+          index: index,
+          total: activeWorkspaceIds.length,
+          appVersion,
+        });
+      } catch (error) {
+        this.failingWorkspaces.push({
+          error,
+          workspaceId,
+        });
+        this.logger.warn(
+          chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
         );
       }
-    } catch (error) {
-      this.logger.error(error);
+
+      await this.twentyORMGlobalManager
+        .destroyDataSourceForWorkspace(workspaceId)
+        .catch((error) => this.logger.error(error));
     }
+
+    this.failingWorkspaces.forEach(({ error, workspaceId }) =>
+      this.logger.error(`Error in workspace ${workspaceId}: ${error.message}`),
+    );
   }
 
   protected abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
