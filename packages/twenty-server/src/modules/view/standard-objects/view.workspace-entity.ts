@@ -284,6 +284,18 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
         position: 9,
         color: 'yellow',
       },
+      {
+        value: AGGREGATE_OPERATIONS.countTrue,
+        label: 'Count true',
+        position: 10,
+        color: 'red',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countFalse,
+        label: 'Count false',
+        position: 11,
+        color: 'purple',
+      },
     ],
     defaultValue: `'${AGGREGATE_OPERATIONS.count}'`,
   })
