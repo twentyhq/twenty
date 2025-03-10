@@ -18,6 +18,16 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid ""
+" These are only the server values. Ensure your worker environment has the\n"
+"        same variables and values, this is required for asynchronous tasks like\n"
+"        email sync."
+msgstr ""
+" Đây chỉ là các giá trị của máy chủ. Đảm bảo môi trường làm việc của bạn có\n"
+"        cùng các biến và giá trị này, đây là yêu cầu cho các tác vụ không đồng bộ như\n"
+"        đồng bộ hóa email."
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
 msgstr ": Trống"
@@ -149,7 +159,7 @@ msgstr "Kích hoạt Workflow"
 msgid "Active"
 msgstr "Kích hoạt"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "Các khóa API hoạt động đã được bạn hoặc đội ngũ của bạn tạo."
 
@@ -236,6 +246,14 @@ msgstr "Đã thêm vào danh sách chặn"
 msgid "Adjust the role-related settings"
 msgstr "Điều chỉnh các cài đặt liên quan đến vai trò"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Admin Panel"
+msgstr "Bảng Điều Khiển Admin"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Bộ lọc nâng cao"
@@ -296,6 +314,10 @@ msgstr "Đã xảy ra lỗi khi cập nhật mật khẩu"
 msgid "An optional description"
 msgstr "Mô tả không bắt buộc"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "An unexpected error occurred"
+msgstr "Đã xảy ra lỗi không mong muốn"
+
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
 msgstr "và"
@@ -304,13 +326,17 @@ msgstr "và"
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "Bất kỳ ai có địa chỉ email tại các miền này đều được phép đăng ký không gian làm việc này."
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "API"
+msgstr ""
+
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API Key"
 msgstr "Khóa API"
 
@@ -318,7 +344,7 @@ msgstr "Khóa API"
 msgid "API Key copied to clipboard"
 msgstr "Đã sao chép khóa API vào bảng tạm"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "API keys"
 msgstr "Khóa API"
 
@@ -337,6 +363,16 @@ msgstr "Tên API (Số ít)"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "API values"
 msgstr "Giá trị API"
+
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "APIs"
+msgstr "API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -481,6 +517,10 @@ msgstr "Lịch"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Calendar settings"
 msgstr "Cài đặt lịch"
+
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Calendar Sync Status"
+msgstr "Trạng thái đồng bộ Lịch"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -689,6 +729,10 @@ msgstr "Sao chép liên kết"
 msgid "Copy this key as it will not be visible again"
 msgstr "Sao chép khóa này vì bạn sẽ không thể xem lại lần nữa"
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Core"
+msgstr ""
+
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -719,7 +763,7 @@ msgstr "Tạo"
 msgid "Create a workflow and return here to view its versions"
 msgstr "Tạo một quy trình làm việc và quay lại đây để xem các phiên bản của nó"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
 msgstr "Tạo khóa API"
 
@@ -745,7 +789,7 @@ msgstr "Tạo trường chọn"
 msgid "Create view"
 msgstr "Tạo chế độ xem"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
 msgstr "Tạo Webhook"
 
@@ -756,6 +800,10 @@ msgstr "Tạo không gian làm việc của bạn"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Created"
 msgstr "Đã tạo"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Current version:"
+msgstr "Phiên bản hiện tại:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1001,11 +1049,6 @@ msgstr "Mô tả"
 msgid "Destroy"
 msgstr "Hủy bỏ"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
-#: src/pages/settings/developers/SettingsDevelopers.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
-#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Developers"
 msgstr "Nhà phát triển"
@@ -1246,7 +1289,7 @@ msgstr "Lỗi khi gửi lại lời mời"
 msgid "Error while switching subscription {to}."
 msgstr "Lỗi khi chuyển đổi đăng ký {to}."
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Thiết lập điểm cuối Webhooks để nhận thông báo về các sự kiện không đồng bộ."
 
@@ -1283,6 +1326,10 @@ msgstr "Loại trừ những người và miền sau từ đồng bộ email c�
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
 msgstr "\"Đối tượng hiện hữu\""
+
+#: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
+msgid "Exit Full Screen"
+msgstr "Thoát chế độ toàn màn hình"
 
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
@@ -1379,6 +1426,10 @@ msgstr "Xuất các quy trình công việc"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Failed to validate API key. Please check your API key and try again."
+msgstr "Không thể xác thực khóa API. Vui lòng kiểm tra khóa API của bạn và thử lại."
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "False"
@@ -1504,6 +1555,14 @@ msgstr "Đi tới cài đặt"
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Cấp quyền truy cập tạm thời cho bộ phận hỗ trợ Twenty vào không gian làm việc của bạn để chúng tôi có thể khắc phục sự cố hoặc khôi phục nội dung thay mặt bạn. Bạn có thể thu hồi quyền truy cập bất cứ lúc nào."
 
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "GraphQL"
+msgstr ""
+
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
+msgid "GraphQL API Playground"
+msgstr "Sân chơi GraphQL API"
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
 msgstr "Lớn hơn"
@@ -1518,6 +1577,7 @@ msgid "Group by"
 msgstr "Nhóm theo"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr "Tình trạng Sức khỏe"
@@ -1546,6 +1606,10 @@ msgstr "Ẩn nhóm trống"
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
 msgstr "Cách bạn sẽ được nhận diện trong ứng dụng."
+
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
+msgid "How your system is doing"
+msgstr "Tình trạng hệ thống của bạn"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
@@ -1763,6 +1827,38 @@ msgstr "Phòng thí nghiệm"
 msgid "Language"
 msgstr "Ngôn ngữ"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 1 hour"
+msgstr "1 giờ trước"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 1 Hour (oldest → newest)"
+msgstr "1 Giờ Cuối (cũ nhất → mới nhất)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 12 hours"
+msgstr "12 giờ trước"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 12 Hours (oldest → newest)"
+msgstr "12 Giờ Cuối (cũ nhất → mới nhất)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 24 Hours (oldest → newest)"
+msgstr "24 Giờ Cuối (cũ nhất → mới nhất)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 4 hours"
+msgstr "4 giờ trước"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 4 Hours (oldest → newest)"
+msgstr "4 Giờ Cuối (cũ nhất → mới nhất)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 7 Days (oldest → newest)"
+msgstr "7 Ngày Qua (cũ nhất → mới nhất)"
+
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
@@ -1775,6 +1871,14 @@ msgstr "Mới nhất"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Latest date"
 msgstr "Ngày mới nhất"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Latest version:"
+msgstr "Phiên bản mới nhất:"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Launch"
+msgstr "Khởi chạy"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -1792,6 +1896,10 @@ msgstr "Đã sao chép đường dẫn vào bảng tạm"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listings"
 msgstr "Danh sách"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Loading metrics data..."
+msgstr "Đang tải dữ liệu chỉ số..."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Log out"
@@ -1846,6 +1954,11 @@ msgstr "Tối đa"
 msgid "Members"
 msgstr "Thành viên"
 
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Message Sync Status"
+msgstr "Trạng thái đồng bộ Tin nhắn"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
@@ -1949,7 +2062,7 @@ msgstr "Điều hướng đến quy trình trước đó"
 msgid "New"
 msgstr "Mới"
 
-#: src/modules/command-menu/hooks/useCommandMenu.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "{capitalizedObjectNameSingular} Mới"
 
@@ -2027,6 +2140,10 @@ msgstr "Không có quốc gia"
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members matching your search"
 #~ msgstr "No members matching your search"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "No metrics data available"
+msgstr "Không có dữ liệu chỉ số khả dụng"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
@@ -2155,11 +2272,20 @@ msgstr "hoặc"
 
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/lab/SettingsLab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
 msgstr "Khác"
+
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+msgid "Other Environment Variables"
+msgstr "Các Biến Môi Trường Khác"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "Other Variables"
+msgstr "Các Biến Khác"
 
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -2229,6 +2355,10 @@ msgstr "Đã sao chép số điện thoại vào bảng tạm"
 msgid "Picture"
 msgstr "Hình ảnh"
 
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Playground"
+msgstr "Sân chơi"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
 msgstr "Vui lòng nhập đường dẫn URL hợp lệ"
@@ -2296,13 +2426,25 @@ msgstr "Cung cấp chi tiết nhà cung cấp OIDC của bạn"
 msgid "Pseudo-English"
 msgstr "Tiếng Anh giả"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
+msgid "Queue information is not available because the worker is down"
+msgstr "Thông tin hàng đợi không khả dụng vì nhân viên không hoạt động"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Queue performance"
+msgstr "Hiệu suất hàng đợi"
+
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
-msgid "Read documentation"
-msgstr "Đọc tài liệu"
+#~ msgid "Read documentation"
+#~ msgstr "Read documentation"
 
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "Nhận email chứa đường link cập nhật mật khẩu"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Recent Events (oldest → newest)"
+msgstr "Sự kiện gần đây (cũ nhất → mới nhất)"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -2404,6 +2546,11 @@ msgstr "Đặt lại Mật khẩu"
 msgid "Reset to"
 msgstr "Đặt lại thành"
 
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "REST"
+msgstr "REST"
+
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
@@ -2450,6 +2597,10 @@ msgstr "Lưu"
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
 msgstr "Lưu dưới dạng chế độ xem mới"
+
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Schema"
+msgstr "Schema"
 
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2549,6 +2700,10 @@ msgstr "Xem các phiên bản"
 msgid "See versions history"
 msgstr "Xem lịch sử phiên bản"
 
+#: src/modules/command-menu/hooks/useCommandMenu.ts
+msgid "Select Action"
+msgstr "Chọn Hành Động"
+
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
 msgstr "Chọn giá trị mặc định cho trường boolean này"
@@ -2581,8 +2736,8 @@ msgstr "Tiếng Serbia (Chữ Cyrillic)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Server Admin"
-msgstr "Quản trị viên máy chủ"
+#~ msgid "Server Admin"
+#~ msgstr "Server Admin"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -2895,6 +3050,10 @@ msgstr "Hành động này không thể được hoàn tác. Điều này sẽ x
 msgid "This role is assigned to these workspace members."
 msgstr "Vai trò này được phân công cho các thành viên của không gian làm việc."
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "This week"
+msgstr "Tuần này"
+
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
 msgstr "Định dạng thời gian"
@@ -2915,11 +3074,16 @@ msgstr "thành hàng tháng"
 msgid "to yearly"
 msgstr "thành hàng năm"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Today"
+msgstr "Hôm nay"
+
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
 msgstr "Tổng số người dùng"
 
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "Loại Kích hoạt"
 
@@ -2930,6 +3094,10 @@ msgstr "Kiểu kích hoạt phải là Manual - khi không có bản ghi nào (<
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
 msgstr "Đúng"
+
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Try our REST or GraphQL API playgrounds."
+msgstr "Thử các sân chơi API REST hoặc GraphQL của chúng tôi."
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -3102,7 +3270,10 @@ msgstr "Chúng tôi sẽ gửi cho bạn một liên kết để xác minh quy�
 msgid "Webhook"
 msgstr "Webhook"
 
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -3143,10 +3314,13 @@ msgstr "Lần chạy quy trình thất bại"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/pages/settings/developers/SettingsDevelopers.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -3208,8 +3382,8 @@ msgstr "Bạn không được phép tạo bản ghi cho đối tượng này"
 #~ msgstr "You are not allowed to create records in this object"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "You do not have access to impersonate users."
-msgstr "Bạn không có quyền truy cập để giả lập người dùng khác."
+#~ msgid "You do not have access to impersonate users."
+#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

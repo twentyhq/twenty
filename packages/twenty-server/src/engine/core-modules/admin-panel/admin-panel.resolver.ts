@@ -15,12 +15,14 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-data.dto';
 import { QueueMetricsData } from './dtos/queue-metrics-data.dto';
+
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AdminPanelResolver {
@@ -60,19 +62,19 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => EnvironmentVariablesOutput)
   async getEnvironmentVariablesGrouped(): Promise<EnvironmentVariablesOutput> {
     return this.adminService.getEnvironmentVariablesGrouped();
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => SystemHealth)
   async getSystemHealthStatus(): Promise<SystemHealth> {
     return this.adminPanelHealthService.getSystemHealthStatus();
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => AdminPanelHealthServiceData)
   async getIndicatorHealthStatus(
     @Args('indicatorId', {
@@ -83,7 +85,7 @@ export class AdminPanelResolver {
     return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => QueueMetricsData)
   async getQueueMetrics(
     @Args('queueName', { type: () => String })

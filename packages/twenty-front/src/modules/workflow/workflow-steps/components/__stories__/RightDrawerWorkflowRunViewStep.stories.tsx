@@ -10,6 +10,7 @@ import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { oneFailedWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
@@ -39,7 +40,13 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
       );
       const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
 
-      setFlow(oneFailedWorkflowRunQueryResult.workflowRun.output.flow);
+      setFlow({
+        workflowVersionId:
+          oneFailedWorkflowRunQueryResult.workflowRun.workflowVersionId,
+        trigger:
+          oneFailedWorkflowRunQueryResult.workflowRun.output.flow.trigger,
+        steps: oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps,
+      });
       setWorkflowSelectedNode(
         oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps[0].id,
       );
@@ -50,6 +57,7 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
     RouterDecorator,
     ObjectMetadataItemsDecorator,
     WorkspaceDecorator,
+    WorkflowStepDecorator,
   ],
   parameters: {
     msw: {
@@ -117,7 +125,6 @@ export const InputTabNotExecutedStep: Story = {
       return <Story />;
     },
   ],
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -138,5 +145,52 @@ export const OutputTab: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('Create Record')).not.toBeInTheDocument();
     });
+
+    expect(await canvas.findByText('result')).toBeVisible();
+  },
+};
+
+export const OutputTabDisabledForTrigger: Story = {
+  decorators: [
+    (Story) => {
+      const setWorkflowSelectedNode = useSetRecoilState(
+        workflowSelectedNodeState,
+      );
+
+      setWorkflowSelectedNode(TRIGGER_STEP_ID);
+
+      return <Story />;
+    },
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const outputTab = await canvas.findByRole('button', { name: 'Output' });
+
+    expect(outputTab).toBeDisabled();
+  },
+};
+
+export const OutputTabNotExecutedStep: Story = {
+  decorators: [
+    (Story) => {
+      const setWorkflowSelectedNode = useSetRecoilState(
+        workflowSelectedNodeState,
+      );
+
+      setWorkflowSelectedNode(
+        oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps.at(-1)!
+          .id,
+      );
+
+      return <Story />;
+    },
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const outputTab = await canvas.findByRole('button', { name: 'Output' });
+
+    expect(outputTab).toBeDisabled();
   },
 };

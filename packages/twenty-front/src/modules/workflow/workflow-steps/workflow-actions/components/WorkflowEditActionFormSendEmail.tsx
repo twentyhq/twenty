@@ -1,9 +1,12 @@
 import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
+import { MICROSOFT_SEND_SCOPE } from '@/accounts/constants/MicrosoftSendScope';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
@@ -14,10 +17,15 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ConnectedAccountProvider, isDefined } from 'twenty-shared';
+import {
+  assertUnreachable,
+  ConnectedAccountProvider,
+  isDefined,
+} from 'twenty-shared';
 import { IconPlus, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type WorkflowEditActionFormSendEmailProps = {
   action: WorkflowSendEmailAction;
@@ -66,12 +74,28 @@ export const WorkflowEditActionFormSendEmail = ({
     if (!isDefined(connectedAccount)) {
       return;
     }
+
     const scopes = connectedAccount.scopes;
-    if (
-      !isDefined(scopes) ||
-      !isDefined(scopes.find((scope) => scope === GMAIL_SEND_SCOPE))
-    ) {
-      await triggerApisOAuth(ConnectedAccountProvider.GOOGLE, {
+
+    const hasSendScope = (
+      connectedAccount: ConnectedAccount,
+      scopes: string[],
+    ): boolean => {
+      switch (connectedAccount.provider) {
+        case ConnectedAccountProvider.GOOGLE:
+          return scopes.some((scope) => scope === GMAIL_SEND_SCOPE);
+        case ConnectedAccountProvider.MICROSOFT:
+          return scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE);
+        default:
+          assertUnreachable(
+            connectedAccount.provider,
+            'Provider not yet supported for sending emails',
+          );
+      }
+    };
+
+    if (!isDefined(scopes) || !hasSendScope(connectedAccount, scopes)) {
+      await triggerApisOAuth(connectedAccount.provider, {
         redirectLocation: redirectUrl,
         loginHint: connectedAccount.handle,
       });
@@ -79,7 +103,7 @@ export const WorkflowEditActionFormSendEmail = ({
   };
 
   const saveAction = useDebouncedCallback(
-    async (formData: SendEmailFormData, checkScopes = false) => {
+    async (formData: SendEmailFormData) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -97,9 +121,7 @@ export const WorkflowEditActionFormSendEmail = ({
         },
       });
 
-      if (checkScopes === true) {
-        await checkConnectedAccountScopes(formData.connectedAccountId);
-      }
+      await checkConnectedAccountScopes(formData.connectedAccountId);
     },
     1_000,
   );
@@ -169,7 +191,9 @@ export const WorkflowEditActionFormSendEmail = ({
 
   const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
   const headerIcon = getActionIcon(action.type);
+  const navigate = useNavigateSettings();
 
+  const { closeCommandMenu } = useCommandMenu();
   return (
     !loading && (
       <>
@@ -199,10 +223,10 @@ export const WorkflowEditActionFormSendEmail = ({
             value={formData.connectedAccountId}
             options={connectedAccountOptions}
             callToActionButton={{
-              onClick: () =>
-                triggerApisOAuth(ConnectedAccountProvider.GOOGLE, {
-                  redirectLocation: redirectUrl,
-                }),
+              onClick: () => {
+                closeCommandMenu();
+                navigate(SettingsPath.NewAccount);
+              },
               Icon: IconPlus,
               text: 'Add account',
             }}

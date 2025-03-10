@@ -23,7 +23,6 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -64,15 +63,10 @@ export const CommandMenuContainer = ({
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
 
-  const workflowReactFlowRef = useRecoilValue(workflowReactFlowRefState);
-
   useCommandMenuHotKeys();
 
   useListenClickOutside({
-    refs: [
-      commandMenuRef,
-      ...(workflowReactFlowRef ? [workflowReactFlowRef] : []),
-    ],
+    refs: [commandMenuRef],
     callback: closeCommandMenu,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
