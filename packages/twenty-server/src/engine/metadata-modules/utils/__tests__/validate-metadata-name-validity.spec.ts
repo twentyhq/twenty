@@ -55,10 +55,10 @@ describe('validateMetadataNameValidityOrThrow', () => {
   });
 
   it('throws if an empty string', () => {
-    const inputWith64Characters = '';
+    const emptyString = '';
 
     expect(() =>
-      validateMetadataNameValidityOrThrow(inputWith64Characters),
+      validateMetadataNameValidityOrThrow(emptyString),
     ).toThrow(InvalidStringException);
   });
 });

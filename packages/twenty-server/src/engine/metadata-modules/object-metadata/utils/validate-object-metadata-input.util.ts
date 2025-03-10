@@ -92,7 +92,7 @@ export const validateObjectMetadataInputNamesOrThrow = <
 
 export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
   const validators = [
-    validateStringIsNoTooShortOrThrow,
+    validateStringIsNotTooShortOrThrow,
     validateStringIsNotTooLongOrThrow,
     validateNameCamelCasedOrThrow,
     validateNameCharactersOrThrow,
@@ -114,7 +114,7 @@ export const validateObjectMetadataInputLabelsOrThrow = <
 
 const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
   const validators = [
-    validateStringIsNoTooShortOrThrow,
+    validateStringIsNotTooShortOrThrow,
     validateStringIsNotTooLongOrThrow,
   ];
 
@@ -148,7 +148,7 @@ const validateStringIsNotTooLongOrThrow = (name: string) => {
   }
 };
 
-const validateStringIsNoTooShortOrThrow = (name: string) => {
+const validateStringIsNotTooShortOrThrow = (name: string) => {
   if (beneathDatabaseIdentifierMininumLength(name)) {
     throw new ObjectMetadataException(
       `Input is too short: ${name}`,
@@ -225,7 +225,7 @@ export const validateLowerCasedAndTrimmedStringsAreDifferentOrThrow = ({
   inputs: [firstString, secondString],
 }: ValidateLowerCasedAndTrimmedStringAreDifferentOrThrowArgs) => {
   if (
-    firstString.trim().toLowerCase() === secondString.trim().toLocaleLowerCase()
+    firstString.trim().toLowerCase() === secondString.trim().toLowerCase()
   ) {
     throw new ObjectMetadataException(
       message,

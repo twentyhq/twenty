@@ -5,7 +5,7 @@ export const getMockCreateObjectInput = (
   overrides?: Partial<Omit<CreateObjectInput, 'workspaceId' | 'dataSourceId'>>,
 ) => ({
   namePlural: 'listings',
-  nameSingular: 'toto',
+  nameSingular: 'listing',
   labelPlural: 'Listings',
   labelSingular: 'Listing',
   description: 'Listing object',

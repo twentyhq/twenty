@@ -22,7 +22,7 @@ export const performFailingObjectMetadataCreation = async (
       'Object Metadata Item should have failed but did not',
     );
   }
-  expect(response.body.errors.length).toBeDefined();
+  expect(response.body.errors.length).toBeGreaterThan(0);
 
   return response.body.errors;
 };

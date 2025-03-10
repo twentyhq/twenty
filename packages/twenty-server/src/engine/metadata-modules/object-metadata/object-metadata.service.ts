@@ -81,7 +81,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return result;
   }
 
-  // HERE
   override async createOne(
     objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
@@ -109,9 +108,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         'The singular and plural labels cannot be the same for an object',
     });
 
-    // Should check by default if undefined ?
     if (objectMetadataInput.isLabelSyncedWithName === true) {
-      // Refactor should not infer front shit
       validateNameAndLabelAreSyncOrThrow(
         objectMetadataInput.labelSingular,
         objectMetadataInput.nameSingular,
