@@ -2,6 +2,7 @@ import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormCurrencyFieldInput } from '../FormCurrencyFieldInput';
@@ -11,7 +12,7 @@ const meta: Meta<typeof FormCurrencyFieldInput> = {
   component: FormCurrencyFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator],
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;

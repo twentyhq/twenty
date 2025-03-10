@@ -3,13 +3,15 @@ import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import { IconAlertTriangle, IconX } from 'twenty-ui';
 
 const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
   background-color: ${({ theme, danger }) =>
     danger ? theme.background.danger : theme.accent.quaternary};
-  border: 1px solid ${({ theme }) => theme.accent.tertiary};
+  border: ${({ theme, danger }) =>
+    danger ? 'none' : `1px solid ${theme.accent.tertiary}`};
   border-radius: 4px;
   height: 20px;
   box-sizing: border-box;
@@ -75,6 +77,7 @@ export const VariableChip = ({
   isFullRecord = false,
 }: VariableChipProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
   const { getStepsOutputSchema } = useStepsOutputSchema({});
   const stepId = extractRawVariableNamePart({
     rawVariableName,
@@ -95,7 +98,8 @@ export const VariableChip = ({
     });
 
   const isVariableNotFound = !isDefined(variableLabel);
-  const label = isVariableNotFound ? 'Not Found' : variableLabel;
+  const label = isVariableNotFound ? t`Not Found` : variableLabel;
+  const title = isVariableNotFound ? t`Variable not found` : variablePathLabel;
 
   return (
     <StyledChip deletable={isDefined(onRemove)} danger={isVariableNotFound}>
@@ -106,7 +110,7 @@ export const VariableChip = ({
           color={theme.color.red}
         />
       )}
-      <StyledLabel title={variablePathLabel} danger={isVariableNotFound}>
+      <StyledLabel title={title} danger={isVariableNotFound}>
         {label}
       </StyledLabel>
 
