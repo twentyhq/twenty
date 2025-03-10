@@ -44,9 +44,11 @@ export const DocumentField = ({
       ? formatCnpj(currentWorkspaceMember?.userDocument || '')
       : formatCpf(currentWorkspaceMember?.userDocument || ''),
   );
+
   const [personType, setPersonType] = useState(
     isCnpj(currentWorkspaceMember?.userDocument) ? 'CNPJ' : 'CPF',
   );
+
   const [error, setError] = useState<string | undefined>(undefined);
   const [disabled, setDisabled] = useState(true);
 
