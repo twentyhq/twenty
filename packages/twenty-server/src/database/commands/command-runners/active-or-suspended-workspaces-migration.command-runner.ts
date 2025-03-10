@@ -1,9 +1,10 @@
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -19,6 +20,7 @@ export type ActiveOrSuspendedWorkspacesMigrationCommandOptions = {
 export type RunOnWorkspaceArgs = {
   options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
   workspaceId: string;
+  appVersion: string;
   dataSource: WorkspaceDataSource;
   index: number;
   total: number;
@@ -31,10 +33,12 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   private workspaceIds: string[] = [];
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
+  public shouldUpdateWorkspaceVersion: boolean = false;
 
   constructor(
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly environmentService: EnvironmentService,
   ) {
     super();
   }
@@ -118,6 +122,14 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
     }
 
     try {
+      const appVersion = this.environmentService.get('APP_VERSION');
+      // if (this.shouldUpdateWorkspaceVersion && !isDefined(appVersion)) {
+      if (!isDefined(appVersion)) {
+        throw new Error(
+          'Cannot run upgrade command when APP_VERSION is not defined',
+        );
+      }
+
       for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
         this.logger.log(
           `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
@@ -136,7 +148,14 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
             dataSource,
             index: index,
             total: activeWorkspaceIds.length,
+            appVersion,
           });
+          if (this.shouldUpdateWorkspaceVersion) {
+            await this.workspaceRepository.update(
+              { id: workspaceId },
+              { version: appVersion },
+            );
+          }
         } catch (error) {
           this.logger.warn(
             chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),

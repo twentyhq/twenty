@@ -13,6 +13,7 @@ import { MigrateIsSearchableForCustomObjectMetadataCommand } from 'src/database/
 import { MigrateRichTextContentPatchCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-rich-text-content-patch.command';
 import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-search-vector-on-note-and-task-entities.command';
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
@@ -22,9 +23,12 @@ import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/works
   description: 'Upgrade workspaces to the latest version',
 })
 export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+  override shouldUpdateWorkspaceVersion: boolean = true;
+
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    protected readonly environmentService: EnvironmentService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly migrateRichTextContentPatchCommand: MigrateRichTextContentPatchCommand,
     protected readonly addTasksAssignedToMeViewCommand: AddTasksAssignedToMeViewCommand,
@@ -33,7 +37,7 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
     protected readonly migrateSearchVectorOnNoteAndTaskEntitiesCommand: MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, environmentService);
   }
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {

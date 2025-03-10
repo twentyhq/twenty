@@ -979,7 +979,7 @@ export class EnvironmentVariables {
   // Should be required if NODE_ENV is not local ?
   @IsOptional()
   // Could it be a commit sha on main for example ? Or a branch + sha ? Could then be optional ?
-  APP_VERSION: string;
+  APP_VERSION?: string;
 }
 
 export const validate = (
