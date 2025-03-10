@@ -49,6 +49,12 @@ const StyledActionLink = styled.a`
   }
 `;
 
+const StyledSpan = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
 type VersionDetail = {
   Icon: IconComponent;
   text: string;
@@ -103,7 +109,7 @@ export const SettingsAdminVersionContainer = () => {
               {versionDetail.version}
             </StyledActionLink>
           ) : (
-            <span>{versionDetail.version}</span>
+            <StyledSpan>{versionDetail.version}</StyledSpan>
           )}
         </StyledVersionDetails>
       ))}
