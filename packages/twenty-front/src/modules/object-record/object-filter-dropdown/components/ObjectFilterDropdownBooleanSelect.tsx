@@ -7,8 +7,8 @@ import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldM
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -91,7 +91,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
     <SelectableList
       selectableListId="boolean-select"
       selectableItemIdArray={options.map((option) => option.toString())}
-      hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+      hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       onEnter={(itemId) => {
         handleOptionSelect(itemId === 'true');
       }}
