@@ -8,7 +8,7 @@ import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/v
 
 type ValidateMetadataNameTestContext = EachTestingContext<{
   input: string;
-  expectedError?: typeof InvalidStringException | typeof NameTooLongException;
+  expectedError?: any;
 }>;
 
 const validateMetadataNameTestCases: ValidateMetadataNameTestContext[] = [
@@ -56,13 +56,13 @@ const validateMetadataNameTestCases: ValidateMetadataNameTestContext[] = [
   {
     title: 'validates when string is less than 63 characters',
     context: {
-      input: 'thisIsAstringWithSixtyThreeCharacters11111111111111111111111111',
+      input: 'a'.repeat(63),
     },
   },
   {
     title: 'throws error when string is above 63 characters',
     context: {
-      input: 'thisIsAstringWithSixtyFourCharacters1111111111111111111111111111',
+      input: 'a'.repeat(64),
       expectedError: NameTooLongException,
     },
   },
