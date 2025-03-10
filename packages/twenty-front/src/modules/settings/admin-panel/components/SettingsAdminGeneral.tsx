@@ -53,11 +53,6 @@ const StyledContentContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)} 0;
 `;
 
-const StyledErrorMessage = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueSnackBar } = useSnackBar();
@@ -73,6 +68,8 @@ export const SettingsAdminGeneral = () => {
   const [userLookup] = useUserLookupAdminPanelMutation();
 
   const currentUser = useRecoilValue(currentUserState);
+
+  const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
 
   const canImpersonate = currentUser?.canImpersonate;
 
@@ -129,51 +126,51 @@ export const SettingsAdminGeneral = () => {
 
   return (
     <>
-      <Section>
-        <H2Title title={t`About`} description={t`Version of the application`} />
-        <SettingsAdminVersionContainer />
-      </Section>
-
-      <Section>
-        <H2Title
-          title={
-            canManageFeatureFlags
-              ? t`Feature Flags & Impersonation`
-              : t`User Impersonation`
-          }
-          description={
-            canManageFeatureFlags
-              ? t`Look up users and manage their workspace feature flags or impersonate them.`
-              : t`Look up users to impersonate them.`
-          }
-        />
-
-        <StyledContainer>
-          <TextInput
-            value={userIdentifier}
-            onChange={setUserIdentifier}
-            onInputEnter={handleSearch}
-            placeholder={t`Enter user ID or email address`}
-            fullWidth
-            disabled={isUserLookupLoading}
+      {canAccessFullAdminPanel && (
+        <Section>
+          <H2Title
+            title={t`About`}
+            description={t`Version of the application`}
           />
-          <Button
-            Icon={IconSearch}
-            variant="primary"
-            accent="blue"
-            title={t`Search`}
-            onClick={handleSearch}
-            disabled={
-              !userIdentifier.trim() || isUserLookupLoading || !canImpersonate
+          <SettingsAdminVersionContainer />
+        </Section>
+      )}
+
+      {canImpersonate && (
+        <Section>
+          <H2Title
+            title={
+              canManageFeatureFlags
+                ? t`Feature Flags & Impersonation`
+                : t`User Impersonation`
+            }
+            description={
+              canManageFeatureFlags
+                ? t`Look up users and manage their workspace feature flags or impersonate them.`
+                : t`Look up users to impersonate them.`
             }
           />
-        </StyledContainer>
-        {!canImpersonate && (
-          <StyledErrorMessage>
-            {t`You do not have access to impersonate users.`}
-          </StyledErrorMessage>
-        )}
-      </Section>
+
+          <StyledContainer>
+            <TextInput
+              value={userIdentifier}
+              onChange={setUserIdentifier}
+              onInputEnter={handleSearch}
+              placeholder={t`Enter user ID or email address`}
+              fullWidth
+              disabled={isUserLookupLoading}
+            />
+            <Button
+              Icon={IconSearch}
+              variant="primary"
+              accent="blue"
+              title={t`Search`}
+              onClick={handleSearch}
+              disabled={!userIdentifier.trim() || isUserLookupLoading}
+            />
+          </StyledContainer>
+        </Section>
+      )}
 
       {isDefined(userLookupResult) && (
         <Section>
