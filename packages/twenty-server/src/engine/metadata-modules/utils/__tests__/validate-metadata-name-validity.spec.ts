@@ -1,6 +1,6 @@
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import { NameTooLongException } from 'src/engine/metadata-modules/utils/exceptions/name-too-long.exception';
-import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
+import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-contains-whitelisted-characters.utils';
 
 describe('validateMetadataNameValidityOrThrow', () => {
   it('does not throw if string is valid', () => {

@@ -41,12 +41,9 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import { NameNotAvailableException } from 'src/engine/metadata-modules/utils/exceptions/name-not-available.exception';
-import { NameTooLongException } from 'src/engine/metadata-modules/utils/exceptions/name-too-long.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
-import { validateMetadataNameValidityOrThrow as validateFieldNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -66,6 +63,7 @@ import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
@@ -540,23 +538,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   ): T {
     if (fieldMetadataInput.name) {
       try {
-        validateFieldNameValidityOrThrow(fieldMetadataInput.name);
+        validateMetadataNameOrThrow(fieldMetadataInput.name);
+      } catch (error) {
+        throw new FieldMetadataException(
+          error.message,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      try {
         validateFieldNameAvailabilityOrThrow(
           fieldMetadataInput.name,
           objectMetadata,
         );
       } catch (error) {
-        if (error instanceof InvalidStringException) {
-          throw new FieldMetadataException(
-            `Characters used in name "${fieldMetadataInput.name}" are not supported`,
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        } else if (error instanceof NameTooLongException) {
-          throw new FieldMetadataException(
-            `Name "${fieldMetadataInput.name}" exceeds 63 characters`,
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        } else if (error instanceof NameNotAvailableException) {
+        if (error instanceof NameNotAvailableException) {
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

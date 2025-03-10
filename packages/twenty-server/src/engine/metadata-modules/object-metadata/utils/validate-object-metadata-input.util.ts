@@ -7,75 +7,10 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { IDENTIFIER_MAX_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-max-char-length.constants';
-import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
-import {
-  beneathDatabaseIdentifierMinimumLength,
-  exceedsDatabaseIdentifierMaximumLength,
-} from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
-import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
+import { validateMetadataNameIsNotTooLongOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils copy';
+import { validateMetadataNameIsNotTooShortOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils';
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { camelCase } from 'src/utils/camel-case';
-
-const coreObjectNames = [
-  'approvedAccessDomain',
-  'approvedAccessDomains',
-  'appToken',
-  'appTokens',
-  'billingCustomer',
-  'billingCustomers',
-  'billingEntitlement',
-  'billingEntitlements',
-  'billingMeter',
-  'billingMeters',
-  'billingProduct',
-  'billingProducts',
-  'billingSubscription',
-  'billingSubscriptions',
-  'billingSubscriptionItem',
-  'billingSubscriptionItems',
-  'featureFlag',
-  'featureFlags',
-  'keyValuePair',
-  'keyValuePairs',
-  'postgresCredential',
-  'postgresCredentials',
-  'twoFactorMethod',
-  'twoFactorMethods',
-  'user',
-  'users',
-  'userWorkspace',
-  'userWorkspaces',
-  'workspace',
-  'workspaces',
-
-  'role',
-  'roles',
-  'userWorkspaceRole',
-  'userWorkspaceRoles',
-];
-
-const reservedKeywords = [
-  ...coreObjectNames,
-  'event',
-  'events',
-  'field',
-  'fields',
-  'link',
-  'links',
-  'currency',
-  'currencies',
-  'fullName',
-  'fullNames',
-  'address',
-  'addresses',
-  'type',
-  'types',
-  'object',
-  'objects',
-  'index',
-  'relation',
-  'relations',
-];
 
 export const validateObjectMetadataInputNamesOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
@@ -91,15 +26,14 @@ export const validateObjectMetadataInputNamesOrThrow = <
   });
 
 export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
-  const validators = [
-    validateStringIsNotTooShortOrThrow,
-    validateStringIsNotTooLongOrThrow,
-    validateNameCamelCasedOrThrow,
-    validateNameCharactersOrThrow,
-    validateNameIsNotReservedKeywordOrThrow,
-  ];
-
-  validators.forEach((validator) => validator(name));
+  try {
+    validateMetadataNameOrThrow(name);
+  } catch (error) {
+    throw new ObjectMetadataException(
+      error.message,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
 };
 
 export const validateObjectMetadataInputLabelsOrThrow = <
@@ -114,61 +48,17 @@ export const validateObjectMetadataInputLabelsOrThrow = <
 
 const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
   const validators = [
-    validateStringIsNotTooShortOrThrow,
-    validateStringIsNotTooLongOrThrow,
+    validateMetadataNameIsNotTooShortOrThrow,
+    validateMetadataNameIsNotTooLongOrThrow,
   ];
 
-  validators.forEach((validator) => validator(name.trim()));
-};
-
-const validateNameIsNotReservedKeywordOrThrow = (name: string) => {
-  if (reservedKeywords.includes(name)) {
-    throw new ObjectMetadataException(
-      `The name "${name}" is not available`,
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
-  }
-};
-
-const validateNameCamelCasedOrThrow = (name: string) => {
-  if (name !== camelCase(name)) {
-    throw new ObjectMetadataException(
-      `Name should be in camelCase: ${name}`,
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
-  }
-};
-
-const validateStringIsNotTooLongOrThrow = (name: string) => {
-  if (exceedsDatabaseIdentifierMaximumLength(name)) {
-    throw new ObjectMetadataException(
-      `Input exceeds ${IDENTIFIER_MAX_CHAR_LENGTH} characters: ${name}`,
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
-  }
-};
-
-const validateStringIsNotTooShortOrThrow = (name: string) => {
-  if (beneathDatabaseIdentifierMinimumLength(name)) {
-    throw new ObjectMetadataException(
-      `Input is too short: ${name}`,
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
-  }
-};
-
-const validateNameCharactersOrThrow = (name: string) => {
   try {
-    validateMetadataNameValidityOrThrow(name);
+    validators.forEach((validator) => validator(name.trim()));
   } catch (error) {
-    if (error instanceof InvalidStringException) {
-      throw new ObjectMetadataException(
-        `Characters used in name "${name}" are not supported`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    } else {
-      throw error;
-    }
+    throw new ObjectMetadataException(
+      error.message,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 
