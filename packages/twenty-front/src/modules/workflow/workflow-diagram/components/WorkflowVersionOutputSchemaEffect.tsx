@@ -1,4 +1,4 @@
-import { usePopulateStepsOutputSchema } from '@/workflow/hooks/usePopulateStepsOutputSchema';
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useEffect } from 'react';
 
@@ -7,8 +7,8 @@ export const WorkflowVersionOutputSchemaEffect = ({
 }: {
   workflowVersion: WorkflowVersion;
 }) => {
-  const { populateStepsOutputSchema } = usePopulateStepsOutputSchema({
-    workflowVersionId: workflowVersion.id,
+  const { populateStepsOutputSchema } = useStepsOutputSchema({
+    instanceIdFromProps: workflowVersion.id,
   });
 
   useEffect(() => {
