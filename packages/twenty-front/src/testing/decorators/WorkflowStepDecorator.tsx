@@ -1,4 +1,4 @@
-import { usePopulateStepsOutputSchema } from '@/workflow/hooks/usePopulateStepsOutputSchema';
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
@@ -16,8 +16,8 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const workflowVersion = getWorkflowMock().versions.edges[0]
     .node as WorkflowVersion;
-  const { populateStepsOutputSchema } = usePopulateStepsOutputSchema({
-    workflowVersionId: workflowVersion.id,
+  const { populateStepsOutputSchema } = useStepsOutputSchema({
+    instanceIdFromProps: workflowVersion.id,
   });
   const [ready, setReady] = useState(false);
 

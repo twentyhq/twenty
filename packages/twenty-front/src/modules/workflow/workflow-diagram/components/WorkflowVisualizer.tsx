@@ -11,11 +11,15 @@ export const WorkflowVisualizer = ({ workflowId }: { workflowId: string }) => {
 
   return (
     <>
-      <WorkflowDiagramEffect
-        workflowWithCurrentVersion={workflowWithCurrentVersion}
-      />
       {isDefined(workflowVersion) && (
-        <WorkflowVersionOutputSchemaEffect workflowVersion={workflowVersion} />
+        <>
+          <WorkflowDiagramEffect
+            workflowWithCurrentVersion={workflowWithCurrentVersion}
+          />
+          <WorkflowVersionOutputSchemaEffect
+            workflowVersion={workflowVersion}
+          />
+        </>
       )}
 
       {isDefined(workflowWithCurrentVersion) ? (
