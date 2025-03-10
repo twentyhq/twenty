@@ -6,14 +6,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
-import {
-  Banner,
-  Card,
-  H2Title,
-  IconHeartRateMonitor,
-  IconInfoCircle,
-  Section,
-} from 'twenty-ui';
+import { Card, H2Title, IconHeartRateMonitor, Section } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -21,23 +14,8 @@ const StyledGroupContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledBanner = styled(Banner)`
-  align-items: center;
-  background-color: ${({ theme }) => theme.color.blueAccent20};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: space-between;
-`;
-
-const StyledBannerContent = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledBannerText = styled.div`
-  color: ${({ theme }) => theme.color.blue};
+const StyledInfoText = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
 export const SettingsAdminEnvVariables = () => {
@@ -59,17 +37,11 @@ export const SettingsAdminEnvVariables = () => {
   return (
     <>
       <Section>
-        <StyledBanner>
-          <StyledBannerContent>
-            <IconInfoCircle
-              color={theme.color.blue}
-              size={theme.icon.size.md}
-            />
-            <StyledBannerText>
-              {t`Matching values required in worker environment`}
-            </StyledBannerText>
-          </StyledBannerContent>
-        </StyledBanner>
+        <StyledInfoText>
+          {t` These are only the server values. Ensure your worker environment has the
+        same variables and values, this is required for asynchronous tasks like
+        email sync.`}
+        </StyledInfoText>
       </Section>
       <Section>
         {visibleGroups.map((group) => (
