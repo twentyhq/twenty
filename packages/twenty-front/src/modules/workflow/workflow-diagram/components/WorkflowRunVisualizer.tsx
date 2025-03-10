@@ -15,9 +15,7 @@ export const WorkflowRunVisualizer = ({
   workflowRunId: string;
 }) => {
   const workflowRun = useWorkflowRun({ workflowRunId });
-  const workflowVersion = useWorkflowVersion(
-    workflowRun?.workflowVersionId ?? '',
-  );
+  const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
 
   if (!isDefined(workflowRun) || !isDefined(workflowVersion)) {
     return null;
