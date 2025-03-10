@@ -12,6 +12,8 @@ import {
 } from '@storybook/test';
 import { DateTime } from 'luxon';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormDateFieldInput } from '../FormDateFieldInput';
 
 const meta: Meta<typeof FormDateFieldInput> = {
@@ -19,7 +21,7 @@ const meta: Meta<typeof FormDateFieldInput> = {
   component: FormDateFieldInput,
   args: {},
   argTypes: {},
-  decorators: [I18nFrontDecorator],
+  decorators: [I18nFrontDecorator, WorkflowStepDecorator],
 };
 
 export default meta;
@@ -308,7 +310,7 @@ export const SwitchesToStandaloneVariable: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.createdAt}}`);
           }}
         >
           Add variable
@@ -322,7 +324,7 @@ export const SwitchesToStandaloneVariable: Story = {
     const addVariableButton = await canvas.findByText('Add variable');
     await userEvent.click(addVariableButton);
 
-    const variableTag = await canvas.findByText('test');
+    const variableTag = await canvas.findByText('Creation date');
     expect(variableTag).toBeVisible();
 
     const removeVariableButton = canvasElement.querySelector(
@@ -395,14 +397,14 @@ export const Disabled: Story = {
 export const DisabledWithVariable: Story = {
   args: {
     label: 'Created At',
-    defaultValue: `{{a.b.c}}`,
+    defaultValue: `{{${MOCKED_STEP_ID}.createdAt}}`,
     onPersist: fn(),
     readonly: true,
     VariablePicker: ({ onVariableSelect }) => {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.createdAt}}`);
           }}
         >
           Add variable
@@ -410,10 +412,11 @@ export const DisabledWithVariable: Story = {
       );
     },
   },
+  decorators: [WorkflowStepDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const variableChip = await canvas.findByText('c');
+    const variableChip = await canvas.findByText('Creation date');
     expect(variableChip).toBeVisible();
   },
 };

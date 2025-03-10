@@ -1,6 +1,8 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormMultiSelectFieldInput } from '../FormMultiSelectFieldInput';
 
 const meta: Meta<typeof FormMultiSelectFieldInput> = {
@@ -8,6 +10,7 @@ const meta: Meta<typeof FormMultiSelectFieldInput> = {
   component: FormMultiSelectFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -117,14 +120,14 @@ export const Disabled: Story = {
 export const DisabledWithVariable: Story = {
   args: {
     label: 'Created At',
-    defaultValue: `{{a.b.c}}`,
+    defaultValue: `{{${MOCKED_STEP_ID}.stage}}`,
     onPersist: fn(),
     readonly: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const variableChip = await canvas.findByText('c');
+    const variableChip = await canvas.findByText('Stage');
     expect(variableChip).toBeVisible();
 
     await userEvent.click(variableChip);
