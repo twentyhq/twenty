@@ -132,7 +132,7 @@ services:
       context: ../..
       dockerfile: ./packages/twenty-docker/twenty-postgres-spilo/Dockerfile
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/home/postgres/pgdata
     environment:
       PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
       PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
