@@ -405,6 +405,17 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   agentId: string | null;
 
+  // kvoip changes
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.extensionNumber,
+    type: FieldMetadataType.TEXT,
+    label: msg`extensionNumber`,
+    description: msg`Associated extensionNumber`,
+    icon: 'IconCircleUsers',
+  })
+  @WorkspaceIsNullable()
+  extensionNumber: string | null;
+
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,

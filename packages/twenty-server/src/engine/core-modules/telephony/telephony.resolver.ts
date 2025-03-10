@@ -54,7 +54,9 @@ export class TelephonyResolver {
         codigo_area: input.areaCode ? parseInt(input.areaCode) : 0,
         habilitar_dupla_autenticacao: 0,
         habilitar_caixa_postal: input.enableMailbox ? 1 : 0,
-        caixa_postal_email: input.emailForMailbox,
+        caixa_postal_email: input.emailForMailbox
+          ? input.emailForMailbox
+          : 'default@default.com',
         encaminhar_todas_chamadas: {
           encaminhamento_tipo: input.fowardAllCalls
             ? parseInt(input.fowardAllCalls)
@@ -149,6 +151,8 @@ export class TelephonyResolver {
 
     const ramalBody = this.getRamalBody(createTelephonyInput);
 
+    console.log('ramalBody: ', ramalBody);
+
     try {
       const createdRamal = await this.pabxService.createExtention(ramalBody);
 
@@ -167,6 +171,8 @@ export class TelephonyResolver {
         return result;
       }
     } catch (error) {
+      console.log('error da telefonia: ', error);
+
       return error;
     }
   }

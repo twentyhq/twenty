@@ -25,7 +25,7 @@ import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsS
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
     (module) => ({
-      default: module.SettingsApiKeys,
+      default: module.SettingsApiKeys,.
     }),
   ),
 );
@@ -376,6 +376,18 @@ export const SettingsRoutes = ({
       <Route
         path={SettingsPath.ServiceCenterAgents}
         element={<SettingsServiceCenterAgents />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterTelephony}
+        element={<SettingsServiceCenterTelephony />}
+      />
+      <Route
+        path={SettingsPath.ServiceCenterNewTelephonyExtension}
+        element={<SettingsServiceCenterNewTelephonyExtension />}
+      />
+      <Route
+        path={SettingsPath.EditTelephony}
+        element={<SettingsTelephonyEdit />}
       />
       <Route
         path={SettingsPath.ServiceCenterNewAgent}
