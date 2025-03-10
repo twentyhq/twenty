@@ -10,8 +10,6 @@ import { IconAlertTriangle, IconX } from 'twenty-ui';
 const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
   background-color: ${({ theme, danger }) =>
     danger ? theme.background.danger : theme.accent.quaternary};
-  border: ${({ theme, danger }) =>
-    danger ? 'none' : `1px solid ${theme.accent.tertiary}`};
   border-radius: 4px;
   height: 20px;
   box-sizing: border-box;
