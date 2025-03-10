@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsNumber,
   IsOptional,
+  IsSemVer,
   IsString,
   IsUrl,
   ValidateIf,
@@ -969,6 +970,16 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_ATTACHMENT_PREVIEW_ENABLED = true;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.ServerConfig,
+    description: 'Twenty server version',
+  })
+  @IsSemVer()
+  // Should be required if NODE_ENV is not local ?
+  @IsOptional()
+  // Could it be a commit sha on main for example ? Or a branch + sha ? Could then be optional ?
+  APP_VERSION: string;
 }
 
 export const validate = (

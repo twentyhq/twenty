@@ -1,7 +1,7 @@
 ARG POSTGRES_VERSION=15
 ARG SPILO_VERSION=3.2-p1
 ARG WRAPPERS_VERSION=0.2.0
-
+# Should also be maintainted ?
 # Build the mysql_fdw extension
 FROM debian:bookworm AS build-mysql_fdw
 ARG POSTGRES_VERSION
