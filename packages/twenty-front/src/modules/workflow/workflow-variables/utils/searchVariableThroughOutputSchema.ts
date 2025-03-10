@@ -93,6 +93,13 @@ export const searchVariableThroughOutputSchema = ({
   rawVariableName: string;
   isFullRecord?: boolean;
 }) => {
+  if (!isDefined(stepOutputSchema)) {
+    return {
+      variableLabel: undefined,
+      variablePathLabel: undefined,
+    };
+  }
+
   const variableWithoutBrackets = rawVariableName.replace(
     CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
     (_, variableName) => {

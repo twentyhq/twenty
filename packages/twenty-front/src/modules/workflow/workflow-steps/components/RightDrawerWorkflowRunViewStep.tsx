@@ -4,6 +4,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
+import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
@@ -65,7 +66,9 @@ export const RightDrawerWorkflowRunViewStep = () => {
   }
 
   return (
-    <>
+    <WorkflowVersionComponentInstanceContext.Provider
+      value={{ instanceId: flow.workflowVersionId }}
+    >
       <StyledTabListContainer>
         <TabList
           tabListInstanceId={WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID}
@@ -90,6 +93,6 @@ export const RightDrawerWorkflowRunViewStep = () => {
       {activeTabId === 'output' ? (
         <WorkflowRunStepOutputDetail stepId={workflowSelectedNode} />
       ) : null}
-    </>
+    </WorkflowVersionComponentInstanceContext.Provider>
   );
 };

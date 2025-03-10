@@ -31,6 +31,7 @@ export const WorkflowRunVisualizerEffect = ({
     }
 
     setFlow({
+      workflowVersionId: workflowRun.workflowVersionId,
       trigger: workflowRun.output.flow.trigger,
       steps: workflowRun.output.flow.steps,
     });
@@ -42,7 +43,12 @@ export const WorkflowRunVisualizerEffect = ({
     });
 
     setWorkflowDiagram(nextWorkflowDiagram);
-  }, [setFlow, setWorkflowDiagram, workflowRun?.output]);
+  }, [
+    setFlow,
+    setWorkflowDiagram,
+    workflowRun?.output,
+    workflowRun?.workflowVersionId,
+  ]);
 
   return null;
 };

@@ -83,10 +83,6 @@ export const VariableChip = ({
 
   const stepOutputSchema = getStepsOutputSchema([stepId])?.[0];
 
-  if (!isDefined(stepOutputSchema)) {
-    return null;
-  }
-
   const { variableLabel, variablePathLabel } =
     searchVariableThroughOutputSchema({
       stepOutputSchema,
