@@ -2,6 +2,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
   AnimatedExpandableContainer,
@@ -10,6 +11,7 @@ import {
   IconEyeOff,
   LightIconButton,
 } from 'twenty-ui';
+
 type SettingsAdminEnvVariablesRowProps = {
   variable: {
     name: string;
@@ -26,8 +28,23 @@ const StyledTruncatedCell = styled(TableCell)`
   cursor: pointer;
 `;
 
+const StyledButton = styled(motion.button)`
+  align-items: center;
+  border: none;
+  display: flex;
+  justify-content: center;
+  padding-inline: ${({ theme }) => theme.spacing(1)};
+  background-color: transparent;
+  height: 24px;
+  width: 24px;
+  box-sizing: border-box;
+  cursor: pointer;
+`;
+
+const MotionIconChevronDown = motion(IconChevronRight);
+
 const StyledExpandedDetails = styled.div`
-  background-color: ${({ theme }) => theme.background.tertiary};
+  background-color: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   margin: ${({ theme }) => theme.spacing(2)} 0;
   padding: ${({ theme }) => theme.spacing(2)};
@@ -40,7 +57,8 @@ const StyledExpandedDetails = styled.div`
 `;
 
 const StyledDetailLabel = styled.div`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   padding-right: ${({ theme }) => theme.spacing(4)};
 `;
 
@@ -56,12 +74,16 @@ const StyledExpandedLabel = styled.div`
   overflow: visible;
 `;
 
-const StyledTransitionedIconChevronRight = styled(IconChevronRight)`
-  cursor: pointer;
-  transform: ${({ $isExpanded }: { $isExpanded: boolean }) =>
-    $isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'};
-  transition: ${({ theme }) =>
-    `transform ${theme.animation.duration.normal}s ease`};
+const StyledValueContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const StyledTableRow = styled(TableRow)<{ isExpanded: boolean }>`
+  background-color: ${({ isExpanded, theme }) =>
+    isExpanded ? theme.background.transparent.light : 'transparent'};
+  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 export const SettingsAdminEnvVariablesRow = ({
@@ -85,44 +107,51 @@ export const SettingsAdminEnvVariablesRow = ({
 
   return (
     <>
-      <TableRow
+      <StyledTableRow
         onClick={() => setIsExpanded(!isExpanded)}
-        gridAutoColumns="4fr 3fr 2fr 1fr 1fr"
+        gridAutoColumns="5fr 4fr 3fr 1fr"
+        isExpanded={isExpanded}
       >
-        <StyledTruncatedCell color="primary">
+        <StyledTruncatedCell color={theme.font.color.primary}>
           <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
         </StyledTruncatedCell>
         <StyledTruncatedCell>
           <StyledEllipsisLabel>{variable.description}</StyledEllipsisLabel>
         </StyledTruncatedCell>
-        <StyledTruncatedCell>
+        <StyledTruncatedCell align="right">
           <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
         </StyledTruncatedCell>
         <TableCell align="right">
-          {variable.sensitive && variable.value !== '' && (
-            <LightIconButton
-              Icon={showSensitiveValue ? IconEyeOff : IconEye}
-              size="small"
-              accent="secondary"
-              onClick={handleToggleVisibility}
+          <StyledButton onClick={() => setIsExpanded(!isExpanded)}>
+            <MotionIconChevronDown
+              size={theme.icon.size.md}
+              color={theme.font.color.tertiary}
+              initial={false}
+              animate={{ rotate: isExpanded ? 90 : 0 }}
             />
-          )}
+          </StyledButton>
         </TableCell>
-        <TableCell align="right">
-          <StyledTransitionedIconChevronRight
-            $isExpanded={isExpanded}
-            size={theme.icon.size.sm}
-          />
-        </TableCell>
-      </TableRow>
+      </StyledTableRow>
       <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
         <StyledExpandedDetails>
-          <StyledDetailLabel>Name:</StyledDetailLabel>
+          <StyledDetailLabel>Name</StyledDetailLabel>
           <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
-          <StyledDetailLabel>Description:</StyledDetailLabel>
+          <StyledDetailLabel>Description</StyledDetailLabel>
           <StyledExpandedLabel>{variable.description}</StyledExpandedLabel>
-          <StyledDetailLabel>Value:</StyledDetailLabel>
-          <StyledExpandedLabel>{displayValue}</StyledExpandedLabel>
+          <StyledDetailLabel>Value</StyledDetailLabel>
+          <StyledExpandedLabel>
+            <StyledValueContainer>
+              {displayValue}
+              {variable.sensitive && variable.value !== '' && (
+                <LightIconButton
+                  Icon={showSensitiveValue ? IconEyeOff : IconEye}
+                  size="small"
+                  accent="secondary"
+                  onClick={handleToggleVisibility}
+                />
+              )}
+            </StyledValueContainer>
+          </StyledExpandedLabel>
         </StyledExpandedDetails>
       </AnimatedExpandableContainer>
     </>

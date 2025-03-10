@@ -22,6 +22,38 @@ import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-cent
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
 
+const SettingsApiKeys = lazy(() =>
+  import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
+    (module) => ({
+      default: module.SettingsApiKeys,
+    }),
+  ),
+);
+
+const SettingsGraphQLPlayground = lazy(() =>
+  import(
+    '~/pages/settings/developers/playground/SettingsGraphQLPlayground'
+  ).then((module) => ({
+    default: module.SettingsGraphQLPlayground,
+  })),
+);
+
+const SettingsRestPlayground = lazy(() =>
+  import('~/pages/settings/developers/playground/SettingsRestPlayground').then(
+    (module) => ({
+      default: module.SettingsRestPlayground,
+    }),
+  ),
+);
+
+const SettingsWebhooks = lazy(() =>
+  import(
+    '~/pages/settings/developers/webhooks/components/SettingsWebhooks'
+  ).then((module) => ({
+    default: module.SettingsWebhooks,
+  })),
+);
+
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
     (module) => ({
@@ -149,12 +181,6 @@ const SettingsAccounts = lazy(() =>
 const SettingsBilling = lazy(() =>
   import('~/pages/settings/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
-  })),
-);
-
-const SettingsDevelopers = lazy(() =>
-  import('~/pages/settings/developers/SettingsDevelopers').then((module) => ({
-    default: module.SettingsDevelopers,
   })),
 );
 
@@ -439,9 +465,15 @@ export const SettingsRoutes = ({
           />
         }
       >
+        <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
+        <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
         <Route
-          path={SettingsPath.Developers}
-          element={<SettingsDevelopers />}
+          path={`${SettingsPath.GraphQLPlayground}`}
+          element={<SettingsGraphQLPlayground />}
+        />
+        <Route
+          path={`${SettingsPath.RestPlayground}/*`}
+          element={<SettingsRestPlayground />}
         />
         <Route
           path={SettingsPath.DevelopersNewApiKey}
@@ -557,13 +589,13 @@ export const SettingsRoutes = ({
 
       {isAdminPageEnabled && (
         <>
-          <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
+          <Route path={SettingsPath.ServerAdmin} element={<SettingsAdmin />} />
           <Route
             path={SettingsPath.FeatureFlags}
             element={<SettingsAdminContent />}
           />
           <Route
-            path={SettingsPath.AdminPanelIndicatorHealthStatus}
+            path={SettingsPath.ServerAdminIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
           />
         </>

@@ -16,6 +16,7 @@ describe('JwtAuthStrategy', () => {
   let userRepository: any;
   let dataSourceService: any;
   let typeORMService: any;
+
   const jwt = {
     sub: 'sub-default',
     jti: 'jti-default',
@@ -33,6 +34,10 @@ describe('JwtAuthStrategy', () => {
     findOne: jest.fn(async () => new UserWorkspace()),
   };
 
+  const jwtWrapperService: any = {
+    extractJwtFromRequest: jest.fn(() => () => 'token'),
+  };
+
   // first we test the API_KEY case
   it('should throw AuthException if type is API_KEY and workspace is not found', async () => {
     const payload = {
@@ -46,7 +51,7 @@ describe('JwtAuthStrategy', () => {
 
     strategy = new JwtAuthStrategy(
       {} as any,
-      {} as any,
+      jwtWrapperService,
       typeORMService,
       dataSourceService,
       workspaceRepository,
@@ -82,7 +87,7 @@ describe('JwtAuthStrategy', () => {
 
     strategy = new JwtAuthStrategy(
       {} as any,
-      {} as any,
+      jwtWrapperService,
       typeORMService,
       dataSourceService,
       workspaceRepository,
@@ -120,7 +125,7 @@ describe('JwtAuthStrategy', () => {
 
     strategy = new JwtAuthStrategy(
       {} as any,
-      {} as any,
+      jwtWrapperService,
       typeORMService,
       dataSourceService,
       workspaceRepository,
@@ -152,7 +157,7 @@ describe('JwtAuthStrategy', () => {
 
     strategy = new JwtAuthStrategy(
       {} as any,
-      {} as any,
+      jwtWrapperService,
       typeORMService,
       dataSourceService,
       workspaceRepository,
@@ -190,7 +195,7 @@ describe('JwtAuthStrategy', () => {
 
     strategy = new JwtAuthStrategy(
       {} as any,
-      {} as any,
+      jwtWrapperService,
       typeORMService,
       dataSourceService,
       workspaceRepository,
@@ -231,7 +236,7 @@ describe('JwtAuthStrategy', () => {
 
     strategy = new JwtAuthStrategy(
       {} as any,
-      {} as any,
+      jwtWrapperService,
       typeORMService,
       dataSourceService,
       workspaceRepository,

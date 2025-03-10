@@ -123,7 +123,6 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                   fullWidth
                   placeholder="yourdomain.com"
                   error={error?.message}
-                  leftAdornment="https://"
                 />
               )}
             />
