@@ -19,12 +19,10 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
-" Dette er kun serverværdierne. Sørg for, at dit worker-miljø har de\n"
+msgstr " Dette er kun serverværdierne. Sørg for, at dit worker-miljø har de\n"
 "        samme variabler og værdier, dette er nødvendigt for asynkrone opgaver som\n"
 "        e-mail synkronisering."
 
@@ -1223,11 +1221,11 @@ msgstr "Tom"
 
 #: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
 msgid "Empty Array"
-msgstr ""
+msgstr "Tom Array"
 
 #: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
 msgid "Empty Object"
-msgstr ""
+msgstr "Tomt Objekt"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
@@ -2206,7 +2204,7 @@ msgstr "Ikke tom"
 
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Not Found"
-msgstr ""
+msgstr "Ikke fundet"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
@@ -3223,7 +3221,7 @@ msgstr "Værdier"
 
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
-msgstr ""
+msgstr "Variabel ikke fundet"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"

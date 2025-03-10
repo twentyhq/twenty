@@ -19,12 +19,10 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
-" Ezek csak a szerver értékei. Biztosítsa, hogy a munkavállalói környezet\n"
+msgstr " Ezek csak a szerver értékei. Biztosítsa, hogy a munkavállalói környezet\n"
 "        ugyanazokkal a változókkal és értékekkel rendelkezzen, ez szükséges az aszinkron feladatokhoz, mint például az\n"
 "        e-mail szinkronizálás."
 
@@ -1223,11 +1221,11 @@ msgstr "\\u00dcres"
 
 #: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
 msgid "Empty Array"
-msgstr ""
+msgstr "Üres tömb"
 
 #: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
 msgid "Empty Object"
-msgstr ""
+msgstr "Üres objektum"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
@@ -2206,7 +2204,7 @@ msgstr "Nem üres"
 
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Not Found"
-msgstr ""
+msgstr "Nem található"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
@@ -3223,7 +3221,7 @@ msgstr "Értékek"
 
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
-msgstr ""
+msgstr "Változó nem található"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
