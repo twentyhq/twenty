@@ -3,7 +3,9 @@ import { InvalidStringException } from 'src/engine/metadata-modules/utils/except
 const ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX =
   /^[a-z][a-zA-Z0-9]*$/;
 
-export const validateMetadataNameValidityOrThrow = (name: string) => {
+export const validateMetadataNameOnlyContainsWhitelistedCharactersOrThrow = (
+  name: string,
+) => {
   if (!name.match(ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX)) {
     throw new InvalidStringException(name);
   }
