@@ -262,6 +262,10 @@ const performSearchExcludingPickedRecords = async ({
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickableMorphItems: RecordPickerPickableMorphItem[];
 }) => {
+  if (searchableObjectMetadataItems.length === 0) {
+    return [];
+  }
+
   const pickedMorphItems = pickableMorphItems.filter(
     ({ isSelected }) => isSelected,
   );

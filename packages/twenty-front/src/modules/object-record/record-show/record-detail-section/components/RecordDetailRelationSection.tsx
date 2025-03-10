@@ -12,9 +12,13 @@ import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
+import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
+import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
@@ -82,19 +86,39 @@ export const RecordDetailRelationSection = ({
   const { closeDropdown, isDropdownOpen, dropdownPlacement } =
     useDropdown(dropdownId);
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+  const setMultipleRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+    multipleRecordPickerSearchFilterComponentState,
+    dropdownId,
+  );
+
+  const setMultipleRecordPickerPickableMorphItems =
+    useSetRecoilComponentStateV2(
+      multipleRecordPickerPickableMorphItemsComponentState,
+      dropdownId,
+    );
+
+  const setMultipleRecordPickerSearchableObjectMetadataItems =
+    useSetRecoilComponentStateV2(
+      multipleRecordPickerSearchableObjectMetadataItemsComponentState,
+      dropdownId,
+    );
+
+  const { performSearch: multipleRecordPickerPerformSearch } =
+    useMultipleRecordPickerPerformSearch();
+
+  const setSingleRecordPickerSearchFilter = useSetRecoilComponentStateV2(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
-  const setRecordPickerPickableMorphItems = useSetRecoilComponentStateV2(
-    multipleRecordPickerPickableMorphItemsComponentState,
+  const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
+    singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
 
   const handleCloseRelationPickerDropdown = useCallback(() => {
-    setRecordPickerSearchFilter('');
-  }, [setRecordPickerSearchFilter]);
+    setMultipleRecordPickerSearchFilter('');
+  }, [setMultipleRecordPickerSearchFilter]);
 
   const persistField = usePersistField();
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
@@ -171,15 +195,37 @@ export const RecordDetailRelationSection = ({
   const relationRecordsCount = relationRecords.length;
 
   const handleOpenRelationPickerDropdown = () => {
-    setRecordPickerSearchFilter('');
-    setRecordPickerPickableMorphItems(
-      relationRecords.map((record) => ({
-        recordId: record.id,
-        objectMetadataId: relationObjectMetadataItem.id,
-        isSelected: true,
-        isMatchingSearchFilter: true,
-      })),
-    );
+    if (isToOneObject) {
+      setSingleRecordPickerSearchFilter('');
+      setSingleRecordPickerSelectedId(relationRecords[0].id);
+    }
+
+    if (isToManyObjects) {
+      setMultipleRecordPickerSearchableObjectMetadataItems([
+        relationObjectMetadataItem,
+      ]);
+      setMultipleRecordPickerSearchFilter('');
+      setMultipleRecordPickerPickableMorphItems(
+        relationRecords.map((record) => ({
+          recordId: record.id,
+          objectMetadataId: relationObjectMetadataItem.id,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        })),
+      );
+
+      multipleRecordPickerPerformSearch({
+        multipleRecordPickerInstanceId: dropdownId,
+        forceSearchFilter: '',
+        forceSearchableObjectMetadataItems: [relationObjectMetadataItem],
+        forcePickableMorphItems: relationRecords.map((record) => ({
+          recordId: record.id,
+          objectMetadataId: relationObjectMetadataItem.id,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        })),
+      });
+    }
   };
 
   return (
