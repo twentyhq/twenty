@@ -25,7 +25,7 @@ import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsS
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
     (module) => ({
-      default: module.SettingsApiKeys,.
+      default: module.SettingsApiKeys,
     }),
   ),
 );
