@@ -40,7 +40,13 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
       );
       const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
 
-      setFlow(oneFailedWorkflowRunQueryResult.workflowRun.output.flow);
+      setFlow({
+        workflowVersionId:
+          oneFailedWorkflowRunQueryResult.workflowRun.workflowVersionId,
+        trigger:
+          oneFailedWorkflowRunQueryResult.workflowRun.output.flow.trigger,
+        steps: oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps,
+      });
       setWorkflowSelectedNode(
         oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps[0].id,
       );

@@ -25,6 +25,7 @@ export const WorkflowVersionVisualizerEffect = ({
     }
 
     setFlow({
+      workflowVersionId: workflowVersion.id,
       trigger: workflowVersion.trigger,
       steps: workflowVersion.steps,
     });
