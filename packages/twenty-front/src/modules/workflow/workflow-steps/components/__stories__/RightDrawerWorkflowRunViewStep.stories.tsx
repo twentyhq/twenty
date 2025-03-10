@@ -10,6 +10,7 @@ import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { oneFailedWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
@@ -50,6 +51,7 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
     RouterDecorator,
     ObjectMetadataItemsDecorator,
     WorkspaceDecorator,
+    WorkflowStepDecorator,
   ],
   parameters: {
     msw: {

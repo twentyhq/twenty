@@ -25,6 +25,8 @@ export const getWorkflowNodeIdMock = () => {
   return getWorkflowMock().versions.edges[0].node.steps[0].id;
 };
 
+export const MOCKED_STEP_ID = '04d5f3bf-9714-400d-ba27-644006a5fb1b';
+
 export const workflowQueryResult = {
   workflows: {
     __typename: 'WorkflowConnection',
@@ -76,7 +78,7 @@ export const workflowQueryResult = {
                   status: 'DRAFT',
                   steps: [
                     {
-                      id: '04d5f3bf-9714-400d-ba27-644006a5fb1b',
+                      id: MOCKED_STEP_ID,
                       name: 'Create Record',
                       type: 'CREATE_RECORD',
                       valid: false,
@@ -107,6 +109,28 @@ export const workflowQueryResult = {
                               value: 'My text',
                               isLeaf: true,
                             },
+                            fullName: {
+                              icon: 'IconTargetArrow',
+                              type: 'TEXT',
+                              label: 'Full Name',
+                              isLeaf: false,
+                              value: {
+                                firstName: {
+                                  icon: 'IconTargetArrow',
+                                  type: 'TEXT',
+                                  label: 'Full Name First Name',
+                                  value: 'John',
+                                  isLeaf: true,
+                                },
+                                lastName: {
+                                  icon: 'IconTargetArrow',
+                                  type: 'TEXT',
+                                  label: 'Full Name Last Name',
+                                  value: 'Doe',
+                                  isLeaf: true,
+                                },
+                              },
+                            },
                             stage: {
                               icon: 'IconProgressCheck',
                               type: 'SELECT',
@@ -120,13 +144,13 @@ export const workflowQueryResult = {
                               value: {
                                 amountMicros: {
                                   type: 'NUMERIC',
-                                  label: ' Amount Micros',
+                                  label: 'My Amount Micros',
                                   value: null,
                                   isLeaf: true,
                                 },
                                 currencyCode: {
                                   type: 'TEXT',
-                                  label: ' Currency Code',
+                                  label: 'My Currency Code',
                                   value: 'My text',
                                   isLeaf: true,
                                 },
@@ -184,6 +208,13 @@ export const workflowQueryResult = {
                               type: 'DATE_TIME',
                               label: 'Last update',
                               value: '01/23/2025 15:16',
+                              isLeaf: true,
+                            },
+                            salary: {
+                              icon: 'IconMoneybag',
+                              type: 'NUMBER',
+                              label: 'Salary',
+                              value: 1000000000,
                               isLeaf: true,
                             },
                           },

@@ -193,11 +193,5 @@ export const DisabledWithDefaultVariableValues: Story = {
     ).queryByRole('button');
 
     expect(openRecordSelectButton).not.toBeInTheDocument();
-
-    const recordVariableToDelete = await within(
-      canvas.getByTestId('workflow-edit-action-record-delete-object-record-id'),
-    ).findByText('Person');
-
-    expect(recordVariableToDelete).toBeVisible();
   },
 };

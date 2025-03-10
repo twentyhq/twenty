@@ -291,6 +291,15 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.EmailSettings,
+    description: 'Use unsecure connection for SMTP',
+  })
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  EMAIL_SMTP_NO_TLS = false;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.EmailSettings,
     description: 'SMTP port for sending emails',
   })
   @CastToPositiveNumber()

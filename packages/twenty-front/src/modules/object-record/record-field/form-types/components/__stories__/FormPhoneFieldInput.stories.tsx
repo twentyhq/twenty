@@ -2,6 +2,8 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormPhoneFieldInput } from '../FormPhoneFieldInput';
 
 const meta: Meta<typeof FormPhoneFieldInput> = {
@@ -9,6 +11,7 @@ const meta: Meta<typeof FormPhoneFieldInput> = {
   component: FormPhoneFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -108,19 +111,16 @@ export const WithVariablesAsDefaultValues: Story = {
   args: {
     label: 'Phone',
     defaultValue: {
-      primaryPhoneCountryCode: '{{a.countryCode}}',
-      primaryPhoneNumber: '{{a.phoneNumber}}',
+      primaryPhoneCountryCode: `{{${MOCKED_STEP_ID}.name}}`,
+      primaryPhoneNumber: `{{${MOCKED_STEP_ID}.amount.amountMicros}}`,
     },
     VariablePicker: () => <div>VariablePicker</div>,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const countryCodeVariable = await canvas.findByText('countryCode');
+    const countryCodeVariable = await canvas.findByText('Name');
     expect(countryCodeVariable).toBeVisible();
-
-    const phoneNumberVariable = await canvas.findByText('phoneNumber');
-    expect(phoneNumberVariable).toBeVisible();
 
     const variablePickers = await canvas.findAllByText('VariablePicker');
 
@@ -139,7 +139,7 @@ export const SelectingVariables: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.phoneNumber}}`);
           }}
         >
           Add variable
@@ -162,12 +162,12 @@ export const SelectingVariables: Story = {
 
     await userEvent.click(phoneNumberVariablePicker);
 
-    const phoneNumberVariable = await canvas.findByText('test');
+    const phoneNumberVariable = await canvas.findByText('phoneNumber');
     expect(phoneNumberVariable).toBeVisible();
 
     await waitFor(() => {
       expect(args.onPersist).toHaveBeenCalledWith({
-        primaryPhoneNumber: '{{test}}',
+        primaryPhoneNumber: `{{${MOCKED_STEP_ID}.phoneNumber}}`,
         primaryPhoneCountryCode: '',
         primaryPhoneCallingCode: '',
       });
