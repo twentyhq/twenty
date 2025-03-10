@@ -17,6 +17,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
+import { isDefined } from 'twenty-shared';
 
 @Command({
   name: 'upgrade',
@@ -41,12 +42,45 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
   }
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    const { appVersion, workspaceId, index, total, options } = args;
+    await this.validateWorkspaceVersion({
+      appVersion,
+      workspaceId,
+    });
+
     this.logger.log(
       chalk.blue(
-        `${args.options.dryRun ? '(dry run)' : ''} Upgrading workspace ${args.workspaceId} ${args.index + 1}/${args.total}`,
+        `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
       ),
     );
 
+    await this.runUpgradeVersionCommands(args);
+
+    this.logger.log(
+      chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
+    );
+  }
+
+  private async validateWorkspaceVersion({
+    appVersion,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    appVersion: string;
+  }) {
+    const currentWorkspaceVersion = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!isDefined(currentWorkspaceVersion)) {
+      throw new Error('TODO implem aggreg => VERSION NOT DEFINED');
+    }
+
+    const result = 
+  }
+
+  // EDIT ONLY ZONE
+  private async runUpgradeVersionCommands(args: RunOnWorkspaceArgs) {
     await this.migrateRichTextContentPatchCommand.runOnWorkspace(args);
 
     await this.migrateIsSearchableForCustomObjectMetadataCommand.runOnWorkspace(
@@ -61,16 +95,14 @@ export class UpgradeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandR
       args,
     );
 
+    // NOTE SAFE sync metadata
     await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
-
+    ///
     await this.updateDefaultViewRecordOpeningOnWorkflowObjectsCommand.runOnWorkspace(
       args,
     );
 
     await this.addTasksAssignedToMeViewCommand.runOnWorkspace(args);
-
-    this.logger.log(
-      chalk.blue(`Upgrade for workspace ${args.workspaceId} completed.`),
-    );
   }
+  ///
 }
