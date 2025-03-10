@@ -15,6 +15,7 @@ import {
   IconNotes,
   IconPrinter,
   IconSettings,
+  IconHome,
 } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -287,6 +288,27 @@ export const useRecordShowContainerTabs = (
             requiredObjectsInactive ||
             relationsDontExist,
         };
-      }),
+      })
+      // When isInRightDrawer === true, we merge first and second tab into first tab
+      .reduce<SingleTabProps[]>((acc, tab, index, array) => {
+        if (isInRightDrawer && array.length > 1) {
+          if (index === 0) {
+            return [
+              ...acc,
+              {
+                id: 'home',
+                title: 'Home',
+                Icon: IconHome,
+                cards: [...tab.cards, ...array[1].cards],
+                hide: false,
+              },
+            ];
+          }
+          if (index === 1) {
+            return acc;
+          }
+        }
+        return [...acc, tab];
+      }, []),
   };
 };
