@@ -1,10 +1,12 @@
 import { Key } from 'ts-key-enum';
 import {
   AppTooltip,
+  IconCopy,
   IconLayout,
   IconLayoutList,
   IconList,
   IconTag,
+  IconTrash,
   MenuItem,
   useIcons,
 } from 'twenty-ui';
@@ -13,14 +15,20 @@ import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdow
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewType } from '@/views/types/ViewType';
+import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
+import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -65,6 +73,21 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
+
+  const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
+  const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
+    viewPickerReferenceViewIdComponentState,
+  );
+  const handleDelete = () => {
+    if (!currentView?.id) {
+      return;
+    }
+    setViewPickerReferenceViewId(currentView?.id);
+    deleteViewFromCurrentState();
+    closeDropdown();
+  };
+  const theme = useTheme();
+  const { enqueueSnackBar } = useSnackBar();
 
   return (
     <>
@@ -122,6 +145,26 @@ export const ObjectOptionsDropdownMenuContent = () => {
             width="100%"
           />
         )}
+        <DropdownMenuSeparator />
+
+        <MenuItem
+          onClick={() => {
+            const currentUrl = window.location.href;
+            navigator.clipboard.writeText(currentUrl);
+            enqueueSnackBar('Link copied to clipboard', {
+              variant: SnackBarVariant.Error,
+              icon: <IconCopy size={theme.icon.size.md} />,
+              duration: 2000,
+            });
+          }}
+          LeftIcon={IconCopy}
+          text={t`Copy link to view`}
+        />
+        <MenuItem
+          onClick={() => handleDelete()}
+          LeftIcon={IconTrash}
+          text={t`Delete view`}
+        />
       </DropdownMenuItemsContainer>
     </>
   );
