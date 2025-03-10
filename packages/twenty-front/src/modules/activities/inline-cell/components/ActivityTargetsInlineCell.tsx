@@ -95,6 +95,8 @@ export const ActivityTargetsInlineCell = ({
                       updateActivityTargetFromInlineCell({
                         recordPickerInstanceId: multipleRecordPickerInstanceId,
                         morphItem,
+                        activityTargetWithTargetRecords:
+                          activityTargetObjectRecords,
                       });
                     }}
                     onSubmit={() => {

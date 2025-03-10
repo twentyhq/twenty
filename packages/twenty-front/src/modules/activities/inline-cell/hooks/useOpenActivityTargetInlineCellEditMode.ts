@@ -1,5 +1,6 @@
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
@@ -29,7 +30,12 @@ export const useOpenActivityTargetInlineCellEditMode = () => {
         const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)
           .getValue()
-          .filter((objectMetadataItem) => objectMetadataItem.isSearchable);
+          .filter(
+            (objectMetadataItem) =>
+              objectMetadataItem.isSearchable &&
+              objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task &&
+              objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note,
+          );
 
         set(
           multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
