@@ -224,9 +224,7 @@ export const validateLowerCasedAndTrimmedStringsAreDifferentOrThrow = ({
   message,
   inputs: [firstString, secondString],
 }: ValidateLowerCasedAndTrimmedStringAreDifferentOrThrowArgs) => {
-  if (
-    firstString.trim().toLowerCase() === secondString.trim().toLowerCase()
-  ) {
+  if (firstString.trim().toLowerCase() === secondString.trim().toLowerCase()) {
     throw new ObjectMetadataException(
       message,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,

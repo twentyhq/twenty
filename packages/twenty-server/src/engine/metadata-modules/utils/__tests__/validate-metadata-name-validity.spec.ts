@@ -57,8 +57,8 @@ describe('validateMetadataNameValidityOrThrow', () => {
   it('throws if an empty string', () => {
     const emptyString = '';
 
-    expect(() =>
-      validateMetadataNameValidityOrThrow(emptyString),
-    ).toThrow(InvalidStringException);
+    expect(() => validateMetadataNameValidityOrThrow(emptyString)).toThrow(
+      InvalidStringException,
+    );
   });
 });
