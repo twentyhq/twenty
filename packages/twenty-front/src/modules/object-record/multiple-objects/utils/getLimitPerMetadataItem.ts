@@ -2,7 +2,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize, isDefined } from 'twenty-shared';
 
 export const getLimitPerMetadataItem = (
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: Pick<ObjectMetadataItem, 'nameSingular'>[],
   limit: number,
 ) => {
   return Object.fromEntries(

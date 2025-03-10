@@ -24,6 +24,7 @@ import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContext
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
+import { commandMenuNavigationMorphItemsState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -374,6 +375,22 @@ export const useCommandMenu = () => {
               }),
             )
             .getValue(),
+        );
+
+        set(
+          commandMenuNavigationMorphItemsState,
+          new Map([
+            ...snapshot
+              .getLoadable(commandMenuNavigationMorphItemsState)
+              .getValue(),
+            [
+              pageComponentInstanceId,
+              {
+                objectMetadataId: objectMetadataItem.id,
+                recordId,
+              },
+            ],
+          ]),
         );
 
         const Icon = objectMetadataItem?.icon
