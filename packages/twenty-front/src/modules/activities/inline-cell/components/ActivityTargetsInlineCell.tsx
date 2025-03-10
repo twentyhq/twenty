@@ -4,10 +4,8 @@ import { IconArrowUpRight, IconPencil } from 'twenty-ui';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
-import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
 import { useOpenActivityTargetInlineCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetInlineCellEditMode';
-import { ActivityTargetInlineCellComponentInstanceContext } from '@/activities/inline-cell/states/contexts/ActivityTargetInlineCellComponentInstanceContext';
-import { getActivityTargetsInlineCellComponentInstanceIdFromActivityId } from '@/activities/inline-cell/utils/getActivityTargetsInlineCellComponentInstanceIdFromActivityId';
+import { useUpdateActivityTargetFromInlineCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromInlineCell';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
@@ -20,6 +18,7 @@ import { RecordFieldInputScope } from '@/object-record/record-field/scopes/Recor
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 type ActivityTargetsInlineCellProps = {
@@ -39,6 +38,8 @@ export const ActivityTargetsInlineCell = ({
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activity);
+
+  const multipleRecordPickerInstanceId = `multiple-record-picker-target-${activity.id}`;
 
   const { closeInlineCell } = useInlineCell();
 
@@ -66,60 +67,61 @@ export const ActivityTargetsInlineCell = ({
   const { openActivityTargetInlineCellEditMode } =
     useOpenActivityTargetInlineCellEditMode();
 
+  const { updateActivityTargetFromInlineCell } =
+    useUpdateActivityTargetFromInlineCell({
+      activityObjectNameSingular,
+      activityId: activity.id,
+    });
+
   return (
-    <ActivityTargetInlineCellComponentInstanceContext.Provider
-      value={{
-        instanceId:
-          getActivityTargetsInlineCellComponentInstanceIdFromActivityId(
-            activity.id,
-          ),
-      }}
-    >
-      <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
-        <FieldFocusContextProvider>
-          {ActivityTargetsContextProvider && (
-            <ActivityTargetsContextProvider>
-              <RecordInlineCellContext.Provider
-                value={{
-                  buttonIcon: IconPencil,
-                  customEditHotkeyScope:
-                    ActivityEditorHotkeyScope.ActivityTargets,
-                  IconLabel: showLabel ? IconArrowUpRight : undefined,
-                  showLabel: showLabel,
-                  readonly: isFieldReadOnly,
-                  labelWidth: fieldDefinition?.labelWidth,
-                  editModeContent: (
-                    <ActivityTargetInlineCellEditMode
-                      activity={activity}
-                      activityTargetWithTargetRecords={
-                        activityTargetObjectRecords
-                      }
-                      activityObjectNameSingular={activityObjectNameSingular}
-                    />
-                  ),
-                  label: 'Relations',
-                  displayModeContent: (
-                    <ActivityTargetChips
-                      activityTargetObjectRecords={activityTargetObjectRecords}
-                      maxWidth={maxWidth}
-                    />
-                  ),
-                  onOpenEditMode: () => {
-                    openActivityTargetInlineCellEditMode({
-                      componentInstanceId:
-                        getActivityTargetsInlineCellComponentInstanceIdFromActivityId(
-                          activity.id,
-                        ),
-                    });
-                  },
-                }}
-              >
-                <RecordInlineCellContainer />
-              </RecordInlineCellContext.Provider>
-            </ActivityTargetsContextProvider>
-          )}
-        </FieldFocusContextProvider>
-      </RecordFieldInputScope>
-    </ActivityTargetInlineCellComponentInstanceContext.Provider>
+    <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
+      <FieldFocusContextProvider>
+        {ActivityTargetsContextProvider && (
+          <ActivityTargetsContextProvider>
+            <RecordInlineCellContext.Provider
+              value={{
+                buttonIcon: IconPencil,
+                customEditHotkeyScope:
+                  ActivityEditorHotkeyScope.ActivityTargets,
+                IconLabel: showLabel ? IconArrowUpRight : undefined,
+                showLabel: showLabel,
+                readonly: isFieldReadOnly,
+                labelWidth: fieldDefinition?.labelWidth,
+                editModeContent: (
+                  <MultipleRecordPicker
+                    componentInstanceId={multipleRecordPickerInstanceId}
+                    onClickOutside={() => {}}
+                    onChange={(morphItem) => {
+                      updateActivityTargetFromInlineCell({
+                        recordPickerInstanceId: multipleRecordPickerInstanceId,
+                        morphItem,
+                      });
+                    }}
+                    onSubmit={() => {
+                      closeInlineCell();
+                    }}
+                  />
+                ),
+                label: 'Relations',
+                displayModeContent: (
+                  <ActivityTargetChips
+                    activityTargetObjectRecords={activityTargetObjectRecords}
+                    maxWidth={maxWidth}
+                  />
+                ),
+                onOpenEditMode: () => {
+                  openActivityTargetInlineCellEditMode({
+                    recordPickerInstanceId: multipleRecordPickerInstanceId,
+                    activityTargetObjectRecords,
+                  });
+                },
+              }}
+            >
+              <RecordInlineCellContainer />
+            </RecordInlineCellContext.Provider>
+          </ActivityTargetsContextProvider>
+        )}
+      </FieldFocusContextProvider>
+    </RecordFieldInputScope>
   );
 };
