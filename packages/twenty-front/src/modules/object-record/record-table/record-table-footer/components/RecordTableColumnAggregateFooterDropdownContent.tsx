@@ -27,7 +27,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
   switch (currentContentId) {
     case 'moreAggregateOperationOptions': {
       const aggregateOperations = availableAggregateOperations.filter(
-        (aggregateOperation) =>
+        (aggregateOperation): aggregateOperation is AGGREGATE_OPERATIONS =>
           !STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(
             aggregateOperation as AGGREGATE_OPERATIONS,
           ),
@@ -42,7 +42,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
     }
     case 'countAggregateOperationsOptions': {
       const aggregateOperations = availableAggregateOperations.filter(
-        (aggregateOperation) =>
+        (aggregateOperation): aggregateOperation is AGGREGATE_OPERATIONS =>
           COUNT_AGGREGATE_OPERATION_OPTIONS.includes(
             aggregateOperation as AGGREGATE_OPERATIONS,
           ),
@@ -56,7 +56,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
     }
     case 'percentAggregateOperationsOptions': {
       const aggregateOperations = availableAggregateOperations.filter(
-        (aggregateOperation) =>
+        (aggregateOperation): aggregateOperation is AGGREGATE_OPERATIONS =>
           PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(
             aggregateOperation as AGGREGATE_OPERATIONS,
           ),
@@ -70,7 +70,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
     }
     case 'booleanAggregateOperationsOptions': {
       const aggregateOperations = availableAggregateOperations.filter(
-        (aggregateOperation) =>
+        (aggregateOperation): aggregateOperation is AGGREGATE_OPERATIONS =>
           BOOLEAN_AGGREGATE_OPERATION_OPTIONS.includes(
             aggregateOperation as AGGREGATE_OPERATIONS,
           ),
@@ -84,7 +84,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
     }
     case 'datesAggregateOperationsOptions': {
       const aggregateOperations = availableAggregateOperations.filter(
-        (aggregateOperation) =>
+        (aggregateOperation): aggregateOperation is DATE_AGGREGATE_OPERATIONS =>
           DATE_AGGREGATE_OPERATION_OPTIONS.includes(
             aggregateOperation as DATE_AGGREGATE_OPERATIONS,
           ),
