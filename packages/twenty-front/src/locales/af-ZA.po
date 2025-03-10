@@ -2201,6 +2201,10 @@ msgstr "Nie beskikbaar in verstek aansig nie"
 msgid "Not empty"
 msgstr "Nie leeg nie"
 
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Not Found"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
 msgstr "Nie gesinkroniseer nie"
@@ -3213,6 +3217,10 @@ msgstr "Gebruikers"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "Waardes"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Variable not found"
+msgstr ""
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
