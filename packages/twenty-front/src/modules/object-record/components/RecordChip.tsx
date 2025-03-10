@@ -22,6 +22,7 @@ export type RecordChipProps = {
   maxWidth?: number;
   to?: string | undefined;
   size?: ChipSize;
+  isLabelHidden?: boolean;
 };
 
 export const RecordChip = ({
@@ -33,6 +34,7 @@ export const RecordChip = ({
   to,
   size,
   forceDisableClick = false,
+  isLabelHidden = false,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -76,6 +78,7 @@ export const RecordChip = ({
       maxWidth={maxWidth}
       placeholderColorSeed={record.id}
       name={recordChipData.name}
+      isLabelHidden={isLabelHidden}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       className={className}
