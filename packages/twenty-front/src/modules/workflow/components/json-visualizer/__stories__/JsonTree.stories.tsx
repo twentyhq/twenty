@@ -6,7 +6,6 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
-import { ComponentDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof JsonTree> = {
@@ -14,7 +13,7 @@ const meta: Meta<typeof JsonTree> = {
   component: JsonTree,
   args: {},
   argTypes: {},
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;
@@ -51,9 +50,46 @@ export const ArraySimple: Story = {
   },
 };
 
+export const ArrayEmpty: Story = {
+  args: {
+    value: [],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emptyState = await canvas.findByText('Empty Array');
+
+    expect(emptyState).toBeVisible();
+  },
+};
+
 export const ArrayNested: Story = {
   args: {
     value: [1, 2, ['a', 'b', 'c'], 3],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedArrayElements = await canvas.findByText('[3]');
+
+    expect(nestedArrayElements).toBeVisible();
+  },
+};
+
+export const ArrayNestedEmpty: Story = {
+  args: {
+    value: [1, 2, [], 3],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedArrayElements = await canvas.findByText('[0]');
+
+    expect(nestedArrayElements).toBeVisible();
+
+    const emptyState = await canvas.findByText('Empty Array');
+
+    expect(emptyState).toBeVisible();
   },
 };
 
@@ -70,6 +106,13 @@ export const ArrayWithObjects: Story = {
       },
     ],
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedObjectItemsCounts = await canvas.findAllByText('{2}');
+
+    expect(nestedObjectItemsCounts).toHaveLength(2);
+  },
 };
 
 export const ObjectSimple: Story = {
@@ -78,6 +121,19 @@ export const ObjectSimple: Story = {
       name: 'John Doe',
       age: 30,
     },
+  },
+};
+
+export const ObjectEmpty: Story = {
+  args: {
+    value: {},
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emptyState = await canvas.findByText('Empty Object');
+
+    expect(emptyState).toBeVisible();
   },
 };
 
@@ -93,6 +149,32 @@ export const ObjectNested: Story = {
       },
       isActive: true,
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedObjectItemsCounts = await canvas.findAllByText('{2}');
+
+    expect(nestedObjectItemsCounts).toHaveLength(2);
+  },
+};
+
+export const ObjectNestedEmpty: Story = {
+  args: {
+    value: {
+      person: {},
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nestedObjectItemsCount = await canvas.findByText('{0}');
+
+    expect(nestedObjectItemsCount).toBeVisible();
+
+    const emptyState = await canvas.findByText('Empty Object');
+
+    expect(emptyState).toBeVisible();
   },
 };
 
@@ -185,5 +267,125 @@ export const ExpandingElementExpandsAllItsDescendants: Story = {
 
       expect(allCollapseButtons).toHaveLength(3);
     }
+  },
+};
+
+export const ReallyDeepNestedObject: Story = {
+  args: {
+    value: {
+      a: {
+        b: {
+          c: {
+            d: {
+              e: {
+                f: {
+                  g: {
+                    h: {
+                      i: {
+                        j: {
+                          k: {
+                            l: {
+                              m: {
+                                n: {
+                                  o: {
+                                    p: {
+                                      q: {
+                                        r: {
+                                          s: {
+                                            t: {
+                                              u: {
+                                                v: {
+                                                  w: {
+                                                    x: {
+                                                      y: {
+                                                        z: {
+                                                          end: true,
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        bis: {
+          c: {
+            d: {
+              e: {
+                f: {
+                  g: {
+                    h: {
+                      i: {
+                        j: {
+                          k: {
+                            l: {
+                              m: {
+                                n: {
+                                  o: {
+                                    p: {
+                                      q: {
+                                        r: {
+                                          s: {
+                                            t: {
+                                              u: {
+                                                v: {
+                                                  w: {
+                                                    x: {
+                                                      y: {
+                                                        z: {
+                                                          end: true,
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const LongText: Story = {
+  args: {
+    value: {
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum iaculis est tincidunt, sagittis neque vitae, sodales purus.':
+        'Ut lobortis ultricies purus, sit amet porta eros. Suspendisse efficitur quam vitae diam imperdiet feugiat. Etiam vel bibendum elit.',
+    },
   },
 };
