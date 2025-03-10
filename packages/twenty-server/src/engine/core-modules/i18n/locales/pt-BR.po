@@ -238,6 +238,10 @@ msgid "Associated Agent Id"
 msgstr "ID do agente associado"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated extensionNumber"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Document"
 msgstr "Documento do usuário associado"
 
@@ -542,7 +546,6 @@ msgid "Company"
 msgstr "Empresa"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Company linked to the charge"
 msgstr "Empresa vinculada a Cobrança"
 
@@ -651,6 +654,10 @@ msgstr "Data e Hora da Criação"
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Customer"
 msgstr "Cliente"
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Customer linked to the charge"
+msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
@@ -851,12 +858,16 @@ msgid "Expiration date"
 msgstr "Data de Expiração"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Extension Number"
-msgstr "Número de ramal"
+#~ msgid "Extension Number"
+#~ msgstr "Número de ramal"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Extension number to receive calls."
-msgstr "Número de ramal para receber chamadas"
+#~ msgid "Extension number to receive calls."
+#~ msgstr "Número de ramal para receber chamadas"
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "extensionNumber"
+msgstr ""
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"

@@ -238,6 +238,10 @@ msgid "Associated Agent Id"
 msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Associated extensionNumber"
+msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Document"
 msgstr ""
 
@@ -542,7 +546,6 @@ msgid "Company"
 msgstr "Yritys"
 
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Company linked to the charge"
 msgstr ""
 
@@ -650,6 +653,10 @@ msgstr "Luontihetken aika"
 
 #: src/modules/charges/standard-objects/charge.workspace-entity.ts
 msgid "Customer"
+msgstr ""
+
+#: src/modules/charges/standard-objects/charge.workspace-entity.ts
+msgid "Customer linked to the charge"
 msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -851,11 +858,15 @@ msgid "Expiration date"
 msgstr "Vanhentumispäivä"
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Extension Number"
-msgstr ""
+#~ msgid "Extension Number"
+#~ msgstr ""
 
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-msgid "Extension number to receive calls."
+#~ msgid "Extension number to receive calls."
+#~ msgstr ""
+
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "extensionNumber"
 msgstr ""
 
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
