@@ -100,6 +100,7 @@ const meta: Meta<typeof CommandMenu> = {
           page: CommandMenuPages.Root,
           pageTitle: 'Command Menu',
           pageIcon: IconDotsVertical,
+          pageId: '1',
         },
       ]);
 

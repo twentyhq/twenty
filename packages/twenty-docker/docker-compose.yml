@@ -23,7 +23,9 @@ services:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
       - ./packages/twenty-server/secrets:/app/twenty-server/secrets
-    env_file: "server.env"
+    env_file: 
+      - .env
+      - server.env
     ports:
       - "${SERVER_PORT:-3000}:${SERVER_PORT:-3000}"
     environment:

@@ -2,7 +2,7 @@ import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
@@ -13,6 +13,7 @@ import { ExtendedAggregateOperations } from '@/object-record/record-table/types/
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { UserContext } from '@/users/contexts/UserContext';
+import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared';
@@ -33,12 +34,16 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const requestFilters = computeViewRecordGqlOperationFilter(
-    filterValueDependencies,
-    currentRecordFilters,
-    objectMetadataItem.fields,
+  const recordFilterGroups = mapViewFilterGroupsToRecordFilterGroups(
     recordIndexViewFilterGroups,
   );
+
+  const requestFilters = computeRecordGqlOperationFilter({
+    fields: objectMetadataItem.fields,
+    filterValueDependencies,
+    recordFilterGroups,
+    recordFilters: currentRecordFilters,
+  });
 
   const { viewFieldId } = useContext(
     RecordTableColumnAggregateFooterCellContext,

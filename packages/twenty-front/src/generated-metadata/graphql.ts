@@ -194,6 +194,7 @@ export type BillingPlanOutput = {
 
 export type BillingPriceLicensedDto = {
   __typename?: 'BillingPriceLicensedDTO';
+  priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String']['output'];
   unitAmount: Scalars['Float']['output'];
@@ -201,6 +202,7 @@ export type BillingPriceLicensedDto = {
 
 export type BillingPriceMeteredDto = {
   __typename?: 'BillingPriceMeteredDTO';
+  priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String']['output'];
   tiers?: Maybe<Array<BillingPriceTierDto>>;
@@ -229,22 +231,8 @@ export type BillingProductDto = {
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
   name: Scalars['String']['output'];
-  prices: Array<Maybe<BillingPriceUnionDto>>;
+  prices: Array<BillingPriceUnionDto>;
   type: BillingUsageType;
-};
-
-export type BillingProductPriceDto = {
-  __typename?: 'BillingProductPriceDTO';
-  created: Scalars['Float']['output'];
-  recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String']['output'];
-  unitAmount: Scalars['Float']['output'];
-};
-
-export type BillingProductPricesOutput = {
-  __typename?: 'BillingProductPricesOutput';
-  productPrices: Array<BillingProductPriceDto>;
-  totalNumberOfPrices: Scalars['Int']['output'];
 };
 
 export type BillingSessionOutput = {
@@ -618,7 +606,6 @@ export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
   IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
-  IsBillingPlansEnabled = 'IsBillingPlansEnabled',
   IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
@@ -1532,7 +1519,6 @@ export type Query = {
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
-  getProductPrices: BillingProductPricesOutput;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;

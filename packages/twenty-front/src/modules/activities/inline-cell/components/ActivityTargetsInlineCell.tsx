@@ -13,6 +13,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
+import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
@@ -23,7 +24,6 @@ type ActivityTargetsInlineCellProps = {
   activity: Task | Note;
   showLabel?: boolean;
   maxWidth?: number;
-  readonly?: boolean;
   activityObjectNameSingular:
     | CoreObjectNameSingular.Note
     | CoreObjectNameSingular.Task;
@@ -33,7 +33,6 @@ export const ActivityTargetsInlineCell = ({
   activity,
   showLabel = true,
   maxWidth,
-  readonly,
   activityObjectNameSingular,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } =
@@ -42,6 +41,8 @@ export const ActivityTargetsInlineCell = ({
   const { closeInlineCell } = useInlineCell();
 
   const { fieldDefinition } = useContext(FieldContext);
+
+  const isFieldReadOnly = useIsFieldValueReadOnly();
 
   useScopedHotkeys(
     Key.Escape,
@@ -76,7 +77,7 @@ export const ActivityTargetsInlineCell = ({
                 },
                 IconLabel: showLabel ? IconArrowUpRight : undefined,
                 showLabel: showLabel,
-                readonly: readonly,
+                readonly: isFieldReadOnly,
                 labelWidth: fieldDefinition?.labelWidth,
                 editModeContent: (
                   <ActivityTargetInlineCellEditMode

@@ -14,7 +14,8 @@ export const JsonObjectNode = ({
   return (
     <JsonNestedNode
       elements={Object.entries(value).map(([key, value]) => ({
-        key,
+        id: key,
+        label: key,
         value,
       }))}
       label={label}

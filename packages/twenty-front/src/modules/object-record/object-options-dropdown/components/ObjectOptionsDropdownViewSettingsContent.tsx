@@ -12,17 +12,17 @@ import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hook
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownViewSettingsContent = () => {
   const { t } = useLingui();
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
   const {
     recordIndexId,
@@ -74,7 +74,7 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
             onToggleChange={() =>
               setAndPersistIsCompactModeActive(
                 !isCompactModeActive,
-                currentViewWithCombinedFiltersAndSorts,
+                currentView,
               )
             }
             toggled={isCompactModeActive}

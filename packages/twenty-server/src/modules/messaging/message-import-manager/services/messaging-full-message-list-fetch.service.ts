@@ -11,12 +11,12 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
+import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
-} from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
-import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
-import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
+} from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 @Injectable()
 export class MessagingFullMessageListFetchService {
   constructor(

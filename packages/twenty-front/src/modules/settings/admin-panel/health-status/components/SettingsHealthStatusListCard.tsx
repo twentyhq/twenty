@@ -20,7 +20,7 @@ export const SettingsHealthStatusListCard = ({
         <SettingsAdminHealthStatusRightContainer status={service.status} />
       )}
       to={(service) =>
-        getSettingsPath(SettingsPath.AdminPanelIndicatorHealthStatus, {
+        getSettingsPath(SettingsPath.ServerAdminIndicatorHealthStatus, {
           indicatorId: service.id,
         })
       }

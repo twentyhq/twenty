@@ -2,14 +2,22 @@ import { RolePermissionsObjectsTableHeader } from '@/settings/roles/role-permiss
 import { RolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader';
 import { RolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableRow';
 import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePermissionsObjectPermission';
+import { RolePermissionsSettingPermission } from '@/settings/roles/types/RolePermissionsSettingPermission';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
   H2Title,
+  IconCode,
   IconEye,
+  IconHierarchy,
+  IconKey,
+  IconLock,
   IconPencil,
+  IconSettings,
   IconTrash,
   IconTrashX,
+  IconUserCog,
+  IconUsers,
   Section,
 } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
@@ -44,71 +52,78 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
     {
       key: 'seeRecords',
       label: 'See Records on All Objects',
-      icon: <IconEye size={14} />,
+      Icon: IconEye,
       value: role.canReadAllObjectRecords,
     },
     {
       key: 'editRecords',
       label: 'Edit Records on All Objects',
-      icon: <IconPencil size={14} />,
+      Icon: IconPencil,
       value: role.canUpdateAllObjectRecords,
     },
     {
       key: 'deleteRecords',
       label: 'Delete Records on All Objects',
-      icon: <IconTrash size={14} />,
+      Icon: IconTrash,
       value: role.canSoftDeleteAllObjectRecords,
     },
     {
       key: 'destroyRecords',
       label: 'Destroy Records on All Objects',
-      icon: <IconTrashX size={14} />,
+      Icon: IconTrashX,
       value: role.canDestroyAllObjectRecords,
     },
   ];
 
-  const settingsPermissionsConfig = [
+  const settingsPermissionsConfig: RolePermissionsSettingPermission[] = [
     {
       key: SettingsPermissions.API_KEYS_AND_WEBHOOKS,
-      label: 'API Keys and Webhooks',
+      label: 'Manage API Keys & Webhooks',
       type: 'Developer',
       value: role.canUpdateAllSettings,
-    },
-    {
-      key: SettingsPermissions.ROLES,
-      label: 'Roles',
-      type: 'Members',
-      value: role.canUpdateAllSettings,
+      Icon: IconCode,
     },
     {
       key: SettingsPermissions.WORKSPACE,
-      label: 'Workspace Settings',
+      label: 'Manage Workspace Settings',
       type: 'General',
       value: role.canUpdateAllSettings,
+      Icon: IconSettings,
     },
     {
       key: SettingsPermissions.WORKSPACE_MEMBERS,
-      label: 'Workspace Users',
+      label: 'Manage Members',
       type: 'Members',
       value: role.canUpdateAllSettings,
+      Icon: IconUsers,
+    },
+    {
+      key: SettingsPermissions.ROLES,
+      label: 'Manage Roles',
+      type: 'Members',
+      value: role.canUpdateAllSettings,
+      Icon: IconLock,
     },
     {
       key: SettingsPermissions.DATA_MODEL,
-      label: 'Data Model',
+      label: 'Manage Data Model',
       type: 'Data Model',
       value: role.canUpdateAllSettings,
+      Icon: IconHierarchy,
     },
     {
       key: SettingsPermissions.ADMIN_PANEL,
-      label: 'Admin Panel',
+      label: 'Manage Admin Panel',
       type: 'Admin Panel',
       value: role.canUpdateAllSettings,
+      Icon: IconUserCog,
     },
     {
       key: SettingsPermissions.SECURITY,
-      label: 'Security Settings',
+      label: 'Manage Security Settings',
       type: 'Security',
       value: role.canUpdateAllSettings,
+      Icon: IconKey,
     },
   ];
 
