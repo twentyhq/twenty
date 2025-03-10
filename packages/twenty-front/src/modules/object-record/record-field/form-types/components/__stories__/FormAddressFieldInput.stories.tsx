@@ -57,11 +57,11 @@ export const WithVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const street1Variable = await canvas.findByText('street1');
-    const street2Variable = await canvas.findByText('street2');
-    const cityVariable = await canvas.findByText('city');
-    const stateVariable = await canvas.findByText('state');
-    const postcodeVariable = await canvas.findByText('postcode');
+    const street1Variable = await canvas.findByText('Street 1');
+    const street2Variable = await canvas.findByText('Street 2');
+    const cityVariable = await canvas.findByText('My City');
+    const stateVariable = await canvas.findByText('My State');
+    const postcodeVariable = await canvas.findByText('My Postcode');
 
     expect(street1Variable).toBeVisible();
     expect(street2Variable).toBeVisible();

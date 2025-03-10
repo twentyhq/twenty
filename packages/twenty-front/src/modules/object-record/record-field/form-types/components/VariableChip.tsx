@@ -94,13 +94,11 @@ export const VariableChip = ({
       isFullRecord,
     });
 
-  const label = isDefined(variableLabel) ? variableLabel : 'Not Found';
+  const isVariableNotFound = !isDefined(variableLabel);
+  const label = isVariableNotFound ? 'Not Found' : variableLabel;
 
   return (
-    <StyledChip
-      deletable={isDefined(onRemove)}
-      danger={!isDefined(variableLabel)}
-    >
+    <StyledChip deletable={isDefined(onRemove)} danger={isVariableNotFound}>
       {!isDefined(variableLabel) && (
         <IconAlertTriangle
           size={theme.icon.size.sm}
@@ -108,7 +106,7 @@ export const VariableChip = ({
           color={theme.color.red}
         />
       )}
-      <StyledLabel title={variablePathLabel} danger={!isDefined(variableLabel)}>
+      <StyledLabel title={variablePathLabel} danger={isVariableNotFound}>
         {label}
       </StyledLabel>
 
@@ -116,7 +114,7 @@ export const VariableChip = ({
         <StyledDelete
           onClick={onRemove}
           aria-label="Remove variable"
-          danger={!isDefined(variableLabel)}
+          danger={isVariableNotFound}
         >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledDelete>
