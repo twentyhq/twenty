@@ -7,7 +7,6 @@ import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/ap
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 
 import { HealthCacheService } from './health-cache.service';
 
@@ -19,7 +18,6 @@ import { WorkerHealthIndicator } from './indicators/worker.health';
   imports: [
     TerminusModule,
     RedisClientModule,
-    WorkspaceHealthModule,
     ObjectMetadataModule,
     WorkspaceMigrationModule,
   ],

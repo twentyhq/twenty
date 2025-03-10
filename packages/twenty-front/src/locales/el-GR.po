@@ -18,6 +18,16 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid ""
+" These are only the server values. Ensure your worker environment has the\n"
+"        same variables and values, this is required for asynchronous tasks like\n"
+"        email sync."
+msgstr ""
+" Αυτές είναι μόνο οι τιμές του διακομιστή. Βεβαιωθείτε ότι το περιβάλλον εργασίας σας έχει τις\n"
+"        ίδιες μεταβλητές και τιμές, που απαιτούνται για ασύγχρονες εργασίες όπως η\n"
+"        συγχρονισμός email."
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
 msgstr ": Κενό"
@@ -235,6 +245,14 @@ msgstr "Προστέθηκε στη λίστα αποκλεισμού"
 #: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
 msgstr "Ρυθμίστε τις ρυθμίσεις που σχετίζονται με τον ρόλο"
+
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Admin Panel"
+msgstr "Πίνακας Διαχείρισης"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -499,6 +517,10 @@ msgstr "Ημερολόγιο"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Calendar settings"
 msgstr "Ρυθμίσεις Ημερολογίου"
+
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Calendar Sync Status"
+msgstr "Κατάσταση συγχρονισμού ημερολογίου"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -778,6 +800,10 @@ msgstr "Δημιουργήστε το χώρο εργασίας σας"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Created"
 msgstr "Δημιουργήθηκε"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Current version:"
+msgstr "Τρέχουσα έκδοση:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1551,6 +1577,7 @@ msgid "Group by"
 msgstr "Ομαδοποίηση ανά"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr "Κατάσταση Υγείας"
@@ -1579,6 +1606,10 @@ msgstr "Απόκρυψη άδειων ομάδων"
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
 msgstr "Πώς θα ταυτοποιείστε στην εφαρμογή."
+
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
+msgid "How your system is doing"
+msgstr "Πώς τα πάει το σύστημά σας"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
@@ -1796,6 +1827,38 @@ msgstr "Εργαστήριο"
 msgid "Language"
 msgstr "Γλώσσα"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 1 hour"
+msgstr "Τελευταία 1 ώρα"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 1 Hour (oldest → newest)"
+msgstr "Τελευταία 1 Ώρα (παλιότερα → νεότερα)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 12 hours"
+msgstr "Τελευταίες 12 ώρες"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 12 Hours (oldest → newest)"
+msgstr "Τελευταίες 12 Ώρες (παλιότερα → νεότερα)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 24 Hours (oldest → newest)"
+msgstr "Τελευταίες 24 Ώρες (παλιότερα → νεότερα)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 4 hours"
+msgstr "Τελευταίες 4 ώρες"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 4 Hours (oldest → newest)"
+msgstr "Τελευταίες 4 Ώρες (παλιότερα → νεότερα)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 7 Days (oldest → newest)"
+msgstr "Τελευταίες 7 Ημέρες (παλιότερα → νεότερα)"
+
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
@@ -1808,6 +1871,10 @@ msgstr "Τελευταίο"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Latest date"
 msgstr "Τελευταία ημερομηνία"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Latest version:"
+msgstr "Τελευταία έκδοση:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1829,6 +1896,10 @@ msgstr "Ο σύνδεσμος αντιγράφηκε στο πρόχειρο"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listings"
 msgstr "Καταχωρήσεις"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Loading metrics data..."
+msgstr "Φόρτωση δεδομένων μετρήσεων..."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Log out"
@@ -1882,6 +1953,10 @@ msgstr "Μέγιστο"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Members"
 msgstr "Μέλη"
+
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Message Sync Status"
+msgstr "Κατάσταση συγχρονισμού μηνυμάτων"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -2066,6 +2141,10 @@ msgstr "Χωρίς χώρα"
 #~ msgid "No members matching your search"
 #~ msgstr "No members matching your search"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "No metrics data available"
+msgstr "Δεν υπάρχουν διαθέσιμα δεδομένα μετρήσεων"
+
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
@@ -2193,11 +2272,20 @@ msgstr "ή"
 
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/lab/SettingsLab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
 msgstr "Άλλο"
+
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+msgid "Other Environment Variables"
+msgstr "Άλλες Μεταβλητές Περιβάλλοντος"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "Other Variables"
+msgstr "Άλλες Μεταβλητές"
 
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -2338,6 +2426,14 @@ msgstr "Παρέχετε τις λεπτομέρειες του παρόχου O
 msgid "Pseudo-English"
 msgstr "Ψευδο-Αγγλικά"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
+msgid "Queue information is not available because the worker is down"
+msgstr "Οι πληροφορίες ουράς δεν είναι διαθέσιμες επειδή ο εργαζόμενος έχει διακοπεί"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Queue performance"
+msgstr "Επιδόσεις Ουράς"
+
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
 #~ msgstr "Read documentation"
@@ -2345,6 +2441,10 @@ msgstr "Ψευδο-Αγγλικά"
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "Λάβετε ένα email που περιέχει τον σύνδεσμο ενημέρωσης κωδικού πρόσβασης"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Recent Events (oldest → newest)"
+msgstr "Πρόσφατα Γεγονότα (παλιότερα → νεότερα)"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -2636,8 +2736,8 @@ msgstr "Σερβικά (Κυριλλικά)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Server Admin"
-msgstr "Διαχειριστής Διακομιστή"
+#~ msgid "Server Admin"
+#~ msgstr "Server Admin"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -2950,6 +3050,10 @@ msgstr "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί
 msgid "This role is assigned to these workspace members."
 msgstr "Αυτός ο ρόλος έχει ανατεθεί σε αυτά τα μέλη του χώρου εργασίας."
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "This week"
+msgstr "Αυτή την εβδομάδα"
+
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
 msgstr "Μορφή ώρας"
@@ -2969,6 +3073,10 @@ msgstr "σε μηνιαία"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to yearly"
 msgstr "σε ετήσια"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Today"
+msgstr "Σήμερα"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
@@ -3274,8 +3382,8 @@ msgstr "Δεν επιτρέπεται να δημιουργείτε εγγραφ
 #~ msgstr "You are not allowed to create records in this object"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "You do not have access to impersonate users."
-msgstr "Δεν έχετε πρόσβαση να προσωμοιώσετε χρήστες."
+#~ msgid "You do not have access to impersonate users."
+#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
