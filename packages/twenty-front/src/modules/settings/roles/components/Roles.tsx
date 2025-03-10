@@ -16,7 +16,6 @@ const StyledCreateRoleSection = styled(Section)`
 `;
 
 const StyledTableRows = styled.div`
-  gap: ${({ theme }) => theme.spacing(0.5)};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
