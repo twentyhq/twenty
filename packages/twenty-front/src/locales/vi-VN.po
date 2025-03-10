@@ -24,6 +24,9 @@ msgid ""
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
 msgstr ""
+" Đây chỉ là các giá trị của máy chủ. Đảm bảo môi trường làm việc của bạn có\n"
+"        cùng các biến và giá trị này, đây là yêu cầu cho các tác vụ không đồng bộ như\n"
+"        đồng bộ hóa email."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -249,7 +252,7 @@ msgstr "Điều chỉnh các cài đặt liên quan đến vai trò"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
-msgstr ""
+msgstr "Bảng Điều Khiển Admin"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -517,7 +520,7 @@ msgstr "Cài đặt lịch"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Calendar Sync Status"
-msgstr ""
+msgstr "Trạng thái đồng bộ Lịch"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -800,7 +803,7 @@ msgstr "Đã tạo"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version:"
-msgstr ""
+msgstr "Phiên bản hiện tại:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1606,7 +1609,7 @@ msgstr "Cách bạn sẽ được nhận diện trong ứng dụng."
 
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
-msgstr ""
+msgstr "Tình trạng hệ thống của bạn"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
@@ -1826,35 +1829,35 @@ msgstr "Ngôn ngữ"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 hour"
-msgstr ""
+msgstr "1 giờ trước"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 Hour (oldest → newest)"
-msgstr ""
+msgstr "1 Giờ Cuối (cũ nhất → mới nhất)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 hours"
-msgstr ""
+msgstr "12 giờ trước"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 Hours (oldest → newest)"
-msgstr ""
+msgstr "12 Giờ Cuối (cũ nhất → mới nhất)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 24 Hours (oldest → newest)"
-msgstr ""
+msgstr "24 Giờ Cuối (cũ nhất → mới nhất)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 hours"
-msgstr ""
+msgstr "4 giờ trước"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 Hours (oldest → newest)"
-msgstr ""
+msgstr "4 Giờ Cuối (cũ nhất → mới nhất)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 7 Days (oldest → newest)"
-msgstr ""
+msgstr "7 Ngày Qua (cũ nhất → mới nhất)"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -1871,7 +1874,7 @@ msgstr "Ngày mới nhất"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version:"
-msgstr ""
+msgstr "Phiên bản mới nhất:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1896,7 +1899,7 @@ msgstr "Danh sách"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
-msgstr ""
+msgstr "Đang tải dữ liệu chỉ số..."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Log out"
@@ -1953,7 +1956,7 @@ msgstr "Thành viên"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync Status"
-msgstr ""
+msgstr "Trạng thái đồng bộ Tin nhắn"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -2140,7 +2143,7 @@ msgstr "Không có quốc gia"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "No metrics data available"
-msgstr ""
+msgstr "Không có dữ liệu chỉ số khả dụng"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
@@ -2278,11 +2281,11 @@ msgstr "Khác"
 
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
-msgstr ""
+msgstr "Các Biến Môi Trường Khác"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "Other Variables"
-msgstr ""
+msgstr "Các Biến Khác"
 
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -2425,11 +2428,11 @@ msgstr "Tiếng Anh giả"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
-msgstr ""
+msgstr "Thông tin hàng đợi không khả dụng vì nhân viên không hoạt động"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Queue performance"
-msgstr ""
+msgstr "Hiệu suất hàng đợi"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
@@ -2441,7 +2444,7 @@ msgstr "Nhận email chứa đường link cập nhật mật khẩu"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
-msgstr ""
+msgstr "Sự kiện gần đây (cũ nhất → mới nhất)"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -2734,7 +2737,7 @@ msgstr "Tiếng Serbia (Chữ Cyrillic)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #~ msgid "Server Admin"
-#~ msgstr "Quản trị viên máy chủ"
+#~ msgstr "Server Admin"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -3049,7 +3052,7 @@ msgstr "Vai trò này được phân công cho các thành viên của không gi
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "This week"
-msgstr ""
+msgstr "Tuần này"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
@@ -3073,7 +3076,7 @@ msgstr "thành hàng năm"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Today"
-msgstr ""
+msgstr "Hôm nay"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
@@ -3380,7 +3383,7 @@ msgstr "Bạn không được phép tạo bản ghi cho đối tượng này"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
-#~ msgstr "Bạn không có quyền truy cập để giả lập người dùng khác."
+#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

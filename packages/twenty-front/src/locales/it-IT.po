@@ -23,7 +23,7 @@ msgid ""
 " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
+msgstr " Questi sono solo i valori del server. Assicurati che il tuo ambiente di lavoro abbia le stesse variabili e valori, questo è necessario per attività asincrone come la sincronizzazione delle email."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -249,7 +249,7 @@ msgstr "Regola le impostazioni relative al ruolo"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
-msgstr ""
+msgstr "Pannello di amministrazione"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -517,7 +517,7 @@ msgstr "Impostazioni del calendario"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Calendar Sync Status"
-msgstr ""
+msgstr "Stato sincronizzazione calendario"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -800,7 +800,7 @@ msgstr "Creato"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version:"
-msgstr ""
+msgstr "Versione attuale:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1606,7 +1606,7 @@ msgstr "Come sarai identificato sull'app."
 
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
-msgstr ""
+msgstr "Come sta funzionando il tuo sistema"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
@@ -1826,35 +1826,35 @@ msgstr "Lingua"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 hour"
-msgstr ""
+msgstr "Ultima 1 ora"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 Hour (oldest → newest)"
-msgstr ""
+msgstr "Ultima 1 ora (più vecchio → più nuovo)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 hours"
-msgstr ""
+msgstr "Ultime 12 ore"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 Hours (oldest → newest)"
-msgstr ""
+msgstr "Ultime 12 ore (più vecchio → più nuovo)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 24 Hours (oldest → newest)"
-msgstr ""
+msgstr "Ultime 24 ore (più vecchio → più nuovo)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 hours"
-msgstr ""
+msgstr "Ultime 4 ore"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 Hours (oldest → newest)"
-msgstr ""
+msgstr "Ultime 4 ore (più vecchio → più nuovo)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 7 Days (oldest → newest)"
-msgstr ""
+msgstr "Ultimi 7 giorni (più vecchio → più nuovo)"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -1871,7 +1871,7 @@ msgstr "Ultima data"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version:"
-msgstr ""
+msgstr "Versione più recente:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1896,7 +1896,7 @@ msgstr "Annunci"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
-msgstr ""
+msgstr "Caricamento dei dati metrici..."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Log out"
@@ -1953,7 +1953,7 @@ msgstr "Membri"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync Status"
-msgstr ""
+msgstr "Stato sincronizzazione dei messaggi"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -2140,7 +2140,7 @@ msgstr "Nessun paese"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "No metrics data available"
-msgstr ""
+msgstr "Nessun dato metrico disponibile"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
@@ -2278,11 +2278,11 @@ msgstr "Altro"
 
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
-msgstr ""
+msgstr "Altre variabili d'ambiente"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "Other Variables"
-msgstr ""
+msgstr "Altre variabili"
 
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -2425,11 +2425,11 @@ msgstr "Pseudoinglese"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
-msgstr ""
+msgstr "Le informazioni sulla coda non sono disponibili perché il worker è fermo"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Queue performance"
-msgstr ""
+msgstr "Prestazioni della coda"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
@@ -2441,7 +2441,7 @@ msgstr "Ricevi un'e-mail contenente il link per l'aggiornamento della password"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
-msgstr ""
+msgstr "Eventi recenti (più vecchio → più nuovo)"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -2734,7 +2734,7 @@ msgstr "Serbo (Cirillico)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #~ msgid "Server Admin"
-#~ msgstr "Amministratore del Server"
+#~ msgstr "Server Admin"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -3049,7 +3049,7 @@ msgstr "Questo ruolo è assegnato a questi membri dello spazio di lavoro."
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "This week"
-msgstr ""
+msgstr "Questa settimana"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
@@ -3073,7 +3073,7 @@ msgstr "a annuale"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Today"
-msgstr ""
+msgstr "Oggi"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
@@ -3380,7 +3380,7 @@ msgstr "Non sei autorizzato a creare record per questo oggetto"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
-#~ msgstr "Non hai accesso per impersonare gli utenti."
+#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

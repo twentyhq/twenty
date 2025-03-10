@@ -23,7 +23,7 @@ msgid ""
 " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
+msgstr " Це тільки значення серверу. Переконайтеся, що ваше робоче середовище має ті ж змінні та значення, це необхідно для асинхронних задач, таких як синхронізація електронної пошти."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -249,7 +249,7 @@ msgstr "Налаштувати параметри, пов'язані з ролл
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
-msgstr ""
+msgstr "Панель адміністратора"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -517,7 +517,7 @@ msgstr "Налаштування календаря"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Calendar Sync Status"
-msgstr ""
+msgstr "Статус синхронізації календаря"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -800,7 +800,7 @@ msgstr "Створено"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version:"
-msgstr ""
+msgstr "Поточна версія:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1662,7 +1662,7 @@ msgstr "Як вас будуть ідентифікувати в додатку.
 
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
-msgstr ""
+msgstr "Як працює ваша система"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
@@ -1882,35 +1882,35 @@ msgstr "Мова"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 hour"
-msgstr ""
+msgstr "Остання 1 година"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 Hour (oldest → newest)"
-msgstr ""
+msgstr "Остання 1 година (найстаріша → найновіша)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 hours"
-msgstr ""
+msgstr "Останні 12 годин"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 Hours (oldest → newest)"
-msgstr ""
+msgstr "Останні 12 годин (найстаріші → найновіші)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 24 Hours (oldest → newest)"
-msgstr ""
+msgstr "Останні 24 години (найстаріші → найновіші)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 hours"
-msgstr ""
+msgstr "Останні 4 години"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 Hours (oldest → newest)"
-msgstr ""
+msgstr "Останні 4 години (найстаріші → найновіші)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 7 Days (oldest → newest)"
-msgstr ""
+msgstr "Останні 7 днів (найстаріший → найновіший)"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -1927,7 +1927,7 @@ msgstr "Остання дата"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version:"
-msgstr ""
+msgstr "Остання версія:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1952,7 +1952,7 @@ msgstr "Списки"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
-msgstr ""
+msgstr "Завантаження даних метрик..."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Log out"
@@ -2009,7 +2009,7 @@ msgstr "Члени"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync Status"
-msgstr ""
+msgstr "Статус синхронізації повідомлень"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -2196,7 +2196,7 @@ msgstr "Немає країни"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "No metrics data available"
-msgstr ""
+msgstr "Дані метрик недоступні"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
@@ -2334,11 +2334,11 @@ msgstr "Інший"
 
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
-msgstr ""
+msgstr "Інші змінні середовища"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "Other Variables"
-msgstr ""
+msgstr "Інші змінні"
 
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -2481,11 +2481,11 @@ msgstr "Псевдо-англійська"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
-msgstr ""
+msgstr "Інформація про чергу недоступна, оскільки працівник недоступний"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Queue performance"
-msgstr ""
+msgstr "Виконання черги"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
@@ -2497,7 +2497,7 @@ msgstr "Отримати лист з посиланням для оновлен�
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
-msgstr ""
+msgstr "Нещодавні події (найстаріша → найновіша)"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -2790,7 +2790,7 @@ msgstr "Сербська (кирилиця)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #~ msgid "Server Admin"
-#~ msgstr "Адміністратор сервера"
+#~ msgstr "Server Admin"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -3105,7 +3105,7 @@ msgstr "Ця роль призначена цим членам робочого 
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "This week"
-msgstr ""
+msgstr "Цього тижня"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
@@ -3129,7 +3129,7 @@ msgstr "на річний"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Today"
-msgstr ""
+msgstr "Сьогодні"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
@@ -3436,7 +3436,7 @@ msgstr "Ви не маєте права створювати записи для
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
-#~ msgstr "Ви не маєте доступу для наслідування користувачів."
+#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

@@ -24,6 +24,9 @@ msgid ""
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
 msgstr ""
+" Dette er kun serverværdierne. Sørg for, at dit worker-miljø har de\n"
+"        samme variabler og værdier, dette er nødvendigt for asynkrone opgaver som\n"
+"        e-mail synkronisering."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -249,7 +252,7 @@ msgstr "Juster de rolle-relaterede indstillinger"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
-msgstr ""
+msgstr "Administratorpanel"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -517,7 +520,7 @@ msgstr "Kalenderindstillinger"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Calendar Sync Status"
-msgstr ""
+msgstr "Kalendersynkroniseringsstatus"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -800,7 +803,7 @@ msgstr "Oprettet"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version:"
-msgstr ""
+msgstr "Nuværende version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1606,7 +1609,7 @@ msgstr "Hvordan du identificeres i appen."
 
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
-msgstr ""
+msgstr "Hvordan dit system klarer sig"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
@@ -1826,35 +1829,35 @@ msgstr "Sprog"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 hour"
-msgstr ""
+msgstr "Sidste 1 time"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 Hour (oldest → newest)"
-msgstr ""
+msgstr "Sidste 1 time (ældste → nyeste)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 hours"
-msgstr ""
+msgstr "Sidste 12 timer"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 Hours (oldest → newest)"
-msgstr ""
+msgstr "Sidste 12 timer (ældste → nyeste)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 24 Hours (oldest → newest)"
-msgstr ""
+msgstr "Sidste 24 timer (ældste → nyeste)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 hours"
-msgstr ""
+msgstr "Sidste 4 timer"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 Hours (oldest → newest)"
-msgstr ""
+msgstr "Sidste 4 timer (ældste → nyeste)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 7 Days (oldest → newest)"
-msgstr ""
+msgstr "Sidste 7 dage (ældste → nyeste)"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -1871,7 +1874,7 @@ msgstr "Seneste dato"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version:"
-msgstr ""
+msgstr "Seneste version:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1896,7 +1899,7 @@ msgstr "Oversigter"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
-msgstr ""
+msgstr "Indlæser metrikdata..."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Log out"
@@ -1953,7 +1956,7 @@ msgstr "Medlemmer"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync Status"
-msgstr ""
+msgstr "Beskedsynkroniseringsstatus"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -2140,7 +2143,7 @@ msgstr "Intet land"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "No metrics data available"
-msgstr ""
+msgstr "Ingen metrikdata tilgængelige"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
@@ -2278,11 +2281,11 @@ msgstr "Andet"
 
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
-msgstr ""
+msgstr "Andre miljøvariabler"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "Other Variables"
-msgstr ""
+msgstr "Andre Variable"
 
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -2425,11 +2428,11 @@ msgstr "Pseudo-Engelsk"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
-msgstr ""
+msgstr "Kø information er ikke tilgængelig, fordi worker er nede"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Queue performance"
-msgstr ""
+msgstr "Køydelse"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
@@ -2441,7 +2444,7 @@ msgstr "Modtag en e-mail med link til opdatering af kodeord"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
-msgstr ""
+msgstr "Seneste hændelser (ældste → nyeste)"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -2734,7 +2737,7 @@ msgstr "Serbisk (Cyrillisk)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #~ msgid "Server Admin"
-#~ msgstr "Serveradministrator"
+#~ msgstr "Server Admin"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -3049,7 +3052,7 @@ msgstr "Denne rolle er tildelt disse arbejdsomr\\u00e5demedlemmer."
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "This week"
-msgstr ""
+msgstr "Denne uge"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
@@ -3073,7 +3076,7 @@ msgstr "til årligt"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Today"
-msgstr ""
+msgstr "I dag"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
@@ -3380,7 +3383,7 @@ msgstr "Du har ikke tilladelse til at oprette poster i dette objekt"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
-#~ msgstr "Du har ikke adgang til at efterligne brugere."
+#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
