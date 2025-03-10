@@ -27,7 +27,7 @@ export const useRecordGroupActions = ({
   const navigate = useNavigateSettings();
   const location = useLocation();
 
-  const { objectNameSingular, recordIndexId } = useRecordIndexContextOrThrow();
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const { columnDefinition: recordGroupDefinition } = useContext(
     RecordBoardColumnContext,
@@ -43,7 +43,6 @@ export const useRecordGroupActions = ({
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
-      viewBarId: recordIndexId,
       viewType,
     });
 

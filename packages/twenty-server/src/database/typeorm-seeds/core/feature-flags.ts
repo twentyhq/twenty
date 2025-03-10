@@ -56,11 +56,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsBillingPlansEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsUniqueIndexesEnabled,
         workspaceId: workspaceId,
         value: false,
@@ -72,11 +67,6 @@ export const seedFeatureFlags = async (
       },
       {
         key: FeatureFlagKey.IsCommandMenuV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsRichTextV2Enabled,
         workspaceId: workspaceId,
         value: true,
       },

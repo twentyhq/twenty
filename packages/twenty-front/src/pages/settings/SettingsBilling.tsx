@@ -190,7 +190,7 @@ export const SettingsBilling = () => {
           ` ${impact}`
         }
         onConfirmClick={switchInterval}
-        deleteButtonText={t`Change ${to}`}
+        confirmButtonText={t`Change ${to}`}
         confirmButtonAccent={'blue'}
       />
     </SubMenuTopBarContainer>

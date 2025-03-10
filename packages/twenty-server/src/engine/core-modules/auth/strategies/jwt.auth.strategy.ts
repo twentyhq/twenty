@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -36,25 +36,28 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {
-    super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKeyProvider: async (request, rawJwtToken, done) => {
-        try {
-          const decodedToken = this.jwtWrapperService.decode(
-            rawJwtToken,
-          ) as JwtPayload;
-          const workspaceId = decodedToken.workspaceId;
-          const secret = this.jwtWrapperService.generateAppSecret(
-            'ACCESS',
-            workspaceId,
-          );
+    const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
+    const secretOrKeyProviderFunction = async (request, rawJwtToken, done) => {
+      try {
+        const decodedToken = jwtWrapperService.decode(
+          rawJwtToken,
+        ) as JwtPayload;
+        const workspaceId = decodedToken.workspaceId;
+        const secret = jwtWrapperService.generateAppSecret(
+          'ACCESS',
+          workspaceId,
+        );
 
-          done(null, secret);
-        } catch (error) {
-          done(error, null);
-        }
-      },
+        done(null, secret);
+      } catch (error) {
+        done(error, null);
+      }
+    };
+
+    super({
+      jwtFromRequest: jwtFromRequestFunction,
+      ignoreExpiration: false,
+      secretOrKeyProvider: secretOrKeyProviderFunction,
     });
   }
 

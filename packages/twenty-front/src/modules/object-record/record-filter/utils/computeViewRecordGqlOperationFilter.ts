@@ -32,8 +32,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/utils/getEmptyRecordGqlOperationFilter';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
+
 import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { resolveSelectViewFilterValue } from '@/views/view-filter-value/utils/resolveSelectViewFilterValue';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
@@ -41,6 +40,8 @@ import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/valid
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
+import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 
 type ComputeFilterRecordGqlOperationFilterParams = {
@@ -808,54 +809,55 @@ export const computeFilterRecordGqlOperationFilter = ({
   }
 };
 
-const computeViewFilterGroupRecordGqlOperationFilter = (
+const computeRecordFilterGroupRecordGqlOperationFilter = (
   filterValueDependencies: RecordFilterValueDependencies,
   filters: RecordFilter[],
   fields: Pick<Field, 'id' | 'name' | 'type'>[],
-  viewFilterGroups: ViewFilterGroup[],
-  currentViewFilterGroupId?: string,
+  recordFilterGroups: RecordFilterGroup[],
+  currentRecordFilterGroupId?: string,
 ): RecordGqlOperationFilter | undefined => {
-  const currentViewFilterGroup = viewFilterGroups.find(
-    (viewFilterGroup) => viewFilterGroup.id === currentViewFilterGroupId,
+  const currentRecordFilterGroup = recordFilterGroups.find(
+    (recordFilterGroup) => recordFilterGroup.id === currentRecordFilterGroupId,
   );
 
-  if (!currentViewFilterGroup) {
+  if (!currentRecordFilterGroup) {
     return;
   }
 
-  const groupFilters = filters.filter(
-    (filter) => filter.viewFilterGroupId === currentViewFilterGroupId,
+  const recordFiltersInGroup = filters.filter(
+    (filter) => filter.recordFilterGroupId === currentRecordFilterGroupId,
   );
 
-  const groupRecordGqlOperationFilters = groupFilters
-    .map((filter) =>
+  const groupRecordGqlOperationFilters = recordFiltersInGroup
+    .map((recordFilter) =>
       computeFilterRecordGqlOperationFilter({
         filterValueDependencies,
-        filter,
+        filter: recordFilter,
         fieldMetadataItems: fields,
       }),
     )
     .filter(isDefined);
 
-  const subGroupRecordGqlOperationFilters = viewFilterGroups
+  const subGroupRecordGqlOperationFilters = recordFilterGroups
     .filter(
-      (viewFilterGroup) =>
-        viewFilterGroup.parentViewFilterGroupId === currentViewFilterGroupId,
+      (recordFilterGroup) =>
+        recordFilterGroup.parentRecordFilterGroupId ===
+        currentRecordFilterGroupId,
     )
     .map((subViewFilterGroup) =>
-      computeViewFilterGroupRecordGqlOperationFilter(
+      computeRecordFilterGroupRecordGqlOperationFilter(
         filterValueDependencies,
         filters,
         fields,
-        viewFilterGroups,
+        recordFilterGroups,
         subViewFilterGroup.id,
       ),
     )
     .filter(isDefined);
 
   if (
-    currentViewFilterGroup.logicalOperator ===
-    ViewFilterGroupLogicalOperator.AND
+    currentRecordFilterGroup.logicalOperator ===
+    RecordFilterGroupLogicalOperator.AND
   ) {
     return {
       and: [
@@ -864,7 +866,8 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
       ],
     };
   } else if (
-    currentViewFilterGroup.logicalOperator === ViewFilterGroupLogicalOperator.OR
+    currentRecordFilterGroup.logicalOperator ===
+    RecordFilterGroupLogicalOperator.OR
   ) {
     return {
       or: [
@@ -874,38 +877,44 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
     };
   } else {
     throw new Error(
-      `Unknown logical operator ${currentViewFilterGroup.logicalOperator}`,
+      `Unknown logical operator ${currentRecordFilterGroup.logicalOperator}`,
     );
   }
 };
 
-export const computeViewRecordGqlOperationFilter = (
-  filterValueDependencies: RecordFilterValueDependencies,
-  filters: RecordFilter[],
-  fields: Pick<Field, 'id' | 'name' | 'type'>[],
-  viewFilterGroups: ViewFilterGroup[],
-): RecordGqlOperationFilter => {
-  const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] = filters
-    .filter((filter) => !filter.viewFilterGroupId)
-    .map((regularFilter) =>
-      computeFilterRecordGqlOperationFilter({
-        filterValueDependencies,
-        filter: regularFilter,
-        fieldMetadataItems: fields,
-      }),
-    )
-    .filter(isDefined);
+export const computeRecordGqlOperationFilter = ({
+  fields,
+  filterValueDependencies,
+  recordFilters,
+  recordFilterGroups,
+}: {
+  filterValueDependencies: RecordFilterValueDependencies;
+  recordFilters: RecordFilter[];
+  fields: Pick<Field, 'id' | 'name' | 'type'>[];
+  recordFilterGroups: RecordFilterGroup[];
+}): RecordGqlOperationFilter => {
+  const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] =
+    recordFilters
+      .filter((filter) => !isDefined(filter.recordFilterGroupId))
+      .map((regularFilter) =>
+        computeFilterRecordGqlOperationFilter({
+          filterValueDependencies,
+          filter: regularFilter,
+          fieldMetadataItems: fields,
+        }),
+      )
+      .filter(isDefined);
 
-  const outermostFilterGroupId = viewFilterGroups.find(
-    (viewFilterGroup) => !viewFilterGroup.parentViewFilterGroupId,
+  const outermostFilterGroupId = recordFilterGroups.find(
+    (recordFilterGroup) => !recordFilterGroup.parentRecordFilterGroupId,
   )?.id;
 
   const advancedRecordGqlOperationFilter =
-    computeViewFilterGroupRecordGqlOperationFilter(
+    computeRecordFilterGroupRecordGqlOperationFilter(
       filterValueDependencies,
-      filters,
+      recordFilters,
       fields,
-      viewFilterGroups,
+      recordFilterGroups,
       outermostFilterGroupId,
     );
 

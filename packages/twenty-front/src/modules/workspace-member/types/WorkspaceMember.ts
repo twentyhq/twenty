@@ -28,6 +28,7 @@ export type WorkspaceMember = {
   extensionNumber?: string;
   userDocument?: string | null;
   userPhone?: FieldPhonesValue | null;
+  extensionNumber?: string;
 };
 
 export type WorkspaceInvitation = {

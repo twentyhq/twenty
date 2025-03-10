@@ -218,7 +218,7 @@ export const CurrentWorkspaceMemberFavorites = ({
           title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
           subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
           onConfirmClick={handleConfirmDelete}
-          deleteButtonText="Delete Folder"
+          confirmButtonText="Delete Folder"
         />,
         document.body,
       )}

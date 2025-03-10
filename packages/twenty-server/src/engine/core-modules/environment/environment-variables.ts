@@ -5,7 +5,6 @@ import {
   IsBoolean,
   IsDefined,
   IsEnum,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -864,16 +863,6 @@ export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     description:
-      'Use as a feature flag for the new permission feature we are working on.',
-  })
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  PERMISSIONS_ENABLED = false;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.Other,
-    description:
       'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',
   })
   @CastToPositiveNumber()
@@ -970,7 +959,7 @@ export class EnvironmentVariables {
   @IsNumber()
   @CastToPositiveNumber()
   @IsOptional()
-  HEALTH_MONITORING_TIME_WINDOW_IN_MINUTES = 5;
+  HEALTH_METRICS_TIME_WINDOW_IN_MINUTES = 5;
 
   // Meta
   @IsString()
@@ -1043,10 +1032,97 @@ export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     description: 'Secret key for stripe custom integration',
+    sensitive: true,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   WEBHOOK_STRIPE_SECRETKEY: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX environment (development, production, etc.)',
+  })
+  @IsEnum(NodeEnvironment)
+  @IsOptional()
+  @IsString()
+  PABX_ENV: NodeEnvironment;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX test server base url.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV &&
+      [NodeEnvironment.development, NodeEnvironment.test].includes(
+        data.PABX_ENV,
+      ),
+  )
+  @IsString()
+  PABX_TEST_URL: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX test server user.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV &&
+      [NodeEnvironment.development, NodeEnvironment.test].includes(
+        data.PABX_ENV,
+      ),
+  )
+  @IsString()
+  PABX_TEST_USER: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX test server token.',
+    sensitive: true,
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV &&
+      [NodeEnvironment.development, NodeEnvironment.test].includes(
+        data.PABX_ENV,
+      ),
+  )
+  @IsString()
+  PABX_TEST_TOKEN: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX production server base url.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.production,
+  )
+  @IsString()
+  PABX_URL: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX production server user.',
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.production,
+  )
+  @IsString()
+  PABX_USER: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Other,
+    description: 'PABX production server token.',
+    sensitive: true,
+  })
+  @ValidateIf(
+    (data: EnvironmentVariables) =>
+      !!data.PABX_ENV && data.PABX_ENV === NodeEnvironment.production,
+  )
+  @IsString()
+  PABX_TOKEN: string;
 }
 
 export const validate = (

@@ -26,6 +26,8 @@ export default defineConfig(({ command, mode }) => {
     SSL_CERT_PATH,
     SSL_KEY_PATH,
     REACT_APP_PORT,
+    REACT_APP_CHATBOT_BASE_URL,
+    REACT_APP_STRIPE_PUBLISHABLE_KEY,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
@@ -154,9 +156,13 @@ export default defineConfig(({ command, mode }) => {
     define: {
       _env_: {
         REACT_APP_SERVER_BASE_URL,
+        REACT_APP_CHATBOT_BASE_URL,
+        REACT_APP_STRIPE_PUBLISHABLE_KEY,
       },
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
+        REACT_APP_CHATBOT_BASE_URL,
+        REACT_APP_STRIPE_PUBLISHABLE_KEY,
       },
     },
     css: {

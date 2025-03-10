@@ -85,13 +85,8 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
+          contextStoreCurrentViewId: mockView.id,
           onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
-              contextStoreCurrentViewIdComponentState.atomFamily({
-                instanceId: 'instanceId',
-              }),
-              mockView.id,
-            );
             snapshot.set(prefetchViewsState, [mockView]);
           },
         }),
@@ -109,8 +104,8 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         value: mockViewFilter.value,
         displayValue: mockViewFilter.displayValue,
         operand: mockViewFilter.operand,
-        viewFilterGroupId: mockViewFilter.viewFilterGroupId,
-        positionInViewFilterGroup: mockViewFilter.positionInViewFilterGroup,
+        recordFilterGroupId: mockViewFilter.viewFilterGroupId,
+        positionInRecordFilterGroup: mockViewFilter.positionInViewFilterGroup,
         label: mockFieldMetadataItem.label,
         type: getFilterTypeFromFieldType(mockFieldMetadataItem.type),
       } satisfies RecordFilter,

@@ -26,6 +26,47 @@ If you want to upgrade your instance by few versions, e.g. from 0.33.0 to 0.35.0
 
 ## Version-specific upgrade steps
 
+### v0.42.0 to v0.43.0
+
+Upgrade your Twenty instance to use v0.43.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+In this version, we have also switched to postgres:16 image in docker-compose.yml.
+
+#### (Option 1) Database migration
+
+Keeping the existing postgres-spilo image is fine, but you will have to freeze the version in your docker-compose.yml to be 0.43.0.
+
+#### (Option 2) Database migration
+
+If you want to migrate your database to the new postgres:16 image, please follow these steps:
+
+1. Dump your database from the old postgres-spilo container
+
+```
+docker exec -it twenty-db-1 sh 
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+Make sure your dump file is not empty.
+
+2. Upgrade your docker-compose.yml to use postgres:16 image as in the [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) file.
+
+3. Restore the database to the new postgres:16 container
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
 ### v0.41.0 to v0.42.0
 
 Upgrade your Twenty instance to use v0.42.0 image

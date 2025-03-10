@@ -1,11 +1,11 @@
 import { loadStripe } from '@stripe/stripe-js';
+import { REACT_APP_STRIPE_PUBLISHABLE_KEY } from '~/config';
 
 export const useStripePromise = () => {
-  const key = import.meta.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
+  if (!REACT_APP_STRIPE_PUBLISHABLE_KEY)
+    throw new Error('App missing Stripe environment configuration.');
 
-  if (!key) throw new Error('Missing REACT_APP_STRIPE_PUBLISHABLE_KEY .env');
-
-  const stripePromise = loadStripe(key);
+  const stripePromise = loadStripe(REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
   return { stripePromise };
 };

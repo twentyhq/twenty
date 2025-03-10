@@ -12,8 +12,6 @@ export enum FeatureFlagKey {
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
   IsCustomDomainEnabled = 'IS_CUSTOM_DOMAIN_ENABLED',
   IsApprovedAccessDomainsEnabled = 'IS_APPROVED_ACCESS_DOMAINS_ENABLED',
-  IsBillingPlansEnabled = 'IS_BILLING_PLANS_ENABLED',
-  IsRichTextV2Enabled = 'IS_RICH_TEXT_V2_ENABLED',
   IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
   IsPermissionsEnabled = 'IS_PERMISSIONS_ENABLED',
 }

@@ -34,8 +34,8 @@ export const SettingsAdminHealthAccountSyncCountersTable = ({
           <TableCell align="right">{details.counters.NOT_SYNCED}</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell>Sync Ongoing</TableCell>
-          <TableCell align="right">{details.counters.ONGOING}</TableCell>
+          <TableCell>Active Sync</TableCell>
+          <TableCell align="right">{details.counters.ACTIVE}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Total Jobs</TableCell>

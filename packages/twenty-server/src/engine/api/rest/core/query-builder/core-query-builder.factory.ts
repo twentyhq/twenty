@@ -24,6 +24,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNamePlural } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-plural.util';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
@@ -44,6 +45,7 @@ export class CoreQueryBuilderFactory {
     private readonly accessTokenService: AccessTokenService,
     private readonly domainManagerService: DomainManagerService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
   async getObjectMetadata(
@@ -60,9 +62,12 @@ export class CoreQueryBuilderFactory {
       await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
 
     if (currentCacheVersion === undefined) {
-      throw new BadRequestException('No cacheVersion');
-    }
+      await this.workspaceMetadataCacheService.recomputeMetadataCache({
+        workspaceId: workspace.id,
+      });
 
+      throw new BadRequestException('Metadata cache version not found');
+    }
     const objectMetadataMaps =
       await this.workspaceCacheStorageService.getObjectMetadataMaps(
         workspace.id,

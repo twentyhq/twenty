@@ -1,20 +1,12 @@
 import { SettingsAdminEnvVariablesTable } from '@/settings/admin-panel/components/SettingsAdminEnvVariablesTable';
+import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { Button, H1Title, H1TitleFontColor, Section } from 'twenty-ui';
+import { Button, H1Title, H1TitleFontColor, H2Title, Section } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 
 const StyledGroupContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledGroupVariablesContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(4)};
-  padding-right: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledGroupDescription = styled.div`
@@ -37,11 +29,10 @@ const StyledShowMoreButton = styled(Button)<{ isSelected?: boolean }>`
 `;
 
 export const SettingsAdminEnvVariables = () => {
-  const { data: environmentVariables } = useGetEnvironmentVariablesGroupedQuery(
-    {
+  const { data: environmentVariables, loading: environmentVariablesLoading } =
+    useGetEnvironmentVariablesGroupedQuery({
       fetchPolicy: 'network-only',
-    },
-  );
+    });
 
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
 
@@ -64,6 +55,10 @@ export const SettingsAdminEnvVariables = () => {
       (group) => group.name === selectedGroup,
     );
 
+  if (environmentVariablesLoading) {
+    return <SettingsAdminTabSkeletonLoader />;
+  }
+
   return (
     <>
       <Section>
@@ -74,16 +69,9 @@ export const SettingsAdminEnvVariables = () => {
       <Section>
         {visibleGroups.map((group) => (
           <StyledGroupContainer key={group.name}>
-            <H1Title title={group.name} fontColor={H1TitleFontColor.Primary} />
-            {group.description !== '' && (
-              <StyledGroupDescription>
-                {group.description}
-              </StyledGroupDescription>
-            )}
+            <H2Title title={group.name} description={group.description} />
             {group.variables.length > 0 && (
-              <StyledGroupVariablesContainer>
-                <SettingsAdminEnvVariablesTable variables={group.variables} />
-              </StyledGroupVariablesContainer>
+              <SettingsAdminEnvVariablesTable variables={group.variables} />
             )}
           </StyledGroupContainer>
         ))}
@@ -116,11 +104,9 @@ export const SettingsAdminEnvVariables = () => {
                   </StyledGroupDescription>
                 )}
                 {selectedGroupData.variables.length > 0 && (
-                  <StyledGroupVariablesContainer>
-                    <SettingsAdminEnvVariablesTable
-                      variables={selectedGroupData.variables}
-                    />
-                  </StyledGroupVariablesContainer>
+                  <SettingsAdminEnvVariablesTable
+                    variables={selectedGroupData.variables}
+                  />
                 )}
               </StyledGroupContainer>
             )}

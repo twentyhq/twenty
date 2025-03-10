@@ -197,18 +197,15 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.charge,
-    type: RelationMetadataType.ONE_TO_ONE,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: msg`Charge`,
     description: msg`Person linked to the charge`,
     icon: 'IconPhone',
     inverseSideTarget: () => ChargeWorkspaceEntity,
-    inverseSideFieldKey: 'people',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  charge: Relation<ChargeWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('charge')
-  chargeId: string | null;
+  charge: Relation<ChargeWorkspaceEntity[]> | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,

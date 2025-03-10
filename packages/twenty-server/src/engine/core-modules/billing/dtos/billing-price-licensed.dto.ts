@@ -3,6 +3,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 
 @ObjectType()
 export class BillingPriceLicensedDTO {
@@ -14,4 +15,7 @@ export class BillingPriceLicensedDTO {
 
   @Field(() => String)
   stripePriceId: string;
+
+  @Field(() => BillingUsageType)
+  priceUsageType: BillingUsageType.LICENSED;
 }

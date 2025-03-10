@@ -18,7 +18,7 @@ export const Default: Story = {
     isOpen: true,
     title: 'Pariatur labore.',
     subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
-    deleteButtonText: 'Delete',
+    confirmButtonText: 'Delete',
   },
   decorators: [ComponentDecorator],
 };
