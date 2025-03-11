@@ -1,9 +1,10 @@
 import camelCase from 'lodash.camelcase';
-
-import { NameIsNotInCamelCase } from 'src/engine/metadata-modules/utils/exceptions/name-not-camel-case.exception';
+import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 
 export const validateMetadataNameIsCamelCaseOrThrow = (name: string) => {
   if (name !== camelCase(name)) {
-    throw new NameIsNotInCamelCase(name);
+    throw new InvalidMetadataNameException(
+      `Name should be in camelCase: ${name}`,
+    );
   }
 };

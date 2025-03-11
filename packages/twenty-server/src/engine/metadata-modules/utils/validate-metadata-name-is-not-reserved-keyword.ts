@@ -1,4 +1,4 @@
-import { NameIsReservedKeywordException } from 'src/engine/metadata-modules/utils/exceptions/name-is-reserved-keyword.exception';
+import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 
 const coreObjectNames = [
   'approvedAccessDomain',
@@ -65,6 +65,8 @@ export const validateMetadataNameIsNotReservedKeywordOrThrow = (
   name: string,
 ) => {
   if (reservedKeywords.includes(name)) {
-    throw new NameIsReservedKeywordException(name);
+    throw new InvalidMetadataNameException(
+      `The name "${name}" is not available`,
+    );
   }
 };
