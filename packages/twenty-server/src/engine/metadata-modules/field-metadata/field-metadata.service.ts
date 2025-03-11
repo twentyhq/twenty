@@ -41,9 +41,9 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { NameNotAvailableException } from 'src/engine/metadata-modules/utils/exceptions/name-not-available.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -59,11 +59,11 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
-import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
@@ -540,10 +540,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
       } catch (error) {
-        throw new FieldMetadataException(
-          error.message,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
+        if (error instanceof InvalidMetadataNameException) {
+          throw new FieldMetadataException(
+            error.message,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
+        }
+
+        throw error;
       }
 
       try {
@@ -552,14 +556,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           objectMetadata,
         );
       } catch (error) {
-        if (error instanceof NameNotAvailableException) {
+        if (error instanceof InvalidMetadataNameException) {
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
-        } else {
-          throw error;
         }
+
+        throw error;
       }
     }
 

@@ -20,6 +20,7 @@ import {
   RelationMetadataExceptionCode,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -32,8 +33,8 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
+import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -69,10 +70,12 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       validateMetadataNameOrThrow(relationMetadataInput.fromName);
       validateMetadataNameOrThrow(relationMetadataInput.toName);
     } catch (error) {
-      throw new RelationMetadataException(
-        error.message,
-        RelationMetadataExceptionCode.INVALID_RELATION_INPUT,
-      );
+      if (error instanceof InvalidMetadataNameException)
+        throw new RelationMetadataException(
+          error.message,
+          RelationMetadataExceptionCode.INVALID_RELATION_INPUT,
+        );
+      throw error;
     }
 
     await this.validateCreateRelationMetadataInput(
