@@ -7,7 +7,8 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { validateMetadataNameIsNotTooLongOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils copy';
+import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
+import { validateMetadataNameIsNotTooLongOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils';
 import { validateMetadataNameIsNotTooShortOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { camelCase } from 'src/utils/camel-case';
@@ -29,10 +30,14 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
   try {
     validateMetadataNameOrThrow(name);
   } catch (error) {
-    throw new ObjectMetadataException(
-      error.message,
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
+    if (error instanceof InvalidMetadataNameException) {
+      throw new ObjectMetadataException(
+        error.message,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
+    }
+
+    throw error;
   }
 };
 
@@ -55,10 +60,14 @@ const validateObjectMetadataInputLabelOrThrow = (name: string): void => {
   try {
     validators.forEach((validator) => validator(name.trim()));
   } catch (error) {
-    throw new ObjectMetadataException(
-      error.message,
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
+    if (error instanceof InvalidMetadataNameException) {
+      throw new ObjectMetadataException(
+        error.message,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
+    }
+
+    throw error;
   }
 };
 
