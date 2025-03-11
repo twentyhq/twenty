@@ -19099,21 +19099,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tabler/icons-react@npm:^3.17.0":
-  version: 3.31.0
-  resolution: "@tabler/icons-react@npm:3.31.0"
+"@tabler/icons-react@npm:3.18.0":
+  version: 3.18.0
+  resolution: "@tabler/icons-react@npm:3.18.0"
   dependencies:
-    "@tabler/icons": "npm:3.31.0"
+    "@tabler/icons": "npm:3.18.0"
   peerDependencies:
     react: ">= 16"
-  checksum: 10c0/aceefe1b6c12a2e64921900f49c09c0c24bcd837dfb3d4274914065e33a5175944f1e25ce9a80d110272e5ae0fefc24062a38f1ec75a4ec79c63d40acb9d1d12
+  checksum: 10c0/7500a9dc175f1924a35cefe3a50a82fdc34bbb79f49c3b4973597f9ea2ff4946e3f93e7cce9d1fe6a6af31246f708de9f44f8b1db1445a49780cfda1278083e9
   languageName: node
   linkType: hard
 
-"@tabler/icons@npm:3.31.0":
-  version: 3.31.0
-  resolution: "@tabler/icons@npm:3.31.0"
-  checksum: 10c0/03fcfff0b705e1474030acee2ff0523bfa1fda7a29a33d031a9fd8e3b52ecc2e0380f9cf5e81bd054b30dc0acdb819b1e08ab746805be8d660934a08b2c3545e
+"@tabler/icons@npm:3.18.0":
+  version: 3.18.0
+  resolution: "@tabler/icons@npm:3.18.0"
+  checksum: 10c0/efb70286fa8e488d91e4640b00c80d4abc36ccc4f06e7979f97a174cb76b1418ff3ccfb27e0aad3ee44bc0e1613a03de9ee09b57745c700d3518f377e829fe56
   languageName: node
   linkType: hard
 
@@ -51536,7 +51536,7 @@ __metadata:
     "@swc/core": "npm:1.7.42"
     "@swc/helpers": "npm:~0.5.2"
     "@swc/jest": "npm:^0.2.29"
-    "@tabler/icons-react": "npm:^3.17.0"
+    "@tabler/icons-react": "npm:3.18.0"
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:14.0.0"
     "@types/addressparser": "npm:^1.0.3"
