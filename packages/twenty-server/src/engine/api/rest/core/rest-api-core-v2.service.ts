@@ -4,28 +4,41 @@ import { Request } from 'express';
 
 import { capitalize } from 'twenty-shared/utils';
 
-import { OrderByCondition } from 'typeorm';
+import { ObjectLiteral, OrderByCondition, SelectQueryBuilder } from 'typeorm';
+
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
 import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
 import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
 import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
 import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
+
+interface FindManyMeta {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string | null;
+  endCursor: string | null;
+  totalCount: number;
+}
 
 interface FormatResultParams<T> {
   operation: 'delete' | 'create' | 'update' | 'findOne' | 'findMany';
   objectNameSingular?: string;
   objectNamePlural?: string;
   data: T;
-  meta?: any;
+  meta?: FindManyMeta;
 }
 @Injectable()
 export class RestApiCoreServiceV2 {
@@ -150,11 +163,13 @@ export class RestApiCoreServiceV2 {
 
   private async findMany(
     request: Request,
-    repository: any,
+    repository: WorkspaceRepository<ObjectLiteral>,
     objectMetadata: any,
     objectMetadataNameSingular: string,
-    objectMetadataItemWithFieldsMaps: any,
-    featureFlagsMap: any,
+    objectMetadataItemWithFieldsMaps:
+      | ObjectMetadataItemWithFieldMaps
+      | undefined,
+    featureFlagsMap: FeatureFlagMap,
   ) {
     // Get input parameters
     const inputs = this.getPaginationInputs(request, objectMetadata);
@@ -215,12 +230,14 @@ export class RestApiCoreServiceV2 {
   }
 
   private async applyFiltersWithCursor(
-    qb: any,
+    qb: SelectQueryBuilder<ObjectLiteral>,
     objectMetadataNameSingular: string,
-    objectMetadataItemWithFieldsMaps: any,
-    featureFlagsMap: any,
+    objectMetadataItemWithFieldsMaps:
+      | ObjectMetadataItemWithFieldMaps
+      | undefined,
+    featureFlagsMap: FeatureFlagMap,
     inputs: {
-      filter: any;
+      filter: Record<string, FieldValue>;
       orderBy: any;
       startingAfter: string | undefined;
       endingBefore: string | undefined;
@@ -248,7 +265,7 @@ export class RestApiCoreServiceV2 {
 
         const cursorFilter = await this.computeCursorFilter(
           cursorData,
-          orderByWithIdCondition,
+          orderByWithIdCondition as any,
           fieldMetadataMapByName,
           inputs.isForwardPagination,
         );
@@ -270,17 +287,21 @@ export class RestApiCoreServiceV2 {
     return { finalQuery, appliedFilters };
   }
 
-  private async getTotalCount(query: any): Promise<number> {
+  private async getTotalCount(
+    query: SelectQueryBuilder<ObjectLiteral>,
+  ): Promise<number> {
     const countQuery = query.clone();
 
     return await countQuery.getCount();
   }
 
   private async getRecordsWithPagination(
-    query: any,
+    query: SelectQueryBuilder<ObjectLiteral>,
     objectMetadataNameSingular: string,
-    objectMetadataItemWithFieldsMaps: any,
-    featureFlagsMap: any,
+    objectMetadataItemWithFieldsMaps:
+      | ObjectMetadataItemWithFieldMaps
+      | undefined,
+    featureFlagsMap: FeatureFlagMap,
     inputs: {
       orderBy: any;
       limit: number;
@@ -328,9 +349,11 @@ export class RestApiCoreServiceV2 {
   }
 
   private formatPaginatedResult(
-    finalRecords: any[],
+    finalRecords: ObjectLiteral[],
     objectMetadataNameSingular: string,
-    objectMetadataItemWithFieldsMaps: any,
+    objectMetadataItemWithFieldsMaps:
+      | ObjectMetadataItemWithFieldMaps
+      | undefined,
     objectMetadata: any,
     isForwardPagination: boolean,
     hasMoreRecords: boolean,
@@ -341,7 +364,7 @@ export class RestApiCoreServiceV2 {
       objectNamePlural: objectMetadataNameSingular,
       data: formatGetManyData(
         finalRecords,
-        objectMetadataItemWithFieldsMaps as any,
+        objectMetadataItemWithFieldsMaps as ObjectMetadataItemWithFieldMaps,
         objectMetadata.objectMetadataMaps,
       ),
       meta: {
@@ -445,11 +468,11 @@ export class RestApiCoreServiceV2 {
 
   // Helper method to compute cursor filter - similar to computeCursorArgFilter in GraphQL
   private async computeCursorFilter(
-    cursorData: Record<string, any>,
-    orderBy: any[],
+    cursorData: Record<string, FieldValue>,
+    orderBy: OrderByCondition,
     fieldMetadataMap: Record<string, any>,
     isForwardPagination: boolean,
-  ): Promise<any> {
+  ): Promise<Record<string, FieldValue>> {
     // We'll use a simpler approach for REST API for now, focusing on ID-based pagination
     // This could be extended to support multi-field ordering just like in GraphQL
     return {
