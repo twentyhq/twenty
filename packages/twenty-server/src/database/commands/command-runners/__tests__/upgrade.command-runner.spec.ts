@@ -47,14 +47,10 @@ class TestUpgradeCommandRunnerV2 extends UpgradeCommandRunner {
   }
 }
 
-// Overkill ? TODO refactor
-const COMMANDS_RUNNERS = {
-  TestUpgradeCommandRunnerV1: TestUpgradeCommandRunnerV1,
-  TestUpgradeCommandRunnerV2: TestUpgradeCommandRunnerV2,
-  InvalidVersionUpgradeCommandRunner: InvalidVersionUpgradeCommandRunner,
-} as const;
-type CommandRunnerNames = keyof typeof COMMANDS_RUNNERS;
-type CommandRunnerValues = (typeof COMMANDS_RUNNERS)[CommandRunnerNames];
+type CommandRunnerValues =
+  | typeof TestUpgradeCommandRunnerV1
+  | typeof TestUpgradeCommandRunnerV2
+  | typeof InvalidVersionUpgradeCommandRunner;
 
 describe('fromVersion validation', () => {
   it('should fail if fromVersion is not a valid semver', () => {
@@ -161,15 +157,14 @@ describe('UpgradeCommandRunner', () => {
     numberOfWorkspace?: number;
     workspaceOverride?: Partial<Workspace>;
     appVersion?: string | null;
-    commandRunnerName?: CommandRunnerNames;
+    commandRunner?: CommandRunnerValues;
   };
   const buildModuleAndSetupSpies = async ({
     numberOfWorkspace = 1,
     workspaceOverride,
-    commandRunnerName = 'TestUpgradeCommandRunnerV1',
+    commandRunner = TestUpgradeCommandRunnerV1,
     appVersion = '2.0.0',
   }: BuildModuleAndSetupSpiesArgs) => {
-    const commandRunner = COMMANDS_RUNNERS[commandRunnerName];
     const workspaces = Array.from({ length: numberOfWorkspace }, (_v, index) =>
       genereateMockWorkspace({
         id: `workspace_${index}`,
@@ -249,7 +244,7 @@ describe('UpgradeCommandRunner', () => {
     await buildModuleAndSetupSpies({
       numberOfWorkspace: 1,
       appVersion: '3.0.0',
-      commandRunnerName: 'TestUpgradeCommandRunnerV2',
+      commandRunner: TestUpgradeCommandRunnerV2,
       workspaceOverride: {
         version: '0.1.0',
       },
@@ -274,7 +269,7 @@ describe('UpgradeCommandRunner', () => {
   it('should fail if upgrade command version is invalid', async () => {
     await expect(
       buildModuleAndSetupSpies({
-        commandRunnerName: 'InvalidVersionUpgradeCommandRunner',
+        commandRunner: InvalidVersionUpgradeCommandRunner,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`"Invalid Version: invalid"`);
   });
