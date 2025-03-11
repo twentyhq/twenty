@@ -93,7 +93,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               id: "8047b613-2dc9-4d77-bccc-8a3f54ba3fd4",
               type: "BOOLEAN",
               name: "isFullDay",
-              icon: "Icon24Hours",
+              icon: "IconHours24",
               isCustom: false,
               isActive: true,
               isSystem: false,
