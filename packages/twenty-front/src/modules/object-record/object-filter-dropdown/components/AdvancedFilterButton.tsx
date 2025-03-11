@@ -91,14 +91,14 @@ export const AdvancedFilterButton = () => {
     const alreadyHasAdvancedFilterGroup = currentRecordFilterGroups.length > 0;
 
     if (!alreadyHasAdvancedFilterGroup) {
-      const newViewFilterGroup = {
+      const newRecordFilterGroup = {
         id: v4(),
         viewId: currentView.id,
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
       };
 
       upsertRecordFilterGroup({
-        id: newViewFilterGroup.id,
+        id: newRecordFilterGroup.id,
         logicalOperator: RecordFilterGroupLogicalOperator.AND,
       });
 
@@ -127,9 +127,10 @@ export const AdvancedFilterButton = () => {
         operand: firstOperand,
         value: '',
         displayValue: '',
-        recordFilterGroupId: newViewFilterGroup.id,
+        recordFilterGroupId: newRecordFilterGroup.id,
         type: getFilterTypeFromFieldType(defaultFieldMetadataItem.type),
         label: defaultFieldMetadataItem.label,
+        positionInRecordFilterGroup: 1,
       });
     }
 
