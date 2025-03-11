@@ -1,11 +1,10 @@
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationMorphItemsState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { useSearchManyRecords } from '@/object-record/multiple-objects/hooks/useSearchManyRecords';
 import { useTheme } from '@emotion/react';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -24,19 +23,9 @@ export const useContextChips = () => {
     commandMenuNavigationMorphItemsState,
   );
 
-  const searchableObjectMetadataItemIds = Array.from(
-    commandMenuNavigationMorphItems.values(),
-  ).map(({ objectMetadataId }) => objectMetadataId);
-
-  const searchableObjectMetadataItems = useRecoilValue(
-    objectMetadataItemsState,
-  ).filter(({ id }) => searchableObjectMetadataItemIds.includes(id));
-
-  const { recordsWithObjectMetadataId } = useSearchManyRecords({
-    searchFilter: '',
-    searchableObjectMetadataItems,
-    morphItems: Array.from(commandMenuNavigationMorphItems.values()),
-  });
+  const commandMenuNavigationRecords = useRecoilValue(
+    commandMenuNavigationRecordsState,
+  );
 
   const contextChips = useMemo(() => {
     const filteredCommandMenuNavigationStack =
@@ -59,11 +48,13 @@ export const useContextChips = () => {
             return null;
           }
 
-          const objectMetadataItem = searchableObjectMetadataItems.find(
-            ({ id }) => id === commandMenuNavigationMorphItem.objectMetadataId,
-          );
+          const objectMetadataItem = commandMenuNavigationRecords.find(
+            ({ objectMetadataItem }) =>
+              objectMetadataItem.id ===
+              commandMenuNavigationMorphItem.objectMetadataId,
+          )?.objectMetadataItem;
 
-          const record = recordsWithObjectMetadataId.find(
+          const record = commandMenuNavigationRecords.find(
             ({ record }) =>
               record.id === commandMenuNavigationMorphItem.recordId,
           )?.record;
@@ -106,10 +97,9 @@ export const useContextChips = () => {
       .filter(isDefined);
   }, [
     commandMenuNavigationMorphItems,
+    commandMenuNavigationRecords,
     commandMenuNavigationStack,
     navigateCommandMenuHistory,
-    recordsWithObjectMetadataId,
-    searchableObjectMetadataItems,
     theme.icon.size.sm,
   ]);
 
