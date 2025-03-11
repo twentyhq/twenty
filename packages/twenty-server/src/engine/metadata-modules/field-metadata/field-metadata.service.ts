@@ -59,11 +59,11 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
+import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
-import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
