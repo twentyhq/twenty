@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
+import { Writable } from 'stream';
 
 import ts, { transpileModule } from 'typescript';
 import { v4 } from 'uuid';
@@ -129,6 +130,18 @@ export class LocalDriver implements ServerlessDriver {
       }
     }
 
+    let logs = '';
+    const logStream = new Writable({
+      write(chunk, encoding, callback) {
+        logs = logs.concat(chunk.toString());
+        callback();
+      },
+    });
+
+    const originalStdoutWrite = process.stdout.write;
+
+    process.stdout.write = logStream.write.bind(logStream) as any;
+
     try {
       const mainFile = await import(compiledCodeFilePath);
 
@@ -141,12 +154,14 @@ export class LocalDriver implements ServerlessDriver {
 
       return {
         data: result,
+        logs,
         duration,
         status: ServerlessFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
       return {
         data: null,
+        logs,
         duration: Date.now() - startTime,
         error: {
           errorType: 'UnhandledError',
@@ -156,6 +171,7 @@ export class LocalDriver implements ServerlessDriver {
         status: ServerlessFunctionExecutionStatus.ERROR,
       };
     } finally {
+      process.stdout.write = originalStdoutWrite;
       await fs.rm(compiledCodeFolderPath, { recursive: true, force: true });
     }
   }
