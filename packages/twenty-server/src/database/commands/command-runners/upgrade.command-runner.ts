@@ -46,7 +46,9 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       ),
     );
 
-    await this.runUpgradeVersionCommands(args);
+    await this.beforeSyncMetadataUpgradeCommandsToRun(args);
+    await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
+    await this.afterSyncMetadataUpgradeCommandsToRun(args);
 
     await this.workspaceRepository.update(
       { id: workspaceId },
@@ -77,7 +79,10 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     }
   }
 
-  protected abstract runUpgradeVersionCommands(
+  protected abstract beforeSyncMetadataUpgradeCommandsToRun(
+    args: RunOnWorkspaceArgs,
+  ): Promise<void>;
+  protected abstract afterSyncMetadataUpgradeCommandsToRun(
     args: RunOnWorkspaceArgs,
   ): Promise<void>;
 }

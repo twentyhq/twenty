@@ -46,8 +46,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     );
   }
 
-  // EDIT ONLY ZONE
-  override async runUpgradeVersionCommands(args: RunOnWorkspaceArgs) {
+  override async beforeSyncMetadataUpgradeCommandsToRun(
+    args: RunOnWorkspaceArgs,
+  ) {
     await this.migrateRichTextContentPatchCommand.runOnWorkspace(args);
 
     await this.migrateIsSearchableForCustomObjectMetadataCommand.runOnWorkspace(
@@ -61,11 +62,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     await this.migrateIsSearchableForCustomObjectMetadataCommand.runOnWorkspace(
       args,
     );
+  }
 
-    // NOTE SAFE sync metadata TODO refactor
-    await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
-    ///
-
+  override async afterSyncMetadataUpgradeCommandsToRun(
+    args: RunOnWorkspaceArgs,
+  ) {
     await this.updateDefaultViewRecordOpeningOnWorkflowObjectsCommand.runOnWorkspace(
       args,
     );
