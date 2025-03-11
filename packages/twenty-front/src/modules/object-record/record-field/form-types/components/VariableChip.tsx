@@ -1,9 +1,11 @@
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
+import { WorkflowStepContext } from '@/workflow/states/context/WorkflowStepContext';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared';
 import { IconAlertTriangle, IconX } from 'twenty-ui';
 
@@ -76,17 +78,21 @@ export const VariableChip = ({
 }: VariableChipProps) => {
   const theme = useTheme();
   const { t } = useLingui();
-  const { getStepsOutputSchema } = useStepsOutputSchema({});
+  const { workflowVersionId } = useContext(WorkflowStepContext);
+  const { getStepsOutputSchema } = useStepsOutputSchema();
   const stepId = extractRawVariableNamePart({
     rawVariableName,
     part: 'stepId',
   });
 
-  if (!isDefined(stepId)) {
+  if (!isDefined(stepId) || !isDefined(workflowVersionId)) {
     return null;
   }
 
-  const stepOutputSchema = getStepsOutputSchema([stepId])?.[0];
+  const stepOutputSchema = getStepsOutputSchema({
+    workflowVersionId,
+    stepIds: [stepId],
+  })?.[0];
 
   const { variableLabel, variablePathLabel } =
     searchVariableThroughOutputSchema({

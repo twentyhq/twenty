@@ -1,8 +1,6 @@
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
-import { stepsOutputSchemaComponentFamilyState } from '@/workflow/states/stepsOutputSchemaFamilyState';
+import { stepsOutputSchemaFamilyState } from '@/workflow/states/stepsOutputSchemaFamilyState';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { getStepOutputSchemaKey } from '@/workflow/utils/getStepOutputSchemaKey';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
@@ -15,35 +13,28 @@ import { getTriggerStepName } from '@/workflow/workflow-variables/utils/getTrigg
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
-export const useStepsOutputSchema = ({
-  instanceIdFromProps,
-}: {
-  instanceIdFromProps?: string;
-}) => {
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    WorkflowVersionComponentInstanceContext,
-    instanceIdFromProps,
-  );
-
-  const stepsOutputSchemaFamilyState = useRecoilComponentCallbackStateV2(
-    stepsOutputSchemaComponentFamilyState,
-    instanceId,
-  );
-
+export const useStepsOutputSchema = () => {
   const getStepsOutputSchema = useRecoilCallback(
     ({ snapshot }) =>
-      (stepIds: string[]) => {
+      ({
+        workflowVersionId,
+        stepIds,
+      }: {
+        workflowVersionId: string;
+        stepIds: string[];
+      }) => {
         const stepsOutputSchema = stepIds
-          .map((stepId) =>
+          .map((stepId) => getStepOutputSchemaKey(workflowVersionId, stepId))
+          .map((stepOutputSchemaKey) =>
             snapshot
-              .getLoadable(stepsOutputSchemaFamilyState(stepId))
+              .getLoadable(stepsOutputSchemaFamilyState(stepOutputSchemaKey))
               .getValue(),
           )
           .filter(isDefined);
 
         return stepsOutputSchema;
       },
-    [stepsOutputSchemaFamilyState],
+    [],
   );
 
   const populateStepsOutputSchema = useRecoilCallback(
@@ -57,7 +48,12 @@ export const useStepsOutputSchema = ({
             outputSchema: step.settings?.outputSchema as OutputSchema,
           };
 
-          set(stepsOutputSchemaFamilyState(step.id), stepOutputSchema);
+          set(
+            stepsOutputSchemaFamilyState(
+              getStepOutputSchemaKey(workflowVersion.id, step.id),
+            ),
+            stepOutputSchema,
+          );
         });
 
         const trigger = workflowVersion.trigger;
@@ -85,25 +81,38 @@ export const useStepsOutputSchema = ({
           };
 
           set(
-            stepsOutputSchemaFamilyState(TRIGGER_STEP_ID),
+            stepsOutputSchemaFamilyState(
+              getStepOutputSchemaKey(workflowVersion.id, TRIGGER_STEP_ID),
+            ),
             triggerOutputSchema,
           );
         }
       },
-    [stepsOutputSchemaFamilyState],
+    [],
   );
 
-  const resetStepsOutputSchema = useRecoilCallback(
-    ({ reset }) =>
-      ({ stepId }: { stepId: string }) => {
-        reset(stepsOutputSchemaFamilyState(stepId));
+  const resetStepOutputSchema = useRecoilCallback(
+    ({ set }) =>
+      ({
+        stepId,
+        workflowVersionId,
+      }: {
+        stepId: string;
+        workflowVersionId: string;
+      }) => {
+        set(
+          stepsOutputSchemaFamilyState(
+            getStepOutputSchemaKey(workflowVersionId, stepId),
+          ),
+          null,
+        );
       },
-    [stepsOutputSchemaFamilyState],
+    [],
   );
 
   return {
     populateStepsOutputSchema,
-    resetStepsOutputSchema,
+    resetStepOutputSchema,
     getStepsOutputSchema,
   };
 };

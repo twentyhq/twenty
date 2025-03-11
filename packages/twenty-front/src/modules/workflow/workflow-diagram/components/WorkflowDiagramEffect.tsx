@@ -12,9 +12,8 @@ import { addCreateStepNodes } from '@/workflow/workflow-diagram/utils/addCreateS
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { markLeafNodes } from '@/workflow/workflow-diagram/utils/markLeafNodes';
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { useEffect } from 'react';
-import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const WorkflowDiagramEffect = ({
@@ -23,10 +22,8 @@ export const WorkflowDiagramEffect = ({
   workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
 }) => {
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
-  const [flow, setFlow] = useRecoilState(flowState);
-  const { resetStepsOutputSchema } = useStepsOutputSchema({
-    instanceIdFromProps: workflowWithCurrentVersion?.currentVersion.id,
-  });
+  const setFlow = useSetRecoilState(flowState);
+  const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {
@@ -99,26 +96,8 @@ export const WorkflowDiagramEffect = ({
       return;
     }
 
-    const deletedSteps = flow?.steps?.filter((flowStep) => {
-      if (!isDefined(currentVersion?.steps)) {
-        return false;
-      }
-
-      return !currentVersion.steps.some(
-        (versionStep) => versionStep.id === flowStep.id,
-      );
-    });
-
-    if (isDefined(deletedSteps)) {
-      deletedSteps.forEach((step) => {
-        resetStepsOutputSchema({ stepId: step.id });
-      });
-    }
-
-    if (!isDefined(currentVersion.trigger) && isDefined(flow?.trigger)) {
-      resetStepsOutputSchema({ stepId: TRIGGER_STEP_ID });
-    }
-  }, [currentVersion, flow?.steps, flow?.trigger, resetStepsOutputSchema]);
+    populateStepsOutputSchema(currentVersion);
+  }, [currentVersion, populateStepsOutputSchema]);
 
   return null;
 };

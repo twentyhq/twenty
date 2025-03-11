@@ -17,7 +17,7 @@ export const useAvailableVariablesInWorkflowStep = ({
 }): StepOutputSchema[] => {
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   const flow = useFlowOrThrow();
-  const { getStepsOutputSchema } = useStepsOutputSchema({});
+  const { getStepsOutputSchema } = useStepsOutputSchema();
 
   const steps = flow.steps ?? [];
 
@@ -30,11 +30,16 @@ export const useAvailableVariablesInWorkflowStep = ({
     previousStepIds.push(step.id);
   }
 
-  const availableStepsOutputSchema: StepOutputSchema[] =
-    getStepsOutputSchema(previousStepIds).filter(isDefined);
+  const availableStepsOutputSchema: StepOutputSchema[] = getStepsOutputSchema({
+    workflowVersionId: flow.workflowVersionId,
+    stepIds: previousStepIds,
+  }).filter(isDefined);
 
   const triggersOutputSchema: StepOutputSchema[] = isDefined(flow.trigger)
-    ? getStepsOutputSchema([TRIGGER_STEP_ID]).filter(isDefined)
+    ? getStepsOutputSchema({
+        workflowVersionId: flow.workflowVersionId,
+        stepIds: [TRIGGER_STEP_ID],
+      }).filter(isDefined)
     : [];
 
   const availableVariablesInWorkflowStep = [
