@@ -270,6 +270,21 @@ export const useCommandMenu = () => {
         });
 
         set(commandMenuNavigationStackState, newNavigationStack);
+
+        const currentMorphItems = snapshot
+          .getLoadable(commandMenuNavigationMorphItemsState)
+          .getValue();
+
+        if (currentNavigationStack.length > 0) {
+          const removedItem = currentNavigationStack.at(-1);
+
+          if (isDefined(removedItem)) {
+            const newMorphItems = new Map(currentMorphItems);
+            newMorphItems.delete(removedItem.pageId);
+            set(commandMenuNavigationMorphItemsState, newMorphItems);
+          }
+        }
+
         set(hasUserSelectedCommandState, false);
       };
     },
@@ -300,6 +315,17 @@ export const useCommandMenu = () => {
         Icon: newNavigationStackItem?.pageIcon,
         instanceId: newNavigationStackItem?.pageId,
       });
+      const currentMorphItems = snapshot
+        .getLoadable(commandMenuNavigationMorphItemsState)
+        .getValue();
+
+      const newMorphItems = new Map(
+        Array.from(currentMorphItems.entries()).filter(([pageId]) =>
+          newNavigationStack.some((item) => item.pageId === pageId),
+        ),
+      );
+
+      set(commandMenuNavigationMorphItemsState, newMorphItems);
 
       set(hasUserSelectedCommandState, false);
     };
