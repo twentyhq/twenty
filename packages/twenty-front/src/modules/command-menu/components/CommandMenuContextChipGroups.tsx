@@ -30,6 +30,7 @@ export const CommandMenuContextChipGroups = ({
             Icons={chip.Icons}
             text={chip.text}
             onClick={chip.onClick}
+            withIconBackground={chip.withIconBackground}
           />
         ))}
       </>

@@ -82,18 +82,29 @@ export const useContextChips = () => {
               : () => {
                   navigateCommandMenuHistory(index);
                 },
+            withIconBackground: false,
           };
         }
 
         return {
           page,
-          Icons: [<page.pageIcon size={theme.icon.size.sm} />],
+          Icons: [
+            <page.pageIcon
+              size={theme.icon.size.sm}
+              color={
+                page.pageIconColor !== 'currentColor'
+                  ? page.pageIconColor
+                  : theme.font.color.tertiary
+              }
+            />,
+          ],
           text: page.pageTitle,
           onClick: isLastChip
             ? undefined
             : () => {
                 navigateCommandMenuHistory(index);
               },
+          withIconBackground: true,
         };
       })
       .filter(isDefined);
@@ -102,6 +113,7 @@ export const useContextChips = () => {
     commandMenuNavigationRecords,
     commandMenuNavigationStack,
     navigateCommandMenuHistory,
+    theme.font.color.tertiary,
     theme.icon.size.sm,
   ]);
 

@@ -42,10 +42,12 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
+import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared';
@@ -56,6 +58,7 @@ export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
   pageTitle: string;
   pageIcon: IconComponent;
+  pageIconColor?: string;
   pageId?: string;
 };
 
@@ -71,6 +74,8 @@ export const useCommandMenu = () => {
   const { resetContextStoreStates } = useResetContextStoreStates();
 
   const { closeDropdown } = useDropdownV2();
+
+  const theme = useTheme();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set }) =>
@@ -160,6 +165,7 @@ export const useCommandMenu = () => {
         page,
         pageTitle,
         pageIcon,
+        pageIconColor,
         pageId,
         resetNavigationStack = false,
       }: CommandMenuNavigationStackItem & {
@@ -191,6 +197,7 @@ export const useCommandMenu = () => {
               page,
               pageTitle,
               pageIcon,
+              pageIconColor,
               pageId,
             },
           ]);
@@ -204,6 +211,7 @@ export const useCommandMenu = () => {
               page,
               pageTitle,
               pageIcon,
+              pageIconColor,
               pageId,
             },
           ]);
@@ -405,6 +413,11 @@ export const useCommandMenu = () => {
           ? getIcon(objectMetadataItem.icon)
           : getIcon('IconList');
 
+        const IconColor = getIconColorForObjectType({
+          objectType: objectMetadataItem.nameSingular,
+          theme,
+        });
+
         const capitalizedObjectNameSingular = capitalize(objectNameSingular);
 
         navigateCommandMenu({
@@ -413,12 +426,13 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
+          pageIconColor: IconColor,
           pageId: pageComponentInstanceId,
           resetNavigationStack: false,
         });
       };
     },
-    [getIcon, navigateCommandMenu],
+    [getIcon, navigateCommandMenu, theme],
   );
 
   const openWorkflowTriggerTypeInCommandMenu = useRecoilCallback(

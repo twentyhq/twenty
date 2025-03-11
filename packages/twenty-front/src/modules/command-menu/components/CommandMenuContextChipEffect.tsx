@@ -77,7 +77,6 @@ export const CommandMenuContextChipEffect = () => {
             filterPerMetadataItemFilteredOnRecordId[
               `filter${capitalize(objectMetadataItem.nameSingular)}`
             ],
-          limit: 10,
         },
       }));
 
