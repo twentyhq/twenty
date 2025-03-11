@@ -145,6 +145,9 @@ export default defineConfig(({ command, mode }) => {
     build: {
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      rollupOptions: {
+        external: ['@scalar'],
+      },
     },
 
     envPrefix: 'REACT_APP_',
