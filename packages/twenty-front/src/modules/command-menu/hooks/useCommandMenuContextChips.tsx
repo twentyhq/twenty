@@ -86,11 +86,9 @@ export const useCommandMenuContextChips = () => {
               />,
             ],
             text: name,
-            onClick: isLastChip
-              ? undefined
-              : () => {
-                  navigateCommandMenuHistory(index);
-                },
+            onClick: () => {
+              navigateCommandMenuHistory(index);
+            },
           };
         }
 
