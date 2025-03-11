@@ -21,7 +21,11 @@ function* resolveVariables(value: JsonValue): Generator<string> {
   }
 }
 
-export const getVariablesUsedInStep = ({ step }: { step: WorkflowStep }) => {
+export const getWorkflowVariablesUsedInStep = ({
+  step,
+}: {
+  step: WorkflowStep;
+}) => {
   const flowVariables = new Set<string>();
 
   for (const variable of resolveVariables(step.settings.input)) {

@@ -1,8 +1,8 @@
 import { JsonNestedNode } from '@/workflow/components/json-visualizer/components/JsonNestedNode';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
-import { getVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getFlowVariablesInUse';
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
+import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 import { IconBrackets } from 'twenty-ui';
@@ -32,7 +32,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     return null;
   }
 
-  const variablesInUse = getVariablesUsedInStep({
+  const variablesInUse = getWorkflowVariablesUsedInStep({
     step,
   });
 
