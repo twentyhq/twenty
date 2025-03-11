@@ -1,6 +1,7 @@
 import { JsonNestedNode } from '@/workflow/components/json-visualizer/components/JsonNestedNode';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
+import { getVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getFlowVariablesInUse';
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
@@ -16,16 +17,24 @@ const StyledContainer = styled.div`
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
+  const step = workflowRun?.output?.flow.steps.find(
+    (step) => step.id === stepId,
+  );
 
   if (
     !(
       isDefined(workflowRun) &&
       isDefined(workflowRun.context) &&
-      isDefined(workflowRun.output?.flow)
+      isDefined(workflowRun.output?.flow) &&
+      isDefined(step)
     )
   ) {
     return null;
   }
+
+  const variablesInUse = getVariablesUsedInStep({
+    step,
+  });
 
   const stepContext = getWorkflowRunStepContext({
     context: workflowRun.context,
@@ -49,7 +58,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
         emptyElementsText=""
         depth={0}
         keyPath=""
-        getNodeHighlighting={() => true}
+        getNodeHighlighting={(keyPath) => variablesInUse.has(keyPath)}
       />
     </StyledContainer>
   );

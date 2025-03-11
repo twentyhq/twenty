@@ -26,8 +26,6 @@ export const JsonNode = ({
 }) => {
   const isHighlighted = getNodeHighlighting?.(keyPath) ?? false;
 
-  console.log({ isHighlighted });
-
   if (isNull(value)) {
     return (
       <JsonValueNode
