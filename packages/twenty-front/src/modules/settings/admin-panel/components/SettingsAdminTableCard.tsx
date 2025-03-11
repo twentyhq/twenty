@@ -51,7 +51,10 @@ export const SettingsAdminTableCard = ({
       <Table>
         <TableBody>
           {items.map((item, index) => (
-            <StyledTableRow key={index} gridAutoColumns={gridAutoColumns}>
+            <StyledTableRow
+              key={index + item.label}
+              gridAutoColumns={gridAutoColumns}
+            >
               <StyledTableCellLabel>
                 {item.Icon && <item.Icon size={theme.icon.size.md} />}
                 <span>{item.label}</span>

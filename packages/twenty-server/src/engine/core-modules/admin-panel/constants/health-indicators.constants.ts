@@ -25,7 +25,7 @@ export const HEALTH_INDICATORS: Record<HealthIndicatorId, HealthIndicatorInfo> =
     },
     [HealthIndicatorId.connectedAccount]: {
       id: HealthIndicatorId.connectedAccount,
-      label: 'Connected Account',
+      label: 'Connected Accounts',
       description: 'Connected accounts health status',
     },
     [HealthIndicatorId.app]: {

@@ -81,7 +81,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
         >
           <Section>
             <StyledTitleContainer>
-              <H3Title title={`${data?.getIndicatorHealthStatus?.label}`} />
+              <H3Title title={data?.getIndicatorHealthStatus?.label} />
               {data?.getIndicatorHealthStatus?.status && (
                 <SettingsAdminHealthStatusRightContainer
                   status={data?.getIndicatorHealthStatus.status}

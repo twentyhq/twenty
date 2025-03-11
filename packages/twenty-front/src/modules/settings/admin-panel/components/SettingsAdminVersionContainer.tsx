@@ -66,7 +66,7 @@ export const SettingsAdminVersionContainer = () => {
           {latestVersion}
         </StyledActionLink>
       ) : (
-        <StyledSpan>{latestVersion}</StyledSpan>
+        <StyledSpan>{latestVersion ?? 'Loading...'}</StyledSpan>
       ),
     },
   ];

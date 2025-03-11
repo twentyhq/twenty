@@ -171,69 +171,67 @@ export const SettingsAdminWorkspaceContent = ({
 
   return (
     <StyledContainer>
-      <>
-        <Section>
-          <H2Title
-            title={t`Workspace Info`}
-            description={t`About this workspace`}
-          />
-          <SettingsAdminTableCard
-            items={workspaceInfoItems}
-            gridAutoColumns="1fr 4fr"
-          />
-          <StyledButtonContainer>
-            {currentUser?.canImpersonate && (
-              <Button
-                Icon={IconEyeShare}
-                variant="primary"
-                accent="default"
-                title={t`Impersonate`}
-                onClick={() => handleImpersonate(activeWorkspace.id)}
-                disabled={
-                  isImpersonateLoading ||
-                  activeWorkspace.allowImpersonation === false
-                }
-                dataTestId="impersonate-button"
-              />
-            )}
-          </StyledButtonContainer>
-        </Section>
-        {canManageFeatureFlags && (
-          <Table>
-            <TableBody>
+      <Section>
+        <H2Title
+          title={t`Workspace Info`}
+          description={t`About this workspace`}
+        />
+        <SettingsAdminTableCard
+          items={workspaceInfoItems}
+          gridAutoColumns="1fr 4fr"
+        />
+        <StyledButtonContainer>
+          {currentUser?.canImpersonate && (
+            <Button
+              Icon={IconEyeShare}
+              variant="primary"
+              accent="default"
+              title={t`Impersonate`}
+              onClick={() => handleImpersonate(activeWorkspace.id)}
+              disabled={
+                isImpersonateLoading ||
+                activeWorkspace.allowImpersonation === false
+              }
+              dataTestId="impersonate-button"
+            />
+          )}
+        </StyledButtonContainer>
+      </Section>
+      {canManageFeatureFlags && (
+        <Table>
+          <TableBody>
+            <TableRow
+              gridAutoColumns="1fr 100px"
+              mobileGridAutoColumns="1fr 80px"
+            >
+              <TableHeader>{t`Feature Flag`}</TableHeader>
+              <TableHeader align="right">{t`Status`}</TableHeader>
+            </TableRow>
+
+            {activeWorkspace.featureFlags.map((flag) => (
               <TableRow
                 gridAutoColumns="1fr 100px"
                 mobileGridAutoColumns="1fr 80px"
+                key={flag.key}
               >
-                <TableHeader>{t`Feature Flag`}</TableHeader>
-                <TableHeader align="right">{t`Status`}</TableHeader>
+                <TableCell>{flag.key}</TableCell>
+                <TableCell align="right">
+                  <Toggle
+                    value={flag.value}
+                    onChange={(newValue) =>
+                      handleFeatureFlagUpdate(
+                        activeWorkspace.id,
+                        flag.key,
+                        newValue,
+                      )
+                    }
+                  />
+                </TableCell>
               </TableRow>
-
-              {activeWorkspace.featureFlags.map((flag) => (
-                <TableRow
-                  gridAutoColumns="1fr 100px"
-                  mobileGridAutoColumns="1fr 80px"
-                  key={flag.key}
-                >
-                  <TableCell>{flag.key}</TableCell>
-                  <TableCell align="right">
-                    <Toggle
-                      value={flag.value}
-                      onChange={(newValue) =>
-                        handleFeatureFlagUpdate(
-                          activeWorkspace.id,
-                          flag.key,
-                          newValue,
-                        )
-                      }
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </StyledContainer>
   );
 };

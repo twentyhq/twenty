@@ -29,7 +29,7 @@ const StyledTooltipColorCircle = styled.div<{ color: string }>`
   width: 8px;
 `;
 
-const StyledTooltipDataRow = styled.span`
+const StyledTooltipDataRow = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
