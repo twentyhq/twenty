@@ -100,6 +100,10 @@ export const CommandMenuContextChipEffect = () => {
     };
 
     fetchRecords();
+
+    return () => {
+      setCommandMenuNavigationRecords([]);
+    };
   }, [
     commandMenuNavigationMorphItems,
     objectMetadataItems,

@@ -30,28 +30,26 @@ export const CommandMenuRouter = () => {
   const theme = useTheme();
 
   return (
-    <>
+    <CommandMenuContainer>
       <CommandMenuContextChipEffect />
-      <CommandMenuContainer>
-        <CommandMenuPageComponentInstanceContext.Provider
-          value={{ instanceId: commandMenuPageInfo.instanceId }}
+      <CommandMenuPageComponentInstanceContext.Provider
+        value={{ instanceId: commandMenuPageInfo.instanceId }}
+      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            duration: theme.animation.duration.instant,
+            delay: 0.1,
+          }}
         >
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              duration: theme.animation.duration.instant,
-              delay: 0.1,
-            }}
-          >
-            <CommandMenuTopBar />
-          </motion.div>
-          <StyledCommandMenuContent>
-            {commandMenuPageComponent}
-          </StyledCommandMenuContent>
-        </CommandMenuPageComponentInstanceContext.Provider>
-      </CommandMenuContainer>
-    </>
+          <CommandMenuTopBar />
+        </motion.div>
+        <StyledCommandMenuContent>
+          {commandMenuPageComponent}
+        </StyledCommandMenuContent>
+      </CommandMenuPageComponentInstanceContext.Provider>
+    </CommandMenuContainer>
   );
 };

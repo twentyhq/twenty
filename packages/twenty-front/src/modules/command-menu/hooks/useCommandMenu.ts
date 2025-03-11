@@ -39,6 +39,8 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
@@ -528,7 +530,7 @@ export const useCommandMenu = () => {
   };
 
   const openCalendarEventInCommandMenu = useRecoilCallback(
-    ({ set }) => {
+    ({ set, snapshot }) => {
       return (calendarEventId: string) => {
         const pageComponentInstanceId = v4();
 
@@ -537,6 +539,30 @@ export const useCommandMenu = () => {
             instanceId: pageComponentInstanceId,
           }),
           calendarEventId,
+        );
+
+        const objectMetadataItem = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue()
+          .find(
+            ({ nameSingular }) =>
+              nameSingular === CoreObjectNameSingular.CalendarEvent,
+          );
+
+        set(
+          commandMenuNavigationMorphItemsState,
+          new Map([
+            ...snapshot
+              .getLoadable(commandMenuNavigationMorphItemsState)
+              .getValue(),
+            [
+              pageComponentInstanceId,
+              {
+                objectMetadataId: objectMetadataItem?.id,
+                recordId: calendarEventId,
+              },
+            ],
+          ]),
         );
 
         navigateCommandMenu({
@@ -551,7 +577,7 @@ export const useCommandMenu = () => {
   );
 
   const openEmailThreadInCommandMenu = useRecoilCallback(
-    ({ set }) => {
+    ({ set, snapshot }) => {
       return (emailThreadId: string) => {
         const pageComponentInstanceId = v4();
 
@@ -560,6 +586,30 @@ export const useCommandMenu = () => {
             instanceId: pageComponentInstanceId,
           }),
           emailThreadId,
+        );
+
+        const objectMetadataItem = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue()
+          .find(
+            ({ nameSingular }) =>
+              nameSingular === CoreObjectNameSingular.MessageThread,
+          );
+
+        set(
+          commandMenuNavigationMorphItemsState,
+          new Map([
+            ...snapshot
+              .getLoadable(commandMenuNavigationMorphItemsState)
+              .getValue(),
+            [
+              pageComponentInstanceId,
+              {
+                objectMetadataId: objectMetadataItem?.id,
+                recordId: emailThreadId,
+              },
+            ],
+          ]),
         );
 
         navigateCommandMenu({
