@@ -20,9 +20,11 @@ import {
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
-export interface FieldMetadataUpdate {
-  current: FieldMetadataEntity;
-  altered: FieldMetadataEntity;
+export interface FieldMetadataUpdate<
+  Type extends FieldMetadataType = FieldMetadataType,
+> {
+  current: FieldMetadataEntity<Type>;
+  altered: FieldMetadataEntity<Type>;
 }
 
 @Injectable()

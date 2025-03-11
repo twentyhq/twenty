@@ -5,6 +5,7 @@ import { EntitySchema } from 'typeorm';
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
@@ -32,6 +33,7 @@ export class WorkspaceDatasourceFactory {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     this.cachedDataSourcePromise = {};
   }
@@ -131,10 +133,16 @@ export class WorkspaceDatasourceFactory {
               cachedEntitySchemas = entitySchemas;
             }
 
+            const featureFlagsMap =
+              await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+                workspaceId,
+              );
+
             const workspaceDataSource = new WorkspaceDataSource(
               {
                 workspaceId,
                 objectMetadataMaps: cachedObjectMetadataMaps,
+                featureFlagsMap,
               },
               {
                 url:

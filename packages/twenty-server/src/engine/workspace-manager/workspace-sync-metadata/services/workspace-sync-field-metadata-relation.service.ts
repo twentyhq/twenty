@@ -15,7 +15,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceMigrationFieldRelationFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field-relation.factory';
-import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
+import {
+  FieldMetadataUpdate,
+  WorkspaceMigrationFieldFactory,
+} from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { WorkspaceFieldRelationComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-field-relation.comparator';
 import { StandardFieldRelationFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field-relation.factory';
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
@@ -42,20 +45,9 @@ export class WorkspaceSyncFieldMetadataRelationService {
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    const objectMetadataRepository =
-      manager.getRepository(ObjectMetadataEntity);
+    let originalObjectMetadataCollection =
+      await this.getOriginalObjectMetadataCollection(context, manager);
 
-    // Retrieve object metadata collection from DB
-    const originalObjectMetadataCollection =
-      await objectMetadataRepository.find({
-        where: {
-          workspaceId: context.workspaceId,
-          fields: {
-            type: FieldMetadataType.RELATION,
-          },
-        },
-        relations: ['dataSource', 'fields'],
-      });
     const customObjectMetadataCollection =
       originalObjectMetadataCollection.filter(
         (objectMetadata) => objectMetadata.isCustom,
@@ -85,7 +77,7 @@ export class WorkspaceSyncFieldMetadataRelationService {
     this.logger.log('Updating workspace metadata');
 
     // Save field metadata to DB
-    const { updatedFieldMetadataCollection } =
+    const metadataFieldUpdaterResult =
       await this.workspaceMetadataUpdaterService.updateFieldRelationMetadata(
         manager,
         storage,
@@ -96,75 +88,57 @@ export class WorkspaceSyncFieldMetadataRelationService {
     const updateFieldWorkspaceMigrations =
       await this.workspaceMigrationFieldFactory.create(
         originalObjectMetadataCollection,
-        updatedFieldMetadataCollection,
+        [
+          // Both of them are update as field where created in WorkspaceSyncFieldMetadataService
+          ...metadataFieldUpdaterResult.createdFieldRelationMetadataCollection,
+          ...metadataFieldUpdaterResult.updatedFieldRelationMetadataCollection,
+          ...metadataFieldUpdaterResult.deletedFieldRelationMetadataCollection,
+        ] as FieldMetadataUpdate[],
         WorkspaceMigrationBuilderAction.UPDATE,
       );
 
-    const originalObjectMetadataCollection2 =
-      await objectMetadataRepository.find({
-        where: {
-          workspaceId: context.workspaceId,
-          fields: {
-            type: FieldMetadataType.RELATION,
-          },
-        },
-        relations: ['dataSource', 'fields'],
-      });
+    // Resync updated object metadata
+    originalObjectMetadataCollection =
+      await this.getOriginalObjectMetadataCollection(context, manager);
 
-    const createFieldMetadataCollection = updatedFieldMetadataCollection.reduce(
-      (acc, field) => {
-        if (
-          storage.fieldRelationMetadataCreateCollection.some(
-            (createField) => createField.id === field.altered.id,
-          )
-        ) {
-          acc.push(
-            field.altered as FieldMetadataEntity<FieldMetadataType.RELATION>,
-          );
-        }
+    const deletedFieldRelationMetadataCollection =
+      metadataFieldUpdaterResult.deletedFieldRelationMetadataCollection.map(
+        (field) => field.altered,
+      );
 
-        return acc;
-      },
-      [] as FieldMetadataEntity<FieldMetadataType.RELATION>[],
-    );
+    const deleteFieldRelationWorkspaceMigrations =
+      await this.workspaceMigrationFieldRelationFactory.create(
+        originalObjectMetadataCollection,
+        deletedFieldRelationMetadataCollection,
+        WorkspaceMigrationBuilderAction.DELETE,
+      );
+
+    const createdFieldRelationMetadataCollection =
+      metadataFieldUpdaterResult.createdFieldRelationMetadataCollection.map(
+        (field) => field.altered,
+      );
 
     const createFieldRelationWorkspaceMigrations =
       await this.workspaceMigrationFieldRelationFactory.create(
-        originalObjectMetadataCollection2,
-        createFieldMetadataCollection,
+        originalObjectMetadataCollection,
+        createdFieldRelationMetadataCollection,
         WorkspaceMigrationBuilderAction.CREATE,
       );
 
-    const updateFieldMetadataCollection = updatedFieldMetadataCollection.reduce(
-      (acc, field) => {
-        if (
-          storage.fieldRelationMetadataUpdateCollection.some(
-            (updateField) => updateField.id === field.altered.id,
-          )
-        ) {
-          acc.push(
-            field.altered as FieldMetadataEntity<FieldMetadataType.RELATION>,
-          );
-        }
-
-        return acc;
-      },
-      [] as FieldMetadataEntity<FieldMetadataType.RELATION>[],
-    );
-
-    console.log(updateFieldMetadataCollection);
-
     const updateFieldRelationWorkspaceMigrations =
       await this.workspaceMigrationFieldRelationFactory.create(
-        originalObjectMetadataCollection2,
-        updateFieldMetadataCollection,
+        originalObjectMetadataCollection,
+        metadataFieldUpdaterResult.updatedFieldRelationMetadataCollection,
         WorkspaceMigrationBuilderAction.UPDATE,
       );
+
+    // TODO: Should we handle deletion of relation here?
 
     this.logger.log('Saving migrations');
 
     return [
       ...updateFieldWorkspaceMigrations,
+      ...deleteFieldRelationWorkspaceMigrations,
       ...createFieldRelationWorkspaceMigrations,
       ...updateFieldRelationWorkspaceMigrations,
     ];
@@ -246,6 +220,27 @@ export class WorkspaceSyncFieldMetadataRelationService {
 
       this.storeComparatorResults(fieldComparatorResults, storage);
     }
+  }
+
+  private async getOriginalObjectMetadataCollection(
+    context: WorkspaceSyncContext,
+    manager: EntityManager,
+  ): Promise<ObjectMetadataEntity[]> {
+    const objectMetadataRepository =
+      manager.getRepository(ObjectMetadataEntity);
+
+    const originalObjectMetadataCollection =
+      await objectMetadataRepository.find({
+        where: {
+          workspaceId: context.workspaceId,
+          fields: {
+            type: FieldMetadataType.RELATION,
+          },
+        },
+        relations: ['dataSource', 'fields'],
+      });
+
+    return originalObjectMetadataCollection;
   }
 
   private storeComparatorResults(

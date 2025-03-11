@@ -22,6 +22,7 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
@@ -682,7 +683,14 @@ export class WorkspaceRepository<
     objectMetadata ??= await this.getObjectMetadataFromTarget();
 
     const objectMetadataMaps = this.internalContext.objectMetadataMaps;
+    const isNewRelationEnabled =
+      this.internalContext.featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled];
 
-    return formatResult(data, objectMetadata, objectMetadataMaps) as T;
+    return formatResult(
+      data,
+      objectMetadata,
+      objectMetadataMaps,
+      isNewRelationEnabled,
+    ) as T;
   }
 }

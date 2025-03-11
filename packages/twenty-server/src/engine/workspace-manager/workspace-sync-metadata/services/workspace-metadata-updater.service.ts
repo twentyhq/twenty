@@ -211,27 +211,61 @@ export class WorkspaceMetadataUpdaterService {
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
     options?: UpdaterOptions,
-  ) {
-    let updatedFieldMetadataCollection: FieldMetadataUpdate[] = [];
+  ): Promise<{
+    createdFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[];
+    updatedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[];
+    deletedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[];
+  }> {
+    let createdFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[] =
+      [];
+    let updatedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[] =
+      [];
+    let deletedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[] =
+      [];
+
+    /**
+     * Create field relation metadata
+     */
+    if (!options || options.actions.includes('create')) {
+      createdFieldRelationMetadataCollection = await this.updateEntities<
+        FieldMetadataEntity<FieldMetadataType.RELATION>
+      >(
+        manager,
+        FieldMetadataEntity,
+        storage.fieldRelationMetadataCreateCollection,
+        ['objectMetadataId', 'workspaceId'],
+      );
+    }
 
     /**
      * Update field relation metadata
      */
     if (!options || options.actions.includes('update')) {
-      updatedFieldMetadataCollection =
-        await this.updateEntities<FieldMetadataEntity>(
-          manager,
-          FieldMetadataEntity,
-          [
-            ...storage.fieldRelationMetadataCreateCollection,
-            ...storage.fieldRelationMetadataUpdateCollection,
-          ],
-          ['objectMetadataId', 'workspaceId'],
-        );
+      updatedFieldRelationMetadataCollection = await this.updateEntities<
+        FieldMetadataEntity<FieldMetadataType.RELATION>
+      >(
+        manager,
+        FieldMetadataEntity,
+        storage.fieldRelationMetadataUpdateCollection,
+        ['objectMetadataId', 'workspaceId'],
+      );
+    }
+
+    if (!options || options.actions.includes('delete')) {
+      deletedFieldRelationMetadataCollection = await this.updateEntities<
+        FieldMetadataEntity<FieldMetadataType.RELATION>
+      >(
+        manager,
+        FieldMetadataEntity,
+        storage.fieldRelationMetadataDeleteCollection,
+        ['objectMetadataId', 'workspaceId'],
+      );
     }
 
     return {
-      updatedFieldMetadataCollection,
+      createdFieldRelationMetadataCollection,
+      updatedFieldRelationMetadataCollection,
+      deletedFieldRelationMetadataCollection,
     };
   }
 
