@@ -146,7 +146,7 @@ export default defineConfig(({ command, mode }) => {
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
-        external: ['@scalar/api-reference-react'],
+        external: ['@scalar/api-reference-react', '@tabler/icons-react'],
       },
     },
 
