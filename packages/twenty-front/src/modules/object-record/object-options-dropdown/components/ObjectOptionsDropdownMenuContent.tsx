@@ -170,6 +170,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
         </div>
         {currentView?.key === 'INDEX' && (
           <AppTooltip
+            // eslint-disable-next-line
             anchorSelect={`#delete-view-menu-item`}
             content={t`Not available on Default View`}
             noArrow
