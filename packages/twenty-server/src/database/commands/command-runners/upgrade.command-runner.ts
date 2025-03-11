@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Repository } from 'typeorm';
 
+import { SemVer } from 'semver';
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
@@ -11,10 +12,12 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { isOneMinorVersionHigher } from 'src/utils/version/is-one-minor-version-higher';
+import { isSameVersion } from 'src/utils/version/is-same-version';
 import { isDefined } from 'twenty-shared';
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+  abstract readonly fromVersion: SemVer;
+
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -27,7 +30,12 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
     const { appVersion, workspaceId, index, total, options } = args;
-    await this.validateWorkspaceVersion({
+
+    if (!isDefined(appVersion)) {
+      throw new Error('Should never occur, APP_VERSION_NOT_DEFINED');
+    }
+
+    await this.validateWorkspaceVersionEqualFromVersion({
       appVersion,
       workspaceId,
     });
@@ -49,14 +57,10 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     );
   }
 
-  private async validateWorkspaceVersion({
+  private async validateWorkspaceVersionEqualFromVersion({
     appVersion,
     workspaceId,
   }: Pick<RunOnWorkspaceArgs, 'appVersion' | 'workspaceId'>) {
-    if (!isDefined(appVersion)) {
-      throw new Error('Should never occur, APP_VERSION_NOT_DEFINED');
-    }
-
     const workspace = await this.workspaceRepository.findOneByOrFail({
       id: workspaceId,
     });
@@ -66,14 +70,9 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       throw new Error(`WORKSPACE_VERSION_NOT_DEFINED to=${appVersion}`);
     }
 
-    const isValid = isOneMinorVersionHigher({
-      from: currentWorkspaceVersion,
-      to: appVersion,
-    });
-
-    if (!isValid) {
+    if (!isSameVersion(currentWorkspaceVersion, this.fromVersion.version)) {
       throw new Error(
-        `WORKSPACE_VERSION_MISSMATCH from=${currentWorkspaceVersion} to=${appVersion}`,
+        `WORKSPACE_VERSION_MISSMATCH workspaceVersion=${currentWorkspaceVersion} from=${this.fromVersion.version} to=${appVersion}`,
       );
     }
   }
