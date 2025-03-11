@@ -4,6 +4,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
@@ -20,6 +21,7 @@ export const useDeleteStep = ({
     useUpdateOneRecord<WorkflowVersion>({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
+  const { deleteStepOutputSchema } = useStepsOutputSchema();
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const { closeRightDrawer } = useRightDrawer();
@@ -36,11 +38,15 @@ export const useDeleteStep = ({
           trigger: null,
         },
       });
-      return;
+    } else {
+      await deleteWorkflowVersionStep({
+        workflowVersionId,
+        stepId,
+      });
     }
-    await deleteWorkflowVersionStep({
-      workflowVersionId,
+    deleteStepOutputSchema({
       stepId,
+      workflowVersionId,
     });
   };
 

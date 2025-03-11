@@ -721,6 +721,10 @@ msgstr "crwdns215:0crwdne215:0"
 msgid "Copy link"
 msgstr "crwdns3987:0crwdne3987:0"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Copy link to view"
+msgstr "crwdns5519:0crwdne5519:0"
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
 msgstr "crwdns217:0crwdne217:0"
@@ -979,6 +983,10 @@ msgstr "crwdns281:0crwdne281:0"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "crwdns283:0crwdne283:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Delete view"
+msgstr "crwdns5521:0crwdne5521:0"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -2191,6 +2199,7 @@ msgstr "crwdns5207:0crwdne5207:0"
 msgid "Norwegian"
 msgstr "crwdns1825:0crwdne1825:0"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Not available on Default View"

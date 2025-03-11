@@ -1,7 +1,5 @@
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
-import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { WorkflowRunDiagramCanvas } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvas';
-import { WorkflowVersionOutputSchemaEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionOutputSchemaEffect';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 
@@ -15,15 +13,13 @@ export const WorkflowRunVisualizer = ({
   workflowRunId: string;
 }) => {
   const workflowRun = useWorkflowRun({ workflowRunId });
-  const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
 
-  if (!isDefined(workflowRun) || !isDefined(workflowVersion)) {
+  if (!isDefined(workflowRun)) {
     return null;
   }
 
   return (
     <StyledContainer>
-      <WorkflowVersionOutputSchemaEffect workflowVersion={workflowVersion} />
       <WorkflowRunDiagramCanvas workflowRunStatus={workflowRun.status} />
     </StyledContainer>
   );

@@ -3,17 +3,12 @@ import { wrapper } from '@keystatic/core/content-components';
 
 export default config({
   storage: {
-    kind:
-      process.env.KEYSTATIC_STORAGE_KIND === ''
-        ? 'local'
-        : ((process.env.KEYSTATIC_STORAGE_KIND || 'local') as
-            | 'local'
-            | 'github'
-            | 'cloud'),
+    kind: 'github',
     repo: {
       owner: 'twentyhq',
       name: 'twenty',
     },
+    pathPrefix: 'packages/twenty-website',
   },
   collections: {
     developers: collection({

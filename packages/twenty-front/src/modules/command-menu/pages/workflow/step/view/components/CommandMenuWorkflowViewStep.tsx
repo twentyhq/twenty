@@ -1,5 +1,5 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
+import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 
@@ -7,8 +7,8 @@ export const CommandMenuWorkflowViewStep = () => {
   const flow = useFlowOrThrow();
   const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
   return (
-    <WorkflowVersionComponentInstanceContext.Provider
-      value={{ instanceId: flow.workflowVersionId }}
+    <WorkflowStepContextProvider
+      value={{ workflowVersionId: flow.workflowVersionId }}
     >
       <WorkflowStepDetail
         stepId={workflowSelectedNode}
@@ -16,6 +16,6 @@ export const CommandMenuWorkflowViewStep = () => {
         steps={flow.steps}
         readonly
       />
-    </WorkflowVersionComponentInstanceContext.Provider>
+    </WorkflowStepContextProvider>
   );
 };

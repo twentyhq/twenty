@@ -1,5 +1,5 @@
-import { usePopulateStepsOutputSchema } from '@/workflow/hooks/usePopulateStepsOutputSchema';
-import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
+import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
@@ -16,9 +16,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const workflowVersion = getWorkflowMock().versions.edges[0]
     .node as WorkflowVersion;
-  const { populateStepsOutputSchema } = usePopulateStepsOutputSchema({
-    workflowVersionId: workflowVersion.id,
-  });
+  const { populateStepsOutputSchema } = useStepsOutputSchema();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -34,10 +32,10 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   ]);
 
   return (
-    <WorkflowVersionComponentInstanceContext.Provider
-      value={{ instanceId: workflowVersion.id }}
+    <WorkflowStepContextProvider
+      value={{ workflowVersionId: workflowVersion.id }}
     >
       {ready && <Story />}
-    </WorkflowVersionComponentInstanceContext.Provider>
+    </WorkflowStepContextProvider>
   );
 };

@@ -1,3 +1,4 @@
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowState } from '@/workflow/states/flowState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
@@ -16,7 +17,7 @@ export const WorkflowVersionVisualizerEffect = ({
 
   const setFlow = useSetRecoilState(flowState);
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
-
+  const { populateStepsOutputSchema } = useStepsOutputSchema();
   useEffect(() => {
     if (!isDefined(workflowVersion)) {
       setFlow(undefined);
@@ -44,6 +45,14 @@ export const WorkflowVersionVisualizerEffect = ({
 
     setWorkflowDiagram(nextWorkflowDiagram);
   }, [setWorkflowDiagram, workflowVersion]);
+
+  useEffect(() => {
+    if (!isDefined(workflowVersion)) {
+      return;
+    }
+
+    populateStepsOutputSchema(workflowVersion);
+  }, [populateStepsOutputSchema, workflowVersion]);
 
   return null;
 };
