@@ -19099,7 +19099,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tabler/icons-react@npm:^3.18.0":
+"@tabler/icons-react@npm:^3.17.0":
   version: 3.31.0
   resolution: "@tabler/icons-react@npm:3.31.0"
   dependencies:
@@ -51536,7 +51536,7 @@ __metadata:
     "@swc/core": "npm:1.7.42"
     "@swc/helpers": "npm:~0.5.2"
     "@swc/jest": "npm:^0.2.29"
-    "@tabler/icons-react": "npm:^3.18.0"
+    "@tabler/icons-react": "npm:^3.17.0"
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:14.0.0"
     "@types/addressparser": "npm:^1.0.3"
