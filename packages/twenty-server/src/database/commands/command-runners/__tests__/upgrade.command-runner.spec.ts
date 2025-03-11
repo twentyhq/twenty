@@ -3,7 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { SemVer } from 'semver';
 import { Repository } from 'typeorm';
 
-import { errors } from 'openid-client';
 import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -90,7 +89,7 @@ const genereateMockWorkspace = (overrides?: Partial<Workspace>) =>
 
 type BuildUpgradeCommandModuleArgs = {
   workspaces: Workspace[];
-  appVersion: string;
+  appVersion: string | null;
   commandRunner: CommandRunnerValues;
 };
 const buildUpgradeCommandModule = async ({
@@ -161,7 +160,7 @@ describe('UpgradeCommandRunner', () => {
   type BuildModuleAndSetupSpiesArgs = {
     numberOfWorkspace?: number;
     workspaceOverride?: Partial<Workspace>;
-    appVersion?: string;
+    appVersion?: string | null;
     commandRunnerName?: CommandRunnerNames;
   };
   const buildModuleAndSetupSpies = async ({
@@ -217,6 +216,7 @@ describe('UpgradeCommandRunner', () => {
       syncWorkspaceMetadataCommand.runOnWorkspace,
       workspaceRepository.update,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
+    expect(upgradeCommandRunner.migrationReport).toMatchInlineSnapshot();
   });
 
   it('should run syncMetadataCommand betwen beforeSyncMetadataUpgradeCommandsToRun and afterSyncMetadataUpgradeCommandsToRun', async () => {
@@ -242,102 +242,67 @@ describe('UpgradeCommandRunner', () => {
 
     expect(beforeSyncCall).toBeLessThan(syncMetadataCall);
     expect(syncMetadataCall).toBeLessThan(afterSyncCall);
+    expect(upgradeCommandRunner.migrationReport).toMatchInlineSnapshot();
   });
 
   it('should fail if workspace version is not the same as fromVersion', async () => {
     await buildModuleAndSetupSpies({
       numberOfWorkspace: 1,
-      appVersion: '2.0.0',
+      appVersion: '3.0.0',
+      commandRunnerName: 'TestUpgradeCommandRunnerV2',
       workspaceOverride: {
         version: '0.1.0',
       },
     });
 
-    jest
-      .spyOn(workspaceRepository, 'findOneByOrFail')
-      .mockResolvedValueOnce(workspaceWithDifferentVersion);
+    const passedParams = [];
+    const options = {};
+    await upgradeCommandRunner.run(passedParams, options);
+    expect(upgradeCommandRunner.migrationReport).toMatchInlineSnapshot(`
+{
+  "fail": [
+    {
+      "error": [Error: WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.1.0 from=2.0.0 to=3.0.0],
+      "workspaceId": "workspace_0",
+    },
+  ],
+  "success": [],
+}
+`);
+  });
 
-    await expect(upgradeCommandRunner.runOnWorkspace(runArgs)).rejects.toThrow(
-      'WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.9.0 from=1.0.0 to=1.1.0',
+  it('should fail if upgrade command version is invalid', async () => {
+    await expect(
+      buildModuleAndSetupSpies({
+        commandRunnerName: 'InvalidVersionUpgradeCommandRunner',
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`"Invalid Version: invalid"`);
+  });
+
+  it('should fail if workspace version is not defined', async () => {
+    await buildModuleAndSetupSpies({
+      workspaceOverride: {
+        version: null,
+      },
+    });
+
+    const passedParams = [];
+    const options = {};
+    await upgradeCommandRunner.run(passedParams, options);
+    expect(upgradeCommandRunner.migrationReport).toMatchInlineSnapshot();
+  });
+
+  it('should fail if app version is not defined', async () => {
+    await buildModuleAndSetupSpies({
+      appVersion: null,
+    });
+
+    const passedParams = [];
+    const options = {};
+    await expect(
+      upgradeCommandRunner.run(passedParams, options),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"Cannot run upgrade command when APP_VERSION is not defined "`,
     );
-  });
-});
-
-describe('WIP_UpgradeCommandRunner', () => {
-  describe('runOnWorkspace', () => {
-    it('should fail if workspace version is not the same as fromVersion', async () => {
-      const workspaceWithDifferentVersion = {
-        ...findByOneMockWorkspace,
-        version: '0.9.0',
-      };
-
-      jest
-        .spyOn(workspaceRepository, 'findOneByOrFail')
-        .mockResolvedValueOnce(workspaceWithDifferentVersion);
-
-      await expect(
-        upgradeCommandRunner.runOnWorkspace(runArgs),
-      ).rejects.toThrow(
-        'WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.9.0 from=1.0.0 to=1.1.0',
-      );
-    });
-
-    it('should fail if workspace version is not defined', async () => {
-      const workspaceWithoutVersion = {
-        ...findByOneMockWorkspace,
-        version: undefined,
-      };
-
-      jest
-        .spyOn(workspaceRepository, 'findOneByOrFail')
-        .mockResolvedValueOnce(workspaceWithoutVersion);
-
-      await expect(
-        upgradeCommandRunner.runOnWorkspace(runArgs),
-      ).rejects.toThrow('WORKSPACE_VERSION_NOT_DEFINED to=1.1.0');
-    });
-
-    it('should fail if app version is not defined', async () => {
-      await expect(
-        upgradeCommandRunner.run({
-          ...runArgs,
-          appVersion: undefined,
-        }),
-      ).rejects.toThrow('Should never occur, APP_VERSION_NOT_DEFINED');
-    });
-  });
-
-  describe('error aggregation', () => {
-    it('should collect all errors during the upgrade process', async () => {
-      const workspaces = ['workspace-1', 'workspace-2', 'workspace-3'];
-
-      // Mock different error scenarios
-      jest
-        .spyOn(workspaceRepository, 'findOneByOrFail')
-        .mockImplementation(async ({ id }) => {
-          if (id === 'workspace-1') {
-            return { ...findByOneMockWorkspace, version: '0.9.0' };
-          }
-          if (id === 'workspace-2') {
-            return { ...findByOneMockWorkspace, version: undefined };
-          }
-          return findByOneMockWorkspace;
-        });
-
-      for (const workspaceId of workspaces) {
-        try {
-          await upgradeCommandRunner.runOnWorkspace({
-            ...runArgs,
-            workspaceId,
-          });
-        } catch (error) {
-          errors.push(error as Error);
-        }
-      }
-
-      expect(errors).toHaveLength(2);
-      expect(errors[0].message).toContain('WORKSPACE_VERSION_MISSMATCH');
-      expect(errors[1].message).toContain('WORKSPACE_VERSION_NOT_DEFINED');
-    });
   });
 });

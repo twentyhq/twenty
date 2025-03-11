@@ -26,9 +26,16 @@ export type RunOnWorkspaceArgs = {
   total: number;
 };
 
-type FailingWorkspace = {
+type FailedWorkspaceMigration = {
   workspaceId: string;
-  error: any;
+  error: Error;
+};
+type SucceedWorkspaceMigration = {
+  workspaceId: string;
+};
+export type WorkspaceMigrationReport = {
+  fail: FailedWorkspaceMigration[];
+  success: SucceedWorkspaceMigration[];
 };
 
 export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
@@ -38,7 +45,10 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   private workspaceIds: string[] = [];
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
-  private failingWorkspaces: FailingWorkspace[] = [];
+  public migrationReport: WorkspaceMigrationReport = {
+    fail: [],
+    success: [],
+  };
 
   constructor(
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -116,7 +126,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   override async runMigrationCommand(
     _passedParams: string[],
     options: Options,
-  ): Promise<void> {
+  ) {
     const activeWorkspaceIds =
       this.workspaceIds.length > 0
         ? this.workspaceIds
@@ -154,8 +164,11 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
           total: activeWorkspaceIds.length,
           appVersion,
         });
+        this.migrationReport.success.push({
+          workspaceId,
+        });
       } catch (error) {
-        this.failingWorkspaces.push({
+        this.migrationReport.fail.push({
           error,
           workspaceId,
         });
@@ -173,7 +186,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
       }
     }
 
-    this.failingWorkspaces.forEach(({ error, workspaceId }) =>
+    this.migrationReport.fail.forEach(({ error, workspaceId }) =>
       this.logger.error(`Error in workspace ${workspaceId}: ${error.message}`),
     );
   }
