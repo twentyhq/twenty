@@ -14,9 +14,9 @@ export class ViewDeleteManyPreQueryHook implements WorkspaceQueryHookInstance {
   constructor() {}
 
   async execute(
-    authContext: AuthContext,
-    objectName: string,
-    payload: DeleteManyResolverArgs,
+    _authContext: AuthContext,
+    _objectName: string,
+    _payload: DeleteManyResolverArgs,
   ): Promise<DeleteManyResolverArgs> {
     throw new ViewException(
       ViewExceptionMessage.METHOD_NOT_IMPLEMENTED,

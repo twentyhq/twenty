@@ -18,7 +18,7 @@ export class ViewDeleteOnePreQueryHook implements WorkspaceQueryHookInstance {
 
   async execute(
     authContext: AuthContext,
-    objectName: string,
+    _objectName: string,
     payload: DeleteOneResolverArgs,
   ): Promise<DeleteOneResolverArgs> {
     const targettedViewId = payload.id;
