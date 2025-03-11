@@ -55,25 +55,30 @@ describe('UpgradeCommandRunner', () => {
   let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
   let errors: Error[] = [];
 
-  const genereateMockWorkspace = (overrides?: Partial<Workspace>) => ({
-    id: 'workspace-id',
-    version: '1.0.0',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    allowImpersonation: false,
-    isPublicInviteLinkEnabled: false,
-    displayName: 'Test Workspace',
-    domainName: 'test',
-    inviteHash: 'hash',
-    logo: null,
-    deletedAt: null,
-    activationStatus: 'active',
-    workspaceMembersCount: 1,
-    ...overrides,
-  });
+  const genereateMockWorkspace = (overrides?: Partial<Workspace>) =>
+    ({
+      id: 'workspace-id',
+      version: '1.0.0',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      allowImpersonation: false,
+      isPublicInviteLinkEnabled: false,
+      displayName: 'Test Workspace',
+      domainName: 'test',
+      inviteHash: 'hash',
+      logo: null,
+      deletedAt: null,
+      activationStatus: 'active',
+      workspaceMembersCount: 1,
+      ...overrides,
+    }) as Workspace;
 
   const findByOneMockWorkspace = genereateMockWorkspace();
-  const NUMBER_OF_MOCK_WORKSPACE = 42;
+  const ALL_MOCKED_WORKSPACE: Workspace[] = Array.from(
+    { length: 42 },
+    (_v, index) => genereateMockWorkspace({ id: `workspace_${index}` }),
+  ).concat([findByOneMockWorkspace]);
+  const NUMBER_OF_MOCK_WORKSPACE = ALL_MOCKED_WORKSPACE.length;
   const mockDataSource = {
     // Add minimal required DataSource implementation
   } as unknown as WorkspaceDataSource; // TODO ?
@@ -91,13 +96,7 @@ describe('UpgradeCommandRunner', () => {
               return findByOneMockWorkspace;
             }),
             update: jest.fn(),
-            find: jest
-              .fn()
-              .mockResolvedValue(
-                Array.from({ length: NUMBER_OF_MOCK_WORKSPACE }, (_v, index) =>
-                  genereateMockWorkspace({ id: `workspace_${index}` }),
-                ),
-              ),
+            find: jest.fn().mockResolvedValue(ALL_MOCKED_WORKSPACE),
           },
         },
         {
@@ -139,6 +138,7 @@ describe('UpgradeCommandRunner', () => {
     );
     jest.spyOn(upgradeCommandRunner, 'beforeSyncMetadataUpgradeCommandsToRun');
     jest.spyOn(upgradeCommandRunner, 'afterSyncMetadataUpgradeCommandsToRun');
+    jest.spyOn(upgradeCommandRunner, 'runOnWorkspace');
 
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace, 'core'),
@@ -237,13 +237,13 @@ describe('UpgradeCommandRunner', () => {
         upgradeCommandRunner.runOnWorkspace,
         upgradeCommandRunner.beforeSyncMetadataUpgradeCommandsToRun,
         upgradeCommandRunner.afterSyncMetadataUpgradeCommandsToRun,
+        syncWorkspaceMetadataCommand.runOnWorkspace,
       ].forEach((fn) =>
         expect(fn).toHaveBeenCalledTimes(NUMBER_OF_MOCK_WORKSPACE),
       );
 
-      expect(workspaceRepository.update).toHaveBeenCalledWith(
-        { id: 'workspace-id' },
-        { version: '1.1.0' },
+      expect(workspaceRepository.update).toHaveBeenCalledTimes(
+        NUMBER_OF_MOCK_WORKSPACE,
       );
     });
   });
