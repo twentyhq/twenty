@@ -6,9 +6,18 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
+
+const StyledIconWrapper = styled.div`
+  background: ${({ theme }) => theme.background.primary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 export const useContextChips = () => {
   const commandMenuNavigationStack = useRecoilValue(
@@ -82,21 +91,23 @@ export const useContextChips = () => {
               : () => {
                   navigateCommandMenuHistory(index);
                 },
-            withIconBackground: false,
           };
         }
 
         return {
           page,
           Icons: [
-            <page.pageIcon
-              size={theme.icon.size.sm}
-              color={
-                page.pageIconColor !== 'currentColor'
-                  ? page.pageIconColor
-                  : theme.font.color.tertiary
-              }
-            />,
+            <StyledIconWrapper>
+              <page.pageIcon
+                size={theme.icon.size.sm}
+                color={
+                  isDefined(page.pageIconColor) &&
+                  page.pageIconColor !== 'currentColor'
+                    ? page.pageIconColor
+                    : theme.font.color.tertiary
+                }
+              />
+            </StyledIconWrapper>,
           ],
           text: page.pageTitle,
           onClick: isLastChip
@@ -104,7 +115,6 @@ export const useContextChips = () => {
             : () => {
                 navigateCommandMenuHistory(index);
               },
-          withIconBackground: true,
         };
       })
       .filter(isDefined);

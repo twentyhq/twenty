@@ -36,9 +36,6 @@ const StyledChip = styled.button<{
 const StyledIconsContainer = styled.div<{ withIconBackground?: boolean }>`
   align-items: center;
   display: flex;
-  background: ${({ theme, withIconBackground }) =>
-    withIconBackground ? theme.background.primary : 'unset'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
 export type CommandMenuContextChipProps = {
@@ -46,7 +43,6 @@ export type CommandMenuContextChipProps = {
   text?: string;
   onClick?: () => void;
   testId?: string;
-  withIconBackground?: boolean;
 };
 
 export const CommandMenuContextChip = ({
@@ -54,7 +50,6 @@ export const CommandMenuContextChip = ({
   text,
   onClick,
   testId,
-  withIconBackground = false,
 }: CommandMenuContextChipProps) => {
   return (
     <StyledChip
@@ -62,7 +57,7 @@ export const CommandMenuContextChip = ({
       onClick={onClick}
       data-testid={testId}
     >
-      <StyledIconsContainer withIconBackground={withIconBackground}>
+      <StyledIconsContainer>
         {Icons.map((Icon, index) => (
           <Fragment key={index}>{Icon}</Fragment>
         ))}
