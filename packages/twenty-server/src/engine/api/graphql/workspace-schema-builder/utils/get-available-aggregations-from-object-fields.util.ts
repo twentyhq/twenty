@@ -98,6 +98,25 @@ export const getAvailableAggregationsFromObjectFields = (
       }
 
       switch (field.type) {
+        case FieldMetadataType.BOOLEAN:
+          acc[`countTrue${capitalize(field.name)}`] = {
+            type: GraphQLInt,
+            description: `Number of true values for ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            fromSubFields,
+            aggregateOperation: AGGREGATE_OPERATIONS.countTrue,
+          };
+
+          acc[`countFalse${capitalize(field.name)}`] = {
+            type: GraphQLInt,
+            description: `Number of false values for ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            fromSubFields,
+            aggregateOperation: AGGREGATE_OPERATIONS.countFalse,
+          };
+          break;
         case FieldMetadataType.NUMBER:
           acc[`min${capitalize(field.name)}`] = {
             type: GraphQLFloat,

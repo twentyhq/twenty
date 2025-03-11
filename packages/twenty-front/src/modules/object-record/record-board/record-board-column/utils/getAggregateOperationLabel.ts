@@ -23,6 +23,10 @@ export const getAggregateOperationLabel = (
       return t`Count not empty`;
     case AGGREGATE_OPERATIONS.countUniqueValues:
       return t`Count unique values`;
+    case AGGREGATE_OPERATIONS.countTrue:
+      return t`Count true`;
+    case AGGREGATE_OPERATIONS.countFalse:
+      return t`Count false`;
     case AGGREGATE_OPERATIONS.percentageEmpty:
       return t`Percent empty`;
     case AGGREGATE_OPERATIONS.percentageNotEmpty:

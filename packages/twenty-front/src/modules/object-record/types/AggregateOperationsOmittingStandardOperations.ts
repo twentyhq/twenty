@@ -8,4 +8,6 @@ export type AggregateOperationsOmittingStandardOperations = Exclude<
   | AGGREGATE_OPERATIONS.countUniqueValues
   | AGGREGATE_OPERATIONS.percentageEmpty
   | AGGREGATE_OPERATIONS.percentageNotEmpty
+  | AGGREGATE_OPERATIONS.countTrue
+  | AGGREGATE_OPERATIONS.countFalse
 >;

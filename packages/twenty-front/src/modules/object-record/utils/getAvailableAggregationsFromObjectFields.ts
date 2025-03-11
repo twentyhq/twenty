@@ -40,6 +40,8 @@ export const getAvailableAggregationsFromObjectFields = (
         [AGGREGATE_OPERATIONS.percentageEmpty]: `percentageEmpty${capitalize(field.name)}`,
         [AGGREGATE_OPERATIONS.percentageNotEmpty]: `percentageNotEmpty${capitalize(field.name)}`,
         [AGGREGATE_OPERATIONS.count]: 'totalCount',
+        [AGGREGATE_OPERATIONS.countTrue]: `countTrue${capitalize(field.name)}`,
+        [AGGREGATE_OPERATIONS.countFalse]: `countFalse${capitalize(field.name)}`,
       };
 
       if (field.type === FieldMetadataType.NUMBER) {

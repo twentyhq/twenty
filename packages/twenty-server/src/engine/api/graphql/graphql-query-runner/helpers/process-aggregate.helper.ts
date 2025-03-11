@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { SelectQueryBuilder } from 'typeorm';
 import { isDefined } from 'twenty-shared';
+import { SelectQueryBuilder } from 'typeorm';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
@@ -72,6 +72,18 @@ export class ProcessAggregateHelper {
         case AGGREGATE_OPERATIONS.countUniqueValues:
           queryBuilder.addSelect(
             `CASE WHEN COUNT(*) = 0 THEN NULL ELSE COUNT(DISTINCT ${columnExpression}) END`,
+            `${aggregatedFieldName}`,
+          );
+          break;
+        case AGGREGATE_OPERATIONS.countTrue:
+          queryBuilder.addSelect(
+            `CASE WHEN COUNT(*) = 0 THEN NULL ELSE COUNT(CASE WHEN CAST(${columnExpression} AS BOOLEAN) = TRUE THEN 1 ELSE NULL END) END`,
+            `${aggregatedFieldName}`,
+          );
+          break;
+        case AGGREGATE_OPERATIONS.countFalse:
+          queryBuilder.addSelect(
+            `CASE WHEN COUNT(*) = 0 THEN NULL ELSE COUNT(CASE WHEN CAST(${columnExpression} AS BOOLEAN) = FALSE THEN 1 ELSE NULL END) END`,
             `${aggregatedFieldName}`,
           );
           break;

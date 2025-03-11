@@ -17,6 +17,10 @@ export const getAggregateOperationShortLabel = (
       return msg`Sum`;
     case AGGREGATE_OPERATIONS.count:
       return msg`All`;
+    case AGGREGATE_OPERATIONS.countTrue:
+      return msg`True`;
+    case AGGREGATE_OPERATIONS.countFalse:
+      return msg`False`;
     case AGGREGATE_OPERATIONS.countEmpty:
     case AGGREGATE_OPERATIONS.percentageEmpty:
       return msg`Empty`;

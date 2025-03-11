@@ -157,6 +157,18 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
         position: 9,
         color: 'yellow',
       },
+      {
+        value: AGGREGATE_OPERATIONS.countTrue,
+        label: 'Count True',
+        position: 10,
+        color: 'red',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countFalse,
+        label: 'Count False',
+        position: 11,
+        color: 'purple',
+      },
     ],
     defaultValue: null,
   })
