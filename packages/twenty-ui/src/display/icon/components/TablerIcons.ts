@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 export {
   IconNumber123 as Icon123,
-  IconHours24 as Icon24Hours,
   IconAlertCircle,
   IconAlertTriangle,
   IconApi,
@@ -166,6 +165,7 @@ export {
   IconHistory,
   IconHistoryToggle,
   IconHome,
+  IconHours24,
   IconInbox,
   IconInfoCircle,
   IconJson,
