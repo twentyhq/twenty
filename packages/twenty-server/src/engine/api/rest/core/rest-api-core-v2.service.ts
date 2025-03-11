@@ -115,52 +115,255 @@ export class RestApiCoreServiceV2 {
     } = await this.getRepositoryAndMetadataOrFail(request);
 
     if (recordId) {
-      const record = await repository.findOne({
-        where: { id: recordId },
-      });
-
-      return this.formatResult({
-        operation: 'findOne',
-        objectNameSingular: objectMetadataNameSingular,
-        data: record,
-      });
+      return await this.findOne(
+        repository,
+        recordId,
+        objectMetadataNameSingular,
+      );
     } else {
-      const limit = this.limitInputFactory.create(request);
-      const filter = this.filterInputFactory.create(request, objectMetadata);
-      const orderBy = this.orderByInputFactory.create(request, objectMetadata);
-      // const endingBefore = this.endingBeforeInputFactory.create(request);
-      // const startingAfter = this.startingAfterInputFactory.create(request);
-
-      const fieldMetadataMapByName =
-        objectMetadataItemWithFieldsMaps?.fieldsByName || {};
-
-      const qb = repository.createQueryBuilder(objectMetadataNameSingular);
-
-      const finalQuery = new GraphqlQueryFilterConditionParser(
-        fieldMetadataMapByName,
+      return await this.findMany(
+        request,
+        repository,
+        objectMetadata,
+        objectMetadataNameSingular,
+        objectMetadataItemWithFieldsMaps,
         featureFlagsMap,
-      ).parse(qb, objectMetadataNameSingular, filter);
-
-      const parsedOrderBy = new GraphqlQueryOrderFieldParser(
-        fieldMetadataMapByName,
-        featureFlagsMap,
-      ).parse(orderBy, objectMetadataNameSingular);
-
-      const records = await finalQuery
-        .orderBy(parsedOrderBy as OrderByCondition)
-        .take(limit)
-        .getMany();
-
-      return this.formatResult({
-        operation: 'findMany',
-        objectNamePlural: objectMetadataNameSingular,
-        data: formatGetManyData(
-          records,
-          objectMetadataItemWithFieldsMaps as any,
-          objectMetadata.objectMetadataMaps,
-        ),
-      });
+      );
     }
+  }
+
+  private async findOne(
+    repository: any,
+    recordId: string,
+    objectMetadataNameSingular: string,
+  ) {
+    const record = await repository.findOne({
+      where: { id: recordId },
+    });
+
+    return this.formatResult({
+      operation: 'findOne',
+      objectNameSingular: objectMetadataNameSingular,
+      data: record,
+    });
+  }
+
+  private async findMany(
+    request: Request,
+    repository: any,
+    objectMetadata: any,
+    objectMetadataNameSingular: string,
+    objectMetadataItemWithFieldsMaps: any,
+    featureFlagsMap: any,
+  ) {
+    // Get input parameters
+    const inputs = this.getPaginationInputs(request, objectMetadata);
+
+    // Create query builder
+    const qb = repository.createQueryBuilder(objectMetadataNameSingular);
+
+    // Apply filters with cursor
+    const { finalQuery } = await this.applyFiltersWithCursor(
+      qb,
+      objectMetadataNameSingular,
+      objectMetadataItemWithFieldsMaps,
+      featureFlagsMap,
+      inputs,
+    );
+
+    // Get total count
+    const totalCount = await this.getTotalCount(finalQuery);
+
+    // Get records with pagination
+    const { finalRecords, hasMoreRecords } =
+      await this.getRecordsWithPagination(
+        finalQuery,
+        objectMetadataNameSingular,
+        objectMetadataItemWithFieldsMaps,
+        featureFlagsMap,
+        inputs,
+      );
+
+    // Format and return result
+    return this.formatPaginatedResult(
+      finalRecords,
+      objectMetadataNameSingular,
+      objectMetadataItemWithFieldsMaps,
+      objectMetadata,
+      inputs.isForwardPagination,
+      hasMoreRecords,
+      totalCount,
+    );
+  }
+
+  private getPaginationInputs(request: Request, objectMetadata: any) {
+    const limit = this.limitInputFactory.create(request);
+    const filter = this.filterInputFactory.create(request, objectMetadata);
+    const orderBy = this.orderByInputFactory.create(request, objectMetadata);
+    const endingBefore = this.endingBeforeInputFactory.create(request);
+    const startingAfter = this.startingAfterInputFactory.create(request);
+    const isForwardPagination = !endingBefore;
+
+    return {
+      limit,
+      filter,
+      orderBy,
+      endingBefore,
+      startingAfter,
+      isForwardPagination,
+    };
+  }
+
+  private async applyFiltersWithCursor(
+    qb: any,
+    objectMetadataNameSingular: string,
+    objectMetadataItemWithFieldsMaps: any,
+    featureFlagsMap: any,
+    inputs: {
+      filter: any;
+      orderBy: any;
+      startingAfter: string | undefined;
+      endingBefore: string | undefined;
+      isForwardPagination: boolean;
+    },
+  ) {
+    const fieldMetadataMapByName =
+      objectMetadataItemWithFieldsMaps?.fieldsByName || {};
+
+    let appliedFilters = inputs.filter;
+
+    // Handle cursor-based filtering
+    if (inputs.startingAfter || inputs.endingBefore) {
+      const cursor = inputs.startingAfter || inputs.endingBefore;
+
+      try {
+        const cursorData = JSON.parse(
+          Buffer.from(cursor ?? '', 'base64').toString(),
+        );
+
+        const orderByWithIdCondition = [
+          ...(inputs.orderBy || []),
+          { id: 'ASC' },
+        ];
+
+        const cursorFilter = await this.computeCursorFilter(
+          cursorData,
+          orderByWithIdCondition,
+          fieldMetadataMapByName,
+          inputs.isForwardPagination,
+        );
+
+        appliedFilters = inputs.filter
+          ? { and: [inputs.filter, cursorFilter] }
+          : cursorFilter;
+      } catch (error) {
+        throw new BadRequestException(`Invalid cursor: ${cursor}`);
+      }
+    }
+
+    // Apply filters to query builder
+    const finalQuery = new GraphqlQueryFilterConditionParser(
+      fieldMetadataMapByName,
+      featureFlagsMap,
+    ).parse(qb, objectMetadataNameSingular, appliedFilters);
+
+    return { finalQuery, appliedFilters };
+  }
+
+  private async getTotalCount(query: any): Promise<number> {
+    const countQuery = query.clone();
+
+    return await countQuery.getCount();
+  }
+
+  private async getRecordsWithPagination(
+    query: any,
+    objectMetadataNameSingular: string,
+    objectMetadataItemWithFieldsMaps: any,
+    featureFlagsMap: any,
+    inputs: {
+      orderBy: any;
+      limit: number;
+      isForwardPagination: boolean;
+    },
+  ) {
+    const fieldMetadataMapByName =
+      objectMetadataItemWithFieldsMaps?.fieldsByName || {};
+
+    // Get parsed order by
+    const parsedOrderBy = new GraphqlQueryOrderFieldParser(
+      fieldMetadataMapByName,
+      featureFlagsMap,
+    ).parse(inputs.orderBy, objectMetadataNameSingular);
+
+    // If backward pagination, reverse the order
+    const finalOrderBy = inputs.isForwardPagination
+      ? parsedOrderBy
+      : Object.entries(parsedOrderBy).reduce((acc, [key, direction]) => {
+          acc[key] = direction === 'ASC' ? 'DESC' : 'ASC';
+
+          return acc;
+        }, {});
+
+    // Fetch one extra record to determine if there are more pages
+    const records = await query
+      .orderBy(finalOrderBy as OrderByCondition)
+      .take(inputs.limit + 1)
+      .getMany();
+
+    // Determine if there are more pages
+    const hasMoreRecords = records.length > inputs.limit;
+
+    // Remove the extra record if we have more than requested
+    if (hasMoreRecords) {
+      records.pop();
+    }
+
+    // For backward pagination, reverse the records to get correct order
+    const finalRecords = !inputs.isForwardPagination
+      ? records.reverse()
+      : records;
+
+    return { finalRecords, hasMoreRecords };
+  }
+
+  private formatPaginatedResult(
+    finalRecords: any[],
+    objectMetadataNameSingular: string,
+    objectMetadataItemWithFieldsMaps: any,
+    objectMetadata: any,
+    isForwardPagination: boolean,
+    hasMoreRecords: boolean,
+    totalCount: number,
+  ) {
+    return this.formatResult({
+      operation: 'findMany',
+      objectNamePlural: objectMetadataNameSingular,
+      data: formatGetManyData(
+        finalRecords,
+        objectMetadataItemWithFieldsMaps as any,
+        objectMetadata.objectMetadataMaps,
+      ),
+      meta: {
+        hasNextPage: isForwardPagination && hasMoreRecords,
+        hasPreviousPage: !isForwardPagination && hasMoreRecords,
+        startCursor:
+          finalRecords.length > 0
+            ? Buffer.from(JSON.stringify({ id: finalRecords[0].id })).toString(
+                'base64',
+              )
+            : null,
+        endCursor:
+          finalRecords.length > 0
+            ? Buffer.from(
+                JSON.stringify({
+                  id: finalRecords[finalRecords.length - 1].id,
+                }),
+              ).toString('base64')
+            : null,
+        totalCount,
+      },
+    });
   }
 
   private formatResult<T>({
@@ -168,8 +371,9 @@ export class RestApiCoreServiceV2 {
     objectNameSingular,
     objectNamePlural,
     data,
+    meta,
   }: FormatResultParams<T>) {
-    let prefix;
+    let prefix: string;
 
     if (operation === 'findOne') {
       prefix = objectNameSingular || '';
@@ -183,6 +387,14 @@ export class RestApiCoreServiceV2 {
         [prefix]: data,
       },
     };
+
+    if (meta) {
+      const { totalCount, ...rest } = meta;
+
+      (result.data as any).pageInfo = { ...rest };
+
+      (result.data as any).totalCount = totalCount;
+    }
 
     return result;
   }
@@ -228,6 +440,20 @@ export class RestApiCoreServiceV2 {
       repository,
       objectMetadataItemWithFieldsMaps,
       featureFlagsMap,
+    };
+  }
+
+  // Helper method to compute cursor filter - similar to computeCursorArgFilter in GraphQL
+  private async computeCursorFilter(
+    cursorData: Record<string, any>,
+    orderBy: any[],
+    fieldMetadataMap: Record<string, any>,
+    isForwardPagination: boolean,
+  ): Promise<any> {
+    // We'll use a simpler approach for REST API for now, focusing on ID-based pagination
+    // This could be extended to support multi-field ordering just like in GraphQL
+    return {
+      id: isForwardPagination ? { gt: cursorData.id } : { lt: cursorData.id },
     };
   }
 }
