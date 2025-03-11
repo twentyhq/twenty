@@ -48,12 +48,12 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        {t`View settings`}
+        {t`Layout`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {isCommandMenuV2Enabled && (
           <MenuItem
-            onClick={() => onContentChange('viewSettingsOpenIn')}
+            onClick={() => onContentChange('layoutOpenIn')}
             LeftIcon={
               recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
                 ? IconLayoutSidebarRight

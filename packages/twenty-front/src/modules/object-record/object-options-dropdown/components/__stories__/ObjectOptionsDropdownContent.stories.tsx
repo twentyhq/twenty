@@ -123,7 +123,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
 
 export const Default = createStory(null);
 
-export const ViewSettings = createStory('viewSettings');
+export const ViewSettings = createStory('layout');
 
 export const Fields = createStory('fields');
 

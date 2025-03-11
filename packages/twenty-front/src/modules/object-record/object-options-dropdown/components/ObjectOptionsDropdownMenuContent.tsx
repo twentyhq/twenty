@@ -1,11 +1,13 @@
 import { Key } from 'ts-key-enum';
+import { capitalize, isDefined } from 'twenty-shared';
 import {
   AppTooltip,
   IconCopy,
-  IconLayout,
+  IconLayoutKanban,
   IconLayoutList,
   IconList,
-  IconTag,
+  IconListDetails,
+  IconTable,
   IconTrash,
   MenuItem,
   useIcons,
@@ -30,7 +32,6 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownMenuContent = () => {
@@ -86,6 +87,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
     deleteViewFromCurrentState();
     closeDropdown();
   };
+
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
 
@@ -99,9 +101,14 @@ export const ObjectOptionsDropdownMenuContent = () => {
         <>
           <DropdownMenuItemsContainer scrollable={false}>
             <MenuItem
-              onClick={() => onContentChange('viewSettings')}
-              LeftIcon={IconLayout}
-              text={t`View settings`}
+              onClick={() => onContentChange('layout')}
+              LeftIcon={
+                currentView?.type === ViewType.Table
+                  ? IconTable
+                  : IconLayoutKanban
+              }
+              text={t`Layout`}
+              contextualText={`${capitalize(currentView?.type ?? '')}`}
               hasSubMenu
             />
           </DropdownMenuItemsContainer>
@@ -112,7 +119,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
           onClick={() => onContentChange('fields')}
-          LeftIcon={IconTag}
+          LeftIcon={IconListDetails}
           text={t`Fields`}
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu

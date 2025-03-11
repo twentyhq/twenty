@@ -1,8 +1,8 @@
 import {
-  IconChevronLeft,
-  IconLayoutNavbar,
-  IconLayoutSidebarRight,
-  MenuItemSelect,
+    IconChevronLeft,
+    IconLayoutNavbar,
+    IconLayoutSidebarRight,
+    MenuItemSelect,
 } from 'twenty-ui';
 
 import { useObjectOptions } from '@/object-record/object-options-dropdown/hooks/useObjectOptions';
@@ -25,7 +25,7 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
     <>
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
-        onClick={() => onContentChange('viewSettings')}
+        onClick={() => onContentChange('layout')}
       >
         {t`Open in`}
       </DropdownMenuHeader>

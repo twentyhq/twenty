@@ -13,9 +13,9 @@ export const ObjectOptionsDropdownContent = () => {
   const { currentContentId } = useOptionsDropdown();
 
   switch (currentContentId) {
-    case 'viewSettings':
+    case 'layout':
       return <ObjectOptionsDropdownViewSettingsContent />;
-    case 'viewSettingsOpenIn':
+    case 'layoutOpenIn':
       return <ObjectOptionsDropdownViewSettingsOpenInContent />;
     case 'fields':
       return <ObjectOptionsDropdownFieldsContent />;
