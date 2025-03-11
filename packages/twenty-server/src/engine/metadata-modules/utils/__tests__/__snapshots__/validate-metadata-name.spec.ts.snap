@@ -4,7 +4,7 @@ exports[`validateMetadataNameOrThrow throw error when string is not in camel cas
 
 exports[`validateMetadataNameOrThrow throws error when starts with digits 1`] = `"Name should be in camelCase: 123string"`;
 
-exports[`validateMetadataNameOrThrow throws error when string has non latin characters 1`] = `"String "בְרִבְרִ" is not valid"`;
+exports[`validateMetadataNameOrThrow throws error when string has non latin characters 1`] = `"String "בְרִבְרִ" is not valid: must start with lowercase letter and contain only alphanumeric letters"`;
 
 exports[`validateMetadataNameOrThrow throws error when string has spaces 1`] = `"Name should be in camelCase: name with spaces"`;
 

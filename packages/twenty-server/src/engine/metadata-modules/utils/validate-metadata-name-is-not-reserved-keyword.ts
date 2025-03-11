@@ -31,7 +31,6 @@ const coreObjectNames = [
   'userWorkspaces',
   'workspace',
   'workspaces',
-
   'role',
   'roles',
   'userWorkspaceRole',

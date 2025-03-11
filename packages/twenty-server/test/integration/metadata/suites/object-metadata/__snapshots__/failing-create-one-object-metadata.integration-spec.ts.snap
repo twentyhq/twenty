@@ -18,7 +18,7 @@ exports[`Object metadata creation should fail when labels with whitespaces resul
 
 exports[`Object metadata creation should fail when name exceeds maximum length 1`] = `"String "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters limit"`;
 
-exports[`Object metadata creation should fail when namePlural has invalid characters 1`] = `"String "μ" is not valid"`;
+exports[`Object metadata creation should fail when namePlural has invalid characters 1`] = `"String "μ" is not valid: must start with lowercase letter and contain only alphanumeric letters"`;
 
 exports[`Object metadata creation should fail when namePlural is a reserved keyword 1`] = `"The name "users" is not available"`;
 
@@ -30,7 +30,7 @@ exports[`Object metadata creation should fail when nameSingular contains only on
 
 exports[`Object metadata creation should fail when nameSingular contains only whitespaces 1`] = `"Name should be in camelCase:                  "`;
 
-exports[`Object metadata creation should fail when nameSingular has invalid characters 1`] = `"String "μ" is not valid"`;
+exports[`Object metadata creation should fail when nameSingular has invalid characters 1`] = `"String "μ" is not valid: must start with lowercase letter and contain only alphanumeric letters"`;
 
 exports[`Object metadata creation should fail when nameSingular is a reserved keyword 1`] = `"The name "user" is not available"`;
 
