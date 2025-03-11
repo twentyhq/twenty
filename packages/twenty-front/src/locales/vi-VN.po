@@ -19,12 +19,10 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
-" Đây chỉ là các giá trị của máy chủ. Đảm bảo môi trường làm việc của bạn có\n"
+msgstr " Đây chỉ là các giá trị của máy chủ. Đảm bảo môi trường làm việc của bạn có\n"
 "        cùng các biến và giá trị này, đây là yêu cầu cho các tác vụ không đồng bộ như\n"
 "        đồng bộ hóa email."
 
@@ -727,7 +725,7 @@ msgstr "Sao chép liên kết"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Copy link to view"
-msgstr ""
+msgstr "Sao chép liên kết để xem"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
@@ -990,7 +988,7 @@ msgstr "Xóa tích hợp này"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Delete view"
-msgstr ""
+msgstr "Xóa chế độ xem"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
