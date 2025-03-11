@@ -12,6 +12,6 @@ exports[`validateMetadataNameOrThrow throws error when string is a reserved word
 
 exports[`validateMetadataNameOrThrow throws error when string is above 63 characters 1`] = `"String "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" exceeds 63 characters limit"`;
 
-exports[`validateMetadataNameOrThrow throws error when string is empty 1`] = `"Input is too short: "`;
+exports[`validateMetadataNameOrThrow throws error when string is empty 1`] = `"Input is too short: """`;
 
 exports[`validateMetadataNameOrThrow throws error when string starts with capital letter 1`] = `"Name should be in camelCase: StringStartingWithCapitalLetter"`;

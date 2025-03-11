@@ -6,7 +6,7 @@ exports[`validateObjectMetadataInputOrThrow should fail when namePlural has inva
 
 exports[`validateObjectMetadataInputOrThrow should fail when namePlural is a reserved keyword 1`] = `"The name "users" is not available"`;
 
-exports[`validateObjectMetadataInputOrThrow should fail when namePlural is an empty string 1`] = `"Input is too short: "`;
+exports[`validateObjectMetadataInputOrThrow should fail when namePlural is an empty string 1`] = `"Input is too short: """`;
 
 exports[`validateObjectMetadataInputOrThrow should fail when namePlural is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;
 
@@ -14,6 +14,6 @@ exports[`validateObjectMetadataInputOrThrow should fail when nameSingular has in
 
 exports[`validateObjectMetadataInputOrThrow should fail when nameSingular is a reserved keyword 1`] = `"The name "user" is not available"`;
 
-exports[`validateObjectMetadataInputOrThrow should fail when nameSingular is an empty string 1`] = `"Input is too short: "`;
+exports[`validateObjectMetadataInputOrThrow should fail when nameSingular is an empty string 1`] = `"Input is too short: """`;
 
 exports[`validateObjectMetadataInputOrThrow should fail when nameSingular is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;

@@ -1,16 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Object metadata creation should fail when labelPlural contains only whitespace 1`] = `"Input is too short: "`;
+exports[`Object metadata creation should fail when labelPlural contains only whitespace 1`] = `"Input is too short: """`;
 
 exports[`Object metadata creation should fail when labelPlural exceeds maximum length 1`] = `"String "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" exceeds 63 characters limit"`;
 
-exports[`Object metadata creation should fail when labelPlural is empty 1`] = `"Input is too short: "`;
+exports[`Object metadata creation should fail when labelPlural is empty 1`] = `"Input is too short: """`;
 
-exports[`Object metadata creation should fail when labelSingular contains only whitespace 1`] = `"Input is too short: "`;
+exports[`Object metadata creation should fail when labelSingular contains only whitespace 1`] = `"Input is too short: """`;
 
 exports[`Object metadata creation should fail when labelSingular exceeds maximum length 1`] = `"String "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" exceeds 63 characters limit"`;
 
-exports[`Object metadata creation should fail when labelSingular is empty 1`] = `"Input is too short: "`;
+exports[`Object metadata creation should fail when labelSingular is empty 1`] = `"Input is too short: """`;
 
 exports[`Object metadata creation should fail when labels are identical 1`] = `"The singular and plural labels cannot be the same for an object"`;
 
@@ -22,7 +22,7 @@ exports[`Object metadata creation should fail when namePlural has invalid charac
 
 exports[`Object metadata creation should fail when namePlural is a reserved keyword 1`] = `"The name "users" is not available"`;
 
-exports[`Object metadata creation should fail when namePlural is an empty string 1`] = `"Input is too short: "`;
+exports[`Object metadata creation should fail when namePlural is an empty string 1`] = `"Input is too short: """`;
 
 exports[`Object metadata creation should fail when namePlural is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;
 
@@ -34,7 +34,7 @@ exports[`Object metadata creation should fail when nameSingular has invalid char
 
 exports[`Object metadata creation should fail when nameSingular is a reserved keyword 1`] = `"The name "user" is not available"`;
 
-exports[`Object metadata creation should fail when nameSingular is an empty string 1`] = `"Input is too short: "`;
+exports[`Object metadata creation should fail when nameSingular is an empty string 1`] = `"Input is too short: """`;
 
 exports[`Object metadata creation should fail when nameSingular is not camelCased 1`] = `"Name should be in camelCase: Not_Camel_Case"`;
 
