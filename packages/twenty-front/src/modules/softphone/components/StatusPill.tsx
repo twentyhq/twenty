@@ -27,7 +27,13 @@ const StyledStatusCircle = styled.div<{ status: string }>`
   width: 6px;
 `;
 
-const StatusIndicator = ({ status }: { status: string }) => {
+const StatusIndicator = ({
+  status,
+  extension,
+}: {
+  status: string;
+  extension?: string;
+}) => {
   return (
     <StyledStatusWrapper>
       <StyledStatusCircle status={status} />
@@ -36,6 +42,7 @@ const StatusIndicator = ({ status }: { status: string }) => {
         : status === 'registering'
           ? 'Registrando'
           : 'Offline'}
+      {extension && <span> - {extension}</span>}
     </StyledStatusWrapper>
   );
 };

@@ -141,6 +141,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               indentationLevel: 2,
             },
             {
+              label: 'Telephony',
+              path: SettingsPath.ServiceCenterTelephony,
+              Icon: IconPhone,
+              indentationLevel: 2,
+            },
+            {
               label: 'Service Level',
               path: SettingsPath.ServiceCenterServiceLevel,
               Icon: IconMessageCircleCog,

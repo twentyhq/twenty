@@ -4,15 +4,14 @@ import styled from '@emotion/styled';
 const StyledKeyboard = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: ${({ theme }) => theme.spacing(3)};
-  width: 100%;
+  grid-gap: ${({ theme }) => theme.spacing(2)};
   justify-items: center;
 `;
 
 const StyledKey = styled.div`
   border-radius: 50%;
   border: 2px solid #fff;
-  color: #000;
+  color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   font-size: 1.5rem;
   display: flex;

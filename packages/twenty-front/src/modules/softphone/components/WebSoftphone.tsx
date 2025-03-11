@@ -196,8 +196,6 @@ const WebSoftphone: React.FC = () => {
   });
 
   useEffect(() => {
-    console.log('****telephonyExtension', telephonyExtension);
-
     if (telephonyExtension) {
       setConfig({
         domain: 'suite.pabx.digital',
@@ -773,7 +771,8 @@ const WebSoftphone: React.FC = () => {
     }));
   };
 
-  const KeyboradOffIcon = getIcon('IconKeyboardOff');
+  const KeyboardOffIcon = getIcon('IconKeyboardOff');
+  const KeyboardIcon = getIcon('IconKeyboard');
   const PhoneIncoming = getIcon('IconPhoneIncoming');
   const IconPhoneOutgoing = getIcon('IconPhoneOutgoing');
   const IconMicrophoneOff = getIcon('IconMicrophoneOff');
@@ -824,10 +823,6 @@ const WebSoftphone: React.FC = () => {
       <StyledContainer>
         <audio ref={remoteAudioRef} autoPlay />
 
-        {/* callState.incomingCall && !callState.isInCall
-callState.incomingCall && !callState.isInCall
-callState.incomingCall && !callState.isInCall */}
-
         {callState.incomingCall && !callState.isInCall ? (
           <StyledIncomingCall>
             <PhoneIncoming
@@ -846,8 +841,8 @@ callState.incomingCall && !callState.isInCall */}
                     ? 'registering'
                     : 'offline'
               }
+              extension={config?.username}
             />
-            {/* callState.isInCall */}
             {(callState.isInCall || callState.ringingStartTime) && (
               <StyledIncomingTimerAndIcon>
                 <IconPhoneOutgoing
@@ -883,7 +878,6 @@ callState.incomingCall && !callState.isInCall */}
             <div style={{ width: '100%' }}>
               <StyledDefaultContainer>
                 <StyledTextAndCallButton>
-                  {/* !callState.isInCall && !callState.callStatus */}
                   {!callState.isInCall && !callState.callStatus && (
                     <TextInput
                       placeholder="Dial the phone number"
@@ -897,16 +891,27 @@ callState.incomingCall && !callState.isInCall */}
                           }));
                         }
                       }}
-                      RightIcon={() => (
-                        <KeyboradOffIcon
-                          color={theme.font.color.tertiary}
-                          size={theme.icon.size.md}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() =>
-                            setIsKeyboardExpanded(!isKeyboardExpanded)
-                          }
-                        />
-                      )}
+                      RightIcon={() =>
+                        isKeyboardExpanded ? (
+                          <KeyboardOffIcon
+                            color={theme.font.color.tertiary}
+                            size={theme.icon.size.md}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              setIsKeyboardExpanded(!isKeyboardExpanded)
+                            }
+                          />
+                        ) : (
+                          <KeyboardIcon
+                            color={theme.font.color.tertiary}
+                            size={theme.icon.size.md}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              setIsKeyboardExpanded(!isKeyboardExpanded)
+                            }
+                          />
+                        )
+                      }
                       disabled={callState.isInCall}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && callState.isRegistered) {
@@ -961,12 +966,10 @@ callState.incomingCall && !callState.isInCall */}
                   )}
               </StyledDefaultContainer>
 
-              {/* callState.isInCall */}
               {callState.isInCall && (
                 <StyledOngoingCallContainer>
                   <StyledIncomingNumber alignSelf="center">
-                    {callState.incomingCallNumber}
-                    +55 11 99999-9999
+                    {callState.currentNumber}
                   </StyledIncomingNumber>
 
                   <StyledControlsContainer column={false} gap={5}>
