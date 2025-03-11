@@ -1,5 +1,6 @@
 import { SettingsAdminEnvVariablesRow } from '@/settings/admin-panel/components/SettingsAdminEnvVariablesRow';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
@@ -20,15 +21,22 @@ type SettingsAdminEnvVariablesTableProps = {
 export const SettingsAdminEnvVariablesTable = ({
   variables,
 }: SettingsAdminEnvVariablesTableProps) => (
-  <StyledTable>
-    <TableRow gridAutoColumns="5fr 4fr 3fr 1fr">
-      <TableHeader>Name</TableHeader>
-      <TableHeader>Description</TableHeader>
-      <TableHeader align="right">Value</TableHeader>
-      <TableHeader align="right"></TableHeader>
-    </TableRow>
-    {variables.map((variable) => (
-      <SettingsAdminEnvVariablesRow key={variable.name} variable={variable} />
-    ))}
-  </StyledTable>
+  <>
+    <StyledTable>
+      <TableRow gridAutoColumns="5fr 4fr 3fr 1fr">
+        <TableHeader>Name</TableHeader>
+        <TableHeader>Description</TableHeader>
+        <TableHeader align="right">Value</TableHeader>
+        <TableHeader align="right"></TableHeader>
+      </TableRow>
+      <TableBody>
+        {variables.map((variable) => (
+          <SettingsAdminEnvVariablesRow
+            key={variable.name}
+            variable={variable}
+          />
+        ))}
+      </TableBody>
+    </StyledTable>
+  </>
 );

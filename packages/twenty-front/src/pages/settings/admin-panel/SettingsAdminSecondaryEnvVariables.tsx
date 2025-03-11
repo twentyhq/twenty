@@ -30,6 +30,7 @@ export const SettingsAdminSecondaryEnvVariables = () => {
 
   return (
     <SubMenuTopBarContainer
+      title={t`Other Environment Variables`}
       links={[
         {
           children: t`Other`,

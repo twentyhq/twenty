@@ -11,11 +11,15 @@ import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledGroupContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledInfoText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
+`;
+
+const StyledCard = styled(Card)`
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const SettingsAdminEnvVariables = () => {
@@ -53,7 +57,7 @@ export const SettingsAdminEnvVariables = () => {
           </StyledGroupContainer>
         ))}
 
-        <Card rounded>
+        <StyledCard rounded>
           <SettingsListItemCardContent
             label={t`Other Variables`}
             to={getSettingsPath(SettingsPath.AdminPanelOtherEnvVariables)}
@@ -61,7 +65,7 @@ export const SettingsAdminEnvVariables = () => {
             LeftIcon={IconHeartRateMonitor}
             LeftIconColor={theme.font.color.tertiary}
           />
-        </Card>
+        </StyledCard>
       </Section>
     </>
   );

@@ -16,10 +16,6 @@ import {
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledH3Title = styled(H3Title)`
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -28,11 +24,9 @@ const StyledDescription = styled.div`
 `;
 
 const StyledTitleContainer = styled.div`
+  align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledHealthStatusContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -87,15 +81,11 @@ export const SettingsAdminIndicatorHealthStatus = () => {
         >
           <Section>
             <StyledTitleContainer>
-              <StyledH3Title
-                title={`${data?.getIndicatorHealthStatus?.label}`}
-              />
+              <H3Title title={`${data?.getIndicatorHealthStatus?.label}`} />
               {data?.getIndicatorHealthStatus?.status && (
-                <StyledHealthStatusContainer>
-                  <SettingsAdminHealthStatusRightContainer
-                    status={data?.getIndicatorHealthStatus.status}
-                  />
-                </StyledHealthStatusContainer>
+                <SettingsAdminHealthStatusRightContainer
+                  status={data?.getIndicatorHealthStatus.status}
+                />
               )}
             </StyledTitleContainer>
             <StyledDescription>

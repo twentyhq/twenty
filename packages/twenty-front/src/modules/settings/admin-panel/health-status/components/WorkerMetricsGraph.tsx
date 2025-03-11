@@ -1,3 +1,4 @@
+import { WorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/WorkerMetricsTooltip';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
@@ -8,12 +9,17 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
+import { Card } from 'twenty-ui';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
 } from '~/generated/graphql';
 
 const StyledTableRow = styled(TableRow)`
+  height: ${({ theme }) => theme.spacing(6)};
+`;
+
+const StyledTableCell = styled(TableCell)`
   height: ${({ theme }) => theme.spacing(6)};
 `;
 
@@ -26,22 +32,14 @@ const StyledQueueMetricsTitle = styled.div`
 `;
 
 const StyledGraphContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${({ theme }) => theme.background.secondary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   height: 230px;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   padding-top: ${({ theme }) => theme.spacing(4)};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
-`;
-
-const StyledQueueMetricsContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledGraphControls = styled.div`
@@ -60,31 +58,11 @@ const StyledNoDataMessage = styled.div`
   justify-content: center;
 `;
 
-const StyledTooltipContainer = styled.div`
+const StyledCard = styled(Card)`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: ${({ theme }) => theme.spacing(2)};
-  font-size: ${({ theme }) => theme.font.size.sm};
-`;
-
-const StyledTooltipItem = styled.div<{ color: string }>`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  padding: ${({ theme }) => theme.spacing(0.5)} 0;
-`;
-
-const StyledTooltipColorSquare = styled.div<{ color: string }>`
-  width: 12px;
-  height: 12px;
-  background-color: ${({ color }) => color};
-  margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledTooltipValue = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  height: 100%;
 `;
 
 type WorkerMetricsGraphProps = {
@@ -174,6 +152,7 @@ export const WorkerMetricsGraph = ({
           ]}
           onChange={onTimeRangeChange}
           needIconCheck
+          selectSizeVariant="small"
         />
       </StyledGraphControls>
 
@@ -185,7 +164,7 @@ export const WorkerMetricsGraph = ({
             data={metricsData}
             curve="monotoneX"
             enableArea={true}
-            colors={[theme.color.green, theme.color.red]}
+            colors={[theme.color.blue, theme.color.red]}
             theme={{
               text: {
                 fill: theme.font.color.light,
@@ -249,21 +228,7 @@ export const WorkerMetricsGraph = ({
             gridYValues={4}
             pointSize={0}
             enableSlices="x"
-            sliceTooltip={({ slice }) => (
-              <StyledTooltipContainer>
-                {slice.points.map((point) => (
-                  <StyledTooltipItem key={point.id} color={point.serieColor}>
-                    <StyledTooltipColorSquare color={point.serieColor} />
-                    <span>
-                      {point.serieId}:{' '}
-                      <StyledTooltipValue>
-                        {String(point.data.y)}
-                      </StyledTooltipValue>
-                    </span>
-                  </StyledTooltipItem>
-                ))}
-              </StyledTooltipContainer>
-            )}
+            sliceTooltip={({ slice }) => <WorkerMetricsTooltip slice={slice} />}
             useMesh={true}
             legends={[
               {
@@ -276,8 +241,9 @@ export const WorkerMetricsGraph = ({
                 itemDirection: 'left-to-right',
                 itemWidth: 100,
                 itemHeight: 20,
+                itemTextColor: theme.font.color.secondary,
                 symbolSize: 12,
-                symbolShape: 'square',
+                symbolShape: 'circle',
               },
             ]}
           />
@@ -288,26 +254,26 @@ export const WorkerMetricsGraph = ({
       {metricsDetails && (
         <>
           <StyledQueueMetricsTitle>Metrics:</StyledQueueMetricsTitle>
-          <StyledQueueMetricsContainer>
+          <StyledCard rounded>
             <Table>
               {Object.entries(metricsDetails)
                 .filter(([key]) => key !== '__typename')
                 .map(([key, value]) => (
                   <StyledTableRow key={key}>
-                    <TableCell align="left">
+                    <StyledTableCell align="left">
                       {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </TableCell>
-                    <TableCell align="right">
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
                       {typeof value === 'number'
                         ? value
                         : Array.isArray(value)
                           ? value.length
                           : String(value)}
-                    </TableCell>
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
             </Table>
-          </StyledQueueMetricsContainer>
+          </StyledCard>
         </>
       )}
     </>
