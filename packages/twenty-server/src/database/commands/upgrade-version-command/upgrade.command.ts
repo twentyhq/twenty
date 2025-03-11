@@ -30,7 +30,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
 
-    // Commands
+    // Commands injection
     protected readonly migrateRichTextContentPatchCommand: MigrateRichTextContentPatchCommand,
     protected readonly addTasksAssignedToMeViewCommand: AddTasksAssignedToMeViewCommand,
     protected readonly migrateIsSearchableForCustomObjectMetadataCommand: MigrateIsSearchableForCustomObjectMetadataCommand,

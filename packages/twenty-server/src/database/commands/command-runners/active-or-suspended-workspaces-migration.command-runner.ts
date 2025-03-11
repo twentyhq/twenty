@@ -164,9 +164,13 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
         );
       }
 
-      await this.twentyORMGlobalManager
-        .destroyDataSourceForWorkspace(workspaceId)
-        .catch((error) => this.logger.error(error));
+      try {
+        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
+          workspaceId,
+        );
+      } catch (error) {
+        this.logger.error(error);
+      }
     }
 
     this.failingWorkspaces.forEach(({ error, workspaceId }) =>
