@@ -19,7 +19,7 @@ const StyledIconWrapper = styled.div`
   justify-content: center;
 `;
 
-export const useContextChips = () => {
+export const useCommandMenuContextChips = () => {
   const commandMenuNavigationStack = useRecoilValue(
     commandMenuNavigationStackState,
   );

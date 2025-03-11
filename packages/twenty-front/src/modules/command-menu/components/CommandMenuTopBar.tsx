@@ -5,7 +5,7 @@ import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/Com
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
+import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -114,7 +114,7 @@ export const CommandMenuTopBar = () => {
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
-  const { contextChips } = useContextChips();
+  const { contextChips } = useCommandMenuContextChips();
 
   const location = useLocation();
   const isButtonVisible =
