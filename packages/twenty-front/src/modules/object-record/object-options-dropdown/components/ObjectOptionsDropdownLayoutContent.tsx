@@ -20,7 +20,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const ObjectOptionsDropdownViewSettingsContent = () => {
+export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();
   const { currentView } = useGetCurrentViewOnly();
 

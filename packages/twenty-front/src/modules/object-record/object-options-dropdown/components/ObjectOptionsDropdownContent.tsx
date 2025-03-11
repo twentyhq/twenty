@@ -1,12 +1,12 @@
 import { ObjectOptionsDropdownFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent';
 import { ObjectOptionsDropdownHiddenFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent';
 import { ObjectOptionsDropdownHiddenRecordGroupsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent';
+import { ObjectOptionsDropdownLayoutContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent';
+import { ObjectOptionsDropdownLayoutOpenInContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent';
 import { ObjectOptionsDropdownMenuContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent';
 import { ObjectOptionsDropdownRecordGroupFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent';
 import { ObjectOptionsDropdownRecordGroupsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent';
 import { ObjectOptionsDropdownRecordGroupSortContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupSortContent';
-import { ObjectOptionsDropdownViewSettingsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent';
-import { ObjectOptionsDropdownViewSettingsOpenInContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 
 export const ObjectOptionsDropdownContent = () => {
@@ -14,9 +14,9 @@ export const ObjectOptionsDropdownContent = () => {
 
   switch (currentContentId) {
     case 'layout':
-      return <ObjectOptionsDropdownViewSettingsContent />;
+      return <ObjectOptionsDropdownLayoutContent />;
     case 'layoutOpenIn':
-      return <ObjectOptionsDropdownViewSettingsOpenInContent />;
+      return <ObjectOptionsDropdownLayoutOpenInContent />;
     case 'fields':
       return <ObjectOptionsDropdownFieldsContent />;
     case 'hiddenFields':
