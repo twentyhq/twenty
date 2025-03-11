@@ -19,12 +19,10 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
-" Ezek csak a szerver értékei. Biztosítsa, hogy a munkavállalói környezet\n"
+msgstr " Ezek csak a szerver értékei. Biztosítsa, hogy a munkavállalói környezet\n"
 "        ugyanazokkal a változókkal és értékekkel rendelkezzen, ez szükséges az aszinkron feladatokhoz, mint például az\n"
 "        e-mail szinkronizálás."
 
@@ -727,7 +725,7 @@ msgstr "Hivatkozás másolása"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Copy link to view"
-msgstr ""
+msgstr "Link másolása a megtekintéshez"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
@@ -990,7 +988,7 @@ msgstr "Az integr\\u00e1ci\\u00f3 t\\u00f6rl\\u00e9se"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Delete view"
-msgstr ""
+msgstr "Nézet törlése"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx

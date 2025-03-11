@@ -19,8 +19,7 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
 msgstr " これはサーバーの値のみです。 ワーカー環境に同じ変数と値があることを確認してください。これは電子メール同期のような非同期タスクに必要です。"
@@ -724,7 +723,7 @@ msgstr "リンクをコピー"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Copy link to view"
-msgstr ""
+msgstr "\"ビューのリンクをコピー\""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
@@ -987,7 +986,7 @@ msgstr "この統合を削除"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Delete view"
-msgstr ""
+msgstr "\"ビューを削除\""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx

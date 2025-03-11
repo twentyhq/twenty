@@ -19,8 +19,7 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
 msgstr " Dit zijn alleen de serverwaarden. Zorg ervoor dat je werkomgeving dezelfde variabelen en waarden heeft, dit is vereist voor asynchrone taken zoals e-mailsynchronisatie."
@@ -724,7 +723,7 @@ msgstr "Kopieer link"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Copy link to view"
-msgstr ""
+msgstr "Kopieer link om te bekijken"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
@@ -987,7 +986,7 @@ msgstr "Verwijder deze integratie"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Delete view"
-msgstr ""
+msgstr "Weergave verwijderen"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
