@@ -1,5 +1,5 @@
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { WorkflowStepContext } from '@/workflow/states/context/WorkflowStepContext';
+import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { RightDrawerWorkflowEditStepContent } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStepContent';
 import { useRecoilValue } from 'recoil';
@@ -14,10 +14,10 @@ export const RightDrawerWorkflowEditStep = () => {
   }
 
   return (
-    <WorkflowStepContext.Provider
+    <WorkflowStepContextProvider
       value={{ workflowVersionId: workflow.currentVersion.id }}
     >
       <RightDrawerWorkflowEditStepContent workflow={workflow} />
-    </WorkflowStepContext.Provider>
+    </WorkflowStepContextProvider>
   );
 };

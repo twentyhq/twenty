@@ -21,7 +21,7 @@ export const useDeleteStep = ({
     useUpdateOneRecord<WorkflowVersion>({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
-  const { resetStepOutputSchema } = useStepsOutputSchema();
+  const { deleteStepOutputSchema } = useStepsOutputSchema();
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const { closeRightDrawer } = useRightDrawer();
@@ -44,7 +44,7 @@ export const useDeleteStep = ({
         stepId,
       });
     }
-    resetStepOutputSchema({
+    deleteStepOutputSchema({
       stepId,
       workflowVersionId,
     });

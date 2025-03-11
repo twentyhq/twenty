@@ -1,9 +1,8 @@
-import { createContext } from 'react';
+import { createRequiredContext } from '~/utils/createRequiredContext';
 
 type WorkflowStepContextType = {
-  workflowVersionId?: string;
+  workflowVersionId: string;
 };
 
-export const WorkflowStepContext = createContext<WorkflowStepContextType>({
-  workflowVersionId: undefined,
-});
+export const [WorkflowStepContextProvider, useWorkflowStepContextOrThrow] =
+  createRequiredContext<WorkflowStepContextType>('WorkflowStepContext');

@@ -1,5 +1,5 @@
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
-import { WorkflowStepContext } from '@/workflow/states/context/WorkflowStepContext';
+import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
@@ -32,10 +32,10 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   ]);
 
   return (
-    <WorkflowStepContext.Provider
+    <WorkflowStepContextProvider
       value={{ workflowVersionId: workflowVersion.id }}
     >
       {ready && <Story />}
-    </WorkflowStepContext.Provider>
+    </WorkflowStepContextProvider>
   );
 };

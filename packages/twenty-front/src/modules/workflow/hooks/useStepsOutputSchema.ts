@@ -1,6 +1,6 @@
 import { stepsOutputSchemaFamilyState } from '@/workflow/states/stepsOutputSchemaFamilyState';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
-import { getStepOutputSchemaKey } from '@/workflow/utils/getStepOutputSchemaKey';
+import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
@@ -14,33 +14,10 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 export const useStepsOutputSchema = () => {
-  const getStepsOutputSchema = useRecoilCallback(
-    ({ snapshot }) =>
-      ({
-        workflowVersionId,
-        stepIds,
-      }: {
-        workflowVersionId: string;
-        stepIds: string[];
-      }) => {
-        const stepsOutputSchema = stepIds
-          .map((stepId) => getStepOutputSchemaKey(workflowVersionId, stepId))
-          .map((stepOutputSchemaKey) =>
-            snapshot
-              .getLoadable(stepsOutputSchemaFamilyState(stepOutputSchemaKey))
-              .getValue(),
-          )
-          .filter(isDefined);
-
-        return stepsOutputSchema;
-      },
-    [],
-  );
-
   const populateStepsOutputSchema = useRecoilCallback(
     ({ set }) =>
       (workflowVersion: WorkflowVersion) => {
-        workflowVersion?.steps?.forEach((step) => {
+        workflowVersion.steps?.forEach((step) => {
           const stepOutputSchema: StepOutputSchema = {
             id: step.id,
             name: step.name,
@@ -50,7 +27,7 @@ export const useStepsOutputSchema = () => {
 
           set(
             stepsOutputSchemaFamilyState(
-              getStepOutputSchemaKey(workflowVersion.id, step.id),
+              getStepOutputSchemaFamilyStateKey(workflowVersion.id, step.id),
             ),
             stepOutputSchema,
           );
@@ -82,7 +59,10 @@ export const useStepsOutputSchema = () => {
 
           set(
             stepsOutputSchemaFamilyState(
-              getStepOutputSchemaKey(workflowVersion.id, TRIGGER_STEP_ID),
+              getStepOutputSchemaFamilyStateKey(
+                workflowVersion.id,
+                TRIGGER_STEP_ID,
+              ),
             ),
             triggerOutputSchema,
           );
@@ -91,7 +71,7 @@ export const useStepsOutputSchema = () => {
     [],
   );
 
-  const resetStepOutputSchema = useRecoilCallback(
+  const deleteStepOutputSchema = useRecoilCallback(
     ({ set }) =>
       ({
         stepId,
@@ -102,7 +82,7 @@ export const useStepsOutputSchema = () => {
       }) => {
         set(
           stepsOutputSchemaFamilyState(
-            getStepOutputSchemaKey(workflowVersionId, stepId),
+            getStepOutputSchemaFamilyStateKey(workflowVersionId, stepId),
           ),
           null,
         );
@@ -112,7 +92,6 @@ export const useStepsOutputSchema = () => {
 
   return {
     populateStepsOutputSchema,
-    resetStepOutputSchema,
-    getStepsOutputSchema,
+    deleteStepOutputSchema,
   };
 };
