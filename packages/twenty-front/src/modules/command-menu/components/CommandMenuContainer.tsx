@@ -144,11 +144,12 @@ export const CommandMenuContainer = ({
                   <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
                 )}
                 <ActionMenuConfirmationModals />
-                <AnimatePresence
-                  mode="wait"
-                  onExitComplete={onCommandMenuCloseAnimationComplete}
-                >
-                  {isCommandMenuOpened && (
+
+                {isCommandMenuOpened && (
+                  <AnimatePresence
+                    mode="wait"
+                    onExitComplete={onCommandMenuCloseAnimationComplete}
+                  >
                     <StyledCommandMenu
                       data-testid="command-menu"
                       ref={commandMenuRef}
@@ -161,8 +162,8 @@ export const CommandMenuContainer = ({
                     >
                       {children}
                     </StyledCommandMenu>
-                  )}
-                </AnimatePresence>
+                  </AnimatePresence>
+                )}
               </ActionMenuContext.Provider>
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>
