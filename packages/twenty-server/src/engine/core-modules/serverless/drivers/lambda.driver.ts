@@ -264,20 +264,18 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   private extractLogs(logString: string): string {
-    const logRegex = /INFO (.*?)\n/g; // Match logs after "INFO " until the newline
-    let matches;
-    let logs = '';
-
     const formattedLogString = Buffer.from(logString, 'base64')
       .toString('utf8')
       .split('\t')
       .join(' ');
 
-    while ((matches = logRegex.exec(formattedLogString)) !== null) {
-      logs = logs.concat(matches[1] + '\n'); // Preserve the newline
-    }
-
-    return logs;
+    return formattedLogString
+      .replace(/^(START|END|REPORT).*\n?/gm, '')
+      .replace(
+        /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z) [a-f0-9-]+ INFO /gm,
+        '$1 INFO ',
+      )
+      .trim();
   }
 
   async execute(

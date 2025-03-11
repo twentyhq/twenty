@@ -1,6 +1,5 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { Writable } from 'stream';
 
 import ts, { transpileModule } from 'typescript';
 import { v4 } from 'uuid';
@@ -130,17 +129,54 @@ export class LocalDriver implements ServerlessDriver {
       }
     }
 
+    const originalConsole = {
+      log: console.log,
+      error: console.error,
+      warn: console.warn,
+      info: console.info,
+      debug: console.debug,
+    };
+
+    const interceptConsole = (
+      callback: (type: string, message: any[]) => void,
+    ) => {
+      Object.keys(originalConsole).forEach((method) => {
+        console[method] = (...args: any[]) => {
+          callback(method, args);
+        };
+      });
+    };
+
     let logs = '';
-    const logStream = new Writable({
-      write(chunk, encoding, callback) {
-        logs = logs.concat(chunk.toString());
-        callback();
-      },
+
+    interceptConsole((type, args) => {
+      const formattedArgs = args.map((arg) => {
+        if (typeof arg === 'object' && arg !== null) {
+          const seen = new WeakSet();
+
+          return JSON.stringify(
+            arg,
+            (key, value) => {
+              if (typeof value === 'object' && value !== null) {
+                if (seen.has(value)) {
+                  return '[Circular]'; // Handle circular references
+                }
+                seen.add(value);
+              }
+
+              return value;
+            },
+            2,
+          );
+        }
+
+        return arg;
+      });
+
+      const formattedType = type === 'log' ? 'info' : type;
+
+      logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
     });
-
-    const originalStdoutWrite = process.stdout.write;
-
-    process.stdout.write = logStream.write.bind(logStream) as any;
 
     try {
       const mainFile = await import(compiledCodeFilePath);
@@ -171,7 +207,12 @@ export class LocalDriver implements ServerlessDriver {
         status: ServerlessFunctionExecutionStatus.ERROR,
       };
     } finally {
-      process.stdout.write = originalStdoutWrite;
+      // Restoring originalConsole
+      Object.keys(originalConsole).forEach((method) => {
+        console[method] = (...args: any[]) => {
+          originalConsole[method](...args);
+        };
+      });
       await fs.rm(compiledCodeFolderPath, { recursive: true, force: true });
     }
   }
