@@ -1,11 +1,12 @@
 import { commandMenuNavigationMorphItemsState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared';
 
@@ -23,91 +24,102 @@ export const CommandMenuContextChipEffect = () => {
   const { performCombinedFindManyRecords } =
     usePerformCombinedFindManyRecords();
 
-  useEffect(() => {
-    const objectMetadataIds = Array.from(
-      commandMenuNavigationMorphItems.values(),
-    ).map(({ objectMetadataId }) => objectMetadataId);
+  const objectMetadataIds = Array.from(
+    commandMenuNavigationMorphItems.values(),
+  ).map(({ objectMetadataId }) => objectMetadataId);
 
-    const searchableObjectMetadataItems = objectMetadataItems.filter(({ id }) =>
-      objectMetadataIds.includes(id),
+  const searchableObjectMetadataItems = objectMetadataItems.filter(({ id }) =>
+    objectMetadataIds.includes(id),
+  );
+
+  const commandMenuNavigationStack = useRecoilValue(
+    commandMenuNavigationStackState,
+  );
+
+  const fetchRecords = useCallback(async () => {
+    const filterPerMetadataItemFilteredOnRecordId = Object.fromEntries(
+      searchableObjectMetadataItems
+        .map(({ id, nameSingular }) => {
+          const recordIdsForMetadataItem = Array.from(
+            commandMenuNavigationMorphItems.values(),
+          )
+            .filter(({ objectMetadataId }) => objectMetadataId === id)
+            .map(({ recordId }) => recordId);
+
+          if (!isNonEmptyArray(recordIdsForMetadataItem)) {
+            return null;
+          }
+
+          return [
+            `filter${capitalize(nameSingular)}`,
+            {
+              id: {
+                in: recordIdsForMetadataItem,
+              },
+            },
+          ];
+        })
+        .filter(isDefined),
     );
 
-    const fetchRecords = async () => {
-      const filterPerMetadataItemFilteredOnRecordId = Object.fromEntries(
-        searchableObjectMetadataItems
-          .map(({ id, nameSingular }) => {
-            const recordIdsForMetadataItem = Array.from(
-              commandMenuNavigationMorphItems.values(),
-            )
-              .filter(({ objectMetadataId }) => objectMetadataId === id)
-              .map(({ recordId }) => recordId);
-
-            if (!isNonEmptyArray(recordIdsForMetadataItem)) {
-              return null;
-            }
-
-            return [
-              `filter${capitalize(nameSingular)}`,
-              {
-                id: {
-                  in: recordIdsForMetadataItem,
-                },
-              },
-            ];
-          })
-          .filter(isDefined),
-      );
-
-      const operationSignatures = searchableObjectMetadataItems
-        .filter(({ nameSingular }) =>
-          isDefined(
+    const operationSignatures = searchableObjectMetadataItems
+      .filter(({ nameSingular }) =>
+        isDefined(
+          filterPerMetadataItemFilteredOnRecordId[
+            `filter${capitalize(nameSingular)}`
+          ],
+        ),
+      )
+      .map((objectMetadataItem) => ({
+        objectNameSingular: objectMetadataItem.nameSingular,
+        variables: {
+          filter:
             filterPerMetadataItemFilteredOnRecordId[
-              `filter${capitalize(nameSingular)}`
+              `filter${capitalize(objectMetadataItem.nameSingular)}`
             ],
-          ),
-        )
-        .map((objectMetadataItem) => ({
-          objectNameSingular: objectMetadataItem.nameSingular,
-          variables: {
-            filter:
-              filterPerMetadataItemFilteredOnRecordId[
-                `filter${capitalize(objectMetadataItem.nameSingular)}`
-              ],
-            limit: 10,
-          },
-        }));
+          limit: 10,
+        },
+      }));
 
-      if (operationSignatures.length === 0) {
-        setCommandMenuNavigationRecords([]);
-        return;
-      }
+    if (operationSignatures.length === 0) {
+      setCommandMenuNavigationRecords([]);
+      return;
+    }
 
-      const { result } = await performCombinedFindManyRecords({
-        operationSignatures,
-      });
+    const { result } = await performCombinedFindManyRecords({
+      operationSignatures,
+    });
 
-      const formattedRecords = Object.entries(result).flatMap(
-        ([objectNamePlural, records]) =>
-          records.map((record) => ({
-            objectMetadataItem: searchableObjectMetadataItems.find(
-              ({ namePlural }) => namePlural === objectNamePlural,
-            ) as ObjectMetadataItem,
-            record: record as RecordGqlNode,
-          })),
-      );
+    const formattedRecords = Object.entries(result).flatMap(
+      ([objectNamePlural, records]) =>
+        records.map((record) => ({
+          objectMetadataItem: searchableObjectMetadataItems.find(
+            ({ namePlural }) => namePlural === objectNamePlural,
+          ) as ObjectMetadataItem,
+          record: record as RecordGqlNode,
+        })),
+    );
 
-      setCommandMenuNavigationRecords(formattedRecords);
-    };
+    setCommandMenuNavigationRecords(formattedRecords);
+  }, [
+    commandMenuNavigationMorphItems,
+    performCombinedFindManyRecords,
+    searchableObjectMetadataItems,
+    setCommandMenuNavigationRecords,
+  ]);
 
-    fetchRecords();
+  useEffect(() => {
+    if (commandMenuNavigationStack.length > 1) {
+      fetchRecords();
+    }
 
     return () => {
       setCommandMenuNavigationRecords([]);
     };
   }, [
     commandMenuNavigationMorphItems,
-    objectMetadataItems,
-    performCombinedFindManyRecords,
+    commandMenuNavigationStack.length,
+    fetchRecords,
     setCommandMenuNavigationRecords,
   ]);
 
