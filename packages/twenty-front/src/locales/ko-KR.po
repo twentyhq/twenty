@@ -23,7 +23,7 @@ msgid ""
 " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
+msgstr "이것들은 서버 값만입니다. 비동기 작업(예: 이메일 동기화)을 위해 워커 환경에 동일한 변수와 값이 있는지 확인하십시오."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -249,7 +249,7 @@ msgstr "역할 관련 설정 조정"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
-msgstr ""
+msgstr "관리자 패널"
 
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
@@ -517,7 +517,7 @@ msgstr "캘린더 설정"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Calendar Sync Status"
-msgstr ""
+msgstr "캘린더 동기화 상태"
 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -722,6 +722,10 @@ msgstr "초대 링크 복사"
 msgid "Copy link"
 msgstr "링크 복사"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Copy link to view"
+msgstr ""
+
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
 msgstr "이 키는 다시 표시되지 않으므로 복사하세요"
@@ -800,7 +804,7 @@ msgstr "생성됨"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version:"
-msgstr ""
+msgstr "현재 버전:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -980,6 +984,10 @@ msgstr "레코드 삭제"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "이 통합 삭제"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Delete view"
+msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -1217,6 +1225,14 @@ msgstr "직원"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 msgid "Empty"
 msgstr "비어 있음"
+
+#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+msgid "Empty Array"
+msgstr "빈 배열"
+
+#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+msgid "Empty Object"
+msgstr "빈 객체"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
@@ -1606,7 +1622,7 @@ msgstr "앱에서 사용자를 식별하는 방법입니다."
 
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
-msgstr ""
+msgstr "시스템 상태"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
@@ -1826,35 +1842,35 @@ msgstr "언어"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 hour"
-msgstr ""
+msgstr "지난 <b>1</b>시간"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 Hour (oldest → newest)"
-msgstr ""
+msgstr "지난 1시간 (오래된 순 → 최신 순)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 hours"
-msgstr ""
+msgstr "지난 <b>12</b>시간"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 Hours (oldest → newest)"
-msgstr ""
+msgstr "지난 12시간 (오래된 순 → 최신 순)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 24 Hours (oldest → newest)"
-msgstr ""
+msgstr "지난 24시간 (오래된 순 → 최신 순)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 hours"
-msgstr ""
+msgstr "지난 <b>4</b>시간"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 Hours (oldest → newest)"
-msgstr ""
+msgstr "지난 4시간 (오래된 순 → 최신 순)"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 7 Days (oldest → newest)"
-msgstr ""
+msgstr "지난 7일 (오래된 순 → 최신 순)"
 
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -1871,7 +1887,7 @@ msgstr "최신 날짜"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version:"
-msgstr ""
+msgstr "최신 버전:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1896,7 +1912,7 @@ msgstr "목록"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
-msgstr ""
+msgstr "메트릭스 데이터 로딩 중..."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Log out"
@@ -1953,7 +1969,7 @@ msgstr "회원"
 
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync Status"
-msgstr ""
+msgstr "메시지 동기화 상태"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -2140,7 +2156,7 @@ msgstr "국가 없음"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "No metrics data available"
-msgstr ""
+msgstr "사용 가능한 메트릭스 데이터 없음"
 
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
@@ -2186,12 +2202,17 @@ msgstr "노르웨이어"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Not available on Default View"
 msgstr "기본 보기에서 사용 불가"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
 msgstr "비어 있지 않음"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Not Found"
+msgstr "찾을 수 없음"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
@@ -2278,11 +2299,11 @@ msgstr "기타"
 
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
-msgstr ""
+msgstr "기타 환경 변수"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "Other Variables"
-msgstr ""
+msgstr "기타 변수"
 
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -2425,11 +2446,11 @@ msgstr "의사 영어"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
-msgstr ""
+msgstr "워크가 다운되어 대기열 정보를 사용할 수 없습니다"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Queue performance"
-msgstr ""
+msgstr "대기열 성능"
 
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
@@ -2441,7 +2462,7 @@ msgstr "비밀번호 업데이트 링크가 포함된 이메일 받기"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
-msgstr ""
+msgstr "최근 이벤트 (오래된 순 → 최신 순)"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -2734,7 +2755,7 @@ msgstr "세르비아어 (키릴)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #~ msgid "Server Admin"
-#~ msgstr "서버 관리자"
+#~ msgstr "Server Admin"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -3049,7 +3070,7 @@ msgstr "이 역할은 이 워크스페이스 멤버들에게 할당되었습니�
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "This week"
-msgstr ""
+msgstr "이번 주"
 
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
@@ -3073,7 +3094,7 @@ msgstr "연간으로"
 
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Today"
-msgstr ""
+msgstr "오늘"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Total Users"
@@ -3205,6 +3226,10 @@ msgstr "사용자"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "값"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Variable not found"
+msgstr "변수를 찾을 수 없음"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
@@ -3380,7 +3405,7 @@ msgstr "이 개체에 기록을 생성할 수 있는 권한이 없습니다"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
-#~ msgstr "사용자 대리로 접근할 수 없습니다."
+#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

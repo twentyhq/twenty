@@ -1,9 +1,11 @@
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
+import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { WorkflowRunDiagramCanvas } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvas';
+import { WorkflowVersionOutputSchemaEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionOutputSchemaEffect';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 
-const StyledSourceCodeContainer = styled.div`
+const StyledContainer = styled.div`
   height: 100%;
 `;
 
@@ -13,13 +15,16 @@ export const WorkflowRunVisualizer = ({
   workflowRunId: string;
 }) => {
   const workflowRun = useWorkflowRun({ workflowRunId });
-  if (!isDefined(workflowRun)) {
+  const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
+
+  if (!isDefined(workflowRun) || !isDefined(workflowVersion)) {
     return null;
   }
 
   return (
-    <StyledSourceCodeContainer>
+    <StyledContainer>
+      <WorkflowVersionOutputSchemaEffect workflowVersion={workflowVersion} />
       <WorkflowRunDiagramCanvas workflowRunStatus={workflowRun.status} />
-    </StyledSourceCodeContainer>
+    </StyledContainer>
   );
 };
