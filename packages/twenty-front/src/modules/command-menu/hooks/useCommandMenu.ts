@@ -40,8 +40,6 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
@@ -550,7 +548,7 @@ export const useCommandMenu = () => {
   };
 
   const openCalendarEventInCommandMenu = useRecoilCallback(
-    ({ set, snapshot }) => {
+    ({ set }) => {
       return (calendarEventId: string) => {
         const pageComponentInstanceId = v4();
 
@@ -561,29 +559,30 @@ export const useCommandMenu = () => {
           calendarEventId,
         );
 
-        const objectMetadataItem = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue()
-          .find(
-            ({ nameSingular }) =>
-              nameSingular === CoreObjectNameSingular.CalendarEvent,
-          );
+        // TODO: Uncomment this once we need to calendar event title in the navigation
+        // const objectMetadataItem = snapshot
+        //   .getLoadable(objectMetadataItemsState)
+        //   .getValue()
+        //   .find(
+        //     ({ nameSingular }) =>
+        //       nameSingular === CoreObjectNameSingular.CalendarEvent,
+        //   );
 
-        set(
-          commandMenuNavigationMorphItemsState,
-          new Map([
-            ...snapshot
-              .getLoadable(commandMenuNavigationMorphItemsState)
-              .getValue(),
-            [
-              pageComponentInstanceId,
-              {
-                objectMetadataId: objectMetadataItem?.id,
-                recordId: calendarEventId,
-              },
-            ],
-          ]),
-        );
+        // set(
+        //   commandMenuNavigationMorphItemsState,
+        //   new Map([
+        //     ...snapshot
+        //       .getLoadable(commandMenuNavigationMorphItemsState)
+        //       .getValue(),
+        //     [
+        //       pageComponentInstanceId,
+        //       {
+        //         objectMetadataId: objectMetadataItem?.id,
+        //         recordId: calendarEventId,
+        //       },
+        //     ],
+        //   ]),
+        // );
 
         navigateCommandMenu({
           page: CommandMenuPages.ViewCalendarEvent,
@@ -597,7 +596,7 @@ export const useCommandMenu = () => {
   );
 
   const openEmailThreadInCommandMenu = useRecoilCallback(
-    ({ set, snapshot }) => {
+    ({ set }) => {
       return (emailThreadId: string) => {
         const pageComponentInstanceId = v4();
 
@@ -608,29 +607,30 @@ export const useCommandMenu = () => {
           emailThreadId,
         );
 
-        const objectMetadataItem = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue()
-          .find(
-            ({ nameSingular }) =>
-              nameSingular === CoreObjectNameSingular.MessageThread,
-          );
+        // TODO: Uncomment this once we need to show the thread title in the navigation
+        // const objectMetadataItem = snapshot
+        //   .getLoadable(objectMetadataItemsState)
+        //   .getValue()
+        //   .find(
+        //     ({ nameSingular }) =>
+        //       nameSingular === CoreObjectNameSingular.MessageThread,
+        //   );
 
-        set(
-          commandMenuNavigationMorphItemsState,
-          new Map([
-            ...snapshot
-              .getLoadable(commandMenuNavigationMorphItemsState)
-              .getValue(),
-            [
-              pageComponentInstanceId,
-              {
-                objectMetadataId: objectMetadataItem?.id,
-                recordId: emailThreadId,
-              },
-            ],
-          ]),
-        );
+        // set(
+        //   commandMenuNavigationMorphItemsState,
+        //   new Map([
+        //     ...snapshot
+        //       .getLoadable(commandMenuNavigationMorphItemsState)
+        //       .getValue(),
+        //     [
+        //       pageComponentInstanceId,
+        //       {
+        //         objectMetadataId: objectMetadataItem?.id,
+        //         recordId: emailThreadId,
+        //       },
+        //     ],
+        //   ]),
+        // );
 
         navigateCommandMenu({
           page: CommandMenuPages.ViewEmailThread,
