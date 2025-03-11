@@ -217,6 +217,67 @@ export const workflowQueryResult = {
                               value: 1000000000,
                               isLeaf: true,
                             },
+                            address: {
+                              isLeaf: false,
+                              value: {
+                                street1: {
+                                  isLeaf: true,
+                                  label: 'Street 1',
+                                  value: '123 Main St',
+                                },
+                                street2: {
+                                  isLeaf: true,
+                                  label: 'Street 2',
+                                  value: 'Apt 1',
+                                },
+                                city: {
+                                  isLeaf: true,
+                                  label: 'My City',
+                                  value: 'San Francisco',
+                                },
+                                state: {
+                                  isLeaf: true,
+                                  label: 'My State',
+                                  value: 'CA',
+                                },
+                                country: {
+                                  isLeaf: true,
+                                  label: 'My Country',
+                                  value: 'United States',
+                                },
+                                postcode: {
+                                  isLeaf: true,
+                                  label: 'My Postcode',
+                                  value: '94101',
+                                },
+                                lat: {
+                                  isLeaf: true,
+                                  label: 'My Lat',
+                                  value: 37.774929,
+                                },
+                                lng: {
+                                  isLeaf: true,
+                                  label: 'My Lng',
+                                  value: -122.419418,
+                                },
+                              },
+                            },
+                            phone: {
+                              isLeaf: false,
+                              label: 'Phone',
+                              value: {
+                                countryCode: {
+                                  isLeaf: true,
+                                  label: 'My Country Code',
+                                  value: '+1',
+                                },
+                                number: {
+                                  isLeaf: true,
+                                  label: 'My Number',
+                                  value: '1234567890',
+                                },
+                              },
+                            },
                           },
                           object: {
                             icon: 'IconTargetArrow',

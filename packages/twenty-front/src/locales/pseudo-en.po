@@ -2196,6 +2196,10 @@ msgstr ""
 msgid "Not empty"
 msgstr ""
 
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Not Found"
+msgstr ""
+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
 msgstr ""
@@ -3207,6 +3211,10 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
+msgstr ""
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Variable not found"
 msgstr ""
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx

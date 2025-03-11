@@ -8,6 +8,7 @@ import {
   within,
 } from '@storybook/test';
 import { getUserDevice } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormTextFieldInput } from '../FormTextFieldInput';
@@ -17,7 +18,7 @@ const meta: Meta<typeof FormTextFieldInput> = {
   component: FormTextFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator],
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;

@@ -1217,6 +1217,14 @@ msgstr "crwdns331:0crwdne331:0"
 msgid "Empty"
 msgstr "crwdns333:0crwdne333:0"
 
+#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+msgid "Empty Array"
+msgstr "crwdns5511:0crwdne5511:0"
+
+#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+msgid "Empty Object"
+msgstr "crwdns5513:0crwdne5513:0"
+
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
 msgstr "crwdns335:0crwdne335:0"
@@ -2191,6 +2199,10 @@ msgstr "crwdns5209:0crwdne5209:0"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
 msgstr "crwdns537:0crwdne537:0"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Not Found"
+msgstr "crwdns5515:0crwdne5515:0"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
@@ -3204,6 +3216,10 @@ msgstr "crwdns5319:0crwdne5319:0"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "crwdns773:0crwdne773:0"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Variable not found"
+msgstr "crwdns5517:0crwdne5517:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
