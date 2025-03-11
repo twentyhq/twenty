@@ -38,10 +38,7 @@ export const useContextChips = () => {
         const isLastChip =
           index === filteredCommandMenuNavigationStack.length - 1;
 
-        const isRecordPage =
-          page.page === CommandMenuPages.ViewRecord ||
-          page.page === CommandMenuPages.ViewEmailThread ||
-          page.page === CommandMenuPages.ViewCalendarEvent;
+        const isRecordPage = page.page === CommandMenuPages.ViewRecord;
 
         if (isRecordPage && !isLastChip) {
           const commandMenuNavigationMorphItem =
