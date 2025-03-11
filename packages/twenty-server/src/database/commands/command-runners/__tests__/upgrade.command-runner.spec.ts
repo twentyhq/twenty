@@ -12,7 +12,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { UpgradeCommandRunner } from '../upgrade.command-runner';
 
-class TestUpgradeCommandRunner extends UpgradeCommandRunner {
+class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
   fromVersion = new SemVer('1.0.0');
 
   public override async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
@@ -35,6 +35,27 @@ class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
     return;
   }
 }
+
+class TestUpgradeCommandRunnerV2 extends UpgradeCommandRunner {
+  fromVersion = new SemVer('2.0.0');
+
+  protected async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
+    return;
+  }
+
+  protected async afterSyncMetadataUpgradeCommandsToRun(): Promise<void> {
+    return;
+  }
+}
+
+// Overkill ? TODO refactor
+const COMMANDS_RUNNERS = {
+  TestUpgradeCommandRunnerV1: TestUpgradeCommandRunnerV1,
+  TestUpgradeCommandRunnerV2: TestUpgradeCommandRunnerV2,
+  InvalidVersionUpgradeCommandRunner: InvalidVersionUpgradeCommandRunner,
+} as const;
+type CommandRunnerNames = keyof typeof COMMANDS_RUNNERS;
+type CommandRunnerValues = (typeof COMMANDS_RUNNERS)[CommandRunnerNames];
 
 describe('fromVersion validation', () => {
   it('should fail if fromVersion is not a valid semver', () => {
@@ -70,14 +91,16 @@ const genereateMockWorkspace = (overrides?: Partial<Workspace>) =>
 type BuildUpgradeCommandModuleArgs = {
   workspaces: Workspace[];
   appVersion: string;
+  commandRunner: CommandRunnerValues;
 };
 const buildUpgradeCommandModule = async ({
   workspaces,
   appVersion,
+  commandRunner,
 }: BuildUpgradeCommandModuleArgs) => {
   const module: TestingModule = await Test.createTestingModule({
     providers: [
-      TestUpgradeCommandRunner,
+      commandRunner,
       {
         provide: getRepositoryToken(Workspace, 'core'),
         useValue: {
@@ -128,7 +151,7 @@ const buildUpgradeCommandModule = async ({
 };
 
 describe('UpgradeCommandRunner', () => {
-  let upgradeCommandRunner: TestUpgradeCommandRunner;
+  let upgradeCommandRunner: TestUpgradeCommandRunnerV1;
   let workspaceRepository: Repository<Workspace>;
   let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
   let afterSyncMetadataUpgradeCommandsToRun: jest.SpyInstance; //TODO improve typing ?
@@ -136,25 +159,32 @@ describe('UpgradeCommandRunner', () => {
   let errors: Error[] = [];
 
   type BuildModuleAndSetupSpiesArgs = {
-    numberOfWorkspace: number;
+    numberOfWorkspace?: number;
+    workspaceOverride?: Partial<Workspace>;
     appVersion?: string;
+    commandRunnerName?: CommandRunnerNames;
   };
   const buildModuleAndSetupSpies = async ({
-    numberOfWorkspace,
-    appVersion = '1.0.0',
+    numberOfWorkspace = 1,
+    workspaceOverride,
+    commandRunnerName = 'TestUpgradeCommandRunnerV1',
+    appVersion = '2.0.0',
   }: BuildModuleAndSetupSpiesArgs) => {
+    const commandRunner = COMMANDS_RUNNERS[commandRunnerName];
     const workspaces = Array.from({ length: numberOfWorkspace }, (_v, index) =>
-      genereateMockWorkspace({ id: `workspace_${index}` }),
+      genereateMockWorkspace({
+        id: `workspace_${index}`,
+        ...workspaceOverride,
+      }),
     );
     const module = await buildUpgradeCommandModule({
+      commandRunner,
       appVersion,
       workspaces,
     });
 
     errors = [];
-    upgradeCommandRunner = module.get<TestUpgradeCommandRunner>(
-      TestUpgradeCommandRunner,
-    );
+    upgradeCommandRunner = module.get(commandRunner);
     beforeSyncMetadataUpgradeCommandsToRun = jest.spyOn(
       upgradeCommandRunner,
       'beforeSyncMetadataUpgradeCommandsToRun',
@@ -171,7 +201,7 @@ describe('UpgradeCommandRunner', () => {
     syncWorkspaceMetadataCommand = module.get(SyncWorkspaceMetadataCommand);
   };
 
-  it('should run upgrade over all workspaces', async () => {
+  it('should run upgrade over several workspaces', async () => {
     const numberOfWorkspace = 42;
     await buildModuleAndSetupSpies({
       numberOfWorkspace,
@@ -190,9 +220,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should run syncMetadataCommand betwen beforeSyncMetadataUpgradeCommandsToRun and afterSyncMetadataUpgradeCommandsToRun', async () => {
-    await buildModuleAndSetupSpies({
-      numberOfWorkspace: 1,
-    });
+    await buildModuleAndSetupSpies({});
     const passedParams = [];
     const options = {};
     await upgradeCommandRunner.run(passedParams, options);
@@ -215,38 +243,28 @@ describe('UpgradeCommandRunner', () => {
     expect(beforeSyncCall).toBeLessThan(syncMetadataCall);
     expect(syncMetadataCall).toBeLessThan(afterSyncCall);
   });
+
+  it('should fail if workspace version is not the same as fromVersion', async () => {
+    await buildModuleAndSetupSpies({
+      numberOfWorkspace: 1,
+      appVersion: '2.0.0',
+      workspaceOverride: {
+        version: '0.1.0',
+      },
+    });
+
+    jest
+      .spyOn(workspaceRepository, 'findOneByOrFail')
+      .mockResolvedValueOnce(workspaceWithDifferentVersion);
+
+    await expect(upgradeCommandRunner.runOnWorkspace(runArgs)).rejects.toThrow(
+      'WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.9.0 from=1.0.0 to=1.1.0',
+    );
+  });
 });
 
 describe('WIP_UpgradeCommandRunner', () => {
   describe('runOnWorkspace', () => {
-    it('should run sync metadata between commands', async () => {
-      const beforeSyncSpy = jest.spyOn(
-        upgradeCommandRunner,
-        'beforeSyncMetadataUpgradeCommandsToRun', // why
-      );
-      const afterSyncSpy = jest.spyOn(
-        upgradeCommandRunner,
-        'afterSyncMetadataUpgradeCommandsToRun', // why
-      );
-
-      await upgradeCommandRunner.runOnWorkspace(runArgs);
-
-      expect(beforeSyncSpy).toHaveBeenCalled();
-      expect(syncWorkspaceMetadataCommand.runOnWorkspace).toHaveBeenCalledWith(
-        runArgs,
-      );
-      expect(afterSyncSpy).toHaveBeenCalled();
-
-      // Verify order of execution
-      const beforeSyncCall = beforeSyncSpy.mock.invocationCallOrder[0];
-      const syncMetadataCall =
-        syncWorkspaceMetadataCommand.runOnWorkspace.mock.invocationCallOrder[0];
-      const afterSyncCall = afterSyncSpy.mock.invocationCallOrder[0];
-
-      expect(beforeSyncCall).toBeLessThan(syncMetadataCall);
-      expect(syncMetadataCall).toBeLessThan(afterSyncCall);
-    });
-
     it('should fail if workspace version is not the same as fromVersion', async () => {
       const workspaceWithDifferentVersion = {
         ...findByOneMockWorkspace,
