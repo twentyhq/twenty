@@ -11,7 +11,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { RefreshCcw } from 'lucide-react';
+import { useLingui } from '@lingui/react/macro';
 import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useRecoilValue } from 'recoil';
@@ -178,6 +178,8 @@ const WebSoftphone: React.FC = () => {
   useRingTone(isRinging, isIncomingCall);
 
   const { getIcon } = useIcons();
+
+  const { t } = useLingui();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
@@ -778,7 +780,7 @@ const WebSoftphone: React.FC = () => {
               color={theme.font.color.secondary}
               size={theme.icon.size.md}
             />
-            <StyledIncomingText>incoming</StyledIncomingText>
+            <StyledIncomingText>{t`incoming`}</StyledIncomingText>
           </StyledIncomingCall>
         ) : (
           <StyledStatusAndTimer>
@@ -816,10 +818,10 @@ const WebSoftphone: React.FC = () => {
               </StyledIncomingNumber>
               <StyledIncomingButtonContainer>
                 <StyledIncomingButton accept={false} onClick={handleRejectCall}>
-                  Reject
+                  {t`Reject`}
                 </StyledIncomingButton>
                 <StyledIncomingButton accept={true} onClick={handleAcceptCall}>
-                  Accept
+                  {t`Accept`}
                 </StyledIncomingButton>
               </StyledIncomingButtonContainer>
             </>
@@ -829,7 +831,7 @@ const WebSoftphone: React.FC = () => {
                 <StyledTextAndCallButton>
                   {!callState.isInCall && !callState.callStatus && (
                     <TextInput
-                      placeholder="Dial the phone number"
+                      placeholder={t`Dial the phone number`}
                       fullWidth
                       value={callState.currentNumber}
                       onChange={(e) => {
@@ -870,9 +872,6 @@ const WebSoftphone: React.FC = () => {
                     />
                   )}
 
-                  {/* callState.isRegistered &&
-                  !callState.isInCall &&
-                  !callState.callStatus &&  */}
                   {callState.isRegistered &&
                     !callState.isInCall &&
                     !callState.callStatus &&
@@ -954,7 +953,7 @@ const WebSoftphone: React.FC = () => {
                   </StyledControlsContainer>
 
                   <StyledEndButton onClick={cleanupSession}>
-                    End call
+                    {t`End call`}
                   </StyledEndButton>
                 </StyledOngoingCallContainer>
               )}
@@ -962,17 +961,8 @@ const WebSoftphone: React.FC = () => {
               {(callState.callStatus === CallStatus.CALLING ||
                 callState.callStatus === CallStatus.STARTING_CALL) && (
                 <StyledEndButton onClick={cleanupSession}>
-                  End call
+                  {t`End call`}
                 </StyledEndButton>
-              )}
-
-              {!callState.isRegistered && (
-                <button
-                  onClick={() => initializeSIP(config)}
-                  className="p-1 rounded-full hover:bg-blue-50 text-blue-600"
-                >
-                  <RefreshCcw className="w-4 h-4" />
-                </button>
               )}
             </div>
           )}
