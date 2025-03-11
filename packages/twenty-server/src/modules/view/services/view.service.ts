@@ -122,16 +122,6 @@ export class ViewService {
       .then((views) => views.map((view) => view.id));
   }
 
-  async getView({ workspaceId, id }: { workspaceId: string; id: string }) {
-    const viewRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'view',
-      );
-
-    return viewRepository.findOne({ where: { id } });
-  }
-
   async resetKanbanAggregateOperationByFieldMetadataId({
     workspaceId,
     fieldMetadataId,

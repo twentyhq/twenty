@@ -3,16 +3,18 @@ import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { ViewService } from 'src/modules/view/services/view.service';
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessage,
+} from 'src/modules/view/views.exception';
 
 @WorkspaceQueryHook(`view.deleteOne`)
 export class ViewDeleteOnePreQueryHook implements WorkspaceQueryHookInstance {
-  constructor(private readonly viewService: ViewService) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   async execute(
     authContext: AuthContext,
@@ -21,22 +23,25 @@ export class ViewDeleteOnePreQueryHook implements WorkspaceQueryHookInstance {
   ): Promise<DeleteOneResolverArgs> {
     const targettedViewId = payload.id;
 
-    const view = await this.viewService.getView({
-      workspaceId: authContext.workspace.id,
-      id: targettedViewId,
-    });
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        authContext.workspace.id,
+        'view',
+      );
+
+    const view = await viewRepository.findOne({ where: { targettedViewId } });
 
     if (!view) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.VIEW_NOT_FOUND,
-        PermissionsExceptionCode.VIEW_NOT_FOUND,
+      throw new ViewException(
+        ViewExceptionMessage.VIEW_NOT_FOUND,
+        ViewExceptionCode.VIEW_NOT_FOUND,
       );
     }
 
     if (view.key === 'INDEX') {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.CANNOT_DELETE_INDEX_VIEW,
-        PermissionsExceptionCode.CANNOT_DELETE_INDEX_VIEW,
+      throw new ViewException(
+        ViewExceptionMessage.CANNOT_DELETE_INDEX_VIEW,
+        ViewExceptionCode.CANNOT_DELETE_INDEX_VIEW,
       );
     }
 
