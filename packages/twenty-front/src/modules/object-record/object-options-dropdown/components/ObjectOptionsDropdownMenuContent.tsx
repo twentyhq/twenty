@@ -160,11 +160,23 @@ export const ObjectOptionsDropdownMenuContent = () => {
           LeftIcon={IconCopy}
           text={t`Copy link to view`}
         />
-        <MenuItem
-          onClick={() => handleDelete()}
-          LeftIcon={IconTrash}
-          text={t`Delete view`}
-        />
+        <div id="delete-view-menu-item">
+          <MenuItem
+            onClick={() => handleDelete()}
+            LeftIcon={IconTrash}
+            text={t`Delete view`}
+            disabled={currentView?.key === 'INDEX'}
+          />
+        </div>
+        {currentView?.key === 'INDEX' && (
+          <AppTooltip
+            anchorSelect={`#delete-view-menu-item`}
+            content={t`Not available on Default View`}
+            noArrow
+            place="bottom"
+            width="100%"
+          />
+        )}
       </DropdownMenuItemsContainer>
     </>
   );
