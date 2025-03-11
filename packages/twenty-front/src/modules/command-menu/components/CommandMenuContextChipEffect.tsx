@@ -112,16 +112,7 @@ export const CommandMenuContextChipEffect = () => {
     if (commandMenuNavigationStack.length > 1) {
       fetchRecords();
     }
-
-    return () => {
-      setCommandMenuNavigationRecords([]);
-    };
-  }, [
-    commandMenuNavigationMorphItems,
-    commandMenuNavigationStack.length,
-    fetchRecords,
-    setCommandMenuNavigationRecords,
-  ]);
+  }, [commandMenuNavigationStack.length, fetchRecords]);
 
   return null;
 };

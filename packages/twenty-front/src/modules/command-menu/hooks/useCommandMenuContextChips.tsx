@@ -66,6 +66,11 @@ export const useContextChips = () => {
             return null;
           }
 
+          const name = getObjectRecordIdentifier({
+            objectMetadataItem,
+            record,
+          }).name;
+
           return {
             page,
             Icons: [
@@ -74,10 +79,7 @@ export const useContextChips = () => {
                 record={record}
               />,
             ],
-            text: getObjectRecordIdentifier({
-              objectMetadataItem,
-              record,
-            }).name,
+            text: name,
             onClick: isLastChip
               ? undefined
               : () => {

@@ -25,6 +25,7 @@ import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
 import { commandMenuNavigationMorphItemsState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -98,6 +99,8 @@ export const useCommandMenu = () => {
         });
         set(isCommandMenuOpenedState, false);
         set(commandMenuSearchState, '');
+        set(commandMenuNavigationMorphItemsState, new Map());
+        set(commandMenuNavigationRecordsState, []);
         set(commandMenuNavigationStackState, []);
         resetSelectedItem();
         set(hasUserSelectedCommandState, false);
@@ -191,6 +194,9 @@ export const useCommandMenu = () => {
               pageId,
             },
           ]);
+
+          set(commandMenuNavigationRecordsState, []);
+          set(commandMenuNavigationMorphItemsState, new Map());
         } else {
           set(commandMenuNavigationStackState, [
             ...currentNavigationStack,
