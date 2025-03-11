@@ -11,7 +11,7 @@ import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionFormDeleteRecord } from '../WorkflowEditActionFormDeleteRecord';
+import { WorkflowEditActionDeleteRecord } from '../WorkflowEditActionDeleteRecord';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -35,9 +35,9 @@ const DEFAULT_ACTION = {
   },
 } satisfies WorkflowDeleteRecordAction;
 
-const meta: Meta<typeof WorkflowEditActionFormDeleteRecord> = {
-  title: 'Modules/Workflow/WorkflowEditActionFormDeleteRecord',
-  component: WorkflowEditActionFormDeleteRecord,
+const meta: Meta<typeof WorkflowEditActionDeleteRecord> = {
+  title: 'Modules/Workflow/WorkflowEditActionDeleteRecord',
+  component: WorkflowEditActionDeleteRecord,
   parameters: {
     msw: graphqlMocks,
   },
@@ -58,7 +58,7 @@ const meta: Meta<typeof WorkflowEditActionFormDeleteRecord> = {
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowEditActionFormDeleteRecord>;
+type Story = StoryObj<typeof WorkflowEditActionDeleteRecord>;
 
 export const Default: Story = {
   args: {

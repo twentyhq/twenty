@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-type WorkflowEditActionFormServerlessFunctionFieldsProps = {
+type WorkflowEditActionServerlessFunctionFieldsProps = {
   functionInput: FunctionInput;
   path?: string[];
   readonly?: boolean;
@@ -19,13 +19,13 @@ type WorkflowEditActionFormServerlessFunctionFieldsProps = {
   VariablePicker?: VariablePickerComponent;
 };
 
-export const WorkflowEditActionFormServerlessFunctionFields = ({
+export const WorkflowEditActionServerlessFunctionFields = ({
   functionInput,
   path = [],
   readonly,
   onInputChange,
   VariablePicker,
-}: WorkflowEditActionFormServerlessFunctionFieldsProps) => {
+}: WorkflowEditActionServerlessFunctionFieldsProps) => {
   return (
     <>
       {Object.entries(functionInput).map(([inputKey, inputValue]) => {
@@ -37,7 +37,7 @@ export const WorkflowEditActionFormServerlessFunctionFields = ({
             <StyledContainer key={pathKey}>
               <InputLabel>{inputKey}</InputLabel>
               <FormNestedFieldInputContainer>
-                <WorkflowEditActionFormServerlessFunctionFields
+                <WorkflowEditActionServerlessFunctionFields
                   functionInput={inputValue}
                   path={currentPath}
                   readonly={readonly}

@@ -11,7 +11,7 @@ import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionFormUpdateRecord } from '../WorkflowEditActionFormUpdateRecord';
+import { WorkflowEditActionUpdateRecord } from '../WorkflowEditActionUpdateRecord';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -48,9 +48,9 @@ const DEFAULT_ACTION = {
   valid: false,
 } satisfies WorkflowUpdateRecordAction;
 
-const meta: Meta<typeof WorkflowEditActionFormUpdateRecord> = {
-  title: 'Modules/Workflow/WorkflowEditActionFormUpdateRecord',
-  component: WorkflowEditActionFormUpdateRecord,
+const meta: Meta<typeof WorkflowEditActionUpdateRecord> = {
+  title: 'Modules/Workflow/WorkflowEditActionUpdateRecord',
+  component: WorkflowEditActionUpdateRecord,
   parameters: {
     msw: graphqlMocks,
   },
@@ -71,7 +71,7 @@ const meta: Meta<typeof WorkflowEditActionFormUpdateRecord> = {
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowEditActionFormUpdateRecord>;
+type Story = StoryObj<typeof WorkflowEditActionUpdateRecord>;
 
 export const Default: Story = {
   args: {

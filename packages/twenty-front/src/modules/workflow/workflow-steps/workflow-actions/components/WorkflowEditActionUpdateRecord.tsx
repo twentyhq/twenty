@@ -18,7 +18,7 @@ import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-type WorkflowEditActionFormUpdateRecordProps = {
+type WorkflowEditActionUpdateRecordProps = {
   action: WorkflowUpdateRecordAction;
   actionOptions:
     | {
@@ -55,10 +55,10 @@ const AVAILABLE_FIELD_METADATA_TYPES = [
   FieldMetadataType.UUID,
 ];
 
-export const WorkflowEditActionFormUpdateRecord = ({
+export const WorkflowEditActionUpdateRecord = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormUpdateRecordProps) => {
+}: WorkflowEditActionUpdateRecordProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 
