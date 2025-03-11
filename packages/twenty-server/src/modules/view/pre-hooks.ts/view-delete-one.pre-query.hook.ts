@@ -29,7 +29,9 @@ export class ViewDeleteOnePreQueryHook implements WorkspaceQueryHookInstance {
         'view',
       );
 
-    const view = await viewRepository.findOne({ where: { targettedViewId } });
+    const view = await viewRepository.findOne({
+      where: { id: targettedViewId },
+    });
 
     if (!view) {
       throw new ViewException(
