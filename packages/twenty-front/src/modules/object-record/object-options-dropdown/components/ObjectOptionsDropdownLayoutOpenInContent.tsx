@@ -15,7 +15,7 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 
-export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
+export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const { onContentChange } = useOptionsDropdown();
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
   const { currentView } = useGetCurrentViewOnly();
@@ -25,7 +25,7 @@ export const ObjectOptionsDropdownViewSettingsOpenInContent = () => {
     <>
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
-        onClick={() => onContentChange('viewSettings')}
+        onClick={() => onContentChange('layout')}
       >
         {t`Open in`}
       </DropdownMenuHeader>

@@ -18,7 +18,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 
-export const ObjectOptionsDropdownViewSettingsContent = () => {
+export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();
   const { currentView } = useGetCurrentViewOnly();
 
@@ -42,11 +42,11 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        {t`View settings`}
+        {t`Layout`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <MenuItem
-          onClick={() => onContentChange('viewSettingsOpenIn')}
+          onClick={() => onContentChange('layoutOpenIn')}
           LeftIcon={
             recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
               ? IconLayoutSidebarRight
@@ -60,6 +60,7 @@ export const ObjectOptionsDropdownViewSettingsContent = () => {
           }
           hasSubMenu
         />
+
         {viewType === ViewType.Kanban && (
           <MenuItemToggle
             LeftIcon={IconBaselineDensitySmall}
