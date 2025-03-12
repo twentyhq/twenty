@@ -39,6 +39,20 @@ describe('computeCronPatternFromSchedule', () => {
     );
   });
 
+  it('should return the correct cron pattern for DAYS type', () => {
+    const trigger: WorkflowCronTrigger = {
+      name: '',
+      type: WorkflowTriggerType.CRON,
+      settings: {
+        type: 'DAYS',
+        schedule: { day: 31, hour: 10, minute: 30 },
+        outputSchema: {},
+      },
+    };
+
+    expect(computeCronPatternFromSchedule(trigger)).toBe('30 10 */31 * *');
+  });
+
   it('should return the correct cron pattern for HOURS type', () => {
     const trigger: WorkflowCronTrigger = {
       name: '',
