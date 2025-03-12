@@ -106,6 +106,10 @@ msgstr ""
 msgid "About"
 msgstr ""
 
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "Accept"
+msgstr ""
+
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Account"
@@ -1023,6 +1027,10 @@ msgstr ""
 msgid "Developers"
 msgstr ""
 
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "Dial the phone number"
+msgstr ""
+
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -1189,6 +1197,11 @@ msgstr ""
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 msgid "Empty"
+msgstr ""
+
+#: src/modules/softphone/components/WebSoftphone.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "End call"
 msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -1631,6 +1644,10 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Inactive"
+msgstr ""
+
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "incoming"
 msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -2382,6 +2399,10 @@ msgstr ""
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate Key"
+msgstr ""
+
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "Reject"
 msgstr ""
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx

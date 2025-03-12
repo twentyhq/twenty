@@ -11,7 +11,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { RefreshCcw } from 'lucide-react';
+import { useLingui } from '@lingui/react/macro';
 import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useRecoilValue } from 'recoil';
@@ -22,8 +22,6 @@ import {
   RegistererState,
   Session,
   SessionState,
-  SIPExtension,
-  URI,
   UserAgent,
 } from 'sip.js';
 import {
@@ -181,6 +179,8 @@ const WebSoftphone: React.FC = () => {
 
   const { getIcon } = useIcons();
 
+  const { t } = useLingui();
+
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -191,13 +191,11 @@ const WebSoftphone: React.FC = () => {
   );
 
   // const { telephonyExtensions, loading } = useFindAllPABX();
-  const { telephonyExtension, loading: loadingSoftfone } = useGetUserSoftfone({
+  const { telephonyExtension } = useGetUserSoftfone({
     extNum: workspaceMember?.extensionNumber || '',
   });
 
   useEffect(() => {
-    console.log('****telephonyExtension', telephonyExtension);
-
     if (telephonyExtension) {
       setConfig({
         domain: 'suite.pabx.digital',
@@ -395,178 +393,6 @@ const WebSoftphone: React.FC = () => {
     }
   };
 
-  const setupUserAgent = (updatedConfig: SipConfig, uri: URI) => {
-    const wsServer = `${updatedConfig.protocol}${updatedConfig.proxy}`;
-
-    return new UserAgent({
-      uri,
-      userAgentString: 'RamalWeb/1.1.11', // Define o UserAgent
-      transportOptions: {
-        server: wsServer,
-        traceSip: true,
-        wsServers: [wsServer],
-      },
-      sipExtensionReplaces: 'Supported' as SIPExtension,
-      sipExtensionExtraSupported: ['path', 'gruu', '100rel'],
-      authorizationUsername: updatedConfig.username,
-      authorizationPassword: updatedConfig.password,
-      displayName: updatedConfig.username,
-      contactName: updatedConfig.username,
-      noAnswerTimeout: 60,
-      hackIpInContact: false,
-      logLevel: 'error',
-      logConnector: console.log,
-      sessionDescriptionHandlerFactoryOptions: {
-        constraints: {
-          audio: true,
-          video: false,
-        },
-        peerConnectionOptions: {
-          rtcConfiguration: {
-            iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }],
-          },
-        },
-        modifiers: [
-          (description: RTCSessionDescriptionInit) => {
-            description.sdp = description.sdp?.replace(
-              'a=rtpmap:101 telephone-event/8000',
-              'a=rtpmap:101 telephone-event/8000\r\na=fmtp:101 0-15',
-            );
-            return Promise.resolve(description);
-          },
-        ],
-      },
-    });
-  };
-
-  const keepConectionAlive = async (userAgent: UserAgent, uri: URI) => {
-    // Enviar pacotes OPTIONS a cada 30 segundos
-    setInterval(async () => {
-      if (!userAgent || !userAgent.transport) {
-        console.error('Erro: UserAgent ou transporte não está disponível.');
-        return;
-      }
-
-      const optionsMessage = `OPTIONS sip:${uri} SIP/2.0
-      Via: SIP/2.0/WSS example.com;branch=z9hG4bK776asdhds
-      Max-Forwards: 70
-      To: <sip:${uri}>
-      From: <sip:${uri}>;tag=12345
-      Call-ID: ${Math.random().toString(36).slice(2, 12)}
-      CSeq: 1 OPTIONS
-      Content-Length: 0`;
-
-      await userAgent.transport.send(optionsMessage);
-      console.log('Pacote OPTIONS enviado para manter a conexão ativa.');
-    }, 30000); // A cada 30 segundos
-  };
-
-  const onInvite = async (invitation: Invitation) => {
-    console.log('Incoming call received');
-
-    await cleanupSession();
-
-    invitationRef.current = invitation;
-    const fromNumber = invitation.remoteIdentity.uri.user;
-    setCallState((prev) => ({
-      ...prev,
-      incomingCall: true,
-      incomingCallNumber: fromNumber || '',
-      ringingStartTime: Date.now(),
-      callStatus: CallStatus.INCOMING_CALL,
-    }));
-
-    invitation.stateChange.addListener(async (state: SessionState) => {
-      console.log('Incoming call state changed:', state);
-      if (state === SessionState.Establishing) {
-        setCallState((prev) => ({
-          ...prev,
-          callStatus: CallStatus.CONNECTING,
-        }));
-      } else if (state === SessionState.Established) {
-        sessionRef.current = invitation;
-        setupRemoteMedia(invitation);
-        setCallState((prev) => ({
-          ...prev,
-          isInCall: true,
-          incomingCall: false,
-          incomingCallNumber: '',
-          callStatus: CallStatus.CONNECTED,
-          callStartTime: Date.now(),
-          ringingStartTime: null,
-        }));
-        console.log('Incoming call accepted:', invitationRef.current);
-      } else if (state === SessionState.Terminated) {
-        await cleanupSession();
-      }
-    });
-  };
-
-  const onConnect = async (userAgent: UserAgent) => {
-    console.log('Transport connected');
-    try {
-      const registerer = new Registerer(userAgent, {
-        expires: 300, //tempo de registro
-        extraHeaders: ['X-oauth-dazsoft: 1'],
-        regId: 1,
-      });
-
-      registererRef.current = registerer;
-
-      registerer.stateChange.addListener(async (newState: RegistererState) => {
-        console.log('Registerer state changed:', newState);
-        switch (newState) {
-          case RegistererState.Registered:
-            setCallState((prev) => ({
-              ...prev,
-              isRegistered: true,
-              isRegistering: false,
-            }));
-            requestMediaPermissions();
-            break;
-          case RegistererState.Unregistered:
-          case RegistererState.Terminated:
-            setCallState((prev) => ({
-              ...prev,
-              isRegistered: false,
-              isRegistering: false,
-            }));
-            await cleanupSession();
-            break;
-        }
-      });
-
-      await registerer.register();
-      console.log('Registration request sent');
-
-      // Set interval to renew registration
-      registerIntervalRef.current = window.setInterval(() => {
-        if (registererRef.current) {
-          registererRef.current.register().catch((error) => {
-            console.error('Error renewing registration:', error);
-          });
-        }
-      }, 270000); // Renew registration every 4.5 minutes (270000 ms)
-    } catch (error) {
-      console.error('Registration error:', error);
-      setCallState((prev) => ({
-        ...prev,
-        isRegistered: false,
-        isRegistering: false,
-      }));
-    }
-  };
-
-  const onDisconnect = async (error?: Error) => {
-    console.log('Transport disconnected', error);
-    setCallState((prev) => ({
-      ...prev,
-      isRegistered: false,
-      isRegistering: false,
-    }));
-    await cleanupSession();
-  };
-
   const initializeSIP = async (updatedConfig: SipConfig | undefined) => {
     if (!updatedConfig) return;
 
@@ -589,21 +415,183 @@ const WebSoftphone: React.FC = () => {
         throw new Error('Failed to create URI');
       }
 
-      const userAgent = setupUserAgent(updatedConfig, uri);
+      const wsServer = `${updatedConfig.protocol}${updatedConfig.proxy}`;
+
+      const userAgent = new UserAgent({
+        uri,
+        userAgentString: 'RamalWeb/1.1.11', // Define o UserAgent
+        transportOptions: {
+          server: wsServer,
+          traceSip: true,
+          wsServers: [wsServer],
+        },
+        authorizationUsername: updatedConfig.username,
+        authorizationPassword: updatedConfig.password,
+        displayName: updatedConfig.username,
+        contactName: updatedConfig.username,
+        noAnswerTimeout: 60,
+        hackIpInContact: false,
+        logLevel: 'error',
+        logConnector: console.log,
+        sessionDescriptionHandlerFactoryOptions: {
+          constraints: {
+            audio: true,
+            video: false,
+          },
+          peerConnectionOptions: {
+            rtcConfiguration: {
+              iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }],
+            },
+          },
+          modifiers: [
+            (description: RTCSessionDescriptionInit) => {
+              description.sdp = description.sdp?.replace(
+                'a=rtpmap:101 telephone-event/8000',
+                'a=rtpmap:101 telephone-event/8000\r\na=fmtp:101 0-15',
+              );
+              return Promise.resolve(description);
+            },
+          ],
+        },
+      });
 
       // Manter o UserAgent na referência
       userAgentRef.current = userAgent;
 
-      userAgent.delegate = { onInvite: onInvite };
-
-      userAgent.transport.onConnect = () => onConnect(userAgent);
-
-      userAgent.transport.onDisconnect = onDisconnect;
-
-      // keepConectionAlive(userAgent, uri);
+      // Enviar pacotes OPTIONS a cada 30 segundos
+      setInterval(() => {
+        // const optionsRequest = new Request('OPTIONS', {
+        //   to: uri,
+        //   from: uri,
+        //   headers: {
+        //     to: { uri: uri },
+        //     from: { uri: uri },
+        //     'max-forwards': 70,
+        //   },
+        // }); ISSO NAO FAZ SENTIDO MAS TA FUNCIONANDO.
+        try {
+          userAgent.transport.send('aa');
+        } catch (err) {
+          console.error('Error sending OPTIONS packet:', err);
+        }
+        console.log('Pacote OPTIONS enviado para manter a conexão ativa.');
+      }, 30000); // Intervalo de 30 segundos
 
       // Evento para encerrar a conexão quando a página for fechada ou recarregada
-      window.addEventListener('beforeunload', onComponentUnmount);
+      window.addEventListener('beforeunload', () => {
+        if (userAgentRef.current) {
+          userAgentRef.current.stop(); // Encerra a conexão SIP
+          console.log('Conexão SIP encerrada.');
+        }
+      });
+
+      userAgent.delegate = {
+        onInvite: (invitation) => {
+          console.log('Incoming call received');
+
+          cleanupSession();
+
+          invitationRef.current = invitation;
+          const fromNumber = invitation.remoteIdentity.uri.user;
+          setCallState((prev) => ({
+            ...prev,
+            incomingCall: true,
+            incomingCallNumber: fromNumber || '',
+            ringingStartTime: Date.now(),
+            callStatus: CallStatus.INCOMING_CALL,
+          }));
+
+          invitation.stateChange.addListener((state: SessionState) => {
+            console.log('Incoming call state changed:', state);
+            if (state === SessionState.Establishing) {
+              setCallState((prev) => ({
+                ...prev,
+                callStatus: CallStatus.CONNECTING,
+              }));
+            } else if (state === SessionState.Established) {
+              sessionRef.current = invitation;
+              setupRemoteMedia(invitation);
+              setCallState((prev) => ({
+                ...prev,
+                isInCall: true,
+                incomingCall: false,
+                incomingCallNumber: '',
+                callStatus: CallStatus.CONNECTED,
+                callStartTime: Date.now(),
+                ringingStartTime: null,
+              }));
+              console.log('Incoming call accepted:', invitationRef.current);
+            } else if (state === SessionState.Terminated) {
+              cleanupSession();
+            }
+          });
+        },
+      };
+
+      userAgent.transport.onConnect = async () => {
+        console.log('Transport connected');
+        try {
+          const registerer = new Registerer(userAgent, {
+            expires: 10, //tempo de registro
+            extraHeaders: ['X-oauth-dazsoft: 1'],
+            regId: 1,
+          });
+
+          registererRef.current = registerer;
+
+          registerer.stateChange.addListener((newState: RegistererState) => {
+            console.log('Registerer state changed:', newState);
+            switch (newState) {
+              case RegistererState.Registered:
+                setCallState((prev) => ({
+                  ...prev,
+                  isRegistered: true,
+                  isRegistering: false,
+                }));
+                requestMediaPermissions();
+                break;
+              case RegistererState.Unregistered:
+              case RegistererState.Terminated:
+                setCallState((prev) => ({
+                  ...prev,
+                  isRegistered: false,
+                  isRegistering: false,
+                }));
+                cleanupSession();
+                break;
+            }
+          });
+
+          await registerer.register();
+          console.log('Registration request sent');
+
+          // Set interval to renew registration
+          registerIntervalRef.current = window.setInterval(() => {
+            if (registererRef.current) {
+              registererRef.current.register().catch((error) => {
+                console.error('Error renewing registration:', error);
+              });
+            }
+          }, 20000); // Renew registration every 4.5 minutes (270000 ms)
+        } catch (error) {
+          console.error('Registration error:', error);
+          setCallState((prev) => ({
+            ...prev,
+            isRegistered: false,
+            isRegistering: false,
+          }));
+        }
+      };
+
+      userAgent.transport.onDisconnect = (error?: Error) => {
+        console.log('Transport disconnected', error);
+        setCallState((prev) => ({
+          ...prev,
+          isRegistered: false,
+          isRegistering: false,
+        }));
+        cleanupSession();
+      };
 
       await userAgent.start();
       console.log('UserAgent started');
@@ -773,60 +761,18 @@ const WebSoftphone: React.FC = () => {
     }));
   };
 
-  const KeyboradOffIcon = getIcon('IconKeyboardOff');
+  const KeyboardOffIcon = getIcon('IconKeyboardOff');
+  const KeyboardIcon = getIcon('IconKeyboard');
   const PhoneIncoming = getIcon('IconPhoneIncoming');
   const IconPhoneOutgoing = getIcon('IconPhoneOutgoing');
   const IconMicrophoneOff = getIcon('IconMicrophoneOff');
 
   const theme = useTheme();
 
-  // const sendDTMF = (tone: string) => {
-  //   console.log('Sending DTMF tone:', tone);
-  //   console.log(
-  //     'Comparacao',
-  //     sessionRef.current?.state,
-  //     ' x ',
-  //     SessionState.Established,
-  //   );
-  //   // sessionManager?.transfer(session, `sip:${transferTarget}@${domain}`);
-  //   console.log('Session ref', sessionRef.current);
-
-  //   if (sessionRef.current?.state === SessionState.Established) {
-  //     const dtmfSender = (
-  //       sessionRef.current.sessionDescriptionHandler as
-  //         | SessionDescriptionHandler
-  //         | undefined
-  //     )?.peerConnection
-  //       ?.getSenders()
-  //       .find((sender) => sender.track?.kind === 'audio')?.dtmf;
-
-  //     console.log('DtmfSender:', dtmfSender);
-  //     console.log(
-  //       'SessionDescriptionHandler:',
-  //       (
-  //         sessionRef.current.sessionDescriptionHandler as
-  //           | SessionDescriptionHandler
-  //           | undefined
-  //       )?.peerConnection?.getSenders(),
-  //     );
-
-  //     if (dtmfSender) {
-  //       console.log(`Sending DTMF: ${tone}`);
-  //       dtmfSender.insertDTMF(tone, 1000);
-  //     } else {
-  //       console.error('DTMF sender not available');
-  //     }
-  //   }
-  // };
-
   return (
     <Draggable>
       <StyledContainer>
         <audio ref={remoteAudioRef} autoPlay />
-
-        {/* callState.incomingCall && !callState.isInCall
-callState.incomingCall && !callState.isInCall
-callState.incomingCall && !callState.isInCall */}
 
         {callState.incomingCall && !callState.isInCall ? (
           <StyledIncomingCall>
@@ -834,7 +780,7 @@ callState.incomingCall && !callState.isInCall */}
               color={theme.font.color.secondary}
               size={theme.icon.size.md}
             />
-            <StyledIncomingText>incoming</StyledIncomingText>
+            <StyledIncomingText>{t`incoming`}</StyledIncomingText>
           </StyledIncomingCall>
         ) : (
           <StyledStatusAndTimer>
@@ -846,8 +792,8 @@ callState.incomingCall && !callState.isInCall */}
                     ? 'registering'
                     : 'offline'
               }
+              extension={config?.username}
             />
-            {/* callState.isInCall */}
             {(callState.isInCall || callState.ringingStartTime) && (
               <StyledIncomingTimerAndIcon>
                 <IconPhoneOutgoing
@@ -872,10 +818,10 @@ callState.incomingCall && !callState.isInCall */}
               </StyledIncomingNumber>
               <StyledIncomingButtonContainer>
                 <StyledIncomingButton accept={false} onClick={handleRejectCall}>
-                  Reject
+                  {t`Reject`}
                 </StyledIncomingButton>
                 <StyledIncomingButton accept={true} onClick={handleAcceptCall}>
-                  Accept
+                  {t`Accept`}
                 </StyledIncomingButton>
               </StyledIncomingButtonContainer>
             </>
@@ -883,10 +829,9 @@ callState.incomingCall && !callState.isInCall */}
             <div style={{ width: '100%' }}>
               <StyledDefaultContainer>
                 <StyledTextAndCallButton>
-                  {/* !callState.isInCall && !callState.callStatus */}
                   {!callState.isInCall && !callState.callStatus && (
                     <TextInput
-                      placeholder="Dial the phone number"
+                      placeholder={t`Dial the phone number`}
                       fullWidth
                       value={callState.currentNumber}
                       onChange={(e) => {
@@ -897,16 +842,27 @@ callState.incomingCall && !callState.isInCall */}
                           }));
                         }
                       }}
-                      RightIcon={() => (
-                        <KeyboradOffIcon
-                          color={theme.font.color.tertiary}
-                          size={theme.icon.size.md}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() =>
-                            setIsKeyboardExpanded(!isKeyboardExpanded)
-                          }
-                        />
-                      )}
+                      RightIcon={() =>
+                        isKeyboardExpanded ? (
+                          <KeyboardOffIcon
+                            color={theme.font.color.tertiary}
+                            size={theme.icon.size.md}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              setIsKeyboardExpanded(!isKeyboardExpanded)
+                            }
+                          />
+                        ) : (
+                          <KeyboardIcon
+                            color={theme.font.color.tertiary}
+                            size={theme.icon.size.md}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              setIsKeyboardExpanded(!isKeyboardExpanded)
+                            }
+                          />
+                        )
+                      }
                       disabled={callState.isInCall}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && callState.isRegistered) {
@@ -916,9 +872,6 @@ callState.incomingCall && !callState.isInCall */}
                     />
                   )}
 
-                  {/* callState.isRegistered &&
-                  !callState.isInCall &&
-                  !callState.callStatus &&  */}
                   {callState.isRegistered &&
                     !callState.isInCall &&
                     !callState.callStatus &&
@@ -961,12 +914,10 @@ callState.incomingCall && !callState.isInCall */}
                   )}
               </StyledDefaultContainer>
 
-              {/* callState.isInCall */}
               {callState.isInCall && (
                 <StyledOngoingCallContainer>
                   <StyledIncomingNumber alignSelf="center">
-                    {callState.incomingCallNumber}
-                    +55 11 99999-9999
+                    {callState.currentNumber}
                   </StyledIncomingNumber>
 
                   <StyledControlsContainer column={false} gap={5}>
@@ -1002,7 +953,7 @@ callState.incomingCall && !callState.isInCall */}
                   </StyledControlsContainer>
 
                   <StyledEndButton onClick={cleanupSession}>
-                    End call
+                    {t`End call`}
                   </StyledEndButton>
                 </StyledOngoingCallContainer>
               )}
@@ -1010,17 +961,8 @@ callState.incomingCall && !callState.isInCall */}
               {(callState.callStatus === CallStatus.CALLING ||
                 callState.callStatus === CallStatus.STARTING_CALL) && (
                 <StyledEndButton onClick={cleanupSession}>
-                  End call
+                  {t`End call`}
                 </StyledEndButton>
-              )}
-
-              {!callState.isRegistered && (
-                <button
-                  onClick={() => initializeSIP(config)}
-                  className="p-1 rounded-full hover:bg-blue-50 text-blue-600"
-                >
-                  <RefreshCcw className="w-4 h-4" />
-                </button>
               )}
             </div>
           )}
@@ -1031,3 +973,218 @@ callState.incomingCall && !callState.isInCall */}
 };
 
 export default WebSoftphone;
+
+// const setupUserAgent = (updatedConfig: SipConfig, uri: URI) => {
+//   const wsServer = `${updatedConfig.protocol}${updatedConfig.proxy}`;
+
+//   return new UserAgent({
+//     uri,
+//     userAgentString: 'RamalWeb/1.1.11', // Define o UserAgent
+//     transportOptions: {
+//       server: wsServer,
+//       traceSip: true,
+//       wsServers: [wsServer],
+//     },
+//     sipExtensionReplaces: 'Supported' as SIPExtension,
+//     sipExtensionExtraSupported: ['path', 'gruu', '100rel'],
+//     authorizationUsername: updatedConfig.username,
+//     authorizationPassword: updatedConfig.password,
+//     displayName: updatedConfig.username,
+//     contactName: updatedConfig.username,
+//     noAnswerTimeout: 60,
+//     hackIpInContact: false,
+//     logLevel: 'error',
+//     logConnector: console.log,
+//     sessionDescriptionHandlerFactoryOptions: {
+//       constraints: {
+//         audio: true,
+//         video: false,
+//       },
+//       peerConnectionOptions: {
+//         rtcConfiguration: {
+//           iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }],
+//         },
+//       },
+//       modifiers: [
+//         (description: RTCSessionDescriptionInit) => {
+//           description.sdp = description.sdp?.replace(
+//             'a=rtpmap:101 telephone-event/8000',
+//             'a=rtpmap:101 telephone-event/8000\r\na=fmtp:101 0-15',
+//           );
+//           return Promise.resolve(description);
+//         },
+//       ],
+//     },
+//   });
+// };
+
+// const keepConectionAlive = async (userAgent: UserAgent, uri: URI) => {
+//   // Enviar pacotes OPTIONS a cada 30 segundos
+//   setInterval(async () => {
+//     if (!userAgent || !userAgent.transport) {
+//       console.error('Erro: UserAgent ou transporte não está disponível.');
+//       return;
+//     }
+
+//     try {
+//       const optionsMessage = `OPTIONS sip:${uri} SIP/2.0
+//       Via: SIP/2.0/WSS example.com;branch=z9hG4bK776asdhds
+//       Max-Forwards: 70
+//       To: <sip:${uri}>
+//       From: <sip:${uri}>;tag=12345
+//       Call-ID: ${Math.random().toString(36).slice(2, 12)}
+//       CSeq: 1 OPTIONS
+//       Content-Length: 0`;
+
+//       await userAgent.transport.send(optionsMessage);
+//       console.log('Pacote OPTIONS enviado para manter a conexão ativa.');
+//     } catch (error) {
+//       console.error('Erro ao enviar pacote OPTIONS:', error);
+//     }
+//   }, 30000); // A cada 30 segundos
+// };
+
+// const onInvite = async (invitation: Invitation) => {
+//   console.log('Incoming call received');
+
+//   await cleanupSession();
+
+//   invitationRef.current = invitation;
+//   const fromNumber = invitation.remoteIdentity.uri.user;
+//   setCallState((prev) => ({
+//     ...prev,
+//     incomingCall: true,
+//     incomingCallNumber: fromNumber || '',
+//     ringingStartTime: Date.now(),
+//     callStatus: CallStatus.INCOMING_CALL,
+//   }));
+
+//   invitation.stateChange.addListener(async (state: SessionState) => {
+//     console.log('Incoming call state changed:', state);
+//     if (state === SessionState.Establishing) {
+//       setCallState((prev) => ({
+//         ...prev,
+//         callStatus: CallStatus.CONNECTING,
+//       }));
+//     } else if (state === SessionState.Established) {
+//       sessionRef.current = invitation;
+//       setupRemoteMedia(invitation);
+//       setCallState((prev) => ({
+//         ...prev,
+//         isInCall: true,
+//         incomingCall: false,
+//         incomingCallNumber: '',
+//         callStatus: CallStatus.CONNECTED,
+//         callStartTime: Date.now(),
+//         ringingStartTime: null,
+//       }));
+//       console.log('Incoming call accepted:', invitationRef.current);
+//     } else if (state === SessionState.Terminated) {
+//       await cleanupSession();
+//     }
+//   });
+// };
+
+// const onConnect = async (userAgent: UserAgent) => {
+//   console.log('Transport connected');
+//   try {
+//     const registerer = new Registerer(userAgent, {
+//       expires: 300, //tempo de registro
+//       extraHeaders: ['X-oauth-dazsoft: 1'],
+//       regId: 1,
+//     });
+
+//     registererRef.current = registerer;
+
+//     registerer.stateChange.addListener(async (newState: RegistererState) => {
+//       console.log('Registerer state changed:', newState);
+//       switch (newState) {
+//         case RegistererState.Registered:
+//           setCallState((prev) => ({
+//             ...prev,
+//             isRegistered: true,
+//             isRegistering: false,
+//           }));
+//           requestMediaPermissions();
+//           break;
+//         case RegistererState.Unregistered:
+//         case RegistererState.Terminated:
+//           setCallState((prev) => ({
+//             ...prev,
+//             isRegistered: false,
+//             isRegistering: false,
+//           }));
+//           await cleanupSession();
+//           break;
+//       }
+//     });
+
+//     await registerer.register();
+//     console.log('Registration request sent');
+
+//     // Set interval to renew registration
+//     registerIntervalRef.current = window.setInterval(() => {
+//       if (registererRef.current) {
+//         registererRef.current.register().catch((error) => {
+//           console.error('Error renewing registration:', error);
+//         });
+//       }
+//     }, 270000); // Renew registration every 4.5 minutes (270000 ms)
+//   } catch (error) {
+//     console.error('Registration error:', error);
+//     setCallState((prev) => ({
+//       ...prev,
+//       isRegistered: false,
+//       isRegistering: false,
+//     }));
+//   }
+// };
+
+// const onDisconnect = async (error?: Error) => {
+//   console.log('Transport disconnected', error);
+//   setCallState((prev) => ({
+//     ...prev,
+//     isRegistered: false,
+//     isRegistering: false,
+//   }));
+//   await cleanupSession();
+// };
+
+// const sendDTMF = (tone: string) => {
+//   console.log('Sending DTMF tone:', tone);
+//   console.log(
+//     'Comparacao',
+//     sessionRef.current?.state,
+//     ' x ',
+//     SessionState.Established,
+//   );
+//   // sessionManager?.transfer(session, `sip:${transferTarget}@${domain}`);
+//   console.log('Session ref', sessionRef.current);
+
+//   if (sessionRef.current?.state === SessionState.Established) {
+//     const dtmfSender = (
+//       sessionRef.current.sessionDescriptionHandler as
+//         | SessionDescriptionHandler
+//         | undefined
+//     )?.peerConnection
+//       ?.getSenders()
+//       .find((sender) => sender.track?.kind === 'audio')?.dtmf;
+
+//     console.log('DtmfSender:', dtmfSender);
+//     console.log(
+//       'SessionDescriptionHandler:',
+//       (
+//         sessionRef.current.sessionDescriptionHandler as
+//           | SessionDescriptionHandler
+//           | undefined
+//       )?.peerConnection?.getSenders(),
+//     );
+
+//     if (dtmfSender) {
+//       console.log(`Sending DTMF: ${tone}`);
+//       dtmfSender.insertDTMF(tone, 1000);
+//     } else {
+//       console.error('DTMF sender not available');
+//     }
+//   }
+// };

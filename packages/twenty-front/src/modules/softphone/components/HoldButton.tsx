@@ -130,7 +130,7 @@ const HoldButton: React.FC<HoldButtonProps> = ({
 
   const { getIcon } = useIcons();
 
-  const IconPhonePause = getIcon('IconPhonePause');
+  const IconPhonePause = getIcon('IconPlayerPause');
 
   const theme = useTheme();
 

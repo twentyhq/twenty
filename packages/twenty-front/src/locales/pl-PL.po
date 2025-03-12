@@ -111,6 +111,10 @@ msgstr "Przerwij"
 msgid "About"
 msgstr "O programie"
 
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "Accept"
+msgstr ""
+
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Account"
@@ -1028,6 +1032,10 @@ msgstr "Zniszcz"
 msgid "Developers"
 msgstr "Deweloperzy"
 
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "Dial the phone number"
+msgstr ""
+
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -1195,6 +1203,11 @@ msgstr "Pracownicy"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 msgid "Empty"
 msgstr "Puste"
+
+#: src/modules/softphone/components/WebSoftphone.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "End call"
+msgstr ""
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
@@ -1637,6 +1650,10 @@ msgstr "Importowanie"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Inactive"
 msgstr "Nieaktywny"
+
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "incoming"
+msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Indexes"
@@ -2388,6 +2405,10 @@ msgstr "Wygeneruj ponownie klucz"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate Key"
 msgstr "Wygeneruj ponownie klucz"
+
+#: src/modules/softphone/components/WebSoftphone.tsx
+msgid "Reject"
+msgstr ""
 
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
