@@ -141,7 +141,7 @@ export const ShowPageSummaryCard = ({
   return (
     <StyledShowPageSummaryCard isMobile={isMobile}>
       <StyledAvatarWrapper
-        isAvatarEditable={!!onUploadPicture}
+        isAvatarEditable={isDefined(onUploadPicture)}
         hasIcon={isDefined(icon)}
       >
         <Avatar
