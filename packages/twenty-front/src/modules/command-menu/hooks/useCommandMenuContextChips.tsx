@@ -94,19 +94,21 @@ export const useCommandMenuContextChips = () => {
 
         return {
           page,
-          Icons: [
-            <StyledIconWrapper>
-              <page.pageIcon
-                size={theme.icon.size.sm}
-                color={
-                  isDefined(page.pageIconColor) &&
-                  page.pageIconColor !== 'currentColor'
-                    ? page.pageIconColor
-                    : theme.font.color.tertiary
-                }
-              />
-            </StyledIconWrapper>,
-          ],
+          Icons: isLastChip
+            ? [<page.pageIcon size={theme.icon.size.sm} />]
+            : [
+                <StyledIconWrapper>
+                  <page.pageIcon
+                    size={theme.icon.size.sm}
+                    color={
+                      isDefined(page.pageIconColor) &&
+                      page.pageIconColor !== 'currentColor'
+                        ? page.pageIconColor
+                        : theme.font.color.tertiary
+                    }
+                  />
+                </StyledIconWrapper>,
+              ],
           text: page.pageTitle,
           onClick: isLastChip
             ? undefined
