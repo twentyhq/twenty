@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared';
 import { z } from 'zod';
 
 // Base schemas
@@ -87,7 +88,7 @@ export const workflowFormActionSettingsSchema =
       z.object({
         label: z.string(),
         name: z.string(),
-        type: z.string(),
+        type: z.nativeEnum(FieldMetadataType),
         placeholder: z.string().optional(),
         settings: z.record(z.any()),
       }),

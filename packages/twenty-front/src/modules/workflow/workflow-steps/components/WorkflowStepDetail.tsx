@@ -22,11 +22,11 @@ const WorkflowEditActionServerlessFunction = lazy(() =>
   })),
 );
 
-const WorkflowReadonlyActionFormServerlessFunction = lazy(() =>
+const WorkflowReadonlyActionServerlessFunction = lazy(() =>
   import(
     '@/workflow/workflow-steps/workflow-actions/components/WorkflowReadonlyActionServerlessFunction'
   ).then((module) => ({
-    default: module.WorkflowReadonlyActionFormServerlessFunction,
+    default: module.WorkflowReadonlyActionServerlessFunction,
   })),
 );
 
@@ -107,7 +107,7 @@ export const WorkflowStepDetail = ({
           return (
             <Suspense fallback={<RightDrawerSkeletonLoader />}>
               {props.readonly ? (
-                <WorkflowReadonlyActionFormServerlessFunction
+                <WorkflowReadonlyActionServerlessFunction
                   key={stepId}
                   action={stepDefinition.definition}
                 />

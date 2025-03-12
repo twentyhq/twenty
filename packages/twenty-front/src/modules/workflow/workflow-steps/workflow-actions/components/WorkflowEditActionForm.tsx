@@ -87,7 +87,7 @@ export const WorkflowEditActionForm = ({
       />
       <WorkflowStepBody>
         {action.settings.input.map((field) => (
-          <FormFieldInputContainer>
+          <FormFieldInputContainer key={field.name}>
             {field.label ? <InputLabel>{field.label}</InputLabel> : null}
 
             <FormFieldInputRowContainer>

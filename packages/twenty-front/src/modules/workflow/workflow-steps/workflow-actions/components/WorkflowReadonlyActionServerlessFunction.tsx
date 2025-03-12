@@ -27,13 +27,13 @@ const StyledCodeEditorContainer = styled.div`
   flex-direction: column;
 `;
 
-type WorkflowReadonlyActionFormServerlessFunctionProps = {
+type WorkflowReadonlyActionServerlessFunctionProps = {
   action: WorkflowCodeAction;
 };
 
-export const WorkflowReadonlyActionFormServerlessFunction = ({
+export const WorkflowReadonlyActionServerlessFunction = ({
   action,
-}: WorkflowReadonlyActionFormServerlessFunctionProps) => {
+}: WorkflowReadonlyActionServerlessFunctionProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;

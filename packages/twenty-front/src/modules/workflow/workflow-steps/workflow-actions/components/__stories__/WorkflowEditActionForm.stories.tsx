@@ -2,6 +2,7 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionForm } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, within } from '@storybook/test';
+import { FieldMetadataType } from 'twenty-shared';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -17,14 +18,14 @@ const DEFAULT_ACTION = {
     input: [
       {
         name: 'company',
-        type: 'text',
+        type: FieldMetadataType.TEXT,
         label: 'Company',
         placeholder: 'Select a company',
         settings: {},
       },
       {
         name: 'number',
-        type: 'number',
+        type: FieldMetadataType.NUMBER,
         label: 'Number',
         placeholder: '1000',
         settings: {},
