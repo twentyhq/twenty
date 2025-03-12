@@ -1,4 +1,4 @@
-import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
+import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
@@ -11,17 +11,29 @@ import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionFormDeleteRecord } from '../WorkflowEditActionFormDeleteRecord';
+import { WorkflowEditActionUpdateRecord } from '../WorkflowEditActionUpdateRecord';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
-  name: 'Delete Record',
-  type: 'DELETE_RECORD',
-  valid: false,
+  name: 'Update Record',
+  type: 'UPDATE_RECORD',
   settings: {
     input: {
       objectName: 'person',
       objectRecordId: '',
+      objectRecord: {},
+      fieldsToUpdate: [
+        'updatedAt',
+        'averageEstimatedNumberOfAtomsInTheUniverse',
+        'comments',
+        'createdAt',
+        'deletedAt',
+        'name',
+        'participants',
+        'percentageOfCompletion',
+        'score',
+        'shortNotes',
+      ],
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -33,11 +45,12 @@ const DEFAULT_ACTION = {
       },
     },
   },
-} satisfies WorkflowDeleteRecordAction;
+  valid: false,
+} satisfies WorkflowUpdateRecordAction;
 
-const meta: Meta<typeof WorkflowEditActionFormDeleteRecord> = {
-  title: 'Modules/Workflow/WorkflowEditActionFormDeleteRecord',
-  component: WorkflowEditActionFormDeleteRecord,
+const meta: Meta<typeof WorkflowEditActionUpdateRecord> = {
+  title: 'Modules/Workflow/WorkflowEditActionUpdateRecord',
+  component: WorkflowEditActionUpdateRecord,
   parameters: {
     msw: graphqlMocks,
   },
@@ -58,7 +71,7 @@ const meta: Meta<typeof WorkflowEditActionFormDeleteRecord> = {
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowEditActionFormDeleteRecord>;
+type Story = StoryObj<typeof WorkflowEditActionUpdateRecord>;
 
 export const Default: Story = {
   args: {
@@ -77,7 +90,7 @@ export const DisabledWithEmptyValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const titleInput = await canvas.findByDisplayValue('Delete Record');
+    const titleInput = await canvas.findByDisplayValue('Update Record');
 
     expect(titleInput).toBeDisabled();
 
@@ -94,11 +107,26 @@ export const DisabledWithEmptyValues: Story = {
 
     const openRecordSelectButton = within(
       await canvas.findByTestId(
-        'workflow-edit-action-record-delete-object-record-id',
+        'workflow-edit-action-record-update-object-record-id',
       ),
     ).queryByRole('button');
 
     expect(openRecordSelectButton).not.toBeInTheDocument();
+
+    const firstSelectedUpdatableField = await within(
+      await canvas.findByTestId(
+        'workflow-edit-action-record-update-fields-to-update',
+      ),
+    ).findByText('Creation date');
+
+    await userEvent.click(firstSelectedUpdatableField);
+
+    {
+      const searchInputInSelectDropdown =
+        canvas.queryByPlaceholderText('Search');
+
+      expect(searchInputInSelectDropdown).not.toBeInTheDocument();
+    }
   },
 };
 
@@ -123,7 +151,7 @@ export const DisabledWithDefaultStaticValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const titleInput = await canvas.findByDisplayValue('Delete Record');
+    const titleInput = await canvas.findByDisplayValue('Update Record');
 
     expect(titleInput).toBeDisabled();
 
@@ -138,19 +166,33 @@ export const DisabledWithDefaultStaticValues: Story = {
       expect(searchInputInSelectDropdown).not.toBeInTheDocument();
     }
 
+    const selectedRecord = await canvas.findByText(
+      `${peopleMock.name.firstName} ${peopleMock.name.lastName}`,
+    );
+    expect(selectedRecord).toBeVisible();
+
     const openRecordSelectButton = within(
       await canvas.findByTestId(
-        'workflow-edit-action-record-delete-object-record-id',
+        'workflow-edit-action-record-update-object-record-id',
       ),
     ).queryByRole('button');
 
     expect(openRecordSelectButton).not.toBeInTheDocument();
 
-    const selectedRecordToDelete = await canvas.findByText(
-      `${peopleMock.name.firstName} ${peopleMock.name.lastName}`,
-    );
+    const firstSelectedUpdatableField = await within(
+      await canvas.findByTestId(
+        'workflow-edit-action-record-update-fields-to-update',
+      ),
+    ).findByText('Creation date');
 
-    expect(selectedRecordToDelete).toBeVisible();
+    await userEvent.click(firstSelectedUpdatableField);
+
+    {
+      const searchInputInSelectDropdown =
+        canvas.queryByPlaceholderText('Search');
+
+      expect(searchInputInSelectDropdown).not.toBeInTheDocument();
+    }
   },
 };
 
@@ -173,7 +215,7 @@ export const DisabledWithDefaultVariableValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const titleInput = await canvas.findByDisplayValue('Delete Record');
+    const titleInput = await canvas.findByDisplayValue('Update Record');
 
     expect(titleInput).toBeDisabled();
 
@@ -190,10 +232,25 @@ export const DisabledWithDefaultVariableValues: Story = {
 
     const openRecordSelectButton = within(
       await canvas.findByTestId(
-        'workflow-edit-action-record-delete-object-record-id',
+        'workflow-edit-action-record-update-object-record-id',
       ),
     ).queryByRole('button');
 
     expect(openRecordSelectButton).not.toBeInTheDocument();
+
+    const firstSelectedUpdatableField = await within(
+      await canvas.findByTestId(
+        'workflow-edit-action-record-update-fields-to-update',
+      ),
+    ).findByText('Creation date');
+
+    await userEvent.click(firstSelectedUpdatableField);
+
+    {
+      const searchInputInSelectDropdown =
+        canvas.queryByPlaceholderText('Search');
+
+      expect(searchInputInSelectDropdown).not.toBeInTheDocument();
+    }
   },
 };

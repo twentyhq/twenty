@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared';
 import { z } from 'zod';
 
 // Base schemas
@@ -81,6 +82,19 @@ export const workflowFindRecordsActionSettingsSchema =
     }),
   });
 
+export const workflowFormActionSettingsSchema =
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.array(
+      z.object({
+        label: z.string(),
+        name: z.string(),
+        type: z.nativeEnum(FieldMetadataType),
+        placeholder: z.string().optional(),
+        settings: z.record(z.any()),
+      }),
+    ),
+  });
+
 // Action schemas
 export const workflowCodeActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('CODE'),
@@ -118,6 +132,11 @@ export const workflowFindRecordsActionSchema = baseWorkflowActionSchema.extend({
   settings: workflowFindRecordsActionSettingsSchema,
 });
 
+export const workflowFormActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('FORM'),
+  settings: workflowFormActionSettingsSchema,
+});
+
 // Combined action schema
 export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,
@@ -126,6 +145,7 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowUpdateRecordActionSchema,
   workflowDeleteRecordActionSchema,
   workflowFindRecordsActionSchema,
+  workflowFormActionSchema,
 ]);
 
 // Trigger schemas

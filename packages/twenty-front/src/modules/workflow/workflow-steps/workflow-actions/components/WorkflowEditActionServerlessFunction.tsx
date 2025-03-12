@@ -22,7 +22,7 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
+import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionServerlessFunctionFields';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
@@ -54,7 +54,7 @@ const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-type WorkflowEditActionFormServerlessFunctionProps = {
+type WorkflowEditActionServerlessFunctionProps = {
   action: WorkflowCodeAction;
   actionOptions:
     | {
@@ -70,10 +70,10 @@ type ServerlessFunctionInputFormData = {
   [field: string]: string | ServerlessFunctionInputFormData;
 };
 
-export const WorkflowEditActionFormServerlessFunction = ({
+export const WorkflowEditActionServerlessFunction = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormServerlessFunctionProps) => {
+}: WorkflowEditActionServerlessFunctionProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
@@ -303,7 +303,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
         <WorkflowStepBody>
           {activeTabId === 'code' && (
             <>
-              <WorkflowEditActionFormServerlessFunctionFields
+              <WorkflowEditActionServerlessFunctionFields
                 functionInput={functionInput}
                 VariablePicker={WorkflowVariablePicker}
                 onInputChange={handleInputChange}
@@ -327,7 +327,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
           )}
           {activeTabId === 'test' && (
             <>
-              <WorkflowEditActionFormServerlessFunctionFields
+              <WorkflowEditActionServerlessFunctionFields
                 functionInput={serverlessFunctionTestData.input}
                 onInputChange={handleTestInputChange}
                 readonly={actionOptions.readonly}

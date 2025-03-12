@@ -10,11 +10,11 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionFormCreateRecord } from '../WorkflowEditActionFormCreateRecord';
+import { WorkflowEditActionCreateRecord } from '../WorkflowEditActionCreateRecord';
 
-const meta: Meta<typeof WorkflowEditActionFormCreateRecord> = {
-  title: 'Modules/Workflow/WorkflowEditActionFormCreateRecord',
-  component: WorkflowEditActionFormCreateRecord,
+const meta: Meta<typeof WorkflowEditActionCreateRecord> = {
+  title: 'Modules/Workflow/WorkflowEditActionCreateRecord',
+  component: WorkflowEditActionCreateRecord,
   parameters: {
     msw: graphqlMocks,
   },
@@ -54,7 +54,7 @@ const meta: Meta<typeof WorkflowEditActionFormCreateRecord> = {
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowEditActionFormCreateRecord>;
+type Story = StoryObj<typeof WorkflowEditActionCreateRecord>;
 
 export const Default: Story = {
   args: {

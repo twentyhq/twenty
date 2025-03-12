@@ -5,7 +5,7 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 
 import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
+import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionServerlessFunctionFields';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
 import { useTheme } from '@emotion/react';
@@ -27,13 +27,13 @@ const StyledCodeEditorContainer = styled.div`
   flex-direction: column;
 `;
 
-type WorkflowReadonlyActionFormServerlessFunctionProps = {
+type WorkflowReadonlyActionServerlessFunctionProps = {
   action: WorkflowCodeAction;
 };
 
-export const WorkflowReadonlyActionFormServerlessFunction = ({
+export const WorkflowReadonlyActionServerlessFunction = ({
   action,
-}: WorkflowReadonlyActionFormServerlessFunctionProps) => {
+}: WorkflowReadonlyActionServerlessFunctionProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
@@ -81,7 +81,7 @@ export const WorkflowReadonlyActionFormServerlessFunction = ({
         disabled
       />
       <WorkflowStepBody>
-        <WorkflowEditActionFormServerlessFunctionFields
+        <WorkflowEditActionServerlessFunctionFields
           functionInput={action.settings.input.serverlessFunctionInput}
           readonly
         />

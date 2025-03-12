@@ -15,4 +15,9 @@ export const OTHER_ACTIONS: Array<{
     type: 'CODE',
     icon: 'IconCode',
   },
+  {
+    label: 'Form',
+    type: 'FORM',
+    icon: 'IconForms',
+  },
 ];

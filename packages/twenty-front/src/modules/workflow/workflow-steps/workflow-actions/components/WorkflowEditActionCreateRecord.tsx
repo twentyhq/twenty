@@ -17,7 +17,7 @@ import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
 
-type WorkflowEditActionFormCreateRecordProps = {
+type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;
   actionOptions:
     | {
@@ -53,10 +53,10 @@ const sortByViewFieldPosition = (
   return 0;
 };
 
-export const WorkflowEditActionFormCreateRecord = ({
+export const WorkflowEditActionCreateRecord = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormCreateRecordProps) => {
+}: WorkflowEditActionCreateRecordProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 

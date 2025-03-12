@@ -27,7 +27,7 @@ import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-type WorkflowEditActionFormSendEmailProps = {
+type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;
   actionOptions:
     | {
@@ -46,10 +46,10 @@ type SendEmailFormData = {
   body: string;
 };
 
-export const WorkflowEditActionFormSendEmail = ({
+export const WorkflowEditActionSendEmail = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormSendEmailProps) => {
+}: WorkflowEditActionSendEmailProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);

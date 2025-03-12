@@ -1,39 +1,38 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
+import { WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
+import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { isDefined } from 'twenty-shared';
 import { HorizontalSeparator, useIcons } from 'twenty-ui';
-import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
-type WorkflowEditActionFormDeleteRecordProps = {
-  action: WorkflowDeleteRecordAction;
+type WorkflowEditActionFindRecordsProps = {
+  action: WorkflowFindRecordsAction;
   actionOptions:
     | {
         readonly: true;
       }
     | {
         readonly?: false;
-        onActionUpdate: (action: WorkflowDeleteRecordAction) => void;
+        onActionUpdate: (action: WorkflowFindRecordsAction) => void;
       };
 };
 
-type DeleteRecordFormData = {
+type FindRecordsFormData = {
   objectName: string;
-  objectRecordId: string;
+  limit?: number;
 };
 
-export const WorkflowEditActionFormDeleteRecord = ({
+export const WorkflowEditActionFindRecords = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormDeleteRecordProps) => {
+}: WorkflowEditActionFindRecordsProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -46,25 +45,11 @@ export const WorkflowEditActionFormDeleteRecord = ({
       value: item.nameSingular,
     }));
 
-  const [formData, setFormData] = useState<DeleteRecordFormData>({
+  const [formData, setFormData] = useState<FindRecordsFormData>({
     objectName: action.settings.input.objectName,
-    objectRecordId: action.settings.input.objectRecordId,
+    limit: action.settings.input.limit,
   });
   const isFormDisabled = actionOptions.readonly;
-
-  const handleFieldChange = (
-    fieldName: keyof DeleteRecordFormData,
-    updatedValue: JsonValue,
-  ) => {
-    const newFormData: DeleteRecordFormData = {
-      ...formData,
-      [fieldName]: updatedValue,
-    };
-
-    setFormData(newFormData);
-
-    saveAction(newFormData);
-  };
 
   const selectedObjectMetadataItemNameSingular = formData.objectName;
 
@@ -76,15 +61,12 @@ export const WorkflowEditActionFormDeleteRecord = ({
   }
 
   const saveAction = useDebouncedCallback(
-    async (formData: DeleteRecordFormData) => {
+    async (formData: FindRecordsFormData) => {
       if (actionOptions.readonly === true) {
         return;
       }
 
-      const {
-        objectName: updatedObjectName,
-        objectRecordId: updatedObjectRecordId,
-      } = formData;
+      const { objectName: updatedObjectName, limit: updatedLimit } = formData;
 
       actionOptions.onActionUpdate({
         ...action,
@@ -92,7 +74,7 @@ export const WorkflowEditActionFormDeleteRecord = ({
           ...action.settings,
           input: {
             objectName: updatedObjectName,
-            objectRecordId: updatedObjectRecordId ?? '',
+            limit: updatedLimit ?? 1,
           },
         },
       });
@@ -106,7 +88,7 @@ export const WorkflowEditActionFormDeleteRecord = ({
     };
   }, [saveAction]);
 
-  const headerTitle = isDefined(action.name) ? action.name : `Delete Record`;
+  const headerTitle = isDefined(action.name) ? action.name : `Search Records`;
   const headerIcon = getActionIcon(action.type);
 
   return (
@@ -130,7 +112,7 @@ export const WorkflowEditActionFormDeleteRecord = ({
       />
       <WorkflowStepBody>
         <Select
-          dropdownId="workflow-edit-action-record-delete-object-name"
+          dropdownId="workflow-edit-action-record-find-records-object-name"
           label="Object"
           fullWidth
           disabled={isFormDisabled}
@@ -138,9 +120,9 @@ export const WorkflowEditActionFormDeleteRecord = ({
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
           onChange={(objectName) => {
-            const newFormData: DeleteRecordFormData = {
+            const newFormData: FindRecordsFormData = {
               objectName,
-              objectRecordId: '',
+              limit: 1,
             };
 
             setFormData(newFormData);
@@ -152,15 +134,12 @@ export const WorkflowEditActionFormDeleteRecord = ({
 
         <HorizontalSeparator noMargin />
 
-        <WorkflowSingleRecordPicker
-          label="Record"
-          onChange={(objectRecordId) =>
-            handleFieldChange('objectRecordId', objectRecordId)
-          }
-          objectNameSingular={formData.objectName}
-          defaultValue={formData.objectRecordId}
-          testId="workflow-edit-action-record-delete-object-record-id"
-          disabled={isFormDisabled}
+        <FormNumberFieldInput
+          label="Limit"
+          defaultValue={formData.limit}
+          placeholder="Enter limit"
+          onPersist={() => {}}
+          readonly
         />
       </WorkflowStepBody>
     </>
