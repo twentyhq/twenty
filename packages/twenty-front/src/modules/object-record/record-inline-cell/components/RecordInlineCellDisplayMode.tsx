@@ -60,6 +60,14 @@ const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
+const StyledRatingIconContainer = styled.div<{
+  color: string;
+}>`
+  color: ${({ color }) => color};
+  display: inline-flex;
+`;
+
+
 export const RecordInlineCellDisplayMode = ({
   children,
 }: React.PropsWithChildren<unknown>) => {
@@ -89,13 +97,6 @@ export const RecordInlineCellDisplayMode = ({
   const emptyPlaceHolder = showLabel ? t`Empty` : label;
   const { fieldDefinition } = useContext(FieldContext);
   const iconSizeMd = THEME_COMMON.icon.size.md;
-  const StyledRatingIconContainer = styled.div<{
-    color: string;
-  }>`
-    color: ${({ color }) => color};
-    display: inline-flex;
-  `;
-  const { theme } = useContext(ThemeContext);
   const { theme } = useContext(ThemeContext);
 
   const inactiveColor = theme.background.quaternary;
