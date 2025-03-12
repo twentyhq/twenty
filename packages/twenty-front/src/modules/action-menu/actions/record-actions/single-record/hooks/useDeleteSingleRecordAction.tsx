@@ -1,6 +1,5 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -10,7 +9,7 @@ import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObj
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { t } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { getOsControlSymbol } from 'twenty-ui';
@@ -59,8 +58,6 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   ]);
 
   const isRemoteObject = objectMetadataItem.isRemote;
-
-  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const shouldBeRegistered =
     !isRemoteObject &&

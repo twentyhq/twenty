@@ -1,13 +1,12 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { AppPath } from '@/types/AppPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -50,8 +49,6 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
   ]);
 
   const isRemoteObject = objectMetadataItem.isRemote;
-
-  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const shouldBeRegistered =
     !hasObjectReadOnlyPermission &&
