@@ -127,7 +127,7 @@ msgstr "이 사용자에 대해"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
-msgstr ""
+msgstr "이 작업공간에 대해"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3082,7 +3082,7 @@ msgstr "문제가 발생했습니다"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr ""
+msgstr "이것들은 서버 값에 불과합니다. 작업 환경에 동일한 변수와 값이 있는지 확인하십시오. 이메일 동기화와 같은 비동기 작업에 필요합니다."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -3399,7 +3399,7 @@ msgstr "워크스페이스 삭제"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
-msgstr ""
+msgstr "워크스페이스 정보"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"

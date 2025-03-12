@@ -127,7 +127,7 @@ msgstr "Σχετικά με αυτόν τον χρήστη"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
-msgstr ""
+msgstr "Σχετικά με αυτό το χώρο εργασίας"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3082,7 +3082,7 @@ msgstr "Υπήρξε ένα πρόβλημα"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr ""
+msgstr "Αυτές είναι μόνο οι τιμές του διακομιστή. Βεβαιωθείτε ότι το περιβάλλον εργασίας σας έχει τις ίδιες μεταβλητές και τιμές, που απαιτούνται για ασύγχρονες εργασίες όπως η συγχρονισμός email."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -3399,7 +3399,7 @@ msgstr "Διαγραφή Workspace"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
-msgstr ""
+msgstr "Πληροφορίες Χώρου Εργασίας"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"

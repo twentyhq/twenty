@@ -127,7 +127,7 @@ msgstr "Over deze gebruiker"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
-msgstr ""
+msgstr "Over deze werkruimte"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3082,7 +3082,7 @@ msgstr "Er was een probleem"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr ""
+msgstr "Dit zijn alleen de serverwaarden. Zorg ervoor dat je werkomgeving dezelfde variabelen en waarden heeft, dit is vereist voor asynchrone taken zoals e-mailsynchronisatie."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -3399,7 +3399,7 @@ msgstr "Verwijdering van werkruimte"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
-msgstr ""
+msgstr "Werkruimte Info"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
