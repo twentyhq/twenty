@@ -170,6 +170,7 @@ msgstr "crwdns5005:0crwdne5005:0"
 msgid "Add Approved Access Domain"
 msgstr "crwdns4879:0crwdne4879:0"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "crwdns81:0crwdne81:0"
@@ -620,7 +621,7 @@ msgstr "crwdns5381:0crwdne5381:0"
 msgid "Color code"
 msgstr "crwdns5053:0crwdne5053:0"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "crwdns5055:0crwdne5055:0"
 
@@ -1888,6 +1889,11 @@ msgstr "crwdns5489:0crwdne5489:0"
 msgid "Launch"
 msgstr "crwdns5451:0crwdne5451:0"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr "crwdns5523:0crwdne5523:0"
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "crwdns5191:0crwdne5191:0"
@@ -2259,8 +2265,8 @@ msgstr "crwdns5223:0crwdne5223:0"
 msgid "Open command menu"
 msgstr "crwdns4861:0crwdne4861:0"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "crwdns4943:0crwdne4943:0"
 
@@ -2471,8 +2477,8 @@ msgstr "crwdns5235:0crwdne5235:0"
 msgid "Record label"
 msgstr "crwdns5237:0crwdne5237:0"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "crwdns5239:0crwdne5239:0"
 
@@ -2810,8 +2816,8 @@ msgstr "crwdns665:0crwdne665:0"
 msgid "Should changing an object's label also change the API?"
 msgstr "crwdns4007:0crwdne4007:0"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "crwdns5269:0crwdne5269:0"
 
@@ -3246,8 +3252,8 @@ msgstr "crwdns4963:0crwdne4963:0"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "crwdns5325:0crwdne5325:0"
+#~ msgid "View settings"
+#~ msgstr "View settings"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

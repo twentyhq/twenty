@@ -19,12 +19,10 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
-" Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les\n"
+msgstr " Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les\n"
 "        mateixes variables i valors, això és necessari per a tasques asincròniques com la\n"
 "        sincronització de correu electrònic."
 
@@ -1896,7 +1894,7 @@ msgstr "Iniciar"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Layout"
-msgstr ""
+msgstr "Disseny"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -3257,7 +3255,7 @@ msgstr "Veure detall d'execució"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #~ msgid "View settings"
-#~ msgstr "Configuració de vista"
+#~ msgstr "View settings"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
