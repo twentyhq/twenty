@@ -6,6 +6,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
+import { isNumber } from '@tiptap/core';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
@@ -203,12 +204,11 @@ export const WorkerMetricsGraph = ({
             .filter(([key]) => key !== '__typename')
             .map(([key, value]) => ({
               label: key.charAt(0).toUpperCase() + key.slice(1),
-              value:
-                typeof value === 'number'
-                  ? value
-                  : Array.isArray(value)
-                    ? value.length
-                    : String(value),
+              value: isNumber(value)
+                ? value
+                : Array.isArray(value)
+                  ? value.length
+                  : String(value),
             }))}
           gridAutoColumns="1fr 1fr"
           labelAlign="left"
