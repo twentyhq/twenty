@@ -132,7 +132,7 @@ export const ChatAnex = ({ setIsAnexOpen }: ChatAnexProps) => {
           }}
         />
       </StyledLabel>
-      {!isWhatsappDocument(selectedChat) && (
+      {selectedChat && (
         <StyledLabel
           isImage
           style={{

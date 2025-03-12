@@ -85,14 +85,14 @@ export class WhatsappController {
         type: body.entry[0].changes[0].value.messages[0].type,
       };
 
-      // if (mediaId) {
-      //   fileUrl = await this.whatsappService.downloadMedia(
-      //     mediaId,
-      //     id,
-      //     body.entry[0].changes[0].value.messages[0].from,
-      //     messages.type,
-      //   );
-      // }
+      if (mediaId) {
+        fileUrl = await this.whatsappService.downloadMedia(
+          mediaId,
+          id,
+          body.entry[0].changes[0].value.messages[0].from,
+          messages.type,
+        );
+      }
 
       const whatsappIntegration: Omit<
         WhatsappDocument,
