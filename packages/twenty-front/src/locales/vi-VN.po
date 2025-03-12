@@ -624,7 +624,7 @@ msgstr "Thu gọn"
 msgid "Color code"
 msgstr "Mã màu"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Chế độ xem gọn"
 
@@ -1892,6 +1892,11 @@ msgstr "Phiên bản mới nhất:"
 msgid "Launch"
 msgstr "Khởi chạy"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Ít hơn"
@@ -2263,8 +2268,8 @@ msgstr "Chỉ dấu thời gian và người tham gia sẽ được chia sẻ v�
 msgid "Open command menu"
 msgstr "Mở menu lệnh"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Mở trong"
 
@@ -2475,8 +2480,8 @@ msgstr "Ảnh hồ sơ"
 msgid "Record label"
 msgstr "Nhãn hồ sơ"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Trang hồ sơ"
 
@@ -2814,8 +2819,8 @@ msgstr "Liệu việc thay đổi nhãn của một trường có nên thay đ�
 msgid "Should changing an object's label also change the API?"
 msgstr "Thay đổi nhãn của đối tượng có nên thay đổi API không?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Bảng điều khiển bên"
 
@@ -3250,8 +3255,8 @@ msgstr "Xem chi tiết thực thi"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Cài đặt chế độ xem"
+#~ msgid "View settings"
+#~ msgstr "Cài đặt chế độ xem"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

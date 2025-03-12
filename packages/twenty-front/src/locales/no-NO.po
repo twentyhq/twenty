@@ -624,7 +624,7 @@ msgstr "Lukk"
 msgid "Color code"
 msgstr "Fargekode"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Kompakt visning"
 
@@ -1892,6 +1892,11 @@ msgstr "Seneste versjon:"
 msgid "Launch"
 msgstr "Start"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Mindre enn"
@@ -2263,8 +2268,8 @@ msgstr "Bare tidsstempel og deltakere vil bli delt med teamet ditt."
 msgid "Open command menu"
 msgstr "Åpne kommandomeny"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Åpne i"
 
@@ -2475,8 +2480,8 @@ msgstr "Opptak bilde"
 msgid "Record label"
 msgstr "Opptak etikett"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Opptak side"
 
@@ -2814,8 +2819,8 @@ msgstr "Skal en endring av feltets etikett også endre API-navnet?"
 msgid "Should changing an object's label also change the API?"
 msgstr "Bør en endring av et objekts etikett også endre API-et?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Sidepanel"
 
@@ -3250,8 +3255,8 @@ msgstr "Vis utførelsesdetaljer"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Visningsinnstillinger"
+#~ msgid "View settings"
+#~ msgstr "Visningsinnstillinger"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

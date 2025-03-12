@@ -624,7 +624,7 @@ msgstr "Colapsar"
 msgid "Color code"
 msgstr "Código de cor"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Vista compacta"
 
@@ -1892,6 +1892,11 @@ msgstr "Versão mais recente:"
 msgid "Launch"
 msgstr "Lançar"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Menor que"
@@ -2263,8 +2268,8 @@ msgstr "Apenas o carimbo de data/hora e os participantes serão partilhados com 
 msgid "Open command menu"
 msgstr "Abrir menu de comandos"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Abrir em"
 
@@ -2475,8 +2480,8 @@ msgstr "Imagem de registro"
 msgid "Record label"
 msgstr "Etiqueta de registro"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Página de Registro"
 
@@ -2814,8 +2819,8 @@ msgstr "Alterar o rótulo de um campo deve também alterar o nome da API?"
 msgid "Should changing an object's label also change the API?"
 msgstr "Alterar o rótulo de um objeto deve também alterar a API?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Painel Lateral"
 
@@ -3250,8 +3255,8 @@ msgstr "Ver detalhes da execução"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Configurações de Vista"
+#~ msgid "View settings"
+#~ msgstr "Configurações de Vista"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

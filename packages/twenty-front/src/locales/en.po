@@ -619,7 +619,7 @@ msgstr "Collapse"
 msgid "Color code"
 msgstr "Color code"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Compact view"
 
@@ -1887,6 +1887,11 @@ msgstr "Latest version:"
 msgid "Launch"
 msgstr "Launch"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr "Layout"
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Less than"
@@ -2258,8 +2263,8 @@ msgstr "Only the timestamp & participants will be shared with your team."
 msgid "Open command menu"
 msgstr "Open command menu"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Open in"
 
@@ -2470,8 +2475,8 @@ msgstr "Record image"
 msgid "Record label"
 msgstr "Record label"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Record Page"
 
@@ -2809,8 +2814,8 @@ msgstr "Should changing a field's label also change the API name?"
 msgid "Should changing an object's label also change the API?"
 msgstr "Should changing an object's label also change the API?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Side Panel"
 
@@ -3245,8 +3250,8 @@ msgstr "View execution details"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "View settings"
+#~ msgid "View settings"
+#~ msgstr "View settings"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

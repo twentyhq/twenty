@@ -621,7 +621,7 @@ msgstr "Colapsar"
 msgid "Color code"
 msgstr "Código de cor"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Visualização Compacta"
 
@@ -1889,6 +1889,11 @@ msgstr "Última versão:"
 msgid "Launch"
 msgstr "Lançar"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Menor que"
@@ -2260,8 +2265,8 @@ msgstr "Apenas o timestamp & participantes serão compartilhados com sua equipe.
 msgid "Open command menu"
 msgstr "Abrir menu de comandos"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Abrir em"
 
@@ -2472,8 +2477,8 @@ msgstr "Imagem do registro"
 msgid "Record label"
 msgstr "Rótulo do registro"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Página do Registro"
 
@@ -2814,8 +2819,8 @@ msgstr ""
 "tulo de um objeto tamb\n"
 "m deve alterar a API?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Painel Lateral"
 
@@ -3252,8 +3257,8 @@ msgstr "Ver detalhes de execução"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Configurações de exibição"
+#~ msgid "View settings"
+#~ msgstr "Configurações de exibição"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

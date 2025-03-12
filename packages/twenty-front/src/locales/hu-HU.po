@@ -624,7 +624,7 @@ msgstr "Összecsuk"
 msgid "Color code"
 msgstr "Színekód"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Kompakt nézet"
 
@@ -1892,6 +1892,11 @@ msgstr "Legújabb verzió:"
 msgid "Launch"
 msgstr "Indítás"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Kevesebb, mint"
@@ -2263,8 +2268,8 @@ msgstr "Csak az időbélyeg és résztvevők lesznek megosztva a csapatával."
 msgid "Open command menu"
 msgstr "Parancsmenü megnyitása"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Megnyitás itt"
 
@@ -2475,8 +2480,8 @@ msgstr "Felvétel képe"
 msgid "Record label"
 msgstr "Felvétel címkéje"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Felvételi oldal"
 
@@ -2814,8 +2819,8 @@ msgstr "Meg kell változtatni egy mező címkéjét az API nevének megváltozta
 msgid "Should changing an object's label also change the API?"
 msgstr "Ha megváltozik egy objektum címkéje, akkor az megváltoztatja az API-t is?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Oldal Panel"
 
@@ -3250,8 +3255,8 @@ msgstr "Végrehajtási részletek megtekintése"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Nézet beállítások"
+#~ msgid "View settings"
+#~ msgstr "Nézet beállítások"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

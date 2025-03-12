@@ -621,7 +621,7 @@ msgstr "Restrângere"
 msgid "Color code"
 msgstr "Cod culoare"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Vizualizare compactă"
 
@@ -1889,6 +1889,11 @@ msgstr "Ultima versiune:"
 msgid "Launch"
 msgstr "Lansează"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Mai mic decât"
@@ -2260,8 +2265,8 @@ msgstr "Doar marca temporală și participanții vor fi partajați cu echipa dvs
 msgid "Open command menu"
 msgstr "Deschide meniul de comandă"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Deschide în"
 
@@ -2472,8 +2477,8 @@ msgstr "Imagine înregistrare"
 msgid "Record label"
 msgstr "Etichetă înregistrare"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Pagina de înregistrare"
 
@@ -2811,8 +2816,8 @@ msgstr "Modificarea etichetei unui câmp ar trebui să schimbe și numele pentru
 msgid "Should changing an object's label also change the API?"
 msgstr "Schimbarea etichetei unui obiect ar trebui să schimbe și API-ul?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Panou lateral"
 
@@ -3247,8 +3252,8 @@ msgstr "Vizualizați detaliile execuției"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Setări vizualizare"
+#~ msgid "View settings"
+#~ msgstr "Setări vizualizare"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

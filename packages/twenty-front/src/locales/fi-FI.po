@@ -621,7 +621,7 @@ msgstr "Sulje"
 msgid "Color code"
 msgstr "Värikoodi"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Tiivis näkymä"
 
@@ -1889,6 +1889,11 @@ msgstr "Uusin versio:"
 msgid "Launch"
 msgstr "Käynnistä"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Pienempi kuin"
@@ -2260,8 +2265,8 @@ msgstr "Vain aikaleima ja osallistujat jaetaan tiimisi kanssa."
 msgid "Open command menu"
 msgstr "Avaa komento-valikko"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Avaa kohteessa"
 
@@ -2472,8 +2477,8 @@ msgstr "Tietueen kuva"
 msgid "Record label"
 msgstr "Tietueen otsikko"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Tietuesivu"
 
@@ -2811,8 +2816,8 @@ msgstr "Pitäisikö kentän nimen muutoksen vaikuttaa myös API-nimeen?"
 msgid "Should changing an object's label also change the API?"
 msgstr "Pitäisikö objektin nimilapun muuttaminen vaihtaa myös APIa?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Sivupaneeli"
 
@@ -3247,8 +3252,8 @@ msgstr "Näytä suoritustiedot"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Näkymäasetukset"
+#~ msgid "View settings"
+#~ msgstr "Näkymäasetukset"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

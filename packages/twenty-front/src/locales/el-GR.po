@@ -624,7 +624,7 @@ msgstr "Σύμπτυξη"
 msgid "Color code"
 msgstr "Κωδικός χρώματος"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Συμπαγής Προβολή"
 
@@ -1892,6 +1892,11 @@ msgstr "Τελευταία έκδοση:"
 msgid "Launch"
 msgstr "Έναρξη"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Μικρότερο από"
@@ -2263,8 +2268,8 @@ msgstr "Μόνο η χρονική σήμανση και οι συμμετέχο
 msgid "Open command menu"
 msgstr "Άνοιγμα μενού εντολών"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Άνοιγμα με"
 
@@ -2475,8 +2480,8 @@ msgstr "Εγγραφή εικόνας"
 msgid "Record label"
 msgstr "Ετικέτα εγγραφής"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Σελίδα εγγραφής"
 
@@ -2814,8 +2819,8 @@ msgstr "Θα πρέπει η αλλαγή της ετικέτας ενός πε�
 msgid "Should changing an object's label also change the API?"
 msgstr "Πρέπει η αλλαγή της ετικέτας ενός αντικειμένου να αλλάζει επίσης το API;"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Πλάγιος Πίνακας"
 
@@ -3250,8 +3255,8 @@ msgstr "Προβολή λεπτομερειών εκτέλεσης"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Ρυθμίσεις Προβολής"
+#~ msgid "View settings"
+#~ msgstr "Ρυθμίσεις Προβολής"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
