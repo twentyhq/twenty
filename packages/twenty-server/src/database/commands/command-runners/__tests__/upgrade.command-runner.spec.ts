@@ -209,10 +209,11 @@ describe('UpgradeCommandRunner', () => {
       nullVersionWorkspace,
     ];
     const totalWorkspace = numberOfValidWorkspace + failingWorkspaces.length;
-
+    const appVersion = '2.0.0';
     await buildModuleAndSetupSpies({
       numberOfWorkspace: numberOfValidWorkspace,
       workspaces: failingWorkspaces,
+      appVersion,
     });
 
     const passedParams = [];
@@ -235,9 +236,13 @@ describe('UpgradeCommandRunner', () => {
       upgradeCommandRunner.beforeSyncMetadataUpgradeCommandsToRun,
       syncWorkspaceMetadataCommand.runOnWorkspace,
       upgradeCommandRunner.afterSyncMetadataUpgradeCommandsToRun,
-      workspaceRepository.update,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfValidWorkspace));
     expect(successReport.length).toBe(numberOfValidWorkspace);
+    expect(workspaceRepository.update).toHaveBeenNthCalledWith(
+      numberOfValidWorkspace,
+      { id: expect.any(String) },
+      { version: appVersion },
+    );
 
     // Failing assertions
     expect(failReport.length).toBe(failingWorkspaces.length);
@@ -253,9 +258,10 @@ describe('UpgradeCommandRunner', () => {
 
   it('should run upgrade over several workspaces', async () => {
     const numberOfWorkspace = 42;
-
+    const appVersion = '2.0.0';
     await buildModuleAndSetupSpies({
       numberOfWorkspace,
+      appVersion,
     });
     const passedParams = [];
     const options = {};
@@ -268,8 +274,12 @@ describe('UpgradeCommandRunner', () => {
       upgradeCommandRunner.afterSyncMetadataUpgradeCommandsToRun,
       syncWorkspaceMetadataCommand.runOnWorkspace,
       twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
-      workspaceRepository.update,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
+    expect(workspaceRepository.update).toHaveBeenNthCalledWith(
+      numberOfWorkspace,
+      { id: expect.any(String) },
+      { version: appVersion },
+    );
     expect(upgradeCommandRunner.migrationReport.success.length).toBe(42);
     expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
   });
