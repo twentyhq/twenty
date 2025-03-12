@@ -11,6 +11,7 @@ import {
   IconEye,
   IconEyeOff,
   LightIconButton,
+  OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
 type SettingsAdminEnvVariablesRowProps = {
@@ -52,9 +53,15 @@ const StyledEllipsisLabel = styled.div`
   overflow: hidden;
 `;
 
+const StyledExpandedEllipsisLabel = styled.div`
+  white-space: normal;
+  word-break: break-all;
+`;
+
 const StyledValueContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
   justify-content: space-between;
   width: 100%;
 `;
@@ -97,13 +104,22 @@ export const SettingsAdminEnvVariablesRow = ({
     },
     {
       label: 'Description',
-      value: variable.description,
+      value: (
+        <OverflowingTextWithTooltip
+          text={variable.description}
+          displayedMaxRows={1}
+          isTooltipMultiline={true}
+        />
+      ),
     },
     {
       label: 'Value',
       value: (
         <StyledValueContainer>
-          {displayValue}
+          <StyledExpandedEllipsisLabel>
+            {displayValue}
+          </StyledExpandedEllipsisLabel>
+
           {variable.sensitive && variable.value !== '' && (
             <LightIconButton
               Icon={showSensitiveValue ? IconEyeOff : IconEye}

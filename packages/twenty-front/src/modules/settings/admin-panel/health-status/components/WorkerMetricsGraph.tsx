@@ -242,7 +242,7 @@ export const WorkerMetricsGraph = ({
                 itemWidth: 100,
                 itemHeight: 20,
                 itemTextColor: theme.font.color.secondary,
-                symbolSize: 12,
+                symbolSize: 4,
                 symbolShape: 'circle',
               },
             ]}
