@@ -19,6 +19,7 @@ import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-inp
 import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -258,6 +259,8 @@ export class RestApiCoreServiceV2 {
           Buffer.from(cursor ?? '', 'base64').toString(),
         );
 
+        // We always include ID in the ordering to ensure consistent pagination results
+        // Even if two records have identical values for the user-specified sort fields, their IDs ensures a deterministic order
         const orderByWithIdCondition = [
           ...(inputs.orderBy || []),
           { id: 'ASC' },
@@ -265,11 +268,12 @@ export class RestApiCoreServiceV2 {
 
         const cursorFilter = await this.computeCursorFilter(
           cursorData,
-          orderByWithIdCondition as any,
+          orderByWithIdCondition,
           fieldMetadataMapByName,
           inputs.isForwardPagination,
         );
 
+        // Combine cursor filter with any user-provided filters
         appliedFilters = inputs.filter
           ? { and: [inputs.filter, cursorFilter] }
           : cursorFilter;
@@ -290,6 +294,7 @@ export class RestApiCoreServiceV2 {
   private async getTotalCount(
     query: SelectQueryBuilder<ObjectLiteral>,
   ): Promise<number> {
+    // Clone the query to avoid modifying the original query that will fetch records
     const countQuery = query.clone();
 
     return await countQuery.getCount();
@@ -317,7 +322,7 @@ export class RestApiCoreServiceV2 {
       featureFlagsMap,
     ).parse(inputs.orderBy, objectMetadataNameSingular);
 
-    // If backward pagination, reverse the order
+    // For backward pagination (endingBefore), we need to reverse the sort order
     const finalOrderBy = inputs.isForwardPagination
       ? parsedOrderBy
       : Object.entries(parsedOrderBy).reduce((acc, [key, direction]) => {
@@ -326,21 +331,23 @@ export class RestApiCoreServiceV2 {
           return acc;
         }, {});
 
-    // Fetch one extra record to determine if there are more pages
+    // Fetch one extra record beyond the requested limit
+    // We'll remove it from the results before returning to the client
     const records = await query
       .orderBy(finalOrderBy as OrderByCondition)
       .take(inputs.limit + 1)
       .getMany();
 
-    // Determine if there are more pages
+    // If we got more records than the limit, it means there are more pages
     const hasMoreRecords = records.length > inputs.limit;
 
-    // Remove the extra record if we have more than requested
+    // Remove the extra record if we fetched more than requested
     if (hasMoreRecords) {
       records.pop();
     }
 
-    // For backward pagination, reverse the records to get correct order
+    // For backward pagination, we reversed the order to get the correct records
+    // Now we need to reverse them back to maintain the expected order for the client
     const finalRecords = !inputs.isForwardPagination
       ? records.reverse()
       : records;
@@ -349,11 +356,9 @@ export class RestApiCoreServiceV2 {
   }
 
   private formatPaginatedResult(
-    finalRecords: ObjectLiteral[],
+    finalRecords: any[],
     objectMetadataNameSingular: string,
-    objectMetadataItemWithFieldsMaps:
-      | ObjectMetadataItemWithFieldMaps
-      | undefined,
+    objectMetadataItemWithFieldsMaps: any,
     objectMetadata: any,
     isForwardPagination: boolean,
     hasMoreRecords: boolean,
@@ -364,7 +369,7 @@ export class RestApiCoreServiceV2 {
       objectNamePlural: objectMetadataNameSingular,
       data: formatGetManyData(
         finalRecords,
-        objectMetadataItemWithFieldsMaps as ObjectMetadataItemWithFieldMaps,
+        objectMetadataItemWithFieldsMaps as any,
         objectMetadata.objectMetadataMaps,
       ),
       meta: {
@@ -466,15 +471,13 @@ export class RestApiCoreServiceV2 {
     };
   }
 
-  // Helper method to compute cursor filter - similar to computeCursorArgFilter in GraphQL
+  // Helper method to compute cursor filter
   private async computeCursorFilter(
-    cursorData: Record<string, FieldValue>,
-    orderBy: OrderByCondition,
-    fieldMetadataMap: Record<string, any>,
+    cursorData: Record<string, any>,
+    orderByWithIdCondition: any[],
+    fieldMetadataMapByName: FieldMetadataMap,
     isForwardPagination: boolean,
-  ): Promise<Record<string, FieldValue>> {
-    // We'll use a simpler approach for REST API for now, focusing on ID-based pagination
-    // This could be extended to support multi-field ordering just like in GraphQL
+  ): Promise<any> {
     return {
       id: isForwardPagination ? { gt: cursorData.id } : { lt: cursorData.id },
     };
