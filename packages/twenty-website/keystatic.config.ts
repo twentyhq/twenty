@@ -1,3 +1,4 @@
+import { global } from '@apollo/client/utilities/globals';
 import { collection, config, fields } from '@keystatic/core';
 import { wrapper } from '@keystatic/core/content-components';
 
@@ -11,6 +12,8 @@ console.log({
   KEYSTATIC_SECRET: process.env.KEYSTATIC_SECRET?.slice(0, 2),
   NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG:
     process.env.NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG?.slice(0, 2),
+  GITHUB_TOKEN: global.process.env.GITHUB_TOKEN?.slice(0, 2),
+  GITHUB_TOKEN_2: process.env.GITHUB_TOKEN?.slice(0, 2),
 });
 
 export default config({
