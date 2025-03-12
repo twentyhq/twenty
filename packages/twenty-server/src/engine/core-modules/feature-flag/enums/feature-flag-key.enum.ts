@@ -13,4 +13,5 @@ export enum FeatureFlagKey {
   IsApprovedAccessDomainsEnabled = 'IS_APPROVED_ACCESS_DOMAINS_ENABLED',
   IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
   IsPermissionsEnabled = 'IS_PERMISSIONS_ENABLED',
+  IsWorkflowFormActionEnabled = 'IS_WORKFLOW_FORM_ACTION_ENABLED',
 }
