@@ -145,6 +145,9 @@ export default defineConfig(({ command, mode }) => {
     build: {
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      rollupOptions: {
+        external: ['@scalar/api-reference-react'],
+      },
     },
 
     envPrefix: 'REACT_APP_',
@@ -165,6 +168,9 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         path: 'rollup-plugin-node-polyfills/polyfills/path',
+        // https://github.com/twentyhq/twenty/pull/10782/files
+        // This will likely be migrated to twenty-ui package when built separately
+        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
   };
