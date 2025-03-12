@@ -6,6 +6,8 @@ import { AdvancedFilterRecordFilterGroup } from '@/object-record/advanced-filter
 import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilter';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 
@@ -29,19 +31,20 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   overflow: hidden;
 `;
 
-type AdvancedFilterRootLevelViewFilterGroupProps = {
-  rootLevelRecordFilterGroupId: string;
-};
+export const AdvancedFilterRootLevelViewFilterGroup = () => {
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
+  );
 
-export const AdvancedFilterRootLevelViewFilterGroup = ({
-  rootLevelRecordFilterGroupId,
-}: AdvancedFilterRootLevelViewFilterGroupProps) => {
+  const rootRecordFilterGroupId = currentRecordFilterGroups.find(
+    (recordFilterGroup) => !recordFilterGroup.parentRecordFilterGroupId,
+  )?.id;
+
   const {
     currentRecordFilterGroup: rootLevelRecordFilterGroup,
     childRecordFiltersAndRecordFilterGroups,
-    lastChildPosition,
   } = useChildRecordFiltersAndRecordFilterGroups({
-    recordFilterGroupId: rootLevelRecordFilterGroupId,
+    recordFilterGroupId: rootRecordFilterGroupId,
   });
 
   if (!isDefined(rootLevelRecordFilterGroup)) {
@@ -50,34 +53,38 @@ export const AdvancedFilterRootLevelViewFilterGroup = ({
 
   return (
     <StyledContainer>
-      {childRecordFiltersAndRecordFilterGroups.map((child, i) =>
-        isRecordFilterGroupChildARecordFilterGroup(child) ? (
-          <StyledRow key={child.id}>
-            <AdvancedFilterLogicalOperatorCell
-              index={i}
-              recordFilterGroup={rootLevelRecordFilterGroup}
-            />
-            <AdvancedFilterRecordFilterGroup recordFilterGroupId={child.id} />
-            <AdvancedFilterRecordFilterGroupChildOptionsDropdown
-              recordFilterGroupChild={child}
-            />
-          </StyledRow>
-        ) : (
-          <StyledRow key={child.id}>
-            <AdvancedFilterLogicalOperatorCell
-              index={i}
-              recordFilterGroup={rootLevelRecordFilterGroup}
-            />
-            <AdvancedFilterViewFilter viewFilterId={child.id} />
-            <AdvancedFilterRecordFilterGroupChildOptionsDropdown
-              recordFilterGroupChild={child}
-            />
-          </StyledRow>
-        ),
+      {childRecordFiltersAndRecordFilterGroups.map(
+        (recordFilterGroupChild, recordFilterGroupChildIndex) =>
+          isRecordFilterGroupChildARecordFilterGroup(recordFilterGroupChild) ? (
+            <StyledRow key={recordFilterGroupChild.id}>
+              <AdvancedFilterLogicalOperatorCell
+                index={recordFilterGroupChildIndex}
+                recordFilterGroup={rootLevelRecordFilterGroup}
+              />
+              <AdvancedFilterRecordFilterGroup
+                recordFilterGroupId={recordFilterGroupChild.id}
+              />
+              <AdvancedFilterRecordFilterGroupChildOptionsDropdown
+                recordFilterGroupChild={recordFilterGroupChild}
+              />
+            </StyledRow>
+          ) : (
+            <StyledRow key={recordFilterGroupChild.id}>
+              <AdvancedFilterLogicalOperatorCell
+                index={recordFilterGroupChildIndex}
+                recordFilterGroup={rootLevelRecordFilterGroup}
+              />
+              <AdvancedFilterViewFilter
+                viewFilterId={recordFilterGroupChild.id}
+              />
+              <AdvancedFilterRecordFilterGroupChildOptionsDropdown
+                recordFilterGroupChild={recordFilterGroupChild}
+              />
+            </StyledRow>
+          ),
       )}
       <AdvancedFilterAddFilterRuleSelect
         recordFilterGroup={rootLevelRecordFilterGroup}
-        lastChildPosition={lastChildPosition}
       />
     </StyledContainer>
   );
