@@ -621,7 +621,7 @@ msgstr "צמצם"
 msgid "Color code"
 msgstr "קוד צבע"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "תצוגה קומפקטית"
 
@@ -1889,6 +1889,11 @@ msgstr "גרסה אחרונה:"
 msgid "Launch"
 msgstr "הפעל"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "פחות מ"
@@ -2260,8 +2265,8 @@ msgstr "רק חותמת הזמן והמשתתפים ישותפו עם הצוות
 msgid "Open command menu"
 msgstr "פתח תפריט פקודות"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "פתח ב"
 
@@ -2472,8 +2477,8 @@ msgstr "תמונה של רישום"
 msgid "Record label"
 msgstr "תווית של רישום"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "דף רישום"
 
@@ -2811,8 +2816,8 @@ msgstr "האם שינוי תווית שדה צריך גם לשנות את שם �
 msgid "Should changing an object's label also change the API?"
 msgstr "האם שינוי תווית של אובייקט צריך גם לשנות את ה-API?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "לוח צדדי"
 
@@ -3247,8 +3252,8 @@ msgstr "הצג פרטי ביצוע"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "הגדרות תצוגה"
+#~ msgid "View settings"
+#~ msgstr "הגדרות תצוגה"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"

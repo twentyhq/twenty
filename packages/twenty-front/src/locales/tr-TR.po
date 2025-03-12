@@ -621,7 +621,7 @@ msgstr "Daralt"
 msgid "Color code"
 msgstr "Renk kodu"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Kompakt Görünüm"
 
@@ -1889,6 +1889,11 @@ msgstr "En son sürüm:"
 msgid "Launch"
 msgstr "Başlat"
 
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr ""
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Küçüktür"
@@ -2260,8 +2265,8 @@ msgstr "Yalnızca zaman damgası ve katılımcılar ekibinizle paylaşılacak."
 msgid "Open command menu"
 msgstr "Komut menüsünü aç"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Açık"
 
@@ -2472,8 +2477,8 @@ msgstr "Kayıt görüntüsü"
 msgid "Record label"
 msgstr "Kayıt etiketi"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Kayıt Sayfası"
 
@@ -2811,8 +2816,8 @@ msgstr "Bir alanın etiketi değiştirilirse API adı da değiştirilsin mi?"
 msgid "Should changing an object's label also change the API?"
 msgstr "Bir nesnenin etiketini değiştirmek API'yı da değiştirmeli mi?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Yan Panel"
 
@@ -3247,8 +3252,8 @@ msgstr "Çalıştırma detaylarını görüntüle"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Görünüm ayarları"
+#~ msgid "View settings"
+#~ msgstr "Görünüm ayarları"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
