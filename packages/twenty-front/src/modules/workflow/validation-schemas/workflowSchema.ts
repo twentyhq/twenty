@@ -151,6 +151,15 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('CRON'),
   settings: z.discriminatedUnion('type', [
     z.object({
+      type: z.literal('DAYS'),
+      schedule: z.object({
+        day: z.number(),
+        hour: z.number(),
+        minute: z.number(),
+      }),
+      outputSchema: z.object({}).passthrough(),
+    }),
+    z.object({
       type: z.literal('HOURS'),
       schedule: z.object({ hour: z.number(), minute: z.number() }),
       outputSchema: z.object({}).passthrough(),
