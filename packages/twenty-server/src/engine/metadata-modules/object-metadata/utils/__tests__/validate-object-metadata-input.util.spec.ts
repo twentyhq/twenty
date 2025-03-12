@@ -1,85 +1,57 @@
+import { EachTestingContext } from 'twenty-shared';
+import { getMockCreateObjectInput } from 'test/integration/utils/object-metadata/generate-mock-create-object-metadata-input';
+
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { validateObjectMetadataInputOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
+import { validateObjectMetadataInputNamesOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 
-const validObjectInput: UpdateObjectPayload = {
-  labelPlural: 'Car',
-  labelSingular: 'Cars',
-  nameSingular: 'car',
-  namePlural: 'cars',
-};
+type ValidateObjectNameTestingContext = EachTestingContext<
+  Partial<UpdateObjectPayload>
+>;
+const validateObjectMetadataTestCases: ValidateObjectNameTestingContext[] = [
+  {
+    title: 'when nameSingular has invalid characters',
+    context: { nameSingular: 'μ' },
+  },
+  {
+    title: 'when namePlural has invalid characters',
+    context: { namePlural: 'μ' },
+  },
+  {
+    title: 'when nameSingular is a reserved keyword',
+    context: { nameSingular: 'user' },
+  },
+  {
+    title: 'when namePlural is a reserved keyword',
+    context: { namePlural: 'users' },
+  },
+  {
+    title: 'when nameSingular is not camelCased',
+    context: { nameSingular: 'Not_Camel_Case' },
+  },
+  {
+    title: 'when namePlural is not camelCased',
+    context: { namePlural: 'Not_Camel_Case' },
+  },
+  {
+    title: 'when namePlural is an empty string',
+    context: { namePlural: '' },
+  },
+  {
+    title: 'when nameSingular is an empty string',
+    context: { nameSingular: '' },
+  },
+  {
+    title: 'when name exceeds maximum length',
+    context: { nameSingular: 'a'.repeat(64) },
+  },
+];
 
-const reservedKeyword = 'user';
-
-describe('validateObjectName', () => {
-  it('should not throw if names are valid', () => {
+describe('validateObjectMetadataInputOrThrow should fail', () => {
+  it.each(validateObjectMetadataTestCases)('$title', ({ context }) => {
     expect(() =>
-      validateObjectMetadataInputOrThrow(validObjectInput),
-    ).not.toThrow();
-  });
-
-  it('should throw is nameSingular has invalid characters', () => {
-    const invalidObjectInput = {
-      ...validObjectInput,
-      nameSingular: 'μ',
-    };
-
-    expect(() =>
-      validateObjectMetadataInputOrThrow(invalidObjectInput),
-    ).toThrow();
-  });
-
-  it('should throw is namePlural has invalid characters', () => {
-    const invalidObjectInput = {
-      ...validObjectInput,
-      namePlural: 'μ',
-    };
-
-    expect(() =>
-      validateObjectMetadataInputOrThrow(invalidObjectInput),
-    ).toThrow();
-  });
-
-  it('should throw if nameSingular is a reserved keyword', async () => {
-    const invalidObjectInput = {
-      ...validObjectInput,
-      nameSingular: reservedKeyword,
-    };
-
-    expect(() =>
-      validateObjectMetadataInputOrThrow(invalidObjectInput),
-    ).toThrow();
-  });
-
-  it('should throw if namePlural is a reserved keyword', async () => {
-    const invalidObjectInput = {
-      ...validObjectInput,
-      namePlural: reservedKeyword,
-    };
-
-    expect(() =>
-      validateObjectMetadataInputOrThrow(invalidObjectInput),
-    ).toThrow();
-  });
-
-  it('should throw if nameSingular is not camelCased', async () => {
-    const invalidObjectInput = {
-      ...validObjectInput,
-      nameSingular: 'notACamelCase1a',
-    };
-
-    expect(() =>
-      validateObjectMetadataInputOrThrow(invalidObjectInput),
-    ).toThrow();
-  });
-
-  it('should throw if namePlural is a not camelCased', async () => {
-    const invalidObjectInput = {
-      ...validObjectInput,
-      namePlural: 'notACamelCase1b',
-    };
-
-    expect(() =>
-      validateObjectMetadataInputOrThrow(invalidObjectInput),
-    ).toThrow();
+      validateObjectMetadataInputNamesOrThrow(
+        getMockCreateObjectInput(context),
+      ),
+    ).toThrowErrorMatchingSnapshot();
   });
 });

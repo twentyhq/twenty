@@ -2,6 +2,9 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, waitFor, within } from '@storybook/test';
 import { getUserDevice } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormRawJsonFieldInput } from '../FormRawJsonFieldInput';
 
 const meta: Meta<typeof FormRawJsonFieldInput> = {
@@ -9,6 +12,7 @@ const meta: Meta<typeof FormRawJsonFieldInput> = {
   component: FormRawJsonFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -37,7 +41,7 @@ export const Readonly: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
           }}
         >
           Add variable
@@ -142,7 +146,7 @@ export const DoesNotIgnoreInvalidJson: Story = {
 export const DisplayDefaultValueWithVariablesProperly: Story = {
   args: {
     placeholder: 'Enter valid json',
-    defaultValue: '{ "a": { "b" :  {{var.test}} } }',
+    defaultValue: `{ "a": { "b" :  {{${MOCKED_STEP_ID}.name}} } }`,
     onPersist: fn(),
   },
   play: async ({ canvasElement }) => {
@@ -150,7 +154,7 @@ export const DisplayDefaultValueWithVariablesProperly: Story = {
 
     await canvas.findByText(/{ "a": { "b" : /);
 
-    const variableTag = await canvas.findByText('test');
+    const variableTag = await canvas.findByText('Name');
     await expect(variableTag).toBeVisible();
 
     await canvas.findByText(/ } }/);
@@ -304,7 +308,7 @@ export const HasHistory: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
           }}
         >
           Add variable
@@ -331,7 +335,9 @@ export const HasHistory: Story = {
 
     await userEvent.type(editor, ' }');
 
-    expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
+    expect(args.onPersist).toHaveBeenLastCalledWith(
+      `{ "a": {{${MOCKED_STEP_ID}.name}} }`,
+    );
 
     await userEvent.type(editor, `{${controlKey}>}z{/${controlKey}}`);
 
@@ -343,7 +349,9 @@ export const HasHistory: Story = {
       `{Shift>}{${controlKey}>}z{/${controlKey}}{/Shift}`,
     );
 
-    expect(editor).toHaveTextContent('{ "a": test }');
-    expect(args.onPersist).toHaveBeenLastCalledWith('{ "a": {{test}} }');
+    expect(editor).toHaveTextContent('{ "a": Name }');
+    expect(args.onPersist).toHaveBeenLastCalledWith(
+      `{ "a": {{${MOCKED_STEP_ID}.name}} }`,
+    );
   },
 };

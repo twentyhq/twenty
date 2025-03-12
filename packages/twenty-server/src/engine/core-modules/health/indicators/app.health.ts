@@ -7,7 +7,6 @@ import {
 import { HealthStateManager } from 'src/engine/core-modules/health/utils/health-state-manager.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
-import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 
 @Injectable()
 export class AppHealthIndicator {
@@ -15,7 +14,6 @@ export class AppHealthIndicator {
 
   constructor(
     private readonly healthIndicatorService: HealthIndicatorService,
-    private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}

@@ -5,6 +5,8 @@ import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 
 const StyledContainer = styled.div`
+  display: grid;
+  overflow-x: auto;
   padding-block: ${({ theme }) => theme.spacing(4)};
   padding-inline: ${({ theme }) => theme.spacing(3)};
 `;

@@ -20,6 +20,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
@@ -79,6 +80,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const { openRecordInCommandMenu } = useCommandMenu();
+
+  const { openFieldInput } = useOpenFieldInputEditMode();
 
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -152,6 +155,11 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
         setDragSelectionStartEnabled(false);
 
+        openFieldInput({
+          fieldDefinition,
+          recordId,
+        });
+
         moveEditModeToTableCellPosition(cellPosition);
 
         initDraftValue({
@@ -185,6 +193,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
     [
       getClickOutsideListenerIsActivatedState,
       setDragSelectionStartEnabled,
+      openFieldInput,
       moveEditModeToTableCellPosition,
       initDraftValue,
       toggleClickOutsideListener,

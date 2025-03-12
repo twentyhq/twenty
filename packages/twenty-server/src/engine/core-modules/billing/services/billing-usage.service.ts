@@ -13,6 +13,7 @@ import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billin
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
 export class BillingUsageService {
@@ -22,9 +23,14 @@ export class BillingUsageService {
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+      return true;
+    }
+
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         {

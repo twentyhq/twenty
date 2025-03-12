@@ -11,7 +11,7 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   display: flex;
 
   flex-direction: column;
-  max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '188px' : 'none')};
+  max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '168px' : 'none')};
 
   padding: var(--padding);
 
@@ -72,7 +72,6 @@ export const DropdownMenuItemsContainer = ({
     <ScrollWrapper
       contextProviderName="dropdownMenuItemsContainer"
       componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
-      heightMode="fit-content"
     >
       <StyledDropdownMenuItemsExternalContainer
         hasMaxHeight={hasMaxHeight}

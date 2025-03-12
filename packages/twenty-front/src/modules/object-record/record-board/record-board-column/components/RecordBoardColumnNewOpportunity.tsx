@@ -2,8 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
-import { SingleRecordPicker } from '@/object-record/record-picker/components/SingleRecordPicker';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -68,22 +67,15 @@ export const RecordBoardColumnNewOpportunity = ({
     <>
       {newRecord.isCreating && newRecord.position === position && (
         <OverlayContainer>
-          <RecordPickerComponentInstanceContext.Provider
-            value={{
-              instanceId: `add-new-card-record-picker-column-${columnId}`,
-            }}
-          >
-            <SingleRecordPicker
-              componentInstanceId={`add-new-card-record-picker-column-${columnId}`}
-              onCancel={() => handleCreateSuccess(position, columnId, false)}
-              onRecordSelected={(company) =>
-                company ? handleEntitySelect(position, company) : null
-              }
-              objectNameSingular={CoreObjectNameSingular.Company}
-              selectedRecordIds={[]}
-              onCreate={createCompanyOpportunityAndOpenRightDrawer}
-            />
-          </RecordPickerComponentInstanceContext.Provider>
+          <SingleRecordPicker
+            componentInstanceId={`add-new-card-record-picker-column-${columnId}`}
+            onCancel={() => handleCreateSuccess(position, columnId, false)}
+            onRecordSelected={(company) =>
+              company ? handleEntitySelect(position, company) : null
+            }
+            objectNameSingular={CoreObjectNameSingular.Company}
+            onCreate={createCompanyOpportunityAndOpenRightDrawer}
+          />
         </OverlayContainer>
       )}
     </>
