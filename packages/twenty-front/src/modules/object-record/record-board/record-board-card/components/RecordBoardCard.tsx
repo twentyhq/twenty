@@ -1,4 +1,3 @@
-import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
@@ -15,6 +14,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { AppPath } from '@/types/AppPath';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -119,7 +119,7 @@ export const RecordBoardCard = ({
     ),
   );
 
-  const { openActionMenuDropdown } = useActionMenu(actionMenuId);
+  const { openDropdown } = useDropdownV2();
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
@@ -130,7 +130,7 @@ export const RecordBoardCard = ({
       x: event.clientX,
       y: event.clientY,
     });
-    openActionMenuDropdown();
+    openDropdown(actionMenuDropdownId);
   };
 
   const handleCardClick = () => {
