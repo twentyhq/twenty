@@ -9,6 +9,5 @@
     "src/**/*.d.ts",
     "src/**/*.stories.mdx",
     "src/**/*.stories.ts",
-    "src/**/*.stories.tsx"
-, "src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.tsx"  ]
+    "src/**/*.stories.tsx" ]
 }
