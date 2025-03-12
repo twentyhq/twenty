@@ -19,10 +19,14 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid " These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr "crwdns5463:0crwdne5463:0"
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -116,6 +120,14 @@ msgstr "crwdns61:0crwdne61:0"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "crwdns63:0crwdne63:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr "crwdns5525:0crwdne5525:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr "crwdns5527:0crwdne5527:0"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -285,6 +297,10 @@ msgstr "crwdns5025:0crwdne5025:0"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "crwdns99:0crwdne99:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr "crwdns5529:0crwdne5529:0"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -699,6 +715,7 @@ msgid "Continue with Microsoft"
 msgstr "crwdns211:0crwdne211:0"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "crwdns4891:0crwdne4891:0"
 
@@ -802,8 +819,12 @@ msgid "Created"
 msgstr "crwdns5069:0crwdne5069:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "crwdns5469:0crwdne5469:0"
+msgid "Current version"
+msgstr "crwdns5531:0crwdne5531:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Current version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1158,6 +1179,7 @@ msgstr "crwdns319:0crwdne319:0"
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "crwdns321:0crwdne321:0"
 
@@ -1633,6 +1655,11 @@ msgstr "crwdns5157:0crwdne5157:0"
 msgid "Icon and Name"
 msgstr "crwdns417:0crwdne417:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr "crwdns5533:0crwdne5533:0"
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "crwdns419:0crwdne419:0"
@@ -1836,7 +1863,7 @@ msgstr "crwdns457:0crwdne457:0"
 msgid "Language"
 msgstr "crwdns459:0crwdne459:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "crwdns5473:0crwdne5473:0"
 
@@ -1844,7 +1871,7 @@ msgstr "crwdns5473:0crwdne5473:0"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "crwdns5475:0crwdne5475:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "crwdns5477:0crwdne5477:0"
 
@@ -1856,7 +1883,7 @@ msgstr "crwdns5479:0crwdne5479:0"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "crwdns5481:0crwdne5481:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "crwdns5483:0crwdne5483:0"
 
@@ -1882,8 +1909,12 @@ msgid "Latest date"
 msgstr "crwdns465:0crwdne465:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "crwdns5489:0crwdne5489:0"
+msgid "Latest version"
+msgstr "crwdns5535:0crwdne5535:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Latest version:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1965,6 +1996,7 @@ msgstr "crwdns483:0crwdne483:0"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "crwdns485:0crwdne485:0"
 
@@ -2020,6 +2052,8 @@ msgstr "crwdns493:0crwdne493:0"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "crwdns495:0crwdne495:0"
 
@@ -2298,6 +2332,7 @@ msgstr "crwdns549:0crwdne549:0"
 msgid "Other"
 msgstr "crwdns551:0crwdne551:0"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "crwdns5497:0crwdne5497:0"
@@ -2867,6 +2902,7 @@ msgstr "crwdns679:0crwdne679:0"
 msgid "Stages"
 msgstr "crwdns5273:0crwdne5273:0"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "crwdns5275:0crwdne5275:0"
@@ -3044,6 +3080,10 @@ msgstr "crwdns727:0crwdne727:0"
 msgid "There was an issue"
 msgstr "crwdns729:0crwdne729:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr "crwdns5537:0crwdne5537:0"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "crwdns731:0crwdne731:0"
@@ -3068,7 +3108,7 @@ msgstr "crwdns733:0crwdne733:0"
 msgid "This role is assigned to these workspace members."
 msgstr "crwdns1843:0crwdne1843:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "crwdns5507:0crwdne5507:0"
 
@@ -3092,13 +3132,13 @@ msgstr "crwdns741:0crwdne741:0"
 msgid "to yearly"
 msgstr "crwdns743:0crwdne743:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "crwdns5509:0crwdne5509:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "crwdns5303:0crwdne5303:0"
+#~ msgid "Total Users"
+#~ msgstr "Total Users"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3187,17 +3227,16 @@ msgstr "crwdns767:0{objectLabel}crwdne767:0"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "crwdns769:0crwdne769:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "crwdns5309:0crwdne5309:0"
+#~ msgid "User Email"
+#~ msgstr "User Email"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "crwdns5311:0crwdne5311:0"
+#~ msgid "User ID"
+#~ msgstr "User ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3213,12 +3252,12 @@ msgid "User is not logged in"
 msgstr "crwdns771:0crwdne771:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "crwdns5317:0crwdne5317:0"
+#~ msgid "User Name"
+#~ msgstr "User Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "crwdns5319:0crwdne5319:0"
+#~ msgid "Users"
+#~ msgstr "Users"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3358,6 +3397,10 @@ msgstr "crwdns795:0crwdne795:0"
 msgid "Workspace Deletion"
 msgstr "crwdns797:0crwdne797:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr "crwdns5539:0crwdne5539:0"
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "crwdns799:0crwdne799:0"
@@ -3367,8 +3410,8 @@ msgid "Workspace name"
 msgstr "crwdns801:0crwdne801:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "crwdns5337:0crwdne5337:0"
+#~ msgid "Workspace Name"
+#~ msgstr "Workspace Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
