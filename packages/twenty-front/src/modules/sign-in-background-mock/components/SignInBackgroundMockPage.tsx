@@ -6,7 +6,6 @@ import { SignInBackgroundMockContainer } from '@/sign-in-background-mock/compone
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -17,9 +16,7 @@ const StyledTableContainer = styled.div`
 export const SignInBackgroundMockPage = () => {
   return (
     <PageContainer>
-      <PageHeader title="Companies" Icon={IconBuildingSkyscraper}>
-        <PageHotkeysEffect onAddButtonClick={() => {}} />
-      </PageHeader>
+      <PageHeader title="Companies" Icon={IconBuildingSkyscraper} />
       <PageBody>
         <RecordFieldValueSelectorContextProvider>
           <StyledTableContainer>
