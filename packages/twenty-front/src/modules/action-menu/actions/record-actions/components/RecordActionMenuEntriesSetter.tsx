@@ -27,10 +27,6 @@ export const RecordActionMenuEntriesSetter = () => {
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
   if (!isDefined(contextStoreCurrentObjectMetadataItem)) {
     return null;
   }
@@ -40,10 +36,7 @@ export const RecordActionMenuEntriesSetter = () => {
     contextStoreTargetedRecordsRule,
   );
 
-  const actionConfig = getActionConfig(
-    contextStoreCurrentObjectMetadataItem,
-    isCommandMenuV2Enabled,
-  );
+  const actionConfig = getActionConfig(contextStoreCurrentObjectMetadataItem);
 
   const actionsToRegister = isDefined(viewType)
     ? Object.values(actionConfig ?? {}).filter((action) =>
