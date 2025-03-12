@@ -171,6 +171,7 @@ msgstr "Ajouter un compte"
 msgid "Add Approved Access Domain"
 msgstr "Ajouter un domaine d'accès approuvé"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "Ajouter un champ"

@@ -171,6 +171,7 @@ msgstr "Додати обліковий запис"
 msgid "Add Approved Access Domain"
 msgstr "Додати затверджений домен доступу"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "Додати поле"

@@ -171,6 +171,7 @@ msgstr "Lägg till konto"
 msgid "Add Approved Access Domain"
 msgstr "Lägg till godkänd åtkomstdomän"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "L\\u00e4gg till f\\u00e4lt"
