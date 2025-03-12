@@ -69,6 +69,7 @@ jobs:
           while [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-server-1) = "healthy" ]; do
               sleep 1;
               count=$((count+1));
+              docker exec -it twenty-server-1 env
               if [ $(docker inspect --format='{{.State.Status}}' twenty-server-1) = "exited" ]; then
                   echo "Server exited"
                   docker compose logs server
