@@ -560,7 +560,6 @@ export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
   IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
-  IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
@@ -570,7 +569,8 @@ export enum FeatureFlagKey {
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsWorkflowEnabled = 'IsWorkflowEnabled'
+  IsWorkflowEnabled = 'IsWorkflowEnabled',
+  IsWorkflowFormActionEnabled = 'IsWorkflowFormActionEnabled'
 }
 
 export type Field = {

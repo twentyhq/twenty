@@ -3,48 +3,19 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
-import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { COMMAND_MENU_NAVIGATE_COMMANDS } from '@/command-menu/constants/CommandMenuNavigateCommands';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import {
   Command,
   CommandScope,
   CommandType,
 } from '@/command-menu/types/Command';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { i18n } from '@lingui/core';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconSparkles } from 'twenty-ui';
-import { useDebounce } from 'use-debounce';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useCommandMenuCommands = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );
-
-  const commandMenuSearch = useRecoilValue(commandMenuSearchState);
-  const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
-
-  const isCopilotEnabled = useIsFeatureEnabled(FeatureFlagKey.IsCopilotEnabled);
-  const setCopilotQuery = useSetRecoilState(copilotQueryState);
-  const openCopilotRightDrawer = useOpenCopilotRightDrawer();
-
-  const copilotCommand: Command = {
-    id: 'copilot',
-    to: '', // TODO
-    Icon: IconSparkles,
-    label: 'Open Copilot',
-    type: CommandType.Navigate,
-    onCommandClick: () => {
-      setCopilotQuery(deferredCommandMenuSearch);
-      openCopilotRightDrawer();
-    },
-  };
-
-  const copilotCommands: Command[] = isCopilotEnabled ? [copilotCommand] : [];
 
   const navigateCommands = Object.values(COMMAND_MENU_NAVIGATE_COMMANDS);
 
@@ -144,7 +115,6 @@ export const useCommandMenuCommands = () => {
     }));
 
   return {
-    copilotCommands,
     navigateCommands,
     actionRecordSelectionCommands,
     actionGlobalCommands,

@@ -10,6 +10,8 @@ import {
   workflowDeleteRecordActionSettingsSchema,
   workflowFindRecordsActionSchema,
   workflowFindRecordsActionSettingsSchema,
+  workflowFormActionSchema,
+  workflowFormActionSettingsSchema,
   workflowManualTriggerSchema,
   workflowRunContextSchema,
   workflowRunOutputSchema,
@@ -42,6 +44,9 @@ export type WorkflowDeleteRecordActionSettings = z.infer<
 export type WorkflowFindRecordsActionSettings = z.infer<
   typeof workflowFindRecordsActionSettingsSchema
 >;
+export type WorkflowFormActionSettings = z.infer<
+  typeof workflowFormActionSettingsSchema
+>;
 
 export type WorkflowCodeAction = z.infer<typeof workflowCodeActionSchema>;
 export type WorkflowSendEmailAction = z.infer<
@@ -59,6 +64,7 @@ export type WorkflowDeleteRecordAction = z.infer<
 export type WorkflowFindRecordsAction = z.infer<
   typeof workflowFindRecordsActionSchema
 >;
+export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
 
 export type WorkflowAction = z.infer<typeof workflowActionSchema>;
 export type WorkflowActionType = WorkflowAction['type'];

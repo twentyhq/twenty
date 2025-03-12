@@ -1,4 +1,3 @@
-import { ShowPageSubContainerTabListContainer } from '@/ui/layout/show-page/components/ShowPageSubContainerTabListContainer';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
@@ -16,8 +15,9 @@ import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui';
 
-const StyledTabListContainer = styled(ShowPageSubContainerTabListContainer)`
+const StyledTabList = styled(TabList)`
   background-color: ${({ theme }) => theme.background.secondary};
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 type TabId = 'node' | 'input' | 'output';
@@ -69,13 +69,11 @@ export const RightDrawerWorkflowRunViewStep = () => {
     <WorkflowStepContextProvider
       value={{ workflowVersionId: flow.workflowVersionId }}
     >
-      <StyledTabListContainer>
-        <TabList
-          tabListInstanceId={WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID}
-          tabs={tabs}
-          behaveAsLinks={false}
-        />
-      </StyledTabListContainer>
+      <StyledTabList
+        tabListInstanceId={WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID}
+        tabs={tabs}
+        behaveAsLinks={false}
+      />
 
       {activeTabId === 'node' ? (
         <WorkflowStepDetail
