@@ -1,6 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -10,9 +11,11 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
 import { IconEye } from 'twenty-ui';
 import {
+  FeatureFlagKey,
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
@@ -45,6 +48,10 @@ export const useAddNewRecordAndOpenRightDrawer = ({
   });
 
   const { openRightDrawer } = useRightDrawer();
+  const { openRecordInCommandMenu } = useCommandMenu();
+  const isCommandMenuEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsCommandMenuV2Enabled,
+  );
 
   if (
     relationObjectMetadataNameSingular === 'workspaceMember' ||
@@ -110,10 +117,18 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
       setViewableRecordId(newRecordId);
       setViewableRecordNameSingular(relationObjectMetadataNameSingular);
-      openRightDrawer(RightDrawerPages.ViewRecord, {
-        title: 'View Record',
-        Icon: IconEye,
-      });
+
+      if (isCommandMenuEnabled) {
+        openRecordInCommandMenu({
+          recordId: newRecordId,
+          objectNameSingular: relationObjectMetadataNameSingular,
+        });
+      } else {
+        openRightDrawer(RightDrawerPages.ViewRecord, {
+          title: 'View Record',
+          Icon: IconEye,
+        });
+      }
     },
   };
 };

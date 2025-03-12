@@ -35,7 +35,7 @@ describe('RedisHealthIndicator', () => {
         down: jest.fn().mockImplementation((error) => ({
           redis: {
             status: 'down',
-            error,
+            ...error,
           },
         })),
       }),
@@ -72,35 +72,43 @@ describe('RedisHealthIndicator', () => {
     mockRedis.info
       .mockResolvedValueOnce('redis_version:7.0.0\r\n')
       .mockResolvedValueOnce(
-        'used_memory_human:1.2G\nused_memory_peak_human:1.5G\nmem_fragmentation_ratio:1.5\n',
+        'used_memory_human:1.2G\r\nused_memory_peak_human:1.5G\r\nmem_fragmentation_ratio:1.5\r\n',
       )
-      .mockResolvedValueOnce('connected_clients:5\n')
+      .mockResolvedValueOnce('connected_clients:5\r\n')
       .mockResolvedValueOnce(
-        'total_connections_received:100\nkeyspace_hits:90\nkeyspace_misses:10\n',
+        'total_connections_received:100\r\nkeyspace_hits:90\r\nkeyspace_misses:10\r\n',
       );
 
     const result = await service.isHealthy();
 
     expect(result.redis.status).toBe('up');
     expect(result.redis.details).toBeDefined();
-    expect(result.redis.details.version).toBe('7.0.0');
+    expect(result.redis.details.system.version).toBe('7.0.0');
+    expect(result.redis.details.system.timestamp).toBeDefined();
+    expect(result.redis.details.memory).toEqual({
+      used: '1.2G',
+      peak: '1.5G',
+      fragmentation: 1.5,
+    });
   });
 
   it('should return down status when redis fails', async () => {
-    mockRedis.ping.mockRejectedValueOnce(
+    mockRedis.info.mockRejectedValueOnce(
       new Error(HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED),
     );
 
     const result = await service.isHealthy();
 
     expect(result.redis.status).toBe('down');
-    expect(result.redis.error).toBe(
+    expect(result.redis.message).toBe(
       HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED,
     );
+    expect(result.redis.details.system.timestamp).toBeDefined();
+    expect(result.redis.details.stateHistory).toBeDefined();
   });
 
   it('should timeout after specified duration', async () => {
-    mockRedis.ping.mockImplementationOnce(
+    mockRedis.info.mockImplementationOnce(
       () =>
         new Promise((resolve) =>
           setTimeout(resolve, HEALTH_INDICATORS_TIMEOUT + 100),
@@ -110,24 +118,38 @@ describe('RedisHealthIndicator', () => {
     const healthCheckPromise = service.isHealthy();
 
     jest.advanceTimersByTime(HEALTH_INDICATORS_TIMEOUT + 1);
-
     const result = await healthCheckPromise;
 
     expect(result.redis.status).toBe('down');
-    expect(result.redis.error).toBe(HEALTH_ERROR_MESSAGES.REDIS_TIMEOUT);
+    expect(result.redis.message).toBe(HEALTH_ERROR_MESSAGES.REDIS_TIMEOUT);
+    expect(result.redis.details.system.timestamp).toBeDefined();
+    expect(result.redis.details.stateHistory).toBeDefined();
   });
 
-  it('should handle partial failures in health details collection', async () => {
+  it('should maintain state history across health checks', async () => {
+    // First check - healthy state
     mockRedis.info
-      .mockResolvedValueOnce('redis_version:7.0.0') // info
-      .mockResolvedValueOnce('used_memory_human:1.2G') // memory
-      .mockResolvedValueOnce('connected_clients:5') // clients
-      .mockResolvedValueOnce('total_connections_received:100'); // stats
+      .mockResolvedValueOnce('redis_version:7.0.0\r\n')
+      .mockResolvedValueOnce(
+        'used_memory_human:1.2G\r\nused_memory_peak_human:1.5G\r\nmem_fragmentation_ratio:1.5\r\n',
+      )
+      .mockResolvedValueOnce('connected_clients:5\r\n')
+      .mockResolvedValueOnce(
+        'total_connections_received:100\r\nkeyspace_hits:90\r\nkeyspace_misses:10\r\n',
+      );
+
+    await service.isHealthy();
+
+    // Second check - error state
+    mockRedis.info.mockRejectedValueOnce(
+      new Error(HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED),
+    );
 
     const result = await service.isHealthy();
 
-    expect(result.redis.status).toBe('up');
-    expect(result.redis.details).toBeDefined();
-    expect(result.redis.details.version).toBe('7.0.0');
+    expect(result.redis.details.stateHistory).toBeDefined();
+    expect(result.redis.details.stateHistory.age).toBeDefined();
+    expect(result.redis.details.stateHistory.timestamp).toBeDefined();
+    expect(result.redis.details.stateHistory.details).toBeDefined();
   });
 });

@@ -7,16 +7,17 @@ import { RolesTableRow } from '@/settings/roles/components/RolesTableRow';
 import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
 
-const StyledTable = styled(Table)`
-  margin-top: ${({ theme }) => theme.spacing(0.5)};
-`;
-
-const StyledBottomSection = styled(Section)`
+const StyledCreateRoleSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(4)};
   display: flex;
   justify-content: flex-end;
+  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTableRows = styled.div`
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const Roles = ({ roles }: { roles: Role[] }) => {
@@ -26,13 +27,15 @@ export const Roles = ({ roles }: { roles: Role[] }) => {
         title={t`All roles`}
         description={t`Assign roles to specify each member's access permissions`}
       />
-      <StyledTable>
+      <Table>
         <RolesTableHeader />
-        {roles.map((role) => (
-          <RolesTableRow key={role.id} role={role} />
-        ))}
-      </StyledTable>
-      <StyledBottomSection>
+        <StyledTableRows>
+          {roles.map((role) => (
+            <RolesTableRow key={role.id} role={role} />
+          ))}
+        </StyledTableRows>
+      </Table>
+      <StyledCreateRoleSection>
         <Button
           Icon={IconPlus}
           title={t`Create Role`}
@@ -40,7 +43,7 @@ export const Roles = ({ roles }: { roles: Role[] }) => {
           size="small"
           soon
         />
-      </StyledBottomSection>
+      </StyledCreateRoleSection>
     </Section>
   );
 };

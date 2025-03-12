@@ -11,7 +11,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -67,7 +66,7 @@ export const AdvancedFilterViewFilterFieldSelect = ({
         }
         onOpen={() => {
           setAdvancedFilterViewFilterId(recordFilter?.id);
-          setAdvancedFilterViewFilterGroupId(recordFilter?.viewFilterGroupId);
+          setAdvancedFilterViewFilterGroupId(recordFilter?.recordFilterGroupId);
         }}
         dropdownComponents={
           shouldShowCompositeSelectionSubMenu ? (
@@ -76,7 +75,7 @@ export const AdvancedFilterViewFilterFieldSelect = ({
             <ObjectFilterDropdownFilterSelect />
           )
         }
-        dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
+        dropdownHotkeyScope={{ scope: advancedFilterDropdownId }}
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"
       />

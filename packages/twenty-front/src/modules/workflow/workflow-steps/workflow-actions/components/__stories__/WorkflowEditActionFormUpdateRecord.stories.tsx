@@ -2,15 +2,16 @@ import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionFormUpdateRecord } from '../WorkflowEditActionFormUpdateRecord';
-import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -64,6 +65,7 @@ const meta: Meta<typeof WorkflowEditActionFormUpdateRecord> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
+    I18nFrontDecorator,
   ],
 };
 
@@ -128,7 +130,7 @@ export const DisabledWithEmptyValues: Story = {
   },
 };
 
-const peopleMock = getPeopleMock()[0];
+const peopleMock = allMockPersonRecords[0];
 
 export const DisabledWithDefaultStaticValues: Story = {
   args: {

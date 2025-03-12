@@ -14,7 +14,7 @@ import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNotes } from '~/testing/mock-data/notes';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
@@ -30,10 +30,11 @@ import {
   getWorkflowVersionsMock,
   workflowQueryResult,
 } from '~/testing/mock-data/workflow';
+import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
-const peopleMock = getPeopleMock();
+const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
 
@@ -43,6 +44,39 @@ export const metadataGraphql = graphql.link(
 
 export const graphqlMocks = {
   handlers: [
+    graphql.query('IntrospectionQuery', () => {
+      return HttpResponse.json({
+        data: {
+          __schema: {
+            queryType: { name: 'Query' },
+            types: [
+              {
+                kind: 'OBJECT',
+                name: 'Query',
+                fields: [
+                  {
+                    name: 'name',
+                    type: { kind: 'SCALAR', name: 'String' },
+                    args: [],
+                  },
+                ],
+                interfaces: [],
+                args: [],
+              },
+              {
+                kind: 'SCALAR',
+                name: 'String',
+                fields: [],
+                interfaces: [],
+                args: [],
+              },
+            ],
+            directives: [],
+          },
+        },
+      });
+    }),
+
     graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
       return HttpResponse.json({
         data: {
@@ -712,6 +746,11 @@ export const graphqlMocks = {
         data: {
           workflow: getWorkflowMock(),
         },
+      });
+    }),
+    graphql.query('FindOneWorkflowRun', () => {
+      return HttpResponse.json({
+        data: oneSucceededWorkflowRunQueryResult,
       });
     }),
     graphql.query('FindManyWorkflowVersions', () => {

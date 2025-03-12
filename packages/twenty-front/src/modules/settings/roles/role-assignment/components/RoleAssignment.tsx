@@ -7,7 +7,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -31,23 +30,20 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { RoleAssignmentConfirmationModal } from './RoleAssignmentConfirmationModal';
 import { RoleAssignmentTableRow } from './RoleAssignmentTableRow';
 
-const StyledBottomSection = styled(Section)<{ hasRows: boolean }>`
-  ${({ hasRows, theme }) =>
-    hasRows
-      ? `
-    border-top: 1px solid ${theme.border.color.light};
-    margin-top: ${theme.spacing(2)};
-    padding-top: ${theme.spacing(4)};
-  `
-      : `
-    margin-top: ${theme.spacing(8)};
-  `}
+const StyledAssignToMemberContainer = styled.div`
   display: flex;
   justify-content: flex-end;
+  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledSearchContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(2)} 0;
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTable = styled.div<{ hasRows: boolean }>`
+  border-bottom: ${({ hasRows, theme }) =>
+    hasRows ? `1px solid ${theme.border.color.light}` : 'none'};
 `;
 
 const StyledSearchInput = styled(TextInput)`
@@ -59,6 +55,12 @@ const StyledSearchInput = styled(TextInput)`
       border: 1px solid ${({ theme }) => theme.border.color.medium};
     }
   }
+`;
+
+const StyledTableRows = styled.div`
+  gap: ${({ theme }) => theme.spacing(0.5)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 type RoleAssignmentProps = {
@@ -134,6 +136,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
       id: workspaceMember.id,
       name: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       role: existingRole,
+      avatarUrl: workspaceMember.avatarUrl,
     });
     setConfirmationModalIsOpen(true);
     closeDropdown();
@@ -178,50 +181,53 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
             sizeVariant="lg"
           />
         </StyledSearchContainer>
-        <Table>
+        <StyledTable hasRows={filteredWorkspaceMembers.length > 0}>
           <RoleAssignmentTableHeader />
-          {filteredWorkspaceMembers.map((workspaceMember) => (
-            <RoleAssignmentTableRow
-              key={workspaceMember.id}
-              workspaceMember={workspaceMember}
-            />
-          ))}
-        </Table>
-      </Section>
-      <StyledBottomSection hasRows={filteredWorkspaceMembers.length > 0}>
-        <Dropdown
-          dropdownId="role-member-select"
-          dropdownHotkeyScope={{ scope: 'roleAssignment' }}
-          clickableComponent={
-            <>
-              <div id="assign-member">
-                <Button
-                  Icon={IconPlus}
-                  title={t`Assign to member`}
-                  variant="secondary"
-                  size="small"
-                  disabled={allWorkspaceMembersHaveThisRole}
-                />
-              </div>
-              <AppTooltip
-                anchorSelect="#assign-member"
-                content={t`No more members to assign`}
-                delay={TooltipDelay.noDelay}
-                hidden={!allWorkspaceMembersHaveThisRole}
+          <StyledTableRows>
+            {filteredWorkspaceMembers.map((workspaceMember) => (
+              <RoleAssignmentTableRow
+                key={workspaceMember.id}
+                workspaceMember={workspaceMember}
               />
-            </>
-          }
-          dropdownComponents={
-            <RoleAssignmentWorkspaceMemberPickerDropdown
-              excludedWorkspaceMemberIds={[
-                ...assignedWorkspaceMemberIds,
-                currentWorkspaceMember?.id,
-              ]}
-              onSelect={handleSelectWorkspaceMember}
-            />
-          }
-        />
-      </StyledBottomSection>
+            ))}
+          </StyledTableRows>
+        </StyledTable>
+
+        <StyledAssignToMemberContainer>
+          <Dropdown
+            dropdownId="role-member-select"
+            dropdownHotkeyScope={{ scope: 'roleAssignment' }}
+            clickableComponent={
+              <>
+                <div id="assign-member">
+                  <Button
+                    Icon={IconPlus}
+                    title={t`Assign to member`}
+                    variant="secondary"
+                    size="small"
+                    disabled={allWorkspaceMembersHaveThisRole}
+                  />
+                </div>
+                <AppTooltip
+                  anchorSelect="#assign-member"
+                  content={t`No more members to assign`}
+                  delay={TooltipDelay.noDelay}
+                  hidden={!allWorkspaceMembersHaveThisRole}
+                />
+              </>
+            }
+            dropdownComponents={
+              <RoleAssignmentWorkspaceMemberPickerDropdown
+                excludedWorkspaceMemberIds={[
+                  ...assignedWorkspaceMemberIds,
+                  currentWorkspaceMember?.id,
+                ]}
+                onSelect={handleSelectWorkspaceMember}
+              />
+            }
+          />
+        </StyledAssignToMemberContainer>
+      </Section>
 
       {confirmationModalIsOpen && selectedWorkspaceMember && (
         <RoleAssignmentConfirmationModal

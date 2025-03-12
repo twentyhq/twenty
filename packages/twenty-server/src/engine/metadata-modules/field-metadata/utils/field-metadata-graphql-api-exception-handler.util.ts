@@ -9,8 +9,13 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
+  if (error instanceof InvalidMetadataException) {
+    throw new UserInputError(error.message);
+  }
+
   if (error instanceof FieldMetadataException) {
     switch (error.code) {
       case FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND:

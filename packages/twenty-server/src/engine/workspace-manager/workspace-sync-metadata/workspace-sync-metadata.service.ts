@@ -8,7 +8,10 @@ import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-syn
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
-import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import {
+  WorkspaceMigrationEntity,
+  WorkspaceMigrationTableActionType,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
@@ -110,6 +113,15 @@ export class WorkspaceSyncMetadataService {
         `Workspace field migrations took ${workspaceFieldMigrationsEnd - workspaceFieldMigrationsStart}ms`,
       );
 
+      // Merge object and field migrations during table creation
+      const {
+        objectMigrations: mergedObjectMigrations,
+        fieldMigrations: mergedFieldMigrations,
+      } = this.mergeMigrations({
+        objectMigrations: workspaceObjectMigrations,
+        fieldMigrations: workspaceFieldMigrations,
+      });
+
       // 3 - Sync standard relations on standard and custom objects
       const workspaceRelationMigrationsStart = performance.now();
 
@@ -171,8 +183,8 @@ export class WorkspaceSyncMetadataService {
 
       // Save workspace migrations into the database
       workspaceMigrations = await workspaceMigrationRepository.save([
-        ...workspaceObjectMigrations,
-        ...workspaceFieldMigrations,
+        ...mergedObjectMigrations,
+        ...mergedFieldMigrations,
         ...workspaceRelationMigrations,
         ...workspaceIndexMigrations,
       ]);
@@ -228,6 +240,64 @@ export class WorkspaceSyncMetadataService {
     return {
       workspaceMigrations,
       storage,
+    };
+  }
+
+  private mergeMigrations({
+    objectMigrations,
+    fieldMigrations,
+  }: {
+    objectMigrations: Partial<WorkspaceMigrationEntity>[];
+    fieldMigrations: Partial<WorkspaceMigrationEntity>[];
+  }): {
+    objectMigrations: Partial<WorkspaceMigrationEntity>[];
+    fieldMigrations: Partial<WorkspaceMigrationEntity>[];
+  } {
+    const createMigrationsByTable = new Map<string, any>();
+
+    for (const objectMigration of objectMigrations) {
+      if (
+        !objectMigration.migrations ||
+        objectMigration.migrations.length === 0
+      )
+        continue;
+
+      const tableMigration = objectMigration.migrations[0];
+
+      if (tableMigration.action === WorkspaceMigrationTableActionType.CREATE) {
+        createMigrationsByTable.set(tableMigration.name, tableMigration);
+      }
+    }
+
+    const fieldMigrationsWithoutTableCreation = fieldMigrations.filter(
+      (fieldMigration) => {
+        if (
+          !fieldMigration.migrations ||
+          fieldMigration.migrations.length === 0
+        )
+          return true;
+
+        const tableMigration = fieldMigration.migrations[0];
+        const tableName = tableMigration.name;
+
+        if (createMigrationsByTable.has(tableName)) {
+          const createMigration = createMigrationsByTable.get(tableName);
+
+          if (tableMigration.columns?.length) {
+            createMigration.columns = createMigration.columns || [];
+            createMigration.columns.push(...tableMigration.columns);
+          }
+
+          return false;
+        }
+
+        return true;
+      },
+    );
+
+    return {
+      objectMigrations,
+      fieldMigrations: fieldMigrationsWithoutTableCreation,
     };
   }
 }

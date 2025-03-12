@@ -10,13 +10,18 @@ import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-he
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
+import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-data.dto';
+import { QueueMetricsData } from './dtos/queue-metrics-data.dto';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -24,6 +29,7 @@ export class AdminPanelResolver {
   constructor(
     private adminService: AdminPanelService,
     private adminPanelHealthService: AdminPanelHealthService,
+    private workerHealthIndicator: WorkerHealthIndicator,
   ) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
@@ -56,18 +62,19 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => EnvironmentVariablesOutput)
   async getEnvironmentVariablesGrouped(): Promise<EnvironmentVariablesOutput> {
     return this.adminService.getEnvironmentVariablesGrouped();
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => SystemHealth)
   async getSystemHealthStatus(): Promise<SystemHealth> {
     return this.adminPanelHealthService.getSystemHealthStatus();
   }
 
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => AdminPanelHealthServiceData)
   async getIndicatorHealthStatus(
     @Args('indicatorId', {
@@ -76,5 +83,23 @@ export class AdminPanelResolver {
     indicatorId: HealthIndicatorId,
   ): Promise<AdminPanelHealthServiceData> {
     return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Query(() => QueueMetricsData)
+  async getQueueMetrics(
+    @Args('queueName', { type: () => String })
+    queueName: string,
+    @Args('timeRange', {
+      nullable: true,
+      defaultValue: QueueMetricsTimeRange.OneDay,
+      type: () => QueueMetricsTimeRange,
+    })
+    timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneHour,
+  ): Promise<QueueMetricsData> {
+    return await this.adminPanelHealthService.getQueueMetrics(
+      queueName as MessageQueue,
+      timeRange,
+    );
   }
 }

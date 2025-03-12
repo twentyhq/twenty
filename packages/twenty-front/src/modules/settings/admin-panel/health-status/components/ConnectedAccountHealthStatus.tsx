@@ -1,6 +1,7 @@
 import { SettingsAdminHealthAccountSyncCountersTable } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
 
@@ -17,11 +18,13 @@ export const ConnectedAccountHealthStatus = () => {
   }
 
   const parsedDetails = JSON.parse(details);
+  const serviceDetails = parsedDetails.details;
 
   const isMessageSyncDown =
-    parsedDetails.messageSync?.status === AdminPanelHealthServiceStatus.OUTAGE;
+    serviceDetails.messageSync?.status === AdminPanelHealthServiceStatus.OUTAGE;
   const isCalendarSyncDown =
-    parsedDetails.calendarSync?.status === AdminPanelHealthServiceStatus.OUTAGE;
+    serviceDetails.calendarSync?.status ===
+    AdminPanelHealthServiceStatus.OUTAGE;
 
   const errorMessages = [];
   if (isMessageSyncDown) {
@@ -39,17 +42,17 @@ export const ConnectedAccountHealthStatus = () => {
         </StyledErrorMessage>
       )}
 
-      {!isMessageSyncDown && parsedDetails.messageSync?.details && (
+      {!isMessageSyncDown && serviceDetails.messageSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
-          details={parsedDetails.messageSync.details}
-          title="Message Sync Status"
+          details={serviceDetails.messageSync.details}
+          title={t`Message Sync Status`}
         />
       )}
 
-      {!isCalendarSyncDown && parsedDetails.calendarSync?.details && (
+      {!isCalendarSyncDown && serviceDetails.calendarSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
-          details={parsedDetails.calendarSync.details}
-          title="Calendar Sync Status"
+          details={serviceDetails.calendarSync.details}
+          title={t`Calendar Sync Status`}
         />
       )}
     </>

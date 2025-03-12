@@ -6,6 +6,12 @@ export const mapRecordFilterToViewFilter = (
 ): ViewFilter => {
   return {
     __typename: 'ViewFilter',
-    ...recordFilter,
-  } satisfies ViewFilter;
+    displayValue: recordFilter.displayValue,
+    fieldMetadataId: recordFilter.fieldMetadataId,
+    id: recordFilter.id,
+    operand: recordFilter.operand,
+    value: recordFilter.value,
+    positionInViewFilterGroup: recordFilter.positionInRecordFilterGroup,
+    viewFilterGroupId: recordFilter.recordFilterGroupId,
+  };
 };

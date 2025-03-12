@@ -5,37 +5,55 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { IconDotsVertical, IconSearch, useIcons } from 'twenty-ui';
+import {
+  IconBolt,
+  IconCalendarEvent,
+  IconComponent,
+  IconDotsVertical,
+  IconMail,
+  IconSearch,
+  IconSettingsAutomation,
+  useIcons,
+} from 'twenty-ui';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
-import {
-  CommandMenuNavigationStackItem,
-  commandMenuNavigationStackState,
-} from '@/command-menu/states/commandMenuNavigationStackState';
+import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
+import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared';
+import { v4 } from 'uuid';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
+
+export type CommandMenuNavigationStackItem = {
+  page: CommandMenuPages;
+  pageTitle: string;
+  pageIcon: IconComponent;
+  pageId?: string;
+};
 
 export const useCommandMenu = () => {
   const { resetSelectedItem } = useSelectableList('command-menu-list');
@@ -73,6 +91,7 @@ export const useCommandMenu = () => {
         set(commandMenuPageInfoState, {
           title: undefined,
           Icon: undefined,
+          instanceId: '',
         });
         set(isCommandMenuOpenedState, false);
         set(commandMenuSearchState, '');
@@ -135,15 +154,21 @@ export const useCommandMenu = () => {
         page,
         pageTitle,
         pageIcon,
+        pageId,
         resetNavigationStack = false,
       }: CommandMenuNavigationStackItem & {
         resetNavigationStack?: boolean;
       }) => {
+        if (!pageId) {
+          pageId = v4();
+        }
+
         openCommandMenu();
         set(commandMenuPageState, page);
         set(commandMenuPageInfoState, {
           title: pageTitle,
           Icon: pageIcon,
+          instanceId: pageId,
         });
 
         const isCommandMenuClosing = snapshot
@@ -155,11 +180,23 @@ export const useCommandMenu = () => {
           : snapshot.getLoadable(commandMenuNavigationStackState).getValue();
 
         if (resetNavigationStack) {
-          set(commandMenuNavigationStackState, [{ page, pageTitle, pageIcon }]);
+          set(commandMenuNavigationStackState, [
+            {
+              page,
+              pageTitle,
+              pageIcon,
+              pageId,
+            },
+          ]);
         } else {
           set(commandMenuNavigationStackState, [
             ...currentNavigationStack,
-            { page, pageTitle, pageIcon },
+            {
+              page,
+              pageTitle,
+              pageIcon,
+              pageId,
+            },
           ]);
         }
       };
@@ -214,6 +251,7 @@ export const useCommandMenu = () => {
         set(commandMenuPageInfoState, {
           title: lastNavigationStackItem.pageTitle,
           Icon: lastNavigationStackItem.pageIcon,
+          instanceId: lastNavigationStackItem.pageId,
         });
 
         set(commandMenuNavigationStackState, newNavigationStack);
@@ -245,6 +283,7 @@ export const useCommandMenu = () => {
       set(commandMenuPageInfoState, {
         title: newNavigationStackItem?.pageTitle,
         Icon: newNavigationStackItem?.pageIcon,
+        instanceId: newNavigationStackItem?.pageId,
       });
 
       set(hasUserSelectedCommandState, false);
@@ -262,7 +301,20 @@ export const useCommandMenu = () => {
         objectNameSingular: string;
         isNewRecord?: boolean;
       }) => {
-        set(viewableRecordNameSingularState, objectNameSingular);
+        const pageComponentInstanceId = v4();
+
+        set(
+          viewableRecordNameSingularComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          objectNameSingular,
+        );
+        set(
+          viewableRecordIdComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          recordId,
+        );
         set(viewableRecordIdState, recordId);
 
         const objectMetadataItem = snapshot
@@ -273,6 +325,56 @@ export const useCommandMenu = () => {
             }),
           )
           .getValue();
+
+        if (!objectMetadataItem) {
+          throw new Error(
+            `No object metadata item found for object name ${objectNameSingular}`,
+          );
+        }
+
+        set(
+          contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          objectMetadataItem,
+        );
+
+        set(
+          contextStoreTargetedRecordsRuleComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          {
+            mode: 'selection',
+            selectedRecordIds: [recordId],
+          },
+        );
+
+        set(
+          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          1,
+        );
+
+        set(
+          contextStoreCurrentViewTypeComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          ContextStoreViewType.ShowPage,
+        );
+
+        set(
+          contextStoreCurrentViewIdComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          snapshot
+            .getLoadable(
+              contextStoreCurrentViewIdComponentState.atomFamily({
+                instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+              }),
+            )
+            .getValue(),
+        );
 
         const Icon = objectMetadataItem?.icon
           ? getIcon(objectMetadataItem.icon)
@@ -286,12 +388,117 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
-          // TODO: remove this once we can store the navigation stack page states
-          resetNavigationStack: true,
+          pageId: pageComponentInstanceId,
+          resetNavigationStack: false,
         });
       };
     },
     [getIcon, navigateCommandMenu],
+  );
+
+  const openWorkflowTriggerTypeInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowStepSelectTriggerType,
+          pageTitle: t`Trigger Type`,
+          pageIcon: IconBolt,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
+  const openWorkflowActionInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowStepSelectAction,
+          pageTitle: t`Select Action`,
+          pageIcon: IconSettingsAutomation,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
+  const openWorkflowEditStepInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string, title: string, icon: IconComponent) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowStepEdit,
+          pageTitle: title,
+          pageIcon: icon,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
+  const openWorkflowViewStepInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string, title: string, icon: IconComponent) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowStepView,
+          pageTitle: title,
+          pageIcon: icon,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
+  const openWorkflowViewRunStepInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (workflowId: string, title: string, icon: IconComponent) => {
+        const pageId = v4();
+
+        set(
+          workflowIdComponentState.atomFamily({ instanceId: pageId }),
+          workflowId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.WorkflowRunStepView,
+          pageTitle: title,
+          pageIcon: icon,
+          pageId,
+        });
+      };
+    },
+    [navigateCommandMenu],
   );
 
   const openRecordsSearchPage = () => {
@@ -299,8 +506,55 @@ export const useCommandMenu = () => {
       page: CommandMenuPages.SearchRecords,
       pageTitle: 'Search',
       pageIcon: IconSearch,
+      pageId: v4(),
     });
   };
+
+  const openCalendarEventInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (calendarEventId: string) => {
+        const pageComponentInstanceId = v4();
+
+        set(
+          viewableRecordIdComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          calendarEventId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.ViewCalendarEvent,
+          pageTitle: 'Calendar Event',
+          pageIcon: IconCalendarEvent,
+          pageId: pageComponentInstanceId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
+
+  const openEmailThreadInCommandMenu = useRecoilCallback(
+    ({ set }) => {
+      return (emailThreadId: string) => {
+        const pageComponentInstanceId = v4();
+
+        set(
+          viewableRecordIdComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          emailThreadId,
+        );
+
+        navigateCommandMenu({
+          page: CommandMenuPages.ViewEmailThread,
+          pageTitle: 'Email Thread',
+          pageIcon: IconMail,
+          pageId: pageComponentInstanceId,
+        });
+      };
+    },
+    [navigateCommandMenu],
+  );
 
   const setGlobalCommandMenuContext = useRecoilCallback(
     ({ set }) => {
@@ -344,6 +598,7 @@ export const useCommandMenu = () => {
         set(commandMenuPageInfoState, {
           title: undefined,
           Icon: undefined,
+          instanceId: '',
         });
 
         set(hasUserSelectedCommandState, false);
@@ -363,5 +618,12 @@ export const useCommandMenu = () => {
     openRecordInCommandMenu,
     toggleCommandMenu,
     setGlobalCommandMenuContext,
+    openCalendarEventInCommandMenu,
+    openEmailThreadInCommandMenu,
+    openWorkflowTriggerTypeInCommandMenu,
+    openWorkflowActionInCommandMenu,
+    openWorkflowEditStepInCommandMenu,
+    openWorkflowViewStepInCommandMenu,
+    openWorkflowViewRunStepInCommandMenu,
   };
 };

@@ -1,6 +1,9 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormSelectFieldInput } from '../FormSelectFieldInput';
 
 const meta: Meta<typeof FormSelectFieldInput> = {
@@ -8,6 +11,7 @@ const meta: Meta<typeof FormSelectFieldInput> = {
   component: FormSelectFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -117,7 +121,7 @@ export const Disabled: Story = {
 export const DisabledWithVariable: Story = {
   args: {
     label: 'Created At',
-    defaultValue: `{{a.b.c}}`,
+    defaultValue: `{{${MOCKED_STEP_ID}.createdAt}}`,
     options: [
       {
         label: 'Work Policy 1',
@@ -146,7 +150,7 @@ export const DisabledWithVariable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const variableChip = await canvas.findByText('c');
+    const variableChip = await canvas.findByText('Creation date');
     expect(variableChip).toBeVisible();
 
     await userEvent.click(variableChip);

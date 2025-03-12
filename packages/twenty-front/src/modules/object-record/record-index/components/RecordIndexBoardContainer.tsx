@@ -33,7 +33,10 @@ export const RecordIndexBoardContainer = ({
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
   const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
-  const { createOneRecord } = useCreateOneRecord({ objectNameSingular });
+  const { createOneRecord } = useCreateOneRecord({
+    objectNameSingular,
+    shouldMatchRootQueryFilter: true,
+  });
 
   if (!selectFieldMetadataItem) {
     return;

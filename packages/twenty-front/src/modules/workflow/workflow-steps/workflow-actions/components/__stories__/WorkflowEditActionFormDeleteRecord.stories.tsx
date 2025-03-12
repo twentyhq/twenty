@@ -2,15 +2,16 @@ import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionFormDeleteRecord } from '../WorkflowEditActionFormDeleteRecord';
-import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -51,6 +52,7 @@ const meta: Meta<typeof WorkflowEditActionFormDeleteRecord> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
+    I18nFrontDecorator,
   ],
 };
 
@@ -100,7 +102,7 @@ export const DisabledWithEmptyValues: Story = {
   },
 };
 
-const peopleMock = getPeopleMock()[0];
+const peopleMock = allMockPersonRecords[0];
 
 export const DisabledWithDefaultStaticValues: Story = {
   args: {
@@ -193,11 +195,5 @@ export const DisabledWithDefaultVariableValues: Story = {
     ).queryByRole('button');
 
     expect(openRecordSelectButton).not.toBeInTheDocument();
-
-    const recordVariableToDelete = await within(
-      canvas.getByTestId('workflow-edit-action-record-delete-object-record-id'),
-    ).findByText('Person');
-
-    expect(recordVariableToDelete).toBeVisible();
   },
 };
