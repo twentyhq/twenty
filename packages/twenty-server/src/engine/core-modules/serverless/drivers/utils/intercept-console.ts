@@ -2,9 +2,8 @@
 
 import { AsyncLocalStorage } from 'async_hooks';
 
-const ASYNC_LOCAL_STORAGE_ACTIVATED = Symbol('AsyncLocalStorageActivated');
-
 export class ConsoleListener {
+  private static isInitialized = false;
   private readonly originalConsole = {
     log: console.log,
     error: console.error,
@@ -12,43 +11,40 @@ export class ConsoleListener {
     info: console.info,
     debug: console.debug,
   };
-  private readonly consoleAsyncLocalStrorage = new AsyncLocalStorage<symbol>();
-  private callback: (type: string, message: any[]) => void | undefined;
+  private readonly consoleAsyncLocalStrorage = new AsyncLocalStorage<{
+    callback: (type: string, message: any[]) => void;
+  }>();
 
-  onConsole(callback: (type: string, message: any[]) => void) {
-    this.callback = callback;
-  }
+  run<T>(
+    callback: () => T,
+    { onConsole }: { onConsole: (type: string, message: any[]) => void },
+  ): T {
+    if (!ConsoleListener.isInitialized) {
+      this.intercept();
 
-  run<T>(callback: () => T): T {
+      ConsoleListener.isInitialized = true;
+    }
+
     return this.consoleAsyncLocalStrorage.run<T>(
-      ASYNC_LOCAL_STORAGE_ACTIVATED,
-      () => {
-        this.intercept();
-
-        return callback();
+      {
+        callback: onConsole,
       },
+      callback,
     );
   }
 
   private intercept() {
     Object.keys(this.originalConsole).forEach((method) => {
       console[method] = (...args: any[]) => {
-        const shouldIntercept =
-          this.consoleAsyncLocalStrorage.getStore() ===
-          ASYNC_LOCAL_STORAGE_ACTIVATED;
+        const store = this.consoleAsyncLocalStrorage.getStore();
+        const shouldIntercept = store !== undefined;
 
-        if (shouldIntercept && this.callback !== undefined) {
-          this.callback(method, args);
+        if (shouldIntercept) {
+          store.callback(method, args);
         } else {
           this.originalConsole[method](...args);
         }
       };
-    });
-  }
-
-  release() {
-    Object.keys(this.originalConsole).forEach((method) => {
-      console[method] = this.originalConsole[method];
     });
   }
 }

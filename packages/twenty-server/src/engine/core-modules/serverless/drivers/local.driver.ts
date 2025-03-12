@@ -134,48 +134,47 @@ export class LocalDriver implements ServerlessDriver {
 
     const consoleListener = new ConsoleListener();
 
-    consoleListener.onConsole((type, args) => {
-      const formattedArgs = args.map((arg) => {
-        if (typeof arg === 'object' && arg !== null) {
-          const seen = new WeakSet();
-
-          return JSON.stringify(
-            arg,
-            (key, value) => {
-              if (typeof value === 'object' && value !== null) {
-                if (seen.has(value)) {
-                  return '[Circular]'; // Handle circular references
-                }
-                seen.add(value);
-              }
-
-              return value;
-            },
-            2,
-          );
-        }
-
-        return arg;
-      });
-
-      const formattedType = type === 'log' ? 'info' : type;
-
-      logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
-    });
-
     try {
       const mainFile = await import(compiledCodeFilePath);
 
-      const result = await consoleListener.run(async () => {
-        const result = await this.executeWithTimeout<object | null>(
-          () => mainFile.main(payload),
-          serverlessFunction.timeoutSeconds * 1_000,
-        );
+      const result = await consoleListener.run(
+        () => {
+          return this.executeWithTimeout<object | null>(
+            () => mainFile.main(payload),
+            serverlessFunction.timeoutSeconds * 1_000,
+          );
+        },
+        {
+          onConsole: (type, args) => {
+            const formattedArgs = args.map((arg) => {
+              if (typeof arg === 'object' && arg !== null) {
+                const seen = new WeakSet();
 
-        consoleListener.release();
+                return JSON.stringify(
+                  arg,
+                  (key, value) => {
+                    if (typeof value === 'object' && value !== null) {
+                      if (seen.has(value)) {
+                        return '[Circular]'; // Handle circular references
+                      }
+                      seen.add(value);
+                    }
 
-        return result;
-      });
+                    return value;
+                  },
+                  2,
+                );
+              }
+
+              return arg;
+            });
+
+            const formattedType = type === 'log' ? 'info' : type;
+
+            logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
+          },
+        },
+      );
 
       const duration = Date.now() - startTime;
 
@@ -186,8 +185,6 @@ export class LocalDriver implements ServerlessDriver {
         status: ServerlessFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
-      consoleListener.release();
-
       return {
         data: null,
         logs,
