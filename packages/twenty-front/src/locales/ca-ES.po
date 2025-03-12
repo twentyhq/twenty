@@ -19,14 +19,14 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr ""
-" Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les\n"
-"        mateixes variables i valors, això és necessari per a tasques asincròniques com la\n"
-"        sincronització de correu electrònic."
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr ""
+#~ " Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les\n"
+#~ "        mateixes variables i valors, això és necessari per a tasques asincròniques com la\n"
+#~ "        sincronització de correu electrònic."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -120,6 +120,14 @@ msgstr "Avorta"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "Sobre"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -289,6 +297,10 @@ msgstr "Tots els objectes"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Tots els rols"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -703,6 +715,7 @@ msgid "Continue with Microsoft"
 msgstr "Continua amb Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Copiat al porta-retalls!"
 
@@ -806,8 +819,12 @@ msgid "Created"
 msgstr "Creat"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "Versió actual:"
+msgid "Current version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Versió actual:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1162,6 +1179,7 @@ msgstr "Edita el nom del teu subdomini o estableix un domini personalitzat."
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "Correu electrònic"
 
@@ -1637,6 +1655,11 @@ msgstr "Icona"
 msgid "Icon and Name"
 msgstr "Icona i nom"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "Identificador"
@@ -1840,7 +1863,7 @@ msgstr "Laboratori"
 msgid "Language"
 msgstr "Idioma"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "Última 1 hora"
 
@@ -1848,7 +1871,7 @@ msgstr "Última 1 hora"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Darrera 1 Hora (més antic → més nou)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "Últimes 12 hores"
 
@@ -1860,7 +1883,7 @@ msgstr "Darreres 12 Hores (més antic → més nou)"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Darreres 24 Hores (més antic → més nou)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "Últimes 4 hores"
 
@@ -1886,8 +1909,12 @@ msgid "Latest date"
 msgstr "Data més recent"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "Última versió:"
+msgid "Latest version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Última versió:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1969,6 +1996,7 @@ msgstr "Màxim"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "Membres"
 
@@ -2024,6 +2052,8 @@ msgstr "Moure a la dreta"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "Nom"
 
@@ -2302,6 +2332,7 @@ msgstr "o"
 msgid "Other"
 msgstr "Altres"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "Altres Variables d'Entorn"
@@ -2871,6 +2902,7 @@ msgstr "SSO"
 msgid "Stages"
 msgstr "Etapes"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Estat"
@@ -3048,6 +3080,10 @@ msgstr "S'ha produït un error en actualitzar la contrasenya."
 msgid "There was an issue"
 msgstr "S'ha produït un problema"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Aquesta acció no es pot desfer. Això esborrarà permanentment aquest usuari i el traurà de totes les seves assignacions."
@@ -3072,7 +3108,7 @@ msgstr "Aquesta acció no es pot desfer. Això esborrarà permanentment tot el v
 msgid "This role is assigned to these workspace members."
 msgstr "Aquest rol està assignat a aquests membres de l'espai de treball."
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "Aquesta setmana"
 
@@ -3096,13 +3132,13 @@ msgstr "a mensual"
 msgid "to yearly"
 msgstr "a anual"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "Avui"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "Usuaris totals"
+#~ msgid "Total Users"
+#~ msgstr "Usuaris totals"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3191,17 +3227,16 @@ msgstr "Utilitzeu la nostra API o afegiu el vostre primer {objectLabel} manualme
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "Correu electrònic de l'usuari"
+#~ msgid "User Email"
+#~ msgstr "Correu electrònic de l'usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "ID d'usuari"
+#~ msgid "User ID"
+#~ msgstr "ID d'usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3217,12 +3252,12 @@ msgid "User is not logged in"
 msgstr "L'usuari no està logat"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "Nom d'usuari"
+#~ msgid "User Name"
+#~ msgstr "Nom d'usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "Usuaris"
+#~ msgid "Users"
+#~ msgstr "Usuaris"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3362,6 +3397,10 @@ msgstr "Espai de treball"
 msgid "Workspace Deletion"
 msgstr "Eliminació de l'espai de treball"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr ""
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "Logotip de l'espai de treball"
@@ -3371,8 +3410,8 @@ msgid "Workspace name"
 msgstr "Nom de l'espai de treball"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "Nom de l'espai de treball"
+#~ msgid "Workspace Name"
+#~ msgstr "Nom de l'espai de treball"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"

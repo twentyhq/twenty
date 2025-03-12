@@ -19,11 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr " هذه هي القيم الخاصة بالخادم فقط. تأكد من أن بيئة العمل لديك تحتوي على نفس المتغيرات والقيم. هذا مطلوب للمهام غير المتزامنة مثل مزامنة البريد الإلكتروني."
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr " هذه هي القيم الخاصة بالخادم فقط. تأكد من أن بيئة العمل لديك تحتوي على نفس المتغيرات والقيم. هذا مطلوب للمهام غير المتزامنة مثل مزامنة البريد الإلكتروني."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -117,6 +117,14 @@ msgstr "إلغاء"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "حول"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -286,6 +294,10 @@ msgstr "كل الكائنات"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "كل الأدوار"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -700,6 +712,7 @@ msgid "Continue with Microsoft"
 msgstr "الاستمرار باستخدام مايكروسوفت"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "تم النسخ إلى الحافظة!"
 
@@ -803,8 +816,12 @@ msgid "Created"
 msgstr "أنشئ"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "الإصدار الحالي:"
+msgid "Current version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "الإصدار الحالي:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1159,6 +1176,7 @@ msgstr "قم بتعديل اسم النطاق الفرعي أو اضبط نطا�
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
@@ -1634,6 +1652,11 @@ msgstr "أيقونة"
 msgid "Icon and Name"
 msgstr "الأيقونة والاسم"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "معرّف"
@@ -1837,7 +1860,7 @@ msgstr "مختبر"
 msgid "Language"
 msgstr "اللغة"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "آخر <b>ساعة واحدة</b>"
 
@@ -1845,7 +1868,7 @@ msgstr "آخر <b>ساعة واحدة</b>"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "آخر ١ ساعة (الأقدم ← الأحدث)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "آخر 12 ساعة"
 
@@ -1857,7 +1880,7 @@ msgstr "آخر 12 ساعة (الأقدم ← الأحدث)"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "آخر 24 ساعة (الأقدم ← الأحدث)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "آخر 4 ساعات"
 
@@ -1883,8 +1906,12 @@ msgid "Latest date"
 msgstr "تاريخ الأحدث"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "أحدث إصدار:"
+msgid "Latest version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "أحدث إصدار:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1966,6 +1993,7 @@ msgstr "الأقصى"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "الأعضاء"
 
@@ -2021,6 +2049,8 @@ msgstr "نقل إلى اليمين"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "الاسم"
 
@@ -2299,6 +2329,7 @@ msgstr "أو"
 msgid "Other"
 msgstr "أخرى"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "متغيرات بيئة أخرى"
@@ -2868,6 +2899,7 @@ msgstr "التسجيل الموحد"
 msgid "Stages"
 msgstr "مراحل"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "الحالة"
@@ -3045,6 +3077,10 @@ msgstr "حدث خطأ أثناء تحديث كلمة المرور."
 msgid "There was an issue"
 msgstr "حدثت مشكلة"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف هذا المستخدم نهائياً وإزالتهم من جميع مهامهم."
@@ -3069,7 +3105,7 @@ msgstr "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذل
 msgid "This role is assigned to these workspace members."
 msgstr "تم تعيين هذا الدور لهؤلاء أعضاء الفضاء العمل."
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "هذا الأسبوع"
 
@@ -3093,13 +3129,13 @@ msgstr "إلى شهرياً"
 msgid "to yearly"
 msgstr "إلى سنوياً"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "اليوم"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "إجمالي المستخدمين"
+#~ msgid "Total Users"
+#~ msgstr "إجمالي المستخدمين"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3188,17 +3224,16 @@ msgstr "استخدم واجهة برمجة التطبيقات لدينا أو أ
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "المستخدم"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "البريد الإلكتروني للمستخدم"
+#~ msgid "User Email"
+#~ msgstr "البريد الإلكتروني للمستخدم"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "معرف المستخدم"
+#~ msgid "User ID"
+#~ msgstr "معرف المستخدم"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3214,12 +3249,12 @@ msgid "User is not logged in"
 msgstr "المستخدم غير مسجل الدخول"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "اسم المستخدم"
+#~ msgid "User Name"
+#~ msgstr "اسم المستخدم"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "المستخدمون"
+#~ msgid "Users"
+#~ msgstr "المستخدمون"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3359,6 +3394,10 @@ msgstr "مساحة العمل"
 msgid "Workspace Deletion"
 msgstr "حذف مساحة العمل"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr ""
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "شعار مساحة العمل"
@@ -3368,8 +3407,8 @@ msgid "Workspace name"
 msgstr "اسم مساحة العمل"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "اسم مساحة العمل"
+#~ msgid "Workspace Name"
+#~ msgstr "اسم مساحة العمل"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"

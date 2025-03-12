@@ -19,11 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr " Jedná se pouze o hodnoty serveru. Ujistěte se, že vaše pracovní prostředí má stejné proměnné a hodnoty, což je nutné pro asynchronní úkoly, jako je synchronizace e-mailů."
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr " Jedná se pouze o hodnoty serveru. Ujistěte se, že vaše pracovní prostředí má stejné proměnné a hodnoty, což je nutné pro asynchronní úkoly, jako je synchronizace e-mailů."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -117,6 +117,14 @@ msgstr "Přerušit"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "O aplikaci"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -286,6 +294,10 @@ msgstr "Všechny objekty"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Všechny role"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -700,6 +712,7 @@ msgid "Continue with Microsoft"
 msgstr "Pokračovat s Microsoftem"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Zkopírováno do schránky!"
 
@@ -803,8 +816,12 @@ msgid "Created"
 msgstr "Vytvořeno"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "Současná verze:"
+msgid "Current version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Současná verze:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1159,6 +1176,7 @@ msgstr "Upravit název vaší subdomény nebo nastavit vlastní doménu."
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "E-mail"
 
@@ -1634,6 +1652,11 @@ msgstr "Ikona"
 msgid "Icon and Name"
 msgstr "Ikona a název"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "Identifikátor"
@@ -1837,7 +1860,7 @@ msgstr "Laboratoř"
 msgid "Language"
 msgstr "Jazyk"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "Poslední 1 hodina"
 
@@ -1845,7 +1868,7 @@ msgstr "Poslední 1 hodina"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Poslední 1 hodina (od nejstarších → k nejnovějším)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "Posledních 12 hodin"
 
@@ -1857,7 +1880,7 @@ msgstr "Posledních 12 hodin (od nejstarších → k nejnovějším)"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Posledních 24 hodin (od nejstarších → k nejnovějším)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "Poslední 4 hodiny"
 
@@ -1883,8 +1906,12 @@ msgid "Latest date"
 msgstr "Nejnovější datum"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "Nejnovější verze:"
+msgid "Latest version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Nejnovější verze:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1966,6 +1993,7 @@ msgstr "Maximální"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "Členové"
 
@@ -2021,6 +2049,8 @@ msgstr "Posunout doprava"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "Název"
 
@@ -2299,6 +2329,7 @@ msgstr "nebo"
 msgid "Other"
 msgstr "Ostatní"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "Ostatní proměnné prostředí"
@@ -2868,6 +2899,7 @@ msgstr "Jednotné přihlášení"
 msgid "Stages"
 msgstr "Etapy"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Stav"
@@ -3045,6 +3077,10 @@ msgstr "Během aktualizace hesla došlo k chybě."
 msgid "There was an issue"
 msgstr "Došlo k problému"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Tato akce nemůže být vrácena zpět. Uživatele natrvalo odstraní a odstraní ho z všech přiřazení."
@@ -3069,7 +3105,7 @@ msgstr "Tuto akci nelze vrátit zpět. Tímto dojde k trvalému odstranění cel
 msgid "This role is assigned to these workspace members."
 msgstr "Tuto roli mají přiřazení následující členové pracovního prostoru."
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "Tento týden"
 
@@ -3093,13 +3129,13 @@ msgstr "na měsíční"
 msgid "to yearly"
 msgstr "na roční"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "Dnes"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "Celkový počet uživatelů"
+#~ msgid "Total Users"
+#~ msgstr "Celkový počet uživatelů"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3188,17 +3224,16 @@ msgstr "Použijte naše API nebo ručně přidejte první {objectLabel}"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Uživatel"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "E-mail uživatele"
+#~ msgid "User Email"
+#~ msgstr "E-mail uživatele"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "ID uživatele"
+#~ msgid "User ID"
+#~ msgstr "ID uživatele"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3214,12 +3249,12 @@ msgid "User is not logged in"
 msgstr "Uživatel není přihlášen"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "Jméno uživatele"
+#~ msgid "User Name"
+#~ msgstr "Jméno uživatele"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "Uživatelé"
+#~ msgid "Users"
+#~ msgstr "Uživatelé"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3359,6 +3394,10 @@ msgstr "Pracovní prostor"
 msgid "Workspace Deletion"
 msgstr "Smazání pracovního prostoru"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr ""
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "Logo pracovního prostoru"
@@ -3368,8 +3407,8 @@ msgid "Workspace name"
 msgstr "Název pracovního prostoru"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "Název pracovního prostoru"
+#~ msgid "Workspace Name"
+#~ msgstr "Název pracovního prostoru"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"

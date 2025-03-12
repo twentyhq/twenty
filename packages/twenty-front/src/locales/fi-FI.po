@@ -19,11 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr " Nämä ovat vain palvelinmuuttujia. Varmista, että työympäristössäsi on samat muuttujat ja arvot, tämä on välttämätöntä asynkronisille tehtäville, kuten sähköpostin synkronointi."
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr " Nämä ovat vain palvelinmuuttujia. Varmista, että työympäristössäsi on samat muuttujat ja arvot, tämä on välttämätöntä asynkronisille tehtäville, kuten sähköpostin synkronointi."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -117,6 +117,14 @@ msgstr "Keskeytä"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "Tietoja"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -286,6 +294,10 @@ msgstr "Kaikki objektit"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Kaikki roolit"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -700,6 +712,7 @@ msgid "Continue with Microsoft"
 msgstr "Jatka Microsoftin avulla"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Kopioitu leikepöydälle!"
 
@@ -803,8 +816,12 @@ msgid "Created"
 msgstr "Luotu"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "Nykyinen versio:"
+msgid "Current version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Nykyinen versio:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1159,6 +1176,7 @@ msgstr "Muokkaa alasivustosi nime\\u00e4 tai aseta mukautettu verkkotunnus."
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "S\\u00e4hk\\u00f6posti"
 
@@ -1634,6 +1652,11 @@ msgstr "Kuvake"
 msgid "Icon and Name"
 msgstr "Ikoni ja nimi"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "Tunnistetieto"
@@ -1837,7 +1860,7 @@ msgstr "Laboratorio"
 msgid "Language"
 msgstr "Kieli"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "Viimeinen 1 tunti"
 
@@ -1845,7 +1868,7 @@ msgstr "Viimeinen 1 tunti"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Viimeiset 1 tunti (vanhin → uusin)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "Viimeiset 12 tuntia"
 
@@ -1857,7 +1880,7 @@ msgstr "Viimeiset 12 tuntia (vanhin → uusin)"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Viimeiset 24 tuntia (vanhin → uusin)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "Viimeiset 4 tuntia"
 
@@ -1883,8 +1906,12 @@ msgid "Latest date"
 msgstr "Viimeisin päivämäärä"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "Uusin versio:"
+msgid "Latest version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Uusin versio:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1966,6 +1993,7 @@ msgstr "Suurin"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "Jäsenet"
 
@@ -2021,6 +2049,8 @@ msgstr "Siirrä oikealle"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "Nimi"
 
@@ -2299,6 +2329,7 @@ msgstr "tai"
 msgid "Other"
 msgstr "Muu"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "Muut ympäristömuuttujat"
@@ -2868,6 +2899,7 @@ msgstr "Kertakirjautuminen"
 msgid "Stages"
 msgstr "Vaiheet"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Tila"
@@ -3045,6 +3077,10 @@ msgstr "Salasanan päivityksessä tapahtui virhe."
 msgid "There was an issue"
 msgstr "Ongelman esiintyi"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Tätä toimintoa ei voi peruuttaa. Tämä poistaa käyttäjän pysyvästi ja poistaa heidät kaikista heidän tehtävistään."
@@ -3069,7 +3105,7 @@ msgstr "Tätä toimintoa ei voi peruuttaa. Tämä poistaa pysyvästi koko työti
 msgid "This role is assigned to these workspace members."
 msgstr "Tämä rooli on määritetty näille työtilan jäsenille."
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "Tämä viikko"
 
@@ -3093,13 +3129,13 @@ msgstr "kuukausittain"
 msgid "to yearly"
 msgstr "vuosittain"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "Tänään"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "Käyttäjien kokonaismäärä"
+#~ msgid "Total Users"
+#~ msgstr "Käyttäjien kokonaismäärä"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3188,17 +3224,16 @@ msgstr "Käytä APIamme tai lisää ensimmäinen {objectLabel} käsin"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Käyttäjä"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "Käyttäjän sähköposti"
+#~ msgid "User Email"
+#~ msgstr "Käyttäjän sähköposti"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "Käyttäjän tunnus"
+#~ msgid "User ID"
+#~ msgstr "Käyttäjän tunnus"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3214,12 +3249,12 @@ msgid "User is not logged in"
 msgstr "Käyttäjä ei ole kirjautunut sisään"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "Käyttäjän nimi"
+#~ msgid "User Name"
+#~ msgstr "Käyttäjän nimi"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "Käyttäjät"
+#~ msgid "Users"
+#~ msgstr "Käyttäjät"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3359,6 +3394,10 @@ msgstr "Työtila"
 msgid "Workspace Deletion"
 msgstr "Työtilan poistaminen"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr ""
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "Työtilan logo"
@@ -3368,8 +3407,8 @@ msgid "Workspace name"
 msgstr "Työtilan nimi"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "Työtilan nimi"
+#~ msgid "Workspace Name"
+#~ msgstr "Työtilan nimi"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"

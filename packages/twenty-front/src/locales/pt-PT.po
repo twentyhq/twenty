@@ -19,14 +19,14 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr ""
-" Estes são apenas os valores do servidor. Certifique-se de que o ambiente de trabalho tenha as\n"
-"        mesmas variáveis e valores, isso é necessário para tarefas assíncronas, como\n"
-"        sincronização de e-mail."
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr ""
+#~ " Estes são apenas os valores do servidor. Certifique-se de que o ambiente de trabalho tenha as\n"
+#~ "        mesmas variáveis e valores, isso é necessário para tarefas assíncronas, como\n"
+#~ "        sincronização de e-mail."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -120,6 +120,14 @@ msgstr "Abortar"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "Sobre"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -289,6 +297,10 @@ msgstr "Todos os Objetos"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Todos os papéis"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -703,6 +715,7 @@ msgid "Continue with Microsoft"
 msgstr "Continuar com a Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Copiado para a área de transferência!"
 
@@ -806,8 +819,12 @@ msgid "Created"
 msgstr "Criado"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "Versão atual:"
+msgid "Current version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Versão atual:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1162,6 +1179,7 @@ msgstr "Edite o nome do seu subdomínio ou defina um domínio personalizado."
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "E-mail"
 
@@ -1637,6 +1655,11 @@ msgstr "Ícone"
 msgid "Icon and Name"
 msgstr "Ícone e Nome"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "Identificador"
@@ -1840,7 +1863,7 @@ msgstr "Laboratório"
 msgid "Language"
 msgstr "Língua"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "Última 1 hora"
 
@@ -1848,7 +1871,7 @@ msgstr "Última 1 hora"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Última 1 Hora (mais antigo → mais recente)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "Últimas 12 horas"
 
@@ -1860,7 +1883,7 @@ msgstr "Últimas 12 Horas (mais antigo → mais recente)"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Últimas 24 Horas (mais antigo → mais recente)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "Últimas 4 horas"
 
@@ -1886,8 +1909,12 @@ msgid "Latest date"
 msgstr "Data mais recente"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "Versão mais recente:"
+msgid "Latest version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Versão mais recente:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1969,6 +1996,7 @@ msgstr "Máximo"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "Membros"
 
@@ -2024,6 +2052,8 @@ msgstr "Mover para a direita"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "Nome"
 
@@ -2302,6 +2332,7 @@ msgstr "ou"
 msgid "Other"
 msgstr "Outros"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "Outras Variáveis de Ambiente"
@@ -2871,6 +2902,7 @@ msgstr "SSO"
 msgid "Stages"
 msgstr "Fases"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Estado"
@@ -3048,6 +3080,10 @@ msgstr "Ocorreu um erro ao atualizar a palavra-passe."
 msgid "There was an issue"
 msgstr "Houve um problema"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente este utilizador e removê-lo-á de todas as suas atribuições."
@@ -3072,7 +3108,7 @@ msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente todo
 msgid "This role is assigned to these workspace members."
 msgstr "Este cargo est\\u00e1 atribu\\u00eddo a estes membros do espa\\u00e7o de trabalho."
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "Esta semana"
 
@@ -3096,13 +3132,13 @@ msgstr "para mensal"
 msgid "to yearly"
 msgstr "para anual"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "Hoje"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "Total de Utilizadores"
+#~ msgid "Total Users"
+#~ msgstr "Total de Utilizadores"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3191,17 +3227,16 @@ msgstr "Use a nossa API ou adicione o seu primeiro {objectLabel} manualmente"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Utilizador"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "Email do Utilizador"
+#~ msgid "User Email"
+#~ msgstr "Email do Utilizador"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "ID do Utilizador"
+#~ msgid "User ID"
+#~ msgstr "ID do Utilizador"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3217,12 +3252,12 @@ msgid "User is not logged in"
 msgstr "O utilizador não está autenticado"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "Nome do Utilizador"
+#~ msgid "User Name"
+#~ msgstr "Nome do Utilizador"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "Utilizadores"
+#~ msgid "Users"
+#~ msgstr "Utilizadores"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3362,6 +3397,10 @@ msgstr "Espaço de trabalho"
 msgid "Workspace Deletion"
 msgstr "Eliminação do espaço de trabalho"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr ""
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "Logo do espaço de trabalho"
@@ -3371,8 +3410,8 @@ msgid "Workspace name"
 msgstr "Nome do espaço de trabalho"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "Nome do Espaço de Trabalho"
+#~ msgid "Workspace Name"
+#~ msgstr "Nome do Espaço de Trabalho"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"

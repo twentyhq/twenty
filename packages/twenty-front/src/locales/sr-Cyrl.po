@@ -19,11 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr " Ово су само параметри сервера. Уверите се да ваше радно окружење има исте променљиве и вредности, ово је потребно за асинхроне задатке као што је синхронизација имејла."
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr " Ово су само параметри сервера. Уверите се да ваше радно окружење има исте променљиве и вредности, ово је потребно за асинхроне задатке као што је синхронизација имејла."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -117,6 +117,14 @@ msgstr "Прекид"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "О томе"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr ""
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -286,6 +294,10 @@ msgstr "Сви објекти"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Све улоге"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr ""
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -700,6 +712,7 @@ msgid "Continue with Microsoft"
 msgstr "Настави са Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Копирано у клипборд!"
 
@@ -803,8 +816,12 @@ msgid "Created"
 msgstr "Креирано"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "Тренутна верзија:"
+msgid "Current version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Тренутна верзија:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1159,6 +1176,7 @@ msgstr "Уредите назив свог потдомена или поста�
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "Имејл"
 
@@ -1634,6 +1652,11 @@ msgstr "Икона"
 msgid "Icon and Name"
 msgstr "Икона и име"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr ""
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "Идентификатор"
@@ -1837,7 +1860,7 @@ msgstr "Лабораторија"
 msgid "Language"
 msgstr "Језик"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "Последњих 1 сат"
 
@@ -1845,7 +1868,7 @@ msgstr "Последњих 1 сат"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Последњи 1 сат (од најстаријег → најновијег)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "Последњих 12 сати"
 
@@ -1857,7 +1880,7 @@ msgstr "Последњих 12 сати (од најстаријег → најн
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Последњих 24 сата (од најстаријег → најновијег)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "Последња 4 сата"
 
@@ -1883,8 +1906,12 @@ msgid "Latest date"
 msgstr "Најновији датум"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "Најновија верзија:"
+msgid "Latest version"
+msgstr ""
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Најновија верзија:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -1966,6 +1993,7 @@ msgstr "Максимум"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "Чланови"
 
@@ -2021,6 +2049,8 @@ msgstr "Помери удесно"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "Име"
 
@@ -2299,6 +2329,7 @@ msgstr "или"
 msgid "Other"
 msgstr "Остало"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "Друге променљиве окружења"
@@ -2868,6 +2899,7 @@ msgstr "Јединствена пријава"
 msgid "Stages"
 msgstr "Фазе"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Статус"
@@ -3045,6 +3077,10 @@ msgstr "Дошло је до грешке при ажурирању лозинк
 msgid "There was an issue"
 msgstr "Постоји проблем"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr ""
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Ова акција се не може опозвати. Ово ће трајно обрисати овог корисника и уклонити га из свих његових задужења."
@@ -3069,7 +3105,7 @@ msgstr "Ова акција се не може опозвати. Ово ће т�
 msgid "This role is assigned to these workspace members."
 msgstr "Ова улога је додељена следећим члановима радног простора."
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "Ове недеље"
 
@@ -3093,13 +3129,13 @@ msgstr "на месечно"
 msgid "to yearly"
 msgstr "на годишње"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "Данас"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "Укупно корисника"
+#~ msgid "Total Users"
+#~ msgstr "Укупно корисника"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3188,17 +3224,16 @@ msgstr "Користите наш API или ручно додајте први 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Корисник"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "Е-маил корисника"
+#~ msgid "User Email"
+#~ msgstr "Е-маил корисника"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "Кориснички ИД"
+#~ msgid "User ID"
+#~ msgstr "Кориснички ИД"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3214,12 +3249,12 @@ msgid "User is not logged in"
 msgstr "Корисник није улогован"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "Корисничко име"
+#~ msgid "User Name"
+#~ msgstr "Корисничко име"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "Корисници"
+#~ msgid "Users"
+#~ msgstr "Корисници"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3359,6 +3394,10 @@ msgstr "Радни простор"
 msgid "Workspace Deletion"
 msgstr "Брисање радног простора"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr ""
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "Лого радног простора"
@@ -3368,8 +3407,8 @@ msgid "Workspace name"
 msgstr "Име радног простора"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "Име радног простора"
+#~ msgid "Workspace Name"
+#~ msgstr "Име радног простора"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
