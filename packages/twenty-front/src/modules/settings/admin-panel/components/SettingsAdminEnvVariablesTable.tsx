@@ -5,8 +5,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 
-const StyledTable = styled(Table)`
-  margin-top: ${({ theme }) => theme.spacing(3)};
+const StyledTableBody = styled(TableBody)`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 type SettingsAdminEnvVariablesTableProps = {
@@ -21,17 +21,17 @@ type SettingsAdminEnvVariablesTableProps = {
 export const SettingsAdminEnvVariablesTable = ({
   variables,
 }: SettingsAdminEnvVariablesTableProps) => (
-  <StyledTable>
+  <Table>
     <TableRow gridAutoColumns="5fr 4fr 3fr 1fr">
       <TableHeader>Name</TableHeader>
       <TableHeader>Description</TableHeader>
       <TableHeader align="right">Value</TableHeader>
       <TableHeader align="right"></TableHeader>
     </TableRow>
-    <TableBody>
+    <StyledTableBody>
       {variables.map((variable) => (
         <SettingsAdminEnvVariablesRow key={variable.name} variable={variable} />
       ))}
-    </TableBody>
-  </StyledTable>
+    </StyledTableBody>
+  </Table>
 );

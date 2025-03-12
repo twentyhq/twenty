@@ -10,9 +10,7 @@ import { Card, H2Title, IconHeartRateMonitor, Section } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledGroupContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
-`;
+const StyledGroupContainer = styled.div``;
 
 const StyledInfoText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
@@ -47,16 +45,16 @@ export const SettingsAdminEnvVariables = () => {
         email sync.`}
         </StyledInfoText>
       </Section>
-      <Section>
-        {visibleGroups.map((group) => (
-          <StyledGroupContainer key={group.name}>
-            <H2Title title={group.name} description={group.description} />
-            {group.variables.length > 0 && (
-              <SettingsAdminEnvVariablesTable variables={group.variables} />
-            )}
-          </StyledGroupContainer>
-        ))}
+      {visibleGroups.map((group) => (
+        <StyledGroupContainer key={group.name}>
+          <H2Title title={group.name} description={group.description} />
+          {group.variables.length > 0 && (
+            <SettingsAdminEnvVariablesTable variables={group.variables} />
+          )}
+        </StyledGroupContainer>
+      ))}
 
+      <Section>
         <StyledCard rounded>
           <SettingsListItemCardContent
             label={t`Other Variables`}
