@@ -16,6 +16,7 @@ import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/get
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -36,7 +37,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { CodeEditor, IconCode, IconPlayerPlay, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { TextArea } from '@/ui/input/components/TextArea';
 
 const StyledContainer = styled.div`
   display: flex;

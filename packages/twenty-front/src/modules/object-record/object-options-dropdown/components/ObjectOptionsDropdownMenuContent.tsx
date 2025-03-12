@@ -24,24 +24,16 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewType } from '@/views/types/ViewType';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    viewType,
-    onContentChange,
-    closeDropdown,
-  } = useOptionsDropdown();
+  const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
+    useOptionsDropdown();
 
   const { getIcon } = useIcons();
   const { currentView } = useGetCurrentViewOnly();
@@ -70,10 +62,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
     viewBarId: recordIndexId,
   });
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
   const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
     viewPickerReferenceViewIdComponentState,
@@ -95,19 +83,15 @@ export const ObjectOptionsDropdownMenuContent = () => {
         {currentView?.name}
       </DropdownMenuHeader>
 
-      {(isCommandMenuV2Enabled || viewType === ViewType.Kanban) && (
-        <>
-          <DropdownMenuItemsContainer scrollable={false}>
-            <MenuItem
-              onClick={() => onContentChange('viewSettings')}
-              LeftIcon={IconLayout}
-              text={t`View settings`}
-              hasSubMenu
-            />
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-        </>
-      )}
+      <DropdownMenuItemsContainer scrollable={false}>
+        <MenuItem
+          onClick={() => onContentChange('viewSettings')}
+          LeftIcon={IconLayout}
+          text={t`View settings`}
+          hasSubMenu
+        />
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
 
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem

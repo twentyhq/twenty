@@ -11,7 +11,6 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -24,11 +23,9 @@ import {
   Button,
   IconChevronLeft,
   IconX,
-  LightIconButton,
   getOsControlSymbol,
   useIsMobile,
 } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -75,13 +72,6 @@ const StyledContentContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledCloseButtonContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 32px;
-  justify-content: center;
-`;
-
 const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
   visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
 `;
@@ -110,10 +100,6 @@ export const CommandMenuTopBar = () => {
 
   const theme = useTheme();
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
   const { contextChips } = useCommandMenuContextChips();
 
   const location = useLocation();
@@ -127,34 +113,30 @@ export const CommandMenuTopBar = () => {
   return (
     <StyledInputContainer>
       <StyledContentContainer>
-        {isCommandMenuV2Enabled && (
-          <>
-            <AnimatePresence>
-              {commandMenuPage !== CommandMenuPages.Root && (
-                <motion.div
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{
-                    duration: backButtonAnimationDuration,
-                  }}
-                >
-                  <CommandMenuContextChip
-                    Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-                    onClick={goBackFromCommandMenu}
-                    testId="command-menu-go-back-button"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-            {isDefined(contextStoreCurrentObjectMetadataItem) &&
-            commandMenuPage !== CommandMenuPages.SearchRecords ? (
-              <CommandMenuContextChipGroupsWithRecordSelection
-                contextChips={contextChips}
-                objectMetadataItemId={contextStoreCurrentObjectMetadataItem.id}
+        <AnimatePresence>
+          {commandMenuPage !== CommandMenuPages.Root && (
+            <motion.div
+              exit={{ opacity: 0, width: 0 }}
+              transition={{
+                duration: backButtonAnimationDuration,
+              }}
+            >
+              <CommandMenuContextChip
+                Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+                onClick={goBackFromCommandMenu}
+                testId="command-menu-go-back-button"
               />
-            ) : (
-              <CommandMenuContextChipGroups contextChips={contextChips} />
-            )}
-          </>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {isDefined(contextStoreCurrentObjectMetadataItem) &&
+        commandMenuPage !== CommandMenuPages.SearchRecords ? (
+          <CommandMenuContextChipGroupsWithRecordSelection
+            contextChips={contextChips}
+            objectMetadataItemId={contextStoreCurrentObjectMetadataItem.id}
+          />
+        ) : (
+          <CommandMenuContextChipGroups contextChips={contextChips} />
         )}
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (
@@ -171,27 +153,16 @@ export const CommandMenuTopBar = () => {
       </StyledContentContainer>
       {!isMobile && (
         <StyledCloseButtonWrapper isVisible={isButtonVisible}>
-          {isCommandMenuV2Enabled ? (
-            <Button
-              Icon={IconX}
-              dataTestId="page-header-close-command-menu-button"
-              size={'small'}
-              variant="secondary"
-              accent="default"
-              hotkeys={[getOsControlSymbol(), 'K']}
-              ariaLabel="Close command menu"
-              onClick={closeCommandMenu}
-            />
-          ) : (
-            <StyledCloseButtonContainer>
-              <LightIconButton
-                accent={'tertiary'}
-                size={'medium'}
-                Icon={IconX}
-                onClick={closeCommandMenu}
-              />
-            </StyledCloseButtonContainer>
-          )}
+          <Button
+            Icon={IconX}
+            dataTestId="page-header-close-command-menu-button"
+            size={'small'}
+            variant="secondary"
+            accent="default"
+            hotkeys={[getOsControlSymbol(), 'K']}
+            ariaLabel="Close command menu"
+            onClick={closeCommandMenu}
+          />
         </StyledCloseButtonWrapper>
       )}
     </StyledInputContainer>

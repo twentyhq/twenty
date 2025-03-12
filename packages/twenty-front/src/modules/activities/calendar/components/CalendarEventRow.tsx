@@ -6,13 +6,11 @@ import { useRecoilValue } from 'recoil';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { useOpenCalendarEventRightDrawer } from '@/activities/calendar/right-drawer/hooks/useOpenCalendarEventRightDrawer';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
 import {
   Avatar,
@@ -24,7 +22,6 @@ import {
 } from 'twenty-ui';
 import {
   CalendarChannelVisibility,
-  FeatureFlagKey,
   TimelineCalendarEvent,
 } from '~/generated-metadata/graphql';
 
@@ -117,11 +114,7 @@ export const CalendarEventRow = ({
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { displayCurrentEventCursor = false } = useContext(CalendarContext);
-  const { openCalendarEventRightDrawer } = useOpenCalendarEventRightDrawer();
   const { openCalendarEventInCommandMenu } = useCommandMenu();
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
 
   const startsAt = getCalendarEventStartDate(calendarEvent);
   const endsAt = getCalendarEventEndDate(calendarEvent);
@@ -145,11 +138,7 @@ export const CalendarEventRow = ({
       onClick={
         showTitle
           ? () => {
-              if (isCommandMenuV2Enabled) {
-                openCalendarEventInCommandMenu(calendarEvent.id);
-              } else {
-                openCalendarEventRightDrawer(calendarEvent.id);
-              }
+              openCalendarEventInCommandMenu(calendarEvent.id);
             }
           : undefined
       }
