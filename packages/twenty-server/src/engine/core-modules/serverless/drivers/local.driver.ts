@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
@@ -129,6 +130,55 @@ export class LocalDriver implements ServerlessDriver {
       }
     }
 
+    const originalConsole = {
+      log: console.log,
+      error: console.error,
+      warn: console.warn,
+      info: console.info,
+      debug: console.debug,
+    };
+
+    const interceptConsole = (
+      callback: (type: string, message: any[]) => void,
+    ) => {
+      Object.keys(originalConsole).forEach((method) => {
+        console[method] = (...args: any[]) => {
+          callback(method, args);
+        };
+      });
+    };
+
+    let logs = '';
+
+    interceptConsole((type, args) => {
+      const formattedArgs = args.map((arg) => {
+        if (typeof arg === 'object' && arg !== null) {
+          const seen = new WeakSet();
+
+          return JSON.stringify(
+            arg,
+            (key, value) => {
+              if (typeof value === 'object' && value !== null) {
+                if (seen.has(value)) {
+                  return '[Circular]'; // Handle circular references
+                }
+                seen.add(value);
+              }
+
+              return value;
+            },
+            2,
+          );
+        }
+
+        return arg;
+      });
+
+      const formattedType = type === 'log' ? 'info' : type;
+
+      logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
+    });
+
     try {
       const mainFile = await import(compiledCodeFilePath);
 
@@ -141,12 +191,14 @@ export class LocalDriver implements ServerlessDriver {
 
       return {
         data: result,
+        logs,
         duration,
         status: ServerlessFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
       return {
         data: null,
+        logs,
         duration: Date.now() - startTime,
         error: {
           errorType: 'UnhandledError',
@@ -156,6 +208,12 @@ export class LocalDriver implements ServerlessDriver {
         status: ServerlessFunctionExecutionStatus.ERROR,
       };
     } finally {
+      // Restoring originalConsole
+      Object.keys(originalConsole).forEach((method) => {
+        console[method] = (...args: any[]) => {
+          originalConsole[method](...args);
+        };
+      });
       await fs.rm(compiledCodeFolderPath, { recursive: true, force: true });
     }
   }
