@@ -20,6 +20,8 @@ type SettingsAdminEnvVariablesRowProps = {
     value: string;
     sensitive: boolean;
   };
+  isExpanded: boolean;
+  onExpandToggle: (name: string) => void;
 };
 
 const StyledTruncatedCell = styled(TableCell)`
@@ -70,8 +72,9 @@ const StyledExpandableContainer = styled.div`
 
 export const SettingsAdminEnvVariablesRow = ({
   variable,
+  isExpanded,
+  onExpandToggle,
 }: SettingsAdminEnvVariablesRowProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [showSensitiveValue, setShowSensitiveValue] = useState(false);
   const theme = useTheme();
 
@@ -117,7 +120,7 @@ export const SettingsAdminEnvVariablesRow = ({
   return (
     <>
       <StyledTableRow
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => onExpandToggle(variable.name)}
         gridAutoColumns="5fr 4fr 3fr 1fr"
         isExpanded={isExpanded}
       >
@@ -131,7 +134,12 @@ export const SettingsAdminEnvVariablesRow = ({
           <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
         </StyledTruncatedCell>
         <TableCell align="right">
-          <StyledButton onClick={() => setIsExpanded(!isExpanded)}>
+          <StyledButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onExpandToggle(variable.name);
+            }}
+          >
             <MotionIconChevronDown
               size={theme.icon.size.md}
               color={theme.font.color.tertiary}
