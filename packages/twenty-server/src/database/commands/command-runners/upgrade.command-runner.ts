@@ -60,7 +60,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'appVersion'>) {
     if (!isDefined(appVersion)) {
       throw new Error(
-        'Cannot run upgrade command when APP_VERSION is not defined ',
+        'Cannot run upgrade command when APP_VERSION is not defined',
       );
     }
 

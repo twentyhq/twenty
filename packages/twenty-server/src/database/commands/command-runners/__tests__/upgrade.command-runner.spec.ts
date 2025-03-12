@@ -188,12 +188,12 @@ describe('UpgradeCommandRunner', () => {
     );
   };
 
-  it('should run upgrade command with failing and successfull workspaces', async () => {
+  it('should run upgrade command with failing and successful workspaces', async () => {
     const outdatedVersionWorkspaces = generateMockWorkspace({
       id: 'outated_version_workspace',
       version: '0.42.42',
     });
-    const invalidVesionWorkspace = generateMockWorkspace({
+    const invalidVersionWorkspace = generateMockWorkspace({
       id: 'invalid_version_workspace',
       version: 'invalid',
     });
@@ -204,7 +204,7 @@ describe('UpgradeCommandRunner', () => {
     const numberOfValidWorkspace = 4;
     const failingWorkspaces = [
       outdatedVersionWorkspaces,
-      invalidVesionWorkspace,
+      invalidVersionWorkspace,
       nullVersionWorkspace,
     ];
     const totalWorkspace = numberOfValidWorkspace + failingWorkspaces.length;
@@ -269,7 +269,7 @@ describe('UpgradeCommandRunner', () => {
     expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
   });
 
-  it('should run syncMetadataCommand betwen beforeSyncMetadataUpgradeCommandsToRun and afterSyncMetadataUpgradeCommandsToRun', async () => {
+  it('should run syncMetadataCommand betweensuccessful beforeSyncMetadataUpgradeCommandsToRun and afterSyncMetadataUpgradeCommandsToRun', async () => {
     await buildModuleAndSetupSpies({});
     const passedParams = [];
     const options = {};
