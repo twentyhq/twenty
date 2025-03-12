@@ -1,27 +1,20 @@
 import { useSetRecoilState } from 'recoil';
 
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
-import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
+import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { Note } from '@/activities/types/Note';
 import { NoteTarget } from '@/activities/types/NoteTarget';
 import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { IconList } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
-import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 export const useOpenCreateActivityDrawer = ({
   activityObjectNameSingular,
@@ -30,10 +23,6 @@ export const useOpenCreateActivityDrawer = ({
     | CoreObjectNameSingular.Note
     | CoreObjectNameSingular.Task;
 }) => {
-  const { openRightDrawer } = useRightDrawer();
-
-  const setHotkeyScope = useSetHotkeyScope();
-
   const { createOneRecord: createOneActivity } = useCreateOneRecord<
     (Task | Note) & { position: 'first' | 'last' }
   >({
@@ -64,10 +53,6 @@ export const useOpenCreateActivityDrawer = ({
     isUpsertingActivityInDBState,
   );
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
   const { openRecordInCommandMenu } = useCommandMenu();
 
   const openCreateActivityDrawer = async ({
@@ -78,12 +63,6 @@ export const useOpenCreateActivityDrawer = ({
     customAssignee?: WorkspaceMember;
   }) => {
     setIsNewViewableRecordLoading(true);
-    if (!isCommandMenuV2Enabled) {
-      openRightDrawer(RightDrawerPages.ViewRecord, {
-        title: activityObjectNameSingular,
-        Icon: IconList,
-      });
-    }
     setViewableRecordId(null);
     setViewableRecordNameSingular(activityObjectNameSingular);
 
@@ -125,15 +104,11 @@ export const useOpenCreateActivityDrawer = ({
       setActivityTargetableEntityArray([]);
     }
 
-    if (isCommandMenuV2Enabled) {
-      openRecordInCommandMenu({
-        recordId: activity.id,
-        objectNameSingular: activityObjectNameSingular,
-        isNewRecord: true,
-      });
-    } else {
-      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-    }
+    openRecordInCommandMenu({
+      recordId: activity.id,
+      objectNameSingular: activityObjectNameSingular,
+      isNewRecord: true,
+    });
 
     setViewableRecordId(activity.id);
 

@@ -1,4 +1,4 @@
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { t } from '@lingui/core/macro';
@@ -24,13 +24,7 @@ export const useSearchRecords = () => {
     },
   });
 
-  const openNoteRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Note,
-  });
-
-  const openTaskRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
-  });
+  const { openRecordInCommandMenu } = useCommandMenu();
 
   const commands = useMemo(() => {
     return (globalSearchData?.globalSearch ?? []).map((searchRecord) => {
@@ -63,14 +57,20 @@ export const useSearchRecords = () => {
           to: '',
           onCommandClick: () => {
             searchRecord.objectSingularName === 'task'
-              ? openTaskRightDrawer(searchRecord.recordId)
-              : openNoteRightDrawer(searchRecord.recordId);
+              ? openRecordInCommandMenu({
+                  recordId: searchRecord.recordId,
+                  objectNameSingular: CoreObjectNameSingular.Task,
+                })
+              : openRecordInCommandMenu({
+                  recordId: searchRecord.recordId,
+                  objectNameSingular: CoreObjectNameSingular.Note,
+                });
           },
         };
       }
       return command;
     });
-  }, [globalSearchData, openTaskRightDrawer, openNoteRightDrawer]);
+  }, [globalSearchData, openRecordInCommandMenu]);
 
   return {
     loading,

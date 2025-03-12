@@ -27,6 +27,7 @@ export {
   IconBrackets,
   IconBracketsAngle,
   IconBracketsContain,
+  IconBrandDaysCounter,
   IconBrandGithub,
   IconBrandGoogle,
   IconBrandGraphql,
