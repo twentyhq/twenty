@@ -28,7 +28,7 @@ export const useCommandMenuContextChips = () => {
 
   const theme = useTheme();
 
-  const commandMenuNavigationMorphItems = useRecoilValue(
+  const commandMenuNavigationMorphItemByPage = useRecoilValue(
     commandMenuNavigationMorphItemByPageState,
   );
 
@@ -51,7 +51,7 @@ export const useCommandMenuContextChips = () => {
 
         if (isRecordPage && !isLastChip) {
           const commandMenuNavigationMorphItem =
-            commandMenuNavigationMorphItems.get(page.pageId);
+            commandMenuNavigationMorphItemByPage.get(page.pageId);
 
           if (!isDefined(commandMenuNavigationMorphItem?.recordId)) {
             return null;
@@ -119,7 +119,7 @@ export const useCommandMenuContextChips = () => {
       })
       .filter(isDefined);
   }, [
-    commandMenuNavigationMorphItems,
+    commandMenuNavigationMorphItemByPage,
     commandMenuNavigationRecords,
     commandMenuNavigationStack,
     navigateCommandMenuHistory,
