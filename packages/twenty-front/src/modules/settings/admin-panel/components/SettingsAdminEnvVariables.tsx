@@ -40,9 +40,7 @@ export const SettingsAdminEnvVariables = () => {
     <>
       <Section>
         <StyledInfoText>
-          {t` These are only the server values. Ensure your worker environment has the
-        same variables and values, this is required for asynchronous tasks like
-        email sync.`}
+          {t`These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync.`}
         </StyledInfoText>
       </Section>
       {visibleGroups.map((group) => (
