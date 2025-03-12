@@ -10,8 +10,8 @@ const StyledDetailsContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
   border-radius: ${({ theme }) => theme.border.radius.md};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  white-space: pre-wrap;
   font-size: ${({ theme }) => theme.font.size.sm};
+  overflow-x: auto;
 `;
 
 const StyledErrorMessage = styled.div`
@@ -41,7 +41,7 @@ export const JsonDataIndicatorHealthStatus = () => {
       )}
       {parsedDetails && (
         <StyledDetailsContainer>
-          <JsonTree value={parsedDetails} />
+            <JsonTree value={parsedDetails} />
         </StyledDetailsContainer>
       )}
     </Section>
