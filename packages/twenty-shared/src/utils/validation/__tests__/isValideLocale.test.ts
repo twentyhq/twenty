@@ -1,5 +1,5 @@
+import { APP_LOCALES } from 'src/i18n/constants/AppLocales';
 import { isValidLocale } from '../isValidLocale';
-import { APP_LOCALES } from 'src/constants/Locales';
 
 describe('isValidLocale', () => {
   it('should return true for valid locales', () => {

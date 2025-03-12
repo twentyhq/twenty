@@ -47,6 +47,7 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
           ),
           Icons: Avatars,
           onClick: contextChips.length > 0 ? openRootCommandMenu : undefined,
+          withIconBackground: false,
         }
       : undefined;
 

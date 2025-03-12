@@ -10,6 +10,7 @@ import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { oneFailedWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
@@ -39,7 +40,13 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
       );
       const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
 
-      setFlow(oneFailedWorkflowRunQueryResult.workflowRun.output.flow);
+      setFlow({
+        workflowVersionId:
+          oneFailedWorkflowRunQueryResult.workflowRun.workflowVersionId,
+        trigger:
+          oneFailedWorkflowRunQueryResult.workflowRun.output.flow.trigger,
+        steps: oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps,
+      });
       setWorkflowSelectedNode(
         oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps[0].id,
       );
@@ -50,6 +57,7 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
     RouterDecorator,
     ObjectMetadataItemsDecorator,
     WorkspaceDecorator,
+    WorkflowStepDecorator,
   ],
   parameters: {
     msw: {

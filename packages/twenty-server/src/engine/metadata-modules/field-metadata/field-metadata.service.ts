@@ -36,17 +36,15 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
-import { NameNotAvailableException } from 'src/engine/metadata-modules/utils/exceptions/name-not-available.exception';
-import { NameTooLongException } from 'src/engine/metadata-modules/utils/exceptions/name-too-long.exception';
+import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata-name.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
-import { validateMetadataNameValidityOrThrow as validateFieldNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -540,30 +538,32 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   ): T {
     if (fieldMetadataInput.name) {
       try {
-        validateFieldNameValidityOrThrow(fieldMetadataInput.name);
+        validateMetadataNameOrThrow(fieldMetadataInput.name);
+      } catch (error) {
+        if (error instanceof InvalidMetadataNameException) {
+          throw new FieldMetadataException(
+            error.message,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
+        }
+
+        throw error;
+      }
+
+      try {
         validateFieldNameAvailabilityOrThrow(
           fieldMetadataInput.name,
           objectMetadata,
         );
       } catch (error) {
-        if (error instanceof InvalidStringException) {
-          throw new FieldMetadataException(
-            `Characters used in name "${fieldMetadataInput.name}" are not supported`,
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        } else if (error instanceof NameTooLongException) {
-          throw new FieldMetadataException(
-            `Name "${fieldMetadataInput.name}" exceeds 63 characters`,
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        } else if (error instanceof NameNotAvailableException) {
+        if (error instanceof InvalidMetadataNameException) {
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
-        } else {
-          throw error;
         }
+
+        throw error;
       }
     }
 

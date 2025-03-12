@@ -17,6 +17,7 @@ import {
   PublishLayerVersionCommandInput,
   ResourceNotFoundException,
   waitUntilFunctionUpdatedV2,
+  LogType,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared';
@@ -262,6 +263,21 @@ export class LambdaDriver implements ServerlessDriver {
     await lambdaBuildDirectoryManager.clean();
   }
 
+  private extractLogs(logString: string): string {
+    const formattedLogString = Buffer.from(logString, 'base64')
+      .toString('utf8')
+      .split('\t')
+      .join(' ');
+
+    return formattedLogString
+      .replace(/^(START|END|REPORT).*\n?/gm, '')
+      .replace(
+        /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z) [a-f0-9-]+ INFO /gm,
+        '$1 INFO ',
+      )
+      .trim();
+  }
+
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object,
@@ -302,6 +318,7 @@ export class LambdaDriver implements ServerlessDriver {
     const params: InvokeCommandInput = {
       FunctionName: serverlessFunction.id,
       Payload: JSON.stringify(executorPayload),
+      LogType: LogType.Tail,
     };
 
     const command = new InvokeCommand(params);
@@ -313,6 +330,8 @@ export class LambdaDriver implements ServerlessDriver {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
+      const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
+
       const duration = Date.now() - startTime;
 
       if (result.FunctionError) {
@@ -321,11 +340,13 @@ export class LambdaDriver implements ServerlessDriver {
           duration,
           status: ServerlessFunctionExecutionStatus.ERROR,
           error: parsedResult,
+          logs,
         };
       }
 
       return {
         data: parsedResult,
+        logs,
         duration,
         status: ServerlessFunctionExecutionStatus.SUCCESS,
       };
