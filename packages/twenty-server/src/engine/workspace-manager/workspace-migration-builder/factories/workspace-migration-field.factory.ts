@@ -146,7 +146,7 @@ export class WorkspaceMigrationFieldFactory {
         name: generateMigrationName(
           `create-${objectMetadata.nameSingular}-fields`,
         ),
-        isCustom: false,
+        isCustom: objectMetadata.isCustom,
         migrations: [
           {
             name: computeObjectTargetTable(
@@ -244,7 +244,7 @@ export class WorkspaceMigrationFieldFactory {
           name: generateMigrationName(
             `update-${fieldMetadataUpdate.altered.name}`,
           ),
-          isCustom: false,
+          isCustom: fieldMetadataUpdate.altered.isCustom,
           migrations,
         });
       }
@@ -283,7 +283,7 @@ export class WorkspaceMigrationFieldFactory {
       workspaceMigrations.push({
         workspaceId: fieldMetadata.workspaceId,
         name: generateMigrationName(`delete-${fieldMetadata.name}`),
-        isCustom: false,
+        isCustom: fieldMetadata.isCustom,
         migrations,
       });
     }

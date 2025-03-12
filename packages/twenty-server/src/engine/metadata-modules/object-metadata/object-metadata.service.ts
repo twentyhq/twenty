@@ -488,9 +488,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
       if (isNewRelationEnabled) {
-        await this.objectMetadataFieldRelationService.updateRelationsAndForeignKeysMetadata(
-          objectMetadataForUpdate.workspaceId,
+        const relationMetadataCollection =
+          await this.objectMetadataFieldRelationService.updateRelationsAndForeignKeysMetadata(
+            objectMetadataForUpdate.workspaceId,
+            objectMetadataForUpdate,
+          );
+
+        await this.objectMetadataMigrationService.updateRelationMigrations(
+          existingObjectMetadata,
           objectMetadataForUpdate,
+          relationMetadataCollection,
+          objectMetadataForUpdate.workspaceId,
         );
       } else {
         const relationsAndForeignKeysMetadata =
@@ -498,14 +506,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             objectMetadataForUpdate.workspaceId,
             objectMetadataForUpdate,
           );
-      }
 
-      await this.objectMetadataMigrationService.createUpdateForeignKeysMigrations(
-        existingObjectMetadata,
-        objectMetadataForUpdate,
-        relationsAndForeignKeysMetadata,
-        objectMetadataForUpdate.workspaceId,
-      );
+        await this.objectMetadataMigrationService.createUpdateForeignKeysMigrations(
+          existingObjectMetadata,
+          objectMetadataForUpdate,
+          relationsAndForeignKeysMetadata,
+          objectMetadataForUpdate.workspaceId,
+        );
+      }
 
       await this.objectMetadataMigrationService.recomputeEnumNames(
         objectMetadataForUpdate,

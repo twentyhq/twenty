@@ -116,6 +116,52 @@ export class ObjectMetadataMigrationService {
     );
   }
 
+  public async updateRelationMigrations(
+    currentObjectMetadata: ObjectMetadataEntity,
+    alteredObjectMetadata: ObjectMetadataEntity,
+    relationMetadataCollection: {
+      targetObjectMetadata: ObjectMetadataEntity;
+      targetFieldMetadata: FieldMetadataEntity;
+      sourceFieldMetadata: FieldMetadataEntity;
+    }[],
+    workspaceId: string,
+  ) {
+    for (const { targetObjectMetadata } of relationMetadataCollection) {
+      const targetTableName = computeObjectTargetTable(targetObjectMetadata);
+      const columnName = `${currentObjectMetadata.nameSingular}Id`;
+
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(
+          `rename-${currentObjectMetadata.nameSingular}-to-${alteredObjectMetadata.nameSingular}-in-${targetObjectMetadata.nameSingular}`,
+        ),
+        workspaceId,
+        [
+          {
+            name: targetTableName,
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: [
+              {
+                action: WorkspaceMigrationColumnActionType.ALTER,
+                currentColumnDefinition: {
+                  columnName,
+                  columnType: 'uuid',
+                  isNullable: true,
+                  defaultValue: null,
+                },
+                alteredColumnDefinition: {
+                  columnName: `${alteredObjectMetadata.nameSingular}Id`,
+                  columnType: 'uuid',
+                  isNullable: true,
+                  defaultValue: null,
+                },
+              },
+            ],
+          },
+        ],
+      );
+    }
+  }
+
   public async createUpdateForeignKeysMigrations(
     existingObjectMetadata: ObjectMetadataEntity,
     updatedObjectMetadata: ObjectMetadataEntity,

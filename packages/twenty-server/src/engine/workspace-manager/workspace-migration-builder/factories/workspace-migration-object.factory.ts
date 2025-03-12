@@ -109,7 +109,7 @@ export class WorkspaceMigrationObjectFactory {
       workspaceMigrations.push({
         workspaceId: objectMetadata.workspaceId,
         name: generateMigrationName(`create-${objectMetadata.nameSingular}`),
-        isCustom: false,
+        isCustom: objectMetadata.isCustom,
         migrations,
       });
     }
@@ -136,7 +136,7 @@ export class WorkspaceMigrationObjectFactory {
           name: generateMigrationName(
             `rename-${objectMetadataUpdate.current.nameSingular}`,
           ),
-          isCustom: false,
+          isCustom: objectMetadataUpdate.altered.isCustom,
           migrations: [
             {
               name: oldTableName,
@@ -167,7 +167,7 @@ export class WorkspaceMigrationObjectFactory {
       workspaceMigrations.push({
         workspaceId: objectMetadata.workspaceId,
         name: generateMigrationName(`delete-${objectMetadata.nameSingular}`),
-        isCustom: false,
+        isCustom: objectMetadata.isCustom,
         migrations: [
           ...(relationMetadataCollection ?? []).map(
             (relationMetadata) =>
