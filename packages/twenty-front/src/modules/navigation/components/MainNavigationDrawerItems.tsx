@@ -1,11 +1,12 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconRobot, IconSearch, IconSettings } from 'twenty-ui';
+import { IconLink, IconRobot, IconSearch, IconSettings } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
+import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
@@ -24,6 +25,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import InnerHTML from 'dangerously-set-html-content';
+import { useMemo } from 'react';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
@@ -39,6 +41,7 @@ export const MainNavigationDrawerItems = () => {
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
   );
+  const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
@@ -62,6 +65,14 @@ export const MainNavigationDrawerItems = () => {
   const { telephonyExtension, loading: loadingSoftfone } = useGetUserSoftfone({
     extNum: workspaceMember?.extensionNumber || '',
   });
+
+  const traceableObject = useMemo(() => {
+    return workspaceFavoritesObjectMetadataItems?.find(
+      (item) => item.nameSingular === 'charge',
+    );
+  }, [workspaceFavoritesObjectMetadataItems]);
+
+  const viewId = traceableObject?.id;
 
   return (
     <>
@@ -97,6 +108,15 @@ export const MainNavigationDrawerItems = () => {
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}
             Icon={IconRobot}
+          />
+
+          <NavigationDrawerItem
+            label="Traceable"
+            to={`/objects/charges?viewId=${viewId ?? ''}`}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+            Icon={IconLink}
           />
         </StyledMainSection>
       )}
