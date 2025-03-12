@@ -72,13 +72,6 @@ const StyledContentContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledCloseButtonContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 32px;
-  justify-content: center;
-`;
-
 const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
   visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
 `;
@@ -153,33 +146,31 @@ export const CommandMenuTopBar = () => {
   return (
     <StyledInputContainer>
       <StyledContentContainer>
-        <>
-          <AnimatePresence>
-            {commandMenuPage !== CommandMenuPages.Root && (
-              <motion.div
-                exit={{ opacity: 0, width: 0 }}
-                transition={{
-                  duration: backButtonAnimationDuration,
-                }}
-              >
-                <CommandMenuContextChip
-                  Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-                  onClick={goBackFromCommandMenu}
-                  testId="command-menu-go-back-button"
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {isDefined(contextStoreCurrentObjectMetadataItem) &&
-          commandMenuPage !== CommandMenuPages.SearchRecords ? (
-            <CommandMenuContextChipGroupsWithRecordSelection
-              contextChips={contextChips}
-              objectMetadataItemId={contextStoreCurrentObjectMetadataItem.id}
-            />
-          ) : (
-            <CommandMenuContextChipGroups contextChips={contextChips} />
+        <AnimatePresence>
+          {commandMenuPage !== CommandMenuPages.Root && (
+            <motion.div
+              exit={{ opacity: 0, width: 0 }}
+              transition={{
+                duration: backButtonAnimationDuration,
+              }}
+            >
+              <CommandMenuContextChip
+                Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+                onClick={goBackFromCommandMenu}
+                testId="command-menu-go-back-button"
+              />
+            </motion.div>
           )}
-        </>
+        </AnimatePresence>
+        {isDefined(contextStoreCurrentObjectMetadataItem) &&
+        commandMenuPage !== CommandMenuPages.SearchRecords ? (
+          <CommandMenuContextChipGroupsWithRecordSelection
+            contextChips={contextChips}
+            objectMetadataItemId={contextStoreCurrentObjectMetadataItem.id}
+          />
+        ) : (
+          <CommandMenuContextChipGroups contextChips={contextChips} />
+        )}
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <>
