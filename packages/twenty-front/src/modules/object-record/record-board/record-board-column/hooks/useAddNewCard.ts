@@ -73,7 +73,6 @@ export const useAddNewCard = ({
 
   const createRecord = useCallback(
     (
-      labelIdentifier: string,
       labelValue: string,
       position: 'first' | 'last',
       isOpportunity: boolean,
@@ -112,7 +111,7 @@ export const useAddNewCard = ({
           ...(isOpportunity
             ? { companyId: company?.id, name: company?.name }
             : {
-                [labelIdentifier.toLowerCase()]: computedLabelIdentifierValue,
+                [labelIdentifierField.name]: computedLabelIdentifierValue,
               }),
         });
       }
@@ -129,7 +128,6 @@ export const useAddNewCard = ({
   const handleAddNewCardClick = useRecoilCallback(
     ({ set }) =>
       (
-        labelIdentifier: string,
         labelValue: string,
         position: 'first' | 'last',
         isOpportunity: boolean,
@@ -142,7 +140,7 @@ export const useAddNewCard = ({
             SingleRecordPickerHotkeyScope.SingleRecordPicker,
           );
         } else {
-          createRecord(labelIdentifier, labelValue, position, isOpportunity);
+          createRecord(labelValue, position, isOpportunity);
         }
       },
     [
@@ -184,25 +182,17 @@ export const useAddNewCard = ({
   );
 
   const handleCreate = (
-    labelIdentifier: string,
     labelValue: string,
     position: 'first' | 'last',
     onCreateSuccess?: () => void,
   ) => {
     if (labelValue.trim() !== '' && position !== undefined) {
-      handleAddNewCardClick(
-        labelIdentifier,
-        labelValue.trim(),
-        position,
-        false,
-        '',
-      );
+      handleAddNewCardClick(labelValue.trim(), position, false, '');
       onCreateSuccess?.();
     }
   };
 
   const handleBlur = (
-    labelIdentifier: string,
     labelValue: string,
     position: 'first' | 'last',
     onCreateSuccess?: () => void,
@@ -210,17 +200,16 @@ export const useAddNewCard = ({
     if (labelValue.trim() === '') {
       onCreateSuccess?.();
     } else {
-      handleCreate(labelIdentifier, labelValue, position, onCreateSuccess);
+      handleCreate(labelValue, position, onCreateSuccess);
     }
   };
 
   const handleInputEnter = (
-    labelIdentifier: string,
     labelValue: string,
     position: 'first' | 'last',
     onCreateSuccess?: () => void,
   ) => {
-    handleCreate(labelIdentifier, labelValue, position, onCreateSuccess);
+    handleCreate(labelValue, position, onCreateSuccess);
   };
 
   const handleEntitySelect = useCallback(
@@ -230,7 +219,7 @@ export const useAddNewCard = ({
       columnId?: string,
     ) => {
       const columnDefinitionId = getColumnDefinitionId(columnId);
-      createRecord('', '', position, true, company);
+      createRecord('', position, true, company);
       handleCreateSuccess(position, columnDefinitionId, true);
     },
     [createRecord, handleCreateSuccess, getColumnDefinitionId],
