@@ -135,8 +135,9 @@ describe('UpgradeCommandRunner', () => {
   let upgradeCommandRunner: TestUpgradeCommandRunnerV1;
   let workspaceRepository: Repository<Workspace>;
   let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
-  let afterSyncMetadataUpgradeCommandsToRun: jest.SpyInstance; //TODO improve typing ?
-  let beforeSyncMetadataUpgradeCommandsToRun: jest.SpyInstance; //TODO improve typing ?
+  let afterSyncMetadataUpgradeCommandsToRun: jest.SpyInstance;
+  let beforeSyncMetadataUpgradeCommandsToRun: jest.SpyInstance;
+  let twentyORMGlobalManagerSpy: TwentyORMGlobalManager;
 
   type BuildModuleAndSetupSpiesArgs = {
     numberOfWorkspace?: number;
@@ -181,6 +182,9 @@ describe('UpgradeCommandRunner', () => {
       getRepositoryToken(Workspace, 'core'),
     );
     syncWorkspaceMetadataCommand = module.get(SyncWorkspaceMetadataCommand);
+    twentyORMGlobalManagerSpy = module.get<TwentyORMGlobalManager>(
+      TwentyORMGlobalManager,
+    );
   };
 
   it('should run upgrade command with failing and successfull workspaces', async () => {
@@ -215,9 +219,11 @@ describe('UpgradeCommandRunner', () => {
     // Common assertions
     const { fail: failReport, success: successReport } =
       upgradeCommandRunner.migrationReport;
-    expect(upgradeCommandRunner.runOnWorkspace).toHaveBeenCalledTimes(
-      totalWorkspace,
-    );
+
+    [
+      twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
+      upgradeCommandRunner.runOnWorkspace,
+    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(totalWorkspace));
     expect(failReport.length + successReport.length).toBe(totalWorkspace);
 
     // Success assertions
@@ -241,8 +247,6 @@ describe('UpgradeCommandRunner', () => {
     });
   });
 
-  //TODO also handle destroyMetadataObject
-
   it('should run upgrade over several workspaces', async () => {
     const numberOfWorkspace = 42;
     await buildModuleAndSetupSpies({
@@ -257,6 +261,7 @@ describe('UpgradeCommandRunner', () => {
       upgradeCommandRunner.beforeSyncMetadataUpgradeCommandsToRun,
       upgradeCommandRunner.afterSyncMetadataUpgradeCommandsToRun,
       syncWorkspaceMetadataCommand.runOnWorkspace,
+      twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
       workspaceRepository.update,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
     expect(upgradeCommandRunner.migrationReport.success.length).toBe(42);
@@ -274,6 +279,7 @@ describe('UpgradeCommandRunner', () => {
       upgradeCommandRunner.beforeSyncMetadataUpgradeCommandsToRun,
       upgradeCommandRunner.afterSyncMetadataUpgradeCommandsToRun,
       syncWorkspaceMetadataCommand.runOnWorkspace,
+      twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
 
     // Verify order of execution
