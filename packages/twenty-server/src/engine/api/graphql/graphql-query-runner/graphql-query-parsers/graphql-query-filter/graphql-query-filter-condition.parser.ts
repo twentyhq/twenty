@@ -15,14 +15,10 @@ export class GraphqlQueryFilterConditionParser {
   private fieldMetadataMapByName: FieldMetadataMap;
   private queryFilterFieldParser: GraphqlQueryFilterFieldParser;
 
-  constructor(
-    fieldMetadataMapByName: FieldMetadataMap,
-    // featureFlagsMap: FeatureFlagMap,
-  ) {
+  constructor(fieldMetadataMapByName: FieldMetadataMap) {
     this.fieldMetadataMapByName = fieldMetadataMapByName;
     this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
       this.fieldMetadataMapByName,
-      // featureFlagsMap,
     );
   }
 
