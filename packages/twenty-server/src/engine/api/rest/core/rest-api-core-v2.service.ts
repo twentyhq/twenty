@@ -4,8 +4,6 @@ import { Request } from 'express';
 import { capitalize } from 'twenty-shared';
 import { ObjectLiteral, OrderByCondition, SelectQueryBuilder } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
@@ -123,7 +121,6 @@ export class RestApiCoreServiceV2 {
       repository,
       objectMetadata,
       objectMetadataItemWithFieldsMaps,
-      featureFlagsMap,
     } = await this.getRepositoryAndMetadataOrFail(request);
 
     if (recordId) {
@@ -139,7 +136,6 @@ export class RestApiCoreServiceV2 {
         objectMetadata,
         objectMetadataNameSingular,
         objectMetadataItemWithFieldsMaps,
-        featureFlagsMap,
       );
     }
   }
@@ -168,7 +164,6 @@ export class RestApiCoreServiceV2 {
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
       | undefined,
-    featureFlagsMap: FeatureFlagMap,
   ) {
     // Get input parameters
     const inputs = this.getPaginationInputs(request, objectMetadata);
@@ -181,7 +176,6 @@ export class RestApiCoreServiceV2 {
       qb,
       objectMetadataNameSingular,
       objectMetadataItemWithFieldsMaps,
-      featureFlagsMap,
       inputs,
     );
 
@@ -194,7 +188,6 @@ export class RestApiCoreServiceV2 {
         finalQuery,
         objectMetadataNameSingular,
         objectMetadataItemWithFieldsMaps,
-        featureFlagsMap,
         inputs,
       );
 
@@ -234,7 +227,6 @@ export class RestApiCoreServiceV2 {
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
       | undefined,
-    featureFlagsMap: FeatureFlagMap,
     inputs: {
       filter: Record<string, FieldValue>;
       orderBy: any;
@@ -283,7 +275,6 @@ export class RestApiCoreServiceV2 {
     // Apply filters to query builder
     const finalQuery = new GraphqlQueryFilterConditionParser(
       fieldMetadataMapByName,
-      featureFlagsMap,
     ).parse(qb, objectMetadataNameSingular, appliedFilters);
 
     return { finalQuery, appliedFilters };
@@ -304,7 +295,6 @@ export class RestApiCoreServiceV2 {
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
       | undefined,
-    featureFlagsMap: FeatureFlagMap,
     inputs: {
       orderBy: any;
       limit: number;
@@ -317,7 +307,6 @@ export class RestApiCoreServiceV2 {
     // Get parsed order by
     const parsedOrderBy = new GraphqlQueryOrderFieldParser(
       fieldMetadataMapByName,
-      featureFlagsMap,
     ).parse(inputs.orderBy, objectMetadataNameSingular);
 
     // For backward pagination (endingBefore), we need to reverse the sort order
@@ -451,9 +440,6 @@ export class RestApiCoreServiceV2 {
         objectMetadataNameSingular,
       );
 
-    const featureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspace.id,
@@ -465,7 +451,6 @@ export class RestApiCoreServiceV2 {
       objectMetadata,
       repository,
       objectMetadataItemWithFieldsMaps,
-      featureFlagsMap,
     };
   }
 
