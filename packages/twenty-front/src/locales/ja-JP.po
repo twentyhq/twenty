@@ -171,6 +171,7 @@ msgstr "アカウントを追加"
 msgid "Add Approved Access Domain"
 msgstr "承認されたアクセスドメインを追加"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "フィールドを追加"
