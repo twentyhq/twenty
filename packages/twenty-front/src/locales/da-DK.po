@@ -19,12 +19,10 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
-" Dette er kun serverværdierne. Sørg for, at dit worker-miljø har de\n"
+msgstr " Dette er kun serverværdierne. Sørg for, at dit worker-miljø har de\n"
 "        samme variabler og værdier, dette er nødvendigt for asynkrone opgaver som\n"
 "        e-mail synkronisering."
 
@@ -164,7 +162,7 @@ msgstr "Aktive API-nøgler oprettet af dig eller dit team."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #~ msgid "Add"
-#~ msgstr "Tilføj"
+#~ msgstr "Add"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -707,7 +705,7 @@ msgstr "Kopieret til udklipsholder!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 #~ msgid "Copilot"
-#~ msgstr "Kopilot"
+#~ msgstr "Copilot"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -3104,7 +3102,7 @@ msgstr "Udløsertype"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Trigger type should be Manual - when no record(s) are selected"
-#~ msgstr "Udløsertypen skal være manuel - når ingen <b>post</b>er er valgt"
+#~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3314,7 +3312,7 @@ msgstr "Når nøglen vil blive deaktiveret"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Workflow cannot be tested"
-#~ msgstr "Arbejdsprocessen kan ikke testes"
+#~ msgstr "Workflow cannot be tested"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."

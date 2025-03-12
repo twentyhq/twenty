@@ -19,12 +19,10 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
-" Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les\n"
+msgstr " Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les\n"
 "        mateixes variables i valors, això és necessari per a tasques asincròniques com la\n"
 "        sincronització de correu electrònic."
 
@@ -164,7 +162,7 @@ msgstr "Claus d'API actives creades per tu o pel teu equip."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #~ msgid "Add"
-#~ msgstr "Afegeix"
+#~ msgstr "Add"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -3104,7 +3102,7 @@ msgstr "Tipus de desencadenador"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Trigger type should be Manual - when no record(s) are selected"
-#~ msgstr "El tipus de desencadenador hauria de ser Manual - quan cap registre(s) estigui seleccionat"
+#~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3314,7 +3312,7 @@ msgstr "Quan serà desactivada la clau"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Workflow cannot be tested"
-#~ msgstr "El Workflow no pot ser provat"
+#~ msgstr "Workflow cannot be tested"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."

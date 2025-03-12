@@ -19,12 +19,10 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
-msgstr ""
-" Ezek csak a szerver értékei. Biztosítsa, hogy a munkavállalói környezet\n"
+msgstr " Ezek csak a szerver értékei. Biztosítsa, hogy a munkavállalói környezet\n"
 "        ugyanazokkal a változókkal és értékekkel rendelkezzen, ez szükséges az aszinkron feladatokhoz, mint például az\n"
 "        e-mail szinkronizálás."
 
@@ -164,7 +162,7 @@ msgstr "Aktív API kulcsok, amelyeket te vagy a csapatod hoztatok létre."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #~ msgid "Add"
-#~ msgstr "Hozzáad"
+#~ msgstr "Add"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -707,7 +705,7 @@ msgstr "Vágólapra másolva!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 #~ msgid "Copilot"
-#~ msgstr "Segédpilóta"
+#~ msgstr "Copilot"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -3104,7 +3102,7 @@ msgstr "Indító Típus"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Trigger type should be Manual - when no record(s) are selected"
-#~ msgstr "Az indító típusnak Kézi módban kell lennie - amikor nincs kijelölt rekord(ok)"
+#~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3314,7 +3312,7 @@ msgstr "Mikor kerül kikapcsolásra a kulcs"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Workflow cannot be tested"
-#~ msgstr "A folyamatot nem lehet tesztelni"
+#~ msgstr "Workflow cannot be tested"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."

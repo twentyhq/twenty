@@ -19,8 +19,7 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
+msgid " These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
 msgstr " هذه هي القيم الخاصة بالخادم فقط. تأكد من أن بيئة العمل لديك تحتوي على نفس المتغيرات والقيم. هذا مطلوب للمهام غير المتزامنة مثل مزامنة البريد الإلكتروني."
@@ -161,7 +160,7 @@ msgstr "مفاتيح واجهة برمجة التطبيقات النشطة ال�
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #~ msgid "Add"
-#~ msgstr "إضافة"
+#~ msgstr "Add"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -704,7 +703,7 @@ msgstr "تم النسخ إلى الحافظة!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
 #~ msgid "Copilot"
-#~ msgstr "كوبيلوت"
+#~ msgstr "Copilot"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -3101,7 +3100,7 @@ msgstr "نوع المُحفِز"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Trigger type should be Manual - when no record(s) are selected"
-#~ msgstr "يجب أن يكون نوع المُشغل يدويّاً - عندما لا يتم تحديد أي سجل(سجلات)"
+#~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3311,7 +3310,7 @@ msgstr "حين سيتم تعطيل المفتاح"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Workflow cannot be tested"
-#~ msgstr "لا يمكن اختبار سير العمل"
+#~ msgstr "Workflow cannot be tested"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
