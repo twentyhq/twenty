@@ -18,11 +18,10 @@ import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistView
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewSort } from '@/views/types/ViewSort';
 import { ViewType } from '@/views/types/ViewType';
+import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicateViewFiltersAndViewFilterGroups';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
@@ -178,77 +177,17 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               }),
           );
 
-          const oldViewFilterGroupIdToNewViewFilterGroupIdMap = new Map<
-            string,
-            string
-          >();
+          const viewFiltersToCopy = currentRecordFilters.map(
+            mapRecordFilterToViewFilter,
+          );
 
-          for (const viewFilterGroupToCopy of viewFilterGroupsToCopy) {
-            oldViewFilterGroupIdToNewViewFilterGroupIdMap.set(
-              viewFilterGroupToCopy.id,
-              v4(),
-            );
-          }
-
-          const viewFilterGroupsToCreate = currentRecordFilterGroups
-            .map((recordFilterGroup) =>
-              mapRecordFilterGroupToViewFilterGroup({
-                recordFilterGroup,
-                view: newView,
-              }),
-            )
-            .map((viewFilterGroup) => {
-              const newViewFilterGroupId =
-                oldViewFilterGroupIdToNewViewFilterGroupIdMap.get(
-                  viewFilterGroup.id,
-                );
-
-              if (!isDefined(newViewFilterGroupId)) {
-                throw new Error(
-                  `Failed to find view filter group to copy for id ${viewFilterGroup.id} this shouldn't happen`,
-                );
-              }
-
-              const parentViewFilterGroupIdToCopy =
-                viewFilterGroup.parentViewFilterGroupId;
-
-              const newParentViewFilterGroupId = isDefined(
-                parentViewFilterGroupIdToCopy,
-              )
-                ? oldViewFilterGroupIdToNewViewFilterGroupIdMap.get(
-                    parentViewFilterGroupIdToCopy,
-                  )
-                : undefined;
-
-              const newViewFilterGroup = {
-                ...viewFilterGroup,
-                id: newViewFilterGroupId,
-                parentViewFilterGroupId: newParentViewFilterGroupId,
-              } satisfies ViewFilterGroup;
-
-              return newViewFilterGroup;
-            });
-
-          const viewFiltersToCreate = currentRecordFilters
-            .map(mapRecordFilterToViewFilter)
-            .map((viewFilter) => {
-              const parentViewFilterGroupIdToCopy =
-                viewFilter.viewFilterGroupId;
-
-              const newParentViewFilterGroupId = isDefined(
-                parentViewFilterGroupIdToCopy,
-              )
-                ? oldViewFilterGroupIdToNewViewFilterGroupIdMap.get(
-                    parentViewFilterGroupIdToCopy,
-                  )
-                : undefined;
-
-              return {
-                ...viewFilter,
-                id: v4(),
-                viewFilterGroupId: newParentViewFilterGroupId,
-              } satisfies ViewFilter;
-            });
+          const {
+            duplicatedViewFilterGroups: viewFilterGroupsToCreate,
+            duplicatedViewFilters: viewFiltersToCreate,
+          } = duplicateViewFiltersAndViewFilterGroups({
+            viewFilterGroupsToDuplicate: viewFilterGroupsToCopy,
+            viewFiltersToDuplicate: viewFiltersToCopy,
+          });
 
           const viewSortsToCreate = currentRecordSorts
             .map(mapRecordSortToViewSort)
@@ -260,9 +199,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                 }) satisfies ViewSort,
             );
 
-          await createViewSortRecords(viewSortsToCreate, newView);
-          await createViewFilterRecords(viewFiltersToCreate, newView);
           await createViewFilterGroupRecords(viewFilterGroupsToCreate, newView);
+          await createViewFilterRecords(viewFiltersToCreate, newView);
+          await createViewSortRecords(viewSortsToCreate, newView);
         }
 
         await findManyRecords();

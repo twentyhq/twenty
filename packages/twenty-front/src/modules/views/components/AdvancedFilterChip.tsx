@@ -9,6 +9,7 @@ import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { plural } from 'pluralize';
 import { isDefined } from 'twenty-shared';
+import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const AdvancedFilterChip = () => {
   const currentRecordFilterGroups = useRecoilComponentValueV2(
@@ -27,14 +28,13 @@ export const AdvancedFilterChip = () => {
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
 
   const handleRemoveClick = () => {
-    if (!advancedRecordFilterIds) {
+    if (!isNonEmptyArray(advancedRecordFilterIds)) {
       throw new Error('No advanced view filters to remove');
     }
 
-    const viewFilterGroupIds =
-      currentRecordFilterGroups?.map(
-        (recordFilterGroup) => recordFilterGroup.id,
-      ) ?? [];
+    const viewFilterGroupIds = currentRecordFilterGroups.map(
+      (recordFilterGroup) => recordFilterGroup.id,
+    );
 
     for (const viewFilterGroupId of viewFilterGroupIds) {
       removeRecordFilterGroup(viewFilterGroupId);
@@ -45,10 +45,10 @@ export const AdvancedFilterChip = () => {
     }
   };
 
-  const advancedFilterCount = advancedRecordFilterIds.length ?? 0;
+  const advancedFilterCount = advancedRecordFilterIds.length;
 
   const labelText = 'advanced rule';
-  const chipLabel = `${advancedFilterCount ?? 0} ${advancedFilterCount === 1 ? labelText : plural(labelText)}`;
+  const chipLabel = `${advancedFilterCount} ${advancedFilterCount === 1 ? labelText : plural(labelText)}`;
 
   return (
     <SortOrFilterChip

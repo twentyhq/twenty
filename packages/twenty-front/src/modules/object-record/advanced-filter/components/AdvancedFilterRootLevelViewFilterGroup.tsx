@@ -36,7 +36,7 @@ export const AdvancedFilterRootLevelViewFilterGroup = () => {
     currentRecordFilterGroupsComponentState,
   );
 
-  const outermostRecordFilterGroupId = currentRecordFilterGroups.find(
+  const rootRecordFilterGroupId = currentRecordFilterGroups.find(
     (recordFilterGroup) => !recordFilterGroup.parentRecordFilterGroupId,
   )?.id;
 
@@ -44,7 +44,7 @@ export const AdvancedFilterRootLevelViewFilterGroup = () => {
     currentRecordFilterGroup: rootLevelRecordFilterGroup,
     childRecordFiltersAndRecordFilterGroups,
   } = useChildRecordFiltersAndRecordFilterGroups({
-    recordFilterGroupId: outermostRecordFilterGroupId,
+    recordFilterGroupId: rootRecordFilterGroupId,
   });
 
   if (!isDefined(rootLevelRecordFilterGroup)) {
