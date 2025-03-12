@@ -45,6 +45,7 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitDeletedEvents(

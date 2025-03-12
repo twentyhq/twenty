@@ -51,6 +51,7 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
       nonFormattedUpsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitCreateEvents(
