@@ -7,6 +7,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -47,9 +48,7 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
       );
 
     const featureFlags =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-        workspaceId,
-      );
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
     const { storage, workspaceMigrations } =
       await this.workspaceSyncMetadataService.synchronize(

@@ -194,12 +194,6 @@ export class StandardFieldFactory {
       return [];
     }
 
-    console.log(
-      isNewRelationEnabled,
-      joinColumn,
-      joinColumnMetadataArgsCollection,
-    );
-
     // We don't want to create the join column field metadata for new relation
     if (!isNewRelationEnabled && joinColumn) {
       fieldMetadataCollection.push({
