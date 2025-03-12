@@ -1,5 +1,6 @@
-import { isSameVersion } from 'src/utils/version/is-same-version';
 import { EachTestingContext } from 'twenty-shared';
+
+import { isSameVersion } from 'src/utils/version/is-same-version';
 
 type IsSameVersionTestCase = EachTestingContext<{
   version1: string;

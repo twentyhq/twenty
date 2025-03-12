@@ -2,8 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
-
 import { SemVer } from 'semver';
+
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-add-tasks-assigned-to-me-view.command';

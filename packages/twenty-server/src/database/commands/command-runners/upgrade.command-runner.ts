@@ -2,8 +2,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Repository } from 'typeorm';
-
 import { SemVer } from 'semver';
+import { isDefined } from 'twenty-shared';
+
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
@@ -13,7 +14,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { isSameVersion } from 'src/utils/version/is-same-version';
-import { isDefined } from 'twenty-shared';
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   abstract readonly fromVersion: SemVer;
@@ -30,6 +30,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
     const { workspaceId, index, total, options, appVersion } = args;
+
     this.logger.log(
       chalk.blue(
         `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} ${index + 1}/${total}`,

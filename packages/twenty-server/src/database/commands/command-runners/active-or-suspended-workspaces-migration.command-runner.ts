@@ -30,6 +30,7 @@ type FailedWorkspaceMigration = {
   workspaceId: string;
   error: Error;
 };
+
 type SucceedWorkspaceMigration = {
   workspaceId: string;
 };

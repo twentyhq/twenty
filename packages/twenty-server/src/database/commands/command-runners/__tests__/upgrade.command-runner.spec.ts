@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
 import { SemVer } from 'semver';
+import { EachTestingContext } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
+import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { EachTestingContext } from 'twenty-shared';
-import { UpgradeCommandRunner } from '../upgrade.command-runner';
 
 class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
   fromVersion = new SemVer('1.0.0');
@@ -208,6 +209,7 @@ describe('UpgradeCommandRunner', () => {
       nullVersionWorkspace,
     ];
     const totalWorkspace = numberOfValidWorkspace + failingWorkspaces.length;
+
     await buildModuleAndSetupSpies({
       numberOfWorkspace: numberOfValidWorkspace,
       workspaces: failingWorkspaces,
@@ -215,6 +217,7 @@ describe('UpgradeCommandRunner', () => {
 
     const passedParams = [];
     const options = {};
+
     await upgradeCommandRunner.run(passedParams, options);
 
     // Common assertions
@@ -250,11 +253,13 @@ describe('UpgradeCommandRunner', () => {
 
   it('should run upgrade over several workspaces', async () => {
     const numberOfWorkspace = 42;
+
     await buildModuleAndSetupSpies({
       numberOfWorkspace,
     });
     const passedParams = [];
     const options = {};
+
     await upgradeCommandRunner.run(passedParams, options);
 
     [
@@ -273,6 +278,7 @@ describe('UpgradeCommandRunner', () => {
     await buildModuleAndSetupSpies({});
     const passedParams = [];
     const options = {};
+
     await upgradeCommandRunner.run(passedParams, options);
 
     [
@@ -338,13 +344,16 @@ describe('UpgradeCommandRunner', () => {
 
       const passedParams = [];
       const options = {};
+
       await upgradeCommandRunner.run(passedParams, options);
 
       const { fail: failReport, success: successReport } =
         upgradeCommandRunner.migrationReport;
+
       expect(successReport.length).toBe(0);
       expect(failReport.length).toBe(1);
       const { workspaceId, error } = failReport[0];
+
       expect(workspaceId).toBe('workspace_0');
       expect(error).toMatchSnapshot();
     });
