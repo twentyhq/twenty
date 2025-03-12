@@ -41,7 +41,7 @@ export const JsonDataIndicatorHealthStatus = () => {
       )}
       {parsedDetails && (
         <StyledDetailsContainer>
-            <JsonTree value={parsedDetails} />
+          <JsonTree value={parsedDetails} />
         </StyledDetailsContainer>
       )}
     </Section>
