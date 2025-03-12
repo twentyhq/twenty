@@ -20,10 +20,10 @@ export type ActiveOrSuspendedWorkspacesMigrationCommandOptions = {
 export type RunOnWorkspaceArgs = {
   options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
   workspaceId: string;
-  appVersion?: string;
   dataSource: WorkspaceDataSource;
   index: number;
   total: number;
+  appVersion?: string | null;
 };
 
 type FailedWorkspaceMigration = {
@@ -136,6 +136,8 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
+    const appVersion = this.environmentService.get('APP_VERSION');
+
     for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
       this.logger.log(
         `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
@@ -154,6 +156,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
           dataSource,
           index: index,
           total: activeWorkspaceIds.length,
+          appVersion,
         });
         this.migrationReport.success.push({
           workspaceId,

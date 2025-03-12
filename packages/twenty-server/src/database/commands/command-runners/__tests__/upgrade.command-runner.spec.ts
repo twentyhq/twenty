@@ -8,6 +8,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
+import { EachTestingContext } from 'twenty-shared';
 import { UpgradeCommandRunner } from '../upgrade.command-runner';
 
 class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
@@ -51,7 +52,7 @@ type CommandRunnerValues =
   | typeof TestUpgradeCommandRunnerV2
   | typeof InvalidVersionUpgradeCommandRunner;
 
-const genereateMockWorkspace = (overrides?: Partial<Workspace>) =>
+const generateMockWorkspace = (overrides?: Partial<Workspace>) =>
   ({
     id: 'workspace-id',
     version: '1.0.0',
@@ -156,7 +157,7 @@ describe('UpgradeCommandRunner', () => {
     const generatedWorkspaces = Array.from(
       { length: numberOfWorkspace },
       (_v, index) =>
-        genereateMockWorkspace({
+        generateMockWorkspace({
           id: `workspace_${index}`,
           ...workspaceOverride,
         }),
@@ -188,15 +189,15 @@ describe('UpgradeCommandRunner', () => {
   };
 
   it('should run upgrade command with failing and successfull workspaces', async () => {
-    const outdatedVersionWorkspaces = genereateMockWorkspace({
+    const outdatedVersionWorkspaces = generateMockWorkspace({
       id: 'outated_version_workspace',
       version: '0.42.42',
     });
-    const invalidVesionWorkspace = genereateMockWorkspace({
+    const invalidVesionWorkspace = generateMockWorkspace({
       id: 'invalid_version_workspace',
       version: 'invalid',
     });
-    const nullVersionWorkspace = genereateMockWorkspace({
+    const nullVersionWorkspace = generateMockWorkspace({
       id: 'null_version_workspace',
       version: null,
     });
@@ -296,66 +297,64 @@ describe('UpgradeCommandRunner', () => {
     expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
   });
 
-  it('should fail if workspace version is not the same as fromVersion', async () => {
-    await buildModuleAndSetupSpies({
-      numberOfWorkspace: 1,
-      appVersion: '3.0.0',
-      commandRunner: TestUpgradeCommandRunnerV2,
-      workspaceOverride: {
-        version: '0.1.0',
+  describe('Workspace upgrade should fail', () => {
+    const failingTestUseCases: EachTestingContext<{
+      input: Omit<BuildModuleAndSetupSpiesArgs, 'numberOfWorkspace'>;
+    }>[] = [
+      {
+        title: 'when workspace version is not equal to fromVersion',
+        context: {
+          input: {
+            appVersion: '3.0.0',
+            commandRunner: TestUpgradeCommandRunnerV2,
+            workspaceOverride: {
+              version: '0.1.0',
+            },
+          },
+        },
       },
-    });
+      {
+        title: 'when workspace version is not defined',
+        context: {
+          input: {
+            workspaceOverride: {
+              version: null,
+            },
+          },
+        },
+      },
+      {
+        title: 'when APP_VERSION is not defined',
+        context: {
+          input: {
+            appVersion: null,
+          },
+        },
+      },
+    ];
 
-    const passedParams = [];
-    const options = {};
-    await upgradeCommandRunner.run(passedParams, options);
-    expect(upgradeCommandRunner.migrationReport.success.length).toBe(0);
-    expect(upgradeCommandRunner.migrationReport.fail.length).toBe(1);
-    const failingWorkspace = upgradeCommandRunner.migrationReport.fail[0];
-    expect(failingWorkspace.workspaceId).toBe('workspace_0');
-    expect(failingWorkspace.error).toMatchInlineSnapshot(
-      `[Error: WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.1.0 from=2.0.0 to=3.0.0]`,
-    );
+    it.each(failingTestUseCases)('$title', async ({ context: { input } }) => {
+      await buildModuleAndSetupSpies(input);
+
+      const passedParams = [];
+      const options = {};
+      await upgradeCommandRunner.run(passedParams, options);
+
+      const { fail: failReport, success: successReport } =
+        upgradeCommandRunner.migrationReport;
+      expect(successReport.length).toBe(0);
+      expect(failReport.length).toBe(1);
+      const { workspaceId, error } = failReport[0];
+      expect(workspaceId).toBe('workspace_0');
+      expect(error).toMatchSnapshot();
+    });
   });
 
-  it('should fail if upgrade command version is invalid', async () => {
+  it('should throw if upgrade command version is invalid', async () => {
     await expect(
       buildModuleAndSetupSpies({
         commandRunner: InvalidVersionUpgradeCommandRunner,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`"Invalid Version: invalid"`);
-  });
-
-  it('should fail if workspace version is not defined', async () => {
-    await buildModuleAndSetupSpies({
-      workspaceOverride: {
-        version: null,
-      },
-    });
-
-    const passedParams = [];
-    const options = {};
-    await upgradeCommandRunner.run(passedParams, options);
-    expect(upgradeCommandRunner.migrationReport.success.length).toBe(0);
-    expect(upgradeCommandRunner.migrationReport.fail.length).toBe(1);
-    const failingWorkspace = upgradeCommandRunner.migrationReport.fail[0];
-    expect(failingWorkspace.workspaceId).toBe('workspace_0');
-    expect(failingWorkspace.error).toMatchInlineSnapshot(
-      `[Error: WORKSPACE_VERSION_NOT_DEFINED to=2.0.0]`,
-    );
-  });
-
-  it('should fail if app version is not defined', async () => {
-    await buildModuleAndSetupSpies({
-      appVersion: null,
-    });
-
-    const passedParams = [];
-    const options = {};
-    await expect(
-      upgradeCommandRunner.run(passedParams, options),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"Cannot run upgrade command when APP_VERSION is not defined "`,
-    );
   });
 });
