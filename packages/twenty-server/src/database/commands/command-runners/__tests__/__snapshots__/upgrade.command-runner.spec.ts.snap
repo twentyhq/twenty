@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpgradeCommandRunner should run upgrade command with failing and successfull workspaces 1`] = `[Error: WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.42.42 from=1.0.0 to=2.0.0]`;
+
+exports[`UpgradeCommandRunner should run upgrade command with failing and successfull workspaces 2`] = `[Error: Received invalid version: invalid]`;
+
+exports[`UpgradeCommandRunner should run upgrade command with failing and successfull workspaces 3`] = `[Error: WORKSPACE_VERSION_NOT_DEFINED to=2.0.0]`;

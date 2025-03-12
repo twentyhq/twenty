@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { UpgradeCommandRunner } from '../upgrade.command-runner';
@@ -51,19 +50,6 @@ type CommandRunnerValues =
   | typeof TestUpgradeCommandRunnerV1
   | typeof TestUpgradeCommandRunnerV2
   | typeof InvalidVersionUpgradeCommandRunner;
-
-describe('fromVersion validation', () => {
-  it('should fail if fromVersion is not a valid semver', () => {
-    expect(() => {
-      new InvalidVersionUpgradeCommandRunner(
-        {} as WorkspaceRepository<Workspace>,
-        {} as EnvironmentService,
-        {} as TwentyORMGlobalManager,
-        {} as SyncWorkspaceMetadataCommand,
-      );
-    }).toThrowErrorMatchingInlineSnapshot(`"Invalid Version: invalid"`);
-  });
-});
 
 const genereateMockWorkspace = (overrides?: Partial<Workspace>) =>
   ({
@@ -151,33 +137,35 @@ describe('UpgradeCommandRunner', () => {
   let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
   let afterSyncMetadataUpgradeCommandsToRun: jest.SpyInstance; //TODO improve typing ?
   let beforeSyncMetadataUpgradeCommandsToRun: jest.SpyInstance; //TODO improve typing ?
-  let errors: Error[] = [];
 
   type BuildModuleAndSetupSpiesArgs = {
     numberOfWorkspace?: number;
     workspaceOverride?: Partial<Workspace>;
+    workspaces?: Workspace[];
     appVersion?: string | null;
     commandRunner?: CommandRunnerValues;
   };
   const buildModuleAndSetupSpies = async ({
     numberOfWorkspace = 1,
     workspaceOverride,
+    workspaces,
     commandRunner = TestUpgradeCommandRunnerV1,
     appVersion = '2.0.0',
   }: BuildModuleAndSetupSpiesArgs) => {
-    const workspaces = Array.from({ length: numberOfWorkspace }, (_v, index) =>
-      genereateMockWorkspace({
-        id: `workspace_${index}`,
-        ...workspaceOverride,
-      }),
+    const generatedWorkspaces = Array.from(
+      { length: numberOfWorkspace },
+      (_v, index) =>
+        genereateMockWorkspace({
+          id: `workspace_${index}`,
+          ...workspaceOverride,
+        }),
     );
     const module = await buildUpgradeCommandModule({
       commandRunner,
       appVersion,
-      workspaces,
+      workspaces: [...generatedWorkspaces, ...(workspaces ?? [])],
     });
 
-    errors = [];
     upgradeCommandRunner = module.get(commandRunner);
     beforeSyncMetadataUpgradeCommandsToRun = jest.spyOn(
       upgradeCommandRunner,
@@ -195,6 +183,66 @@ describe('UpgradeCommandRunner', () => {
     syncWorkspaceMetadataCommand = module.get(SyncWorkspaceMetadataCommand);
   };
 
+  it('should run upgrade command with failing and successfull workspaces', async () => {
+    const outdatedVersionWorkspaces = genereateMockWorkspace({
+      id: 'outated_version_workspace',
+      version: '0.42.42',
+    });
+    const invalidVesionWorkspace = genereateMockWorkspace({
+      id: 'invalid_version_workspace',
+      version: 'invalid',
+    });
+    const nullVersionWorkspace = genereateMockWorkspace({
+      id: 'null_version_workspace',
+      version: null,
+    });
+    const numberOfValidWorkspace = 4;
+    const failingWorkspaces = [
+      outdatedVersionWorkspaces,
+      invalidVesionWorkspace,
+      nullVersionWorkspace,
+    ];
+    const totalWorkspace = numberOfValidWorkspace + failingWorkspaces.length;
+    await buildModuleAndSetupSpies({
+      numberOfWorkspace: numberOfValidWorkspace,
+      workspaces: failingWorkspaces,
+    });
+
+    const passedParams = [];
+    const options = {};
+    await upgradeCommandRunner.run(passedParams, options);
+
+    // Common assertions
+    const { fail: failReport, success: successReport } =
+      upgradeCommandRunner.migrationReport;
+    expect(upgradeCommandRunner.runOnWorkspace).toHaveBeenCalledTimes(
+      totalWorkspace,
+    );
+    expect(failReport.length + successReport.length).toBe(totalWorkspace);
+
+    // Success assertions
+    [
+      upgradeCommandRunner.beforeSyncMetadataUpgradeCommandsToRun,
+      syncWorkspaceMetadataCommand.runOnWorkspace,
+      upgradeCommandRunner.afterSyncMetadataUpgradeCommandsToRun,
+      workspaceRepository.update,
+    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfValidWorkspace));
+    expect(successReport.length).toBe(numberOfValidWorkspace);
+
+    // Failing assertions
+    expect(failReport.length).toBe(failingWorkspaces.length);
+    failReport.forEach((report) => {
+      expect(
+        failingWorkspaces.some(
+          (workspace) => workspace.id === report.workspaceId,
+        ),
+      ).toBe(true);
+      expect(report.error).toMatchSnapshot();
+    });
+  });
+
+  //TODO also handle destroyMetadataObject
+
   it('should run upgrade over several workspaces', async () => {
     const numberOfWorkspace = 42;
     await buildModuleAndSetupSpies({
@@ -211,7 +259,8 @@ describe('UpgradeCommandRunner', () => {
       syncWorkspaceMetadataCommand.runOnWorkspace,
       workspaceRepository.update,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
-    expect(upgradeCommandRunner.migrationReport).toMatchInlineSnapshot();
+    expect(upgradeCommandRunner.migrationReport.success.length).toBe(42);
+    expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
   });
 
   it('should run syncMetadataCommand betwen beforeSyncMetadataUpgradeCommandsToRun and afterSyncMetadataUpgradeCommandsToRun', async () => {
@@ -237,7 +286,8 @@ describe('UpgradeCommandRunner', () => {
 
     expect(beforeSyncCall).toBeLessThan(syncMetadataCall);
     expect(syncMetadataCall).toBeLessThan(afterSyncCall);
-    expect(upgradeCommandRunner.migrationReport).toMatchInlineSnapshot();
+    expect(upgradeCommandRunner.migrationReport.success.length).toBe(1);
+    expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
   });
 
   it('should fail if workspace version is not the same as fromVersion', async () => {
@@ -253,17 +303,13 @@ describe('UpgradeCommandRunner', () => {
     const passedParams = [];
     const options = {};
     await upgradeCommandRunner.run(passedParams, options);
-    expect(upgradeCommandRunner.migrationReport).toMatchInlineSnapshot(`
-{
-  "fail": [
-    {
-      "error": [Error: WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.1.0 from=2.0.0 to=3.0.0],
-      "workspaceId": "workspace_0",
-    },
-  ],
-  "success": [],
-}
-`);
+    expect(upgradeCommandRunner.migrationReport.success.length).toBe(0);
+    expect(upgradeCommandRunner.migrationReport.fail.length).toBe(1);
+    const failingWorkspace = upgradeCommandRunner.migrationReport.fail[0];
+    expect(failingWorkspace.workspaceId).toBe('workspace_0');
+    expect(failingWorkspace.error).toMatchInlineSnapshot(
+      `[Error: WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.1.0 from=2.0.0 to=3.0.0]`,
+    );
   });
 
   it('should fail if upgrade command version is invalid', async () => {
@@ -284,7 +330,13 @@ describe('UpgradeCommandRunner', () => {
     const passedParams = [];
     const options = {};
     await upgradeCommandRunner.run(passedParams, options);
-    expect(upgradeCommandRunner.migrationReport).toMatchInlineSnapshot();
+    expect(upgradeCommandRunner.migrationReport.success.length).toBe(0);
+    expect(upgradeCommandRunner.migrationReport.fail.length).toBe(1);
+    const failingWorkspace = upgradeCommandRunner.migrationReport.fail[0];
+    expect(failingWorkspace.workspaceId).toBe('workspace_0');
+    expect(failingWorkspace.error).toMatchInlineSnapshot(
+      `[Error: WORKSPACE_VERSION_NOT_DEFINED to=2.0.0]`,
+    );
   });
 
   it('should fail if app version is not defined', async () => {
