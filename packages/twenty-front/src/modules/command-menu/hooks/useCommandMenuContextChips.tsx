@@ -1,6 +1,6 @@
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuNavigationMorphItemsState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -29,7 +29,7 @@ export const useCommandMenuContextChips = () => {
   const theme = useTheme();
 
   const commandMenuNavigationMorphItems = useRecoilValue(
-    commandMenuNavigationMorphItemsState,
+    commandMenuNavigationMorphItemByPageState,
   );
 
   const commandMenuNavigationRecords = useRecoilValue(

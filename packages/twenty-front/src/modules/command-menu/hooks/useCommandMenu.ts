@@ -24,7 +24,7 @@ import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContext
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
-import { commandMenuNavigationMorphItemsState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
@@ -102,7 +102,7 @@ export const useCommandMenu = () => {
         });
         set(isCommandMenuOpenedState, false);
         set(commandMenuSearchState, '');
-        set(commandMenuNavigationMorphItemsState, new Map());
+        set(commandMenuNavigationMorphItemByPageState, new Map());
         set(commandMenuNavigationRecordsState, []);
         set(commandMenuNavigationStackState, []);
         resetSelectedItem();
@@ -201,7 +201,7 @@ export const useCommandMenu = () => {
           ]);
 
           set(commandMenuNavigationRecordsState, []);
-          set(commandMenuNavigationMorphItemsState, new Map());
+          set(commandMenuNavigationMorphItemByPageState, new Map());
         } else {
           set(commandMenuNavigationStackState, [
             ...currentNavigationStack,
@@ -272,7 +272,7 @@ export const useCommandMenu = () => {
         set(commandMenuNavigationStackState, newNavigationStack);
 
         const currentMorphItems = snapshot
-          .getLoadable(commandMenuNavigationMorphItemsState)
+          .getLoadable(commandMenuNavigationMorphItemByPageState)
           .getValue();
 
         if (currentNavigationStack.length > 0) {
@@ -281,7 +281,7 @@ export const useCommandMenu = () => {
           if (isDefined(removedItem)) {
             const newMorphItems = new Map(currentMorphItems);
             newMorphItems.delete(removedItem.pageId);
-            set(commandMenuNavigationMorphItemsState, newMorphItems);
+            set(commandMenuNavigationMorphItemByPageState, newMorphItems);
           }
         }
 
@@ -316,7 +316,7 @@ export const useCommandMenu = () => {
         instanceId: newNavigationStackItem?.pageId,
       });
       const currentMorphItems = snapshot
-        .getLoadable(commandMenuNavigationMorphItemsState)
+        .getLoadable(commandMenuNavigationMorphItemByPageState)
         .getValue();
 
       const newMorphItems = new Map(
@@ -325,7 +325,7 @@ export const useCommandMenu = () => {
         ),
       );
 
-      set(commandMenuNavigationMorphItemsState, newMorphItems);
+      set(commandMenuNavigationMorphItemByPageState, newMorphItems);
 
       set(hasUserSelectedCommandState, false);
     };
@@ -417,21 +417,21 @@ export const useCommandMenu = () => {
             .getValue(),
         );
 
-        set(
-          commandMenuNavigationMorphItemsState,
-          new Map([
-            ...snapshot
-              .getLoadable(commandMenuNavigationMorphItemsState)
-              .getValue(),
-            [
-              pageComponentInstanceId,
-              {
-                objectMetadataId: objectMetadataItem.id,
-                recordId,
-              },
-            ],
-          ]),
-        );
+        const currentMorphItems = snapshot
+          .getLoadable(commandMenuNavigationMorphItemByPageState)
+          .getValue();
+
+        const morphItemToAdd = {
+          objectMetadataId: objectMetadataItem.id,
+          recordId,
+        };
+
+        const newMorphItems = new Map([
+          ...currentMorphItems,
+          [pageComponentInstanceId, morphItemToAdd],
+        ]);
+
+        set(commandMenuNavigationMorphItemByPageState, newMorphItems);
 
         const Icon = objectMetadataItem?.icon
           ? getIcon(objectMetadataItem.icon)

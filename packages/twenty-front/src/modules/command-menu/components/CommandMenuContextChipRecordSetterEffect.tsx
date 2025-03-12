@@ -1,4 +1,4 @@
-import { commandMenuNavigationMorphItemsState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -10,9 +10,9 @@ import { useCallback, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared';
 
-export const CommandMenuContextChipEffect = () => {
-  const commandMenuNavigationMorphItems = useRecoilValue(
-    commandMenuNavigationMorphItemsState,
+export const CommandMenuContextChipRecordSetterEffect = () => {
+  const commandMenuNavigationMorphItemByPage = useRecoilValue(
+    commandMenuNavigationMorphItemByPageState,
   );
 
   const setCommandMenuNavigationRecords = useSetRecoilState(
@@ -24,12 +24,12 @@ export const CommandMenuContextChipEffect = () => {
   const { performCombinedFindManyRecords } =
     usePerformCombinedFindManyRecords();
 
-  const objectMetadataIds = Array.from(
-    commandMenuNavigationMorphItems.values(),
+  const objectMetadataIdsUsedInCommandMenuNavigation = Array.from(
+    commandMenuNavigationMorphItemByPage.values(),
   ).map(({ objectMetadataId }) => objectMetadataId);
 
   const searchableObjectMetadataItems = objectMetadataItems.filter(({ id }) =>
-    objectMetadataIds.includes(id),
+    objectMetadataIdsUsedInCommandMenuNavigation.includes(id),
   );
 
   const commandMenuNavigationStack = useRecoilValue(
@@ -41,7 +41,7 @@ export const CommandMenuContextChipEffect = () => {
       searchableObjectMetadataItems
         .map(({ id, nameSingular }) => {
           const recordIdsForMetadataItem = Array.from(
-            commandMenuNavigationMorphItems.values(),
+            commandMenuNavigationMorphItemByPage.values(),
           )
             .filter(({ objectMetadataId }) => objectMetadataId === id)
             .map(({ recordId }) => recordId);
@@ -101,7 +101,7 @@ export const CommandMenuContextChipEffect = () => {
 
     setCommandMenuNavigationRecords(formattedRecords);
   }, [
-    commandMenuNavigationMorphItems,
+    commandMenuNavigationMorphItemByPage,
     performCombinedFindManyRecords,
     searchableObjectMetadataItems,
     setCommandMenuNavigationRecords,

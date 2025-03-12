@@ -1,5 +1,5 @@
 import { CommandMenuContainer } from '@/command-menu/components/CommandMenuContainer';
-import { CommandMenuContextChipEffect } from '@/command-menu/components/CommandMenuContextChipEffect';
+import { CommandMenuContextChipRecordSetterEffect } from '@/command-menu/components/CommandMenuContextChipRecordSetterEffect';
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuPagesConfig';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
@@ -31,7 +31,7 @@ export const CommandMenuRouter = () => {
 
   return (
     <CommandMenuContainer>
-      <CommandMenuContextChipEffect />
+      <CommandMenuContextChipRecordSetterEffect />
       <CommandMenuPageComponentInstanceContext.Provider
         value={{ instanceId: commandMenuPageInfo.instanceId }}
       >
