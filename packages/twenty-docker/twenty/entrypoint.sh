@@ -22,5 +22,10 @@ if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status
     touch /app/docker-data/db_status
 fi
 
+# Set APP_VERSION only if it has a value
+if [ ! -z "${APP_VERSION}" ]; then
+    export APP_VERSION="${APP_VERSION}"
+fi
+
 # Continue with the original Docker command
 exec "$@"
