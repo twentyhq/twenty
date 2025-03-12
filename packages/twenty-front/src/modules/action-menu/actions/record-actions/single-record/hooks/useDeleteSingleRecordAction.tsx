@@ -8,7 +8,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { t } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { useCallback, useContext, useState } from 'react';
@@ -38,8 +37,6 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
-
-  const { closeRightDrawer } = useRightDrawer();
 
   const handleDeleteClick = useCallback(async () => {
     resetTableRowSelection();
@@ -91,9 +88,6 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
         subtitle={t`Are you sure you want to delete this record? It can be recovered from the Command menu (${osControlSymbol} + K).`}
         onConfirmClick={() => {
           handleDeleteClick();
-          if (isInRightDrawer) {
-            closeRightDrawer({ emitCloseEvent: false });
-          }
         }}
         confirmButtonText={'Delete Record'}
       />

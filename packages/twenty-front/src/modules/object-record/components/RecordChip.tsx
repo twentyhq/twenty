@@ -9,7 +9,7 @@ import {
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilValue } from 'recoil';
@@ -41,9 +41,7 @@ export const RecordChip = ({
 
   const { openRecordInCommandMenu } = useCommandMenu();
 
-  const recordIndexOpenRecordIn = useRecoilValue(
-    recordIndexOpenRecordInSelector,
-  );
+  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
   // TODO temporary until we create a record show page for Workspaces members
   if (forceDisableClick) {

@@ -7,7 +7,6 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { AppPath } from '@/types/AppPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -34,8 +33,6 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
   });
 
   const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
-
-  const { closeRightDrawer } = useRightDrawer();
 
   const handleDeleteClick = useCallback(async () => {
     resetTableRowSelection();
@@ -82,9 +79,6 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
         }
         onConfirmClick={async () => {
           await handleDeleteClick();
-          if (isInRightDrawer) {
-            closeRightDrawer();
-          }
         }}
         confirmButtonText={'Permanently Destroy Record'}
       />

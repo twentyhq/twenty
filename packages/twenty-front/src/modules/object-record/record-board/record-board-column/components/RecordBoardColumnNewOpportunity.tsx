@@ -1,3 +1,4 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
@@ -6,11 +7,8 @@ import { SingleRecordPicker } from '@/object-record/record-picker/single-record-
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import { IconList } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 export const RecordBoardColumnNewOpportunity = ({
@@ -34,12 +32,13 @@ export const RecordBoardColumnNewOpportunity = ({
   const { createOneRecord: createCompany } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Company,
   });
-  const { openRightDrawer } = useRightDrawer();
 
   const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
   const setViewableRecordNameSingular = useSetRecoilState(
     viewableRecordNameSingularState,
   );
+
+  const { openRecordInCommandMenu } = useCommandMenu();
 
   const createCompanyOpportunityAndOpenRightDrawer = async (
     searchInput?: string,
@@ -53,9 +52,9 @@ export const RecordBoardColumnNewOpportunity = ({
 
     setViewableRecordId(newRecordId);
     setViewableRecordNameSingular(CoreObjectNameSingular.Company);
-    openRightDrawer(RightDrawerPages.ViewRecord, {
-      title: 'Company',
-      Icon: IconList,
+    openRecordInCommandMenu({
+      recordId: newRecordId,
+      objectNameSingular: CoreObjectNameSingular.Company,
     });
 
     if (isDefined(createdCompany)) {

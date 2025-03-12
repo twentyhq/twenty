@@ -1,6 +1,4 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
@@ -18,7 +16,6 @@ import { useIcons } from 'twenty-ui';
 export const WorkflowDiagramCanvasReadonlyEffect = () => {
   const { getIcon } = useIcons();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
-  const setHotkeyScope = useSetHotkeyScope();
   const { openWorkflowViewStepInCommandMenu } = useCommandMenu();
 
   const workflowId = useRecoilValue(workflowIdState);
@@ -28,7 +25,6 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
       const selectedNode = nodes[0] as WorkflowDiagramNode;
 
       setWorkflowSelectedNode(selectedNode.id);
-      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
@@ -42,7 +38,6 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
     },
     [
       setWorkflowSelectedNode,
-      setHotkeyScope,
       openWorkflowViewStepInCommandMenu,
       workflowId,
       getIcon,
