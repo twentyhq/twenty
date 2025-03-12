@@ -107,7 +107,7 @@ export const RecordInlineCellDisplayMode = ({
           {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
           !children ? (
             isFieldRating(fieldDefinition) ? (
-              RATING_VALUES.map((value, index) => (
+              RATING_VALUES.map((_, index) => (
                 <StyledRatingIconContainer key={index} color={inactiveColor}>
                   <IconTwentyStarFilled size={iconSizeMd} />
                 </StyledRatingIconContainer>
