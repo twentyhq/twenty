@@ -96,6 +96,7 @@ export const RecordInlineCellDisplayMode = ({
     display: inline-flex;
   `;
   const { theme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   const inactiveColor = theme.background.quaternary;
 
