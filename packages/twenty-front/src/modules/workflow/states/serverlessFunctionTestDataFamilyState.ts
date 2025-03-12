@@ -5,6 +5,7 @@ export type ServerlessFunctionTestData = {
   input: { [field: string]: any };
   output: {
     data?: string;
+    logs: string;
     duration?: number;
     status?: ServerlessFunctionExecutionStatus;
     error?: string;
@@ -15,6 +16,7 @@ export type ServerlessFunctionTestData = {
 
 export const DEFAULT_OUTPUT_VALUE = {
   data: 'Enter an input above then press "Test"',
+  logs: '',
   status: ServerlessFunctionExecutionStatus.IDLE,
 };
 

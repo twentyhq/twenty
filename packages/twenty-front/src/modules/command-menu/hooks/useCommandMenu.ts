@@ -24,6 +24,8 @@ import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContext
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
+import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -38,10 +40,12 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
+import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared';
@@ -52,6 +56,7 @@ export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
   pageTitle: string;
   pageIcon: IconComponent;
+  pageIconColor?: string;
   pageId?: string;
 };
 
@@ -67,6 +72,8 @@ export const useCommandMenu = () => {
   const { resetContextStoreStates } = useResetContextStoreStates();
 
   const { closeDropdown } = useDropdownV2();
+
+  const theme = useTheme();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set }) =>
@@ -95,6 +102,8 @@ export const useCommandMenu = () => {
         });
         set(isCommandMenuOpenedState, false);
         set(commandMenuSearchState, '');
+        set(commandMenuNavigationMorphItemByPageState, new Map());
+        set(commandMenuNavigationRecordsState, []);
         set(commandMenuNavigationStackState, []);
         resetSelectedItem();
         set(hasUserSelectedCommandState, false);
@@ -154,6 +163,7 @@ export const useCommandMenu = () => {
         page,
         pageTitle,
         pageIcon,
+        pageIconColor,
         pageId,
         resetNavigationStack = false,
       }: CommandMenuNavigationStackItem & {
@@ -185,9 +195,13 @@ export const useCommandMenu = () => {
               page,
               pageTitle,
               pageIcon,
+              pageIconColor,
               pageId,
             },
           ]);
+
+          set(commandMenuNavigationRecordsState, []);
+          set(commandMenuNavigationMorphItemByPageState, new Map());
         } else {
           set(commandMenuNavigationStackState, [
             ...currentNavigationStack,
@@ -195,6 +209,7 @@ export const useCommandMenu = () => {
               page,
               pageTitle,
               pageIcon,
+              pageIconColor,
               pageId,
             },
           ]);
@@ -255,6 +270,21 @@ export const useCommandMenu = () => {
         });
 
         set(commandMenuNavigationStackState, newNavigationStack);
+
+        const currentMorphItems = snapshot
+          .getLoadable(commandMenuNavigationMorphItemByPageState)
+          .getValue();
+
+        if (currentNavigationStack.length > 0) {
+          const removedItem = currentNavigationStack.at(-1);
+
+          if (isDefined(removedItem)) {
+            const newMorphItems = new Map(currentMorphItems);
+            newMorphItems.delete(removedItem.pageId);
+            set(commandMenuNavigationMorphItemByPageState, newMorphItems);
+          }
+        }
+
         set(hasUserSelectedCommandState, false);
       };
     },
@@ -285,6 +315,17 @@ export const useCommandMenu = () => {
         Icon: newNavigationStackItem?.pageIcon,
         instanceId: newNavigationStackItem?.pageId,
       });
+      const currentMorphItems = snapshot
+        .getLoadable(commandMenuNavigationMorphItemByPageState)
+        .getValue();
+
+      const newMorphItems = new Map(
+        Array.from(currentMorphItems.entries()).filter(([pageId]) =>
+          newNavigationStack.some((item) => item.pageId === pageId),
+        ),
+      );
+
+      set(commandMenuNavigationMorphItemByPageState, newMorphItems);
 
       set(hasUserSelectedCommandState, false);
     };
@@ -376,9 +417,30 @@ export const useCommandMenu = () => {
             .getValue(),
         );
 
+        const currentMorphItems = snapshot
+          .getLoadable(commandMenuNavigationMorphItemByPageState)
+          .getValue();
+
+        const morphItemToAdd = {
+          objectMetadataId: objectMetadataItem.id,
+          recordId,
+        };
+
+        const newMorphItems = new Map([
+          ...currentMorphItems,
+          [pageComponentInstanceId, morphItemToAdd],
+        ]);
+
+        set(commandMenuNavigationMorphItemByPageState, newMorphItems);
+
         const Icon = objectMetadataItem?.icon
           ? getIcon(objectMetadataItem.icon)
           : getIcon('IconList');
+
+        const IconColor = getIconColorForObjectType({
+          objectType: objectMetadataItem.nameSingular,
+          theme,
+        });
 
         const capitalizedObjectNameSingular = capitalize(objectNameSingular);
 
@@ -388,12 +450,13 @@ export const useCommandMenu = () => {
             ? t`New ${capitalizedObjectNameSingular}`
             : capitalizedObjectNameSingular,
           pageIcon: Icon,
+          pageIconColor: IconColor,
           pageId: pageComponentInstanceId,
           resetNavigationStack: false,
         });
       };
     },
-    [getIcon, navigateCommandMenu],
+    [getIcon, navigateCommandMenu, theme],
   );
 
   const openWorkflowTriggerTypeInCommandMenu = useRecoilCallback(
@@ -522,6 +585,31 @@ export const useCommandMenu = () => {
           calendarEventId,
         );
 
+        // TODO: Uncomment this once we need to calendar event title in the navigation
+        // const objectMetadataItem = snapshot
+        //   .getLoadable(objectMetadataItemsState)
+        //   .getValue()
+        //   .find(
+        //     ({ nameSingular }) =>
+        //       nameSingular === CoreObjectNameSingular.CalendarEvent,
+        //   );
+
+        // set(
+        //   commandMenuNavigationMorphItemsState,
+        //   new Map([
+        //     ...snapshot
+        //       .getLoadable(commandMenuNavigationMorphItemsState)
+        //       .getValue(),
+        //     [
+        //       pageComponentInstanceId,
+        //       {
+        //         objectMetadataId: objectMetadataItem?.id,
+        //         recordId: calendarEventId,
+        //       },
+        //     ],
+        //   ]),
+        // );
+
         navigateCommandMenu({
           page: CommandMenuPages.ViewCalendarEvent,
           pageTitle: 'Calendar Event',
@@ -544,6 +632,31 @@ export const useCommandMenu = () => {
           }),
           emailThreadId,
         );
+
+        // TODO: Uncomment this once we need to show the thread title in the navigation
+        // const objectMetadataItem = snapshot
+        //   .getLoadable(objectMetadataItemsState)
+        //   .getValue()
+        //   .find(
+        //     ({ nameSingular }) =>
+        //       nameSingular === CoreObjectNameSingular.MessageThread,
+        //   );
+
+        // set(
+        //   commandMenuNavigationMorphItemsState,
+        //   new Map([
+        //     ...snapshot
+        //       .getLoadable(commandMenuNavigationMorphItemsState)
+        //       .getValue(),
+        //     [
+        //       pageComponentInstanceId,
+        //       {
+        //         objectMetadataId: objectMetadataItem?.id,
+        //         recordId: emailThreadId,
+        //       },
+        //     ],
+        //   ]),
+        // );
 
         navigateCommandMenu({
           page: CommandMenuPages.ViewEmailThread,

@@ -29,20 +29,13 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewType } from '@/views/types/ViewType';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    viewType,
-    onContentChange,
-    closeDropdown,
-  } = useOptionsDropdown();
+  const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
+    useOptionsDropdown();
 
   const { getIcon } = useIcons();
   const { currentView } = useGetCurrentViewOnly();
@@ -71,10 +64,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
     viewBarId: recordIndexId,
   });
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
   const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
     viewPickerReferenceViewIdComponentState,
@@ -97,24 +86,18 @@ export const ObjectOptionsDropdownMenuContent = () => {
         {currentView?.name}
       </DropdownMenuHeader>
 
-      {(isCommandMenuV2Enabled || viewType === ViewType.Kanban) && (
-        <>
-          <DropdownMenuItemsContainer scrollable={false}>
-            <MenuItem
-              onClick={() => onContentChange('layout')}
-              LeftIcon={
-                currentView?.type === ViewType.Table
-                  ? IconTable
-                  : IconLayoutKanban
-              }
-              text={t`Layout`}
-              contextualText={`${capitalize(currentView?.type ?? '')}`}
-              hasSubMenu
-            />
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-        </>
-      )}
+      <DropdownMenuItemsContainer scrollable={false}>
+        <MenuItem
+          onClick={() => onContentChange('layout')}
+          LeftIcon={
+            currentView?.type === ViewType.Table ? IconTable : IconLayoutKanban
+          }
+          text={t`Layout`}
+          contextualText={`${capitalize(currentView?.type ?? '')}`}
+          hasSubMenu
+        />
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
 
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem

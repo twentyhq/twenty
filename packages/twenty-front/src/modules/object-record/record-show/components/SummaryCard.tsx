@@ -1,20 +1,15 @@
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { RightDrawerTitleRecordInlineCell } from '@/object-record/record-right-drawer/components/RightDrawerTitleRecordInlineCell';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey, FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated/graphql';
 
 type SummaryCardProps = {
   objectNameSingular: string;
@@ -50,16 +45,6 @@ export const SummaryCard = ({
 
   const { Icon, IconColor } = useGetStandardObjectIcon(objectNameSingular);
   const isMobile = useIsMobile() || isInRightDrawer;
-
-  const isReadOnly = isFieldValueReadOnly({
-    objectNameSingular,
-    isRecordDeleted: recordFromStore?.isDeleted,
-    contextStoreCurrentViewType: ContextStoreViewType.ShowPage,
-  });
-
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
 
   if (isNewRightDrawerItemLoading || !isDefined(recordFromStore)) {
     return <ShowPageSummaryCardSkeletonLoader />;
@@ -101,13 +86,7 @@ export const SummaryCard = ({
             isDisplayModeFixHeight: true,
           }}
         >
-          {isCommandMenuV2Enabled ? (
-            <RecordTitleCell sizeVariant="md" />
-          ) : isInRightDrawer ? (
-            <RightDrawerTitleRecordInlineCell />
-          ) : (
-            <RecordInlineCell readonly={isReadOnly} />
-          )}
+          <RecordTitleCell sizeVariant="md" />
         </FieldContext.Provider>
       }
       avatarType={recordIdentifier?.avatarType ?? 'rounded'}

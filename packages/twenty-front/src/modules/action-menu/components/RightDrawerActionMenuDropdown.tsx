@@ -6,17 +6,14 @@ import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-men
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { i18n } from '@lingui/core';
 import { Key } from 'ts-key-enum';
-import { Button, MenuItem, getOsControlSymbol } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { Button, getOsControlSymbol, MenuItem } from 'twenty-ui';
 
 export const RightDrawerActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
@@ -30,10 +27,6 @@ export const RightDrawerActionMenuDropdown = () => {
   const { closeDropdown, openDropdown } = useDropdownV2();
 
   const theme = useTheme();
-
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
 
   useScopedHotkeys(
     [Key.Escape, 'ctrl+o,meta+o'],
@@ -53,9 +46,7 @@ export const RightDrawerActionMenuDropdown = () => {
         getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
       );
     },
-    isCommandMenuV2Enabled
-      ? AppHotkeyScope.CommandMenuOpen
-      : RightDrawerHotkeyScope.RightDrawer,
+    AppHotkeyScope.CommandMenuOpen,
     [openDropdown],
   );
 

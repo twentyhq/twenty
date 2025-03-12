@@ -16,8 +16,8 @@ import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/get
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import { ShowPageSubContainerTabListContainer } from '@/ui/layout/show-page/components/ShowPageSubContainerTabListContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
@@ -49,8 +49,9 @@ const StyledCodeEditorContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledTabListContainer = styled(ShowPageSubContainerTabListContainer)`
+const StyledTabList = styled(TabList)`
   background-color: ${({ theme }) => theme.background.secondary};
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 type WorkflowEditActionFormServerlessFunctionProps = {
@@ -284,13 +285,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
   return (
     !loading && (
       <StyledContainer>
-        <StyledTabListContainer>
-          <TabList
-            tabListInstanceId={tabListId}
-            tabs={tabs}
-            behaveAsLinks={false}
-          />
-        </StyledTabListContainer>
+        <StyledTabList
+          tabListInstanceId={tabListId}
+          tabs={tabs}
+          behaveAsLinks={false}
+        />
         <WorkflowStepHeader
           onTitleChange={(newName: string) => {
             updateAction({ name: newName });
@@ -338,6 +337,16 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 <ServerlessFunctionExecutionResult
                   serverlessFunctionTestData={serverlessFunctionTestData}
                   isTesting={isTesting}
+                />
+              </StyledCodeEditorContainer>
+              <StyledCodeEditorContainer>
+                <InputLabel>Logs</InputLabel>
+                <TextArea
+                  value={
+                    isTesting ? '' : serverlessFunctionTestData.output.logs
+                  }
+                  maxRows={20}
+                  disabled
                 />
               </StyledCodeEditorContainer>
             </>
