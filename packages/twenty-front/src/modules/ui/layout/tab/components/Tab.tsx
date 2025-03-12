@@ -23,7 +23,8 @@ const StyledTab = styled('button', {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'active',
 })<{ active?: boolean; disabled?: boolean; to?: string }>`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: ${({ theme }) => theme.icon.stroke.sm}px solid
+    ${({ theme }) => theme.border.color.light};
   border-color: ${({ theme, active }) =>
     active ? theme.border.color.inverted : 'transparent'};
   color: ${({ theme, active, disabled }) =>
