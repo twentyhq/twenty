@@ -19,7 +19,8 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid " These are only the server values. Ensure your worker environment has the\n"
+msgid ""
+" These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
 msgstr " Esses são apenas os valores do servidor. Certifique-se de que o ambiente do seu trabalhador tenha as mesmas variáveis e valores, isso é necessário para tarefas assíncronas como sincronização de e-mails."
@@ -2814,7 +2815,8 @@ msgstr "Alterar o rótulo de um campo também deve alterar o nome da API?"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Should changing an object's label also change the API?"
-msgstr "Alterar o r\n"
+msgstr ""
+"Alterar o r\n"
 "tulo de um objeto tamb\n"
 "m deve alterar a API?"
 
@@ -2950,7 +2952,8 @@ msgstr "Sincronizar o rótulo do campo e o nome da API"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Synchronize Objects Labels and API Names"
-msgstr "Sincronizar r\n"
+msgstr ""
+"Sincronizar r\n"
 "tulos dos Objetos e Nomes da API"
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx

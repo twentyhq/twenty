@@ -19,7 +19,8 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid " These are only the server values. Ensure your worker environment has the\n"
+msgid ""
+" These are only the server values. Ensure your worker environment has the\n"
 "        same variables and values, this is required for asynchronous tasks like\n"
 "        email sync."
 msgstr " Це тільки значення серверу. Переконайтеся, що ваше робоче середовище має ті ж змінні та значення, це необхідно для асинхронних задач, таких як синхронізація електронної пошти."
@@ -975,14 +976,16 @@ msgstr "Видалити запис"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Delete records"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Видалити записи"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Видалити цю інтеграцію"
 
@@ -993,7 +996,8 @@ msgstr "Видалити перегляд"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Delete webhook"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Видалити вебхук"
 
@@ -1008,13 +1012,15 @@ msgstr "Видалити workflows "
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete workspace"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Видалити робочу область"
 
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete your whole workspace"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Видалити всю вашу робочу область"
 
@@ -1046,7 +1052,8 @@ msgstr "Видалені робочі процеси"
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              По спадаючій"
 
@@ -1054,7 +1061,8 @@ msgstr "\n"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Description"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Опис"
 
@@ -1063,20 +1071,23 @@ msgstr "\n"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 msgid "Destroy"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Знищити"
 
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Developers"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Розробники"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Відмінити чернетку"
 
@@ -1090,7 +1101,8 @@ msgstr "Відображати як звичайне число або відс�
 
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Показувати як відносну дату"
 
@@ -1107,7 +1119,8 @@ msgstr "Не містить"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Домен"
 
@@ -1142,19 +1155,22 @@ msgstr "Голландська"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "E.g. backoffice integration"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Наприклад, інтеграція з бекофісом"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Earliest"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Найраніше"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Earliest date"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Найраніша дата"
 
@@ -1165,7 +1181,8 @@ msgstr "Редагувати"
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Редагувати інтервал білінгу"
 
@@ -1191,7 +1208,8 @@ msgstr "Редагуйте назву вашого субдомену або в�
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 msgid "Email"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Електронна адреса"
 
@@ -1248,7 +1266,8 @@ msgstr "співробітники"
 
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Employees"
-msgstr "\n"
+msgstr ""
+"\n"
 "Співробітники"
 
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
@@ -1267,7 +1286,8 @@ msgstr "Порожній об'єкт"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              URL-адреса ендпоінту"
 
