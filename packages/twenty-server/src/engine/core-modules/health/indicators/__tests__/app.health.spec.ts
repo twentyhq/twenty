@@ -4,22 +4,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
-import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 
 describe('AppHealthIndicator', () => {
   let service: AppHealthIndicator;
   let objectMetadataService: jest.Mocked<ObjectMetadataService>;
-  let workspaceHealthService: jest.Mocked<WorkspaceHealthService>;
   let workspaceMigrationService: jest.Mocked<WorkspaceMigrationService>;
   let healthIndicatorService: jest.Mocked<HealthIndicatorService>;
 
   beforeEach(async () => {
     objectMetadataService = {
       findMany: jest.fn(),
-    } as any;
-
-    workspaceHealthService = {
-      healthCheck: jest.fn(),
     } as any;
 
     workspaceMigrationService = {
@@ -44,10 +38,7 @@ describe('AppHealthIndicator', () => {
           provide: ObjectMetadataService,
           useValue: objectMetadataService,
         },
-        {
-          provide: WorkspaceHealthService,
-          useValue: workspaceHealthService,
-        },
+
         {
           provide: WorkspaceMigrationService,
           useValue: workspaceMigrationService,

@@ -2,14 +2,15 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionFormCreateRecord } from '../WorkflowEditActionFormCreateRecord';
-import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 
 const meta: Meta<typeof WorkflowEditActionFormCreateRecord> = {
   title: 'Modules/Workflow/WorkflowEditActionFormCreateRecord',
@@ -47,6 +48,7 @@ const meta: Meta<typeof WorkflowEditActionFormCreateRecord> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     WorkspaceDecorator,
+    I18nFrontDecorator,
   ],
 };
 

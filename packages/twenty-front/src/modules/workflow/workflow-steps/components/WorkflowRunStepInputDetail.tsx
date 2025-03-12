@@ -7,6 +7,8 @@ import { isDefined } from 'twenty-shared';
 import { IconBrackets } from 'twenty-ui';
 
 const StyledContainer = styled.div`
+  display: grid;
+  overflow-x: auto;
   padding-block: ${({ theme }) => theme.spacing(4)};
   padding-inline: ${({ theme }) => theme.spacing(3)};
 `;
@@ -31,6 +33,10 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     stepId,
   });
 
+  if (stepContext.length === 0) {
+    throw new Error('The input tab must be rendered with a non-empty context.');
+  }
+
   return (
     <StyledContainer>
       <JsonNestedNode
@@ -40,6 +46,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
           value: context,
         }))}
         Icon={IconBrackets}
+        emptyElementsText=""
         depth={0}
       />
     </StyledContainer>

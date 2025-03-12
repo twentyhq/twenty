@@ -16,6 +16,8 @@ export type Scalars = {
   Float: { input: number; output: number; }
   /** Cursor for paging through collections */
   ConnectionCursor: { input: any; output: any; }
+  /** Date custom scalar type */
+  Date: { input: any; output: any; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
@@ -36,6 +38,7 @@ export type AdminPanelHealthServiceData = {
   __typename?: 'AdminPanelHealthServiceData';
   description: Scalars['String']['output'];
   details?: Maybe<Scalars['String']['output']>;
+  errorMessage?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   label: Scalars['String']['output'];
   queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
@@ -50,10 +53,8 @@ export enum AdminPanelHealthServiceStatus {
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
   id: Scalars['String']['output'];
-  metrics: WorkerQueueMetrics;
   queueName: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
-  workers: Scalars['Float']['output'];
 };
 
 export type Analytics = {
@@ -421,6 +422,17 @@ export type CustomDomainValidRecords = {
   records: Array<CustomDomainRecord>;
 };
 
+export type DateFilter = {
+  eq?: InputMaybe<Scalars['Date']['input']>;
+  gt?: InputMaybe<Scalars['Date']['input']>;
+  gte?: InputMaybe<Scalars['Date']['input']>;
+  in?: InputMaybe<Array<Scalars['Date']['input']>>;
+  is?: InputMaybe<FilterIs>;
+  lt?: InputMaybe<Scalars['Date']['input']>;
+  lte?: InputMaybe<Scalars['Date']['input']>;
+  neq?: InputMaybe<Scalars['Date']['input']>;
+};
+
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['String']['input'];
 };
@@ -648,6 +660,11 @@ export enum FileFolder {
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
+export enum FilterIs {
+  NotNull = 'NotNull',
+  Null = 'Null'
+}
+
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
   id: Scalars['String']['output'];
@@ -701,11 +718,23 @@ export type GlobalSearchRecord = {
 };
 
 export enum HealthIndicatorId {
+  app = 'app',
   connectedAccount = 'connectedAccount',
   database = 'database',
   redis = 'redis',
   worker = 'worker'
 }
+
+export type IdFilter = {
+  eq?: InputMaybe<Scalars['ID']['input']>;
+  gt?: InputMaybe<Scalars['ID']['input']>;
+  gte?: InputMaybe<Scalars['ID']['input']>;
+  in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  is?: InputMaybe<FilterIs>;
+  lt?: InputMaybe<Scalars['ID']['input']>;
+  lte?: InputMaybe<Scalars['ID']['input']>;
+  neq?: InputMaybe<Scalars['ID']['input']>;
+};
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -1339,6 +1368,16 @@ export type ObjectIndexMetadatasConnection = {
   pageInfo: PageInfo;
 };
 
+export type ObjectRecordFilterInput = {
+  and?: InputMaybe<Array<ObjectRecordFilterInput>>;
+  createdAt?: InputMaybe<DateFilter>;
+  deletedAt?: InputMaybe<DateFilter>;
+  id?: InputMaybe<IdFilter>;
+  not?: InputMaybe<ObjectRecordFilterInput>;
+  or?: InputMaybe<Array<ObjectRecordFilterInput>>;
+  updatedAt?: InputMaybe<DateFilter>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
@@ -1432,6 +1471,7 @@ export type Query = {
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
@@ -1513,6 +1553,11 @@ export type QueryGetIndicatorHealthStatusArgs = {
 };
 
 
+export type QueryGetQueueMetricsArgs = {
+  queueName: Scalars['String']['input'];
+  timeRange?: InputMaybe<QueueMetricsTimeRange>;
+};
+
 
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
@@ -1549,6 +1594,8 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 export type QueryGlobalSearchArgs = {
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
+  filter?: InputMaybe<ObjectRecordFilterInput>;
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
   limit: Scalars['Int']['input'];
   searchInput: Scalars['String']['input'];
 };
@@ -1584,6 +1631,35 @@ export type QueryRelationMetadataArgs = {
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String']['input'];
 };
+
+export type QueueMetricsData = {
+  __typename?: 'QueueMetricsData';
+  data: Array<QueueMetricsSeries>;
+  details?: Maybe<WorkerQueueMetrics>;
+  queueName: Scalars['String']['output'];
+  timeRange: QueueMetricsTimeRange;
+  workers: Scalars['Float']['output'];
+};
+
+export type QueueMetricsDataPoint = {
+  __typename?: 'QueueMetricsDataPoint';
+  x: Scalars['Float']['output'];
+  y: Scalars['Float']['output'];
+};
+
+export type QueueMetricsSeries = {
+  __typename?: 'QueueMetricsSeries';
+  data: Array<QueueMetricsDataPoint>;
+  id: Scalars['String']['output'];
+};
+
+export enum QueueMetricsTimeRange {
+  FourHours = 'FourHours',
+  OneDay = 'OneDay',
+  OneHour = 'OneHour',
+  SevenDays = 'SevenDays',
+  TwelveHours = 'TwelveHours'
+}
 
 export type Relation = {
   __typename?: 'Relation';
@@ -1787,6 +1863,8 @@ export type ServerlessFunctionExecutionResult = {
   duration: Scalars['Float']['output'];
   /** Execution error in JSON format */
   error?: Maybe<Scalars['JSON']['output']>;
+  /** Execution Logs */
+  logs: Scalars['String']['output'];
   /** Execution status */
   status: ServerlessFunctionExecutionStatus;
 };
@@ -2174,9 +2252,11 @@ export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float']['output'];
   completed: Scalars['Float']['output'];
+  completedData?: Maybe<Array<Scalars['Float']['output']>>;
   delayed: Scalars['Float']['output'];
   failed: Scalars['Float']['output'];
-  prioritized: Scalars['Float']['output'];
+  failedData?: Maybe<Array<Scalars['Float']['output']>>;
+  failureRate: Scalars['Float']['output'];
   waiting: Scalars['Float']['output'];
 };
 
@@ -2468,7 +2548,7 @@ export type ExecuteOneServerlessFunctionMutationVariables = Exact<{
 }>;
 
 
-export type ExecuteOneServerlessFunctionMutation = { __typename?: 'Mutation', executeOneServerlessFunction: { __typename?: 'ServerlessFunctionExecutionResult', data?: any | null, duration: number, status: ServerlessFunctionExecutionStatus, error?: any | null } };
+export type ExecuteOneServerlessFunctionMutation = { __typename?: 'Mutation', executeOneServerlessFunction: { __typename?: 'ServerlessFunctionExecutionResult', data?: any | null, logs: string, duration: number, status: ServerlessFunctionExecutionStatus, error?: any | null } };
 
 export type PublishOneServerlessFunctionMutationVariables = Exact<{
   input: PublishServerlessFunctionInput;
@@ -2533,7 +2613,7 @@ export const DeleteOneRelationMetadataItemDocument = {"kind":"Document","definit
 export const ObjectMetadataItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ObjectMetadataItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objects"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paging"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1000"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dataSourceId"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}},{"kind":"Field","name":{"kind":"Name","value":"labelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"labelPlural"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isRemote"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"labelIdentifierFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"imageIdentifierFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"shortcut"}},{"kind":"Field","name":{"kind":"Name","value":"isLabelSyncedWithName"}},{"kind":"Field","name":{"kind":"Name","value":"isSearchable"}},{"kind":"Field","name":{"kind":"Name","value":"duplicateCriteria"}},{"kind":"Field","name":{"kind":"Name","value":"indexMetadatas"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paging"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"indexWhereClause"}},{"kind":"Field","name":{"kind":"Name","value":"indexType"}},{"kind":"Field","name":{"kind":"Name","value":"isUnique"}},{"kind":"Field","name":{"kind":"Name","value":"indexFieldMetadatas"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paging"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}}]}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"fieldsList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isNullable"}},{"kind":"Field","name":{"kind":"Name","value":"isUnique"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"options"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"isLabelSyncedWithName"}},{"kind":"Field","name":{"kind":"Name","value":"relationDefinition"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"relationId"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}},{"kind":"Field","name":{"kind":"Name","value":"sourceObjectMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sourceFieldMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetObjectMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetFieldMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<ObjectMetadataItemsQuery, ObjectMetadataItemsQueryVariables>;
 export const CreateOneServerlessFunctionItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOneServerlessFunctionItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateServerlessFunctionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<CreateOneServerlessFunctionItemMutation, CreateOneServerlessFunctionItemMutationVariables>;
 export const DeleteOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunctionIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<DeleteOneServerlessFunctionMutation, DeleteOneServerlessFunctionMutationVariables>;
-export const ExecuteOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ExecuteOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ExecuteServerlessFunctionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"executeOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]} as unknown as DocumentNode<ExecuteOneServerlessFunctionMutation, ExecuteOneServerlessFunctionMutationVariables>;
+export const ExecuteOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ExecuteOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ExecuteServerlessFunctionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"executeOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"logs"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]} as unknown as DocumentNode<ExecuteOneServerlessFunctionMutation, ExecuteOneServerlessFunctionMutationVariables>;
 export const PublishOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PublishOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PublishServerlessFunctionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"publishServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<PublishOneServerlessFunctionMutation, PublishOneServerlessFunctionMutationVariables>;
 export const UpdateOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateServerlessFunctionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateOneServerlessFunctionMutation, UpdateOneServerlessFunctionMutationVariables>;
 export const FindManyAvailablePackagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyAvailablePackages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunctionIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAvailablePackages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>;

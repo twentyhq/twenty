@@ -17,7 +17,6 @@ import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctio
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import { ShowPageSubContainerTabListContainer } from '@/ui/layout/show-page/components/ShowPageSubContainerTabListContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
@@ -37,6 +36,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { CodeEditor, IconCode, IconPlayerPlay, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { TextArea } from '@/ui/input/components/TextArea';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -49,8 +49,9 @@ const StyledCodeEditorContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledTabListContainer = styled(ShowPageSubContainerTabListContainer)`
+const StyledTabList = styled(TabList)`
   background-color: ${({ theme }) => theme.background.secondary};
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 type WorkflowEditActionFormServerlessFunctionProps = {
@@ -284,13 +285,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
   return (
     !loading && (
       <StyledContainer>
-        <StyledTabListContainer>
-          <TabList
-            tabListInstanceId={tabListId}
-            tabs={tabs}
-            behaveAsLinks={false}
-          />
-        </StyledTabListContainer>
+        <StyledTabList
+          tabListInstanceId={tabListId}
+          tabs={tabs}
+          behaveAsLinks={false}
+        />
         <WorkflowStepHeader
           onTitleChange={(newName: string) => {
             updateAction({ name: newName });
@@ -338,6 +337,16 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 <ServerlessFunctionExecutionResult
                   serverlessFunctionTestData={serverlessFunctionTestData}
                   isTesting={isTesting}
+                />
+              </StyledCodeEditorContainer>
+              <StyledCodeEditorContainer>
+                <InputLabel>Logs</InputLabel>
+                <TextArea
+                  value={
+                    isTesting ? '' : serverlessFunctionTestData.output.logs
+                  }
+                  maxRows={20}
+                  disabled
                 />
               </StyledCodeEditorContainer>
             </>

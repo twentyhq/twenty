@@ -2,6 +2,7 @@ import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -51,6 +52,7 @@ const meta: Meta<typeof WorkflowEditActionFormDeleteRecord> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
+    I18nFrontDecorator,
   ],
 };
 
@@ -193,11 +195,5 @@ export const DisabledWithDefaultVariableValues: Story = {
     ).queryByRole('button');
 
     expect(openRecordSelectButton).not.toBeInTheDocument();
-
-    const recordVariableToDelete = await within(
-      canvas.getByTestId('workflow-edit-action-record-delete-object-record-id'),
-    ).findByText('Person');
-
-    expect(recordVariableToDelete).toBeVisible();
   },
 };

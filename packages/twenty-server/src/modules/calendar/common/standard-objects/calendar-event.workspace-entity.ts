@@ -57,7 +57,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Full Day`,
     description: msg`Is Full Day`,
-    icon: 'Icon24Hours',
+    icon: 'IconHours24',
     defaultValue: false,
   })
   isFullDay: boolean;

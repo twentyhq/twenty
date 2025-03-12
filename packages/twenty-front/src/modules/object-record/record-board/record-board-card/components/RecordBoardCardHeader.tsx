@@ -138,20 +138,10 @@ export const RecordBoardCardHeader = ({
               autoFocus
               value={newLabelValue}
               onInputEnter={() =>
-                handleInputEnter(
-                  identifierFieldDefinition.label ?? '',
-                  newLabelValue,
-                  position,
-                  onCreateSuccess,
-                )
+                handleInputEnter(newLabelValue, position, onCreateSuccess)
               }
               onBlur={() =>
-                handleBlur(
-                  identifierFieldDefinition.label ?? '',
-                  newLabelValue,
-                  position,
-                  onCreateSuccess,
-                )
+                handleBlur(newLabelValue, position, onCreateSuccess)
               }
               onChange={(text: string) => setNewLabelValue(text)}
               placeholder={identifierFieldDefinition.label}

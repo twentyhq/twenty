@@ -18,8 +18,6 @@ const StyledPermissionCell = styled(TableCell)`
   flex: 1;
   gap: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(2)};
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledCheckboxCell = styled(TableCell)`
