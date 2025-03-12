@@ -8,20 +8,13 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
-import { H3Title, Section } from 'twenty-ui';
+import { H2Title, H3Title, Section } from 'twenty-ui';
 import {
   AdminPanelHealthServiceStatus,
   HealthIndicatorId,
   useGetIndicatorHealthStatusQuery,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
-const StyledDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
 
 const StyledTitleContainer = styled.div`
   align-items: center;
@@ -88,12 +81,14 @@ export const SettingsAdminIndicatorHealthStatus = () => {
                 />
               )}
             </StyledTitleContainer>
-            <StyledDescription>
-              {data?.getIndicatorHealthStatus?.description}
-            </StyledDescription>
           </Section>
-
-          <SettingsAdminIndicatorHealthStatusContent />
+          <Section>
+            <H2Title
+              title={t`Status`}
+              description={data?.getIndicatorHealthStatus?.description}
+            />
+            <SettingsAdminIndicatorHealthStatusContent />
+          </Section>
         </SettingsAdminIndicatorHealthContext.Provider>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
