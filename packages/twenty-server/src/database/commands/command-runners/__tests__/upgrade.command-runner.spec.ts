@@ -210,6 +210,7 @@ describe('UpgradeCommandRunner', () => {
     ];
     const totalWorkspace = numberOfValidWorkspace + failingWorkspaces.length;
     const appVersion = '2.0.0';
+
     await buildModuleAndSetupSpies({
       numberOfWorkspace: numberOfValidWorkspace,
       workspaces: failingWorkspaces,
@@ -259,6 +260,7 @@ describe('UpgradeCommandRunner', () => {
   it('should run upgrade over several workspaces', async () => {
     const numberOfWorkspace = 42;
     const appVersion = '2.0.0';
+
     await buildModuleAndSetupSpies({
       numberOfWorkspace,
       appVersion,
