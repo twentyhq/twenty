@@ -7,6 +7,7 @@ const StyledChip = styled.button<{
   withText: boolean;
   onClick?: () => void;
 }>`
+  all: unset;
   align-items: center;
   justify-content: center;
   background: ${({ theme }) => theme.background.transparent.light};
