@@ -23,7 +23,10 @@ msgstr ""
 #~ " These are only the server values. Ensure your worker environment has the\n"
 #~ "        same variables and values, this is required for asynchronous tasks like\n"
 #~ "        email sync."
-#~ msgstr " אלה הם רק ערכי השרת. ודא שסביבת העובד שלך כוללת את אותם משתנים וערכים, זה נדרש למשימות אסינכרוניות כמו סנכרון דואר אלקטרוני."
+#~ msgstr ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -120,7 +123,7 @@ msgstr "אודות"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About this user"
-msgstr ""
+msgstr "אודות משתמש זה"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
@@ -297,7 +300,7 @@ msgstr "כל התפקידים"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "All workspaces this user is a member of"
-msgstr ""
+msgstr "כל החללים שהמשתמש הזה חבר בהם"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -817,11 +820,11 @@ msgstr "נוצר"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version"
-msgstr ""
+msgstr "גרסה נוכחית"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Current version:"
-#~ msgstr "גרסה נוכחית:"
+#~ msgstr "Current version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1655,7 +1658,7 @@ msgstr "אייקון ושם"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "ID"
-msgstr ""
+msgstr "מזהה"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
@@ -1907,11 +1910,11 @@ msgstr "התאריך האחרון"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
-msgstr ""
+msgstr "גרסה אחרונה"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Latest version:"
-#~ msgstr "גרסה אחרונה:"
+#~ msgstr "Latest version:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -3135,7 +3138,7 @@ msgstr "היום"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
-#~ msgstr "סה\"כ משתמשים"
+#~ msgstr "Total Users"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3229,11 +3232,11 @@ msgstr "משתמש"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Email"
-#~ msgstr "דואר אלקטרוני של משתמש"
+#~ msgstr "User Email"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User ID"
-#~ msgstr "מזהה משתמש"
+#~ msgstr "User ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3250,11 +3253,11 @@ msgstr "המשתמש לא מחובר"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Name"
-#~ msgstr "שם משתמש"
+#~ msgstr "User Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Users"
-#~ msgstr "משתמשים"
+#~ msgstr "Users"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3408,7 +3411,7 @@ msgstr "שם סביבת העבודה"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Workspace Name"
-#~ msgstr "שם סביבת עבודה"
+#~ msgstr "Workspace Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
