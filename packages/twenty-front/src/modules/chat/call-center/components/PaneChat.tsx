@@ -199,6 +199,7 @@ const StyledIconButton = styled(IconButton)`
 const StyledButton = styled(Button)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
   justify-content: center;
+  width: 100%;
 `;
 
 const StyledMessageEvent = styled.div`
