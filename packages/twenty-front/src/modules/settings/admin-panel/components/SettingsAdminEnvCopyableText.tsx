@@ -1,12 +1,9 @@
-import { IconCopy, OverflowingTextWithTooltip } from 'twenty-ui';
-
-import { useLingui } from '@lingui/react/macro';
-
-import { useTheme } from '@emotion/react';
-
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import styled from '@linaria/react/styled';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { IconCopy, OverflowingTextWithTooltip } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledEllipsisLabel = styled.div`

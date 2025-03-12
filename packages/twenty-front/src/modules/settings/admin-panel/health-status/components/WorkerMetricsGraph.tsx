@@ -1,26 +1,15 @@
+import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { WorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/WorkerMetricsTooltip';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
-import { Card } from 'twenty-ui';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
 } from '~/generated/graphql';
-
-const StyledTableRow = styled(TableRow)`
-  height: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledTableCell = styled(TableCell)`
-  height: ${({ theme }) => theme.spacing(6)};
-`;
 
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -40,11 +29,9 @@ const StyledNoDataMessage = styled.div`
   justify-content: center;
 `;
 
-const StyledCard = styled(Card)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  padding: ${({ theme }) => theme.spacing(2)};
-  height: 100%;
+const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 type WorkerMetricsGraphProps = {
@@ -210,28 +197,23 @@ export const WorkerMetricsGraph = ({
         )}
       </StyledGraphContainer>
       {metricsDetails && (
-        <>
-          <StyledCard rounded>
-            <Table>
-              {Object.entries(metricsDetails)
-                .filter(([key]) => key !== '__typename')
-                .map(([key, value]) => (
-                  <StyledTableRow key={key}>
-                    <StyledTableCell align="left">
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      {typeof value === 'number'
-                        ? value
-                        : Array.isArray(value)
-                          ? value.length
-                          : String(value)}
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))}
-            </Table>
-          </StyledCard>
-        </>
+        <StyledSettingsAdminTableCard
+          rounded
+          items={Object.entries(metricsDetails)
+            .filter(([key]) => key !== '__typename')
+            .map(([key, value]) => ({
+              label: key.charAt(0).toUpperCase() + key.slice(1),
+              value:
+                typeof value === 'number'
+                  ? value
+                  : Array.isArray(value)
+                    ? value.length
+                    : String(value),
+            }))}
+          gridAutoColumns="1fr 1fr"
+          labelAlign="left"
+          valueAlign="right"
+        />
       )}
     </>
   );

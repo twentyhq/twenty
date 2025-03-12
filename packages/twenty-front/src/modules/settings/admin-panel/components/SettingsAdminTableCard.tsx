@@ -15,16 +15,32 @@ const StyledTableRow = styled(TableRow)`
   height: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledTableCellValue = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  height: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledTableCellLabel = styled(TableCell)`
+const StyledTableCellLabel = styled(TableCell)<{
+  align?: 'left' | 'center' | 'right';
+}>`
   color: ${({ theme }) => theme.font.color.tertiary};
   height: ${({ theme }) => theme.spacing(6)};
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: ${({ align }) =>
+    align === 'right'
+      ? 'flex-end'
+      : align === 'center'
+        ? 'center'
+        : 'flex-start'};
+`;
+
+const StyledTableCellValue = styled(TableCell)<{
+  align?: 'left' | 'center' | 'right';
+}>`
+  color: ${({ theme }) => theme.font.color.primary};
+  height: ${({ theme }) => theme.spacing(6)};
+  justify-content: ${({ align }) =>
+    align === 'left'
+      ? 'flex-start'
+      : align === 'center'
+        ? 'center'
+        : 'flex-end'};
 `;
 
 type TableItem = {
@@ -37,17 +53,23 @@ type SettingsAdminTableCardProps = {
   items: TableItem[];
   rounded?: boolean;
   gridAutoColumns?: string;
+  labelAlign?: 'left' | 'center' | 'right';
+  valueAlign?: 'left' | 'center' | 'right';
+  className?: string;
 };
 
 export const SettingsAdminTableCard = ({
   items,
   rounded = false,
   gridAutoColumns,
+  labelAlign = 'left',
+  valueAlign = 'left',
+  className,
 }: SettingsAdminTableCardProps) => {
   const theme = useTheme();
 
   return (
-    <StyledCard rounded={rounded}>
+    <StyledCard rounded={rounded} className={className}>
       <Table>
         <TableBody>
           {items.map((item, index) => (
@@ -55,11 +77,13 @@ export const SettingsAdminTableCard = ({
               key={index + item.label}
               gridAutoColumns={gridAutoColumns}
             >
-              <StyledTableCellLabel>
+              <StyledTableCellLabel align={labelAlign}>
                 {item.Icon && <item.Icon size={theme.icon.size.md} />}
                 <span>{item.label}</span>
               </StyledTableCellLabel>
-              <StyledTableCellValue>{item.value}</StyledTableCellValue>
+              <StyledTableCellValue align={valueAlign}>
+                {item.value}
+              </StyledTableCellValue>
             </StyledTableRow>
           ))}
         </TableBody>
