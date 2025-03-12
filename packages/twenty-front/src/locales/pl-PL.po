@@ -127,7 +127,7 @@ msgstr "O tym użytkowniku"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
-msgstr ""
+msgstr "O tej przestrzeni roboczej"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3082,7 +3082,7 @@ msgstr "Wystąpił problem"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr ""
+msgstr "To są tylko wartości serwera. Upewnij się, że środowisko robocze ma te same zmienne i wartości, co jest wymagane dla zadań asynchronicznych, takich jak synchronizacja e-mail."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -3399,7 +3399,7 @@ msgstr "Usunięcie miejsca pracy"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
-msgstr ""
+msgstr "Informacje o przestrzeni roboczej"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"

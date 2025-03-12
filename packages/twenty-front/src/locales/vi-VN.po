@@ -127,7 +127,7 @@ msgstr "Về người dùng này"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
-msgstr ""
+msgstr "Giới thiệu về không gian làm việc này"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3082,7 +3082,7 @@ msgstr "Đã có vấn đề xảy ra"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr ""
+msgstr "Đây chỉ là các giá trị của máy chủ. Đảm bảo môi trường làm việc của bạn có cùng các biến và giá trị này, đây là yêu cầu cho các tác vụ không đồng bộ như đồng bộ hóa email."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -3399,7 +3399,7 @@ msgstr "Xóa Workspace"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
-msgstr ""
+msgstr "Thông tin không gian làm việc"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
