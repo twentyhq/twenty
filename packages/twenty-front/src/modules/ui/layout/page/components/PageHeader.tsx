@@ -89,11 +89,6 @@ type PageHeaderProps = {
   title?: ReactNode;
   hasClosePageButton?: boolean;
   onClosePage?: () => void;
-  hasPaginationButtons?: boolean;
-  hasPreviousRecord?: boolean;
-  hasNextRecord?: boolean;
-  navigateToPreviousRecord?: () => void;
-  navigateToNextRecord?: () => void;
   Icon?: IconComponent;
   children?: ReactNode;
 };
@@ -102,9 +97,6 @@ export const PageHeader = ({
   title,
   hasClosePageButton,
   onClosePage,
-  hasPaginationButtons,
-  navigateToPreviousRecord,
-  navigateToNextRecord,
   Icon,
   children,
 }: PageHeaderProps) => {
