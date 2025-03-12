@@ -975,10 +975,8 @@ export class EnvironmentVariables {
     group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Twenty server version',
   })
-  @IsSemVer()
-  // Should be required if NODE_ENV is not local ?
   @IsOptional()
-  // Could it be a commit sha on main for example ? Or a branch + sha ? Could then be optional ?
+  @IsSemVer()
   APP_VERSION?: string;
 }
 

@@ -30,17 +30,16 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
     const { workspaceId, index, total, options, appVersion } = args;
-
-    await this.validateWorkspaceVersionEqualFromVersionOrThrow({
-      appVersion,
-      workspaceId,
-    });
-
     this.logger.log(
       chalk.blue(
         `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
       ),
     );
+
+    await this.validateWorkspaceVersionEqualFromVersionOrThrow({
+      appVersion,
+      workspaceId,
+    });
 
     await this.beforeSyncMetadataUpgradeCommandsToRun(args);
     await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
