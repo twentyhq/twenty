@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
-import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
@@ -136,14 +136,6 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
-    const appVersion = this.environmentService.get('APP_VERSION');
-    // Handle gracefully ?
-    if (!isDefined(appVersion)) {
-      throw new Error(
-        'Cannot run upgrade command when APP_VERSION is not defined ',
-      );
-    }
-
     for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
       this.logger.log(
         `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
@@ -162,7 +154,6 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
           dataSource,
           index: index,
           total: activeWorkspaceIds.length,
-          appVersion,
         });
         this.migrationReport.success.push({
           workspaceId,

@@ -29,10 +29,14 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   }
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    const { appVersion, workspaceId, index, total, options } = args;
+    const { workspaceId, index, total, options } = args;
 
+    // Means this will run for each workspace :thinking: might not be great
+    const appVersion = this.environmentService.get('APP_VERSION');
     if (!isDefined(appVersion)) {
-      throw new Error('Should never occur, APP_VERSION_NOT_DEFINED');
+      throw new Error(
+        'Cannot run upgrade command when APP_VERSION is not defined ',
+      );
     }
 
     await this.validateWorkspaceVersionEqualFromVersion({
