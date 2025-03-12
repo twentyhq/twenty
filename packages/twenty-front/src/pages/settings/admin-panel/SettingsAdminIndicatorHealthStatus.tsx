@@ -83,10 +83,14 @@ export const SettingsAdminIndicatorHealthStatus = () => {
             </StyledTitleContainer>
           </Section>
           <Section>
-            <H2Title
-              title={t`Status`}
-              description={data?.getIndicatorHealthStatus?.description}
-            />
+            {data?.getIndicatorHealthStatus?.id !== HealthIndicatorId.worker &&
+              data?.getIndicatorHealthStatus?.id !==
+                HealthIndicatorId.connectedAccount && (
+                <H2Title
+                  title={t`Status`}
+                  description={data?.getIndicatorHealthStatus?.description}
+                />
+              )}
             <SettingsAdminIndicatorHealthStatusContent />
           </Section>
         </SettingsAdminIndicatorHealthContext.Provider>

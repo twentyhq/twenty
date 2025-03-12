@@ -22,7 +22,7 @@ const StyledControlsContainer = styled.div`
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const WorkerQueueMetricsSection = ({
