@@ -1,6 +1,6 @@
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
-import { useCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecordsQueryVariables';
+import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 
 describe('useCombinedFindManyRecordsQueryVariables', () => {
   it('should generate variables with after cursor and first limit', () => {
@@ -26,7 +26,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
       },
     ];
 
-    const result = useCombinedFindManyRecordsQueryVariables({
+    const result = generateCombinedFindManyRecordsQueryVariables({
       operationSignatures,
     });
 
@@ -58,7 +58,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
       },
     ];
 
-    const result = useCombinedFindManyRecordsQueryVariables({
+    const result = generateCombinedFindManyRecordsQueryVariables({
       operationSignatures,
     });
 
@@ -86,7 +86,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
       },
     ];
 
-    const result = useCombinedFindManyRecordsQueryVariables({
+    const result = generateCombinedFindManyRecordsQueryVariables({
       operationSignatures,
     });
 
@@ -125,7 +125,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
       },
     ];
 
-    const result = useCombinedFindManyRecordsQueryVariables({
+    const result = generateCombinedFindManyRecordsQueryVariables({
       operationSignatures,
     });
 
@@ -139,7 +139,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
   });
 
   it('should handle empty operation signatures', () => {
-    const result = useCombinedFindManyRecordsQueryVariables({
+    const result = generateCombinedFindManyRecordsQueryVariables({
       operationSignatures: [],
     });
 
@@ -157,7 +157,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
       },
     ];
 
-    const result = useCombinedFindManyRecordsQueryVariables({
+    const result = generateCombinedFindManyRecordsQueryVariables({
       operationSignatures,
     });
 
@@ -180,7 +180,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
       },
     ];
 
-    const result = useCombinedFindManyRecordsQueryVariables({
+    const result = generateCombinedFindManyRecordsQueryVariables({
       operationSignatures,
     });
 
