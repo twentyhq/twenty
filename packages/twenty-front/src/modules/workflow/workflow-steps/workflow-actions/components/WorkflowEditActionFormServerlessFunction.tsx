@@ -37,6 +37,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { CodeEditor, IconCode, IconPlayerPlay, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { TextArea } from '@/ui/input/components/TextArea';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -338,6 +339,16 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 <ServerlessFunctionExecutionResult
                   serverlessFunctionTestData={serverlessFunctionTestData}
                   isTesting={isTesting}
+                />
+              </StyledCodeEditorContainer>
+              <StyledCodeEditorContainer>
+                <InputLabel>Logs</InputLabel>
+                <TextArea
+                  value={
+                    isTesting ? '' : serverlessFunctionTestData.output.logs
+                  }
+                  maxRows={20}
+                  disabled
                 />
               </StyledCodeEditorContainer>
             </>
