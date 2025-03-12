@@ -83,6 +83,7 @@ export const WorkflowEditActionForm = ({
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
         headerType="Action"
+        disabled={actionOptions.readonly}
       />
       <WorkflowStepBody>
         {action.settings.input.map((field) => (
