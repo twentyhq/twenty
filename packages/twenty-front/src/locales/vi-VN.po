@@ -143,7 +143,6 @@ msgid "Actions"
 msgstr "Các hoạt động"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -164,8 +163,8 @@ msgid "Active API keys created by you or your team."
 msgstr "Các khóa API hoạt động đã được bạn hoặc đội ngũ của bạn tạo."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-msgid "Add"
-msgstr "Thêm"
+#~ msgid "Add"
+#~ msgstr "Thêm"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -707,8 +706,8 @@ msgid "Copied to clipboard!"
 msgstr "Đã sao chép vào bảng tạm!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
-msgid "Copilot"
-msgstr "Trợ lý lái"
+#~ msgid "Copilot"
+#~ msgstr "Trợ lý lái"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -888,7 +887,6 @@ msgid "Date format"
 msgstr "Định dạng ngày"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -949,7 +947,6 @@ msgstr "Định nghĩa những gì sẽ được hiển thị cho người dùng
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -1061,7 +1058,6 @@ msgstr "Hủy bỏ"
 msgid "Developers"
 msgstr "Nhà phát triển"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
@@ -2974,7 +2970,6 @@ msgstr "Bảng"
 msgid "Terms of Service"
 msgstr "Điều khoản dịch vụ"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test"
 msgstr "Kiểm tra"
@@ -3103,14 +3098,13 @@ msgstr "Hôm nay"
 msgid "Total Users"
 msgstr "Tổng số người dùng"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "Loại Kích hoạt"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "Kiểu kích hoạt phải là Manual - khi không có bản ghi nào (<b>)</b> được chọn"
+#~ msgid "Trigger type should be Manual - when no record(s) are selected"
+#~ msgstr "Kiểu kích hoạt phải là Manual - khi không có bản ghi nào (<b>)</b> được chọn"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3319,8 +3313,8 @@ msgid "When the key will be disabled"
 msgstr "Khi nào khóa sẽ bị vô hiệu hóa"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Workflow cannot be tested"
-msgstr "Không thể kiểm tra Workflow"
+#~ msgid "Workflow cannot be tested"
+#~ msgstr "Không thể kiểm tra Workflow"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."

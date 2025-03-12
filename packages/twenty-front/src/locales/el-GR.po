@@ -143,7 +143,6 @@ msgid "Actions"
 msgstr "Ενέργειες"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -164,8 +163,8 @@ msgid "Active API keys created by you or your team."
 msgstr "Ενεργά API keys που έχουν δημιουργηθεί από εσάς ή την ομάδα σας."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-msgid "Add"
-msgstr "Προσθήκη"
+#~ msgid "Add"
+#~ msgstr "Προσθήκη"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -707,8 +706,8 @@ msgid "Copied to clipboard!"
 msgstr "Αντιγράφηκε στο πρόχειρο!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
-msgid "Copilot"
-msgstr "Πηδαλιούχος"
+#~ msgid "Copilot"
+#~ msgstr "Πηδαλιούχος"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -888,7 +887,6 @@ msgid "Date format"
 msgstr "Μορφή Ημερομηνίας"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -949,7 +947,6 @@ msgstr "Ορίστε τι θα είναι ορατό στους άλλους χ�
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -1061,7 +1058,6 @@ msgstr "Καταστροφή"
 msgid "Developers"
 msgstr "Προγραμματιστές"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
@@ -2974,7 +2970,6 @@ msgstr "Πίνακας"
 msgid "Terms of Service"
 msgstr "Όροι Υπηρεσίας"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test"
 msgstr "Δοκιμή"
@@ -3103,14 +3098,13 @@ msgstr "Σήμερα"
 msgid "Total Users"
 msgstr "Συνολικοί Χρήστες"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "Τύπος Εναύσματος"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "Ο τύπος ενεργοποιήσεως πρέπει να είναι Χειροκίνητος - όταν δεν έχουν επιλεγεί <b>εγγραφές</b>"
+#~ msgid "Trigger type should be Manual - when no record(s) are selected"
+#~ msgstr "Ο τύπος ενεργοποιήσεως πρέπει να είναι Χειροκίνητος - όταν δεν έχουν επιλεγεί <b>εγγραφές</b>"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3319,8 +3313,8 @@ msgid "When the key will be disabled"
 msgstr "Όταν το κλειδί θα απενεργοποιηθεί"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Workflow cannot be tested"
-msgstr "Το Workflow δεν μπορεί να δοκιμαστεί"
+#~ msgid "Workflow cannot be tested"
+#~ msgstr "Το Workflow δεν μπορεί να δοκιμαστεί"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
