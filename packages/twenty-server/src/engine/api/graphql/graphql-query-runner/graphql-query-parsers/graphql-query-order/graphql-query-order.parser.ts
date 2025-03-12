@@ -4,7 +4,6 @@ import {
   ObjectRecordOrderBy,
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
@@ -17,14 +16,9 @@ import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metada
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 export class GraphqlQueryOrderFieldParser {
   private fieldMetadataMapByName: FieldMetadataMap;
-  private featureFlagsMap: FeatureFlagMap;
 
-  constructor(
-    fieldMetadataMapByName: FieldMetadataMap,
-    featureFlagsMap: FeatureFlagMap,
-  ) {
+  constructor(fieldMetadataMapByName: FieldMetadataMap) {
     this.fieldMetadataMapByName = fieldMetadataMapByName;
-    this.featureFlagsMap = featureFlagsMap;
   }
 
   parse(
