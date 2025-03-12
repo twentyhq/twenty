@@ -1,30 +1,54 @@
 /* eslint-disable no-console */
-export class ConsoleListener {
-  private readonly originalConsole;
 
-  constructor() {
-    this.originalConsole = {
-      log: console.log,
-      error: console.error,
-      warn: console.warn,
-      info: console.info,
-      debug: console.debug,
-    };
+import { AsyncLocalStorage } from 'async_hooks';
+
+const ASYNC_LOCAL_STORAGE_ACTIVATED = Symbol('AsyncLocalStorageActivated');
+
+export class ConsoleListener {
+  private readonly originalConsole = {
+    log: console.log,
+    error: console.error,
+    warn: console.warn,
+    info: console.info,
+    debug: console.debug,
+  };
+  private readonly consoleAsyncLocalStrorage = new AsyncLocalStorage<symbol>();
+  private callback: (type: string, message: any[]) => void | undefined;
+
+  onConsole(callback: (type: string, message: any[]) => void) {
+    this.callback = callback;
   }
 
-  intercept(callback: (type: string, message: any[]) => void) {
+  run<T>(callback: () => T): T {
+    return this.consoleAsyncLocalStrorage.run<T>(
+      ASYNC_LOCAL_STORAGE_ACTIVATED,
+      () => {
+        this.intercept();
+
+        return callback();
+      },
+    );
+  }
+
+  private intercept() {
     Object.keys(this.originalConsole).forEach((method) => {
       console[method] = (...args: any[]) => {
-        callback(method, args);
+        const shouldIntercept =
+          this.consoleAsyncLocalStrorage.getStore() ===
+          ASYNC_LOCAL_STORAGE_ACTIVATED;
+
+        if (shouldIntercept && this.callback !== undefined) {
+          this.callback(method, args);
+        } else {
+          this.originalConsole[method](...args);
+        }
       };
     });
   }
 
   release() {
     Object.keys(this.originalConsole).forEach((method) => {
-      console[method] = (...args: any[]) => {
-        this.originalConsole[method](...args);
-      };
+      console[method] = this.originalConsole[method];
     });
   }
 }
