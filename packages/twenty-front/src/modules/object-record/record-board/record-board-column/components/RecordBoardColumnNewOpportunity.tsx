@@ -40,7 +40,7 @@ export const RecordBoardColumnNewOpportunity = ({
 
   const { openRecordInCommandMenu } = useCommandMenu();
 
-  const createCompanyOpportunityAndOpenRightDrawer = async (
+  const createCompanyOpportunityAndOpenCommandMenu = async (
     searchInput?: string,
   ) => {
     const newRecordId = v4();
@@ -73,7 +73,7 @@ export const RecordBoardColumnNewOpportunity = ({
               company ? handleEntitySelect(position, company) : null
             }
             objectNameSingular={CoreObjectNameSingular.Company}
-            onCreate={createCompanyOpportunityAndOpenRightDrawer}
+            onCreate={createCompanyOpportunityAndOpenCommandMenu}
           />
         </OverlayContainer>
       )}
