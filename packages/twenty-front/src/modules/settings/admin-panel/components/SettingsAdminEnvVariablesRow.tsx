@@ -1,3 +1,4 @@
+import { SettingsAdminEnvCopyableText } from '@/settings/admin-panel/components/SettingsAdminEnvCopyableText';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -11,7 +12,6 @@ import {
   IconEye,
   IconEyeOff,
   LightIconButton,
-  OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
 type SettingsAdminEnvVariablesRowProps = {
@@ -51,11 +51,6 @@ const StyledEllipsisLabel = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-`;
-
-const StyledExpandedEllipsisLabel = styled.div`
-  white-space: normal;
-  word-break: break-all;
 `;
 
 const StyledValueContainer = styled.div`
@@ -100,15 +95,15 @@ export const SettingsAdminEnvVariablesRow = ({
   const environmentVariablesDetails = [
     {
       label: 'Name',
-      value: variable.name,
+      value: <SettingsAdminEnvCopyableText text={variable.name} />,
     },
     {
       label: 'Description',
       value: (
-        <OverflowingTextWithTooltip
+        <SettingsAdminEnvCopyableText
           text={variable.description}
-          displayedMaxRows={1}
-          isTooltipMultiline={true}
+          maxRows={1}
+          multiline={true}
         />
       ),
     },
@@ -116,10 +111,11 @@ export const SettingsAdminEnvVariablesRow = ({
       label: 'Value',
       value: (
         <StyledValueContainer>
-          <StyledExpandedEllipsisLabel>
-            {displayValue}
-          </StyledExpandedEllipsisLabel>
-
+          <SettingsAdminEnvCopyableText
+            text={variable.value}
+            displayText={displayValue}
+            multiline={true}
+          />
           {variable.sensitive && variable.value !== '' && (
             <LightIconButton
               Icon={showSensitiveValue ? IconEyeOff : IconEye}
