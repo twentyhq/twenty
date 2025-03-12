@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
@@ -19,6 +18,7 @@ import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/dri
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -130,27 +130,11 @@ export class LocalDriver implements ServerlessDriver {
       }
     }
 
-    const originalConsole = {
-      log: console.log,
-      error: console.error,
-      warn: console.warn,
-      info: console.info,
-      debug: console.debug,
-    };
-
-    const interceptConsole = (
-      callback: (type: string, message: any[]) => void,
-    ) => {
-      Object.keys(originalConsole).forEach((method) => {
-        console[method] = (...args: any[]) => {
-          callback(method, args);
-        };
-      });
-    };
-
     let logs = '';
 
-    interceptConsole((type, args) => {
+    const consoleListener = new ConsoleListener();
+
+    consoleListener.intercept((type, args) => {
       const formattedArgs = args.map((arg) => {
         if (typeof arg === 'object' && arg !== null) {
           const seen = new WeakSet();
@@ -209,11 +193,7 @@ export class LocalDriver implements ServerlessDriver {
       };
     } finally {
       // Restoring originalConsole
-      Object.keys(originalConsole).forEach((method) => {
-        console[method] = (...args: any[]) => {
-          originalConsole[method](...args);
-        };
-      });
+      consoleListener.release();
       await fs.rm(compiledCodeFolderPath, { recursive: true, force: true });
     }
   }
