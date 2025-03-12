@@ -1,7 +1,6 @@
 import { ApolloClient, gql, useApolloClient } from '@apollo/client';
 import { isUndefined } from '@sniptt/guards';
-import { capitalize, isDefined } from 'twenty-shared';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
+import { capitalize } from 'twenty-shared';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -11,6 +10,7 @@ import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
+import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import { useRecoilValue } from 'recoil';
 
@@ -22,10 +22,6 @@ export const usePerformCombinedFindManyRecords = () => {
     operationSignatures: RecordGqlOperationSignature[],
     objectMetadataItemsValue: ObjectMetadataItem[],
   ) => {
-    if (!isNonEmptyArray(operationSignatures)) {
-      return null;
-    }
-
     const filterPerMetadataItemArray = operationSignatures
       .map(
         ({ objectNameSingular }) =>
@@ -76,111 +72,42 @@ export const usePerformCombinedFindManyRecords = () => {
       });
 
     return gql`
-      query CombinedFindManyRecords(
-        ${filterPerMetadataItemArray}, 
-        ${orderByPerMetadataItemArray}, 
-        ${cursorFilteringPerMetadataItemArray}, 
-        ${limitPerMetadataItemArray}
-      ) {
-        ${queryOperationSignatureWithObjectMetadataItemArray
-          .map(
-            ({ objectMetadataItem, operationSignature }) =>
-              `${getCombinedFindManyRecordsQueryFilteringPart(
-                objectMetadataItem,
-              )} {
-            edges {
-              node ${mapObjectMetadataToGraphQLQuery({
-                objectMetadataItems: objectMetadataItemsValue,
-                objectMetadataItem,
-                recordGqlFields:
-                  operationSignature.fields ??
-                  generateDepthOneRecordGqlFields({
-                    objectMetadataItem,
-                  }),
-              })}
-              cursor
-            }
-            pageInfo {
-              hasNextPage
-              hasPreviousPage
-              startCursor
-              endCursor
-            }
-            totalCount
-          }`,
-          )
-          .join('\n')}
-      }
-    `;
-  };
-
-  const generateCombinedFindManyRecordsQueryVariables = (
-    operationSignatures: RecordGqlOperationSignature[],
-  ) => {
-    if (!isNonEmptyArray(operationSignatures)) {
-      return {};
-    }
-
-    return operationSignatures.reduce(
-      (acc, { objectNameSingular, variables }) => {
-        const capitalizedName = capitalize(objectNameSingular);
-
-        const filter = isDefined(variables?.filter)
-          ? { [`filter${capitalizedName}`]: variables.filter }
-          : {};
-
-        const orderBy = isDefined(variables?.orderBy)
-          ? { [`orderBy${capitalizedName}`]: variables.orderBy }
-          : {};
-
-        let limit = {};
-
-        const hasLimit = isDefined(variables?.limit) && variables.limit > 0;
-
-        const cursorDirection = variables?.cursorFilter?.cursorDirection;
-
-        let cursorFilter = {};
-
-        if (isDefined(variables?.cursorFilter?.cursor)) {
-          if (cursorDirection === 'after') {
-            cursorFilter = {
-              [`after${capitalizedName}`]: variables.cursorFilter?.cursor,
-            };
-
-            if (hasLimit) {
-              cursorFilter = {
-                ...cursorFilter,
-                [`first${capitalizedName}`]: variables.limit,
-              };
-            }
-          } else if (cursorDirection === 'before') {
-            cursorFilter = {
-              [`before${capitalizedName}`]: variables.cursorFilter?.cursor,
-            };
-
-            if (hasLimit) {
-              cursorFilter = {
-                ...cursorFilter,
-                [`last${capitalizedName}`]: variables.limit,
-              };
-            }
+    query CombinedFindManyRecords(
+      ${filterPerMetadataItemArray}, 
+      ${orderByPerMetadataItemArray}, 
+      ${cursorFilteringPerMetadataItemArray}, 
+      ${limitPerMetadataItemArray}
+    ) {
+      ${queryOperationSignatureWithObjectMetadataItemArray
+        .map(
+          ({ objectMetadataItem, operationSignature }) =>
+            `${getCombinedFindManyRecordsQueryFilteringPart(
+              objectMetadataItem,
+            )} {
+          edges {
+            node ${mapObjectMetadataToGraphQLQuery({
+              objectMetadataItems: objectMetadataItemsValue,
+              objectMetadataItem,
+              recordGqlFields:
+                operationSignature.fields ??
+                generateDepthOneRecordGqlFields({
+                  objectMetadataItem,
+                }),
+            })}
+            cursor
           }
-        } else if (hasLimit) {
-          limit = {
-            [`limit${capitalizedName}`]: variables.limit,
-          };
-        }
-
-        return {
-          ...acc,
-          ...filter,
-          ...orderBy,
-          ...limit,
-          ...cursorFilter,
-        };
-      },
-      {},
-    );
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+          totalCount
+        }`,
+        )
+        .join('\n')}
+    }
+  `;
   };
 
   const performCombinedFindManyRecords = async ({
@@ -197,8 +124,9 @@ export const usePerformCombinedFindManyRecords = () => {
       objectMetadataItems,
     );
 
-    const queryVariables =
-      generateCombinedFindManyRecordsQueryVariables(operationSignatures);
+    const queryVariables = generateCombinedFindManyRecordsQueryVariables({
+      operationSignatures,
+    });
 
     const { data, loading } =
       await apolloClient.query<CombinedFindManyRecordsQueryResult>({
