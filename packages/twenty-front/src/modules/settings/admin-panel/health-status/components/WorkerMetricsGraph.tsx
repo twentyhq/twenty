@@ -1,7 +1,6 @@
 import { WorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/WorkerMetricsTooltip';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Select } from '@/ui/input/components/Select';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -23,31 +22,14 @@ const StyledTableCell = styled(TableCell)`
   height: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledQueueMetricsTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
-`;
-
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  height: 230px;
+  height: 240px;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(4)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2.5)};
   width: 100%;
-`;
-
-const StyledGraphControls = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: flex-end;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledNoDataMessage = styled.div`
@@ -74,7 +56,6 @@ type WorkerMetricsGraphProps = {
 export const WorkerMetricsGraph = ({
   queueName,
   timeRange,
-  onTimeRangeChange,
 }: WorkerMetricsGraphProps) => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
@@ -136,26 +117,6 @@ export const WorkerMetricsGraph = ({
 
   return (
     <>
-      <StyledGraphControls>
-        <Select
-          dropdownId={`timerange-${queueName}`}
-          value={timeRange}
-          options={[
-            { value: QueueMetricsTimeRange.SevenDays, label: t`This week` },
-            { value: QueueMetricsTimeRange.OneDay, label: t`Today` },
-            {
-              value: QueueMetricsTimeRange.TwelveHours,
-              label: t`Last 12 hours`,
-            },
-            { value: QueueMetricsTimeRange.FourHours, label: t`Last 4 hours` },
-            { value: QueueMetricsTimeRange.OneHour, label: t`Last 1 hour` },
-          ]}
-          onChange={onTimeRangeChange}
-          needIconCheck
-          selectSizeVariant="small"
-        />
-      </StyledGraphControls>
-
       <StyledGraphContainer>
         {loading ? (
           <StyledNoDataMessage>{t`Loading metrics data...`}</StyledNoDataMessage>
@@ -195,7 +156,7 @@ export const WorkerMetricsGraph = ({
                 },
               },
             }}
-            margin={{ top: 40, right: 30, bottom: 40, left: 50 }}
+            margin={{ top: 40, right: 30, bottom: 40, left: 40 }}
             xScale={{
               type: 'linear',
               min: 0,
@@ -209,7 +170,7 @@ export const WorkerMetricsGraph = ({
             }}
             axisBottom={{
               legend: getAxisLabel(),
-              legendOffset: 30,
+              legendOffset: 20,
               legendPosition: 'middle',
               tickSize: 5,
               tickPadding: 5,
@@ -220,9 +181,6 @@ export const WorkerMetricsGraph = ({
               tickSize: 6,
               tickPadding: 5,
               tickValues: 4,
-              legend: 'Count',
-              legendOffset: -40,
-              legendPosition: 'middle',
             }}
             enableGridX={false}
             gridYValues={4}
@@ -253,7 +211,6 @@ export const WorkerMetricsGraph = ({
       </StyledGraphContainer>
       {metricsDetails && (
         <>
-          <StyledQueueMetricsTitle>Metrics:</StyledQueueMetricsTitle>
           <StyledCard rounded>
             <Table>
               {Object.entries(metricsDetails)
