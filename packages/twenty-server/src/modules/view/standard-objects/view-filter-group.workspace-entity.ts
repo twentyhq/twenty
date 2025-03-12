@@ -85,7 +85,7 @@ export class ViewFilterGroupWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.positionInViewFilterGroup,
-    type: FieldMetadataType.POSITION,
+    type: FieldMetadataType.NUMBER,
     label: msg`Position in view filter group`,
     description: msg`Position in the parent view filter group`,
     icon: 'IconHierarchy2',

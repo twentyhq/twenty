@@ -41,7 +41,7 @@ const StyledTab = styled('button', {
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  margin-bottom: 0;
+  margin-bottom: -1px;
   padding: ${({ theme }) => theme.spacing(2) + ' 0'};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
   text-decoration: none;
