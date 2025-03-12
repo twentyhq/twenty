@@ -1,15 +1,20 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
+import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import {
   RecordInlineCellContextProps,
   useRecordInlineCellContext,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
+import { IconTwentyStarFilled, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
@@ -43,8 +48,6 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   align-content: center;
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
-  padding-top: 3px;
-  padding-bottom: 3px;
 
   height: fit-content;
 
@@ -84,6 +87,17 @@ export const RecordInlineCellDisplayMode = ({
   const shouldDisplayEditModeOnFocus = isFocused && isFieldInputOnly;
 
   const emptyPlaceHolder = showLabel ? t`Empty` : label;
+  const { fieldDefinition } = useContext(FieldContext);
+  const iconSizeMd = THEME_COMMON.icon.size.md;
+  const StyledRatingIconContainer = styled.div<{
+    color: string;
+  }>`
+    color: ${({ color }) => color};
+    display: inline-flex;
+  `;
+  const { theme } = useContext(ThemeContext);
+
+  const inactiveColor = theme.background.quaternary;
 
   return (
     <>
@@ -91,7 +105,15 @@ export const RecordInlineCellDisplayMode = ({
         <StyledRecordInlineCellNormalModeInnerContainer>
           {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
           !children ? (
-            <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
+            isFieldRating(fieldDefinition) ? (
+              RATING_VALUES.map((value, index) => (
+                <StyledRatingIconContainer key={index} color={inactiveColor}>
+                  <IconTwentyStarFilled size={iconSizeMd} />
+                </StyledRatingIconContainer>
+              ))
+            ) : (
+              <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
+            )
           ) : (
             children
           )}
