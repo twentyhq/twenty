@@ -5,7 +5,7 @@ import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/Com
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -16,7 +16,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -100,11 +100,7 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const {
-    closeCommandMenu,
-    goBackFromCommandMenu,
-    navigateCommandMenuHistory,
-  } = useCommandMenu();
+  const { closeCommandMenu, goBackFromCommandMenu } = useCommandMenu();
 
   const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemComponentState,
@@ -112,42 +108,13 @@ export const CommandMenuTopBar = () => {
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
-  const commandMenuNavigationStack = useRecoilValue(
-    commandMenuNavigationStackState,
-  );
-
   const theme = useTheme();
 
   const isCommandMenuV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
-  const contextChips = useMemo(() => {
-    const filteredCommandMenuNavigationStack =
-      commandMenuNavigationStack.filter(
-        (page) => page.page !== CommandMenuPages.Root,
-      );
-
-    return filteredCommandMenuNavigationStack.map((page, index) => {
-      const isLastChip =
-        index === filteredCommandMenuNavigationStack.length - 1;
-
-      return {
-        page,
-        Icons: [<page.pageIcon size={theme.icon.size.sm} />],
-        text: page.pageTitle,
-        onClick: isLastChip
-          ? undefined
-          : () => {
-              navigateCommandMenuHistory(index);
-            },
-      };
-    });
-  }, [
-    commandMenuNavigationStack,
-    navigateCommandMenuHistory,
-    theme.icon.size.sm,
-  ]);
+  const { contextChips } = useCommandMenuContextChips();
 
   const location = useLocation();
   const isButtonVisible =

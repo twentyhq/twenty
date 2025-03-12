@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { capitalize, isDefined } from 'twenty-shared';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
-export const useCombinedFindManyRecordsQueryVariables = ({
+export const generateCombinedFindManyRecordsQueryVariables = ({
   operationSignatures,
 }: {
   operationSignatures: RecordGqlOperationSignature[];
