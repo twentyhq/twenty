@@ -16,11 +16,11 @@ class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('1.0.0');
   VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const
 
-  public override async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
+  public override async runBeforeSyncMetadata(): Promise<void> {
     return;
   }
 
-  public override async afterSyncMetadataUpgradeCommandsToRun(): Promise<void> {
+  public override async runAfterSyncMetadata(): Promise<void> {
     return;
   }
 }
@@ -29,11 +29,11 @@ class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('invalid');
   VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const
 
-  protected async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
+  protected async runBeforeSyncMetadata(): Promise<void> {
     return;
   }
 
-  protected async afterSyncMetadataUpgradeCommandsToRun(): Promise<void> {
+  protected async runAfterSyncMetadata(): Promise<void> {
     return;
   }
 }
@@ -42,11 +42,11 @@ class TestUpgradeCommandRunnerV2 extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('2.0.0');
   VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const
 
-  protected async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
+  protected async runBeforeSyncMetadata(): Promise<void> {
     return;
   }
 
-  protected async afterSyncMetadataUpgradeCommandsToRun(): Promise<void> {
+  protected async runAfterSyncMetadata(): Promise<void> {
     return;
   }
 }
@@ -140,8 +140,8 @@ describe('UpgradeCommandRunner', () => {
   let upgradeCommandRunner: TestUpgradeCommandRunnerV1;
   let workspaceRepository: Repository<Workspace>;
   let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
-  let afterSyncMetadataUpgradeCommandsToRun: jest.SpyInstance;
-  let beforeSyncMetadataUpgradeCommandsToRun: jest.SpyInstance;
+  let runAfterSyncMetadataSpy: jest.SpyInstance;
+  let runBeforeSyncMetadataSpy: jest.SpyInstance;
   let twentyORMGlobalManagerSpy: TwentyORMGlobalManager;
 
   type BuildModuleAndSetupSpiesArgs = {
@@ -173,13 +173,13 @@ describe('UpgradeCommandRunner', () => {
     });
 
     upgradeCommandRunner = module.get(commandRunner);
-    beforeSyncMetadataUpgradeCommandsToRun = jest.spyOn(
+    runBeforeSyncMetadataSpy = jest.spyOn(
       upgradeCommandRunner,
-      'beforeSyncMetadataUpgradeCommandsToRun',
+      'runBeforeSyncMetadata',
     );
-    afterSyncMetadataUpgradeCommandsToRun = jest.spyOn(
+    runAfterSyncMetadataSpy = jest.spyOn(
       upgradeCommandRunner,
-      'afterSyncMetadataUpgradeCommandsToRun',
+      'runAfterSyncMetadata',
     );
     jest.spyOn(upgradeCommandRunner, 'runOnWorkspace');
 
@@ -237,9 +237,9 @@ describe('UpgradeCommandRunner', () => {
 
     // Success assertions
     [
-      upgradeCommandRunner.beforeSyncMetadataUpgradeCommandsToRun,
+      upgradeCommandRunner.runBeforeSyncMetadata,
       syncWorkspaceMetadataCommand.runOnWorkspace,
-      upgradeCommandRunner.afterSyncMetadataUpgradeCommandsToRun,
+      upgradeCommandRunner.runAfterSyncMetadata,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfValidWorkspace));
     expect(successReport.length).toBe(numberOfValidWorkspace);
     expect(workspaceRepository.update).toHaveBeenNthCalledWith(
@@ -275,8 +275,8 @@ describe('UpgradeCommandRunner', () => {
 
     [
       upgradeCommandRunner.runOnWorkspace,
-      upgradeCommandRunner.beforeSyncMetadataUpgradeCommandsToRun,
-      upgradeCommandRunner.afterSyncMetadataUpgradeCommandsToRun,
+      upgradeCommandRunner.runBeforeSyncMetadata,
+      upgradeCommandRunner.runAfterSyncMetadata,
       syncWorkspaceMetadataCommand.runOnWorkspace,
       twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
@@ -298,17 +298,17 @@ describe('UpgradeCommandRunner', () => {
 
     [
       upgradeCommandRunner.runOnWorkspace,
-      upgradeCommandRunner.beforeSyncMetadataUpgradeCommandsToRun,
-      upgradeCommandRunner.afterSyncMetadataUpgradeCommandsToRun,
+      upgradeCommandRunner.runBeforeSyncMetadata,
+      upgradeCommandRunner.runAfterSyncMetadata,
       syncWorkspaceMetadataCommand.runOnWorkspace,
       twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
 
     // Verify order of execution
     const beforeSyncCall =
-      beforeSyncMetadataUpgradeCommandsToRun.mock.invocationCallOrder[0];
+      runBeforeSyncMetadataSpy.mock.invocationCallOrder[0];
     const afterSyncCall =
-      afterSyncMetadataUpgradeCommandsToRun.mock.invocationCallOrder[0];
+      runAfterSyncMetadataSpy.mock.invocationCallOrder[0];
     const syncMetadataCall =
       syncWorkspaceMetadataCommand.runOnWorkspace.mock.invocationCallOrder[0];
 

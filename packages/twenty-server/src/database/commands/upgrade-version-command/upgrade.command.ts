@@ -46,7 +46,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     );
   }
 
-  override async beforeSyncMetadataUpgradeCommandsToRun(
+  override async runBeforeSyncMetadata(
     args: RunOnWorkspaceArgs,
   ) {
     await this.migrateRichTextContentPatchCommand.runOnWorkspace(args);
@@ -64,7 +64,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     );
   }
 
-  override async afterSyncMetadataUpgradeCommandsToRun(
+  override async runAfterSyncMetadata(
     args: RunOnWorkspaceArgs,
   ) {
     await this.updateDefaultViewRecordOpeningOnWorkflowObjectsCommand.runOnWorkspace(
