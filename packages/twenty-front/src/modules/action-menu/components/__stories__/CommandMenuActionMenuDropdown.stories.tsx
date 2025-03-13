@@ -2,7 +2,7 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { RightDrawerActionMenuDropdown } from '@/action-menu/components/RightDrawerActionMenuDropdown';
+import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import {
@@ -28,9 +28,9 @@ const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();
 const exportMock = jest.fn();
 
-const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
-  title: 'Modules/ActionMenu/RightDrawerActionMenuDropdown',
-  component: RightDrawerActionMenuDropdown,
+const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
+  title: 'Modules/ActionMenu/CommandMenuActionMenuDropdown',
+  component: CommandMenuActionMenuDropdown,
   decorators: [
     I18nFrontDecorator,
     (Story) => (
@@ -109,7 +109,7 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
 
 export default meta;
 
-type Story = StoryObj<typeof RightDrawerActionMenuDropdown>;
+type Story = StoryObj<typeof CommandMenuActionMenuDropdown>;
 
 export const Default: Story = {
   args: {
