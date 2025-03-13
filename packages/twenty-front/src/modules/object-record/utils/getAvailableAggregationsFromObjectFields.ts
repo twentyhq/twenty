@@ -62,12 +62,12 @@ export const getAvailableAggregationsFromObjectFields = (
         };
       }
 
-      if(field.type === FieldMetadataType.BOOLEAN){
+      if (field.type === FieldMetadataType.BOOLEAN) {
         acc[field.name] = {
           ...acc[field.name],
           [AGGREGATE_OPERATIONS.countTrue]: `countTrue${capitalize(field.name)}`,
           [AGGREGATE_OPERATIONS.countFalse]: `countFalse${capitalize(field.name)}`,
-        }
+        };
       }
 
       if (isFieldMetadataDateKind(field.type) === true) {

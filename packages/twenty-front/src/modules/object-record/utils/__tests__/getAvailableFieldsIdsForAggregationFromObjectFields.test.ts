@@ -15,14 +15,14 @@ const FIELDS_MOCKS = [
   { id: AMOUNT_FIELD_ID, type: FieldMetadataType.NUMBER, name: 'amount' },
   { id: PRICE_FIELD_ID, type: FieldMetadataType.CURRENCY, name: 'price' },
   { id: NAME_FIELD_ID, type: FieldMetadataType.TEXT, name: 'name' },
-  {id: ACTIVE_FIELD_ID, type: FieldMetadataType.BOOLEAN, name: 'active'},
+  { id: ACTIVE_FIELD_ID, type: FieldMetadataType.BOOLEAN, name: 'active' },
 ];
 
 jest.mock(
   '@/object-record/utils/getAvailableAggregationsFromObjectFields',
   () => ({
     getAvailableAggregationsFromObjectFields: jest.fn().mockReturnValue({
-      active:{
+      active: {
         [AGGREGATE_OPERATIONS.countTrue]: 'countTrueActive',
         [AGGREGATE_OPERATIONS.countFalse]: 'CountFalseActive',
       },
@@ -84,12 +84,14 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
         COUNT_AGGREGATE_OPERATION_OPTIONS,
       );
 
-      expect(result.COUNT).toEqual(expect.arrayContaining([
-        AMOUNT_FIELD_ID,
-        PRICE_FIELD_ID,
-        NAME_FIELD_ID,
-      ]));
-      
+      expect(result.COUNT).toEqual(
+        expect.arrayContaining([
+          AMOUNT_FIELD_ID,
+          PRICE_FIELD_ID,
+          NAME_FIELD_ID,
+        ]),
+      );
+
       expect(result.COUNT_TRUE).toContain(ACTIVE_FIELD_ID);
       expect(result.COUNT_FALSE).toContain(ACTIVE_FIELD_ID);
 
