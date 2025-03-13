@@ -51,7 +51,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly initializePermissionsCommand: InitializePermissionsCommand,
 
     // 0.50 Commands
-    protected readonly migrateRelationsToFieldMetadataCommand: MigrateRelationsToFieldMetadataCommand
+    protected readonly migrateRelationsToFieldMetadataCommand: MigrateRelationsToFieldMetadataCommand,
   ) {
     super(
       workspaceRepository,
@@ -79,7 +79,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     const _commands_050: VersionCommands = {
       beforeSyncMetadata: [this.migrateRelationsToFieldMetadataCommand],
       afterSyncMetadata: [],
-    }
+    };
 
     this.commands = commands_044;
   }

@@ -21,11 +21,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     RoleModule,
     UserRoleModule,
   ],
-  providers: [
-    InitializePermissionsCommand,
-  ],
-  exports: [
-    InitializePermissionsCommand,
-  ],
+  providers: [InitializePermissionsCommand],
+  exports: [InitializePermissionsCommand],
 })
 export class V0_44_UpgradeVersionCommandModule {}
