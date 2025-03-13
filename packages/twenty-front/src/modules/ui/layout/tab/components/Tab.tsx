@@ -38,6 +38,7 @@ const StyledTab = styled('button', {
   border-left: none;
   border-right: none;
   border-top: none;
+  font-family: inherit;
 
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
