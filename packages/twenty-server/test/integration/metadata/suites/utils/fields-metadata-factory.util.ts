@@ -13,11 +13,11 @@ export const fieldsMetadataFactory = ({
   input,
 }: FieldsFactoryParams) => ({
   query: gql`
-      query FieldsMetadata($filter: fieldFilter!, $paging: CursorPaging!) {
+      query FieldsMetadata($filter: FieldFilter!, $paging: CursorPaging!) {
         fields(filter: $filter, paging: $paging) {
           edges {
             node {
-               ${gqlFields}
+              ${gqlFields}
             }
           }
         }
