@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsNumber,
   IsOptional,
+  IsSemVer,
   IsString,
   IsUrl,
   ValidateIf,
@@ -978,6 +979,14 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_ATTACHMENT_PREVIEW_ENABLED = true;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.ServerConfig,
+    description: 'Twenty server version',
+  })
+  @IsOptional()
+  @IsSemVer()
+  APP_VERSION?: string;
 }
 
 export const validate = (

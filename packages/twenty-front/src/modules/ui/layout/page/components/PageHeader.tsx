@@ -3,9 +3,6 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-  IconButton,
-  IconChevronDown,
-  IconChevronUp,
   IconComponent,
   IconX,
   LightIconButton,
@@ -17,8 +14,6 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -94,11 +89,6 @@ type PageHeaderProps = {
   title?: ReactNode;
   hasClosePageButton?: boolean;
   onClosePage?: () => void;
-  hasPaginationButtons?: boolean;
-  hasPreviousRecord?: boolean;
-  hasNextRecord?: boolean;
-  navigateToPreviousRecord?: () => void;
-  navigateToNextRecord?: () => void;
   Icon?: IconComponent;
   children?: ReactNode;
 };
@@ -107,9 +97,6 @@ export const PageHeader = ({
   title,
   hasClosePageButton,
   onClosePage,
-  hasPaginationButtons,
-  navigateToPreviousRecord,
-  navigateToNextRecord,
   Icon,
   children,
 }: PageHeaderProps) => {
@@ -117,10 +104,6 @@ export const PageHeader = ({
   const theme = useTheme();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
-  );
-
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   return (
@@ -141,25 +124,11 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
-          {!isCommandMenuV2Enabled && hasPaginationButtons && (
-            <>
-              <IconButton
-                Icon={IconChevronUp}
-                size="small"
-                variant="secondary"
-                onClick={() => navigateToPreviousRecord?.()}
-              />
-              <IconButton
-                Icon={IconChevronDown}
-                size="small"
-                variant="secondary"
-                onClick={() => navigateToNextRecord?.()}
-              />
-            </>
+          {Icon && (
+            <StyledIconContainer>
+              <Icon size={theme.icon.size.md} />
+            </StyledIconContainer>
           )}
-          <StyledIconContainer>
-            {Icon && <Icon size={theme.icon.size.md} />}
-          </StyledIconContainer>
           {title && (
             <StyledTitleContainer data-testid="top-bar-title">
               {typeof title === 'string' ? (

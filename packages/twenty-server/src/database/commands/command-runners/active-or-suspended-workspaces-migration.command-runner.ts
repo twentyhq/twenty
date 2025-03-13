@@ -24,6 +24,16 @@ export type RunOnWorkspaceArgs = {
   total: number;
 };
 
+export type WorkspaceMigrationReport = {
+  fail: {
+    workspaceId: string;
+    error: Error;
+  }[];
+  success: {
+    workspaceId: string;
+  }[];
+};
+
 export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   Options extends
     ActiveOrSuspendedWorkspacesMigrationCommandOptions = ActiveOrSuspendedWorkspacesMigrationCommandOptions,
@@ -31,6 +41,10 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   private workspaceIds: string[] = [];
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
+  public migrationReport: WorkspaceMigrationReport = {
+    fail: [],
+    success: [],
+  };
 
   constructor(
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -107,7 +121,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   override async runMigrationCommand(
     _passedParams: string[],
     options: Options,
-  ): Promise<void> {
+  ) {
     const activeWorkspaceIds =
       this.workspaceIds.length > 0
         ? this.workspaceIds
@@ -117,40 +131,51 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
-    try {
-      for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
-        this.logger.log(
-          `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
-        );
+    for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
+      this.logger.log(
+        `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
+      );
 
-        try {
-          const dataSource =
-            await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-              workspaceId,
-              false,
-            );
-
-          await this.runOnWorkspace({
-            options,
+      try {
+        const dataSource =
+          await this.twentyORMGlobalManager.getDataSourceForWorkspace(
             workspaceId,
-            dataSource,
-            index: index,
-            total: activeWorkspaceIds.length,
-          });
-        } catch (error) {
-          this.logger.warn(
-            chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
+            false,
           );
-        }
 
+        await this.runOnWorkspace({
+          options,
+          workspaceId,
+          dataSource,
+          index: index,
+          total: activeWorkspaceIds.length,
+        });
+        this.migrationReport.success.push({
+          workspaceId,
+        });
+      } catch (error) {
+        this.migrationReport.fail.push({
+          error,
+          workspaceId,
+        });
+        this.logger.warn(
+          chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
+        );
+      }
+
+      try {
         await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
           workspaceId,
         );
+      } catch (error) {
+        this.logger.error(error);
       }
-    } catch (error) {
-      this.logger.error(error);
     }
+
+    this.migrationReport.fail.forEach(({ error, workspaceId }) =>
+      this.logger.error(`Error in workspace ${workspaceId}: ${error.message}`),
+    );
   }
 
-  protected abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
+  public abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
 }

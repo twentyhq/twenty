@@ -10,6 +10,12 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(8)};
+`;
+
 export const ConnectedAccountHealthStatus = () => {
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
   const details = indicatorHealth.details;
@@ -35,7 +41,7 @@ export const ConnectedAccountHealthStatus = () => {
   }
 
   return (
-    <>
+    <StyledContainer>
       {errorMessages.length > 0 && (
         <StyledErrorMessage>
           {`${errorMessages.join(' and ')} ${errorMessages.length > 1 ? 'are' : 'is'} not available because the service is down`}
@@ -55,6 +61,6 @@ export const ConnectedAccountHealthStatus = () => {
           title={t`Calendar Sync Status`}
         />
       )}
-    </>
+    </StyledContainer>
   );
 };

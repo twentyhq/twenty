@@ -10,27 +10,27 @@ export const HEALTH_INDICATORS: Record<HealthIndicatorId, HealthIndicatorInfo> =
   {
     [HealthIndicatorId.database]: {
       id: HealthIndicatorId.database,
-      label: 'Database Status',
+      label: 'Database',
       description: 'PostgreSQL database connection status',
     },
     [HealthIndicatorId.redis]: {
       id: HealthIndicatorId.redis,
-      label: 'Redis Status',
+      label: 'Redis',
       description: 'Redis connection status',
     },
     [HealthIndicatorId.worker]: {
       id: HealthIndicatorId.worker,
-      label: 'Worker Status',
-      description: 'Background job worker status',
+      label: 'Worker',
+      description: 'Background job worker health status',
     },
     [HealthIndicatorId.connectedAccount]: {
       id: HealthIndicatorId.connectedAccount,
-      label: 'Connected Account Status',
-      description: 'Connected accounts status',
+      label: 'Connected Accounts',
+      description: 'Connected accounts health status',
     },
     [HealthIndicatorId.app]: {
       id: HealthIndicatorId.app,
-      label: 'App Status',
+      label: 'App',
       description: 'Workspace metadata migration status check',
     },
   };

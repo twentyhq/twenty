@@ -101,6 +101,7 @@ export const Catalog: CatalogStory<Story, typeof Wrapper> = {
           values: [
             'empty',
             'default',
+            'running',
             'success',
             'failure',
             'not-executed',

@@ -1,6 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 import { generateCombinedSearchRecordsQuery } from '@/object-record/multiple-objects/utils/generateCombinedSearchRecordsQuery';
+import { getLimitPerMetadataItem } from '@/object-record/multiple-objects/utils/getLimitPerMetadataItem';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
@@ -222,12 +223,9 @@ const performSearchForPickedRecords = async ({
         ),
     });
 
-  const limitPerMetadataItem = Object.fromEntries(
-    searchableObjectMetadataItems
-      .map(({ nameSingular }) => {
-        return [`limit${capitalize(nameSingular)}`, 10];
-      })
-      .filter(isDefined),
+  const limitPerMetadataItem = getLimitPerMetadataItem(
+    searchableObjectMetadataItemsFilteredOnPickedRecordId,
+    10,
   );
 
   const { data: combinedSearchRecordFilteredOnPickedRecordsQueryResult } =
@@ -309,12 +307,9 @@ const performSearchExcludingPickedRecords = async ({
       ),
     });
 
-  const limitPerMetadataItem = Object.fromEntries(
-    searchableObjectMetadataItems
-      .map(({ nameSingular }) => {
-        return [`limit${capitalize(nameSingular)}`, 10];
-      })
-      .filter(isDefined),
+  const limitPerMetadataItem = getLimitPerMetadataItem(
+    searchableObjectMetadataItems,
+    10,
   );
 
   const { data: combinedSearchRecordExcludingPickedRecordsQueryResult } =

@@ -1,26 +1,37 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordGroup = () => {
   return useRecoilCallback(
     ({ snapshot, set }) =>
       (recordGroups: RecordGroupDefinition[], recordIndexId: string) => {
-        const objectMetadataItem = snapshot
+        const objectMetadataItemId = snapshot
           .getLoadable(
-            contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+            contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
               instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
             }),
           )
           .getValue();
 
-        if (!objectMetadataItem) {
+        const objectMetadataItems = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue();
+
+        const objectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.id === objectMetadataItemId,
+        );
+
+        if (!isDefined(objectMetadataItem)) {
           return;
         }
 

@@ -7,6 +7,7 @@ const StyledChip = styled.button<{
   withText: boolean;
   onClick?: () => void;
 }>`
+  all: unset;
   align-items: center;
   justify-content: center;
   background: ${({ theme }) => theme.background.transparent.light};
@@ -19,6 +20,7 @@ const StyledChip = styled.button<{
   /* If the chip has text, we add extra padding to have a more balanced design */
   padding: 0
     ${({ theme, withText }) => (withText ? theme.spacing(2) : theme.spacing(1))};
+  font-family: inherit;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
