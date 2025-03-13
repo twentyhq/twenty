@@ -9,8 +9,8 @@ import {
   Avatar,
   IconChevronRight,
   IconLock,
-  IconUser,
   TooltipDelay,
+  useIcons,
 } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -61,6 +61,9 @@ export const RolesTableRow = ({ role }: { role: Role }) => {
     navigateSettings(SettingsPath.RoleDetail, { roleId });
   };
 
+  const { getIcon } = useIcons();
+  const Icon = getIcon(role.icon ?? 'IconUser');
+
   return (
     <StyledTableRow
       key={role.id}
@@ -69,7 +72,7 @@ export const RolesTableRow = ({ role }: { role: Role }) => {
     >
       <TableCell>
         <StyledNameCell>
-          <IconUser size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
           {role.label}
           {!role.isEditable && (
             <StyledIconLockContainer>

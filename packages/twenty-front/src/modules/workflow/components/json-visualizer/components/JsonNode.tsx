@@ -15,17 +15,24 @@ export const JsonNode = ({
   label,
   value,
   depth,
+  keyPath,
+  shouldHighlightNode,
 }: {
   label?: string;
   value: JsonValue;
   depth: number;
+  keyPath: string;
+  shouldHighlightNode?: (keyPath: string) => boolean;
 }) => {
+  const isHighlighted = shouldHighlightNode?.(keyPath) ?? false;
+
   if (isNull(value)) {
     return (
       <JsonValueNode
         label={label}
         valueAsString="[null]"
         Icon={IconCircleOff}
+        isHighlighted={isHighlighted}
       />
     );
   }
@@ -36,6 +43,7 @@ export const JsonNode = ({
         label={label}
         valueAsString={value}
         Icon={IconTypography}
+        isHighlighted={isHighlighted}
       />
     );
   }
@@ -46,6 +54,7 @@ export const JsonNode = ({
         label={label}
         valueAsString={String(value)}
         Icon={IconNumber9}
+        isHighlighted={isHighlighted}
       />
     );
   }
@@ -56,13 +65,30 @@ export const JsonNode = ({
         label={label}
         valueAsString={String(value)}
         Icon={IconCheckbox}
+        isHighlighted={isHighlighted}
       />
     );
   }
 
   if (isArray(value)) {
-    return <JsonArrayNode label={label} value={value} depth={depth} />;
+    return (
+      <JsonArrayNode
+        label={label}
+        value={value}
+        depth={depth}
+        keyPath={keyPath}
+        shouldHighlightNode={shouldHighlightNode}
+      />
+    );
   }
 
-  return <JsonObjectNode label={label} value={value} depth={depth} />;
+  return (
+    <JsonObjectNode
+      label={label}
+      value={value}
+      depth={depth}
+      keyPath={keyPath}
+      shouldHighlightNode={shouldHighlightNode}
+    />
+  );
 };
