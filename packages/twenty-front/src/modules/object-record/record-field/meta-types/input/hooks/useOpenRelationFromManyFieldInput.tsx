@@ -36,6 +36,8 @@ export const useOpenRelationFromManyFieldInput = () => {
           )
           .getValue();
 
+        console.log('fieldValue', fieldValue);
+
         const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)
           .getValue();
