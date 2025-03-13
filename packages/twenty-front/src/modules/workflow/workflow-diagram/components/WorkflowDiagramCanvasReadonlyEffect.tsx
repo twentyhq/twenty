@@ -22,7 +22,11 @@ export const WorkflowDiagramCanvasReadonlyEffect = () => {
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0] as WorkflowDiagramNode;
+      const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
+
+      if (!isDefined(selectedNode)) {
+        return;
+      }
 
       setWorkflowSelectedNode(selectedNode.id);
 
