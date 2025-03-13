@@ -13,7 +13,10 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
+import {
+  CompareVersionMajorAndMinorReturnType,
+  compareVersionMajorAndMinor,
+} from 'src/utils/version/compare-version-minor-and-major';
 
 type ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs = {
   workspaceId: string;
@@ -91,7 +94,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   private async retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion({
     appVersion,
     workspaceId,
-  }: ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs) {
+  }: ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs): Promise<CompareVersionMajorAndMinorReturnType> {
     if (!isDefined(appVersion)) {
       throw new Error(
         'Cannot run upgrade command when APP_VERSION is not defined',
@@ -103,9 +106,8 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       this.logger.warn(
         'VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG set to true ignoring workspace versions validation step',
       );
-      const equalVersions = 0;
 
-      return equalVersions;
+      return 'equal';
     }
 
     const workspace = await this.workspaceRepository.findOneByOrFail({

@@ -1,6 +1,9 @@
 import * as semver from 'semver';
 
-type CompareVersionMajorAndMinorReturnType = 'lower' | 'equal' | 'higher';
+export type CompareVersionMajorAndMinorReturnType =
+  | 'lower'
+  | 'equal'
+  | 'higher';
 export function compareVersionMajorAndMinor(
   rawVersion1: string,
   rawVersion2: string,

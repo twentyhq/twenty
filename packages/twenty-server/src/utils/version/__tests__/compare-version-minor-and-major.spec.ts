@@ -1,11 +1,14 @@
 import { EachTestingContext } from 'twenty-shared';
 
-import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
+import {
+  CompareVersionMajorAndMinorReturnType,
+  compareVersionMajorAndMinor,
+} from 'src/utils/version/compare-version-minor-and-major';
 
 type IsSameVersionTestCase = EachTestingContext<{
   version1: string;
   version2: string;
-  expected?: ReturnType<typeof compareVersionMajorAndMinor>;
+  expected?: CompareVersionMajorAndMinorReturnType;
   expectToThrow?: boolean;
 }>;
 describe('is-same-major-and-minor-version', () => {
