@@ -140,7 +140,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer scrollable={false}>
         <UndecoratedLink
           to={newSelectFieldSettingsUrl}
           onClick={() => {
