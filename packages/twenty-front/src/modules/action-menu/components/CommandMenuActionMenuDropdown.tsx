@@ -1,7 +1,7 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
-import { RightDrawerActionMenuDropdownHotkeyScope } from '@/action-menu/types/RightDrawerActionMenuDropdownHotkeyScope';
+import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,7 +15,7 @@ import { i18n } from '@lingui/core';
 import { Key } from 'ts-key-enum';
 import { Button, getOsControlSymbol, MenuItem } from 'twenty-ui';
 
-export const RightDrawerActionMenuDropdown = () => {
+export const CommandMenuActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );
@@ -35,7 +35,7 @@ export const RightDrawerActionMenuDropdown = () => {
         getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
       );
     },
-    RightDrawerActionMenuDropdownHotkeyScope.RightDrawerActionMenuDropdown,
+    CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
     [closeDropdown],
   );
 
@@ -44,6 +44,10 @@ export const RightDrawerActionMenuDropdown = () => {
     () => {
       openDropdown(
         getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
+        {
+          scope:
+            CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
+        },
       );
     },
     AppHotkeyScope.CommandMenuOpen,
@@ -57,7 +61,7 @@ export const RightDrawerActionMenuDropdown = () => {
       )}
       dropdownHotkeyScope={{
         scope:
-          RightDrawerActionMenuDropdownHotkeyScope.RightDrawerActionMenuDropdown,
+          CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
       }}
       data-select-disable
       clickableComponent={
