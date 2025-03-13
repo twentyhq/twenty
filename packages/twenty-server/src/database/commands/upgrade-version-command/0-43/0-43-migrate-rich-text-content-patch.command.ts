@@ -11,7 +11,6 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -53,9 +52,8 @@ export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspa
     @InjectRepository(FeatureFlag, 'core')
     protected readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    protected readonly environmentService: EnvironmentService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, environmentService);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   override async runOnWorkspace({

@@ -9,7 +9,6 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -36,9 +35,8 @@ export class AddTasksAssignedToMeViewCommand extends ActiveOrSuspendedWorkspaces
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    protected readonly environmentService: EnvironmentService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, environmentService);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   override async runOnWorkspace({

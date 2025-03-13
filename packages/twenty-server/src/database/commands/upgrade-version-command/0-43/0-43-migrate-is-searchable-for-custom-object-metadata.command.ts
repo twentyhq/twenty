@@ -7,7 +7,6 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -23,9 +22,8 @@ export class MigrateIsSearchableForCustomObjectMetadataCommand extends ActiveOrS
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    protected readonly environmentService: EnvironmentService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, environmentService);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   override async runOnWorkspace({

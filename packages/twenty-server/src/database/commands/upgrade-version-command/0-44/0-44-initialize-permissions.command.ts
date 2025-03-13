@@ -10,7 +10,6 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
@@ -32,9 +31,8 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
-    protected readonly environmentService: EnvironmentService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, environmentService);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   override async runOnWorkspace({
