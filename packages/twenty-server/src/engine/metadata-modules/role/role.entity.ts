@@ -36,6 +36,9 @@ export class RoleEntity {
   @Column({ nullable: true, type: 'text' })
   description: string;
 
+  @Column({ nullable: true })
+  icon: string;
+
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 

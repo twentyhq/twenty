@@ -265,6 +265,7 @@ export class UserResolver {
             label: roleEntity.label,
             canUpdateAllSettings: roleEntity.canUpdateAllSettings,
             description: roleEntity.description,
+            icon: roleEntity.icon,
             isEditable: roleEntity.isEditable,
             userWorkspaceRoles: roleEntity.userWorkspaceRoles,
             canReadAllObjectRecords: roleEntity.canReadAllObjectRecords,
