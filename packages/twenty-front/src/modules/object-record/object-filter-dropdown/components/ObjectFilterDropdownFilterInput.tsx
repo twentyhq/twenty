@@ -70,14 +70,19 @@ export const ObjectFilterDropdownFilterInput = ({
     subFieldNameUsedInDropdown,
   );
 
+  const isActorAndIs =
+    filterType === 'ACTOR' && selectedOperandInDropdown !== null &&
+    [ViewFilterOperand.Is,
+      ViewFilterOperand.IsNot,
+ ].includes(selectedOperandInDropdown);
+
   return (
     <>
       {isConfigurable && selectedOperandInDropdown && (
         <>
           {TEXT_FILTER_TYPES.includes(filterType) &&
-            !isActorSourceCompositeFilter && (
-              <ObjectFilterDropdownTextSearchInput />
-            )}
+            !isActorSourceCompositeFilter &&
+            !isActorAndIs && <ObjectFilterDropdownTextSearchInput />}
           {NUMBER_FILTER_TYPES.includes(filterType) && (
             <ObjectFilterDropdownNumberInput />
           )}
@@ -92,7 +97,7 @@ export const ObjectFilterDropdownFilterInput = ({
               <ObjectFilterDropdownRecordSelect />
             </>
           )}
-          {isActorSourceCompositeFilter && (
+          {(isActorSourceCompositeFilter || isActorAndIs) && (
             <>
               <DropdownMenuSeparator />
               <ObjectFilterDropdownSourceSelect />
