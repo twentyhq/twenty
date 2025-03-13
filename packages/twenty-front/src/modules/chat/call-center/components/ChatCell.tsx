@@ -1,13 +1,17 @@
-import { Avatar } from 'twenty-ui';
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import WhatsappIcon from '/images/integrations/whatsapp-logo.svg';
 // import MessengerIcon from '/images/integrations/messenger-logo.svg';
-import { useContext } from 'react';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { formatDate } from '@/chat/utils/formatDate';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useContext } from 'react';
 
 const StyledItemChat = styled.div<{ isSelected?: boolean }>`
   align-items: center;
@@ -88,17 +92,27 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledDiv = styled.div`
   width: 100%;
 `;
 
+const StyledContainerPills = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
   const { whatsappIntegrations /*, messengerIntegrations*/ } = useContext(
     CallCenterContext,
   ) as CallCenterContextType;
+
+  const { agents = [] } = useFindAllAgents();
+  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
 
   // const integration =
   //   platform === 'whatsapp'
@@ -122,6 +136,12 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
       : chat.lastMessage.message
   }`;
 
+  const agent = agents.find((agent: any) => agent.id === chat.agent);
+
+  const member = workspaceMembers.find(
+    (wsMember: any) => wsMember.id === agent?.memberId,
+  );
+
   return (
     <StyledItemChat onClick={onSelect} isSelected={isSelected}>
       <Avatar
@@ -132,15 +152,22 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
         size="xl"
       />
       <StyledContentContainer>
-        <StyledIntegrationCard isSelected={isSelected}>
-          <img
-            src={WhatsappIcon}
-            // src={platform === 'whatsapp' ? WhatsappIcon : MessengerIcon}
-            alt={'Whatsapp'}
-            //alt={platform === 'whatsapp' ? 'Whatsapp' : 'Messenger'}
-          />
-          {integration?.label}
-        </StyledIntegrationCard>
+        <StyledContainerPills>
+          <StyledIntegrationCard isSelected={isSelected}>
+            <img
+              src={WhatsappIcon}
+              // src={platform === 'whatsapp' ? WhatsappIcon : MessengerIcon}
+              alt={'Whatsapp'}
+              //alt={platform === 'whatsapp' ? 'Whatsapp' : 'Messenger'}
+            />
+            {integration?.label}
+          </StyledIntegrationCard>
+          {member && agent?.isAdmin && (
+            <StyledIntegrationCard isSelected={isSelected}>
+              {member?.name.firstName} {member?.name.lastName}
+            </StyledIntegrationCard>
+          )}
+        </StyledContainerPills>
         <StyledContainer>
           <StyledDiv>
             <StyledUserName>{chat.client.name}</StyledUserName>
