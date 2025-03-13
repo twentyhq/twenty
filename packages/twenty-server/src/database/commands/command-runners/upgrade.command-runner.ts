@@ -15,6 +15,11 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { isSameMajorAndMinorVersion } from 'src/utils/version/is-same-major-and-minorversion';
 
+type ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs = {
+  workspaceId: string
+  appVersion: string | undefined
+}
+
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   abstract readonly fromWorkspaceVersion: SemVer;
   public readonly VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG?: true;
@@ -26,11 +31,12 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, environmentService);
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    const { workspaceId, index, total, options, appVersion } = args;
+    const { workspaceId, index, total, options } = args;
+    const appVersion = this.environmentService.get('APP_VERSION');
 
     this.logger.log(
       chalk.blue(
@@ -59,7 +65,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   private async validateWorkspaceVersionEqualsWorkspaceFromVersionOrThrow({
     appVersion,
     workspaceId,
-  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'appVersion'>) {
+  }: ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs) {
     if (!isDefined(appVersion)) {
       throw new Error(
         'Cannot run upgrade command when APP_VERSION is not defined',

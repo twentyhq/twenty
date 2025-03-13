@@ -4,7 +4,6 @@ import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -23,7 +22,6 @@ export type RunOnWorkspaceArgs = {
   dataSource: WorkspaceDataSource;
   index: number;
   total: number;
-  appVersion?: string | null;
 };
 
 export type WorkspaceMigrationReport = {
@@ -51,7 +49,6 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   constructor(
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    protected readonly environmentService: EnvironmentService,
   ) {
     super();
   }
@@ -134,8 +131,6 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
       this.logger.log(chalk.yellow('Dry run mode: No changes will be applied'));
     }
 
-    const appVersion = this.environmentService.get('APP_VERSION');
-
     for (const [index, workspaceId] of activeWorkspaceIds.entries()) {
       this.logger.log(
         `Running command on workspace ${workspaceId} ${index + 1}/${activeWorkspaceIds.length}`,
@@ -154,7 +149,6 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
           dataSource,
           index: index,
           total: activeWorkspaceIds.length,
-          appVersion,
         });
         this.migrationReport.success.push({
           workspaceId,
