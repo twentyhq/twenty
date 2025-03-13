@@ -8,7 +8,6 @@ import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
-import { undefined } from 'zod';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
@@ -67,7 +66,7 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
           const workflowRunContext =
             oneFailedWorkflowRunQueryResult.workflowRun.context;
 
-          // Redering the whole objectMetadata information in the JSON viewer is too long for storybook
+          // Rendering the whole objectMetadata information in the JSON viewer is too long for storybook
           // so we remove it for the story
           return HttpResponse.json({
             data: {

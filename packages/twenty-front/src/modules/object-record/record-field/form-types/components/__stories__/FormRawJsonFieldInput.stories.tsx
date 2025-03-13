@@ -297,12 +297,11 @@ export const DoesNotBreakWhenUserInsertsNewlineInJsonString: Story = {
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
-    await waitFor(() => {
+    const editor = await waitFor(() => {
       const editor = canvasElement.querySelector('.ProseMirror > p');
       expect(editor).toBeVisible();
+      return editor;
     });
-
-    const editor = canvasElement.querySelector('.ProseMirror > p');
 
     await userEvent.type(editor, '"a{Enter}b"');
 
