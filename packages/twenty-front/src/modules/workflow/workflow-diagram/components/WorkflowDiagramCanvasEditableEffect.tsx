@@ -41,10 +41,14 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0] as WorkflowDiagramNode;
+      const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
 
       if (!isInRightDrawer) {
         setCommandMenuNavigationStack([]);
+      }
+
+      if (!isDefined(selectedNode)) {
+        return;
       }
 
       const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;
