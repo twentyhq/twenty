@@ -329,7 +329,7 @@ export const SettingsWorkspaceMembers = () => {
           workspaceMemberToDelete &&
           handleRemoveWorkspaceMember(workspaceMemberToDelete)
         }
-        deleteButtonText={t`Delete account`}
+        confirmButtonText={t`Delete account`}
       />
     </SubMenuTopBarContainer>
   );

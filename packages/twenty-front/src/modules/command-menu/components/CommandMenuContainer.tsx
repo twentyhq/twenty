@@ -7,18 +7,23 @@ import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMen
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -59,15 +64,10 @@ export const CommandMenuContainer = ({
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
 
-  const workflowReactFlowRef = useRecoilValue(workflowReactFlowRefState);
-
   useCommandMenuHotKeys();
 
   useListenClickOutside({
-    refs: [
-      commandMenuRef,
-      ...(workflowReactFlowRef ? [workflowReactFlowRef] : []),
-    ],
+    refs: [commandMenuRef],
     callback: closeCommandMenu,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
@@ -88,21 +88,42 @@ export const CommandMenuContainer = ({
 
   const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
 
+  const objectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  );
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
+  );
+
+  const currentViewId = useRecoilComponentValueV2(
+    contextStoreCurrentViewIdComponentState,
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  );
+
+  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+    objectMetadataItem?.namePlural ?? '',
+    currentViewId ?? '',
+  );
+
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: 'command-menu' }}
+      value={{ instanceId: recordIndexId }}
     >
       <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: 'command-menu' }}
+        value={{ instanceId: recordIndexId }}
       >
         <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: 'command-menu' }}
+          value={{ instanceId: recordIndexId }}
         >
           <ContextStoreComponentInstanceContext.Provider
-            value={{ instanceId: 'command-menu' }}
+            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
           >
             <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: 'command-menu' }}
+              value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
               <ActionMenuContext.Provider
                 value={{

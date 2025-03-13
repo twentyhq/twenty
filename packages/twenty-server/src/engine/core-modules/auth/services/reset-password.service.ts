@@ -28,6 +28,8 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class ResetPasswordService {
@@ -36,12 +38,17 @@ export class ResetPasswordService {
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly emailService: EmailService,
   ) {}
 
-  async generatePasswordResetToken(email: string): Promise<PasswordResetToken> {
+  async generatePasswordResetToken(
+    email: string,
+    workspaceId: string,
+  ): Promise<PasswordResetToken> {
     const user = await this.userRepository.findOneBy({
       email,
     });
@@ -95,12 +102,14 @@ export class ResetPasswordService {
 
     await this.appTokenRepository.save({
       userId: user.id,
+      workspaceId: workspaceId,
       value: hashedResetToken,
       expiresAt,
       type: AppTokenType.PasswordResetToken,
     });
 
     return {
+      workspaceId,
       passwordResetToken: plainResetToken,
       passwordResetTokenExpiresAt: expiresAt,
     };
@@ -122,12 +131,19 @@ export class ResetPasswordService {
       );
     }
 
-    const frontBaseURL = this.domainManagerService.getBaseUrl();
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: resetToken.workspaceId,
+    });
 
-    frontBaseURL.pathname = `/reset-password/${resetToken.passwordResetToken}`;
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
+    const link = this.domainManagerService.buildWorkspaceURL({
+      workspace,
+      pathname: `/reset-password/${resetToken.passwordResetToken}`,
+    });
 
     const emailData = {
-      link: frontBaseURL.toString(),
+      link: link.toString(),
       duration: ms(
         differenceInMilliseconds(
           resetToken.passwordResetTokenExpiresAt,

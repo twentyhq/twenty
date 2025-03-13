@@ -1,4 +1,4 @@
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
+import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 
 export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
@@ -39,6 +39,10 @@ export type WorkflowManualTrigger = BaseTrigger & {
 export type WorkflowCronTrigger = BaseTrigger & {
   type: WorkflowTriggerType.CRON;
   settings: (
+    | {
+        type: 'DAYS';
+        schedule: { day: number; hour: number; minute: number };
+      }
     | {
         type: 'HOURS';
         schedule: { hour: number; minute: number };

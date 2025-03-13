@@ -64,11 +64,13 @@ export const ObjectFilterDropdownTextSearchInput = () => {
             value: event.target.value,
             operand: selectedOperandInDropdown,
             displayValue: event.target.value,
-            viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+            recordFilterGroupId: selectedFilter?.recordFilterGroupId,
             type: getFilterTypeFromFieldType(
               fieldMetadataItemUsedInDropdown.type,
             ),
             label: fieldMetadataItemUsedInDropdown.label,
+            positionInRecordFilterGroup:
+              selectedFilter?.positionInRecordFilterGroup,
           });
         }}
       />

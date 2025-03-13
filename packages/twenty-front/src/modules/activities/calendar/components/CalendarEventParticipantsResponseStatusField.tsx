@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
-import { useRecoilValue } from 'recoil';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
@@ -9,7 +8,6 @@ import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompletedState';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
@@ -68,9 +66,6 @@ export const CalendarEventParticipantsResponseStatusField = ({
   participants: CalendarEventParticipant[];
 }) => {
   const theme = useTheme();
-  const isRightDrawerAnimationCompleted = useRecoilValue(
-    isRightDrawerAnimationCompletedState,
-  );
 
   const Icon = {
     Yes: <IconCheck stroke={theme.icon.stroke.sm} />,
@@ -103,9 +98,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
           </StyledLabelContainer>
         </StyledLabelAndIconContainer>
         <StyledDiv ref={participantsContainerRef}>
-          {isRightDrawerAnimationCompleted && (
-            <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
-          )}
+          <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
         </StyledDiv>
       </StyledInlineCellBaseContainer>
     </StyledPropertyBox>

@@ -24,6 +24,7 @@ export interface ObjectMetadataInterface {
   isActive: boolean;
   isRemote: boolean;
   isAuditLogged: boolean;
+  isSearchable: boolean;
   duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
   labelIdentifierFieldMetadataId?: string | null;
   imageIdentifierFieldMetadataId?: string | null;

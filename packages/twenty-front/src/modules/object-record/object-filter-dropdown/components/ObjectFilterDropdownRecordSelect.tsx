@@ -12,7 +12,7 @@ import { selectedFilterComponentState } from '@/object-record/object-filter-drop
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -214,7 +214,7 @@ export const ObjectFilterDropdownRecordSelect = ({
         displayValue: filterDisplayValue,
         fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
         value: newFilterValue,
-        viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+        recordFilterGroupId: selectedFilter?.recordFilterGroupId,
       });
     }
   };
@@ -232,7 +232,7 @@ export const ObjectFilterDropdownRecordSelect = ({
       )}
       <MultipleSelectDropdown
         selectableListId="object-filter-record-select-id"
-        hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+        hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
         itemsToSelect={recordsToSelect}
         filteredSelectedItems={filteredSelectedRecords}
         selectedItems={selectedRecords}

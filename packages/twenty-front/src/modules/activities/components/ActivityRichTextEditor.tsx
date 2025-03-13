@@ -1,38 +1,35 @@
 import { useApolloClient } from '@apollo/client';
-import { PartialBlock } from '@blocknote/core';
-import { useCreateBlockNote } from '@blocknote/react';
-import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
-import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
+import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared';
+import { useDebouncedCallback } from 'use-debounce';
 
-import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
-import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { PartialBlock } from '@blocknote/core';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
+import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { isArray, isNonEmptyString } from '@sniptt/guards';
 
 type ActivityRichTextEditorProps = {
   activityId: string;
@@ -50,14 +47,6 @@ export const ActivityRichTextEditor = ({
   const cache = useApolloClient().cache;
   const activity = activityInStore as Task | Note | null;
 
-  const isRichTextV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsRichTextV2Enabled,
-  );
-
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
       objectNameSingular: activityObjectNameSingular,
@@ -73,14 +62,12 @@ export const ActivityRichTextEditor = ({
   });
 
   const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
-    const input = isRichTextV2Enabled
-      ? {
-          bodyV2: {
-            blocknote,
-            markdown: null,
-          },
-        }
-      : { body: blocknote };
+    const input = {
+      bodyV2: {
+        blocknote,
+        markdown: null,
+      },
+    };
 
     if (isDefined(activity)) {
       upsertActivity({
@@ -175,9 +162,7 @@ export const ActivityRichTextEditor = ({
   };
 
   const initialBody = useMemo(() => {
-    const blocknote = isRichTextV2Enabled
-      ? activity?.bodyV2?.blocknote
-      : activity?.body;
+    const blocknote = activity?.bodyV2?.blocknote;
 
     if (
       isDefined(activity) &&
@@ -192,7 +177,7 @@ export const ActivityRichTextEditor = ({
       } catch (error) {
         // eslint-disable-next-line no-console
         console.warn(
-          `Failed to parse body for activity ${activityId}, for rich text version ${isRichTextV2Enabled ? 'v2' : 'v1'}`,
+          `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,
         );
         // eslint-disable-next-line no-console
         console.warn(blocknote);
@@ -206,7 +191,7 @@ export const ActivityRichTextEditor = ({
     }
 
     return undefined;
-  }, [activity, isRichTextV2Enabled, activityId]);
+  }, [activity, activityId]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
     const { attachmentAbsoluteURL } = await handleUploadAttachment(file);
@@ -288,9 +273,7 @@ export const ActivityRichTextEditor = ({
       editor.setTextCursorPosition(newBlockId, 'end');
       editor.focus();
     },
-    isCommandMenuV2Enabled
-      ? AppHotkeyScope.CommandMenuOpen
-      : RightDrawerHotkeyScope.RightDrawer,
+    AppHotkeyScope.CommandMenuOpen,
     [],
     {
       preventDefault: false,

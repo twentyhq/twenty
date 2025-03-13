@@ -1,7 +1,7 @@
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
-import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
@@ -10,24 +10,17 @@ import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 export const MainContextStoreProviderEffect = ({
-  mainContextStoreComponentInstanceIdToSet,
   viewId,
   objectMetadataItem,
   pageName,
 }: {
-  mainContextStoreComponentInstanceIdToSet: string;
   viewId?: string;
   objectMetadataItem: ObjectMetadataItem;
   pageName: string;
 }) => {
-  const [
-    mainContextStoreComponentInstanceId,
-    setMainContextStoreComponentInstanceId,
-  ] = useRecoilState(mainContextStoreComponentInstanceIdState);
-
   const { setLastVisitedViewForObjectMetadataNamePlural } =
     useSetLastVisitedViewForObjectMetadataNamePlural();
 
@@ -37,21 +30,21 @@ export const MainContextStoreProviderEffect = ({
   const [contextStoreCurrentViewId, setContextStoreCurrentViewId] =
     useRecoilComponentStateV2(
       contextStoreCurrentViewIdComponentState,
-      mainContextStoreComponentInstanceId,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 
   const [contextStoreCurrentViewType, setContextStoreCurrentViewType] =
     useRecoilComponentStateV2(
       contextStoreCurrentViewTypeComponentState,
-      mainContextStoreComponentInstanceId,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 
   const [
-    contextStoreCurrentObjectMetadataItem,
-    setContextStoreCurrentObjectMetadataItem,
+    contextStoreCurrentObjectMetadataItemId,
+    setContextStoreCurrentObjectMetadataItemId,
   ] = useRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
-    mainContextStoreComponentInstanceId,
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const view = useRecoilValue(
@@ -61,17 +54,8 @@ export const MainContextStoreProviderEffect = ({
   );
 
   useEffect(() => {
-    if (contextStoreCurrentObjectMetadataItem?.id !== objectMetadataItem.id) {
-      setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
-    }
-
-    if (
-      mainContextStoreComponentInstanceIdToSet !==
-      mainContextStoreComponentInstanceId
-    ) {
-      setMainContextStoreComponentInstanceId(
-        mainContextStoreComponentInstanceIdToSet,
-      );
+    if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {
+      setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     }
 
     setLastVisitedViewForObjectMetadataNamePlural({
@@ -87,17 +71,14 @@ export const MainContextStoreProviderEffect = ({
       setContextStoreCurrentViewId(viewId);
     }
   }, [
-    contextStoreCurrentObjectMetadataItem,
+    contextStoreCurrentObjectMetadataItemId,
     contextStoreCurrentViewId,
-    mainContextStoreComponentInstanceId,
-    mainContextStoreComponentInstanceIdToSet,
     objectMetadataItem,
     objectMetadataItem.namePlural,
-    setContextStoreCurrentObjectMetadataItem,
+    setContextStoreCurrentObjectMetadataItemId,
     setContextStoreCurrentViewId,
     setLastVisitedObjectMetadataId,
     setLastVisitedViewForObjectMetadataNamePlural,
-    setMainContextStoreComponentInstanceId,
     viewId,
   ]);
 

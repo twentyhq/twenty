@@ -124,7 +124,6 @@ export class CleanerWorkspaceService {
 
     this.emailService.send({
       to: workspaceMember.userEmail,
-      bcc: this.environmentService.get('EMAIL_SYSTEM_ADDRESS'),
       from: `${this.environmentService.get(
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
@@ -199,7 +198,6 @@ export class CleanerWorkspaceService {
 
     this.emailService.send({
       to: workspaceMember.userEmail,
-      bcc: this.environmentService.get('EMAIL_SYSTEM_ADDRESS'),
       from: `${this.environmentService.get(
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,

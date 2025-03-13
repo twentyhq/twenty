@@ -16,6 +16,7 @@ import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -25,43 +26,28 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
 
 const openTimeout = 50;
 
-// Mock workspace with feature flag enabled
-const mockWorkspaceWithFeatureFlag = {
-  ...mockCurrentWorkspace,
-  featureFlags: [
-    ...(mockCurrentWorkspace.featureFlags || []),
-    {
-      id: 'mock-id',
-      key: FeatureFlagKey.IsCommandMenuV2Enabled,
-      value: true,
-      workspaceId: mockCurrentWorkspace.id,
-    },
-  ],
-};
-
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: 'command-menu' }}
+      value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
     >
       <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: 'command-menu' }}
+        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
       >
         <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: 'command-menu' }}
+          value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
           <ContextStoreComponentInstanceContext.Provider
-            value={{ instanceId: 'command-menu' }}
+            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
           >
             <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: 'command-menu' }}
+              value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
               <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
                 <Story />
@@ -91,7 +77,7 @@ const meta: Meta<typeof CommandMenu> = {
         commandMenuNavigationStackState,
       );
 
-      setCurrentWorkspace(mockWorkspaceWithFeatureFlag);
+      setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setIsCommandMenuOpened(true);
       setCommandMenuNavigationStack([
@@ -99,6 +85,7 @@ const meta: Meta<typeof CommandMenu> = {
           page: CommandMenuPages.Root,
           pageTitle: 'Command Menu',
           pageIcon: IconDotsVertical,
+          pageId: '1',
         },
       ]);
 

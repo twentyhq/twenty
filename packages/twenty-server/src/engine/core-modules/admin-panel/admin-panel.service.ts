@@ -18,15 +18,8 @@ import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/e
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import {
-  FeatureFlagException,
-  FeatureFlagExceptionCode,
-} from 'src/engine/core-modules/feature-flag/feature-flag.exception';
-import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class AdminPanelService {
@@ -36,10 +29,6 @@ export class AdminPanelService {
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
 
   async impersonate(userId: string, workspaceId: string) {
@@ -129,44 +118,6 @@ export class AdminPanelService {
         })) as FeatureFlag[],
       })),
     };
-  }
-
-  async updateWorkspaceFeatureFlags(
-    workspaceId: string,
-    featureFlag: FeatureFlagKey,
-    value: boolean,
-  ) {
-    featureFlagValidator.assertIsFeatureFlagKey(
-      featureFlag,
-      new FeatureFlagException(
-        'Invalid feature flag key',
-        FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
-      ),
-    );
-
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-      relations: ['featureFlags'],
-    });
-
-    workspaceValidator.assertIsDefinedOrThrow(
-      workspace,
-      new AuthException('Workspace not found', AuthExceptionCode.INVALID_INPUT),
-    );
-
-    const existingFlag = workspace.featureFlags?.find(
-      (flag) => flag.key === FeatureFlagKey[featureFlag],
-    );
-
-    if (existingFlag) {
-      await this.featureFlagRepository.update(existingFlag.id, { value });
-    } else {
-      await this.featureFlagRepository.save({
-        key: FeatureFlagKey[featureFlag],
-        value,
-        workspaceId: workspace.id,
-      });
-    }
   }
 
   getEnvironmentVariablesGrouped(): EnvironmentVariablesOutput {

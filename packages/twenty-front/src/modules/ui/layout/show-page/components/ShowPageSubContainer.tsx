@@ -1,4 +1,5 @@
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
+import { RecordShowRightDrawerOpenRecordButton } from '@/action-menu/components/RecordShowRightDrawerOpenRecordButton';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
@@ -26,13 +27,11 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
 `;
 
 const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
-  align-items: center;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
   display: ${({ shouldDisplay }) => (shouldDisplay ? 'flex' : 'none')};
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
+`;
+
+const StyledTabList = styled(TabList)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
@@ -126,7 +125,7 @@ export const ShowPageSubContainer = ({
       )}
       <StyledShowPageRightContainer isMobile={isMobile}>
         <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
-          <TabList
+          <StyledTabList
             behaveAsLinks={!isInRightDrawer}
             loading={loading || isNewViewableRecordLoading}
             tabListInstanceId={tabListComponentId}
@@ -138,8 +137,16 @@ export const ShowPageSubContainer = ({
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}
         </StyledContentContainer>
-        {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
-          <RightDrawerFooter actions={[<RecordShowRightDrawerActionMenu />]} />
+        {isInRightDrawer && recordFromStore && (
+          <RightDrawerFooter
+            actions={[
+              <RecordShowRightDrawerActionMenu />,
+              <RecordShowRightDrawerOpenRecordButton
+                objectNameSingular={targetableObject.targetObjectNameSingular}
+                record={recordFromStore}
+              />,
+            ]}
+          />
         )}
       </StyledShowPageRightContainer>
     </>

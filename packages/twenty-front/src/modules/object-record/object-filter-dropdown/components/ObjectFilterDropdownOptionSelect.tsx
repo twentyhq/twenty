@@ -19,7 +19,7 @@ import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { RelationPickerHotkeyScope } from '@/object-record/record-picker/legacy/types/RelationPickerHotkeyScope';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -101,7 +101,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
       closeDropdown();
       resetSelectedItem();
     },
-    RelationPickerHotkeyScope.RelationPicker,
+    SingleRecordPickerHotkeyScope.SingleRecordPicker,
     [closeDropdown, resetSelectedItem],
   );
 
@@ -145,7 +145,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
         displayValue: filterDisplayValue,
         fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
         value: newFilterValue,
-        viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+        recordFilterGroupId: selectedFilter?.recordFilterGroupId,
       });
     }
     resetSelectedItem();
@@ -164,7 +164,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
     <SelectableList
       selectableListId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
-      hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+      hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       onEnter={(itemId) => {
         const option = optionsInDropdown.find((option) => option.id === itemId);
         if (isDefined(option)) {

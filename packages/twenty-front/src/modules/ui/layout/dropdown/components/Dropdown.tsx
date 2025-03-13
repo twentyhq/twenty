@@ -3,10 +3,8 @@ import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/Dropdown
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
-import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
   Placement,
@@ -17,12 +15,12 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { MouseEvent, ReactNode } from 'react';
-import { flushSync } from 'react-dom';
 import { Keys } from 'react-hotkeys-hook';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
 import { useDropdown } from '../hooks/useDropdown';
+import { flushSync } from 'react-dom';
 
 const StyledDropdownFallbackAnchor = styled.div`
   left: 0;
@@ -68,11 +66,6 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
 
-  const setDropdownMaxHeight = useSetRecoilComponentStateV2(
-    dropdownMaxHeightComponentStateV2,
-    dropdownId,
-  );
-
   const isUsingOffset =
     isDefined(dropdownOffset?.x) || isDefined(dropdownOffset?.y);
 
@@ -92,9 +85,10 @@ export const Dropdown = ({
       flip(),
       size({
         padding: 32,
-        apply: ({ availableHeight }) => {
+        apply: () => {
           flushSync(() => {
-            setDropdownMaxHeight(availableHeight);
+            // TODO: I think this is not needed anymore let's remove it if not used for a few weeks
+            // setDropdownMaxHeight(availableHeight);
           });
         },
         boundary: document.querySelector('#root') ?? undefined,

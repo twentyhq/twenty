@@ -1,61 +1,46 @@
 import { Key } from 'ts-key-enum';
+import { capitalize, isDefined } from 'twenty-shared';
 import {
   AppTooltip,
-  IconFileExport,
-  IconFileImport,
-  IconLayout,
+  IconCopy,
+  IconLayoutKanban,
   IconLayoutList,
   IconList,
-  IconRotate2,
-  IconTag,
+  IconListDetails,
+  IconTable,
+  IconTrash,
   MenuItem,
   useIcons,
 } from 'twenty-ui';
 
-import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
-import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import {
-  displayedExportProgress,
-  useExportRecords,
-} from '@/object-record/record-index/export/hooks/useExportRecords';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewType } from '@/views/types/ViewType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
+import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    viewType,
-    onContentChange,
-    closeDropdown,
-  } = useOptionsDropdown();
+  const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
+    useOptionsDropdown();
 
   const { getIcon } = useIcons();
-  const { currentViewWithCombinedFiltersAndSorts: currentView } =
-    useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
   const CurrentViewIcon = currentView?.icon ? getIcon(currentView.icon) : null;
-
-  const { objectNamePlural } = useObjectNamePluralFromSingular({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
 
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
@@ -73,39 +58,27 @@ export const ObjectOptionsDropdownMenuContent = () => {
     TableOptionsHotkeyScope.Dropdown,
   );
 
-  const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =
-    useHandleToggleTrashColumnFilter({
-      objectNameSingular: objectMetadataItem.nameSingular,
-      viewBarId: recordIndexId,
-    });
-
   const { visibleBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
   });
 
-  const { openObjectRecordsSpreasheetImportDialog } =
-    useOpenObjectRecordsSpreadsheetImportDialog(
-      objectMetadataItem.nameSingular,
-    );
-
-  const { progress, download } = useExportRecords({
-    delayMs: 100,
-    filename: `${objectMetadataItem.nameSingular}.csv`,
-    objectMetadataItem,
-    recordIndexId,
-    viewType,
-  });
-
-  // TODO: Remove this once we have implemented Rich Text v2 and removed the old rich text
-  const canImportOrExport =
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task;
-
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
+  const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
+  const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
+    viewPickerReferenceViewIdComponentState,
   );
+  const handleDelete = () => {
+    if (!currentView?.id) {
+      return;
+    }
+    setViewPickerReferenceViewId(currentView?.id);
+    deleteViewFromCurrentState();
+    closeDropdown();
+  };
+
+  const theme = useTheme();
+  const { enqueueSnackBar } = useSnackBar();
 
   return (
     <>
@@ -113,24 +86,23 @@ export const ObjectOptionsDropdownMenuContent = () => {
         {currentView?.name}
       </DropdownMenuHeader>
 
-      {(isCommandMenuV2Enabled || viewType === ViewType.Kanban) && (
-        <>
-          <DropdownMenuItemsContainer scrollable={false}>
-            <MenuItem
-              onClick={() => onContentChange('viewSettings')}
-              LeftIcon={IconLayout}
-              text={t`View settings`}
-              hasSubMenu
-            />
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-        </>
-      )}
+      <DropdownMenuItemsContainer scrollable={false}>
+        <MenuItem
+          onClick={() => onContentChange('layout')}
+          LeftIcon={
+            currentView?.type === ViewType.Table ? IconTable : IconLayoutKanban
+          }
+          text={t`Layout`}
+          contextualText={`${capitalize(currentView?.type ?? '')}`}
+          hasSubMenu
+        />
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
 
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
           onClick={() => onContentChange('fields')}
-          LeftIcon={IconTag}
+          LeftIcon={IconListDetails}
           text={t`Fields`}
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu
@@ -163,35 +135,39 @@ export const ObjectOptionsDropdownMenuContent = () => {
             width="100%"
           />
         )}
-      </DropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        {canImportOrExport && (
-          <>
-            <MenuItem
-              onClick={download}
-              LeftIcon={IconFileExport}
-              text={displayedExportProgress(progress)}
-            />
-            <MenuItem
-              onClick={() => {
-                closeDropdown();
-                openObjectRecordsSpreasheetImportDialog();
-              }}
-              LeftIcon={IconFileImport}
-              text={t`Import`}
-            />
-          </>
-        )}
+        <DropdownMenuSeparator />
+
         <MenuItem
           onClick={() => {
-            handleToggleTrashColumnFilter();
-            toggleSoftDeleteFilterState(true);
-            closeDropdown();
+            const currentUrl = window.location.href;
+            navigator.clipboard.writeText(currentUrl);
+            enqueueSnackBar('Link copied to clipboard', {
+              variant: SnackBarVariant.Success,
+              icon: <IconCopy size={theme.icon.size.md} />,
+              duration: 2000,
+            });
           }}
-          LeftIcon={IconRotate2}
-          text={t`Deleted ${objectNamePlural}`}
+          LeftIcon={IconCopy}
+          text={t`Copy link to view`}
         />
+        <div id="delete-view-menu-item">
+          <MenuItem
+            onClick={() => handleDelete()}
+            LeftIcon={IconTrash}
+            text={t`Delete view`}
+            disabled={currentView?.key === 'INDEX'}
+          />
+        </div>
+        {currentView?.key === 'INDEX' && (
+          <AppTooltip
+            // eslint-disable-next-line
+            anchorSelect={`#delete-view-menu-item`}
+            content={t`Not available on Default View`}
+            noArrow
+            place="bottom"
+            width="100%"
+          />
+        )}
       </DropdownMenuItemsContainer>
     </>
   );

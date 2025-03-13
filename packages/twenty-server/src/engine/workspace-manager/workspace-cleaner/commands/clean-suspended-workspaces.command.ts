@@ -7,7 +7,7 @@ import { In, Repository } from 'typeorm';
 import {
   MigrationCommandOptions,
   MigrationCommandRunner,
-} from 'src/database/commands/migration-command/migration-command.runner';
+} from 'src/database/commands/command-runners/migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 

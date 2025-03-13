@@ -345,7 +345,7 @@ describe('useSpreadsheetCompanyImport', () => {
           spreadsheetImportDialogState,
         );
         const {
-          openObjectRecordsSpreasheetImportDialog: openRecordSpreadsheetImport,
+          openObjectRecordsSpreadsheetImportDialog: openRecordSpreadsheetImport,
         } = useOpenObjectRecordsSpreadsheetImportDialog(
           CoreObjectNameSingular.Company,
         );

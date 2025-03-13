@@ -1,3 +1,4 @@
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -27,7 +28,7 @@ export const useCommandMenuHotKeys = () => {
 
   const contextStoreTargetedRecordsRuleComponent = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
-    'command-menu',
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
 
   useScopedHotkeys(

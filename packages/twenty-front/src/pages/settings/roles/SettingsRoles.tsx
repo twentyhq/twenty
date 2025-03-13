@@ -1,11 +1,12 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { Roles } from '@/settings/roles/components/Roles';
+import { RolesDefaultRole } from '@/settings/roles/components/RolesDefaultRole';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { H3Title } from 'twenty-ui';
 import { useGetRolesQuery } from '~/generated/graphql';
-import { Roles } from '~/pages/settings/roles/components/Roles';
-import { RolesDefaultRole } from '~/pages/settings/roles/components/RolesDefaultRole';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsRoles = () => {
@@ -16,7 +17,7 @@ export const SettingsRoles = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={t`Roles`}
+      title={rolesData && <H3Title title={t`Roles`} />}
       links={[
         {
           children: <Trans>Workspace</Trans>,
@@ -26,10 +27,10 @@ export const SettingsRoles = () => {
       ]}
     >
       <SettingsPageContainer>
-        {!rolesLoading && (
+        {!rolesLoading && rolesData && (
           <>
-            <Roles roles={rolesData?.getRoles ?? []} />
-            <RolesDefaultRole roles={rolesData?.getRoles ?? []} />
+            <Roles roles={rolesData.getRoles ?? []} />
+            <RolesDefaultRole roles={rolesData.getRoles ?? []} />
           </>
         )}
       </SettingsPageContainer>

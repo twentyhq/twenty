@@ -6,7 +6,6 @@ import {
 
 type SettingsAdminIndicatorHealthContextType = {
   indicatorHealth: AdminPanelHealthServiceData;
-  loading: boolean;
 };
 
 export const SettingsAdminIndicatorHealthContext =
@@ -15,9 +14,9 @@ export const SettingsAdminIndicatorHealthContext =
       id: '',
       label: '',
       description: '',
+      errorMessage: '',
       status: AdminPanelHealthServiceStatus.OPERATIONAL,
       details: '',
       queues: [],
     },
-    loading: false,
   });

@@ -7,7 +7,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
-import { MultipleRecordPickerRecords } from '@/object-record/record-picker/types/MultipleRecordPickerRecords';
+import { MultipleRecordPickerRecords } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerRecords';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import {
   query,
@@ -73,6 +73,7 @@ describe('useFilteredSearchRecordQuery', () => {
           id: '32219445-f587-4c40-b2b1-6d3205ed96da',
           name: { firstName: 'John', lastName: 'Connor' },
           locale: 'en',
+          colorScheme: 'Light',
         });
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);

@@ -7,17 +7,15 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { Task } from '@/activities/types/Task';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
@@ -80,17 +78,9 @@ const StyledCheckboxContainer = styled.div`
 
 export const TaskRow = ({ task }: { task: Task }) => {
   const theme = useTheme();
-  const openActivityRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
-  });
+  const { openRecordInCommandMenu } = useCommandMenu();
 
-  const isRichTextV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsRichTextV2Enabled,
-  );
-
-  const body = getActivitySummary(
-    isRichTextV2Enabled ? (task?.bodyV2?.blocknote ?? null) : task?.body,
-  );
+  const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
 
   const { completeTask } = useCompleteTask(task);
 
@@ -104,7 +94,10 @@ export const TaskRow = ({ task }: { task: Task }) => {
   return (
     <ActivityRow
       onClick={() => {
-        openActivityRightDrawer(task.id);
+        openRecordInCommandMenu({
+          recordId: task.id,
+          objectNameSingular: CoreObjectNameSingular.Task,
+        });
       }}
     >
       <StyledLeftSideContainer>
@@ -142,7 +135,6 @@ export const TaskRow = ({ task }: { task: Task }) => {
               activity={task}
               showLabel={false}
               maxWidth={200}
-              readonly
             />
           </TaskTargetsContextProvider>
         )}

@@ -83,7 +83,7 @@ const StyledClickableZone = styled.div`
   justify-content: flex-end;
 `;
 
-const MotionIconChevronDown = motion(IconChevronDown);
+const MotionIconChevronDown = motion.create(IconChevronDown);
 
 type RecordDetailRelationRecordsListItemProps = {
   isExpanded: boolean;
@@ -300,7 +300,7 @@ export const RecordDetailRelationRecordsListItem = ({
             </>
           }
           onConfirmClick={handleConfirmDelete}
-          deleteButtonText={`Delete ${relationObjectTypeName}`}
+          confirmButtonText={`Delete ${relationObjectTypeName}`}
         />,
         document.body,
       )}

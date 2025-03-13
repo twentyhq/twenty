@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import {
@@ -17,6 +17,7 @@ import {
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnCreate,
   WorkspaceMigrationColumnCreateRelation,
+  WorkspaceMigrationColumnDrop,
   WorkspaceMigrationColumnDropRelation,
   WorkspaceMigrationForeignTable,
   WorkspaceMigrationIndexAction,
@@ -32,8 +33,12 @@ import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migr
 
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 
+export const RELATION_MIGRATION_PRIORITY_PREFIX = '1000';
+
 @Injectable()
 export class WorkspaceMigrationRunnerService {
+  private readonly logger = new Logger(WorkspaceMigrationRunnerService.name);
+
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -89,8 +94,11 @@ export class WorkspaceMigrationRunnerService {
 
       await queryRunner.commitTransaction();
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error executing migration', error);
+      this.logger.error(
+        `Error executing migration: ${error.message}`,
+        error.stack,
+      );
+
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {
@@ -114,7 +122,7 @@ export class WorkspaceMigrationRunnerService {
    *
    * @param queryRunner QueryRunner
    * @param schemaName string
-   * @param tableMigration WorkspaceMigrationTableChange
+   * @param tableMigration WorkspaceMigrationTableAction
    */
   private async handleTableChanges(
     queryRunner: QueryRunner,
@@ -138,6 +146,8 @@ export class WorkspaceMigrationRunnerService {
             tableMigration.name,
             tableMigration.newName,
           );
+
+          break;
         }
 
         if (tableMigration.columns && tableMigration.columns.length > 0) {
@@ -147,6 +157,8 @@ export class WorkspaceMigrationRunnerService {
             tableMigration.newName ?? tableMigration.name,
             tableMigration.columns,
           );
+
+          break;
         }
 
         break;
@@ -193,6 +205,14 @@ export class WorkspaceMigrationRunnerService {
     }
   }
 
+  /**
+   * Handles index changes for a given table
+   *
+   * @param queryRunner QueryRunner
+   * @param schemaName string
+   * @param tableName string
+   * @param indexes WorkspaceMigrationIndexAction[]
+   */
   private async handleIndexesChanges(
     queryRunner: QueryRunner,
     schemaName: string,
@@ -202,48 +222,10 @@ export class WorkspaceMigrationRunnerService {
     for (const index of indexes) {
       switch (index.action) {
         case WorkspaceMigrationIndexActionType.CREATE:
-          try {
-            if (isDefined(index.type) && index.type !== IndexType.BTREE) {
-              const quotedColumns = index.columns.map(
-                (column) => `"${column}"`,
-              );
-
-              await queryRunner.query(`
-              CREATE INDEX "${index.name}" ON "${schemaName}"."${tableName}" USING ${index.type} (${quotedColumns.join(', ')})
-          `);
-            } else {
-              await queryRunner.createIndex(
-                `${schemaName}.${tableName}`,
-                new TableIndex({
-                  name: index.name,
-                  columnNames: index.columns,
-                  isUnique: index.isUnique,
-                  where: index.where ?? undefined,
-                }),
-              );
-            }
-          } catch (error) {
-            // Ignore error if index already exists
-            if (error.code === '42P07') {
-              continue;
-            }
-          }
+          await this.createIndex(queryRunner, schemaName, tableName, index);
           break;
         case WorkspaceMigrationIndexActionType.DROP:
-          try {
-            await queryRunner.dropIndex(
-              `${schemaName}.${tableName}`,
-              index.name,
-            );
-          } catch (error) {
-            // Ignore error if index does not exist
-            if (
-              error.message ===
-              `Supplied index ${index.name} was not found in table ${schemaName}.${tableName}`
-            ) {
-              continue;
-            }
-          }
+          await this.dropIndex(queryRunner, schemaName, tableName, index.name);
           break;
         default:
           throw new Error(`Migration index action not supported`);
@@ -252,11 +234,81 @@ export class WorkspaceMigrationRunnerService {
   }
 
   /**
-   * Creates a table for a given schema and table name
+   * Creates an index on a table
    *
    * @param queryRunner QueryRunner
    * @param schemaName string
    * @param tableName string
+   * @param index WorkspaceMigrationIndexAction
+   */
+  private async createIndex(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    index: WorkspaceMigrationIndexAction,
+  ) {
+    try {
+      if (isDefined(index.type) && index.type !== IndexType.BTREE) {
+        const quotedColumns = index.columns.map((column) => `"${column}"`);
+
+        await queryRunner.query(`
+          CREATE INDEX "${index.name}" ON "${schemaName}"."${tableName}" USING ${index.type} (${quotedColumns.join(', ')})
+        `);
+      } else {
+        await queryRunner.createIndex(
+          `${schemaName}.${tableName}`,
+          new TableIndex({
+            name: index.name,
+            columnNames: index.columns,
+            isUnique: index.isUnique,
+            where: index.where ?? undefined,
+          }),
+        );
+      }
+    } catch (error) {
+      // Ignore error if index already exists
+      if (error.code === '42P07') {
+        return;
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Drops an index from a table
+   *
+   * @param queryRunner QueryRunner
+   * @param schemaName string
+   * @param tableName string
+   * @param indexName string
+   */
+  private async dropIndex(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    indexName: string,
+  ) {
+    try {
+      await queryRunner.dropIndex(`${schemaName}.${tableName}`, indexName);
+    } catch (error) {
+      // Ignore error if index does not exist
+      if (
+        error.message ===
+        `Supplied index ${indexName} was not found in table ${schemaName}.${tableName}`
+      ) {
+        return;
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Creates a table with columns from migration
+   *
+   * @param queryRunner QueryRunner
+   * @param schemaName string
+   * @param tableName string
+   * @param columns WorkspaceMigrationColumnAction[]
    */
   private async createTable(
     queryRunner: QueryRunner,
@@ -264,23 +316,74 @@ export class WorkspaceMigrationRunnerService {
     tableName: string,
     columns?: WorkspaceMigrationColumnAction[],
   ) {
+    const tableColumns: TableColumn[] = [];
+
+    if (columns && columns.length > 0) {
+      const createColumns = columns.filter(
+        (column) => column.action === WorkspaceMigrationColumnActionType.CREATE,
+      ) as WorkspaceMigrationColumnCreate[];
+
+      for (const column of createColumns) {
+        tableColumns.push(
+          this.createTableColumnFromMigration(tableName, column),
+        );
+      }
+    }
+
     await queryRunner.createTable(
       new Table({
         name: tableName,
         schema: schemaName,
-        columns: tableDefaultColumns(),
+        columns: tableColumns.length > 0 ? tableColumns : tableDefaultColumns(),
       }),
       true,
     );
 
     if (columns && columns.length > 0) {
-      await this.handleColumnChanges(
-        queryRunner,
-        schemaName,
-        tableName,
-        columns,
+      const nonCreateColumns = columns.filter(
+        (column) => column.action !== WorkspaceMigrationColumnActionType.CREATE,
       );
+
+      if (nonCreateColumns.length > 0) {
+        await this.handleColumnChanges(
+          queryRunner,
+          schemaName,
+          tableName,
+          nonCreateColumns,
+        );
+      }
     }
+  }
+
+  /**
+   * Creates a TableColumn object from a migration column
+   *
+   * @param tableName string
+   * @param column WorkspaceMigrationColumnCreate
+   * @returns TableColumn
+   */
+  private createTableColumnFromMigration(
+    tableName: string,
+    column: WorkspaceMigrationColumnCreate,
+  ): TableColumn {
+    const enumName = column.enum?.length
+      ? `${tableName}_${column.columnName}_enum`
+      : undefined;
+
+    return new TableColumn({
+      name: column.columnName,
+      type: column.columnType,
+      default: column.defaultValue,
+      isPrimary: column.columnName === 'id',
+      enum: column.enum?.filter(
+        (value): value is string => typeof value === 'string',
+      ),
+      enumName: enumName,
+      isArray: column.isArray,
+      isNullable: column.isNullable,
+      asExpression: column.asExpression,
+      generatedType: column.generatedType,
+    });
   }
 
   /**
@@ -309,7 +412,6 @@ export class WorkspaceMigrationRunnerService {
    * @param schemaName string
    * @param tableName string
    * @param columnMigrations WorkspaceMigrationColumnAction[]
-   * @returns
    */
   private async handleColumnChanges(
     queryRunner: QueryRunner,
@@ -321,105 +423,162 @@ export class WorkspaceMigrationRunnerService {
       return;
     }
 
-    for (const columnMigration of columnMigrations) {
-      switch (columnMigration.action) {
-        case WorkspaceMigrationColumnActionType.CREATE:
-          await this.createColumn(
-            queryRunner,
-            schemaName,
-            tableName,
-            columnMigration,
-          );
-          break;
-        case WorkspaceMigrationColumnActionType.ALTER:
-          await this.alterColumn(
-            queryRunner,
-            schemaName,
-            tableName,
-            columnMigration,
-          );
-          break;
-        case WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY:
-          await this.createRelation(
-            queryRunner,
-            schemaName,
-            tableName,
-            columnMigration,
-          );
-          break;
-        case WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY:
-          await this.dropRelation(
-            queryRunner,
-            schemaName,
-            tableName,
-            columnMigration,
-          );
-          break;
-        case WorkspaceMigrationColumnActionType.DROP:
-          await queryRunner.dropColumn(
-            `${schemaName}.${tableName}`,
-            columnMigration.columnName,
-          );
-          break;
-        case WorkspaceMigrationColumnActionType.CREATE_COMMENT:
-          await this.createComment(
-            queryRunner,
-            schemaName,
-            tableName,
-            columnMigration.comment,
-          );
-          break;
-        default:
-          throw new Error(`Migration column action not supported`);
-      }
+    const columnsByAction = this.groupColumnsByAction(columnMigrations);
+
+    if (columnsByAction.create.length > 0) {
+      await this.handleCreateColumns(
+        queryRunner,
+        schemaName,
+        tableName,
+        columnsByAction.create,
+      );
     }
+
+    if (columnsByAction.drop.length > 0) {
+      await this.handleDropColumns(
+        queryRunner,
+        schemaName,
+        tableName,
+        columnsByAction.drop,
+      );
+    }
+
+    await this.handleOtherColumnActions(
+      queryRunner,
+      schemaName,
+      tableName,
+      columnsByAction.alter,
+      columnsByAction.createForeignKey,
+      columnsByAction.dropForeignKey,
+      columnsByAction.createComment,
+    );
   }
 
-  /**
-   * Creates a column for a given schema, table name, and column migration
-   *
-   * @param queryRunner QueryRunner
-   * @param schemaName string
-   * @param tableName string
-   * @param migrationColumn WorkspaceMigrationColumnAction
-   */
-  private async createColumn(
+  private groupColumnsByAction(
+    columnMigrations: WorkspaceMigrationColumnAction[],
+  ) {
+    return columnMigrations.reduce(
+      (acc, column) => {
+        switch (column.action) {
+          case WorkspaceMigrationColumnActionType.CREATE:
+            acc.create.push(column as WorkspaceMigrationColumnCreate);
+            break;
+          case WorkspaceMigrationColumnActionType.ALTER:
+            acc.alter.push(column as WorkspaceMigrationColumnAlter);
+            break;
+          case WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY:
+            acc.createForeignKey.push(
+              column as WorkspaceMigrationColumnCreateRelation,
+            );
+            break;
+          case WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY:
+            acc.dropForeignKey.push(
+              column as WorkspaceMigrationColumnDropRelation,
+            );
+            break;
+          case WorkspaceMigrationColumnActionType.DROP:
+            acc.drop.push(column as WorkspaceMigrationColumnDrop);
+            break;
+          case WorkspaceMigrationColumnActionType.CREATE_COMMENT:
+            acc.createComment.push(
+              column as {
+                action: WorkspaceMigrationColumnActionType.CREATE_COMMENT;
+                comment: string;
+              },
+            );
+            break;
+        }
+
+        return acc;
+      },
+      {
+        create: [] as WorkspaceMigrationColumnCreate[],
+        alter: [] as WorkspaceMigrationColumnAlter[],
+        createForeignKey: [] as WorkspaceMigrationColumnCreateRelation[],
+        dropForeignKey: [] as WorkspaceMigrationColumnDropRelation[],
+        drop: [] as WorkspaceMigrationColumnDrop[],
+        createComment: [] as {
+          action: WorkspaceMigrationColumnActionType.CREATE_COMMENT;
+          comment: string;
+        }[],
+      },
+    );
+  }
+
+  private async handleCreateColumns(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    migrationColumn: WorkspaceMigrationColumnCreate,
+    createColumns: WorkspaceMigrationColumnCreate[],
   ) {
-    const hasColumn = await queryRunner.hasColumn(
-      `${schemaName}.${tableName}`,
-      migrationColumn.columnName,
-    );
+    if (createColumns.length === 0) return;
 
-    if (hasColumn) {
-      return;
+    const table = await queryRunner.getTable(`${schemaName}.${tableName}`);
+
+    if (!table) {
+      throw new Error(`Table "${tableName}" not found`);
     }
 
-    const enumName = `${tableName}_${migrationColumn.columnName}_enum`;
+    const existingColumns = new Set(table.columns.map((column) => column.name));
 
-    await queryRunner.addColumn(
-      `${schemaName}.${tableName}`,
-      new TableColumn({
-        name: migrationColumn.columnName,
-        type: migrationColumn.columnType,
-        default: migrationColumn.defaultValue,
-        enum: migrationColumn.enum?.filter(
-          (value): value is string => typeof value === 'string',
-        ),
-        enumName: enumName,
-        isArray: migrationColumn.isArray,
-        isNullable: migrationColumn.isNullable,
-        /* For now unique constraints are created at a higher level
-        as we need to handle soft-delete and a bug on empty strings
-        */
-        // isUnique: migrationColumn.isUnique,
-        asExpression: migrationColumn.asExpression,
-        generatedType: migrationColumn.generatedType,
-      }),
+    const columnsToCreate = createColumns.filter(
+      (column) => !existingColumns.has(column.columnName),
     );
+
+    if (columnsToCreate.length === 0) return;
+
+    const tableColumns = columnsToCreate.map((column) =>
+      this.createTableColumnFromMigration(tableName, column),
+    );
+
+    await queryRunner.addColumns(`${schemaName}.${tableName}`, tableColumns);
+  }
+
+  private async handleDropColumns(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    dropColumns: WorkspaceMigrationColumnDrop[],
+  ) {
+    if (dropColumns.length === 0) return;
+
+    const columnNames = dropColumns.map((column) => column.columnName);
+
+    await queryRunner.dropColumns(`${schemaName}.${tableName}`, columnNames);
+  }
+
+  private async handleOtherColumnActions(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    alterColumns: WorkspaceMigrationColumnAlter[],
+    createForeignKeyColumns: WorkspaceMigrationColumnCreateRelation[],
+    dropForeignKeyColumns: WorkspaceMigrationColumnDropRelation[],
+    createCommentColumns: {
+      action: WorkspaceMigrationColumnActionType.CREATE_COMMENT;
+      comment: string;
+    }[],
+  ) {
+    for (const column of alterColumns) {
+      await this.alterColumn(queryRunner, schemaName, tableName, column);
+    }
+
+    for (const column of createForeignKeyColumns) {
+      await this.createRelation(queryRunner, schemaName, tableName, column);
+    }
+
+    for (const column of dropForeignKeyColumns) {
+      await this.dropRelation(queryRunner, schemaName, tableName, column);
+    }
+
+    for (const column of createCommentColumns) {
+      await this.createComment(
+        queryRunner,
+        schemaName,
+        tableName,
+        column.comment,
+      );
+    }
   }
 
   private async alterColumn(

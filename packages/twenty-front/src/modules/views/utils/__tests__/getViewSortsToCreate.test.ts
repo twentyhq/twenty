@@ -54,25 +54,6 @@ describe('getViewSortsToCreate', () => {
     expect(result).toEqual([newSortWithDifferentFieldMetadataId]);
   });
 
-  it('should handle sorts with different fieldMetadataIds', () => {
-    const existingSort = { ...baseSort };
-    const sortWithDifferentFieldMetadataId = {
-      ...baseSort,
-      fieldMetadataId: 'group-2',
-    } satisfies ViewSort;
-
-    const currentViewSorts: ViewSort[] = [existingSort];
-
-    const newViewSorts: ViewSort[] = [
-      existingSort,
-      sortWithDifferentFieldMetadataId,
-    ];
-
-    const result = getViewSortsToCreate(currentViewSorts, newViewSorts);
-
-    expect(result).toEqual([sortWithDifferentFieldMetadataId]);
-  });
-
   it('should handle empty arrays for both inputs', () => {
     const currentViewSorts: ViewSort[] = [];
     const newViewSorts: ViewSort[] = [];

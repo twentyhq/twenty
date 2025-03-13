@@ -1,13 +1,11 @@
 import styled from '@emotion/styled';
 
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -70,15 +68,9 @@ export const NoteCard = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
-  const openActivityRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Note,
-  });
-  const isRichTextV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsRichTextV2Enabled,
-  );
-  const body = getActivityPreview(
-    isRichTextV2Enabled ? (note?.bodyV2?.blocknote ?? null) : note?.body,
-  );
+  const { openRecordInCommandMenu } = useCommandMenu();
+
+  const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 
   const { FieldContextProvider: NoteTargetsContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Note,
@@ -90,7 +82,12 @@ export const NoteCard = ({
   return (
     <StyledCard isSingleNote={isSingleNote}>
       <StyledCardDetailsContainer
-        onClick={() => openActivityRightDrawer(note.id)}
+        onClick={() =>
+          openRecordInCommandMenu({
+            recordId: note.id,
+            objectNameSingular: CoreObjectNameSingular.Note,
+          })
+        }
       >
         <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
         <StyledCardContent>{body}</StyledCardContent>
@@ -101,7 +98,6 @@ export const NoteCard = ({
             <ActivityTargetsInlineCell
               activity={note}
               activityObjectNameSingular={CoreObjectNameSingular.Note}
-              readonly
             />
           </NoteTargetsContextProvider>
         )}

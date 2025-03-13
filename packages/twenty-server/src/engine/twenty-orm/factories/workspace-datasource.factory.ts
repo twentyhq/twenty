@@ -68,10 +68,6 @@ export class WorkspaceDatasourceFactory {
         const result = await this.cacheManager.execute(
           cacheKey,
           async () => {
-            this.logger.log(
-              `Creating workspace data source for workspace ${workspaceId} and metadata version ${cachedWorkspaceMetadataVersion}`,
-            );
-
             const dataSourceMetadata =
               await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
                 workspaceId,
@@ -100,7 +96,7 @@ export class WorkspaceDatasourceFactory {
 
             if (!cachedObjectMetadataMaps) {
               throw new TwentyORMException(
-                `Workspace Schema not found for workspace ${workspaceId}`,
+                `Object metadata collection not found for workspace ${workspaceId}`,
                 TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
               );
             }

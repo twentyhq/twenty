@@ -1,8 +1,8 @@
-import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
+import { CommandMenuContextRecordsChip } from '@/command-menu/components/CommandMenuContextRecordsChip';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -17,8 +17,8 @@ export const ResetContextToSelectionCommandButton = () => {
     'command-menu-previous',
   );
 
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     'command-menu-previous',
   );
 
@@ -26,7 +26,7 @@ export const ResetContextToSelectionCommandButton = () => {
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
-      objectMetadataItem.id === contextStoreCurrentObjectMetadataItem?.id,
+      objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   const { resetPreviousCommandMenuContext } =
@@ -46,7 +46,7 @@ export const ResetContextToSelectionCommandButton = () => {
       Icon={IconArrowBackUp}
       label={t`Reset to`}
       RightComponent={
-        <CommandMenuContextRecordChip
+        <CommandMenuContextRecordsChip
           objectMetadataItemId={objectMetadataItem.id}
           instanceId="command-menu-previous"
         />
