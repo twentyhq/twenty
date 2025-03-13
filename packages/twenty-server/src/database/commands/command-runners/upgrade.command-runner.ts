@@ -13,17 +13,17 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { isSameMajorAndMinorVersion } from 'src/utils/version/is-same-major-and-minorversion';
+import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
 
 type ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs = {
-  workspaceId: string
-  appVersion: string | undefined
-}
+  workspaceId: string;
+  appVersion: string | undefined;
+};
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   abstract readonly fromWorkspaceVersion: SemVer;
   public readonly VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG?: true;
-  
+
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -44,25 +44,43 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       ),
     );
 
-    await this.validateWorkspaceVersionEqualsWorkspaceFromVersionOrThrow({
-      appVersion,
-      workspaceId,
-    });
+    const compareResult =
+      await this.retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion({
+        appVersion,
+        workspaceId,
+      });
 
-    await this.runBeforeSyncMetadata(args);
-    await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
-    await this.runAfterSyncMetadata(args);
+    switch (compareResult) {
+      case -1: {
+        throw new Error(
+          `WORKSPACE_VERSION_MISSMATCH Upgrade for workspace ${workspaceId} failed as its version is beneath fromWorkspaceVersion=${this.fromWorkspaceVersion.version}`,
+        );
+      }
+      case 0: {
+        await this.runBeforeSyncMetadata(args);
+        await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
+        await this.runAfterSyncMetadata(args);
 
-    await this.workspaceRepository.update(
-      { id: workspaceId },
-      { version: appVersion },
-    );
-    this.logger.log(
-      chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
-    );
+        await this.workspaceRepository.update(
+          { id: workspaceId },
+          { version: appVersion },
+        );
+        this.logger.log(
+          chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
+        );
+      }
+      case 1: {
+        this.logger.log(
+          chalk.blue(
+            `Upgrade for workspace ${workspaceId} ignored as is already at a higher version.`,
+          ),
+        );
+        return;
+      }
+    }
   }
 
-  private async validateWorkspaceVersionEqualsWorkspaceFromVersionOrThrow({
+  private async retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion({
     appVersion,
     workspaceId,
   }: ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs) {
@@ -72,9 +90,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       );
     }
 
+    // TODO remove after first release has been done using workspace_version
     if (!isDefined(this.VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG)) {
-      this.logger.warn("VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG set to true ignoring workspace versions validation step")
-      return
+      this.logger.warn(
+        'VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG set to true ignoring workspace versions validation step',
+      );
+      const equalVersions = 0;
+      return equalVersions;
     }
 
     const workspace = await this.workspaceRepository.findOneByOrFail({
@@ -86,11 +108,10 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       throw new Error(`WORKSPACE_VERSION_NOT_DEFINED to=${appVersion}`);
     }
 
-    if (!isSameMajorAndMinorVersion(currentWorkspaceVersion, this.fromWorkspaceVersion.version)) {
-      throw new Error(
-        `WORKSPACE_VERSION_MISSMATCH workspaceVersion=${currentWorkspaceVersion} fromWorkspaceVersion=${this.fromWorkspaceVersion.version} to=${appVersion}`,
-      );
-    }
+    return compareVersionMajorAndMinor(
+      currentWorkspaceVersion,
+      this.fromWorkspaceVersion.version,
+    );
   }
 
   protected abstract runBeforeSyncMetadata(

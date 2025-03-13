@@ -14,7 +14,7 @@ import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/works
 
 class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('1.0.0');
-  VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const
+  VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const;
 
   public override async runBeforeSyncMetadata(): Promise<void> {
     return;
@@ -27,7 +27,7 @@ class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
 
 class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('invalid');
-  VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const
+  VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const;
 
   protected async runBeforeSyncMetadata(): Promise<void> {
     return;
@@ -40,7 +40,7 @@ class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
 
 class TestUpgradeCommandRunnerV2 extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('2.0.0');
-  VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const
+  VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const;
 
   protected async runBeforeSyncMetadata(): Promise<void> {
     return;
@@ -192,6 +192,39 @@ describe('UpgradeCommandRunner', () => {
     );
   };
 
+  it('should ignore and list as succesfull upgrade on workspace with higher version', async () => {
+    const higherVersionWorkspace = generateMockWorkspace({
+      id: 'higher_version_workspace',
+      version: '42.42.42',
+    });
+    const appVersion = '2.0.0';
+    await buildModuleAndSetupSpies({
+      numberOfWorkspace: 0,
+      workspaces: [higherVersionWorkspace],
+      appVersion,
+    });
+    const passedParams = [];
+    const options = {};
+    await upgradeCommandRunner.run(passedParams, options);
+
+    const { fail: failReport, success: successReport } =
+      upgradeCommandRunner.migrationReport;
+    expect(successReport.length).toBe(1);
+    expect(failReport.length).toBe(0);
+
+    [
+      twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
+      upgradeCommandRunner.runOnWorkspace,
+    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
+
+    [
+      upgradeCommandRunner.runBeforeSyncMetadata,
+      syncWorkspaceMetadataCommand.runOnWorkspace,
+      upgradeCommandRunner.runAfterSyncMetadata,
+      workspaceRepository.update,
+    ].forEach((fn) => expect(fn).not.toHaveBeenCalled());
+  });
+
   it('should run upgrade command with failing and successful workspaces', async () => {
     const outdatedVersionWorkspaces = generateMockWorkspace({
       id: 'outated_version_workspace',
@@ -219,10 +252,8 @@ describe('UpgradeCommandRunner', () => {
       workspaces: failingWorkspaces,
       appVersion,
     });
-
     const passedParams = [];
     const options = {};
-
     await upgradeCommandRunner.run(passedParams, options);
 
     // Common assertions
@@ -270,7 +301,6 @@ describe('UpgradeCommandRunner', () => {
     });
     const passedParams = [];
     const options = {};
-
     await upgradeCommandRunner.run(passedParams, options);
 
     [
@@ -305,10 +335,8 @@ describe('UpgradeCommandRunner', () => {
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
 
     // Verify order of execution
-    const beforeSyncCall =
-      runBeforeSyncMetadataSpy.mock.invocationCallOrder[0];
-    const afterSyncCall =
-      runAfterSyncMetadataSpy.mock.invocationCallOrder[0];
+    const beforeSyncCall = runBeforeSyncMetadataSpy.mock.invocationCallOrder[0];
+    const afterSyncCall = runAfterSyncMetadataSpy.mock.invocationCallOrder[0];
     const syncMetadataCall =
       syncWorkspaceMetadataCommand.runOnWorkspace.mock.invocationCallOrder[0];
 
