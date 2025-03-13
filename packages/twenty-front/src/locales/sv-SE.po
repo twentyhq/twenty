@@ -2418,7 +2418,7 @@ msgstr "Skriv {confirmationText} för att bekräfta att du vill radera denna web
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "Använd olika namn för dina käll- och destinationsfält"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"

@@ -2418,7 +2418,7 @@ msgstr "Vui lòng nhập {confirmationText} để xác nhận bạn muốn xóa 
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "Vui lòng sử dụng tên khác cho các trường nguồn và đích của bạn"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"
