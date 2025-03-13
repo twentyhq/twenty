@@ -17,7 +17,7 @@ export const useCopyContextStoreStates = () => {
         instanceIdToCopyFrom: string;
         instanceIdToCopyTo: string;
       }) => {
-        const contextStoreCurrentObjectMetadataItem = snapshot
+        const contextStoreCurrentObjectMetadataItemId = snapshot
           .getLoadable(
             contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
               instanceId: instanceIdToCopyFrom,
@@ -29,7 +29,7 @@ export const useCopyContextStoreStates = () => {
           contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
             instanceId: instanceIdToCopyTo,
           }),
-          contextStoreCurrentObjectMetadataItem,
+          contextStoreCurrentObjectMetadataItemId,
         );
 
         const contextStoreTargetedRecordsRule = snapshot
