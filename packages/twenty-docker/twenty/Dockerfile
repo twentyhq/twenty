@@ -66,6 +66,8 @@ ENV REACT_APP_SERVER_BASE_URL $REACT_APP_SERVER_BASE_URL
 ARG SENTRY_RELEASE
 ENV SENTRY_RELEASE $SENTRY_RELEASE
 
+ARG APP_VERSION
+
 # Copy built applications from previous stages
 COPY --chown=1000 --from=twenty-server-build /app /app
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server /app/packages/twenty-server

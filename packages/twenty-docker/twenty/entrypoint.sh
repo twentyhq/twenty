@@ -1,6 +1,11 @@
 #!/bin/sh
 set -e
 
+# Set APP_VERSION only if it has a value
+if [ ! -z "${APP_VERSION}" ]; then
+    export APP_VERSION="${APP_VERSION}"
+fi
+
 # Check if the initialization has already been done and that we enabled automatic migration
 if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status ]; then
     echo "Running database setup and migrations..."
