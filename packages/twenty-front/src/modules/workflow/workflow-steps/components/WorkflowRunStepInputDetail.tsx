@@ -33,6 +33,8 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     stepId,
   });
 
+  console.log(workflowRun.context);
+
   if (stepContext.length === 0) {
     throw new Error('The input tab must be rendered with a non-empty context.');
   }

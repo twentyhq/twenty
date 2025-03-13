@@ -65,25 +65,28 @@ const RelationManyFieldInputWithContext = () => {
     }),
   );
 
-  useEffect(() => {
-    setRecordStoreFieldValue([]);
-  }, [setRecordStoreFieldValue]);
-
   const { openFieldInput } = useOpenFieldInputEditMode();
 
   useEffect(() => {
+    setRecordStoreFieldValue([]);
+
     setHotKeyScope('hotkey-scope');
     openFieldInput({
       fieldDefinition,
       recordId: 'recordId',
     });
-  }, [fieldDefinition, openFieldInput, setHotKeyScope]);
+  }, [
+    fieldDefinition,
+    openFieldInput,
+    setHotKeyScope,
+    setRecordStoreFieldValue,
+  ]);
 
   return (
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: 'relation-from-many-field-input',
+          instanceId: 'relation-from-many-field-record-id-people',
         }}
       >
         <FieldContextProvider
