@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`is-same-version incomplete version1 1`] = `"Received invalid version: 1.0"`;
-
-exports[`is-same-version invalid version1 1`] = `"Received invalid version: invalid"`;
-
-exports[`is-same-version invalid version2 1`] = `"Received invalid version: invalid"`;

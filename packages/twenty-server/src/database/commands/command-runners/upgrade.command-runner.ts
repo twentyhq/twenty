@@ -74,9 +74,9 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       throw new Error(`WORKSPACE_VERSION_NOT_DEFINED to=${appVersion}`);
     }
 
-    if (!isSameVersion(currentWorkspaceVersion, this.fromVersion.version)) {
+    if (!isSameMajorAndMinorVersion(currentWorkspaceVersion, this.fromWorkspaceVersion.version)) {
       throw new Error(
-        `WORKSPACE_VERSION_MISSMATCH workspaceVersion=${currentWorkspaceVersion} from=${this.fromVersion.version} to=${appVersion}`,
+        `WORKSPACE_VERSION_MISSMATCH workspaceVersion=${currentWorkspaceVersion} from=${this.fromWorkspaceVersion.version} to=${appVersion}`,
       );
     }
   }

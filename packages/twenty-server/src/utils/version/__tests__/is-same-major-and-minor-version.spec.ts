@@ -1,6 +1,6 @@
 import { EachTestingContext } from 'twenty-shared';
 
-import { isSameVersion } from 'src/utils/version/is-same-version';
+import { isSameMajorAndMinorVersion } from 'src/utils/version/is-same-major-and-minorversion';
 
 type IsSameVersionTestCase = EachTestingContext<{
   version1: string;
@@ -8,7 +8,7 @@ type IsSameVersionTestCase = EachTestingContext<{
   expected?: boolean;
   expectToThrow?: boolean;
 }>;
-describe('is-same-version', () => {
+describe('is-same-major-and-minor-version', () => {
   const differentVersionTestCases: IsSameVersionTestCase[] = [
     {
       context: {
@@ -62,6 +62,14 @@ describe('is-same-version', () => {
         expected: true,
       },
       title: 'exact same version',
+    },
+    {
+      context: {
+        version1: '1.1.0',
+        version2: '1.1.42',
+        expected: true,
+      },
+      title: 'exact same major and minor but different patch version',
     },
     {
       context: {
@@ -135,10 +143,10 @@ describe('is-same-version', () => {
     }) => {
       if (expectToThrow) {
         expect(() =>
-          isSameVersion(version1, version2),
+          isSameMajorAndMinorVersion(version1, version2),
         ).toThrowErrorMatchingSnapshot();
       } else {
-        expect(isSameVersion(version1, version2)).toBe(expected);
+        expect(isSameMajorAndMinorVersion(version1, version2)).toBe(expected);
       }
     },
   );
