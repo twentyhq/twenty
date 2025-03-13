@@ -24,9 +24,9 @@ msgstr ""
 #~ "        same variables and values, this is required for asynchronous tasks like\n"
 #~ "        email sync."
 #~ msgstr ""
-#~ " Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les\n"
-#~ "        mateixes variables i valors, això és necessari per a tasques asincròniques com la\n"
-#~ "        sincronització de correu electrònic."
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -123,11 +123,11 @@ msgstr "Sobre"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About this user"
-msgstr ""
+msgstr "Sobre aquest usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
-msgstr ""
+msgstr "Sobre aquest espai de treball"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -300,7 +300,7 @@ msgstr "Tots els rols"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "All workspaces this user is a member of"
-msgstr ""
+msgstr "Tots els espais de treball del qual aquest usuari és membre"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -820,11 +820,11 @@ msgstr "Creat"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version"
-msgstr ""
+msgstr "Versió actual"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Current version:"
-#~ msgstr "Versió actual:"
+#~ msgstr "Current version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1658,7 +1658,7 @@ msgstr "Icona i nom"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
@@ -1910,11 +1910,11 @@ msgstr "Data més recent"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
-msgstr ""
+msgstr "Última versió"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Latest version:"
-#~ msgstr "Última versió:"
+#~ msgstr "Latest version:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -3082,7 +3082,7 @@ msgstr "S'ha produït un problema"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr ""
+msgstr "Aquests són només els valors del servidor. Assegureu-vos que el vostre entorn de treball tingui les mateixes variables i valors, això és necessari per a tasques asincròniques com la sincronització de correu electrònic."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -3138,7 +3138,7 @@ msgstr "Avui"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
-#~ msgstr "Usuaris totals"
+#~ msgstr "Total Users"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3232,11 +3232,11 @@ msgstr "Usuari"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Email"
-#~ msgstr "Correu electrònic de l'usuari"
+#~ msgstr "User Email"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User ID"
-#~ msgstr "ID d'usuari"
+#~ msgstr "User ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3253,11 +3253,11 @@ msgstr "L'usuari no està logat"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Name"
-#~ msgstr "Nom d'usuari"
+#~ msgstr "User Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Users"
-#~ msgstr "Usuaris"
+#~ msgstr "Users"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3399,7 +3399,7 @@ msgstr "Eliminació de l'espai de treball"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
-msgstr ""
+msgstr "Informació de l'espai de treball"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
@@ -3411,7 +3411,7 @@ msgstr "Nom de l'espai de treball"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Workspace Name"
-#~ msgstr "Nom de l'espai de treball"
+#~ msgstr "Workspace Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"

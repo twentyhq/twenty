@@ -23,7 +23,10 @@ msgstr ""
 #~ " These are only the server values. Ensure your worker environment has the\n"
 #~ "        same variables and values, this is required for asynchronous tasks like\n"
 #~ "        email sync."
-#~ msgstr " Acestea sunt doar valorile serverului. Asigură-te că mediul lucrătorului tău are aceleași variabile și valori, acest lucru este necesar pentru sarcini asincrone precum sincronizarea emailului."
+#~ msgstr ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -120,11 +123,11 @@ msgstr "Despre"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About this user"
-msgstr ""
+msgstr "Despre acest utilizator"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
-msgstr ""
+msgstr "Despre acest spațiu de lucru"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -297,7 +300,7 @@ msgstr "Toate rolurile"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "All workspaces this user is a member of"
-msgstr ""
+msgstr "Toate spațiile de lucru din care face parte acest utilizator"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -817,11 +820,11 @@ msgstr "Creat"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version"
-msgstr ""
+msgstr "Versiunea curentă"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Current version:"
-#~ msgstr "Versiunea curentă:"
+#~ msgstr "Current version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1655,7 +1658,7 @@ msgstr "Icoană și Nume"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
@@ -1907,11 +1910,11 @@ msgstr "Data cea mai recentă"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
-msgstr ""
+msgstr "Ultima versiune"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Latest version:"
-#~ msgstr "Ultima versiune:"
+#~ msgstr "Latest version:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -3079,7 +3082,7 @@ msgstr "A intervenit o problemă"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr ""
+msgstr "Acestea sunt doar valorile serverului. Asigură-te că mediul lucrătorului tău are aceleași variabile și valori, acest lucru este necesar pentru sarcini asincrone precum sincronizarea emailului."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -3135,7 +3138,7 @@ msgstr "Azi"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
-#~ msgstr "Utilizatori totali"
+#~ msgstr "Total Users"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3229,11 +3232,11 @@ msgstr "Utilizator"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Email"
-#~ msgstr "Emailul utilizatorului"
+#~ msgstr "User Email"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User ID"
-#~ msgstr "ID utilizator"
+#~ msgstr "User ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3250,11 +3253,11 @@ msgstr "Utilizatorul nu este autentificat"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Name"
-#~ msgstr "Nume utilizator"
+#~ msgstr "User Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Users"
-#~ msgstr "Utilizatori"
+#~ msgstr "Users"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3396,7 +3399,7 @@ msgstr "Ștergere Spațiu de lucru"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
-msgstr ""
+msgstr "Informații despre spațiul de lucru"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
@@ -3408,7 +3411,7 @@ msgstr "Nume Spațiu de lucru"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Workspace Name"
-#~ msgstr "Nume Spațiu de lucru"
+#~ msgstr "Workspace Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"

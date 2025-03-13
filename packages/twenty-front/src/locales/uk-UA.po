@@ -23,7 +23,10 @@ msgstr ""
 #~ " These are only the server values. Ensure your worker environment has the\n"
 #~ "        same variables and values, this is required for asynchronous tasks like\n"
 #~ "        email sync."
-#~ msgstr " Це тільки значення серверу. Переконайтеся, що ваше робоче середовище має ті ж змінні та значення, це необхідно для асинхронних задач, таких як синхронізація електронної пошти."
+#~ msgstr ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -120,11 +123,11 @@ msgstr "Про"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About this user"
-msgstr ""
+msgstr "Про цього користувача"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
-msgstr ""
+msgstr "Про цей робочий простір"
 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -297,7 +300,7 @@ msgstr "Всі ролі"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "All workspaces this user is a member of"
-msgstr ""
+msgstr "Усі робочі області, учасником яких є цей користувач"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -817,11 +820,11 @@ msgstr "Створено"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version"
-msgstr ""
+msgstr "Поточна версія"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Current version:"
-#~ msgstr "Поточна версія:"
+#~ msgstr "Current version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -1711,7 +1714,7 @@ msgstr "Іконка та назва"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "ID"
-msgstr ""
+msgstr "Ідентифікатор"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
@@ -1963,11 +1966,11 @@ msgstr "Остання дата"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
-msgstr ""
+msgstr "Остання версія"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Latest version:"
-#~ msgstr "Остання версія:"
+#~ msgstr "Latest version:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
@@ -3135,7 +3138,7 @@ msgstr "Виникла проблема"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
-msgstr ""
+msgstr "Це тільки значення серверу. Переконайтеся, що ваше робоче середовище має ті ж змінні та значення, це необхідно для асинхронних задач, таких як синхронізація електронної пошти."
 
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
@@ -3191,7 +3194,7 @@ msgstr "Сьогодні"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
-#~ msgstr "Всього користувачів"
+#~ msgstr "Total Users"
 
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
@@ -3285,11 +3288,11 @@ msgstr "Користувач"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Email"
-#~ msgstr "Електронна адреса користувача"
+#~ msgstr "User Email"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User ID"
-#~ msgstr "Ідентифікатор користувача"
+#~ msgstr "User ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3306,11 +3309,11 @@ msgstr "Користувач не увійшов в систему"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Name"
-#~ msgstr "Ім'я користувача"
+#~ msgstr "User Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Users"
-#~ msgstr "Користувачі"
+#~ msgstr "Users"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3452,7 +3455,7 @@ msgstr "Видалення працевлаштування"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
-msgstr ""
+msgstr "Інформація про робочий простір"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
@@ -3464,7 +3467,7 @@ msgstr "Назва працевлаштування"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Workspace Name"
-#~ msgstr "Назва робочого простору"
+#~ msgstr "Workspace Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
