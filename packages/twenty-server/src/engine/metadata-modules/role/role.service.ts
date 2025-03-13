@@ -42,6 +42,7 @@ export class RoleService {
     return this.roleRepository.save({
       label: ADMIN_ROLE_LABEL,
       description: 'Admin role',
+      icon: 'IconUserCog',
       canUpdateAllSettings: true,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
@@ -60,6 +61,7 @@ export class RoleService {
     return this.roleRepository.save({
       label: MEMBER_ROLE_LABEL,
       description: 'Member role',
+      icon: 'IconUser',
       canUpdateAllSettings: false,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
@@ -79,6 +81,7 @@ export class RoleService {
     return this.roleRepository.save({
       label: 'Guest',
       description: 'Guest role',
+      icon: 'IconUser',
       canUpdateAllSettings: false,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: false,
