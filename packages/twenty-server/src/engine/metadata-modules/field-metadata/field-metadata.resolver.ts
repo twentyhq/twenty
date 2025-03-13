@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  UnauthorizedException,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { UnauthorizedException, UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -17,6 +12,7 @@ import { FieldMetadataType } from 'twenty-shared';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -123,19 +119,19 @@ export class FieldMetadataResolver {
       });
 
     if (!fieldMetadata) {
-      throw new BadRequestException('Field does not exist');
+      throw new ValidationError('Field does not exist');
     }
 
     if (!fieldMetadata.isCustom) {
-      throw new BadRequestException("Standard Fields can't be deleted");
+      throw new ValidationError("Standard Fields can't be deleted");
     }
 
     if (fieldMetadata.isActive) {
-      throw new BadRequestException("Active fields can't be deleted");
+      throw new ValidationError("Active fields can't be deleted");
     }
 
     if (fieldMetadata.type === FieldMetadataType.RELATION) {
-      throw new BadRequestException(
+      throw new ValidationError(
         "Relation fields can't be deleted, you need to delete the RelationMetadata instead",
       );
     }

@@ -7,6 +7,12 @@ import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import {
+  FeatureFlagException,
+  FeatureFlagExceptionCode,
+} from 'src/engine/core-modules/feature-flag/feature-flag.exception';
+import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
+import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 
 @Injectable()
 export class FeatureFlagService {
@@ -63,5 +69,49 @@ export class FeatureFlagService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+  }
+
+  public async upsertWorkspaceFeatureFlag({
+    workspaceId,
+    featureFlag,
+    value,
+    shouldBePublic = false,
+  }: {
+    workspaceId: string;
+    featureFlag: FeatureFlagKey;
+    value: boolean;
+    shouldBePublic?: boolean;
+  }): Promise<FeatureFlag> {
+    if (shouldBePublic) {
+      publicFeatureFlagValidator.assertIsPublicFeatureFlag(
+        featureFlag,
+        new FeatureFlagException(
+          'Invalid feature flag key, flag is not public',
+          FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
+        ),
+      );
+    }
+
+    featureFlagValidator.assertIsFeatureFlagKey(
+      featureFlag,
+      new FeatureFlagException(
+        'Invalid feature flag key',
+        FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
+      ),
+    );
+
+    const upsertResult = await this.featureFlagRepository.upsert(
+      {
+        key: FeatureFlagKey[featureFlag],
+        value,
+        workspaceId: workspaceId,
+      },
+      {
+        conflictPaths: ['workspaceId', 'key'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+
+    return upsertResult.generatedMaps[0] as FeatureFlag;
   }
 }

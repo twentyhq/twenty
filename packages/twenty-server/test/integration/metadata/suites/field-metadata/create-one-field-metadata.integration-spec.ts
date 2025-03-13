@@ -32,10 +32,10 @@ describe('createOne', () => {
       const graphqlOperation = createOneFieldMetadataFactory({
         input: { field: createFieldInput },
         gqlFields: `
-            id
-            name
-            label
-            isLabelSyncedWithName
+          id
+          name
+          label
+          isLabelSyncedWithName
         `,
       });
 
@@ -58,10 +58,10 @@ describe('createOne', () => {
       const graphqlOperation = createOneFieldMetadataFactory({
         input: { field: createFieldInput },
         gqlFields: `
-            id
-            name
-            label
-            isLabelSyncedWithName
+          id
+          name
+          label
+          isLabelSyncedWithName
         `,
       });
 
