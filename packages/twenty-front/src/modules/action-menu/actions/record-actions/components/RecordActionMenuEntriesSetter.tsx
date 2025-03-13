@@ -2,7 +2,7 @@ import { RegisterRecordActionEffect } from '@/action-menu/actions/record-actions
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -14,17 +14,30 @@ import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordActionMenuEntriesSetter = () => {
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+  const localContextStoreCurrentObjectMetadataItemId =
+    useRecoilComponentValueV2(
+      contextStoreCurrentObjectMetadataItemIdComponentState,
+    );
+
+  const mainContextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const objectMetadataItem = objectMetadataItems.find(
+  const localContextStoreObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
-      objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
+      objectMetadataItem.id === localContextStoreCurrentObjectMetadataItemId,
   );
+
+  const mainContextStoreObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.id === mainContextStoreCurrentObjectMetadataItemId,
+  );
+
+  const objectMetadataItem =
+    localContextStoreObjectMetadataItem ?? mainContextStoreObjectMetadataItem;
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
