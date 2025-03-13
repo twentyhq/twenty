@@ -179,9 +179,7 @@ describe('is-same-major-and-minor-version', () => {
     ...aboveVersionTestCases,
   ])(
     '$title',
-    ({
-      context: { version1, version2, expected = false, expectToThrow = false },
-    }) => {
+    ({ context: { version1, version2, expected, expectToThrow = false } }) => {
       if (expectToThrow) {
         expect(() =>
           compareVersionMajorAndMinor(version1, version2),
