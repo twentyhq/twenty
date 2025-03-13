@@ -1,17 +1,24 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { ViewGroup } from '@/views/types/ViewGroup';
+import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
+import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const useSetRecordGroup = () => {
-  return useRecoilCallback(
+export const useSetRecordGroups = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
+  const setRecordGroups = useRecoilCallback(
     ({ snapshot, set }) =>
       (recordGroups: RecordGroupDefinition[], recordIndexId: string) => {
         const objectMetadataItemId = snapshot
@@ -104,4 +111,26 @@ export const useSetRecordGroup = () => {
       },
     [],
   );
+
+  const setRecordGroupsFromViewGroups = useCallback(
+    (viewId: string, viewGroups: ViewGroup[]) => {
+      const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+        objectMetadataItem.namePlural,
+        viewId,
+      );
+
+      const newGroupDefinitions = mapViewGroupsToRecordGroupDefinitions({
+        objectMetadataItem,
+        viewGroups,
+      });
+
+      setRecordGroups(newGroupDefinitions, recordIndexId);
+    },
+    [objectMetadataItem, setRecordGroups],
+  );
+
+  return {
+    setRecordGroups,
+    setRecordGroupsFromViewGroups,
+  };
 };
