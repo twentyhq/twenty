@@ -2418,7 +2418,7 @@ msgstr "Veuillez taper {confirmationText} pour confirmer que vous souhaitez supp
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "Veuillez utiliser des noms différents pour vos champs source et destination"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"

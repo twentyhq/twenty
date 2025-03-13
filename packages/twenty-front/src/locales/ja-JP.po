@@ -2418,7 +2418,7 @@ msgstr "{confirmationText}と入力して、このWebhookを削除すること�
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "入力元フィールドと入力先フィールドには異なる名前を使用してください"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"

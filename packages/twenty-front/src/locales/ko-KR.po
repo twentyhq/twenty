@@ -2418,7 +2418,7 @@ msgstr "{confirmationText}을 입력하여 이 Webhook을 삭제할 것인지 �
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "출처 및 목적 필드에 대해 다른 이름을 사용하십시오"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"

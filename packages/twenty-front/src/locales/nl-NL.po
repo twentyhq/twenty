@@ -2418,7 +2418,7 @@ msgstr "Typ alstublieft {confirmationText} om te bevestigen dat u deze webhook w
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "Gebruik alstublieft verschillende namen voor uw bron- en bestemmingsvelden"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"

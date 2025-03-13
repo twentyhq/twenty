@@ -2418,7 +2418,7 @@ msgstr "Παρακαλώ πληκτρολογήστε {confirmationText} για 
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "Παρακαλώ χρησιμοποιήστε διαφορετικά ονόματα για τα πεδία προέλευσης και προορισμού σας"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"

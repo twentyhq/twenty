@@ -2418,7 +2418,7 @@ msgstr "Digite {confirmationText} para confirmar que deseja eliminar este webhoo
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "Por favor, use nomes diferentes para seus campos de origem e destino"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"

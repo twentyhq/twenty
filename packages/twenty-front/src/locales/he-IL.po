@@ -2418,7 +2418,7 @@ msgstr "אנא הקלד {confirmationText} כדי לאשר שברצונך למח
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "אנא השתמשו בשמות שונים לשדות המקור והיעד שלכם"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"

@@ -2418,7 +2418,7 @@ msgstr "Унесите {confirmationText} да потврдите да жели�
 
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Please use different names for your source and destination fields"
-msgstr ""
+msgstr "Молимо вас да користите различита имена за поља извора и одредишта"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"
