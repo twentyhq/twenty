@@ -1,9 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { Repository } from 'typeorm';
 import { SemVer } from 'semver';
 import { isDefined } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -13,10 +13,10 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { isSameVersion } from 'src/utils/version/is-same-version';
+import { isSameMajorAndMinorVersion } from 'src/utils/version/is-same-major-and-minorversion';
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
-  abstract readonly fromVersion: SemVer;
+  abstract readonly fromWorkspaceVersion: SemVer;
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -76,7 +76,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
     if (!isSameMajorAndMinorVersion(currentWorkspaceVersion, this.fromWorkspaceVersion.version)) {
       throw new Error(
-        `WORKSPACE_VERSION_MISSMATCH workspaceVersion=${currentWorkspaceVersion} from=${this.fromWorkspaceVersion.version} to=${appVersion}`,
+        `WORKSPACE_VERSION_MISSMATCH workspaceVersion=${currentWorkspaceVersion} fromWorkspaceVersion=${this.fromWorkspaceVersion.version} to=${appVersion}`,
       );
     }
   }

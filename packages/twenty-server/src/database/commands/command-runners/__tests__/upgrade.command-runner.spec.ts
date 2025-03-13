@@ -13,7 +13,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
-  fromVersion = new SemVer('1.0.0');
+  fromWorkspaceVersion = new SemVer('1.0.0');
 
   public override async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
     return;
@@ -25,7 +25,7 @@ class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
 }
 
 class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
-  fromVersion = new SemVer('invalid');
+  fromWorkspaceVersion = new SemVer('invalid');
 
   protected async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
     return;
@@ -37,7 +37,7 @@ class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
 }
 
 class TestUpgradeCommandRunnerV2 extends UpgradeCommandRunner {
-  fromVersion = new SemVer('2.0.0');
+  fromWorkspaceVersion = new SemVer('2.0.0');
 
   protected async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
     return;
