@@ -39,7 +39,7 @@ import {
   IconTrashX,
 } from 'twenty-ui';
 
-export const DEFAULT_ACTIONS_CONFIG_V2: Record<
+export const DEFAULT_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
     useAction: ActionHook;
