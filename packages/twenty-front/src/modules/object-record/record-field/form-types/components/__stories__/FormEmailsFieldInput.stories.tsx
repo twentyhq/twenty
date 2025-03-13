@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
@@ -68,8 +68,11 @@ export const Disabled: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-    expect(editor).toBeVisible();
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+      return editor;
+    });
 
     const defaultValue = await canvas.findByText('tim@twenty.com');
     expect(defaultValue).toBeVisible();

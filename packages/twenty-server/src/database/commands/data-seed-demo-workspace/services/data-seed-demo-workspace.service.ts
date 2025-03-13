@@ -11,14 +11,12 @@ import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 @Injectable()
 export class DataSeedDemoWorkspaceService {
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly workspaceManagerService: WorkspaceManagerService,
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,

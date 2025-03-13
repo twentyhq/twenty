@@ -65,6 +65,8 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await sleep(100);
-    await canvas.findByText('Code your function');
+    await canvas.findByText('Code your function', undefined, {
+      timeout: 3000,
+    });
   },
 };

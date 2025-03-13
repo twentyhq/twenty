@@ -337,16 +337,18 @@ export const WorkflowEditActionServerlessFunction = ({
                   isTesting={isTesting}
                 />
               </StyledCodeEditorContainer>
-              <StyledCodeEditorContainer>
-                <InputLabel>Logs</InputLabel>
-                <TextArea
-                  value={
-                    isTesting ? '' : serverlessFunctionTestData.output.logs
-                  }
-                  maxRows={20}
-                  disabled
-                />
-              </StyledCodeEditorContainer>
+              {serverlessFunctionTestData.output.logs.length > 0 && (
+                <StyledCodeEditorContainer>
+                  <InputLabel>Logs</InputLabel>
+                  <TextArea
+                    value={
+                      isTesting ? '' : serverlessFunctionTestData.output.logs
+                    }
+                    maxRows={20}
+                    disabled
+                  />
+                </StyledCodeEditorContainer>
+              )}
             </>
           )}
         </WorkflowStepBody>

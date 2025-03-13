@@ -1,14 +1,13 @@
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import {
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessage,
-} from 'src/modules/view/views.exception';
 
 @WorkspaceQueryHook(`view.deleteOne`)
 export class ViewDeleteOnePreQueryHook implements WorkspaceQueryHookInstance {
@@ -34,16 +33,16 @@ export class ViewDeleteOnePreQueryHook implements WorkspaceQueryHookInstance {
     });
 
     if (!view) {
-      throw new ViewException(
-        ViewExceptionMessage.VIEW_NOT_FOUND,
-        ViewExceptionCode.VIEW_NOT_FOUND,
+      throw new GraphqlQueryRunnerException(
+        'View not found',
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
 
     if (view.key === 'INDEX') {
-      throw new ViewException(
-        ViewExceptionMessage.CANNOT_DELETE_INDEX_VIEW,
-        ViewExceptionCode.CANNOT_DELETE_INDEX_VIEW,
+      throw new GraphqlQueryRunnerException(
+        'Cannot delete INDEX view',
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
 

@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`is-same-major-and-minor-version incomplete version1 1`] = `"Received invalid version: 1.0 1.1.0"`;
+
+exports[`is-same-major-and-minor-version invalid version1 1`] = `"Received invalid version: invalid 1.1.0"`;
+
+exports[`is-same-major-and-minor-version invalid version2 1`] = `"Received invalid version: 1.0.0 invalid"`;

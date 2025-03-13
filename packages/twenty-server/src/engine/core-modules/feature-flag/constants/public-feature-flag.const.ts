@@ -7,7 +7,10 @@ type FeatureFlagMetadata = {
 };
 
 export type PublicFeatureFlag = {
-  key: Extract<FeatureFlagKey, FeatureFlagKey.IsWorkflowEnabled>;
+  key: Extract<
+    FeatureFlagKey,
+    FeatureFlagKey.IsWorkflowEnabled | FeatureFlagKey.IsPermissionsEnabled
+  >;
   metadata: FeatureFlagMetadata;
 };
 
@@ -18,6 +21,15 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Workflows',
       description: 'Create custom workflows to automate your work.',
       imagePath: 'https://twenty.com/images/lab/is-workflow-enabled.png',
+    },
+  },
+  {
+    key: FeatureFlagKey.IsPermissionsEnabled,
+    metadata: {
+      label: 'Permissions V1',
+      description:
+        'Role-based access control system for workspace security management (Admin/Member)',
+      imagePath: 'https://twenty.com/images/lab/is-permissions-enabled.png',
     },
   },
 ];
