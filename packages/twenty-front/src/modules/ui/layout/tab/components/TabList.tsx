@@ -33,7 +33,7 @@ const StyledContainer = styled.div`
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
   height: 40px;
   user-select: none;
 `;

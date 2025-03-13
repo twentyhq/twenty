@@ -18,6 +18,16 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
 msgstr ": 비어 있음"
@@ -111,6 +121,14 @@ msgstr "중단"
 msgid "About"
 msgstr "정보"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr "이 사용자에 대해"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr "이 작업공간에 대해"
+
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Account"
@@ -133,7 +151,6 @@ msgid "Actions"
 msgstr "작업"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -154,8 +171,8 @@ msgid "Active API keys created by you or your team."
 msgstr "본인 또는 팀이 생성한 활성 API 키입니다."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-msgid "Add"
-msgstr "추가"
+#~ msgid "Add"
+#~ msgstr "Add"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -165,6 +182,7 @@ msgstr "계정 추가"
 msgid "Add Approved Access Domain"
 msgstr "승인된 액세스 도메인 추가"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "필드 추가"
@@ -236,6 +254,14 @@ msgstr "차단 목록에 추가됨"
 msgid "Adjust the role-related settings"
 msgstr "역할 관련 설정 조정"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Admin Panel"
+msgstr "관리자 패널"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "고급 필터"
@@ -271,6 +297,10 @@ msgstr "모든 개체"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "모든 역할"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr "이 사용자가 속한 모든 작업 공간"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -500,6 +530,10 @@ msgstr "캘린더"
 msgid "Calendar settings"
 msgstr "캘린더 설정"
 
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Calendar Sync Status"
+msgstr "캘린더 동기화 상태"
+
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -603,7 +637,7 @@ msgstr "접기"
 msgid "Color code"
 msgstr "색상 코드"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "컴팩트 보기"
 
@@ -681,12 +715,13 @@ msgid "Continue with Microsoft"
 msgstr "Microsoft로 계속"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "클립보드에 복사되었습니다!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
-msgid "Copilot"
-msgstr "부조종사"
+#~ msgid "Copilot"
+#~ msgstr "Copilot"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -702,6 +737,10 @@ msgstr "초대 링크 복사"
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Copy link"
 msgstr "링크 복사"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Copy link to view"
+msgstr "보기 링크 복사"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
@@ -778,6 +817,14 @@ msgstr "워크스페이스 만들기"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Created"
 msgstr "생성됨"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Current version"
+msgstr "현재 버전"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Current version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -858,7 +905,6 @@ msgid "Date format"
 msgstr "날짜 형식"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -919,7 +965,6 @@ msgstr "워크스페이스에서 다른 사용자에게 표시될 내용을 정�
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -957,6 +1002,10 @@ msgstr "레코드 삭제"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "이 통합 삭제"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Delete view"
+msgstr "보기 삭제"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -1027,7 +1076,6 @@ msgstr "파기"
 msgid "Developers"
 msgstr "개발자"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
@@ -1131,6 +1179,7 @@ msgstr "하위 도메인 이름을 편집하거나 사용자 지정 도메인을
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "이메일"
 
@@ -1194,6 +1243,14 @@ msgstr "직원"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 msgid "Empty"
 msgstr "비어 있음"
+
+#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+msgid "Empty Array"
+msgstr "빈 배열"
+
+#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+msgid "Empty Object"
+msgstr "빈 객체"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
@@ -1551,6 +1608,7 @@ msgid "Group by"
 msgstr "그룹별"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr "건강 상태"
@@ -1580,6 +1638,10 @@ msgstr "빈 그룹 숨기기"
 msgid "How you'll be identified on the app."
 msgstr "앱에서 사용자를 식별하는 방법입니다."
 
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
+msgid "How your system is doing"
+msgstr "시스템 상태"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
 msgstr "헝가리어"
@@ -1592,6 +1654,11 @@ msgstr "아이콘"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Icon and Name"
 msgstr "아이콘 및 이름"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr "ID"
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
@@ -1796,6 +1863,38 @@ msgstr "실험실"
 msgid "Language"
 msgstr "언어"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Last 1 hour"
+msgstr "지난 <b>1</b>시간"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 1 Hour (oldest → newest)"
+msgstr "지난 1시간 (오래된 순 → 최신 순)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Last 12 hours"
+msgstr "지난 <b>12</b>시간"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 12 Hours (oldest → newest)"
+msgstr "지난 12시간 (오래된 순 → 최신 순)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 24 Hours (oldest → newest)"
+msgstr "지난 24시간 (오래된 순 → 최신 순)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Last 4 hours"
+msgstr "지난 <b>4</b>시간"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 4 Hours (oldest → newest)"
+msgstr "지난 4시간 (오래된 순 → 최신 순)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 7 Days (oldest → newest)"
+msgstr "지난 7일 (오래된 순 → 최신 순)"
+
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
@@ -1809,9 +1908,22 @@ msgstr "최신"
 msgid "Latest date"
 msgstr "최신 날짜"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Latest version"
+msgstr "최신 버전"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Latest version:"
+
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
 msgstr "시작"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr "레이아웃"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -1829,6 +1941,10 @@ msgstr "링크가 클립보드에 복사되었습니다"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listings"
 msgstr "목록"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Loading metrics data..."
+msgstr "메트릭스 데이터 로딩 중..."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Log out"
@@ -1880,8 +1996,13 @@ msgstr "최대"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "회원"
+
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Message Sync Status"
+msgstr "메시지 동기화 상태"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -1931,6 +2052,8 @@ msgstr "오른쪽으로 이동"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "이름"
 
@@ -2066,6 +2189,10 @@ msgstr "국가 없음"
 #~ msgid "No members matching your search"
 #~ msgstr "No members matching your search"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "No metrics data available"
+msgstr "사용 가능한 메트릭스 데이터 없음"
+
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
@@ -2110,12 +2237,17 @@ msgstr "노르웨이어"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Not available on Default View"
 msgstr "기본 보기에서 사용 불가"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
 msgstr "비어 있지 않음"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Not Found"
+msgstr "찾을 수 없음"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
@@ -2167,8 +2299,8 @@ msgstr "타임스탬프 및 참가자만 팀과 공유됩니다."
 msgid "Open command menu"
 msgstr "명령 메뉴 열기"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "열기"
 
@@ -2193,11 +2325,21 @@ msgstr "또는"
 
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/lab/SettingsLab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
 msgstr "기타"
+
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+msgid "Other Environment Variables"
+msgstr "기타 환경 변수"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "Other Variables"
+msgstr "기타 변수"
 
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -2338,6 +2480,14 @@ msgstr "OIDC 공급자 세부정보를 제공하세요"
 msgid "Pseudo-English"
 msgstr "의사 영어"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
+msgid "Queue information is not available because the worker is down"
+msgstr "워크가 다운되어 대기열 정보를 사용할 수 없습니다"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Queue performance"
+msgstr "대기열 성능"
+
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
 #~ msgstr "Read documentation"
@@ -2345,6 +2495,10 @@ msgstr "의사 영어"
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "비밀번호 업데이트 링크가 포함된 이메일 받기"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Recent Events (oldest → newest)"
+msgstr "최근 이벤트 (오래된 순 → 최신 순)"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -2358,8 +2512,8 @@ msgstr "레코드 이미지"
 msgid "Record label"
 msgstr "레코드 레이블"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "레코드 페이지"
 
@@ -2636,8 +2790,8 @@ msgstr "세르비아어 (키릴)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Server Admin"
-msgstr "서버 관리자"
+#~ msgid "Server Admin"
+#~ msgstr "Server Admin"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -2697,8 +2851,8 @@ msgstr "필드의 레이블을 변경하면 API 이름도 변경되어야 하나
 msgid "Should changing an object's label also change the API?"
 msgstr "객체의 레이블을 변경할 때 API도 변경되어야 하나요?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "사이드 패널"
 
@@ -2748,6 +2902,7 @@ msgstr "SSO"
 msgid "Stages"
 msgstr "단계"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "상태"
@@ -2853,7 +3008,6 @@ msgstr "테이블"
 msgid "Terms of Service"
 msgstr "서비스 약관"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test"
 msgstr "테스트"
@@ -2926,6 +3080,10 @@ msgstr "비밀번호 업데이트 중 오류가 발생했습니다."
 msgid "There was an issue"
 msgstr "문제가 발생했습니다"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr "이것들은 서버 값에 불과합니다. 작업 환경에 동일한 변수와 값이 있는지 확인하십시오. 이메일 동기화와 같은 비동기 작업에 필요합니다."
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 사용자가 영구적으로 삭제되고 모든 할당에서 제거됩니다."
@@ -2950,6 +3108,10 @@ msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 전체 워크
 msgid "This role is assigned to these workspace members."
 msgstr "이 역할은 이 워크스페이스 멤버들에게 할당되었습니다."
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "This week"
+msgstr "이번 주"
+
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
 msgstr "시간 형식"
@@ -2970,18 +3132,21 @@ msgstr "월간으로"
 msgid "to yearly"
 msgstr "연간으로"
 
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "총 사용자"
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Today"
+msgstr "오늘"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#~ msgid "Total Users"
+#~ msgstr "Total Users"
+
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "트리거 유형"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "트리거 유형은 수동이어야 합니다 - 선택된 레코드가 없는 경우"
+#~ msgid "Trigger type should be Manual - when no record(s) are selected"
+#~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3062,17 +3227,16 @@ msgstr "API를 사용하거나 첫 번째 {objectLabel}을 수동으로 추가�
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "사용자"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "사용자 이메일"
+#~ msgid "User Email"
+#~ msgstr "User Email"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "사용자 ID"
+#~ msgid "User ID"
+#~ msgstr "User ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3088,18 +3252,22 @@ msgid "User is not logged in"
 msgstr "사용자가 로그인하지 않았습니다"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "사용자 이름"
+#~ msgid "User Name"
+#~ msgstr "User Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "사용자"
+#~ msgid "Users"
+#~ msgstr "Users"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "값"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Variable not found"
+msgstr "변수를 찾을 수 없음"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
@@ -3123,8 +3291,8 @@ msgstr "실행 세부 사항 보기"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "보기 설정"
+#~ msgid "View settings"
+#~ msgstr "View settings"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
@@ -3186,8 +3354,8 @@ msgid "When the key will be disabled"
 msgstr "키 비활성화 시기"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Workflow cannot be tested"
-msgstr "워크플로를 테스트할 수 없음"
+#~ msgid "Workflow cannot be tested"
+#~ msgstr "Workflow cannot be tested"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
@@ -3229,6 +3397,10 @@ msgstr "워크스페이스"
 msgid "Workspace Deletion"
 msgstr "워크스페이스 삭제"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr "워크스페이스 정보"
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "워크스페이스 로고"
@@ -3238,8 +3410,8 @@ msgid "Workspace name"
 msgstr "워크스페이스 이름"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "워크스페이스 이름"
+#~ msgid "Workspace Name"
+#~ msgstr "Workspace Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
@@ -3274,8 +3446,8 @@ msgstr "이 개체에 기록을 생성할 수 있는 권한이 없습니다"
 #~ msgstr "You are not allowed to create records in this object"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "You do not have access to impersonate users."
-msgstr "사용자 대리로 접근할 수 없습니다."
+#~ msgid "You do not have access to impersonate users."
+#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

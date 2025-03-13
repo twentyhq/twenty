@@ -18,6 +18,16 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
 msgstr ": Tom"
@@ -111,6 +121,14 @@ msgstr "Avbryt"
 msgid "About"
 msgstr "Om"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr "Om den här användaren"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr "Om den här arbetsytan"
+
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Account"
@@ -133,7 +151,6 @@ msgid "Actions"
 msgstr "Åtgärder"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -154,8 +171,8 @@ msgid "Active API keys created by you or your team."
 msgstr "Aktiva API-nycklar skapade av dig eller ditt team."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-msgid "Add"
-msgstr "L\\u00e4gg till"
+#~ msgid "Add"
+#~ msgstr "Add"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -165,6 +182,7 @@ msgstr "Lägg till konto"
 msgid "Add Approved Access Domain"
 msgstr "Lägg till godkänd åtkomstdomän"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "L\\u00e4gg till f\\u00e4lt"
@@ -236,6 +254,14 @@ msgstr "Tillagd i blocklistan"
 msgid "Adjust the role-related settings"
 msgstr "Justera de rollrelaterade inställningarna"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Admin Panel"
+msgstr "Administratörspanel"
+
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Avancerat filter"
@@ -271,6 +297,10 @@ msgstr "Alla objekt"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Alla roller"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr "Alla arbetsytor som den här användaren är medlem i"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -500,6 +530,10 @@ msgstr "Kalender"
 msgid "Calendar settings"
 msgstr "Kalenderinställningar"
 
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Calendar Sync Status"
+msgstr "Kalendersynkroniseringsstatus"
+
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -603,7 +637,7 @@ msgstr "Kollapsa"
 msgid "Color code"
 msgstr "Färgkod"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Kompakt vy"
 
@@ -681,12 +715,13 @@ msgid "Continue with Microsoft"
 msgstr "Fortsätt med Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Kopierad till urklipp!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
-msgid "Copilot"
-msgstr "Kopilot"
+#~ msgid "Copilot"
+#~ msgstr "Copilot"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -702,6 +737,10 @@ msgstr "Kopiera inbjudningslänk"
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Copy link"
 msgstr "Kopiera länk"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Copy link to view"
+msgstr "Kopiera länk för att se"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
@@ -778,6 +817,14 @@ msgstr "Skapa din arbetsyta"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Created"
 msgstr "Skapad"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Current version"
+msgstr "Nuvarande version"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Current version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -858,7 +905,6 @@ msgid "Date format"
 msgstr "Datumformat"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -919,7 +965,6 @@ msgstr "Definiera vad som ska vara synligt för andra användare i din arbetsyta
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -957,6 +1002,10 @@ msgstr "Ta bort poster"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "Ta bort denna integration"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Delete view"
+msgstr "Ta bort vy"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -1027,7 +1076,6 @@ msgstr "Förstör"
 msgid "Developers"
 msgstr "Utvecklare"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
@@ -1131,6 +1179,7 @@ msgstr "Redigera ditt subdomännamn eller ange en anpassad domän."
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "E-post"
 
@@ -1194,6 +1243,14 @@ msgstr "Anställda"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 msgid "Empty"
 msgstr "Tom"
+
+#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+msgid "Empty Array"
+msgstr "Tom Array"
+
+#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+msgid "Empty Object"
+msgstr "Tomt Objekt"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
@@ -1551,6 +1608,7 @@ msgid "Group by"
 msgstr "Gruppera efter"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr "Hälsostatus"
@@ -1580,6 +1638,10 @@ msgstr "Dölj tomma grupper"
 msgid "How you'll be identified on the app."
 msgstr "Hur du kommer att identifieras i appen."
 
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
+msgid "How your system is doing"
+msgstr "Hur ditt system mår"
+
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
 msgstr "Hungarian"
@@ -1592,6 +1654,11 @@ msgstr "Ikon"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Icon and Name"
 msgstr "Ikon och namn"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr ""
 
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
@@ -1796,6 +1863,38 @@ msgstr "Laboratorium"
 msgid "Language"
 msgstr "Spr\\u00e5k"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Last 1 hour"
+msgstr "Senaste 1 timmen"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 1 Hour (oldest → newest)"
+msgstr "Senaste 1 timmen (äldst → nyast)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Last 12 hours"
+msgstr "Senaste 12 timmarna"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 12 Hours (oldest → newest)"
+msgstr "Senaste 12 timmarna (äldst → nyast)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 24 Hours (oldest → newest)"
+msgstr "Senaste 24 timmarna (äldst → nyast)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Last 4 hours"
+msgstr "Senaste 4 timmarna"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 4 Hours (oldest → newest)"
+msgstr "Senaste 4 timmarna (äldst → nyast)"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Last 7 Days (oldest → newest)"
+msgstr "Senaste 7 dagarna (äldst → nyast)"
+
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
@@ -1809,9 +1908,22 @@ msgstr "Senaste"
 msgid "Latest date"
 msgstr "Senaste datum"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Latest version"
+msgstr "Senaste versionen"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Latest version:"
+
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
 msgstr "Starta"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr "Layout"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -1829,6 +1941,10 @@ msgstr "L\\u00e4nk kopierad till urklipp"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listings"
 msgstr "Listningar"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Loading metrics data..."
+msgstr "Laddar metrikdata..."
 
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Log out"
@@ -1880,8 +1996,13 @@ msgstr "Högsta"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "Medlemmar"
+
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Message Sync Status"
+msgstr "Meddelande synkroniseringsstatus"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -1931,6 +2052,8 @@ msgstr "Flytta \\u00e5t h\\u00f6ger"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "Namn"
 
@@ -2066,6 +2189,10 @@ msgstr "Inget land"
 #~ msgid "No members matching your search"
 #~ msgstr "No members matching your search"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "No metrics data available"
+msgstr "Ingen metrikdata tillgänglig"
+
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
@@ -2110,12 +2237,17 @@ msgstr "Norwegian"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Not available on Default View"
 msgstr "Inte tillgänglig i standardvyn"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
 msgstr "Inte tom"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Not Found"
+msgstr "Hittades inte"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
@@ -2167,8 +2299,8 @@ msgstr "Endast tidsstämpeln och deltagare kommer att delas med ditt team."
 msgid "Open command menu"
 msgstr "Öppna kommandomenyn"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Öppna i"
 
@@ -2193,11 +2325,21 @@ msgstr "eller"
 
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/lab/SettingsLab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
 msgstr "Annat"
+
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
+msgid "Other Environment Variables"
+msgstr "Andra miljövariabler"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "Other Variables"
+msgstr "Andra variabler"
 
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -2338,6 +2480,14 @@ msgstr "Ange dina OIDC-leverantörsdetaljer"
 msgid "Pseudo-English"
 msgstr "Pseudo-Engelska"
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
+msgid "Queue information is not available because the worker is down"
+msgstr "Köinformation är inte tillgänglig eftersom arbetaren är nere"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Queue performance"
+msgstr "Köprestanda"
+
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
 #~ msgstr "Read documentation"
@@ -2345,6 +2495,10 @@ msgstr "Pseudo-Engelska"
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "Ta emot ett e-postmeddelande med länk för att uppdatera lösenordet"
+
+#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+msgid "Recent Events (oldest → newest)"
+msgstr "Senaste händelserna (äldst → nyast)"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
@@ -2358,8 +2512,8 @@ msgstr "Spela in bild"
 msgid "Record label"
 msgstr "Spela in etikett"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Inspelningssida"
 
@@ -2636,8 +2790,8 @@ msgstr "Serbian (Cyrillic)"
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Server Admin"
-msgstr "Serveradministratör"
+#~ msgid "Server Admin"
+#~ msgstr "Server Admin"
 
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -2697,8 +2851,8 @@ msgstr "Bör en ändring av ett fälts etikett även ändra API-namnet?"
 msgid "Should changing an object's label also change the API?"
 msgstr "Bör ändring av ett objekts etikett också ändra APIet?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Sidopanel"
 
@@ -2748,6 +2902,7 @@ msgstr "Enkel inloggning"
 msgid "Stages"
 msgstr "Stadier"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Status"
@@ -2853,7 +3008,6 @@ msgstr "Tabell"
 msgid "Terms of Service"
 msgstr "Användarvillkor"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test"
 msgstr "Testa"
@@ -2926,6 +3080,10 @@ msgstr "Det uppstod ett fel vid uppdatering av lösenordet."
 msgid "There was an issue"
 msgstr "Det uppstod ett problem"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr "Det här är bara servervärdena. Se till att din arbetarmiljö har samma variabler och värden, detta krävs för asynkrona uppgifter som e-postsynkronisering."
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Denna åtgärd kan inte ångras. Det här kommer att radera denna användare permanent och ta bort dem från alla deras uppdrag."
@@ -2950,6 +3108,10 @@ msgstr "Denna åtgärd kan inte ångras. Detta kommer att permanent radera hela 
 msgid "This role is assigned to these workspace members."
 msgstr "Denna roll är tilldelad till dessa arbetsytemedlemmar."
 
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "This week"
+msgstr "Denna vecka"
+
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
 msgstr "Tidsformat"
@@ -2970,18 +3132,21 @@ msgstr "till månadsvis"
 msgid "to yearly"
 msgstr "till årsvis"
 
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "Totala användare"
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+msgid "Today"
+msgstr "Idag"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#~ msgid "Total Users"
+#~ msgstr "Total Users"
+
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "Utlösartyp"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "Utlösartypen bör vara Manuell - när inga post(er) är valda"
+#~ msgid "Trigger type should be Manual - when no record(s) are selected"
+#~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3062,17 +3227,16 @@ msgstr "Använd vår API eller lägg till ditt första {objectLabel} manuellt"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Användare"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "Användarens e-post"
+#~ msgid "User Email"
+#~ msgstr "User Email"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "Användar-ID"
+#~ msgid "User ID"
+#~ msgstr "User ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3088,18 +3252,22 @@ msgid "User is not logged in"
 msgstr "Användaren är inte inloggad"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "Användarnamn"
+#~ msgid "User Name"
+#~ msgstr "User Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "Användare"
+#~ msgid "Users"
+#~ msgstr "Users"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "Värden"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Variable not found"
+msgstr "Variabel hittades inte"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
@@ -3123,8 +3291,8 @@ msgstr "Visa exekveringsdetaljer"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Visa inställningar"
+#~ msgid "View settings"
+#~ msgstr "View settings"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
@@ -3186,8 +3354,8 @@ msgid "When the key will be disabled"
 msgstr "När nyckeln kommer att inaktiveras"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Workflow cannot be tested"
-msgstr "Arbetsflödet kan inte testas"
+#~ msgid "Workflow cannot be tested"
+#~ msgstr "Workflow cannot be tested"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
@@ -3229,6 +3397,10 @@ msgstr "Arbetsyta"
 msgid "Workspace Deletion"
 msgstr "Arbetsytans radering"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr "Arbetsytans info"
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "Arbetsytans logotyp"
@@ -3238,8 +3410,8 @@ msgid "Workspace name"
 msgstr "Arbetsytans namn"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "Arbetsytans namn"
+#~ msgid "Workspace Name"
+#~ msgstr "Workspace Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
@@ -3274,8 +3446,8 @@ msgstr "Du har inte tillåtelse att skapa poster i detta objekt"
 #~ msgstr "You are not allowed to create records in this object"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "You do not have access to impersonate users."
-msgstr "Du har inte behörighet att imitera användare."
+#~ msgid "You do not have access to impersonate users."
+#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

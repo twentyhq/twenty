@@ -5,7 +5,6 @@ import {
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import '@scalar/api-reference-react/style.css';
 import { IconButton, IconX, useIsMobile } from 'twenty-ui';
 
 type FullScreenContainerProps = {

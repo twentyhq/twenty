@@ -3,10 +3,8 @@ import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { RecordIndexActionMenuButtons } from '@/action-menu/components/RecordIndexActionMenuButtons';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
-import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordIndexActionMenuEffect';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
@@ -19,10 +17,6 @@ import { FeatureFlagKey } from '~/generated/graphql';
 export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
   const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemComponentState,
-  );
-
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
   );
 
   const isWorkflowEnabled = useIsFeatureEnabled(
@@ -54,14 +48,9 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
             },
           }}
         >
-          {isCommandMenuV2Enabled ? (
-            <>{!isMobile && <RecordIndexActionMenuButtons />}</>
-          ) : (
-            <RecordIndexActionMenuBar />
-          )}
+          {!isMobile && <RecordIndexActionMenuButtons />}
           <RecordIndexActionMenuDropdown />
           <ActionMenuConfirmationModals />
-          <RecordIndexActionMenuEffect />
           <RecordActionMenuEntriesSetter />
           <RecordAgnosticActionMenuEntriesSetter />
           {isWorkflowEnabled && (

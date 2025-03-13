@@ -26,12 +26,13 @@ import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules
 import { ObjectMetadataRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-relation.service';
 import { buildDefaultFieldsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 import {
-  validateNameAndLabelAreSyncOrThrow,
-  validateNameSingularAndNamePluralAreDifferentOrThrow,
-  validateObjectMetadataInputOrThrow,
+  validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
+  validateObjectMetadataInputLabelsOrThrow,
+  validateObjectMetadataInputNamesOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { SearchService } from 'src/engine/metadata-modules/search/search.service';
+import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -88,12 +89,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.workspaceId,
       );
 
-    validateObjectMetadataInputOrThrow(objectMetadataInput);
+    validateObjectMetadataInputNamesOrThrow(objectMetadataInput);
+    validateObjectMetadataInputLabelsOrThrow(objectMetadataInput);
 
-    validateNameSingularAndNamePluralAreDifferentOrThrow(
-      objectMetadataInput.nameSingular,
-      objectMetadataInput.namePlural,
-    );
+    validateLowerCasedAndTrimmedStringsAreDifferentOrThrow({
+      inputs: [
+        objectMetadataInput.nameSingular,
+        objectMetadataInput.namePlural,
+      ],
+      message: 'The singular and plural names cannot be the same for an object',
+    });
+    validateLowerCasedAndTrimmedStringsAreDifferentOrThrow({
+      inputs: [
+        objectMetadataInput.labelPlural,
+        objectMetadataInput.labelSingular,
+      ],
+      message:
+        'The singular and plural labels cannot be the same for an object',
+    });
 
     if (objectMetadataInput.isLabelSyncedWithName === true) {
       validateNameAndLabelAreSyncOrThrow(
@@ -199,7 +212,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
-    validateObjectMetadataInputOrThrow(input.update);
+    validateObjectMetadataInputNamesOrThrow(input.update);
 
     const existingObjectMetadata = await this.objectMetadataRepository.findOne({
       where: { id: input.id, workspaceId: workspaceId },
@@ -242,10 +255,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isDefined(input.update.nameSingular) ||
       isDefined(input.update.namePlural)
     ) {
-      validateNameSingularAndNamePluralAreDifferentOrThrow(
-        existingObjectMetadataCombinedWithUpdateInput.nameSingular,
-        existingObjectMetadataCombinedWithUpdateInput.namePlural,
-      );
+      validateLowerCasedAndTrimmedStringsAreDifferentOrThrow({
+        inputs: [
+          existingObjectMetadataCombinedWithUpdateInput.nameSingular,
+          existingObjectMetadataCombinedWithUpdateInput.namePlural,
+        ],
+        message:
+          'The singular and plural names cannot be the same for an object',
+      });
     }
 
     const updatedObject = await super.updateOne(input.id, input.update);

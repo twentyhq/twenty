@@ -69,6 +69,8 @@ export const ObjectFilterDropdownTextSearchInput = () => {
               fieldMetadataItemUsedInDropdown.type,
             ),
             label: fieldMetadataItemUsedInDropdown.label,
+            positionInRecordFilterGroup:
+              selectedFilter?.positionInRecordFilterGroup,
           });
         }}
       />

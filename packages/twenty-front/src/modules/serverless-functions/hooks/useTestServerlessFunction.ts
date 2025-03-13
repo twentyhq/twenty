@@ -45,6 +45,7 @@ export const useTestServerlessFunction = ({
                 4,
               )
             : undefined,
+          logs: result?.data?.executeOneServerlessFunction?.logs || '',
           duration: result?.data?.executeOneServerlessFunction?.duration,
           status: result?.data?.executeOneServerlessFunction?.status,
           error: result?.data?.executeOneServerlessFunction?.error
