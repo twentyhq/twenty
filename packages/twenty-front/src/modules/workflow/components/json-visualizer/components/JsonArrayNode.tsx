@@ -1,4 +1,5 @@
 import { JsonNestedNode } from '@/workflow/components/json-visualizer/components/JsonNestedNode';
+import { useLingui } from '@lingui/react/macro';
 import { IconBrackets } from 'twenty-ui';
 import { JsonArray } from 'type-fest';
 
@@ -11,6 +12,8 @@ export const JsonArrayNode = ({
   value: JsonArray;
   depth: number;
 }) => {
+  const { t } = useLingui();
+
   return (
     <JsonNestedNode
       elements={[...value.entries()].map(([key, value]) => ({
@@ -18,9 +21,11 @@ export const JsonArrayNode = ({
         label: String(key),
         value,
       }))}
+      renderElementsCount={(count) => `[${count}]`}
       label={label}
       Icon={IconBrackets}
       depth={depth}
+      emptyElementsText={t`Empty Array`}
     />
   );
 };

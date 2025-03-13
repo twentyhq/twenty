@@ -11,7 +11,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
@@ -125,7 +124,7 @@ export const AdvancedFilterViewFilterOperandSelect = ({
             ))}
           </DropdownMenuItemsContainer>
         }
-        dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
+        dropdownHotkeyScope={{ scope: dropdownId }}
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"
       />

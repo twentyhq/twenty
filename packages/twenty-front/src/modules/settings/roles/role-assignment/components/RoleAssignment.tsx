@@ -38,7 +38,7 @@ const StyledAssignToMemberContainer = styled.div`
 `;
 
 const StyledSearchContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(2)} 0;
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTable = styled.div<{ hasRows: boolean }>`
@@ -55,6 +55,12 @@ const StyledSearchInput = styled(TextInput)`
       border: 1px solid ${({ theme }) => theme.border.color.medium};
     }
   }
+`;
+
+const StyledTableRows = styled.div`
+  gap: ${({ theme }) => theme.spacing(0.5)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 type RoleAssignmentProps = {
@@ -177,12 +183,14 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
         </StyledSearchContainer>
         <StyledTable hasRows={filteredWorkspaceMembers.length > 0}>
           <RoleAssignmentTableHeader />
-          {filteredWorkspaceMembers.map((workspaceMember) => (
-            <RoleAssignmentTableRow
-              key={workspaceMember.id}
-              workspaceMember={workspaceMember}
-            />
-          ))}
+          <StyledTableRows>
+            {filteredWorkspaceMembers.map((workspaceMember) => (
+              <RoleAssignmentTableRow
+                key={workspaceMember.id}
+                workspaceMember={workspaceMember}
+              />
+            ))}
+          </StyledTableRows>
         </StyledTable>
 
         <StyledAssignToMemberContainer>

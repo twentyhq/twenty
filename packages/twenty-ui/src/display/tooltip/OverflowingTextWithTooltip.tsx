@@ -50,10 +50,10 @@ const StyledOverflowingText = styled.div<{
 
   font-weight: inherit;
   max-width: 100%;
-  overflow: hidden;
   text-decoration: inherit;
 
   text-overflow: ellipsis;
+  overflow: hidden;
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
 
   white-space: nowrap;

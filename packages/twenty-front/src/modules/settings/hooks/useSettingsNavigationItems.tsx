@@ -186,8 +186,8 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
       label: t`Other`,
       items: [
         {
-          label: t`Server Admin`,
-          path: SettingsPath.ServerAdmin,
+          label: t`Admin Panel`,
+          path: SettingsPath.AdminPanel,
           Icon: IconServer,
           isHidden: !isAdminEnabled,
         },
