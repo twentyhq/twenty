@@ -4,7 +4,7 @@ import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metad
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
+import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
@@ -55,7 +55,7 @@ export const useLoadRecordIndexStates = () => {
   const setRecordIndexViewKanbanAggregateOperationState = useSetRecoilState(
     recordIndexKanbanAggregateOperationState,
   );
-  const { setRecordGroupFromViewGroups } = useSetRecordGroup();
+  const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const { setTableColumns } = useSetTableColumns();
 
@@ -188,7 +188,7 @@ export const useLoadRecordIndexStates = () => {
           .getValue();
 
         onViewFieldsChange(view.viewFields, objectMetadataItem, recordIndexId);
-        setRecordGroupFromViewGroups(view.id, view.viewGroups);
+        setRecordGroupsFromViewGroups(view.id, view.viewGroups);
 
         set(
           tableFiltersComponentState.atomFamily({
@@ -244,7 +244,7 @@ export const useLoadRecordIndexStates = () => {
       },
     [
       onViewFieldsChange,
-      setRecordGroupFromViewGroups,
+      setRecordGroupsFromViewGroups,
       setRecordIndexFilters,
       setRecordIndexViewFilterGroups,
       setContextStoreTargetedRecordsRuleComponentState,

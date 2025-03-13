@@ -15,10 +15,10 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const useSetRecordGroup = () => {
+export const useSetRecordGroups = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const setRecordGroup = useRecoilCallback(
+  const setRecordGroups = useRecoilCallback(
     ({ snapshot, set }) =>
       (recordGroups: RecordGroupDefinition[], recordIndexId: string) => {
         const objectMetadataItemId = snapshot
@@ -112,7 +112,7 @@ export const useSetRecordGroup = () => {
     [],
   );
 
-  const setRecordGroupFromViewGroups = useCallback(
+  const setRecordGroupsFromViewGroups = useCallback(
     (viewId: string, viewGroups: ViewGroup[]) => {
       const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
         objectMetadataItem.namePlural,
@@ -124,13 +124,13 @@ export const useSetRecordGroup = () => {
         viewGroups,
       });
 
-      setRecordGroup(newGroupDefinitions, recordIndexId);
+      setRecordGroups(newGroupDefinitions, recordIndexId);
     },
-    [objectMetadataItem, setRecordGroup],
+    [objectMetadataItem, setRecordGroups],
   );
 
   return {
-    setRecordGroup,
-    setRecordGroupFromViewGroups,
+    setRecordGroups,
+    setRecordGroupsFromViewGroups,
   };
 };
