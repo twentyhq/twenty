@@ -51,12 +51,12 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       });
 
     switch (workspaceVersionCompareResult) {
-      case -1: {
+      case 'lower': {
         throw new Error(
           `WORKSPACE_VERSION_MISSMATCH Upgrade for workspace ${workspaceId} failed as its version is beneath fromWorkspaceVersion=${this.fromWorkspaceVersion.version}`,
         );
       }
-      case 0: {
+      case 'equal': {
         await this.runBeforeSyncMetadata(args);
         await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
         await this.runAfterSyncMetadata(args);
@@ -71,7 +71,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
         return;
       }
-      case 1: {
+      case 'higher': {
         this.logger.log(
           chalk.blue(
             `Upgrade for workspace ${workspaceId} ignored as is already at a higher version.`,

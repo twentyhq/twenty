@@ -5,7 +5,7 @@ import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-m
 type IsSameVersionTestCase = EachTestingContext<{
   version1: string;
   version2: string;
-  expected?: -1 | 0 | 1;
+  expected?: ReturnType<typeof compareVersionMajorAndMinor>;
   expectToThrow?: boolean;
 }>;
 describe('is-same-major-and-minor-version', () => {
@@ -14,7 +14,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '1.0.0',
         version2: '1.1.0',
-        expected: -1,
+        expected: 'lower',
       },
       title: 'different minor version',
     },
@@ -22,7 +22,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '2.3.0',
         version2: '2.4.0',
-        expected: -1,
+        expected: 'lower',
       },
       title: 'different minor version',
     },
@@ -30,7 +30,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '0.1.0',
         version2: '0.2.0',
-        expected: -1,
+        expected: 'lower',
       },
       title: 'different minor version with zero major',
     },
@@ -38,7 +38,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '2.3.5',
         version2: '2.4.1',
-        expected: -1,
+        expected: 'lower',
       },
       title: 'different minor and patch versions',
     },
@@ -46,7 +46,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '1.0.0-alpha',
         version2: '1.1.0-beta',
-        expected: -1,
+        expected: 'lower',
       },
       title: 'different minor version with different pre-release tags',
     },
@@ -54,7 +54,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: 'v1.0.0',
         version2: 'v1.1.0',
-        expected: -1,
+        expected: 'lower',
       },
       title: 'different minor version with v prefix',
     },
@@ -62,7 +62,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '2.0.0',
         version2: '42.42.42',
-        expected: -1,
+        expected: 'lower',
       },
       title: 'above version2',
     },
@@ -70,7 +70,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '2.0.0',
         version2: 'v42.42.42',
-        expected: -1,
+        expected: 'lower',
       },
       title: 'above version2 with v-prefix',
     },
@@ -81,7 +81,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '1.1.0',
         version2: '1.1.0',
-        expected: 0,
+        expected: 'equal',
       },
       title: 'exact same version',
     },
@@ -89,7 +89,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '1.1.0',
         version2: '1.1.42',
-        expected: 0,
+        expected: 'equal',
       },
       title: 'exact same major and minor but different patch version',
     },
@@ -97,7 +97,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: 'v1.1.0',
         version2: 'v1.1.0',
-        expected: 0,
+        expected: 'equal',
       },
       title: 'exact same version with v prefix',
     },
@@ -105,7 +105,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '1.1.0-alpha',
         version2: '1.1.0-alpha',
-        expected: 0,
+        expected: 'equal',
       },
       title: 'exact same version with same pre-release tag',
     },
@@ -113,7 +113,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '0.0.1',
         version2: '0.0.1',
-        expected: 0,
+        expected: 'equal',
       },
       title: 'exact same version with all zeros',
     },
@@ -121,7 +121,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: 'v1.1.0',
         version2: '1.1.0',
-        expected: 0,
+        expected: 'equal',
       },
       title: 'same version with different v-prefix',
     },
@@ -132,7 +132,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: 'v42.1.0',
         version2: '2.0.0',
-        expected: 1,
+        expected: 'higher',
       },
       title: 'above version',
     },
@@ -140,7 +140,7 @@ describe('is-same-major-and-minor-version', () => {
       context: {
         version1: '42.42.42',
         version2: '2.0.0',
-        expected: 1,
+        expected: 'higher',
       },
       title: 'above version with prefix',
     },
