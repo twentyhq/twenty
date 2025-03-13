@@ -10,6 +10,10 @@ import { useGetTabUnreadMessages } from '@/chat/call-center/hooks/useGetTabUnrea
 import { useRealTimeChats } from '@/chat/call-center/hooks/useRealTimeChats';
 import { useSendWhatsappEventMessage } from '@/chat/call-center/hooks/useSendWhatsappEventMessage';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
+import {
+  FilteredMessage,
+  FilteredUser,
+} from '@/chat/call-center/types/SearchType';
 import { MessageEventType } from '@/chat/types/MessageEventType';
 import { MessageType, UnreadMessages } from '@/chat/types/MessageType';
 import {
@@ -299,6 +303,50 @@ export const CallCenterProvider = ({
     });
   };
 
+  const handleSearch = (
+    searchTerm: string,
+  ): { users: FilteredUser[]; messages: FilteredMessage[] } => {
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+
+    const filteredChats = whatsappChats.flatMap((chat) => {
+      const chatId = chat.integrationId + `_${chat.client.phone}`;
+
+      const matchingMessages = chat.messages.filter((message) =>
+        message.message.toLowerCase().includes(lowercasedSearchTerm),
+      );
+
+      return matchingMessages.map((message) => ({
+        chatId,
+        message: message.message,
+        chat,
+      }));
+    });
+
+    const filteredMembers = workspaceMembers.flatMap((member) => {
+      const memberName =
+        `${member.name.firstName} ${member.name.lastName}`.toLowerCase();
+
+      if (
+        memberName.includes(lowercasedSearchTerm) &&
+        member.id !== currentWorkspaceMember?.id
+      ) {
+        return whatsappChats
+          .filter((chat) => chat.agent === member.agentId)
+          .map((chat) => ({
+            chatId: chat.integrationId + `_${chat.client.phone}`,
+            agent: member,
+          }));
+      }
+
+      return [];
+    });
+
+    return {
+      users: filteredMembers,
+      messages: filteredChats,
+    };
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -326,6 +374,7 @@ export const CallCenterProvider = ({
         setStartChatNumber,
         startChatIntegrationId,
         setStartChatIntegrationId,
+        handleSearch,
       }}
     >
       {children}

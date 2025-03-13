@@ -1,4 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { Search } from '@/chat/call-center/components/Search';
 import { StartChat } from '@/chat/call-center/components/StartChat';
 import { TemplateMessage } from '@/chat/call-center/components/TemplateMessage';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
@@ -72,6 +73,7 @@ export const PaneSideHeader = () => {
 
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [integrationId, setIntegrationId] = useState<string | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const {
     sortChats,
@@ -113,7 +115,7 @@ export const PaneSideHeader = () => {
   ) => {
     const sendTemplateInput = {
       integrationId: integrationId,
-      to: phoneNumber,
+      to: `+${phoneNumber}`,
       templateName,
       language,
       message,
@@ -145,7 +147,7 @@ export const PaneSideHeader = () => {
         />
         <StyledActionsContainer>
           <StyledIconButton
-            onClick={() => console.log(`Search field`)}
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
             variant="primary"
             accent="blue"
             size="medium"
@@ -214,6 +216,8 @@ export const PaneSideHeader = () => {
           </StyledModalContent>
         </StyledModal>
       )}
+
+      <Search isOpen={isSearchOpen} />
     </>
   );
 };

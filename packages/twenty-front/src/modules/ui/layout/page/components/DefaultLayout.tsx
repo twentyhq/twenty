@@ -66,8 +66,8 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledWebSoftphoneContainer = styled.div`
-  position: fixed;
-  bottom: 20px;
+  position: absolute;
+  bottom: 100px;
   right: 20px;
   z-index: 100;
 `;

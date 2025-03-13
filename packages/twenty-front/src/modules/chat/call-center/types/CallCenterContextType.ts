@@ -1,3 +1,7 @@
+import {
+  FilteredMessage,
+  FilteredUser,
+} from '@/chat/call-center/types/SearchType';
 import { UnreadMessages } from '@/chat/types/MessageType';
 import { WhatsappDocument } from '@/chat/types/WhatsappDocument';
 import { FindWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/types/FindWhatsappIntegrationInput';
@@ -30,4 +34,8 @@ export type CallCenterContextType = {
   setStartChatNumber: Dispatch<SetStateAction<string | null>>;
   startChatIntegrationId: string | null;
   setStartChatIntegrationId: Dispatch<SetStateAction<string | null>>;
+  handleSearch: (searchTerm: string) => {
+    users: FilteredUser[];
+    messages: FilteredMessage[];
+  };
 };

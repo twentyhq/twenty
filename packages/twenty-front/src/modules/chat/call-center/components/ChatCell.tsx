@@ -105,9 +105,8 @@ const StyledContainerPills = styled.div`
 `;
 
 export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
-  const { whatsappIntegrations /*, messengerIntegrations*/ } = useContext(
-    CallCenterContext,
-  ) as CallCenterContextType;
+  const { whatsappIntegrations, currentMember /*, messengerIntegrations*/ } =
+    useContext(CallCenterContext) as CallCenterContextType;
 
   const { agents = [] } = useFindAllAgents();
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
@@ -138,6 +137,10 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
 
   const agent = agents.find((agent: any) => agent.id === chat.agent);
 
+  const isAdmin = agents.find(
+    (agent: any) => agent.id === currentMember?.agentId,
+  )?.isAdmin;
+
   const member = workspaceMembers.find(
     (wsMember: any) => wsMember.id === agent?.memberId,
   );
@@ -162,7 +165,7 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
             />
             {integration?.label}
           </StyledIntegrationCard>
-          {member && agent?.isAdmin && (
+          {isAdmin && (
             <StyledIntegrationCard isSelected={isSelected}>
               {member?.name.firstName} {member?.name.lastName}
             </StyledIntegrationCard>
