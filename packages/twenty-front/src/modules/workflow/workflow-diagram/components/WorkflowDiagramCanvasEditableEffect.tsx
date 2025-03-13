@@ -47,6 +47,10 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         setCommandMenuNavigationStack([]);
       }
 
+      if (!isDefined(selectedNode)) {
+        return;
+      }
+
       const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;
       if (isEmptyTriggerNode) {
         if (isDefined(workflowId)) {
