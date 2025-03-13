@@ -1788,6 +1788,7 @@ export type Role = {
   canUpdateAllObjectRecords: Scalars['Boolean']['output'];
   canUpdateAllSettings: Scalars['Boolean']['output'];
   description?: Maybe<Scalars['String']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   isEditable: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
