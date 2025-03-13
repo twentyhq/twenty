@@ -26,17 +26,14 @@ export type RunOnWorkspaceArgs = {
   appVersion?: string | null;
 };
 
-type FailedWorkspaceMigration = {
-  workspaceId: string;
-  error: Error;
-};
-
-type SucceedWorkspaceMigration = {
-  workspaceId: string;
-};
 export type WorkspaceMigrationReport = {
-  fail: FailedWorkspaceMigration[];
-  success: SucceedWorkspaceMigration[];
+  fail: {
+    workspaceId: string;
+    error: Error;
+  }[];
+  success:  {
+    workspaceId: string;
+  }[];
 };
 
 export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
