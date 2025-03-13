@@ -10,6 +10,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
@@ -22,6 +23,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     ),
     WorkspaceDataSourceModule,
     WorkspaceCacheStorageModule,
+    WorkspaceMetadataVersionModule,
     RoleModule,
     UserRoleModule,
   ],

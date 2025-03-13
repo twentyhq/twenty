@@ -12,8 +12,8 @@ import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runne
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 const AGGREGATE_OPERATION_OPTIONS = [
@@ -105,7 +105,7 @@ export class UpdateViewAggregateOperationsCommand extends ActiveOrSuspendedWorks
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -122,24 +122,9 @@ export class UpdateViewAggregateOperationsCommand extends ActiveOrSuspendedWorks
     await this.updateViewAggregateOperations(workspaceId);
     await this.updateViewFieldAggregateOperations(workspaceId);
 
-    // Get the current metadata version for the workspace
-    const metadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    if (metadataVersion) {
-      // Flush the workspace schema cache to ensure changes are reflected
-      await this.workspaceCacheStorageService.flush(
-        workspaceId,
-        metadataVersion,
-      );
-      this.logger.log(
-        `Flushed cache for workspace ${workspaceId} with metadata version ${metadataVersion}`,
-      );
-    } else {
-      this.logger.warn(
-        `Could not find metadata version for workspace ${workspaceId}, skipping cache flush`,
-      );
-    }
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      workspaceId,
+    );
 
     this.logger.log(
       chalk.green(`Command completed for workspace ${workspaceId}.`),
@@ -177,7 +162,6 @@ export class UpdateViewAggregateOperationsCommand extends ActiveOrSuspendedWorks
       return;
     }
 
-    // Replace the options with the complete set
     await this.fieldMetadataRepository.update(
       { id: kanbanAggregateOperationField.id },
       { options: AGGREGATE_OPERATION_OPTIONS },
@@ -221,7 +205,6 @@ export class UpdateViewAggregateOperationsCommand extends ActiveOrSuspendedWorks
       return;
     }
 
-    // Replace the options with the complete set
     await this.fieldMetadataRepository.update(
       { id: aggregateOperationField.id },
       { options: AGGREGATE_OPERATION_OPTIONS },
