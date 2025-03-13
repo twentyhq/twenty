@@ -50,6 +50,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitDestroyEvents(

@@ -116,6 +116,7 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
       resultsWithTsVector,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     const totalCount = isDefined(

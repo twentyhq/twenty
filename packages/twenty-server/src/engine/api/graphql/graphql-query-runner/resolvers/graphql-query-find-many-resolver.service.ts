@@ -128,6 +128,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       nonFormattedObjectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     const { hasNextPage, hasPreviousPage } = getPaginationInfo(

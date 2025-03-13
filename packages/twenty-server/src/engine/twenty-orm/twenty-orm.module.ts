@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
@@ -17,6 +18,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     DataSourceModule,
     WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,
+    FeatureFlagModule,
   ],
   providers: [
     ...entitySchemaFactories,

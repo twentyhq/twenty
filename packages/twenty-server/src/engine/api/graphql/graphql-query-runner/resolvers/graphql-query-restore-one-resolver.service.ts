@@ -45,6 +45,7 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
       nonFormattedRestoredObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitRestoreEvents(

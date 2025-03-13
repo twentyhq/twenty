@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -32,7 +31,6 @@ export class WorkspaceSyncRelationMetadataService {
     context: WorkspaceSyncContext,
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
@@ -76,7 +74,6 @@ export class WorkspaceSyncRelationMetadataService {
         standardObjectMetadataDefinitions,
         context,
         originalObjectMetadataMap,
-        workspaceFeatureFlagsMap,
       );
 
     const customRelationMetadataCollection =
@@ -87,7 +84,6 @@ export class WorkspaceSyncRelationMetadataService {
         })),
         context,
         originalObjectMetadataMap,
-        workspaceFeatureFlagsMap,
       );
 
     const relationComparatorResults = this.workspaceRelationComparator.compare(

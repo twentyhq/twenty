@@ -52,6 +52,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
       nonFormattedRestoredObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
     this.apiEventEmitterService.emitRestoreEvents(
