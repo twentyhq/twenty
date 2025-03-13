@@ -1,9 +1,11 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { RightDrawerActionMenuDropdown } from '@/action-menu/components/RightDrawerActionMenuDropdown';
+import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -24,11 +26,25 @@ export const RecordShowRightDrawerActionMenu = () => {
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
+  const { toggleCommandMenu } = useCommandMenu();
+
   return (
     <>
       {contextStoreCurrentObjectMetadataItem && (
-        <ActionMenuContext.Provider value={{ isInRightDrawer: true }}>
-          <RightDrawerActionMenuDropdown />
+        <ActionMenuContext.Provider
+          value={{
+            isInRightDrawer: true,
+            onActionExecutedCallback: ({ key }) => {
+              if (
+                key === SingleRecordActionKeys.DELETE ||
+                key === SingleRecordActionKeys.DESTROY
+              ) {
+                toggleCommandMenu();
+              }
+            },
+          }}
+        >
+          <CommandMenuActionMenuDropdown />
           <ActionMenuConfirmationModals />
 
           {isDefined(contextStoreTargetedRecordsRule) &&

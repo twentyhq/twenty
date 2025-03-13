@@ -77,8 +77,6 @@ export const WorkflowEditActionServerlessFunction = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
-  const serverlessFunctionVersion =
-    action.settings.input.serverlessFunctionVersion;
   const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
   const { activeTabId } = useTabList(tabListId);
   const { updateOneServerlessFunction } =
@@ -102,7 +100,7 @@ export const WorkflowEditActionServerlessFunction = ({
   const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState({
       serverlessFunctionId,
-      serverlessFunctionVersion,
+      serverlessFunctionVersion: 'draft',
     });
 
   const updateOutputSchemaFromTestResult = async (testResult: object) => {
