@@ -14,6 +14,7 @@ import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/works
 
 class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('1.0.0');
+  VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const
 
   public override async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
     return;
@@ -26,6 +27,7 @@ class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
 
 class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('invalid');
+  VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const
 
   protected async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
     return;
@@ -38,6 +40,7 @@ class InvalidVersionUpgradeCommandRunner extends UpgradeCommandRunner {
 
 class TestUpgradeCommandRunnerV2 extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('2.0.0');
+  VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG = true as const
 
   protected async beforeSyncMetadataUpgradeCommandsToRun(): Promise<void> {
     return;

@@ -4,10 +4,10 @@ exports[`UpgradeCommandRunner Workspace upgrade should fail when APP_VERSION is 
 
 exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not defined 1`] = `[Error: WORKSPACE_VERSION_NOT_DEFINED to=2.0.0]`;
 
-exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not equal to fromVersion 1`] = `[Error: WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.1.0 from=2.0.0 to=3.0.0]`;
+exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not equal to fromVersion 1`] = `[Error: WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.1.0 fromWorkspaceVersion=2.0.0 to=3.0.0]`;
 
-exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 1`] = `[Error: WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.42.42 from=1.0.0 to=2.0.0]`;
+exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 1`] = `[Error: WORKSPACE_VERSION_MISSMATCH workspaceVersion=0.42.42 fromWorkspaceVersion=1.0.0 to=2.0.0]`;
 
-exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 2`] = `[Error: Received invalid version: invalid]`;
+exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 2`] = `[Error: Received invalid version: invalid 1.0.0]`;
 
 exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 3`] = `[Error: WORKSPACE_VERSION_NOT_DEFINED to=2.0.0]`;

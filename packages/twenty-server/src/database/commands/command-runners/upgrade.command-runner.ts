@@ -17,7 +17,8 @@ import { isSameMajorAndMinorVersion } from 'src/utils/version/is-same-major-and-
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   abstract readonly fromWorkspaceVersion: SemVer;
-
+  public readonly VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG?: true;
+  
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -37,7 +38,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       ),
     );
 
-    await this.validateWorkspaceVersionEqualFromVersionOrThrow({
+    await this.validateWorkspaceVersionEqualsWorkspaceFromVersionOrThrow({
       appVersion,
       workspaceId,
     });
@@ -55,7 +56,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     );
   }
 
-  private async validateWorkspaceVersionEqualFromVersionOrThrow({
+  private async validateWorkspaceVersionEqualsWorkspaceFromVersionOrThrow({
     appVersion,
     workspaceId,
   }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'appVersion'>) {
@@ -63,6 +64,11 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       throw new Error(
         'Cannot run upgrade command when APP_VERSION is not defined',
       );
+    }
+
+    if (!isDefined(this.VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG)) {
+      this.logger.warn("VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG set to true ignoring workspace versions validation step")
+      return
     }
 
     const workspace = await this.workspaceRepository.findOneByOrFail({

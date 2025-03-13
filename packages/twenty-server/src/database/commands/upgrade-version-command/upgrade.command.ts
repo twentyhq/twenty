@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
 import { SemVer } from 'semver';
+import { Repository } from 'typeorm';
 
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
@@ -21,7 +21,7 @@ import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/works
   description: 'Upgrade workspaces to the latest version',
 })
 export class UpgradeCommand extends UpgradeCommandRunner {
-  fromVersion = new SemVer('0.43.0');
+  fromWorkspaceVersion = new SemVer('0.43.0');
 
   constructor(
     @InjectRepository(Workspace, 'core')
