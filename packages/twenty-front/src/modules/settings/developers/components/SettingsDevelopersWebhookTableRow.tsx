@@ -36,6 +36,7 @@ export const SettingsDevelopersWebhookTableRow = ({
 }) => {
   const theme = useTheme();
 
+  if (!fieldItem.targetUrl) return;
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>

@@ -24,13 +24,16 @@ export const SettingsWebhooksTable = () => {
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
+  const allWebhooksHaveEmptyTargetUrl =
+    webhooks.length > 0 && webhooks.every((webhook) => !webhook.targetUrl);
+
   return (
     <Table>
       <StyledTableRow>
         <TableHeader>URL</TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
-      {!!webhooks.length && (
+      {!!webhooks.length && !allWebhooksHaveEmptyTargetUrl && (
         <StyledTableBody>
           {webhooks.map((webhookFieldItem) => (
             <SettingsDevelopersWebhookTableRow
