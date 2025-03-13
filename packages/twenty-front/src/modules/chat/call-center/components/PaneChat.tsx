@@ -476,6 +476,15 @@ export const PaneChat = () => {
     selectedChat.lastMessage.createdAt,
   );
 
+  const handleInputKeyDown = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   const renderButtons = () => {
     const IconX = getIcon('IconX');
     const IconMicrophone = getIcon('IconMicrophone');
@@ -519,11 +528,7 @@ export const PaneChat = () => {
             onInput={handleInputChange}
             value={newMessage}
             ref={textareaRef}
-            // onKeyDown={(e) => {
-            //   if (e.key === 'Enter' && newMessage.trim() !== '') {
-            //     handleSendMessageAndScroll(openChat?.chatId);
-            //   }
-            // }}
+            onKeyDown={handleInputKeyDown}
           />
           <StyledDiv>
             <StyledIconButton
