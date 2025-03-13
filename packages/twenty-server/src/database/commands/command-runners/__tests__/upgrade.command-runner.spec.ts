@@ -198,6 +198,7 @@ describe('UpgradeCommandRunner', () => {
       version: '42.42.42',
     });
     const appVersion = '2.0.0';
+
     await buildModuleAndSetupSpies({
       numberOfWorkspace: 0,
       workspaces: [higherVersionWorkspace],
@@ -205,10 +206,12 @@ describe('UpgradeCommandRunner', () => {
     });
     const passedParams = [];
     const options = {};
+
     await upgradeCommandRunner.run(passedParams, options);
 
     const { fail: failReport, success: successReport } =
       upgradeCommandRunner.migrationReport;
+
     expect(successReport.length).toBe(1);
     expect(failReport.length).toBe(0);
 
@@ -254,6 +257,7 @@ describe('UpgradeCommandRunner', () => {
     });
     const passedParams = [];
     const options = {};
+
     await upgradeCommandRunner.run(passedParams, options);
 
     // Common assertions
@@ -301,6 +305,7 @@ describe('UpgradeCommandRunner', () => {
     });
     const passedParams = [];
     const options = {};
+
     await upgradeCommandRunner.run(passedParams, options);
 
     [

@@ -29,7 +29,7 @@ export type WorkspaceMigrationReport = {
     workspaceId: string;
     error: Error;
   }[];
-  success:  {
+  success: {
     workspaceId: string;
   }[];
 };

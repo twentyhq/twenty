@@ -44,13 +44,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       ),
     );
 
-    const compareResult =
+    const workspaceVersionCompareResult =
       await this.retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion({
         appVersion,
         workspaceId,
       });
 
-    switch (compareResult) {
+    switch (workspaceVersionCompareResult) {
       case -1: {
         throw new Error(
           `WORKSPACE_VERSION_MISSMATCH Upgrade for workspace ${workspaceId} failed as its version is beneath fromWorkspaceVersion=${this.fromWorkspaceVersion.version}`,
@@ -68,6 +68,8 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
         this.logger.log(
           chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
         );
+
+        return;
       }
       case 1: {
         this.logger.log(
@@ -75,7 +77,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
             `Upgrade for workspace ${workspaceId} ignored as is already at a higher version.`,
           ),
         );
+
         return;
+      }
+      default: {
+        throw new Error(
+          `Should never occur, encountered unexpected value from retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion ${workspaceVersionCompareResult}`,
+        );
       }
     }
   }
@@ -96,6 +104,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
         'VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG set to true ignoring workspace versions validation step',
       );
       const equalVersions = 0;
+
       return equalVersions;
     }
 
