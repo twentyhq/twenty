@@ -30,13 +30,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
 
-    // Commands injection
     protected readonly migrateRichTextContentPatchCommand: MigrateRichTextContentPatchCommand,
     protected readonly addTasksAssignedToMeViewCommand: AddTasksAssignedToMeViewCommand,
     protected readonly migrateIsSearchableForCustomObjectMetadataCommand: MigrateIsSearchableForCustomObjectMetadataCommand,
     protected readonly updateDefaultViewRecordOpeningOnWorkflowObjectsCommand: UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
     protected readonly migrateSearchVectorOnNoteAndTaskEntitiesCommand: MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
-    ///
   ) {
     super(
       workspaceRepository,
@@ -69,5 +67,4 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     await this.addTasksAssignedToMeViewCommand.runOnWorkspace(args);
   }
-  ///
 }
