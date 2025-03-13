@@ -177,5 +177,5 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
     );
   }
 
-  protected abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
+  public abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
 }
