@@ -13,7 +13,17 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import {
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 const AGGREGATE_OPERATION_OPTIONS = [
@@ -106,6 +116,9 @@ export class UpdateViewAggregateOperationsCommand extends ActiveOrSuspendedWorks
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly workspaceMigrationService: WorkspaceMigrationService,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -121,6 +134,10 @@ export class UpdateViewAggregateOperationsCommand extends ActiveOrSuspendedWorks
 
     await this.updateViewAggregateOperations(workspaceId);
     await this.updateViewFieldAggregateOperations(workspaceId);
+
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      workspaceId,
+    );
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
@@ -170,6 +187,25 @@ export class UpdateViewAggregateOperationsCommand extends ActiveOrSuspendedWorks
     this.logger.log(
       `Updated kanbanAggregateOperation options for workspace ${workspaceId}`,
     );
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`update-view-operations`),
+      workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(viewObjectMetadata),
+          action: WorkspaceMigrationTableActionType.ALTER,
+          columns: this.workspaceMigrationFactory.createColumnActions(
+            WorkspaceMigrationColumnActionType.ALTER,
+            { ...kanbanAggregateOperationField, options: undefined },
+            {
+              ...kanbanAggregateOperationField,
+              options: AGGREGATE_OPERATION_OPTIONS,
+            },
+          ),
+        } satisfies WorkspaceMigrationTableAction,
+      ],
+    );
   }
 
   private async updateViewFieldAggregateOperations(
@@ -212,6 +248,25 @@ export class UpdateViewAggregateOperationsCommand extends ActiveOrSuspendedWorks
 
     this.logger.log(
       `Updated aggregateOperation options for workspace ${workspaceId}`,
+    );
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`update-view-operations`),
+      workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(viewFieldObjectMetadata),
+          action: WorkspaceMigrationTableActionType.ALTER,
+          columns: this.workspaceMigrationFactory.createColumnActions(
+            WorkspaceMigrationColumnActionType.ALTER,
+            { ...aggregateOperationField, options: undefined },
+            {
+              ...aggregateOperationField,
+              options: AGGREGATE_OPERATION_OPTIONS,
+            },
+          ),
+        } satisfies WorkspaceMigrationTableAction,
+      ],
     );
   }
 }
