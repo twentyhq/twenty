@@ -1,4 +1,4 @@
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
@@ -23,9 +23,7 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     }),
   );
 
-  const objectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
-  );
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   useEffect(() => {
     if (loadedViewId === contextStoreCurrentViewId) {

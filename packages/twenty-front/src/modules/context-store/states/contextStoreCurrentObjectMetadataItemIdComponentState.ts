@@ -1,10 +1,9 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-export const contextStoreCurrentObjectMetadataItemComponentState =
-  createComponentStateV2<ObjectMetadataItem | undefined>({
-    key: 'contextStoreCurrentObjectMetadataItemComponentState',
+export const contextStoreCurrentObjectMetadataItemIdComponentState =
+  createComponentStateV2<string | undefined>({
+    key: 'contextStoreCurrentObjectMetadataItemIdComponentState',
     defaultValue: undefined,
     componentInstanceContext: ContextStoreComponentInstanceContext,
   });

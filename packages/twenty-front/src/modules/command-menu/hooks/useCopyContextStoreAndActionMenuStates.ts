@@ -1,5 +1,5 @@
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -19,14 +19,14 @@ export const useCopyContextStoreStates = () => {
       }) => {
         const contextStoreCurrentObjectMetadataItem = snapshot
           .getLoadable(
-            contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+            contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
               instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
 
         set(
-          contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
             instanceId: instanceIdToCopyTo,
           }),
           contextStoreCurrentObjectMetadataItem,

@@ -13,9 +13,10 @@ import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKey
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
@@ -87,9 +88,15 @@ export const CommandMenuContainer = ({
 
   const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
 
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const objectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  );
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
   );
 
   const currentViewId = useRecoilComponentValueV2(
@@ -98,9 +105,10 @@ export const CommandMenuContainer = ({
   );
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
-    contextStoreCurrentObjectMetadataItem?.namePlural ?? '',
+    objectMetadataItem?.namePlural ?? '',
     currentViewId ?? '',
   );
+
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
       value={{ instanceId: recordIndexId }}
