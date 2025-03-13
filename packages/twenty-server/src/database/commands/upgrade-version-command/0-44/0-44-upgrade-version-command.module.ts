@@ -8,11 +8,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
   imports: [
@@ -22,12 +18,8 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       'metadata',
     ),
     WorkspaceDataSourceModule,
-    WorkspaceCacheStorageModule,
-    WorkspaceMetadataVersionModule,
     RoleModule,
     UserRoleModule,
-    WorkspaceMigrationModule,
-    WorkspaceMigrationRunnerModule,
   ],
   providers: [InitializePermissionsCommand],
   exports: [InitializePermissionsCommand],

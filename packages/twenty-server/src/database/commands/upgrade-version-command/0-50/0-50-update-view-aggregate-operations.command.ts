@@ -102,7 +102,7 @@ const AGGREGATE_OPERATION_OPTIONS = [
 ];
 
 @Command({
-  name: 'upgrade:0-44:update-view-aggregate-operations',
+  name: 'upgrade:0-50:update-view-aggregate-operations',
   description:
     'Update View and ViewField entities with new aggregate operations (countTrue, countFalse)',
 })
@@ -251,7 +251,7 @@ export class UpdateViewAggregateOperationsCommand extends ActiveOrSuspendedWorks
     );
 
     await this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`update-view-operations`),
+      generateMigrationName(`update-view-field-operations`),
       workspaceId,
       [
         {
