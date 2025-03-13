@@ -159,12 +159,9 @@ export const DisabledWithDefaultStaticValues: Story = {
 
     await userEvent.click(objectSelectCurrentValue);
 
-    {
-      const searchInputInSelectDropdown =
-        canvas.queryByPlaceholderText('Search');
+    const searchInputInSelectDropdown = canvas.queryByPlaceholderText('Search');
 
-      expect(searchInputInSelectDropdown).not.toBeInTheDocument();
-    }
+    expect(searchInputInSelectDropdown).not.toBeInTheDocument();
 
     const selectedRecord = await canvas.findByText(
       `${peopleMock.name.firstName} ${peopleMock.name.lastName}`,
