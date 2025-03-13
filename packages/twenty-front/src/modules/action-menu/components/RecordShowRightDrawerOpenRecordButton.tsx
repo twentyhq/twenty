@@ -1,4 +1,4 @@
-import { RightDrawerActionMenuDropdownHotkeyScope } from '@/action-menu/types/RightDrawerActionMenuDropdownHotkeyScope';
+import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -47,7 +47,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   useScopedHotkeys(
     ['ctrl+Enter,meta+Enter'],
     handleOpenRecord,
-    RightDrawerActionMenuDropdownHotkeyScope.RightDrawerActionMenuDropdown,
+    CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
     [closeCommandMenu, navigate, objectNameSingular, record.id],
   );
 
