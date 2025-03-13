@@ -1,5 +1,5 @@
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -11,7 +11,7 @@ export const useResetContextStoreStates = () => {
   const resetContextStoreStates = useRecoilCallback(({ set }) => {
     return (instanceId: string) => {
       set(
-        contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
           instanceId,
         }),
         undefined,

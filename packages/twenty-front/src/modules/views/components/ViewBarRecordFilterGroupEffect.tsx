@@ -1,4 +1,5 @@
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
@@ -16,8 +17,9 @@ export const ViewBarRecordFilterGroupEffect = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
 
   const currentView = useRecoilValue(
@@ -43,8 +45,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
   useEffect(() => {
     if (isDefined(currentView) && !hasInitializedCurrentRecordFilterGroups) {
       if (
-        currentView.objectMetadataId !==
-        contextStoreCurrentObjectMetadataItem?.id
+        currentView.objectMetadataId !== contextStoreCurrentObjectMetadataItemId
       ) {
         return;
       }
@@ -64,7 +65,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
     setCurrentRecordFilterGroups,
     hasInitializedCurrentRecordFilterGroups,
     setHasInitializedCurrentRecordFilterGroups,
-    contextStoreCurrentObjectMetadataItem?.id,
+    contextStoreCurrentObjectMetadataItemId,
     currentView,
   ]);
 
