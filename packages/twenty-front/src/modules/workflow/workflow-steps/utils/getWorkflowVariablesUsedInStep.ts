@@ -5,10 +5,10 @@ import { JsonValue } from 'type-fest';
 
 function* resolveVariables(value: JsonValue): Generator<string> {
   if (isString(value)) {
-    for (const [, match] of value.matchAll(
+    for (const [, variablePath] of value.matchAll(
       CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
     )) {
-      yield match;
+      yield variablePath;
     }
 
     return;
@@ -26,11 +26,11 @@ export const getWorkflowVariablesUsedInStep = ({
 }: {
   step: WorkflowStep;
 }) => {
-  const flowVariables = new Set<string>();
+  const variablesUsedInStep = new Set<string>();
 
   for (const variable of resolveVariables(step.settings.input)) {
-    flowVariables.add(variable);
+    variablesUsedInStep.add(variable);
   }
 
-  return flowVariables;
+  return variablesUsedInStep;
 };

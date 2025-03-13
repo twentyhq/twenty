@@ -32,7 +32,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     return null;
   }
 
-  const variablesInUse = getWorkflowVariablesUsedInStep({
+  const variablesUsedInStep = getWorkflowVariablesUsedInStep({
     step,
   });
 
@@ -58,7 +58,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
         emptyElementsText=""
         depth={0}
         keyPath=""
-        getNodeHighlighting={(keyPath) => variablesInUse.has(keyPath)}
+        shouldHighlightNode={(keyPath) => variablesUsedInStep.has(keyPath)}
       />
     </StyledContainer>
   );

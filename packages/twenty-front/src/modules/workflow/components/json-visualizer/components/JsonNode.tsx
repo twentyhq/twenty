@@ -16,15 +16,15 @@ export const JsonNode = ({
   value,
   depth,
   keyPath,
-  getNodeHighlighting,
+  shouldHighlightNode,
 }: {
   label?: string;
   value: JsonValue;
   depth: number;
   keyPath: string;
-  getNodeHighlighting?: (keyPath: string) => boolean;
+  shouldHighlightNode?: (keyPath: string) => boolean;
 }) => {
-  const isHighlighted = getNodeHighlighting?.(keyPath) ?? false;
+  const isHighlighted = shouldHighlightNode?.(keyPath) ?? false;
 
   if (isNull(value)) {
     return (
@@ -77,7 +77,7 @@ export const JsonNode = ({
         value={value}
         depth={depth}
         keyPath={keyPath}
-        getNodeHighlighting={getNodeHighlighting}
+        shouldHighlightNode={shouldHighlightNode}
       />
     );
   }
@@ -88,7 +88,7 @@ export const JsonNode = ({
       value={value}
       depth={depth}
       keyPath={keyPath}
-      getNodeHighlighting={getNodeHighlighting}
+      shouldHighlightNode={shouldHighlightNode}
     />
   );
 };

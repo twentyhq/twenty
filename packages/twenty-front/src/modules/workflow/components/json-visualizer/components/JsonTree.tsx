@@ -4,10 +4,10 @@ import { JsonValue } from 'type-fest';
 
 export const JsonTree = ({
   value,
-  getNodeHighlighting,
+  shouldHighlightNode,
 }: {
   value: JsonValue;
-  getNodeHighlighting?: (keyPath: string) => boolean;
+  shouldHighlightNode?: (keyPath: string) => boolean;
 }) => {
   return (
     <JsonList depth={0}>
@@ -15,7 +15,7 @@ export const JsonTree = ({
         value={value}
         depth={0}
         keyPath=""
-        getNodeHighlighting={getNodeHighlighting}
+        shouldHighlightNode={shouldHighlightNode}
       />
     </JsonList>
   );

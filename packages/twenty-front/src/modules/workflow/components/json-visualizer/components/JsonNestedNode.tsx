@@ -37,7 +37,7 @@ export const JsonNestedNode = ({
   emptyElementsText,
   depth,
   keyPath,
-  getNodeHighlighting,
+  shouldHighlightNode,
 }: {
   label?: string;
   Icon: IconComponent;
@@ -46,7 +46,7 @@ export const JsonNestedNode = ({
   emptyElementsText: string;
   depth: number;
   keyPath: string;
-  getNodeHighlighting?: (keyPath: string) => boolean;
+  shouldHighlightNode?: (keyPath: string) => boolean;
 }) => {
   const hideRoot = !isDefined(label);
 
@@ -69,7 +69,7 @@ export const JsonNestedNode = ({
               value={value}
               depth={depth + 1}
               keyPath={nextKeyPath}
-              getNodeHighlighting={getNodeHighlighting}
+              shouldHighlightNode={shouldHighlightNode}
             />
           );
         })

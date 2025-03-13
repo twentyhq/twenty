@@ -8,13 +8,13 @@ export const JsonArrayNode = ({
   value,
   depth,
   keyPath,
-  getNodeHighlighting,
+  shouldHighlightNode,
 }: {
   label?: string;
   value: JsonArray;
   depth: number;
   keyPath: string;
-  getNodeHighlighting?: (keyPath: string) => boolean;
+  shouldHighlightNode?: (keyPath: string) => boolean;
 }) => {
   const { t } = useLingui();
 
@@ -31,7 +31,7 @@ export const JsonArrayNode = ({
       depth={depth}
       emptyElementsText={t`Empty Array`}
       keyPath={keyPath}
-      getNodeHighlighting={getNodeHighlighting}
+      shouldHighlightNode={shouldHighlightNode}
     />
   );
 };
