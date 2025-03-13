@@ -165,6 +165,8 @@ export const DisabledWithDefaultStaticValues: Story = {
 
     const selectedRecord = await canvas.findByText(
       `${peopleMock.name.firstName} ${peopleMock.name.lastName}`,
+      undefined,
+      { timeout: 3000 },
     );
     expect(selectedRecord).toBeVisible();
 

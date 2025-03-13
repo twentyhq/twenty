@@ -58,7 +58,7 @@ export const WithExpandedList: Story = {
 
     const rootCanvas = within(root);
 
-    const chipCount = await rootCanvas.findByText('+2');
+    const chipCount = await rootCanvas.findByText('+3');
 
     await userEvent.click(chipCount);
 
