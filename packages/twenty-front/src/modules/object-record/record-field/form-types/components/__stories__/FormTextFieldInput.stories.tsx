@@ -185,9 +185,11 @@ export const DisabledWithVariable: Story = {
     readonly: true,
   },
   play: async ({ canvasElement }) => {
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-
-    expect(editor).toBeVisible();
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+      return editor;
+    });
 
     await waitFor(() => {
       expect(editor).toHaveTextContent('test Name test');
