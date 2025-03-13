@@ -23,7 +23,7 @@ export const useRecordGroupReorder = ({
   viewBarId,
   viewType,
 }: UseRecordGroupHandlersParams) => {
-  const setRecordGroup = useSetRecordGroup();
+  const { setRecordGroup } = useSetRecordGroup();
 
   const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackStateV2(
     visibleRecordGroupIdsComponentFamilySelector,
