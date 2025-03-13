@@ -10,6 +10,7 @@ const StyledListItem = styled(JsonListItem)`
 
 type JsonValueNodeProps = {
   valueAsString: string;
+  isHighlighted: boolean;
 } & (
   | {
       label: string;
@@ -24,9 +25,18 @@ type JsonValueNodeProps = {
 export const JsonValueNode = (props: JsonValueNodeProps) => {
   return (
     <StyledListItem>
-      {props.label && <JsonNodeLabel label={props.label} Icon={props.Icon} />}
+      {props.label && (
+        <JsonNodeLabel
+          label={props.label}
+          Icon={props.Icon}
+          isHighlighted={props.isHighlighted}
+        />
+      )}
 
-      <JsonNodeValue valueAsString={props.valueAsString} />
+      <JsonNodeValue
+        valueAsString={props.valueAsString}
+        isHighlighted={props.isHighlighted}
+      />
     </StyledListItem>
   );
 };
