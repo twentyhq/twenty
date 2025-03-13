@@ -9,7 +9,6 @@ export const useMatchingCommandMenuCommands = ({
   const { matchCommands } = useMatchCommands({ commandMenuSearch });
 
   const {
-    copilotCommands,
     navigateCommands,
     actionRecordSelectionCommands,
     actionObjectCommands,
@@ -49,7 +48,6 @@ export const useMatchingCommandMenuCommands = ({
 
   return {
     noResults,
-    copilotCommands,
     matchingStandardActionRecordSelectionCommands,
     matchingStandardActionObjectCommands,
     matchingWorkflowRunRecordSelectionCommands,

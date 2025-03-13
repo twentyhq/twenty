@@ -24,7 +24,6 @@ export const CommandMenu = () => {
 
   const {
     noResults,
-    copilotCommands,
     matchingStandardActionRecordSelectionCommands,
     matchingStandardActionObjectCommands,
     matchingWorkflowRunRecordSelectionCommands,
@@ -47,10 +46,6 @@ export const CommandMenu = () => {
   );
 
   const commandGroups: CommandGroupConfig[] = [
-    {
-      heading: t`Copilot`,
-      items: copilotCommands,
-    },
     {
       heading: t`Record Selection`,
       items: matchingStandardActionRecordSelectionCommands.concat(

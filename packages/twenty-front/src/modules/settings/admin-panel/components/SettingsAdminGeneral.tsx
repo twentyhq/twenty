@@ -16,16 +16,18 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
-  H1Title,
-  H1TitleFontColor,
   H2Title,
+  IconId,
+  IconMail,
   IconSearch,
+  IconUser,
   Section,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 
 const StyledContainer = styled.div`
@@ -35,22 +37,12 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledUserInfo = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(5)};
-`;
-
 const StyledTabListContainer = styled.div`
   align-items: center;
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledContentContainer = styled.div`
-  flex: 1;
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing(4)} 0;
 `;
 
 export const SettingsAdminGeneral = () => {
@@ -124,6 +116,24 @@ export const SettingsAdminGeneral = () => {
     userLookupResult?.user.lastName || ''
   }`.trim();
 
+  const userInfoItems = [
+    {
+      Icon: IconUser,
+      label: t`Name`,
+      value: userFullName,
+    },
+    {
+      Icon: IconMail,
+      label: t`Email`,
+      value: userLookupResult?.user.email,
+    },
+    {
+      Icon: IconId,
+      label: t`ID`,
+      value: userLookupResult?.user.id,
+    },
+  ];
+
   return (
     <>
       {canAccessFullAdminPanel && (
@@ -173,36 +183,31 @@ export const SettingsAdminGeneral = () => {
       )}
 
       {isDefined(userLookupResult) && (
-        <Section>
-          <StyledUserInfo>
-            <H1Title
-              title={t`User Info`}
-              fontColor={H1TitleFontColor.Primary}
+        <>
+          <Section>
+            <H2Title title={t`User Info`} description={t`About this user`} />
+            <SettingsAdminTableCard
+              items={userInfoItems}
+              rounded
+              gridAutoColumns="1fr 4fr"
             />
-            <H2Title title={userFullName} description={t`User Name`} />
+          </Section>
+          <Section>
             <H2Title
-              title={userLookupResult.user.email}
-              description={t`User Email`}
+              title={t`Workspaces`}
+              description={t`All workspaces this user is a member of`}
             />
-            <H2Title
-              title={userLookupResult.user.id}
-              description={t`User ID`}
-            />
-          </StyledUserInfo>
+            <StyledTabListContainer>
+              <TabList
+                tabs={tabs}
+                tabListInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
+                behaveAsLinks={false}
+              />
+            </StyledTabListContainer>
 
-          <H1Title title={t`Workspaces`} fontColor={H1TitleFontColor.Primary} />
-          <StyledTabListContainer>
-            <TabList
-              tabs={tabs}
-              tabListInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
-              behaveAsLinks={false}
-            />
-          </StyledTabListContainer>
-
-          <StyledContentContainer>
             <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
-          </StyledContentContainer>
-        </Section>
+          </Section>
+        </>
       )}
     </>
   );

@@ -19,10 +19,14 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid " These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr "crwdns5463:0crwdne5463:0"
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -117,6 +121,14 @@ msgstr "crwdns61:0crwdne61:0"
 msgid "About"
 msgstr "crwdns63:0crwdne63:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr "crwdns5525:0crwdne5525:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr "crwdns5527:0crwdne5527:0"
+
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Account"
@@ -139,7 +151,6 @@ msgid "Actions"
 msgstr "crwdns1785:0crwdne1785:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -160,8 +171,8 @@ msgid "Active API keys created by you or your team."
 msgstr "crwdns77:0crwdne77:0"
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-msgid "Add"
-msgstr "crwdns79:0crwdne79:0"
+#~ msgid "Add"
+#~ msgstr "Add"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -171,6 +182,7 @@ msgstr "crwdns5005:0crwdne5005:0"
 msgid "Add Approved Access Domain"
 msgstr "crwdns4879:0crwdne4879:0"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "crwdns81:0crwdne81:0"
@@ -285,6 +297,10 @@ msgstr "crwdns5025:0crwdne5025:0"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "crwdns99:0crwdne99:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr "crwdns5529:0crwdne5529:0"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -621,7 +637,7 @@ msgstr "crwdns5381:0crwdne5381:0"
 msgid "Color code"
 msgstr "crwdns5053:0crwdne5053:0"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "crwdns5055:0crwdne5055:0"
 
@@ -699,12 +715,13 @@ msgid "Continue with Microsoft"
 msgstr "crwdns211:0crwdne211:0"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "crwdns4891:0crwdne4891:0"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
-msgid "Copilot"
-msgstr "crwdns213:0crwdne213:0"
+#~ msgid "Copilot"
+#~ msgstr "Copilot"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -802,8 +819,12 @@ msgid "Created"
 msgstr "crwdns5069:0crwdne5069:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "crwdns5469:0crwdne5469:0"
+msgid "Current version"
+msgstr "crwdns5531:0crwdne5531:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Current version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -884,7 +905,6 @@ msgid "Date format"
 msgstr "crwdns5075:0crwdne5075:0"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -945,7 +965,6 @@ msgstr "crwdns5085:0crwdne5085:0"
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -1057,7 +1076,6 @@ msgstr "crwdns299:0crwdne299:0"
 msgid "Developers"
 msgstr "crwdns301:0crwdne301:0"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
@@ -1161,6 +1179,7 @@ msgstr "crwdns319:0crwdne319:0"
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "crwdns321:0crwdne321:0"
 
@@ -1636,6 +1655,11 @@ msgstr "crwdns5157:0crwdne5157:0"
 msgid "Icon and Name"
 msgstr "crwdns417:0crwdne417:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr "crwdns5533:0crwdne5533:0"
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "crwdns419:0crwdne419:0"
@@ -1839,7 +1863,7 @@ msgstr "crwdns457:0crwdne457:0"
 msgid "Language"
 msgstr "crwdns459:0crwdne459:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "crwdns5473:0crwdne5473:0"
 
@@ -1847,7 +1871,7 @@ msgstr "crwdns5473:0crwdne5473:0"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "crwdns5475:0crwdne5475:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "crwdns5477:0crwdne5477:0"
 
@@ -1859,7 +1883,7 @@ msgstr "crwdns5479:0crwdne5479:0"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "crwdns5481:0crwdne5481:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "crwdns5483:0crwdne5483:0"
 
@@ -1885,12 +1909,21 @@ msgid "Latest date"
 msgstr "crwdns465:0crwdne465:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "crwdns5489:0crwdne5489:0"
+msgid "Latest version"
+msgstr "crwdns5535:0crwdne5535:0"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Latest version:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
 msgstr "crwdns5451:0crwdne5451:0"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr "crwdns5523:0crwdne5523:0"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -1963,6 +1996,7 @@ msgstr "crwdns483:0crwdne483:0"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "crwdns485:0crwdne485:0"
 
@@ -2018,6 +2052,8 @@ msgstr "crwdns493:0crwdne493:0"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "crwdns495:0crwdne495:0"
 
@@ -2263,8 +2299,8 @@ msgstr "crwdns5223:0crwdne5223:0"
 msgid "Open command menu"
 msgstr "crwdns4861:0crwdne4861:0"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "crwdns4943:0crwdne4943:0"
 
@@ -2296,6 +2332,7 @@ msgstr "crwdns549:0crwdne549:0"
 msgid "Other"
 msgstr "crwdns551:0crwdne551:0"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "crwdns5497:0crwdne5497:0"
@@ -2475,8 +2512,8 @@ msgstr "crwdns5235:0crwdne5235:0"
 msgid "Record label"
 msgstr "crwdns5237:0crwdne5237:0"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "crwdns5239:0crwdne5239:0"
 
@@ -2814,8 +2851,8 @@ msgstr "crwdns665:0crwdne665:0"
 msgid "Should changing an object's label also change the API?"
 msgstr "crwdns4007:0crwdne4007:0"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "crwdns5269:0crwdne5269:0"
 
@@ -2865,6 +2902,7 @@ msgstr "crwdns679:0crwdne679:0"
 msgid "Stages"
 msgstr "crwdns5273:0crwdne5273:0"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "crwdns5275:0crwdne5275:0"
@@ -2970,7 +3008,6 @@ msgstr "crwdns5287:0crwdne5287:0"
 msgid "Terms of Service"
 msgstr "crwdns707:0crwdne707:0"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test"
 msgstr "crwdns709:0crwdne709:0"
@@ -3043,6 +3080,10 @@ msgstr "crwdns727:0crwdne727:0"
 msgid "There was an issue"
 msgstr "crwdns729:0crwdne729:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr "crwdns5537:0crwdne5537:0"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "crwdns731:0crwdne731:0"
@@ -3067,7 +3108,7 @@ msgstr "crwdns733:0crwdne733:0"
 msgid "This role is assigned to these workspace members."
 msgstr "crwdns1843:0crwdne1843:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "crwdns5507:0crwdne5507:0"
 
@@ -3091,22 +3132,21 @@ msgstr "crwdns741:0crwdne741:0"
 msgid "to yearly"
 msgstr "crwdns743:0crwdne743:0"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "crwdns5509:0crwdne5509:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "crwdns5303:0crwdne5303:0"
+#~ msgid "Total Users"
+#~ msgstr "Total Users"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "crwdns745:0crwdne745:0"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "crwdns747:0crwdne747:0"
+#~ msgid "Trigger type should be Manual - when no record(s) are selected"
+#~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3187,17 +3227,16 @@ msgstr "crwdns767:0{objectLabel}crwdne767:0"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "crwdns769:0crwdne769:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "crwdns5309:0crwdne5309:0"
+#~ msgid "User Email"
+#~ msgstr "User Email"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "crwdns5311:0crwdne5311:0"
+#~ msgid "User ID"
+#~ msgstr "User ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3213,12 +3252,12 @@ msgid "User is not logged in"
 msgstr "crwdns771:0crwdne771:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "crwdns5317:0crwdne5317:0"
+#~ msgid "User Name"
+#~ msgstr "User Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "crwdns5319:0crwdne5319:0"
+#~ msgid "Users"
+#~ msgstr "Users"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3252,8 +3291,8 @@ msgstr "crwdns4963:0crwdne4963:0"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "crwdns5325:0crwdne5325:0"
+#~ msgid "View settings"
+#~ msgstr "View settings"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
@@ -3315,8 +3354,8 @@ msgid "When the key will be disabled"
 msgstr "crwdns791:0crwdne791:0"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Workflow cannot be tested"
-msgstr "crwdns793:0crwdne793:0"
+#~ msgid "Workflow cannot be tested"
+#~ msgstr "Workflow cannot be tested"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
@@ -3358,6 +3397,10 @@ msgstr "crwdns795:0crwdne795:0"
 msgid "Workspace Deletion"
 msgstr "crwdns797:0crwdne797:0"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr "crwdns5539:0crwdne5539:0"
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "crwdns799:0crwdne799:0"
@@ -3367,8 +3410,8 @@ msgid "Workspace name"
 msgstr "crwdns801:0crwdne801:0"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "crwdns5337:0crwdne5337:0"
+#~ msgid "Workspace Name"
+#~ msgstr "Workspace Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"

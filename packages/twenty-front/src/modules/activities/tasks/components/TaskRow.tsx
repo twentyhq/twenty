@@ -7,13 +7,13 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { Task } from '@/activities/types/Task';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useCompleteTask } from '../hooks/useCompleteTask';
@@ -78,9 +78,7 @@ const StyledCheckboxContainer = styled.div`
 
 export const TaskRow = ({ task }: { task: Task }) => {
   const theme = useTheme();
-  const openActivityRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
-  });
+  const { openRecordInCommandMenu } = useCommandMenu();
 
   const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
 
@@ -96,7 +94,10 @@ export const TaskRow = ({ task }: { task: Task }) => {
   return (
     <ActivityRow
       onClick={() => {
-        openActivityRightDrawer(task.id);
+        openRecordInCommandMenu({
+          recordId: task.id,
+          objectNameSingular: CoreObjectNameSingular.Task,
+        });
       }}
     >
       <StyledLeftSideContainer>

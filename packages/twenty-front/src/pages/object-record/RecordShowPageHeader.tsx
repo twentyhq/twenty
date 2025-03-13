@@ -16,13 +16,8 @@ export const RecordShowPageHeader = ({
   headerIcon: React.ComponentType;
   children?: React.ReactNode;
 }) => {
-  const {
-    viewName,
-    navigateToPreviousRecord,
-    navigateToNextRecord,
-    navigateToIndexView,
-    objectMetadataItem,
-  } = useRecordShowPagePagination(objectNameSingular, objectRecordId);
+  const { viewName, navigateToIndexView, objectMetadataItem } =
+    useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
   const { headerIcon } = useRecordShowPage(objectNameSingular, objectRecordId);
 
@@ -52,11 +47,8 @@ export const RecordShowPageHeader = ({
           viewName
         )
       }
-      hasPaginationButtons
       hasClosePageButton
       onClosePage={navigateToIndexView}
-      navigateToPreviousRecord={navigateToPreviousRecord}
-      navigateToNextRecord={navigateToNextRecord}
       Icon={headerIcon}
     >
       {children}

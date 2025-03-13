@@ -26,6 +26,13 @@ export const computeCronPatternFromSchedule = (
 
       return trigger.settings.pattern;
     }
+    case 'DAYS': {
+      const pattern = `${trigger.settings.schedule.minute} ${trigger.settings.schedule.hour} */${trigger.settings.schedule.day} * *`;
+
+      validatePattern(pattern);
+
+      return pattern;
+    }
     case 'HOURS': {
       const pattern = `${trigger.settings.schedule.minute} */${trigger.settings.schedule.hour} * * *`;
 
