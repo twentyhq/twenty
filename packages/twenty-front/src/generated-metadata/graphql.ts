@@ -616,7 +616,6 @@ export enum FeatureFlagKey {
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
   IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
-  IsCommandMenuV2Enabled = 'IsCommandMenuV2Enabled',
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
@@ -627,6 +626,7 @@ export enum FeatureFlagKey {
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled',
+  IsWorkflowFormActionEnabled = 'IsWorkflowFormActionEnabled',
 }
 
 export type Field = {
@@ -1879,6 +1879,7 @@ export type Role = {
   canUpdateAllObjectRecords: Scalars['Boolean']['output'];
   canUpdateAllSettings: Scalars['Boolean']['output'];
   description?: Maybe<Scalars['String']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   isEditable: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];

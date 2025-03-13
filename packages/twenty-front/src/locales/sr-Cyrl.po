@@ -18,13 +18,6 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
-#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr " Ово су само параметри сервера. Уверите се да ваше радно окружење има исте променљиве и вредности, ово је потребно за асинхроне задатке као што је синхронизација имејла."
-
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
 msgstr ": Празно"
@@ -118,6 +111,14 @@ msgstr "Прекид"
 msgid "About"
 msgstr "О томе"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr "О овом кориснику"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr "О овом радном простору"
+
 #: src/modules/softphone/components/WebSoftphone.tsx
 msgid "Accept"
 msgstr ""
@@ -144,7 +145,6 @@ msgid "Actions"
 msgstr "Акције"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -164,10 +164,6 @@ msgstr "Активни"
 msgid "Active API keys created by you or your team."
 msgstr "Активни API кључеви које сте креирали ви или ваш тим."
 
-#: src/modules/ui/layout/page/components/PageAddButton.tsx
-msgid "Add"
-msgstr "Додајте"
-
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Додајте налог"
@@ -176,6 +172,7 @@ msgstr "Додајте налог"
 msgid "Add Approved Access Domain"
 msgstr "Додај одобрен домен приступа"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "Додајте поље"
@@ -209,8 +206,8 @@ msgstr "Додајте на црну листу"
 msgid "Add to Favorite"
 msgstr "Додајте у омиљене"
 
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -290,6 +287,10 @@ msgstr "Сви објекти"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Све улоге"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr "Све радне површине чији је овај корисник члан"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -383,10 +384,6 @@ msgstr "Изглед"
 msgid "Approved Domains"
 msgstr "Одобрени домени"
 
-#: src/pages/settings/security/SettingsSecurity.tsx
-#~ msgid "Approved Email Domain"
-#~ msgstr "Approved Email Domain"
-
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
 msgstr "Арапски"
@@ -394,10 +391,6 @@ msgstr "Арапски"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Are you sure that you want to change your billing interval?"
 msgstr "Да ли сте сигурни да желите да промените интервал наплате?"
-
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-#~ msgid "Are you sure you want to assign this role?"
-#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
@@ -627,7 +620,7 @@ msgstr "Скупи"
 msgid "Color code"
 msgstr "Шифра боје"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Компактан приказ"
 
@@ -705,12 +698,9 @@ msgid "Continue with Microsoft"
 msgstr "Настави са Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Копирано у клипборд!"
-
-#: src/modules/command-menu/components/CommandMenu.tsx
-msgid "Copilot"
-msgstr "Ко-пилот"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -808,8 +798,8 @@ msgid "Created"
 msgstr "Креирано"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "Тренутна верзија:"
+msgid "Current version"
+msgstr "Тренутна верзија"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -890,7 +880,6 @@ msgid "Date format"
 msgstr "Формат датума"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -947,11 +936,10 @@ msgstr "Дефинишите шта ће бити видљиво другим к
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -1020,10 +1008,6 @@ msgstr "Обриши цео свој простор за рад"
 msgid "Deleted"
 msgstr "Обрисано"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-#~ msgid "Deleted {objectNamePlural}"
-#~ msgstr "Deleted {objectNamePlural}"
-
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Deleted records"
@@ -1067,7 +1051,6 @@ msgstr "Развојни програмери"
 msgid "Dial the phone number"
 msgstr ""
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
@@ -1171,12 +1154,9 @@ msgstr "Уредите назив свог потдомена или поста�
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "Имејл"
-
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-#~ msgid "Email can not be empty"
-#~ msgstr "Email can not be empty"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -1343,10 +1323,6 @@ msgid "Exclude non-professional emails"
 msgstr "Изузми непрофесионалне имејлове"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-#~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "Exclude the following people and domains from my email sync"
-
-#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Искључи следеће особе и домене из моје синхронизације е-поште. Интерни разговори неће бити увезени"
 
@@ -1365,10 +1341,6 @@ msgstr "Изађи из подешавања"
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Expand"
 msgstr "Прошири"
-
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
-#~ msgid "Expected selected node to be a create step node."
-#~ msgstr "Expected selected node to be a create step node."
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1394,7 +1366,7 @@ msgid "Expires in"
 msgstr "Истиче за"
 
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1449,10 +1421,6 @@ msgstr "Извези радни процес"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflows"
 msgstr "Извези радне процесе"
-
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#~ msgid "Export Workflows"
-#~ msgstr "Export Workflows"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Failed to validate API key. Please check your API key and try again."
@@ -1651,6 +1619,11 @@ msgstr "Икона"
 msgid "Icon and Name"
 msgstr "Икона и име"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr "ИД"
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "Идентификатор"
@@ -1721,10 +1694,6 @@ msgstr "Интеграције"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Невалидан провајдер аутентификације"
-
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-#~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
@@ -1858,7 +1827,7 @@ msgstr "Лабораторија"
 msgid "Language"
 msgstr "Језик"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "Последњих 1 сат"
 
@@ -1866,7 +1835,7 @@ msgstr "Последњих 1 сат"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Последњи 1 сат (од најстаријег → најновијег)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "Последњих 12 сати"
 
@@ -1878,7 +1847,7 @@ msgstr "Последњих 12 сати (од најстаријег → најн
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Последњих 24 сата (од најстаријег → најновијег)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "Последња 4 сата"
 
@@ -1904,12 +1873,17 @@ msgid "Latest date"
 msgstr "Најновији датум"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "Најновија верзија:"
+msgid "Latest version"
+msgstr "Најновија верзија"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
 msgstr "Покрени"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr "Изглед"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -1982,6 +1956,7 @@ msgstr "Максимум"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "Чланови"
 
@@ -2037,6 +2012,8 @@ msgstr "Помери удесно"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "Име"
 
@@ -2132,10 +2109,6 @@ msgstr "Нова лозинка"
 msgid "New record"
 msgstr "Нови запис"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
-#~ msgid "New Role"
-#~ msgstr "New Role"
-
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO Configuration"
 msgstr "Нова SSO Конфигурација"
@@ -2143,10 +2116,6 @@ msgstr "Нова SSO Конфигурација"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
 msgstr "Нови провајдер за SSO"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
-#~ msgid "New Webhook"
-#~ msgstr "New Webhook"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
@@ -2160,25 +2129,9 @@ msgstr "Није повезан налог"
 msgid "No country"
 msgstr "Нема земље"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
-#~ msgid "No members assigned to this role yet"
-#~ msgstr "No members assigned to this role yet"
-
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
-#~ msgid "No members matching this search"
-#~ msgstr "No members matching this search"
-
-#: src/pages/settings/roles/components/RoleAssignment.tsx
-#~ msgid "No members matching your search"
-#~ msgstr "No members matching your search"
-
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "No metrics data available"
 msgstr "Нема доступних података о метрикама"
-
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
-#~ msgid "No more members to add"
-#~ msgstr "No more members to add"
 
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
@@ -2187,10 +2140,6 @@ msgstr "Нема више чланова за доделу"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "No records found"
 msgstr "Нису пронађени подаци"
-
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
-#~ msgid "No Result"
-#~ msgstr "No Result"
 
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
@@ -2282,8 +2231,8 @@ msgstr "Само временска ознака & учесници ће бит�
 msgid "Open command menu"
 msgstr "Отвори мени команди"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Отвори у"
 
@@ -2315,6 +2264,7 @@ msgstr "или"
 msgid "Other"
 msgstr "Остало"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "Друге променљиве окружења"
@@ -2420,24 +2370,12 @@ msgid "Polish"
 msgstr "Пољски"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
-#~ msgid "Portuguese"
-#~ msgstr "Portuguese"
-
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Portuguese — Brazil"
 msgstr "Португалски — Бразил"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Portuguese — Portugal"
 msgstr "Португалски — Португал"
-
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
-#~ msgid "Portuguese (Brazil)"
-#~ msgstr "Portuguese (Brazil)"
-
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
-#~ msgid "Portuguese (Portugal)"
-#~ msgstr "Portuguese (Portugal)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
@@ -2470,10 +2408,6 @@ msgstr "Информације о редоследу нису доступне �
 msgid "Queue performance"
 msgstr "Перформансе реда"
 
-#: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
-#~ msgid "Read documentation"
-#~ msgstr "Read documentation"
-
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "Примите имејл са везом за ажурирање лозинке"
@@ -2494,8 +2428,8 @@ msgstr "Сними слику"
 msgid "Record label"
 msgstr "Сними етикету"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Страница са записима"
 
@@ -2545,10 +2479,6 @@ msgstr "Учитај поново"
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Уклони"
-
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-#~ msgid "Remove {workspaceMemberName}?"
-#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2772,18 +2702,6 @@ msgstr "Послато и примљено"
 msgid "Serbian (Cyrillic)"
 msgstr "Српски (ћирилица)"
 
-#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#~ msgid "Server Admin"
-#~ msgstr "Server Admin"
-
-#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx
-#~ msgid "Server Admin Panel"
-#~ msgstr "Server Admin Panel"
-
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
 msgstr "Детаљи добављача услуга"
@@ -2803,10 +2721,6 @@ msgstr "Подесите видљивост имејла, управљајте �
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Поставите назив вашег корисничког домена и конфигуришите DNS записе."
-
-#: src/pages/settings/workspace/SettingsHostname.tsx
-#~ msgid "Set the name of your domain"
-#~ msgstr "Set the name of your domain"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
@@ -2837,8 +2751,8 @@ msgstr "Да ли промена назива поља треба да пром�
 msgid "Should changing an object's label also change the API?"
 msgstr "Да ли промена етикете објекта треба да промени и API?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Странични панел"
 
@@ -2888,6 +2802,7 @@ msgstr "Јединствена пријава"
 msgid "Stages"
 msgstr "Фазе"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Статус"
@@ -2993,7 +2908,6 @@ msgstr "Табела"
 msgid "Terms of Service"
 msgstr "Услови коришћења сервиса"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test"
 msgstr "Тест"
@@ -3066,6 +2980,10 @@ msgstr "Дошло је до грешке при ажурирању лозинк
 msgid "There was an issue"
 msgstr "Постоји проблем"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr "\"Ово су само параметри сервера. Уверите се да ваше радно окружење има исте променљиве и вредности, ово је потребно за асинхроне задатке као што је синхронизација имејла.\""
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Ова акција се не може опозвати. Ово ће трајно обрисати овог корисника и уклонити га из свих његових задужења."
@@ -3074,23 +2992,11 @@ msgstr "Ова акција се не може опозвати. Ово ће т�
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Ова акција се не може опозвати. Ово ће трајно обрисати ваш радни простор. <0/> Молимо вас да унесете ваш имејл да потврдите."
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-#~ msgid "This member will be unassigned from this role."
-#~ msgstr "This member will be unassigned from this role."
-
-#: src/pages/settings/roles/components/RolePermissions.tsx
-#~ msgid "This Role has the following permissions."
-#~ msgstr "This Role has the following permissions."
-
-#: src/pages/settings/roles/components/RoleAssignment.tsx
-#~ msgid "This Role is assigned to these workspace member."
-#~ msgstr "This Role is assigned to these workspace member."
-
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Ова улога је додељена следећим члановима радног простора."
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "Ове недеље"
 
@@ -3114,22 +3020,13 @@ msgstr "на месечно"
 msgid "to yearly"
 msgstr "на годишње"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "Данас"
 
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "Укупно корисника"
-
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "Тип окдашајућег догађаја"
-
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "Тип активатора треба да буде Ручни - када није изабран ниједан запис(и)"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3210,17 +3107,8 @@ msgstr "Користите наш API или ручно додајте први 
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Корисник"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "Е-маил корисника"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "Кориснички ИД"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3234,14 +3122,6 @@ msgstr "Информације о кориснику"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "User is not logged in"
 msgstr "Корисник није улогован"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "Корисничко име"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "Корисници"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3272,11 +3152,6 @@ msgstr "Прегледај детаље о плаћању"
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "View execution details"
 msgstr "Прегледајте детаље извршења"
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Подешавања приказа"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
@@ -3322,10 +3197,6 @@ msgid "Webhooks"
 msgstr "Вебхукс"
 
 #: src/pages/auth/SignInUp.tsx
-#~ msgid "Welcome to"
-#~ msgstr "Welcome to"
-
-#: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
 msgstr "Добродошли у {workspaceName}"
 
@@ -3336,10 +3207,6 @@ msgstr "Када ће API кључ истећи."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "Када ће кључ бити онемогућен"
-
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Workflow cannot be tested"
-msgstr "Радња не може бити тестирана"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
@@ -3381,16 +3248,16 @@ msgstr "Радни простор"
 msgid "Workspace Deletion"
 msgstr "Брисање радног простора"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr "Информације о радном простору"
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "Лого радног простора"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace name"
-msgstr "Име радног простора"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
 msgstr "Име радног простора"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -3420,14 +3287,6 @@ msgstr "да"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
 msgstr "Није дозвољено креирање записа за овај објекат"
-
-#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
-#~ msgid "You are not allowed to create records in this object"
-#~ msgstr "You are not allowed to create records in this object"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#~ msgid "You do not have access to impersonate users."
-#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

@@ -18,13 +18,6 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
-#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr " 這些僅是伺服器的數值。確保您的工作環境具有相同的變量和值，這對於電子郵件同步等異步任務是必需的。"
-
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
 msgstr ": 空"
@@ -118,6 +111,14 @@ msgstr "中止"
 msgid "About"
 msgstr "關於"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr "關於此使用者"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr "關於此工作區"
+
 #: src/modules/softphone/components/WebSoftphone.tsx
 msgid "Accept"
 msgstr ""
@@ -144,7 +145,6 @@ msgid "Actions"
 msgstr "操作"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -164,10 +164,6 @@ msgstr "啟用"
 msgid "Active API keys created by you or your team."
 msgstr "由您或您的團隊創建的啟用 API 密鑰。"
 
-#: src/modules/ui/layout/page/components/PageAddButton.tsx
-msgid "Add"
-msgstr "添加"
-
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "新增帳戶"
@@ -176,6 +172,7 @@ msgstr "新增帳戶"
 msgid "Add Approved Access Domain"
 msgstr "添加已批准的訪問域"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "添加字段"
@@ -209,8 +206,8 @@ msgstr "添加到阻止列表"
 msgid "Add to Favorite"
 msgstr "添加到收藏夾"
 
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -290,6 +287,10 @@ msgstr "所有對象"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "所有角色"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr "此使用者所屬的所有工作區"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -383,10 +384,6 @@ msgstr "外觀"
 msgid "Approved Domains"
 msgstr "已批准的網域"
 
-#: src/pages/settings/security/SettingsSecurity.tsx
-#~ msgid "Approved Email Domain"
-#~ msgstr "Approved Email Domain"
-
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
 msgstr "阿拉伯語"
@@ -394,10 +391,6 @@ msgstr "阿拉伯語"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Are you sure that you want to change your billing interval?"
 msgstr "您確定要更改計費間隔嗎？"
-
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-#~ msgid "Are you sure you want to assign this role?"
-#~ msgstr "Are you sure you want to assign this role?"
 
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
@@ -627,7 +620,7 @@ msgstr "收起"
 msgid "Color code"
 msgstr "顏色代碼"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "緊湊視圖"
 
@@ -705,12 +698,9 @@ msgid "Continue with Microsoft"
 msgstr "繼續使用 Microsoft"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "已複製到剪貼板！"
-
-#: src/modules/command-menu/components/CommandMenu.tsx
-msgid "Copilot"
-msgstr "副駕駛"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -808,8 +798,8 @@ msgid "Created"
 msgstr "已創建"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "當前版本："
+msgid "Current version"
+msgstr "當前版本"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -890,7 +880,6 @@ msgid "Date format"
 msgstr "日期格式"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -947,11 +936,10 @@ msgstr "定義在您的工作區中對其他用戶可見的內容"
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
@@ -1020,10 +1008,6 @@ msgstr "刪除整個工作區"
 msgid "Deleted"
 msgstr "已刪除"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-#~ msgid "Deleted {objectNamePlural}"
-#~ msgstr "Deleted {objectNamePlural}"
-
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
 msgid "Deleted records"
@@ -1067,7 +1051,6 @@ msgstr "開發人員"
 msgid "Dial the phone number"
 msgstr ""
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
@@ -1171,12 +1154,9 @@ msgstr "編輯您的子域名或設置自定義域名。"
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "電子郵件"
-
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-#~ msgid "Email can not be empty"
-#~ msgstr "Email can not be empty"
 
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -1343,10 +1323,6 @@ msgid "Exclude non-professional emails"
 msgstr "排除非專業電子郵件"
 
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
-#~ msgid "Exclude the following people and domains from my email sync"
-#~ msgstr "Exclude the following people and domains from my email sync"
-
-#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "排除以下人員和網域自我的電子郵件同步中。內部對話將不會被導入"
 
@@ -1365,10 +1341,6 @@ msgstr "退出設置"
 #: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
 msgid "Expand"
 msgstr "展開"
-
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
-#~ msgid "Expected selected node to be a create step node."
-#~ msgstr "Expected selected node to be a create step node."
 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1394,7 +1366,7 @@ msgid "Expires in"
 msgstr "到期時間"
 
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1449,10 +1421,6 @@ msgstr "導出工作流程"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflows"
 msgstr "導出工作流程"
-
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#~ msgid "Export Workflows"
-#~ msgstr "Export Workflows"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Failed to validate API key. Please check your API key and try again."
@@ -1651,6 +1619,11 @@ msgstr "圖標"
 msgid "Icon and Name"
 msgstr "圖標和名稱"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr "ID"
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "標識符"
@@ -1721,10 +1694,6 @@ msgstr "集成"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "無效的身份驗證提供者"
-
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-#~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
@@ -1858,7 +1827,7 @@ msgstr "實驗室"
 msgid "Language"
 msgstr "語言"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "最近 1 小時"
 
@@ -1866,7 +1835,7 @@ msgstr "最近 1 小時"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "最近1小時（最早 → 最新）"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "最近 12 小時"
 
@@ -1878,7 +1847,7 @@ msgstr "最近12小時（最早 → 最新）"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "最近24小時（最早 → 最新）"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "最近 4 小時"
 
@@ -1904,12 +1873,17 @@ msgid "Latest date"
 msgstr "最新日期"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "最新版本："
+msgid "Latest version"
+msgstr "最新版本"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
 msgstr "啟動"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr "版面設計"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -1982,6 +1956,7 @@ msgstr "最大"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "成員"
 
@@ -2037,6 +2012,8 @@ msgstr "向右移動"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "名稱"
 
@@ -2132,10 +2109,6 @@ msgstr "新密碼"
 msgid "New record"
 msgstr "新記錄"
 
-#: src/pages/settings/roles/SettingsRoles.tsx
-#~ msgid "New Role"
-#~ msgstr "New Role"
-
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO Configuration"
 msgstr "新的 SSO 配置"
@@ -2143,10 +2116,6 @@ msgstr "新的 SSO 配置"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
 msgstr "新的 SSO 提供者"
-
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
-#~ msgid "New Webhook"
-#~ msgstr "New Webhook"
 
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
@@ -2160,25 +2129,9 @@ msgstr "無連接帳戶"
 msgid "No country"
 msgstr "無國家"
 
-#: src/pages/settings/roles/components/RoleAssignment.tsx
-#~ msgid "No members assigned to this role yet"
-#~ msgstr "No members assigned to this role yet"
-
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
-#~ msgid "No members matching this search"
-#~ msgstr "No members matching this search"
-
-#: src/pages/settings/roles/components/RoleAssignment.tsx
-#~ msgid "No members matching your search"
-#~ msgstr "No members matching your search"
-
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "No metrics data available"
 msgstr "沒有可用的數據指標"
-
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
-#~ msgid "No more members to add"
-#~ msgstr "No more members to add"
 
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
@@ -2187,10 +2140,6 @@ msgstr "沒有更多成員可以指派"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "No records found"
 msgstr "未找到記錄"
-
-#: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
-#~ msgid "No Result"
-#~ msgstr "No Result"
 
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
@@ -2282,8 +2231,8 @@ msgstr "僅時間戳和參與者將與您的團隊共享。"
 msgid "Open command menu"
 msgstr "打開指令選單"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "打開"
 
@@ -2315,6 +2264,7 @@ msgstr "或"
 msgid "Other"
 msgstr "其他"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "其他環境變量"
@@ -2420,24 +2370,12 @@ msgid "Polish"
 msgstr "波蘭語"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
-#~ msgid "Portuguese"
-#~ msgstr "Portuguese"
-
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Portuguese — Brazil"
 msgstr "葡萄牙語 - 巴西"
 
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Portuguese — Portugal"
 msgstr "葡萄牙語 - 葡萄牙"
-
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
-#~ msgid "Portuguese (Brazil)"
-#~ msgstr "Portuguese (Brazil)"
-
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
-#~ msgid "Portuguese (Portugal)"
-#~ msgstr "Portuguese (Portugal)"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
@@ -2470,10 +2408,6 @@ msgstr "隊列信息無法獲取，因為工作程序已關閉"
 msgid "Queue performance"
 msgstr "隊列效能"
 
-#: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
-#~ msgid "Read documentation"
-#~ msgstr "Read documentation"
-
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "接收包含密碼更新鏈接的電子郵件"
@@ -2494,8 +2428,8 @@ msgstr "記錄圖像"
 msgid "Record label"
 msgstr "記錄標籤"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "記錄頁面"
 
@@ -2545,10 +2479,6 @@ msgstr "重新載入"
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "移除"
-
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
-#~ msgid "Remove {workspaceMemberName}?"
-#~ msgstr "Remove {workspaceMemberName}?"
 
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
@@ -2772,18 +2702,6 @@ msgstr "已發送和接收"
 msgid "Serbian (Cyrillic)"
 msgstr "塞爾維亞語（西里爾文）"
 
-#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#~ msgid "Server Admin"
-#~ msgstr "Server Admin"
-
-#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
-#: src/pages/settings/admin-panel/SettingsAdmin.tsx
-#~ msgid "Server Admin Panel"
-#~ msgstr "Server Admin Panel"
-
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
 msgstr "服務提供者詳細信息"
@@ -2803,10 +2721,6 @@ msgstr "設置電子郵件可見性，管理您的屏蔽列表等。"
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "設置您的自定義域名名稱並配置您的DNS記錄。"
-
-#: src/pages/settings/workspace/SettingsHostname.tsx
-#~ msgid "Set the name of your domain"
-#~ msgstr "Set the name of your domain"
 
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
@@ -2837,8 +2751,8 @@ msgstr "更改字段標籤是否也應更改 API 名稱？"
 msgid "Should changing an object's label also change the API?"
 msgstr "更改對象標籤是否也應更改 API 名稱？"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "側邊面板"
 
@@ -2888,6 +2802,7 @@ msgstr "單點登錄"
 msgid "Stages"
 msgstr "階段"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "狀態"
@@ -2993,7 +2908,6 @@ msgstr "表格"
 msgid "Terms of Service"
 msgstr "服務條款"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test"
 msgstr "測試"
@@ -3066,6 +2980,10 @@ msgstr "更新密碼時出現錯誤。"
 msgid "There was an issue"
 msgstr "出現問題"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr "這些僅是伺服器的數值。確保您的工作環境具有相同的變量和值，這對於電子郵件同步等異步任務是必需的。"
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "此操作無法撤銷。這將永久刪除此用戶並將其從所有任務中移除。"
@@ -3074,23 +2992,11 @@ msgstr "此操作無法撤銷。這將永久刪除此用戶並將其從所有任
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "此操作無法撤銷。這將永久刪除您的整個工作區。 <0/> 請輸入您的電子郵件以確認。"
 
-#: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
-#~ msgid "This member will be unassigned from this role."
-#~ msgstr "This member will be unassigned from this role."
-
-#: src/pages/settings/roles/components/RolePermissions.tsx
-#~ msgid "This Role has the following permissions."
-#~ msgstr "This Role has the following permissions."
-
-#: src/pages/settings/roles/components/RoleAssignment.tsx
-#~ msgid "This Role is assigned to these workspace member."
-#~ msgstr "This Role is assigned to these workspace member."
-
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "這個角色已被指派給這些工作區成員。"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "本週"
 
@@ -3114,22 +3020,13 @@ msgstr "至每月"
 msgid "to yearly"
 msgstr "至每年"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "今天"
 
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "用戶總數"
-
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "觸發類型"
-
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "觸發類型應為手動 - 當未選擇記錄時"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "True"
@@ -3210,17 +3107,8 @@ msgstr "使用我們的 API 或手動添加您的第一個 {objectLabel}"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "用戶"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "用戶電子郵件"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "用戶 ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3234,14 +3122,6 @@ msgstr "用戶信息"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "User is not logged in"
 msgstr "用戶未登錄"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "用戶名稱"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "用戶"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -3272,11 +3152,6 @@ msgstr "查看計費詳情"
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "View execution details"
 msgstr "查看執行詳情"
-
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "視圖設置"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
@@ -3322,10 +3197,6 @@ msgid "Webhooks"
 msgstr "Webhooks"
 
 #: src/pages/auth/SignInUp.tsx
-#~ msgid "Welcome to"
-#~ msgstr "Welcome to"
-
-#: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
 msgstr "歡迎來到 {workspaceName}"
 
@@ -3336,10 +3207,6 @@ msgstr "API 密鑰的過期時間。"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "按鍵何時禁用"
-
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Workflow cannot be tested"
-msgstr "無法測試工作流程"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
@@ -3381,16 +3248,16 @@ msgstr "工作區"
 msgid "Workspace Deletion"
 msgstr "刪除工作區"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr "工作區資訊"
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "工作區標誌"
 
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace name"
-msgstr "工作區名稱"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
 msgstr "工作區名稱"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -3420,14 +3287,6 @@ msgstr "是"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
 msgstr "您無權在此對象中創建記錄"
-
-#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
-#~ msgid "You are not allowed to create records in this object"
-#~ msgstr "You are not allowed to create records in this object"
-
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#~ msgid "You do not have access to impersonate users."
-#~ msgstr "You do not have access to impersonate users."
 
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."

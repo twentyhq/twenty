@@ -100,6 +100,35 @@ function assertCronTriggerSettingsAreValid(settings: any) {
       return;
     }
 
+    case 'DAYS': {
+      if (!settings.schedule) {
+        throw new WorkflowTriggerException(
+          'No schedule provided in cron trigger',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+      if (settings.schedule.day <= 0) {
+        throw new WorkflowTriggerException(
+          'Invalid day value. Should be integer greater than 1',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+      if (settings.schedule.hour < 0 || settings.schedule.hour > 23) {
+        throw new WorkflowTriggerException(
+          'Invalid hour value. Should be integer between 0 and 23',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+      if (settings.schedule.minute < 0 || settings.schedule.minute > 59) {
+        throw new WorkflowTriggerException(
+          'Invalid minute value. Should be integer between 0 and 59',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+
+      return;
+    }
+
     case 'HOURS': {
       if (!settings.schedule) {
         throw new WorkflowTriggerException(

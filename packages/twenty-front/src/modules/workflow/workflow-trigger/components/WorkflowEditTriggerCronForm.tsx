@@ -30,6 +30,9 @@ type WorkflowEditTriggerCronFormProps = {
 
 type FormErrorMessages = {
   CUSTOM?: string | undefined;
+  DAYS_day?: string | undefined;
+  DAYS_hour?: string | undefined;
+  DAYS_minute?: string | undefined;
   HOURS_hour?: string | undefined;
   HOURS_minute?: string | undefined;
   MINUTES?: string | undefined;
@@ -145,6 +148,159 @@ export const WorkflowEditTriggerCronForm = ({
               });
             }}
           />
+        )}
+        {trigger.settings.type === 'DAYS' && (
+          <>
+            <FormNumberFieldInput
+              label="Days Between Triggers"
+              error={errorMessagesVisible ? errorMessages.DAYS_day : undefined}
+              onBlur={onBlur}
+              defaultValue={trigger.settings.schedule.day}
+              onPersist={(newDay) => {
+                if (triggerOptions.readonly === true) {
+                  return;
+                }
+
+                if (!isDefined(newDay)) {
+                  return;
+                }
+
+                if (!isNumber(newDay) || newDay <= 0) {
+                  setErrorMessages((prev) => ({
+                    ...prev,
+                    DAYS_day: `Invalid day value '${newDay}'. Should be integer greater than 1`,
+                  }));
+                  return;
+                }
+
+                setErrorMessages((prev) => ({
+                  ...prev,
+                  DAYS_day: undefined,
+                }));
+
+                triggerOptions.onTriggerUpdate({
+                  ...trigger,
+                  settings: {
+                    ...trigger.settings,
+                    type: 'DAYS',
+                    schedule: {
+                      day: newDay,
+                      hour:
+                        trigger.settings.type === 'DAYS'
+                          ? trigger.settings.schedule.hour
+                          : 0,
+                      minute:
+                        trigger.settings.type === 'DAYS'
+                          ? trigger.settings.schedule.minute
+                          : 0,
+                    },
+                  },
+                });
+              }}
+              placeholder="Enter number greater than 1"
+              readonly={triggerOptions.readonly}
+            />
+            <FormNumberFieldInput
+              label="Trigger at Hour"
+              error={errorMessagesVisible ? errorMessages.DAYS_hour : undefined}
+              onBlur={onBlur}
+              defaultValue={trigger.settings.schedule.hour}
+              onPersist={(newHour) => {
+                if (triggerOptions.readonly === true) {
+                  return;
+                }
+
+                if (!isDefined(newHour)) {
+                  return;
+                }
+
+                if (!isNumber(newHour) || newHour < 0 || newHour > 23) {
+                  setErrorMessages((prev) => ({
+                    ...prev,
+                    DAYS_hour: `Invalid hour value '${newHour}'. Should be integer between 0 and 23`,
+                  }));
+                  return;
+                }
+
+                setErrorMessages((prev) => ({
+                  ...prev,
+                  DAYS_hour: undefined,
+                }));
+
+                triggerOptions.onTriggerUpdate({
+                  ...trigger,
+                  settings: {
+                    ...trigger.settings,
+                    type: 'DAYS',
+                    schedule: {
+                      day:
+                        trigger.settings.type === 'DAYS'
+                          ? trigger.settings.schedule.day
+                          : 1,
+                      hour: newHour,
+                      minute:
+                        trigger.settings.type === 'DAYS'
+                          ? trigger.settings.schedule.minute
+                          : 0,
+                    },
+                  },
+                });
+              }}
+              placeholder="Enter number between 0 and 23"
+              readonly={triggerOptions.readonly}
+            />
+            <FormNumberFieldInput
+              label="Trigger at Minute"
+              error={
+                errorMessagesVisible ? errorMessages.DAYS_minute : undefined
+              }
+              onBlur={onBlur}
+              defaultValue={trigger.settings.schedule.minute}
+              onPersist={(newMinute) => {
+                if (triggerOptions.readonly === true) {
+                  return;
+                }
+
+                if (!isDefined(newMinute)) {
+                  return;
+                }
+
+                if (!isNumber(newMinute) || newMinute < 0 || newMinute > 59) {
+                  setErrorMessages((prev) => ({
+                    ...prev,
+                    DAYS_minute: `Invalid minute value '${newMinute}'. Should be integer between 0 and 59`,
+                  }));
+                  return;
+                }
+
+                setErrorMessages((prev) => ({
+                  ...prev,
+                  DAYS_minute: undefined,
+                }));
+
+                triggerOptions.onTriggerUpdate({
+                  ...trigger,
+                  settings: {
+                    ...trigger.settings,
+                    type: 'DAYS',
+                    schedule: {
+                      day:
+                        trigger.settings.type === 'DAYS'
+                          ? trigger.settings.schedule.day
+                          : 1,
+                      hour:
+                        trigger.settings.type === 'DAYS'
+                          ? trigger.settings.schedule.hour
+                          : 0,
+                      minute: newMinute,
+                    },
+                  },
+                });
+              }}
+              placeholder="Enter number between 0 and 59"
+              readonly={triggerOptions.readonly}
+            />
+          </>
         )}
         {trigger.settings.type === 'HOURS' && (
           <>

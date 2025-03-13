@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
 import { MAIN_COLORS } from '@ui/theme';
@@ -46,7 +46,6 @@ export const AdvancedSettingsToggle = ({
   isAdvancedModeEnabled,
   setIsAdvancedModeEnabled,
 }: AdvancedSettingsToggleProps) => {
-  const { t } = useLingui();
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);
   };

@@ -2,8 +2,6 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
-import { RightDrawer } from '@/ui/layout/right-drawer/components/RightDrawer';
-
 import { PagePanel } from './PagePanel';
 
 type PageBodyProps = {
@@ -45,6 +43,5 @@ export const PageBody = ({ children }: PageBodyProps) => (
     <StyledLeftContainer>
       <PagePanel>{children}</PagePanel>
     </StyledLeftContainer>
-    <RightDrawer />
   </StyledMainContainer>
 );

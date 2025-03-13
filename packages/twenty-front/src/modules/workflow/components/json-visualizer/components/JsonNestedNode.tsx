@@ -3,6 +3,7 @@ import { JsonList } from '@/workflow/components/json-visualizer/components/inter
 import { JsonNodeLabel } from '@/workflow/components/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNode } from '@/workflow/components/json-visualizer/components/JsonNode';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import { IconComponent } from 'twenty-ui';
@@ -35,6 +36,8 @@ export const JsonNestedNode = ({
   renderElementsCount,
   emptyElementsText,
   depth,
+  keyPath,
+  shouldHighlightNode,
 }: {
   label?: string;
   Icon: IconComponent;
@@ -42,6 +45,8 @@ export const JsonNestedNode = ({
   renderElementsCount?: (count: number) => string;
   emptyElementsText: string;
   depth: number;
+  keyPath: string;
+  shouldHighlightNode?: (keyPath: string) => boolean;
 }) => {
   const hideRoot = !isDefined(label);
 
@@ -52,9 +57,22 @@ export const JsonNestedNode = ({
       {elements.length === 0 ? (
         <StyledEmptyState>{emptyElementsText}</StyledEmptyState>
       ) : (
-        elements.map(({ id, label, value }) => (
-          <JsonNode key={id} label={label} value={value} depth={depth + 1} />
-        ))
+        elements.map(({ id, label, value }) => {
+          const nextKeyPath = isNonEmptyString(keyPath)
+            ? `${keyPath}.${id}`
+            : String(id);
+
+          return (
+            <JsonNode
+              key={id}
+              label={label}
+              value={value}
+              depth={depth + 1}
+              keyPath={nextKeyPath}
+              shouldHighlightNode={shouldHighlightNode}
+            />
+          );
+        })
       )}
     </JsonList>
   );
