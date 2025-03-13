@@ -120,8 +120,12 @@ export const WithDeletableVariable: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
+    await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+    });
+
     const editor = canvasElement.querySelector('.ProseMirror > p');
-    expect(editor).toBeVisible();
 
     const variable = await canvas.findByText('Name');
     expect(variable).toBeVisible();

@@ -39,6 +39,7 @@ export const SingleRecordPicker = ({
         event.target instanceof HTMLInputElement &&
         event.target.tagName === 'INPUT'
       );
+
       if (weAreNotInAnHTMLInput && isDefined(onCancel)) {
         onCancel();
       }
