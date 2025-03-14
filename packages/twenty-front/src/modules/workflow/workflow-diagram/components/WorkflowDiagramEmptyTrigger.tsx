@@ -22,7 +22,6 @@ export const WorkflowDiagramEmptyTrigger = ({
       nodeType="trigger"
       variant="empty"
       Icon={<StyledStepNodeLabelIconContainer />}
-      isLeafNode={data.isLeafNode}
     />
   );
 };

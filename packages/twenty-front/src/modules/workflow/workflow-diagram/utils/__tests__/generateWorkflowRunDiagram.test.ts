@@ -121,7 +121,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "icon": "IconPlaylistAdd",
-        "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
         "runStatus": "success",
@@ -136,7 +135,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 1",
         "nodeType": "action",
         "runStatus": "failure",
@@ -150,7 +148,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 2",
         "nodeType": "action",
         "runStatus": "not-executed",
@@ -164,7 +161,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 3",
         "nodeType": "action",
         "runStatus": "not-executed",
@@ -300,7 +296,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "icon": "IconPlaylistAdd",
-        "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
         "runStatus": "success",
@@ -315,7 +310,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 1",
         "nodeType": "action",
         "runStatus": "success",
@@ -329,7 +323,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 2",
         "nodeType": "action",
         "runStatus": "success",
@@ -343,7 +336,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 3",
         "nodeType": "action",
         "runStatus": "success",
@@ -464,7 +456,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "icon": "IconPlaylistAdd",
-        "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
         "runStatus": "success",
@@ -479,7 +470,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 1",
         "nodeType": "action",
         "runStatus": "running",
@@ -493,7 +483,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 2",
         "nodeType": "action",
         "runStatus": "not-executed",
@@ -507,7 +496,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 3",
         "nodeType": "action",
         "runStatus": "not-executed",
@@ -661,7 +649,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "icon": "IconPlaylistAdd",
-        "isLeafNode": false,
         "name": "Company created",
         "nodeType": "trigger",
         "runStatus": "success",
@@ -676,7 +663,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 1",
         "nodeType": "action",
         "runStatus": "success",
@@ -690,7 +676,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 2",
         "nodeType": "action",
         "runStatus": "running",
@@ -704,7 +689,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 3",
         "nodeType": "action",
         "runStatus": "not-executed",
@@ -718,7 +702,6 @@ describe('generateWorkflowRunDiagram', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "Step 4",
         "nodeType": "action",
         "runStatus": "not-executed",
