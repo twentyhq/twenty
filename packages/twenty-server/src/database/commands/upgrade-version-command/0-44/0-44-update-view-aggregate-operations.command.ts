@@ -102,7 +102,7 @@ const AGGREGATE_OPERATION_OPTIONS = [
 ];
 
 @Command({
-  name: 'upgrade:0-50:update-view-aggregate-operations',
+  name: 'upgrade:0-44:update-view-aggregate-operations',
   description:
     'Update View and ViewField entities with new aggregate operations (countTrue, countFalse)',
 })
