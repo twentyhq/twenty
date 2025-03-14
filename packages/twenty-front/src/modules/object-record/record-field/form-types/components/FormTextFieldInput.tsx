@@ -4,12 +4,12 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/form-ty
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
-import { InputHint } from '@/ui/input/components/InputHint';
 
 type FormTextFieldInputProps = {
   label?: string;

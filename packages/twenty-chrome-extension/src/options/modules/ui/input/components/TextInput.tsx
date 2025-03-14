@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import React, { useId } from 'react';
+import { Label } from 'twenty-ui';
 
 interface TextInputProps {
   label?: string;
@@ -18,12 +19,8 @@ const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledLabel = styled.label`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+const StyledLabel = styled(Label)`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
-  text-transform: uppercase;
 `;
 
 const StyledInputContainer = styled.div`
@@ -68,7 +65,11 @@ const TextInput: React.FC<TextInputProps> = ({
 
   return (
     <StyledContainer fullWidth={fullWidth}>
-      {label && <StyledLabel htmlFor={inputId}>{label}</StyledLabel>}
+      {label && (
+        <StyledLabel htmlFor={inputId} variant="small">
+          {label}
+        </StyledLabel>
+      )}
       <StyledInputContainer>
         {icon && <StyledIcon>{icon}</StyledIcon>}
         <StyledInput
