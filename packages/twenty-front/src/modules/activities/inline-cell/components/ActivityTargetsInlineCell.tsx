@@ -90,7 +90,9 @@ export const ActivityTargetsInlineCell = ({
                 editModeContent: (
                   <MultipleRecordPicker
                     componentInstanceId={multipleRecordPickerInstanceId}
-                    onClickOutside={() => {}}
+                    onClickOutside={() => {
+                      closeInlineCell();
+                    }}
                     onChange={(morphItem) => {
                       updateActivityTargetFromInlineCell({
                         recordPickerInstanceId: multipleRecordPickerInstanceId,
