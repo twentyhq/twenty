@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import {
   deleteCoreSchema,
-  seedCoreSchema,
+  seedDemoCoreSchema,
 } from 'src/database/typeorm-seeds/core/demo';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -43,7 +43,7 @@ export class DataSeedDemoWorkspaceService {
           await deleteCoreSchema(rawDataSource, workspaceId);
         }
 
-        await seedCoreSchema(rawDataSource, workspaceId);
+        await seedDemoCoreSchema(rawDataSource, workspaceId);
         await this.workspaceManagerService.initDemo(workspaceId);
       }
     } catch (error) {

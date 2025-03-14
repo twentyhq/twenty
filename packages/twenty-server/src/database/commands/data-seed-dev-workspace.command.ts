@@ -96,7 +96,12 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
     const isBillingEnabled = this.environmentService.get('IS_BILLING_ENABLED');
 
-    await seedCoreSchema(rawDataSource, workspaceId, isBillingEnabled);
+    await seedCoreSchema({
+      workspaceDataSource: rawDataSource,
+      workspaceId,
+      isBillingEnabled,
+      appVersion: this.environmentService.get('APP_VERSION'),
+    });
 
     await rawDataSource.destroy();
 
