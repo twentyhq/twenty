@@ -7,16 +7,7 @@ const assertIsFeatureFlagKey = (
   featureFlagKey: string,
   exceptionToThrow: CustomException,
 ): asserts featureFlagKey is FeatureFlagKey => {
-  // Convert camelCase to UPPER_CASE if needed
-  const normalizedKey = featureFlagKey.includes('_')
-    ? featureFlagKey
-    : featureFlagKey.replace(/([A-Z])/g, '_$1').toUpperCase();
-
-  if (
-    isDefined(FeatureFlagKey[normalizedKey]) ||
-    isDefined(FeatureFlagKey[featureFlagKey])
-  )
-    return;
+  if (isDefined(FeatureFlagKey[featureFlagKey])) return;
   throw exceptionToThrow;
 };
 
