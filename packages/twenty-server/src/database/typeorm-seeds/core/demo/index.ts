@@ -1,20 +1,21 @@
 import { DataSource } from 'typeorm';
 
-import {
-  seedUsers,
-  deleteUsersByWorkspace,
-} from 'src/database/typeorm-seeds/core/demo/users';
-import {
-  seedWorkspaces,
-  deleteWorkspaces,
-} from 'src/database/typeorm-seeds/core/demo/workspaces';
 import { deleteFeatureFlags } from 'src/database/typeorm-seeds/core/demo/feature-flags';
 import {
   deleteUserWorkspaces,
   seedUserWorkspaces,
 } from 'src/database/typeorm-seeds/core/demo/user-workspaces';
+import {
+  deleteUsersByWorkspace,
+  seedUsers,
+} from 'src/database/typeorm-seeds/core/demo/users';
+import {
+  deleteWorkspaces,
+  seedWorkspaces,
+} from 'src/database/typeorm-seeds/core/demo/workspaces';
 
-export const seedCoreSchema = async (
+// What is this abstraction ?
+export const seedDemoCoreSchema = async (
   workspaceDataSource: DataSource,
   workspaceId: string,
 ) => {
