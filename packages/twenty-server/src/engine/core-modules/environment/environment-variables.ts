@@ -11,7 +11,6 @@ import {
   IsString,
   IsUrl,
   ValidateIf,
-  isDefined,
   validateSync,
 } from 'class-validator';
 
@@ -29,6 +28,7 @@ import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decora
 import { EnvironmentVariablesMetadata } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/environment/decorators/is-duration.decorator';
+import { IsOptionalOrEmptyString } from 'src/engine/core-modules/environment/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/environment/decorators/is-strictly-lower-than.decorator';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
@@ -985,7 +985,7 @@ export class EnvironmentVariables {
     group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Twenty server version',
   })
-  @ValidateIf((env) => isDefined(env.APP_VERSION) && env.APP_VERSION != '')
+  @IsOptionalOrEmptyString()
   @IsSemVer()
   APP_VERSION?: string;
 }
