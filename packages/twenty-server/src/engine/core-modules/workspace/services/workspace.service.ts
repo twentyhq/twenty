@@ -272,9 +272,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
     const appVersion = this.environmentService.get("APP_VERSION") ?? null;
-    if (!isDefined(appVersion)) {
-      // do sentry warning
-    }
     await this.workspaceRepository.update(workspace.id, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
