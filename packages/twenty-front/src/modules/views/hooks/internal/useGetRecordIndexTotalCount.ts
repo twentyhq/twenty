@@ -7,23 +7,15 @@ import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/u
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-type UseGetRecordIndexTotalCountProps = {
-  recordIndexId?: string;
-};
-
-export const useGetRecordIndexTotalCount = ({
-  recordIndexId,
-}: UseGetRecordIndexTotalCountProps) => {
+export const useGetRecordIndexTotalCount = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
-    recordIndexId,
   );
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
-    recordIndexId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();

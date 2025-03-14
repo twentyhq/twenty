@@ -3,14 +3,11 @@ import { useEffect } from 'react';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useGetRecordIndexTotalCount } from '@/object-record/record-index/hooks/useGetRecordIndexTotalCount';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
-import { recordIndexEntityCountNoGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexEntityCountNoGroupComponentFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewField } from '@/views/types/ViewField';
 import { useRecoilCallback } from 'recoil';
@@ -35,21 +32,6 @@ export const RecordIndexTableContainerEffect = () => {
 
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
-
-  const { totalCount } = useGetRecordIndexTotalCount({
-    recordIndexId,
-  });
-
-  const setEntityCount = useSetRecoilComponentStateV2(
-    recordIndexEntityCountNoGroupComponentFamilyState,
-    recordIndexId,
-  );
-
-  useEffect(() => {
-    if (totalCount !== undefined) {
-      setEntityCount(totalCount);
-    }
-  }, [totalCount, setEntityCount]);
 
   useEffect(() => {
     setAvailableTableColumns(columnDefinitions);

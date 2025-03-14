@@ -5,8 +5,6 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
-import { useGetRecordIndexTotalCount } from '@/object-record/record-index/hooks/useGetRecordIndexTotalCount';
-import { recordIndexEntityCountNoGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexEntityCountNoGroupComponentFamilyState';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -21,15 +19,6 @@ export const RecordIndexBoardDataLoaderEffect = ({
 }: RecordIndexBoardDataLoaderEffectProps) => {
   const recordIndexFieldDefinitions = useRecoilValue(
     recordIndexFieldDefinitionsState,
-  );
-
-  const { totalCount } = useGetRecordIndexTotalCount({
-    recordIndexId: recordBoardId,
-  });
-
-  const setEntityCount = useSetRecoilComponentStateV2(
-    recordIndexEntityCountNoGroupComponentFamilyState,
-    recordBoardId,
   );
 
   const recordIndexIsCompactModeActive = useRecoilValue(
@@ -50,12 +39,6 @@ export const RecordIndexBoardDataLoaderEffect = ({
     isRecordBoardCompactModeActiveComponentState,
     recordBoardId,
   );
-
-  useEffect(() => {
-    if (totalCount !== undefined) {
-      setEntityCount(totalCount);
-    }
-  }, [totalCount, setEntityCount]);
 
   useEffect(() => {
     setIsCompactModeActive(recordIndexIsCompactModeActive);
