@@ -97,7 +97,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   }: ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs): Promise<CompareVersionMajorAndMinorReturnType> {
     if (!isDefined(appVersion)) {
       throw new Error(
-        'Cannot run upgrade command when APP_VERSION is not defined',
+        'Cannot run upgrade command when APP_VERSION is not defined, please double check your env variables',
       );
     }
 
