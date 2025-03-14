@@ -3,14 +3,14 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
-import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
-import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
-import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
+import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 
 export const subscriptionModuleFactory = async (
   environmentService: EnvironmentService,
@@ -52,7 +52,7 @@ export const subscriptionModuleFactory = async (
 
   if (environmentService.get('NODE_ENV') === NodeEnvironment.development) {
     config.renderGraphiQL = () => {
-      return renderApolloPlayground({ path: 'metadata' });
+      return renderApolloPlayground({ path: 'playground' });
     };
   }
 
