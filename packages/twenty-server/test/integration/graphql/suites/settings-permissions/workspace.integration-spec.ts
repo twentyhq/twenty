@@ -472,7 +472,7 @@ describe('workspace permissions', () => {
               `,
           variables: {
             input: {
-              publicFeatureFlag: 'TestFeature',
+              publicFeatureFlag: 'IsStripeIntegrationEnabled',
               value: true,
             },
           },
