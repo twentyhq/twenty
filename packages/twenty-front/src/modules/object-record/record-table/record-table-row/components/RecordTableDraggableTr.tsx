@@ -15,7 +15,7 @@ type RecordTableDraggableTrProps = {
   children: ReactNode;
 };
 
-const StyledAbsoluteInViewContainer = styled.div`
+const StyledAbsoluteInViewContainer = styled.td`
   position: absolute;
   top: 0;
   left: 0;

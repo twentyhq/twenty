@@ -12,6 +12,9 @@ import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -30,6 +33,7 @@ export class AdminPanelResolver {
     private adminService: AdminPanelService,
     private adminPanelHealthService: AdminPanelHealthService,
     private workerHealthIndicator: WorkerHealthIndicator,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
@@ -53,13 +57,21 @@ export class AdminPanelResolver {
   async updateWorkspaceFeatureFlag(
     @Args() updateFlagInput: UpdateWorkspaceFeatureFlagInput,
   ): Promise<boolean> {
-    await this.adminService.updateWorkspaceFeatureFlags(
-      updateFlagInput.workspaceId,
-      updateFlagInput.featureFlag,
-      updateFlagInput.value,
-    );
+    try {
+      await this.featureFlagService.upsertWorkspaceFeatureFlag({
+        workspaceId: updateFlagInput.workspaceId,
+        featureFlag: updateFlagInput.featureFlag,
+        value: updateFlagInput.value,
+      });
 
-    return true;
+      return true;
+    } catch (error) {
+      if (error instanceof FeatureFlagException) {
+        throw new UserInputError(error.message);
+      }
+
+      throw error;
+    }
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)

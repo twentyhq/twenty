@@ -23,6 +23,7 @@ type TabProps = {
 const StyledTab = styled('button', {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'active',
 })<{ active?: boolean; disabled?: boolean; to?: string }>`
+  all: unset;
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-color: ${({ theme, active }) =>
@@ -38,6 +39,7 @@ const StyledTab = styled('button', {
   border-left: none;
   border-right: none;
   border-top: none;
+  font-family: inherit;
 
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};

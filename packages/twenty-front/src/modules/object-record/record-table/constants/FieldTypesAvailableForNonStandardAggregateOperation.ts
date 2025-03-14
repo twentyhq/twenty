@@ -19,6 +19,8 @@ export const FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION = {
     FieldMetadataType.NUMBER,
     FieldMetadataType.CURRENCY,
   ],
+  [AGGREGATE_OPERATIONS.countFalse]: [FieldMetadataType.BOOLEAN],
+  [AGGREGATE_OPERATIONS.countTrue]: [FieldMetadataType.BOOLEAN],
   [DATE_AGGREGATE_OPERATIONS.earliest]: [
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,

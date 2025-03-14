@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsNumber,
   IsOptional,
+  IsSemVer,
   IsString,
   IsUrl,
   ValidateIf,
@@ -1132,6 +1133,14 @@ export class EnvironmentVariables {
   )
   @IsString()
   PABX_TOKEN: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.ServerConfig,
+    description: 'Twenty server version',
+  })
+  @IsOptional()
+  @IsSemVer()
+  APP_VERSION?: string;
 }
 
 export const validate = (

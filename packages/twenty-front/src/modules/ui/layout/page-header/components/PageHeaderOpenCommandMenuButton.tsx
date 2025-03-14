@@ -43,6 +43,7 @@ const AnimatedIcon = ({
         cx={12}
         cy={12}
         r="1"
+        initial={{ opacity: 0 }}
         animate={{
           scale: isCommandMenuOpened ? 0 : 1,
           opacity: isCommandMenuOpened ? 0 : 1,
@@ -55,7 +56,7 @@ const AnimatedIcon = ({
         <motion.path
           key={index}
           d={path}
-          initial={{ pathLength: 0 }}
+          initial={{ pathLength: 0, opacity: 0 }}
           animate={{
             pathLength: isCommandMenuOpened ? 1 : 0,
             opacity: isCommandMenuOpened ? 1 : 0,
@@ -73,6 +74,7 @@ const AnimatedIcon = ({
         cx="12"
         cy="5"
         r="1"
+        initial={{ opacity: 0 }}
         animate={{
           scale: isCommandMenuOpened ? 0 : 1,
           opacity: isCommandMenuOpened ? 0 : 1,
@@ -85,6 +87,7 @@ const AnimatedIcon = ({
         cx="12"
         cy="19"
         r="1"
+        initial={{ opacity: 0 }}
         animate={{
           scale: isCommandMenuOpened ? 0 : 1,
           opacity: isCommandMenuOpened ? 0 : 1,
