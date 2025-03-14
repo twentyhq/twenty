@@ -9,14 +9,10 @@ import semver from 'semver';
 
 @ValidatorConstraint({ async: false })
 export class IsTwentySemVerValidator implements ValidatorConstraintInterface {
-  validate(version: any) {
-    try {
-      const parsed = semver.parse(version);
+  validate(version: string) {
+    const parsed = semver.parse(version);
 
-      return parsed !== null;
-    } catch (e) {
-      return false;
-    }
+    return parsed !== null;
   }
 
   defaultMessage(args: ValidationArguments) {
