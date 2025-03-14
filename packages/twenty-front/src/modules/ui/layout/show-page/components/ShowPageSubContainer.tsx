@@ -26,10 +26,6 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   overflow: auto;
 `;
 
-const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
-  display: ${({ shouldDisplay }) => (shouldDisplay ? 'flex' : 'none')};
-`;
-
 const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
@@ -124,7 +120,7 @@ export const ShowPageSubContainer = ({
         </ShowPageLeftContainer>
       )}
       <StyledShowPageRightContainer isMobile={isMobile}>
-        <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
+        {visibleTabs.length > 1 && (
           <StyledTabList
             behaveAsLinks={!isInRightDrawer}
             loading={loading || isNewViewableRecordLoading}
@@ -132,7 +128,7 @@ export const ShowPageSubContainer = ({
             tabs={tabs}
             isInRightDrawer={isInRightDrawer}
           />
-        </StyledTabListContainer>
+        )}
         {(isMobile || isInRightDrawer) && summaryCard}
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}
