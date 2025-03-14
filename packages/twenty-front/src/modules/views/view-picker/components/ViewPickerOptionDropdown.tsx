@@ -77,7 +77,6 @@ export const ViewPickerOptionDropdown = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
-          closeDropdown();
         }}
         dropdownPlacement="bottom-start"
         dropdownId={`view-picker-options-${view.id}`}
