@@ -7,12 +7,13 @@ import {
   useIcons,
 } from 'twenty-ui';
 
-import { recordIndexEntityCountComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexEntityCountComponentSelector';
+import { recordIndexEntityCountNoGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexEntityCountNoGroupComponentFamilyState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
 import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
@@ -22,6 +23,7 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 
 const StyledDropdownLabelAdornments = styled.span`
@@ -55,8 +57,14 @@ export const ViewPickerDropdown = () => {
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
 
-  const entityCount = useRecoilComponentValueV2(
-    recordIndexEntityCountComponentSelector,
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    ViewComponentInstanceContext,
+  );
+
+  const entityCount = useRecoilValue(
+    recordIndexEntityCountNoGroupComponentFamilyState.atomFamily({
+      instanceId,
+    }),
   );
 
   const { isDropdownOpen: isViewsListDropdownOpen } = useDropdown(

@@ -5,6 +5,8 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useUpdateRecordIndexTotalCount } from '@/object-record/record-index/hooks/useRecordIndexTotalCount';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -17,9 +19,16 @@ type RecordIndexBoardDataLoaderEffectProps = {
 export const RecordIndexBoardDataLoaderEffect = ({
   recordBoardId,
 }: RecordIndexBoardDataLoaderEffectProps) => {
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
+
   const recordIndexFieldDefinitions = useRecoilValue(
     recordIndexFieldDefinitionsState,
   );
+
+  useUpdateRecordIndexTotalCount({
+    objectNameSingular,
+    recordIndexId: recordBoardId,
+  });
 
   const recordIndexIsCompactModeActive = useRecoilValue(
     recordIndexIsCompactModeActiveState,
