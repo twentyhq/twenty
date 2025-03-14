@@ -82,16 +82,6 @@ export class FeatureFlagService {
     value: boolean;
     shouldBePublic?: boolean;
   }): Promise<FeatureFlag> {
-    if (shouldBePublic) {
-      publicFeatureFlagValidator.assertIsPublicFeatureFlag(
-        featureFlag,
-        new FeatureFlagException(
-          'Invalid feature flag key, flag is not public',
-          FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
-        ),
-      );
-    }
-
     featureFlagValidator.assertIsFeatureFlagKey(
       featureFlag,
       new FeatureFlagException(
@@ -100,18 +90,36 @@ export class FeatureFlagService {
       ),
     );
 
-    const upsertResult = await this.featureFlagRepository.upsert(
-      {
-        key: FeatureFlagKey[featureFlag],
-        value,
+    const featureFlagKey = FeatureFlagKey[featureFlag];
+
+    if (shouldBePublic) {
+      publicFeatureFlagValidator.assertIsPublicFeatureFlag(
+        featureFlagKey,
+        new FeatureFlagException(
+          'Invalid feature flag key, flag is not public',
+          FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
+        ),
+      );
+    }
+
+    const existingFeatureFlag = await this.featureFlagRepository.findOne({
+      where: {
+        key: featureFlagKey,
         workspaceId: workspaceId,
       },
-      {
-        conflictPaths: ['workspaceId', 'key'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
+    });
 
-    return upsertResult.generatedMaps[0] as FeatureFlag;
+    const featureFlagToSave = existingFeatureFlag
+      ? {
+          ...existingFeatureFlag,
+          value,
+        }
+      : {
+          key: featureFlagKey,
+          value,
+          workspaceId: workspaceId,
+        };
+
+    return await this.featureFlagRepository.save(featureFlagToSave);
   }
 }
