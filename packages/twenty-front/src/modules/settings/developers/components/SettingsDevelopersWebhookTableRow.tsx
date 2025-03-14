@@ -27,6 +27,14 @@ const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
+const getHostnameOrEmptyIfInvalid = (url: string) => {
+  try {
+    return getUrlHostnameOrThrow(url);
+  } catch {
+    return '';
+  }
+};
+
 export const SettingsDevelopersWebhookTableRow = ({
   fieldItem,
   to,
@@ -39,7 +47,7 @@ export const SettingsDevelopersWebhookTableRow = ({
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>
-        {getUrlHostnameOrThrow(fieldItem.targetUrl)}
+        {getHostnameOrEmptyIfInvalid(fieldItem.targetUrl)}
       </StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
