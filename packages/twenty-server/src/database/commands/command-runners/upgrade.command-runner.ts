@@ -41,7 +41,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
         `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
       ),
     );
-    const toVersion = this.retrievetoVersionFromAppVersion();
+    const toVersion = this.retrieveToVersionFromAppVersion();
 
     const workspaceVersionCompareResult =
       await this.retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion(
@@ -86,7 +86,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     }
   }
 
-  private retrievetoVersionFromAppVersion() {
+  private retrieveToVersionFromAppVersion() {
     const appVersion = this.environmentService.get('APP_VERSION');
 
     if (!isDefined(appVersion)) {
