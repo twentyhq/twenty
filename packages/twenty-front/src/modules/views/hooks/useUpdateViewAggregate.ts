@@ -5,7 +5,7 @@ import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 export const useUpdateViewAggregate = () => {
   const currentViewId = useRecoilComponentValueV2(
@@ -13,18 +13,8 @@ export const useUpdateViewAggregate = () => {
   );
   const { updateView } = useUpdateView();
 
-  const updateRecordIndexKanbanAggregateOperationState = useRecoilCallback(
-    ({ set }) =>
-      (
-        operation: ExtendedAggregateOperations | null,
-        fieldMetadataId: string | null,
-      ) => {
-        set(recordIndexKanbanAggregateOperationState, {
-          operation,
-          fieldMetadataId,
-        });
-      },
-    [],
+  const setRecordIndexKanbanAggregateOperationState = useSetRecoilState(
+    recordIndexKanbanAggregateOperationState,
   );
 
   const updateViewAggregate = useCallback(
@@ -45,12 +35,12 @@ export const useUpdateViewAggregate = () => {
         kanbanAggregateOperation: convertedKanbanAggregateOperation,
       });
 
-      updateRecordIndexKanbanAggregateOperationState(
-        kanbanAggregateOperation,
-        kanbanAggregateOperationFieldMetadataId,
-      );
+      setRecordIndexKanbanAggregateOperationState({
+        operation: convertedKanbanAggregateOperation,
+        fieldMetadataId: kanbanAggregateOperationFieldMetadataId,
+      });
     },
-    [currentViewId, updateView, updateRecordIndexKanbanAggregateOperationState],
+    [currentViewId, updateView, setRecordIndexKanbanAggregateOperationState],
   );
 
   return {
