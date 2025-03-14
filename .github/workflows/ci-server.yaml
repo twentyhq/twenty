@@ -33,8 +33,8 @@ jobs:
       postgres:
         image: twentycrm/twenty-postgres:latest
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
+          POSTGRESQL_USERNAME: postgres
+          ALLOW_EMPTY_PASSWORD: yes
           ALLOW_NOSSL: 'true'
         ports:
           - 5432:5432
@@ -152,8 +152,8 @@ jobs:
       postgres:
         image: twentycrm/twenty-postgres:latest
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
+          POSTGRESQL_USERNAME: postgres
+          ALLOW_EMPTY_PASSWORD: yes
           ALLOW_NOSSL: 'true'
         ports:
           - 5432:5432
