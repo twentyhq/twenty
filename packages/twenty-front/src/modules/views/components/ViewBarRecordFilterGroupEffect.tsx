@@ -1,7 +1,6 @@
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -17,10 +16,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
-  );
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const currentView = useRecoilValue(
     prefetchViewFromViewIdFamilySelector({
@@ -44,9 +40,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
 
   useEffect(() => {
     if (isDefined(currentView) && !hasInitializedCurrentRecordFilterGroups) {
-      if (
-        currentView.objectMetadataId !== contextStoreCurrentObjectMetadataItemId
-      ) {
+      if (currentView.objectMetadataId !== objectMetadataItem.id) {
         return;
       }
 
@@ -65,7 +59,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
     setCurrentRecordFilterGroups,
     hasInitializedCurrentRecordFilterGroups,
     setHasInitializedCurrentRecordFilterGroups,
-    contextStoreCurrentObjectMetadataItemId,
+    objectMetadataItem,
     currentView,
   ]);
 

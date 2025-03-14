@@ -1,6 +1,5 @@
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -17,10 +16,7 @@ export const ViewBarRecordSortEffect = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
-  );
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const currentView = useRecoilValue(
     prefetchViewFromViewIdFamilySelector({
@@ -44,9 +40,7 @@ export const ViewBarRecordSortEffect = () => {
 
   useEffect(() => {
     if (isDefined(currentView) && !hasInitializedCurrentRecordSorts) {
-      if (
-        currentView.objectMetadataId !== contextStoreCurrentObjectMetadataItemId
-      ) {
+      if (currentView.objectMetadataId !== objectMetadataItem.id) {
         return;
       }
 
@@ -59,7 +53,7 @@ export const ViewBarRecordSortEffect = () => {
     hasInitializedCurrentRecordSorts,
     currentView,
     setCurrentRecordSorts,
-    contextStoreCurrentObjectMetadataItemId,
+    objectMetadataItem,
     setHasInitializedCurrentRecordSorts,
   ]);
 
