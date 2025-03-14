@@ -38,7 +38,26 @@ export default config({
       path: 'src/content/releases/*',
       format: { contentField: 'content' },
       schema: {
-        release: fields.slug({ name: { label: 'Release' } }),
+        release: fields.slug({
+          name: {
+            label: 'Release',
+            validation: {
+              pattern: {
+                regex: /^\d+\.\d+\.\d+$/,
+                message: 'The release must be in the format major.minor.patch',
+              },
+            },
+          },
+          slug: {
+            generate: (name) => name,
+            validation: {
+              pattern: {
+                regex: /^\d+\.\d+\.\d+$/,
+                message: 'The release must be in the format major.minor.patch',
+              },
+            },
+          },
+        }),
         // TODO: Define the date with a normalized format
         Date: fields.text({ label: 'Date' }),
         content: fields.mdx({
