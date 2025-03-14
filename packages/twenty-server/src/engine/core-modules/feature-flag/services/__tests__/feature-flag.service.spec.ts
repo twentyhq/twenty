@@ -25,6 +25,8 @@ describe('FeatureFlagService', () => {
     findOneBy: jest.fn(),
     find: jest.fn(),
     upsert: jest.fn(),
+    findOne: jest.fn(),
+    save: jest.fn(),
   };
 
   const workspaceId = 'workspace-id';
@@ -179,9 +181,7 @@ describe('FeatureFlagService', () => {
         workspaceId,
       };
 
-      mockFeatureFlagRepository.upsert.mockResolvedValue({
-        generatedMaps: [mockFeatureFlag],
-      });
+      mockFeatureFlagRepository.save.mockResolvedValue(mockFeatureFlag);
 
       (
         featureFlagValidator.assertIsFeatureFlagKey as jest.Mock
@@ -196,17 +196,11 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(result).toEqual(mockFeatureFlag);
-      expect(mockFeatureFlagRepository.upsert).toHaveBeenCalledWith(
-        {
-          key: FeatureFlagKey[featureFlag],
-          value,
-          workspaceId,
-        },
-        {
-          conflictPaths: ['workspaceId', 'key'],
-          skipUpdateIfNoValuesChanged: true,
-        },
-      );
+      expect(mockFeatureFlagRepository.save).toHaveBeenCalledWith({
+        key: FeatureFlagKey[featureFlag],
+        value,
+        workspaceId,
+      });
     });
 
     it('should throw an exception when feature flag key is invalid', async () => {
