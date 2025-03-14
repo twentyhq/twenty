@@ -7,7 +7,7 @@ echo "Entrypoint script starting..."
 if [ -z "$PG_DATABASE_URL" ]; then
   echo "Erro: The variable 'PG_DATABASE_URL' ist not defined."
   exit 1
-  
+fi
 # Set APP_VERSION only if it has a value
 if [ ! -z "${APP_VERSION}" ]; then
     export APP_VERSION="${APP_VERSION}"
