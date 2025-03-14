@@ -246,7 +246,10 @@ export const SettingsDataModelObjectAboutForm = ({
                 tooltip,
                 defaultValue,
               }) => (
-                <AdvancedSettingsWrapper key={`object-${fieldName}-text-input`}>
+                <AdvancedSettingsWrapper
+                  key={`object-${fieldName}-text-input`}
+                  dotPosition="top"
+                >
                   <StyledInputContainer>
                     <Controller
                       name={fieldName}
