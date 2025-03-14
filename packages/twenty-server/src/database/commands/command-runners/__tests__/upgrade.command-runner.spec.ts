@@ -248,7 +248,8 @@ describe('UpgradeCommandRunner', () => {
       nullVersionWorkspace,
     ];
     const totalWorkspace = numberOfValidWorkspace + failingWorkspaces.length;
-    const appVersion = '2.0.0';
+    const appVersion = 'v2.0.0';
+    const expectedToVersion = '2.0.0';
 
     await buildModuleAndSetupSpies({
       numberOfWorkspace: numberOfValidWorkspace,
@@ -280,7 +281,7 @@ describe('UpgradeCommandRunner', () => {
     expect(workspaceRepository.update).toHaveBeenNthCalledWith(
       numberOfValidWorkspace,
       { id: expect.any(String) },
-      { version: appVersion },
+      { version: expectedToVersion },
     );
 
     // Failing assertions
