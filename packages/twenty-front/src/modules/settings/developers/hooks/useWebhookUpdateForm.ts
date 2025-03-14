@@ -104,7 +104,7 @@ export const useWebhookUpdateForm = ({
   }, 300);
 
   const isFormValidAndSetErrors = () => {
-    const { targetUrl, operations, description, secret } = formData;
+    const { targetUrl } = formData;
 
     if (isDefined(targetUrl)) {
       const trimmedUrl = targetUrl.trim();
@@ -194,9 +194,7 @@ export const useWebhookUpdateForm = ({
         secret: data.secret,
       });
       if (isValidUrl(data.targetUrl)) {
-        setTitle(getUrlHostnameOrThrow(data.targetUrl) || 'New Webhook');
-      } else {
-        setTitle('New Webhook');
+        setTitle(getUrlHostnameOrThrow(data.targetUrl));
       }
 
       setLoading(false);
