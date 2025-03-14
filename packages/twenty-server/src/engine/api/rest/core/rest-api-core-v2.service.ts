@@ -8,7 +8,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { overrideFieldValue } from 'src/utils/field-transformers/override-field-value.util';
+import { overrideFieldValue } from 'src/utils/override-field-value.util';
 
 @Injectable()
 export class RestApiCoreServiceV2 {

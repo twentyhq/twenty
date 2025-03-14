@@ -22,7 +22,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-import { overrideFieldValue } from 'src/utils/field-transformers/override-field-value.util';
+import { overrideFieldValue } from 'src/utils/override-field-value.util';
 
 import { RecordPositionFactory } from './record-position.factory';
 
