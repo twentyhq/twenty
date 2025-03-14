@@ -100,9 +100,28 @@ export class FeatureFlagService {
       ),
     );
 
+    // Convert camelCase to UPPER_CASE if needed
+    const normalizedKey = featureFlag.includes('_')
+      ? featureFlag
+      : featureFlag.replace(/([A-Z])/g, '_$1').toUpperCase();
+
+    // Find the actual enum key that matches either the original or normalized key
+    const actualKey = Object.keys(FeatureFlagKey).find(
+      (key) =>
+        FeatureFlagKey[key] === normalizedKey ||
+        FeatureFlagKey[key] === featureFlag,
+    );
+
+    if (!actualKey) {
+      throw new FeatureFlagException(
+        'Invalid feature flag key',
+        FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
+      );
+    }
+
     const upsertResult = await this.featureFlagRepository.upsert(
       {
-        key: FeatureFlagKey[featureFlag],
+        key: FeatureFlagKey[actualKey],
         value,
         workspaceId: workspaceId,
       },

@@ -9,7 +9,9 @@ type FeatureFlagMetadata = {
 export type PublicFeatureFlag = {
   key: Extract<
     FeatureFlagKey,
-    FeatureFlagKey.IsWorkflowEnabled | FeatureFlagKey.IsPermissionsEnabled
+    | FeatureFlagKey.IsWorkflowEnabled
+    | FeatureFlagKey.IsPermissionsEnabled
+    | FeatureFlagKey.IsCustomDomainEnabled
   >;
   metadata: FeatureFlagMetadata;
 };
@@ -30,6 +32,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       description:
         'Role-based access control system for workspace security management (Admin/Member)',
       imagePath: 'https://twenty.com/images/lab/is-permissions-enabled.png',
+    },
+  },
+  {
+    key: FeatureFlagKey.IsCustomDomainEnabled as PublicFeatureFlag['key'],
+    metadata: {
+      label: 'Custom Domain',
+      description: 'Customize your workspace URL with your own domain.',
+      imagePath: '',
     },
   },
 ];

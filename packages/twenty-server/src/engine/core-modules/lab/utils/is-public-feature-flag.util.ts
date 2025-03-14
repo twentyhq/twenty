@@ -11,5 +11,17 @@ export const isPublicFeatureFlag = (
     return false;
   }
 
-  return PUBLIC_FEATURE_FLAGS.some((flag) => flag.key === key);
+  // Convert camelCase to UPPER_CASE if needed
+  const normalizedKey = key.includes('_')
+    ? key
+    : key.replace(/([A-Z])/g, '_$1').toUpperCase();
+
+  return PUBLIC_FEATURE_FLAGS.some(
+    (flag) =>
+      flag.key === normalizedKey ||
+      flag.key === key ||
+      // Also check if the flag key matches after normalization
+      (typeof flag.key === 'string' &&
+        flag.key.replace(/([A-Z])/g, '_$1').toUpperCase() === normalizedKey),
+  );
 };
