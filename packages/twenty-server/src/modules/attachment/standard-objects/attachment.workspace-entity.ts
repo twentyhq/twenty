@@ -72,10 +72,11 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredAttachments',
   })
-  author: Relation<WorkspaceMemberWorkspaceEntity>;
+  @WorkspaceIsNullable()
+  author: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('author')
-  authorId: string;
+  authorId: string | null;
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.task,
