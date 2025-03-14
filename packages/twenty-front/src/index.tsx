@@ -10,4 +10,5 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') ?? document.body,
 );
 
+// TRIGGER CI TO DROP
 root.render(<App />);

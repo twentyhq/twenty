@@ -22,6 +22,8 @@ import './instrument';
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
 
+// TRIGGER CI TO DROP
+
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
