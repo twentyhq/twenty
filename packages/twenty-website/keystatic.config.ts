@@ -43,6 +43,12 @@ export default config({
         Date: fields.text({ label: 'Date' }),
         content: fields.mdx({
           label: 'Content',
+          options: {
+            image: {
+              directory: 'public/images/releases',
+              publicPath: '/images/releases/',
+            },
+          },
         }),
       },
     }),
