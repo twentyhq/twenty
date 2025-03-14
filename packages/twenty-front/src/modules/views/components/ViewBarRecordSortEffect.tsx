@@ -1,13 +1,12 @@
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
-
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -18,8 +17,9 @@ export const ViewBarRecordSortEffect = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
 
   const currentView = useRecoilValue(
@@ -45,8 +45,7 @@ export const ViewBarRecordSortEffect = () => {
   useEffect(() => {
     if (isDefined(currentView) && !hasInitializedCurrentRecordSorts) {
       if (
-        currentView.objectMetadataId !==
-        contextStoreCurrentObjectMetadataItem?.id
+        currentView.objectMetadataId !== contextStoreCurrentObjectMetadataItemId
       ) {
         return;
       }
@@ -60,7 +59,7 @@ export const ViewBarRecordSortEffect = () => {
     hasInitializedCurrentRecordSorts,
     currentView,
     setCurrentRecordSorts,
-    contextStoreCurrentObjectMetadataItem,
+    contextStoreCurrentObjectMetadataItemId,
     setHasInitializedCurrentRecordSorts,
   ]);
 

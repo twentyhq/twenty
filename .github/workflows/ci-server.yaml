@@ -170,6 +170,7 @@ jobs:
           - 6379:6379
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+      NODE_ENV: test
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -183,6 +184,7 @@ jobs:
           echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
+          echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
       - name: Restore server setup
         uses: ./.github/workflows/actions/restore-cache
         with:
@@ -194,15 +196,14 @@ jobs:
           npx nx build twenty-shared
           npx nx build twenty-emails
       - name: Server / Create Test DB
-        env:
-          NODE_ENV: test
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: 'test:integration --configuration=with-db-reset'
+          tasks: 'test:integration'
+          configuration: 'with-db-reset'
       - name: Server / Upload reset-logs file
         if: always()
         uses: actions/upload-artifact@v4
@@ -213,8 +214,9 @@ jobs:
     if: always() && !cancelled()
     timeout-minutes: 1
     runs-on: depot-ubuntu-24.04-8
-    needs: [changed-files-check, server-setup, server-test, server-integration-test]
+    needs:
+      [changed-files-check, server-setup, server-test, server-integration-test]
     steps:
-      - name: Fail job if any needs failed 
+      - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
         run: exit 1

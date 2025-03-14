@@ -5,7 +5,7 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
-import { graphql, HttpResponse } from 'msw';
+import { HttpResponse, graphql } from 'msw';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -63,8 +63,25 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
     msw: {
       handlers: [
         graphql.query('FindOneWorkflowRun', () => {
+          const workflowRunContext =
+            oneFailedWorkflowRunQueryResult.workflowRun.context;
+
+          // Rendering the whole objectMetadata information in the JSON viewer is too long for storybook
+          // so we remove it for the story
           return HttpResponse.json({
-            data: oneFailedWorkflowRunQueryResult,
+            data: {
+              ...oneFailedWorkflowRunQueryResult,
+              workflowRun: {
+                ...oneFailedWorkflowRunQueryResult.workflowRun,
+                context: {
+                  ...workflowRunContext,
+                  trigger: {
+                    ...workflowRunContext.trigger,
+                    objectMetadata: undefined,
+                  },
+                },
+              },
+            },
           });
         }),
         ...graphqlMocks.handlers,
