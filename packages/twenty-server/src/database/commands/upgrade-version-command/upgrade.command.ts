@@ -16,6 +16,7 @@ import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/co
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
 import { InitializePermissionsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-initialize-permissions.command';
 import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-50/0-50-migrate-relations-to-field-metadata.command';
+import { UpdateViewAggregateOperationsCommand } from 'src/database/commands/upgrade-version-command/0-50/0-50-update-view-aggregate-operations.command';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -52,6 +53,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 0.50 Commands
     protected readonly migrateRelationsToFieldMetadataCommand: MigrateRelationsToFieldMetadataCommand,
+    protected readonly updateViewAggregateOperationsCommand: UpdateViewAggregateOperationsCommand,
   ) {
     super(
       workspaceRepository,
@@ -77,7 +79,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
     const _commands_050: VersionCommands = {
-      beforeSyncMetadata: [this.migrateRelationsToFieldMetadataCommand],
+      beforeSyncMetadata: [
+        this.migrateRelationsToFieldMetadataCommand,
+        this.updateViewAggregateOperationsCommand,
+      ],
       afterSyncMetadata: [],
     };
 
