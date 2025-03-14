@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`UpgradeCommandRunner Workspace upgrade should fail when APP_VERSION is not defined 1`] = `[Error: Cannot run upgrade command when APP_VERSION is not defined]`;
+exports[`UpgradeCommandRunner Workspace upgrade should fail when APP_VERSION is not defined 1`] = `[Error: Cannot run upgrade command when APP_VERSION is not defined, please double check your env variables]`;
 
 exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not defined 1`] = `[Error: WORKSPACE_VERSION_NOT_DEFINED to=2.0.0]`;
 
