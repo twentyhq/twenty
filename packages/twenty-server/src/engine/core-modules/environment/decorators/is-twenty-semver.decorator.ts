@@ -12,8 +12,9 @@ export class IsTwentySemVerValidator implements ValidatorConstraintInterface {
   validate(version: any) {
     try {
       const parsed = semver.parse(version);
+
       return parsed !== null;
-    } catch(e) {
+    } catch (e) {
       return false;
     }
   }

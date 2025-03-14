@@ -13,13 +13,14 @@ import {
   ValidationError,
   validateSync,
 } from 'class-validator';
+import { isDefined } from 'twenty-shared';
+
 import { EmailDriver } from 'src/engine/core-modules/email/interfaces/email.interface';
 import { AwsRegion } from 'src/engine/core-modules/environment/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { LLMChatModelDriver } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
 import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
-import { isDefined } from "twenty-shared";
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
@@ -1002,10 +1003,13 @@ export const validate = (
   const validationWarnings = validateSync(validatedConfig, {
     groups: ['warning'],
   });
-  const logValidatonErrors = (errorCollection: ValidationError[], type: 'error' | 'warn') =>
+  const logValidatonErrors = (
+    errorCollection: ValidationError[],
+    type: 'error' | 'warn',
+  ) =>
     errorCollection.forEach((error) => {
-      if (!isDefined(error.constraints) || !isDefined(error.property) ) {
-        return
+      if (!isDefined(error.constraints) || !isDefined(error.property)) {
+        return;
       }
       Logger[type](Object.values(error.constraints).join('\n'));
     });
@@ -1016,7 +1020,7 @@ export const validate = (
 
   if (validationErrors.length > 0) {
     logValidatonErrors(validationErrors, 'error');
-    throw new Error("Environment variables validation failed")
+    throw new Error('Environment variables validation failed');
   }
 
   return validatedConfig;
