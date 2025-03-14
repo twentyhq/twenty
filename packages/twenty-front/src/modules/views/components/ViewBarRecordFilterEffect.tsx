@@ -43,23 +43,11 @@ export const ViewBarRecordFilterEffect = () => {
     objectMetadataItem.id,
   );
 
-  console.log({
-    currentView,
-    objectMetadataItem,
-    hasInitializedCurrentRecordFilters,
-  });
-
   useEffect(() => {
     if (isDefined(currentView) && !hasInitializedCurrentRecordFilters) {
-      console.log({
-        isEqual: currentView.objectMetadataId === objectMetadataItem.id,
-      });
-
       if (currentView.objectMetadataId !== objectMetadataItem.id) {
         return;
       }
-
-      console.log('currentView', currentView);
 
       if (isDefined(currentView)) {
         setCurrentRecordFilters(
