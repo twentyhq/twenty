@@ -11,7 +11,8 @@ import {
   IsString,
   IsUrl,
   ValidateIf,
-  validateSync,
+  isDefined,
+  validateSync
 } from 'class-validator';
 
 import { EmailDriver } from 'src/engine/core-modules/email/interfaces/email.interface';
@@ -984,7 +985,7 @@ export class EnvironmentVariables {
     group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Twenty server version',
   })
-  @IsOptional()
+  @ValidateIf(env => isDefined(env.APP_VERSION) && env.APP_VERSION != '')
   @IsSemVer()
   APP_VERSION?: string;
 }
