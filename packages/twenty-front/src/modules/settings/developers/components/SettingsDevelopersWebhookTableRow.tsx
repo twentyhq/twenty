@@ -5,7 +5,7 @@ import { IconChevronRight } from 'twenty-ui';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { getUrlHostnameOrThrow } from 'twenty-shared';
+import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   grid-template-columns: 1fr 28px;
@@ -27,14 +27,6 @@ const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const getHostnameOrEmptyIfInvalid = (url: string) => {
-  try {
-    return getUrlHostnameOrThrow(url);
-  } catch {
-    return '';
-  }
-};
-
 export const SettingsDevelopersWebhookTableRow = ({
   fieldItem,
   to,
@@ -47,7 +39,9 @@ export const SettingsDevelopersWebhookTableRow = ({
   return (
     <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>
-        {getHostnameOrEmptyIfInvalid(fieldItem.targetUrl)}
+        {isValidUrl(fieldItem.targetUrl)
+          ? getUrlHostnameOrThrow(fieldItem.targetUrl)
+          : fieldItem.targetUrl}
       </StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
