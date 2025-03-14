@@ -23,11 +23,11 @@ services:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
       - ./packages/twenty-server/secrets:/app/twenty-server/secrets
-    env_file: 
+    env_file:
       - .env
       - server.env
     ports:
-      - "${SERVER_PORT:-3000}:${SERVER_PORT:-3000}"
+      - '${SERVER_PORT:-3000}:${SERVER_PORT:-3000}'
     environment:
       NODE_PORT: ${SERVER_PORT:-3000}
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE:-postgres}
@@ -81,7 +81,8 @@ services:
   worker:
     container_name: kvoipv2-worker
     image: kvoipcrm/v2:${TAG:-latest}
-    command: ["yarn", "worker:prod"]
+    command: ['yarn', 'worker:prod']
+    env_file: 'server.env'
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE}
       SERVER_URL: ${SERVER_URL}
@@ -117,7 +118,7 @@ services:
       # EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-465}
       # EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
       # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
-      
+
     depends_on:
       db:
         condition: service_healthy
@@ -137,10 +138,10 @@ services:
       PGUSER_SUPERUSER: ${PG_DATABASE_USER:-postgres}
       PGPASSWORD_SUPERUSER: ${PG_DATABASE_PASSWORD:-postgres}
       POSTGRES_DB: ${PG_DATABASE:-postgres}
-      ALLOW_NOSSL: "true"
-      SPILO_PROVIDER: "local"
-    ports: 
-      - "5433:5432"
+      ALLOW_NOSSL: 'true'
+      SPILO_PROVIDER: 'local'
+    ports:
+      - '5433:5432'
     healthcheck:
       test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h db -d postgres
       interval: 5s
