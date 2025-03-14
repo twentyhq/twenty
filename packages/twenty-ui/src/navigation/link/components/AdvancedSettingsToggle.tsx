@@ -4,25 +4,27 @@ import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
 import { MAIN_COLORS } from '@ui/theme';
 import { useId } from 'react';
+
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  width: 100%;
   gap: ${({ theme }) => theme.spacing(2)};
   position: relative;
+  height: ${({ theme }) => theme.spacing(5)};
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIconContainer = styled.div`
-  height: 16px;
+  align-items: center;
+  display: flex;
+  left: ${({ theme }) => theme.spacing(-5)};
   position: absolute;
-  left: ${({ theme }) => theme.spacing(-3)};
 `;
 
 const StyledToggleContainer = styled.label`
@@ -31,10 +33,6 @@ const StyledToggleContainer = styled.label`
   display: flex;
   justify-content: space-between;
   width: 100%;
-`;
-
-const StyledIconPoint = styled(IconPoint)`
-  margin-right: 0;
 `;
 
 type AdvancedSettingsToggleProps = {
@@ -55,7 +53,7 @@ export const AdvancedSettingsToggle = ({
   return (
     <StyledContainer>
       <StyledIconContainer>
-        <StyledIconPoint
+        <IconPoint
           size={12}
           color={MAIN_COLORS.yellow}
           fill={MAIN_COLORS.yellow}
