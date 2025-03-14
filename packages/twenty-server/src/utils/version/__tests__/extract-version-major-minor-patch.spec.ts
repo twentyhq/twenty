@@ -3,7 +3,7 @@ import { EachTestingContext } from 'twenty-shared';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 type IsSameVersionTestCase = EachTestingContext<{
-  version: string;
+  version: string | undefined;
   expected: string | null;
 }>;
 describe('extract-version-major-minor-patch', () => {
@@ -73,6 +73,13 @@ describe('extract-version-major-minor-patch', () => {
     },
     {
       context: {
+        version: undefined,
+        expected: null,
+      },
+      title: 'With undefined version',
+    },
+    {
+      context: {
         version: '1.0.0.0',
         expected: null,
       },
@@ -91,7 +98,7 @@ describe('extract-version-major-minor-patch', () => {
         expected: null,
       },
       title: 'Invalid version - empty string',
-    }
+    },
   ];
 
   test.each([...beneathVersionTestCases])(
