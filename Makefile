@@ -6,7 +6,7 @@ postgres-on-docker:
 	-e ALLOW_NOSSL=true \
 	-v twenty_db_data:/home/postgres/pgdata \
 	-p 5432:5432 \
-	twentycrm/twenty-postgres-spilo:latest
+	twentycrm/twenty-postgres:latest
 	@echo "Waiting for PostgreSQL to be ready..."
 	@until docker exec twenty_pg psql -U postgres -d postgres \
 		-c 'SELECT pg_is_in_recovery();' 2>/dev/null | grep -q 'f'; do \

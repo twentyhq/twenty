@@ -27,15 +27,13 @@ spec:
             claimName: twentycrm-db-pvc
       containers:
         - name: twentycrm
-          image: twentycrm/twenty-postgres-spilo:latest
+          image: twentycrm/twenty-postgres:latest
           imagePullPolicy: Always
           env:
             - name: PGUSER_SUPERUSER
               value: "postgres"
             - name: PGPASSWORD_SUPERUSER
               value: "postgres"
-            - name: SPILO_PROVIDER
-              value: "local"
             - name: ALLOW_NOSSL
               value: "true"
           ports:
