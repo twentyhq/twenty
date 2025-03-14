@@ -4,8 +4,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/form-ty
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
-import { InputHint } from '@/ui/input/components/InputHint';
+import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
@@ -14,17 +13,11 @@ import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 
 const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
-`;
-
-const StyledLabel = styled.label`
-  color: ${({ theme }) => theme.font.color.light};
-  display: block;
-  font-size: 11px;
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 type FormNumberFieldInputProps = {
@@ -112,7 +105,7 @@ export const FormNumberFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <StyledLabel htmlFor={inputId}>{label}</StyledLabel> : null}
+      {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInputContainer
