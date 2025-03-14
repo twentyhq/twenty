@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { ReactElement } from 'react';
-import { Label } from 'twenty-ui';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { Task } from '@/activities/types/Task';
@@ -38,7 +37,8 @@ const StyledTitle = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-const StyledCount = styled(Label)`
+const StyledCount = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
