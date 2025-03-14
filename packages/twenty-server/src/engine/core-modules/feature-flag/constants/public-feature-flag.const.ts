@@ -34,12 +34,16 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: 'https://twenty.com/images/lab/is-permissions-enabled.png',
     },
   },
-  {
-    key: FeatureFlagKey.IsCustomDomainEnabled as PublicFeatureFlag['key'],
-    metadata: {
-      label: 'Custom Domain',
-      description: 'Customize your workspace URL with your own domain.',
-      imagePath: '',
-    },
-  },
+  ...(process.env.CLOUDFLARE_API_KEY
+    ? [
+        {
+          key: FeatureFlagKey.IsCustomDomainEnabled as PublicFeatureFlag['key'],
+          metadata: {
+            label: 'Custom Domain',
+            description: 'Customize your workspace URL with your own domain.',
+            imagePath: '',
+          },
+        },
+      ]
+    : []),
 ];
