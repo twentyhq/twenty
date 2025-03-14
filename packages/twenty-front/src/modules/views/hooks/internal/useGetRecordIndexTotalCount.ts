@@ -27,7 +27,9 @@ export const useGetRecordIndexTotalCount = () => {
     fields: objectMetadataItem.fields,
   });
 
-  const { data, loading } = useAggregateRecords({
+  const { data, loading } = useAggregateRecords<{
+    id: { COUNT: number };
+  }>({
     objectNameSingular: objectMetadataItem.nameSingular,
     filter,
     recordGqlFieldsAggregate: {
@@ -35,7 +37,7 @@ export const useGetRecordIndexTotalCount = () => {
     },
   });
 
-  const totalCount = data?.id?.COUNT as number | undefined;
+  const totalCount = data?.id?.COUNT;
 
   return {
     totalCount,
