@@ -31,12 +31,11 @@ jobs:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
+        image: twentycrm/twenty-postgres:latest
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
           ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
         ports:
           - 5432:5432
         options: >-
@@ -151,12 +150,11 @@ jobs:
     needs: server-setup
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
+        image: twentycrm/twenty-postgres:latest
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
           ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
         ports:
           - 5432:5432
         options: >-
