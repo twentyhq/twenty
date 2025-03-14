@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { Label } from 'twenty-ui';
 
-const StyledSelectContainer = styled(Label)`
+const StyledSelectContainer = styled.div`
   display: flex;
   width: calc(100% - ${({ theme }) => theme.spacing(2)});
   margin: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.light};
   user-select: none;
 `;
 

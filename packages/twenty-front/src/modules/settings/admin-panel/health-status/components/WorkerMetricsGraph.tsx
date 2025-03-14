@@ -7,7 +7,6 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
 import { isNumber } from '@tiptap/core';
-import { Label } from '@ui/display/typography/components/Label';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
@@ -23,8 +22,9 @@ const StyledGraphContainer = styled.div`
   width: 100%;
 `;
 
-const StyledNoDataMessage = styled(Label)`
+const StyledNoDataMessage = styled.div`
   align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
   display: flex;
   height: 100%;
   justify-content: center;

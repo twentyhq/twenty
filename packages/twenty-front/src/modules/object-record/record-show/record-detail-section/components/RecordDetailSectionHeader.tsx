@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Label } from 'twenty-ui';
 
 const StyledHeader = styled.header<{
   isDropdownOpen?: boolean;
@@ -26,15 +25,10 @@ const StyledTitleLabel = styled.div`
 `;
 
 const StyledLink = styled(Link)`
+  color: ${({ theme }) => theme.font.color.light};
   text-decoration: none;
   font-size: ${({ theme }) => theme.font.size.sm};
 
-  :hover {
-    color: ${({ theme }) => theme.font.color.secondary};
-  }
-`;
-
-const StyledLabelLink = styled(Label)`
   :hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
@@ -65,11 +59,7 @@ export const RecordDetailSectionHeader = ({
     >
       <StyledTitle>
         <StyledTitleLabel>{title}</StyledTitleLabel>
-        {link && (
-          <StyledLink to={link.to}>
-            <StyledLabelLink>{link.label}</StyledLabelLink>
-          </StyledLink>
-        )}
+        {link && <StyledLink to={link.to}>{link.label}</StyledLink>}
       </StyledTitle>
       {hideRightAdornmentOnMouseLeave && !isHovered && areRecordsAvailable
         ? null

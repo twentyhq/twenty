@@ -4,7 +4,6 @@ import { Label } from 'twenty-ui';
 
 const StyledGroupHeading = styled(Label)`
   align-items: center;
-  font-size: ${({ theme }) => theme.font.size.xs};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(1)};

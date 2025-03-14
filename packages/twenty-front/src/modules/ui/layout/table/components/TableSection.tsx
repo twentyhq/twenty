@@ -22,10 +22,6 @@ const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
   text-align: left;
 `;
 
-const StyledLabel = styled(Label)`
-  text-transform: uppercase;
-`;
-
 const StyledSection = styled.div<{ isExpanded: boolean }>`
   max-height: ${({ isExpanded }) => (isExpanded ? 'fit-content' : 0)};
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
@@ -52,8 +48,11 @@ export const TableSection = ({
 
   return (
     <>
-      <StyledSectionHeader isExpanded={isExpanded} onClick={handleToggleSection}>
-        <StyledLabel>{title}</StyledLabel>
+      <StyledSectionHeader
+        isExpanded={isExpanded}
+        onClick={handleToggleSection}
+      >
+        <Label>{title}</Label>
         {isExpanded ? (
           <IconChevronUp
             size={theme.icon.size.md}

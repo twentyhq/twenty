@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared';
 
-import { CardContent, IconChevronRight, IconComponent } from 'twenty-ui';
+import { CardContent, IconChevronRight, IconComponent, Label } from 'twenty-ui';
 
 const StyledRow = styled(CardContent)<{ to?: boolean }>`
   align-items: center;
