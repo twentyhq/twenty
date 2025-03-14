@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import { FieldMetadataType } from 'twenty-shared';
 
 import {
@@ -22,11 +21,8 @@ import {
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
-import {
-  RichTextV2Metadata,
-  richTextV2ValueSchema,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { overrideFieldValue } from 'src/utils/field-transformers/override-field-value.util';
 
 import { RecordPositionFactory } from './record-position.factory';
 
@@ -210,30 +206,12 @@ export class QueryRunnerArgsFactory {
             'Rich text is not supported, please use RICH_TEXT_V2 instead',
           );
         case FieldMetadataType.RICH_TEXT_V2: {
-          const richTextV2Value = richTextV2ValueSchema.parse(value);
+          const overriddenValue = await overrideFieldValue(
+            fieldMetadata.type,
+            value,
+          );
 
-          const serverBlockNoteEditor = ServerBlockNoteEditor.create();
-
-          const convertedMarkdown = richTextV2Value.blocknote
-            ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-                JSON.parse(richTextV2Value.blocknote),
-              )
-            : null;
-
-          const convertedBlocknote = richTextV2Value.markdown
-            ? JSON.stringify(
-                await serverBlockNoteEditor.tryParseMarkdownToBlocks(
-                  richTextV2Value.markdown,
-                ),
-              )
-            : null;
-
-          const valueInBothFormats: RichTextV2Metadata = {
-            markdown: richTextV2Value.markdown || convertedMarkdown,
-            blocknote: richTextV2Value.blocknote || convertedBlocknote,
-          };
-
-          return [key, valueInBothFormats];
+          return [key, overriddenValue];
         }
         case FieldMetadataType.LINKS: {
           const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);

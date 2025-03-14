@@ -3,9 +3,12 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { capitalize } from 'twenty-shared';
 
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { overrideFieldValue } from 'src/utils/field-transformers/override-field-value.util';
 
 @Injectable()
 export class RestApiCoreServiceV2 {
@@ -37,9 +40,15 @@ export class RestApiCoreServiceV2 {
   async createOne(request: Request) {
     const { body } = request;
 
-    const { objectMetadataNameSingular, repository } =
+    const { fieldMetadataByFieldName, objectMetadataNameSingular, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
-    const createdRecord = await repository.save(body);
+
+    const overriddenBody = await this.overrideDataByFieldMetadata(
+      body,
+      fieldMetadataByFieldName,
+    );
+
+    const createdRecord = await repository.save(overriddenBody);
 
     return this.formatResult(
       'create',
@@ -55,16 +64,22 @@ export class RestApiCoreServiceV2 {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadataNameSingular, repository } =
+    const { fieldMetadataByFieldName, objectMetadataNameSingular, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const recordToUpdate = await repository.findOneOrFail({
       where: { id: recordId },
     });
 
+    // Override field values based on their metadata types
+    const overriddenBody = await this.overrideDataByFieldMetadata(
+      request.body,
+      fieldMetadataByFieldName,
+    );
+
     const updatedRecord = await repository.save({
       ...recordToUpdate,
-      ...request.body,
+      ...overriddenBody,
     });
 
     return this.formatResult(
@@ -72,6 +87,25 @@ export class RestApiCoreServiceV2 {
       objectMetadataNameSingular,
       updatedRecord,
     );
+  }
+
+  private async overrideDataByFieldMetadata(
+    data: any,
+    fieldMetadataByFieldName: Record<string, FieldMetadataInterface>,
+  ): Promise<any> {
+    if (!data) {
+      return data;
+    }
+
+    const result = {};
+
+    for (const [key, value] of Object.entries(data)) {
+      const fieldMetadata = fieldMetadataByFieldName[key];
+
+      result[key] = await overrideFieldValue(fieldMetadata?.type, value);
+    }
+
+    return result;
   }
 
   private formatResult<T>(
@@ -113,6 +147,16 @@ export class RestApiCoreServiceV2 {
         objectMetadataNameSingular,
       );
 
-    return { objectMetadataNameSingular, repository };
+    const fieldMetadataByFieldName =
+      objectMetadata.objectMetadataMapItem.fields.reduce(
+        (acc, field) => {
+          acc[field.name] = field;
+
+          return acc;
+        },
+        {} as Record<string, FieldMetadataInterface>,
+      );
+
+    return { fieldMetadataByFieldName, objectMetadataNameSingular, repository };
   }
 }
