@@ -199,6 +199,7 @@ const StyledIconButton = styled(IconButton)`
 const StyledButton = styled(Button)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
   justify-content: center;
+  width: 100%;
 `;
 
 const StyledMessageEvent = styled.div`
@@ -475,6 +476,15 @@ export const PaneChat = () => {
     selectedChat.lastMessage.createdAt,
   );
 
+  const handleInputKeyDown = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   const renderButtons = () => {
     const IconX = getIcon('IconX');
     const IconMicrophone = getIcon('IconMicrophone');
@@ -518,11 +528,7 @@ export const PaneChat = () => {
             onInput={handleInputChange}
             value={newMessage}
             ref={textareaRef}
-            // onKeyDown={(e) => {
-            //   if (e.key === 'Enter' && newMessage.trim() !== '') {
-            //     handleSendMessageAndScroll(openChat?.chatId);
-            //   }
-            // }}
+            onKeyDown={handleInputKeyDown}
           />
           <StyledDiv>
             <StyledIconButton

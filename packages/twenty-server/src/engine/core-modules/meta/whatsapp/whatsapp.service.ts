@@ -133,6 +133,9 @@ export class WhatsappService {
       case 'image':
         fields.image = commonFields;
         break;
+      case 'video':
+        fields.video = commonFields;
+        break;
       default:
         throw new InternalServerError('Invalid message type');
     }
