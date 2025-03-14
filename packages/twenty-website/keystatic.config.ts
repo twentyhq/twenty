@@ -51,6 +51,11 @@ export default config({
           },
         }),
       },
+      parseSlugForSort: (slug) => {
+        const [major, minor, patch] = slug.split('.');
+
+        return `${major.padStart(4, '0')}.${minor.padStart(4, '0')}.${patch.padStart(4, '0')}`;
+      },
     }),
   },
 });
