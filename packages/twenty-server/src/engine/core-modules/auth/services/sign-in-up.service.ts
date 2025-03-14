@@ -344,12 +344,14 @@ export class SignInUpService {
     const logo =
       isWorkEmail(user.email) && (await isLogoUrlValid()) ? logoUrl : undefined;
 
+    const appVersion = this.environmentService.get("APP_VERSION");
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
       displayName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
       logo,
+      version: appVersion
     });
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
