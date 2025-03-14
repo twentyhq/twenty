@@ -271,9 +271,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
+    const appVersion = this.environmentService.get('APP_VERSION') ?? null;
+
     await this.workspaceRepository.update(workspace.id, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
+      version: appVersion,
     });
 
     return await this.workspaceRepository.findOneBy({
