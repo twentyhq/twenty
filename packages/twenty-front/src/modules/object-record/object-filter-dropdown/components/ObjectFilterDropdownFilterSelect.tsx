@@ -27,6 +27,7 @@ import { advancedFilterViewFilterIdComponentState } from '@/object-record/object
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useLingui } from '@lingui/react/macro';
 
@@ -65,17 +66,12 @@ export const ObjectFilterDropdownFilterSelect = ({
 }: ObjectFilterDropdownFilterSelectProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
-    objectFilterDropdownSearchInputComponentState,
-  );
-
   const advancedFilterViewFilterId = useRecoilComponentValueV2(
     advancedFilterViewFilterIdComponentState,
   );
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
-    objectFilterDropdownSearchInputComponentState,
-  );
+  const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
+    useRecoilComponentStateV2(objectFilterDropdownSearchInputComponentState);
 
   const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
     advancedFilterViewFilterId,

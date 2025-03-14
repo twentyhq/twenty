@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 
 type H2TitleProps = {
   title: string;
@@ -45,6 +46,14 @@ export const H2Title = ({
       <StyledTitle>{title}</StyledTitle>
       {adornment}
     </StyledTitleContainer>
-    {description && <StyledDescription>{description}</StyledDescription>}
+    {description && (
+      <StyledDescription>
+        <OverflowingTextWithTooltip
+          text={description}
+          displayedMaxRows={2}
+          isTooltipMultiline={true}
+        />
+      </StyledDescription>
+    )}
   </StyledContainer>
 );

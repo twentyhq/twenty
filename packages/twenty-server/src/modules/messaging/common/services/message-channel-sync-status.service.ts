@@ -6,6 +6,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
+import { HealthCounterCacheKeys } from 'src/engine/core-modules/health/types/health-counter-cache-keys.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -129,11 +130,6 @@ export class MessageChannelSyncStatusService {
       syncStatus: MessageChannelSyncStatus.ONGOING,
       syncStageStartedAt: new Date().toISOString(),
     });
-
-    await this.healthCacheService.incrementMessageChannelSyncJobByStatusCounter(
-      MessageChannelSyncStatus.ONGOING,
-      messageChannelIds.length,
-    );
   }
 
   public async markAsCompletedAndSchedulePartialMessageListFetch(
@@ -156,9 +152,10 @@ export class MessageChannelSyncStatusService {
       syncedAt: new Date().toISOString(),
     });
 
-    await this.healthCacheService.incrementMessageChannelSyncJobByStatusCounter(
+    await this.healthCacheService.updateMessageOrCalendarChannelSyncJobByStatusCache(
+      HealthCounterCacheKeys.MessageChannelSyncJobByStatus,
       MessageChannelSyncStatus.ACTIVE,
-      messageChannelIds.length,
+      messageChannelIds,
     );
   }
 
@@ -202,9 +199,10 @@ export class MessageChannelSyncStatusService {
       syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
     });
 
-    await this.healthCacheService.incrementMessageChannelSyncJobByStatusCounter(
+    await this.healthCacheService.updateMessageOrCalendarChannelSyncJobByStatusCache(
+      HealthCounterCacheKeys.MessageChannelSyncJobByStatus,
       MessageChannelSyncStatus.FAILED_UNKNOWN,
-      messageChannelIds.length,
+      messageChannelIds,
     );
   }
 
@@ -232,9 +230,10 @@ export class MessageChannelSyncStatusService {
       syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
     });
 
-    await this.healthCacheService.incrementMessageChannelSyncJobByStatusCounter(
+    await this.healthCacheService.updateMessageOrCalendarChannelSyncJobByStatusCache(
+      HealthCounterCacheKeys.MessageChannelSyncJobByStatus,
       MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-      messageChannelIds.length,
+      messageChannelIds,
     );
 
     const connectedAccountRepository =

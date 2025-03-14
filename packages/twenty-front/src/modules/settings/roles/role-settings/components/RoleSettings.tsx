@@ -20,7 +20,7 @@ const StyledInputContainer = styled.div`
 `;
 
 type RoleSettingsProps = {
-  role: Pick<Role, 'id' | 'label' | 'description'>;
+  role: Pick<Role, 'id' | 'label' | 'description' | 'icon'>;
 };
 
 export const RoleSettings = ({ role }: RoleSettingsProps) => {
@@ -30,7 +30,7 @@ export const RoleSettings = ({ role }: RoleSettingsProps) => {
         <StyledInputContainer>
           <IconPicker
             disabled={true}
-            selectedIconKey={'IconUser'}
+            selectedIconKey={role.icon ?? 'IconUser'}
             onChange={() => {}}
           />
         </StyledInputContainer>

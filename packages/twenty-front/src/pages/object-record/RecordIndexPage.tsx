@@ -1,5 +1,5 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
@@ -13,13 +13,13 @@ export const RecordIndexPage = () => {
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const objectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   if (
-    isUndefined(objectMetadataItem) ||
+    isUndefined(contextStoreCurrentObjectMetadataItemId) ||
     !isNonEmptyString(contextStoreCurrentViewId)
   ) {
     return null;

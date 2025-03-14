@@ -360,7 +360,8 @@
     "graphql": "16.8.0",
     "type-fest": "4.10.1",
     "typescript": "5.3.3",
-    "prosemirror-model": "1.23.0"
+    "prosemirror-model": "1.23.0",
+    "yjs": "13.6.18"
   },
   "version": "0.2.1",
   "nx": {},

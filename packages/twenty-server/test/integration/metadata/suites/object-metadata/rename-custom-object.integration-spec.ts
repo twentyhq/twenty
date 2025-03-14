@@ -168,7 +168,7 @@ describe('Custom object renaming', () => {
     // Act
     const createRelationGraphqlOperation = createOneRelationMetadataFactory({
       input: {
-        relation: {
+        relationMetadata: {
           fromDescription: '',
           fromIcon: 'IconRelationOneToMany',
           fromLabel: 'Guest',
@@ -193,10 +193,10 @@ describe('Custom object renaming', () => {
     );
 
     // Assert
-    customRelationId = relationResponse.body.data.createOneRelation.id;
+    customRelationId = relationResponse.body.data.createOneRelationMetadata.id;
 
     relationFieldMetadataOnPersonId =
-      relationResponse.body.data.createOneRelation.fromFieldMetadataId;
+      relationResponse.body.data.createOneRelationMetadata.fromFieldMetadataId;
   });
 
   it('3. should rename custom object', async () => {

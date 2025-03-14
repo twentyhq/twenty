@@ -56,6 +56,10 @@ jobs:
         run: npx nx build twenty-website
         env:
           DATABASE_PG_URL: postgres://postgres:postgres@localhost:5432/default
+          KEYSTATIC_GITHUB_CLIENT_ID: xxx
+          KEYSTATIC_GITHUB_CLIENT_SECRET: xxx
+          KEYSTATIC_SECRET: xxx
+          NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: xxx
   ci-website-status-check:
     if: always() && !cancelled()
     timeout-minutes: 10

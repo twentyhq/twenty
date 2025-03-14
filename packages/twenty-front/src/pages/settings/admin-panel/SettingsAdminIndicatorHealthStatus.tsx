@@ -8,7 +8,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
-import { H2Title, Section } from 'twenty-ui';
+import { H2Title, H3Title, Section } from 'twenty-ui';
 import {
   AdminPanelHealthServiceStatus,
   HealthIndicatorId,
@@ -16,19 +16,11 @@ import {
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledH2Title = styled(H2Title)`
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledTitleContainer = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledHealthStatusContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsAdminIndicatorHealthStatus = () => {
@@ -51,15 +43,15 @@ export const SettingsAdminIndicatorHealthStatus = () => {
       links={[
         {
           children: t`Other`,
-          href: getSettingsPath(SettingsPath.ServerAdmin),
+          href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Server Admin`,
-          href: getSettingsPath(SettingsPath.ServerAdmin),
+          children: t`Admin Panel`,
+          href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
           children: t`Health Status`,
-          href: getSettingsPath(SettingsPath.ServerAdminHealthStatus),
+          href: getSettingsPath(SettingsPath.AdminPanelHealthStatus),
         },
         { children: `${data?.getIndicatorHealthStatus?.label}` },
       ]}
@@ -82,22 +74,25 @@ export const SettingsAdminIndicatorHealthStatus = () => {
         >
           <Section>
             <StyledTitleContainer>
-              <StyledH2Title
-                title={`${data?.getIndicatorHealthStatus?.label}`}
-                description={data?.getIndicatorHealthStatus?.description}
-              />
-              {indicatorId !== HealthIndicatorId.connectedAccount &&
-                data?.getIndicatorHealthStatus?.status && (
-                  <StyledHealthStatusContainer>
-                    <SettingsAdminHealthStatusRightContainer
-                      status={data?.getIndicatorHealthStatus.status}
-                    />
-                  </StyledHealthStatusContainer>
-                )}
+              <H3Title title={data?.getIndicatorHealthStatus?.label} />
+              {data?.getIndicatorHealthStatus?.status && (
+                <SettingsAdminHealthStatusRightContainer
+                  status={data?.getIndicatorHealthStatus.status}
+                />
+              )}
             </StyledTitleContainer>
           </Section>
-
-          <SettingsAdminIndicatorHealthStatusContent />
+          <Section>
+            {data?.getIndicatorHealthStatus?.id !== HealthIndicatorId.worker &&
+              data?.getIndicatorHealthStatus?.id !==
+                HealthIndicatorId.connectedAccount && (
+                <H2Title
+                  title={t`Status`}
+                  description={data?.getIndicatorHealthStatus?.description}
+                />
+              )}
+            <SettingsAdminIndicatorHealthStatusContent />
+          </Section>
         </SettingsAdminIndicatorHealthContext.Provider>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

@@ -4,7 +4,7 @@ import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metad
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
+import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
@@ -21,15 +21,13 @@ import { tableSortsComponentState } from '@/object-record/record-table/states/ta
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { View } from '@/views/types/View';
 import { ViewField } from '@/views/types/ViewField';
-import { ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -57,7 +55,7 @@ export const useLoadRecordIndexStates = () => {
   const setRecordIndexViewKanbanAggregateOperationState = useSetRecoilState(
     recordIndexKanbanAggregateOperationState,
   );
-  const setRecordGroup = useSetRecordGroup();
+  const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const { setTableColumns } = useSetTableColumns();
 
@@ -173,26 +171,13 @@ export const useLoadRecordIndexStates = () => {
     [setTableColumns],
   );
 
-  const onViewGroupsChange = useCallback(
-    (
-      viewGroups: ViewGroup[],
-      objectMetadataItem: ObjectMetadataItem,
-      recordIndexId: string,
-    ) => {
-      const newGroupDefinitions = mapViewGroupsToRecordGroupDefinitions({
-        objectMetadataItem,
-        viewGroups,
-      });
-
-      setRecordGroup(newGroupDefinitions, recordIndexId);
-    },
-    [setRecordGroup],
-  );
-
   const loadRecordIndexStates = useRecoilCallback(
     ({ snapshot, set }) =>
       async (view: View, objectMetadataItem: ObjectMetadataItem) => {
-        const recordIndexId = `${objectMetadataItem.namePlural}-${view.id}`;
+        const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+          objectMetadataItem.namePlural,
+          view.id,
+        );
 
         const filterableFieldMetadataItems = snapshot
           .getLoadable(
@@ -203,7 +188,7 @@ export const useLoadRecordIndexStates = () => {
           .getValue();
 
         onViewFieldsChange(view.viewFields, objectMetadataItem, recordIndexId);
-        onViewGroupsChange(view.viewGroups, objectMetadataItem, recordIndexId);
+        setRecordGroupsFromViewGroups(view.id, view.viewGroups);
 
         set(
           tableFiltersComponentState.atomFamily({
@@ -259,16 +244,16 @@ export const useLoadRecordIndexStates = () => {
       },
     [
       onViewFieldsChange,
-      onViewGroupsChange,
-      setContextStoreTargetedRecordsRuleComponentState,
+      setRecordGroupsFromViewGroups,
       setRecordIndexFilters,
-      setRecordIndexIsCompactModeActive,
-      setRecordIndexSorts,
       setRecordIndexViewFilterGroups,
-      setRecordIndexViewKanbanAggregateOperationState,
-      setRecordIndexViewKanbanFieldMetadataIdState,
+      setContextStoreTargetedRecordsRuleComponentState,
+      setRecordIndexSorts,
       setRecordIndexViewType,
       setRecordIndexOpenRecordIn,
+      setRecordIndexViewKanbanFieldMetadataIdState,
+      setRecordIndexViewKanbanAggregateOperationState,
+      setRecordIndexIsCompactModeActive,
     ],
   );
 

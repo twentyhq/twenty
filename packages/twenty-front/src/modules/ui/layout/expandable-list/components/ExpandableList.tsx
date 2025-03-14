@@ -44,7 +44,6 @@ const StyledUnShrinkableContainer = styled.div`
 
 export type ExpandableListProps = {
   isChipCountDisplayed?: boolean;
-  withExpandedListBorder?: boolean;
 };
 
 export type ChildrenProperty = {
@@ -55,7 +54,6 @@ export type ChildrenProperty = {
 export const ExpandableList = ({
   children,
   isChipCountDisplayed: isChipCountDisplayedFromProps,
-  withExpandedListBorder = false,
 }: {
   children: ReactElement[];
 } & ExpandableListProps) => {
@@ -166,7 +164,6 @@ export const ExpandableList = ({
         <ExpandedListDropdown
           anchorElement={containerRef.current ?? undefined}
           onClickOutside={handleClickOutside}
-          withBorder={withExpandedListBorder}
         >
           {children}
         </ExpandedListDropdown>

@@ -1,6 +1,6 @@
 import { PropsWithChildren, useEffect, useState } from 'react';
 
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -37,9 +37,10 @@ export const JestContextStoreSetter = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const setContextStoreCurrentObjectMetadataItem = useSetRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
-  );
+  const setContextStoreCurrentObjectMetadataItemId =
+    useSetRecoilComponentStateV2(
+      contextStoreCurrentObjectMetadataItemIdComponentState,
+    );
 
   const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
     contextStoreNumberOfSelectedRecordsComponentState,
@@ -63,14 +64,14 @@ export const JestContextStoreSetter = ({
   useEffect(() => {
     setContextStoreCurrentViewId(contextStoreCurrentViewId);
     setContextStoreTargetedRecordsRule(contextStoreTargetedRecordsRule);
-    setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
+    setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     setContextStoreNumberOfSelectedRecords(contextStoreNumberOfSelectedRecords);
     setcontextStoreFiltersComponentState(contextStoreFilters);
 
     setIsLoaded(true);
   }, [
     setContextStoreTargetedRecordsRule,
-    setContextStoreCurrentObjectMetadataItem,
+    setContextStoreCurrentObjectMetadataItemId,
     contextStoreTargetedRecordsRule,
     contextStoreCurrentObjectMetadataId,
     setContextStoreNumberOfSelectedRecords,
