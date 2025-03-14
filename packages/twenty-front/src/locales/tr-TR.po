@@ -765,7 +765,7 @@ msgstr "Boş olanları say"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count false"
-msgstr ""
+msgstr "Sayımı yanlış"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count not empty"
@@ -773,7 +773,7 @@ msgstr "Boş olmayanları say"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count true"
-msgstr ""
+msgstr "Gerçekleri say"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"

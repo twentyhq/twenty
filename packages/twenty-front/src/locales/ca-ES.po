@@ -765,7 +765,7 @@ msgstr "Compta buits"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count false"
-msgstr ""
+msgstr "Compta fals"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count not empty"
@@ -773,7 +773,7 @@ msgstr "Compta no buits"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count true"
-msgstr ""
+msgstr "Compta cert"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"

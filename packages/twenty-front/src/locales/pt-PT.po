@@ -765,7 +765,7 @@ msgstr "Contar vazios"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count false"
-msgstr ""
+msgstr "Contar falso"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count not empty"
@@ -773,7 +773,7 @@ msgstr "Contar não vazios"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count true"
-msgstr ""
+msgstr "Contar verdadeiro"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"

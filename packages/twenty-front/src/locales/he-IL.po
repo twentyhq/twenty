@@ -765,7 +765,7 @@ msgstr "ספור ריקים"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count false"
-msgstr ""
+msgstr "ספור שגוי"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count not empty"
@@ -773,7 +773,7 @@ msgstr "ספור לא ריקים"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count true"
-msgstr ""
+msgstr "ספור אמת"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"

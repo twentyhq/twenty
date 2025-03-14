@@ -765,7 +765,7 @@ msgstr "비어 있는 개수"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count false"
-msgstr ""
+msgstr "카운트 거짓"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count not empty"
@@ -773,7 +773,7 @@ msgstr "비어 있지 않은 개수"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count true"
-msgstr ""
+msgstr "정확한 개수"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"

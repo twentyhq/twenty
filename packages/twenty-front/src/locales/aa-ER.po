@@ -764,8 +764,16 @@ msgid "Count empty"
 msgstr "crwdns223:0crwdne223:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
+msgid "Count false"
+msgstr "crwdns5543:0crwdne5543:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count not empty"
 msgstr "crwdns225:0crwdne225:0"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
+msgid "Count true"
+msgstr "crwdns5545:0crwdne5545:0"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"
@@ -1452,6 +1460,7 @@ msgid "Failed to validate API key. Please check your API key and try again."
 msgstr "crwdns5445:0crwdne5445:0"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "False"
 msgstr "crwdns5131:0crwdne5131:0"
 
@@ -3134,6 +3143,7 @@ msgstr "crwdns745:0crwdne745:0"
 #~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "True"
 msgstr "crwdns5305:0crwdne5305:0"
 
