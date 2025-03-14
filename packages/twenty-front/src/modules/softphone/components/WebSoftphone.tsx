@@ -489,7 +489,11 @@ const WebSoftphone: React.FC = () => {
         onInvite: (invitation) => {
           console.log('Incoming call received');
 
-          cleanupSession();
+          // Don't clean up the session for incoming calls - this prevents race conditions
+          // We'll only clean up if there's already an active call
+          if (sessionRef.current || invitationRef.current) {
+            cleanupSession();
+          }
 
           invitationRef.current = invitation;
           const fromNumber = invitation.remoteIdentity.uri.user;
@@ -522,6 +526,7 @@ const WebSoftphone: React.FC = () => {
               }));
               console.log('Incoming call accepted:', invitationRef.current);
             } else if (state === SessionState.Terminated) {
+              console.log('Call terminated with reason:');
               cleanupSession();
             }
           });
@@ -681,7 +686,10 @@ const WebSoftphone: React.FC = () => {
   };
 
   const handleAcceptCall = async () => {
-    if (!invitationRef.current) return;
+    if (!invitationRef.current) {
+      console.log('entrou aqui');
+      return;
+    }
 
     try {
       setCallState((prev) => ({
