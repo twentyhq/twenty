@@ -5,7 +5,7 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
@@ -84,7 +84,9 @@ describe('workspace members permissions', () => {
       expect(response.body.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.body.errors[0].extensions.code).toBe(
+        GraphQLErrorCode.FORBIDDEN,
+      );
     });
   });
 
@@ -135,7 +137,9 @@ describe('workspace members permissions', () => {
       expect(response.body.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.body.errors[0].extensions.code).toBe(
+        GraphQLErrorCode.FORBIDDEN,
+      );
     });
   });
 
@@ -178,7 +182,9 @@ describe('workspace members permissions', () => {
       expect(response.body.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.body.errors[0].extensions.code).toBe(
+        GraphQLErrorCode.FORBIDDEN,
+      );
     });
   });
 
@@ -205,7 +211,9 @@ describe('workspace members permissions', () => {
       expect(response.body.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.body.errors[0].extensions.code).toBe(
+        GraphQLErrorCode.FORBIDDEN,
+      );
     });
   });
 });

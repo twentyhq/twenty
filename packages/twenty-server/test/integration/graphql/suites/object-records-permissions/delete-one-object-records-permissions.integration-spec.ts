@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
@@ -59,7 +59,9 @@ describe('deleteOneObjectRecordsPermissions', () => {
     expect(response.body.errors[0].message).toBe(
       PermissionsExceptionMessage.PERMISSION_DENIED,
     );
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    expect(response.body.errors[0].extensions.code).toBe(
+      GraphQLErrorCode.FORBIDDEN,
+    );
   });
 
   it('should delete an object record when user has permission (admin role)', async () => {

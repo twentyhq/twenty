@@ -1,16 +1,16 @@
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export const graphQLErrorCodesToFilterOut = [
-  ErrorCode.GRAPHQL_VALIDATION_FAILED,
-  ErrorCode.UNAUTHENTICATED,
-  ErrorCode.FORBIDDEN,
-  ErrorCode.NOT_FOUND,
-  ErrorCode.METHOD_NOT_ALLOWED,
-  ErrorCode.TIMEOUT,
-  ErrorCode.CONFLICT,
-  ErrorCode.BAD_USER_INPUT,
+  GraphQLErrorCode.GRAPHQL_VALIDATION_FAILED,
+  GraphQLErrorCode.UNAUTHENTICATED,
+  GraphQLErrorCode.FORBIDDEN,
+  GraphQLErrorCode.NOT_FOUND,
+  GraphQLErrorCode.METHOD_NOT_ALLOWED,
+  GraphQLErrorCode.TIMEOUT,
+  GraphQLErrorCode.CONFLICT,
+  GraphQLErrorCode.BAD_USER_INPUT,
 ];
 
 export const shouldCaptureException = (exception: Error): boolean => {

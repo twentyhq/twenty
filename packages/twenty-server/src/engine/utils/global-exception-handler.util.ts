@@ -1,6 +1,6 @@
 import { HttpException } from '@nestjs/common';
 
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 import { GraphQLError } from 'graphql';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
@@ -30,14 +30,14 @@ const graphQLPredefinedExceptions = {
 };
 
 export const graphQLErrorCodesToFilter = [
-  ErrorCode.GRAPHQL_VALIDATION_FAILED,
-  ErrorCode.UNAUTHENTICATED,
-  ErrorCode.FORBIDDEN,
-  ErrorCode.NOT_FOUND,
-  ErrorCode.METHOD_NOT_ALLOWED,
-  ErrorCode.TIMEOUT,
-  ErrorCode.CONFLICT,
-  ErrorCode.BAD_USER_INPUT,
+  GraphQLErrorCode.GRAPHQL_VALIDATION_FAILED,
+  GraphQLErrorCode.UNAUTHENTICATED,
+  GraphQLErrorCode.FORBIDDEN,
+  GraphQLErrorCode.NOT_FOUND,
+  GraphQLErrorCode.METHOD_NOT_ALLOWED,
+  GraphQLErrorCode.TIMEOUT,
+  GraphQLErrorCode.CONFLICT,
+  GraphQLErrorCode.BAD_USER_INPUT,
 ];
 
 export const handleExceptionAndConvertToGraphQLError = (
@@ -126,7 +126,7 @@ const convertHttpExceptionToGraphql = (exception: HttpException) => {
 export const convertExceptionToGraphql = (exception: Error) => {
   const error = new BaseGraphQLError(
     exception.name,
-    ErrorCode.INTERNAL_SERVER_ERROR,
+    GraphQLErrorCode.INTERNAL_SERVER_ERROR,
   );
 
   error.stack = exception.stack;

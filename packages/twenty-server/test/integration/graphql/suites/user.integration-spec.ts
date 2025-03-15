@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 
@@ -49,7 +49,9 @@ describe('deleteUser', () => {
         expect(res.body.errors[0].message).toBe(
           'Cannot delete account: user is the unique admin of a workspace',
         );
-        expect(res.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+        expect(res.body.errors[0].extensions.code).toBe(
+          GraphQLErrorCode.FORBIDDEN,
+        );
       });
   });
 });

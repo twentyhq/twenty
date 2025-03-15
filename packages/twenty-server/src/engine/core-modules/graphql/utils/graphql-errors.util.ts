@@ -5,7 +5,7 @@ import {
   Source,
   SourceLocation,
 } from 'graphql';
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 
 declare module 'graphql' {
   export interface GraphQLErrorExtensions {
@@ -77,7 +77,7 @@ function toGraphQLError(error: BaseGraphQLError): GraphQLError {
 
 export class SyntaxError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.GRAPHQL_PARSE_FAILED);
+    super(message, GraphQLErrorCode.GRAPHQL_PARSE_FAILED);
 
     Object.defineProperty(this, 'name', { value: 'SyntaxError' });
   }
@@ -85,7 +85,7 @@ export class SyntaxError extends BaseGraphQLError {
 
 export class ValidationError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.GRAPHQL_VALIDATION_FAILED);
+    super(message, GraphQLErrorCode.GRAPHQL_VALIDATION_FAILED);
 
     Object.defineProperty(this, 'name', { value: 'ValidationError' });
   }
@@ -93,7 +93,7 @@ export class ValidationError extends BaseGraphQLError {
 
 export class AuthenticationError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.UNAUTHENTICATED);
+    super(message, GraphQLErrorCode.UNAUTHENTICATED);
 
     Object.defineProperty(this, 'name', { value: 'AuthenticationError' });
   }
@@ -101,7 +101,7 @@ export class AuthenticationError extends BaseGraphQLError {
 
 export class ForbiddenError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.FORBIDDEN);
+    super(message, GraphQLErrorCode.FORBIDDEN);
 
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
   }
@@ -109,7 +109,7 @@ export class ForbiddenError extends BaseGraphQLError {
 
 export class PersistedQueryNotFoundError extends BaseGraphQLError {
   constructor() {
-    super('PersistedQueryNotFound', ErrorCode.PERSISTED_QUERY_NOT_FOUND);
+    super('PersistedQueryNotFound', GraphQLErrorCode.PERSISTED_QUERY_NOT_FOUND);
 
     Object.defineProperty(this, 'name', {
       value: 'PersistedQueryNotFoundError',
@@ -121,7 +121,7 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
   constructor() {
     super(
       'PersistedQueryNotSupported',
-      ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
+      GraphQLErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
     );
 
     Object.defineProperty(this, 'name', {
@@ -132,7 +132,7 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
 
 export class UserInputError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.BAD_USER_INPUT);
+    super(message, GraphQLErrorCode.BAD_USER_INPUT);
 
     Object.defineProperty(this, 'name', { value: 'UserInputError' });
   }
@@ -140,7 +140,7 @@ export class UserInputError extends BaseGraphQLError {
 
 export class NotFoundError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.NOT_FOUND);
+    super(message, GraphQLErrorCode.NOT_FOUND);
 
     Object.defineProperty(this, 'name', { value: 'NotFoundError' });
   }
@@ -148,7 +148,7 @@ export class NotFoundError extends BaseGraphQLError {
 
 export class EmailNotVerifiedError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.EMAIL_NOT_VERIFIED);
+    super(message, GraphQLErrorCode.EMAIL_NOT_VERIFIED);
 
     Object.defineProperty(this, 'name', { value: 'EmailNotVerifiedError' });
   }
@@ -156,7 +156,7 @@ export class EmailNotVerifiedError extends BaseGraphQLError {
 
 export class MethodNotAllowedError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.METHOD_NOT_ALLOWED);
+    super(message, GraphQLErrorCode.METHOD_NOT_ALLOWED);
 
     Object.defineProperty(this, 'name', { value: 'MethodNotAllowedError' });
   }
@@ -164,7 +164,7 @@ export class MethodNotAllowedError extends BaseGraphQLError {
 
 export class ConflictError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.CONFLICT);
+    super(message, GraphQLErrorCode.CONFLICT);
 
     Object.defineProperty(this, 'name', { value: 'ConflictError' });
   }
@@ -172,7 +172,7 @@ export class ConflictError extends BaseGraphQLError {
 
 export class TimeoutError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.TIMEOUT);
+    super(message, GraphQLErrorCode.TIMEOUT);
 
     Object.defineProperty(this, 'name', { value: 'TimeoutError' });
   }
@@ -180,7 +180,7 @@ export class TimeoutError extends BaseGraphQLError {
 
 export class InternalServerError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, ErrorCode.INTERNAL_SERVER_ERROR);
+    super(message, GraphQLErrorCode.INTERNAL_SERVER_ERROR);
 
     Object.defineProperty(this, 'name', { value: 'InternalServerError' });
   }

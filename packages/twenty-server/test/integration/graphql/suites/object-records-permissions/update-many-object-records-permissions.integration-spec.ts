@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
@@ -73,7 +73,9 @@ describe('updateManyObjectRecordsPermissions', () => {
     expect(response.body.errors[0].message).toBe(
       PermissionsExceptionMessage.PERMISSION_DENIED,
     );
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    expect(response.body.errors[0].extensions.code).toBe(
+      GraphQLErrorCode.FORBIDDEN,
+    );
   });
 
   it('should update multiple object records when user has permission (admin role)', async () => {

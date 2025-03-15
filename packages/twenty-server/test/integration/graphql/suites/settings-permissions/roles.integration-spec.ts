@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
@@ -127,7 +127,9 @@ describe('roles permissions', () => {
           expect(res.body.errors[0].message).toBe(
             PermissionsExceptionMessage.PERMISSION_DENIED,
           );
-          expect(res.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+          expect(res.body.errors[0].extensions.code).toBe(
+            GraphQLErrorCode.FORBIDDEN,
+          );
         });
     });
   });
@@ -155,7 +157,9 @@ describe('roles permissions', () => {
           expect(res.body.errors[0].message).toBe(
             PermissionsExceptionMessage.PERMISSION_DENIED,
           );
-          expect(res.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+          expect(res.body.errors[0].extensions.code).toBe(
+            GraphQLErrorCode.FORBIDDEN,
+          );
         });
     });
 
@@ -181,7 +185,9 @@ describe('roles permissions', () => {
           expect(res.body.errors[0].message).toBe(
             PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
           );
-          expect(res.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+          expect(res.body.errors[0].extensions.code).toBe(
+            GraphQLErrorCode.FORBIDDEN,
+          );
         });
     });
 

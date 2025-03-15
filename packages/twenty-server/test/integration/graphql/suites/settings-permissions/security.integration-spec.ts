@@ -2,7 +2,7 @@ import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -126,7 +126,7 @@ describe('Security permissions', () => {
               PermissionsExceptionMessage.PERMISSION_DENIED,
             );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              GraphQLErrorCode.FORBIDDEN,
             );
           });
       });
@@ -186,7 +186,7 @@ describe('Security permissions', () => {
               PermissionsExceptionMessage.PERMISSION_DENIED,
             );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              GraphQLErrorCode.FORBIDDEN,
             );
           });
       });
@@ -246,7 +246,7 @@ describe('Security permissions', () => {
               PermissionsExceptionMessage.PERMISSION_DENIED,
             );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              GraphQLErrorCode.FORBIDDEN,
             );
           });
       });
@@ -305,7 +305,7 @@ describe('Security permissions', () => {
               PermissionsExceptionMessage.PERMISSION_DENIED,
             );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              GraphQLErrorCode.FORBIDDEN,
             );
           });
       });
@@ -338,7 +338,7 @@ describe('Security permissions', () => {
               PermissionsExceptionMessage.PERMISSION_DENIED,
             );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              GraphQLErrorCode.FORBIDDEN,
             );
           });
       });
@@ -397,7 +397,7 @@ describe('Security permissions', () => {
               PermissionsExceptionMessage.PERMISSION_DENIED,
             );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              GraphQLErrorCode.FORBIDDEN,
             );
           });
       });
@@ -457,7 +457,7 @@ describe('Security permissions', () => {
               PermissionsExceptionMessage.PERMISSION_DENIED,
             );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              GraphQLErrorCode.FORBIDDEN,
             );
           });
       });
@@ -517,7 +517,7 @@ describe('Security permissions', () => {
               PermissionsExceptionMessage.PERMISSION_DENIED,
             );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              GraphQLErrorCode.FORBIDDEN,
             );
           });
       });
@@ -577,7 +577,7 @@ describe('Security permissions', () => {
               PermissionsExceptionMessage.PERMISSION_DENIED,
             );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              GraphQLErrorCode.FORBIDDEN,
             );
           });
       });

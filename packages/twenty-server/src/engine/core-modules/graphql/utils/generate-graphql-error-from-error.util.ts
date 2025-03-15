@@ -1,4 +1,4 @@
-import { ErrorCode } from 'twenty-shared';
+import { GraphQLErrorCode } from 'twenty-shared';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
@@ -7,7 +7,7 @@ import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-
 export const generateGraphQLErrorFromError = (error: Error) => {
   const graphqlError = new BaseGraphQLError(
     error.message,
-    ErrorCode.INTERNAL_SERVER_ERROR,
+    GraphQLErrorCode.INTERNAL_SERVER_ERROR,
   );
 
   if (process.env.NODE_ENV === NodeEnvironment.development) {
