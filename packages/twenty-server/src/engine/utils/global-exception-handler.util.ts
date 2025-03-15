@@ -1,5 +1,6 @@
 import { HttpException } from '@nestjs/common';
 
+import { ErrorCode } from 'twenty-shared';
 import { GraphQLError } from 'graphql';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
@@ -11,7 +12,6 @@ import {
   AuthenticationError,
   BaseGraphQLError,
   ConflictError,
-  ErrorCode,
   ForbiddenError,
   MethodNotAllowedError,
   NotFoundError,

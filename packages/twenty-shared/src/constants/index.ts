@@ -1,3 +1,4 @@
+export * from './ErrorCode';
 export * from './FieldForTotalCountAggregateOperation';
 export * from './PermissionsOnAllObjectRecords';
 export * from './StandardObjectRecordsUnderObjectRecordsPermissions';

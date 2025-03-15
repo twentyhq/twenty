@@ -5,6 +5,7 @@ import {
   Source,
   SourceLocation,
 } from 'graphql';
+import { ErrorCode } from 'twenty-shared';
 
 declare module 'graphql' {
   export interface GraphQLErrorExtensions {
@@ -13,22 +14,6 @@ declare module 'graphql' {
       stacktrace?: ReadonlyArray<string>;
     };
   }
-}
-
-export enum ErrorCode {
-  GRAPHQL_PARSE_FAILED = 'GRAPHQL_PARSE_FAILED',
-  GRAPHQL_VALIDATION_FAILED = 'GRAPHQL_VALIDATION_FAILED',
-  UNAUTHENTICATED = 'UNAUTHENTICATED',
-  FORBIDDEN = 'FORBIDDEN',
-  PERSISTED_QUERY_NOT_FOUND = 'PERSISTED_QUERY_NOT_FOUND',
-  PERSISTED_QUERY_NOT_SUPPORTED = 'PERSISTED_QUERY_NOT_SUPPORTED',
-  BAD_USER_INPUT = 'BAD_USER_INPUT',
-  NOT_FOUND = 'NOT_FOUND',
-  EMAIL_NOT_VERIFIED = 'EMAIL_NOT_VERIFIED',
-  METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
-  CONFLICT = 'CONFLICT',
-  TIMEOUT = 'TIMEOUT',
-  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
 }
 
 export class BaseGraphQLError extends GraphQLError {

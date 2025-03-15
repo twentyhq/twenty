@@ -1,7 +1,6 @@
-import {
-  BaseGraphQLError,
-  ErrorCode,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ErrorCode } from 'twenty-shared';
+
+import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export const graphQLErrorCodesToFilterOut = [
   ErrorCode.GRAPHQL_VALIDATION_FAILED,

@@ -1,9 +1,8 @@
+import { ErrorCode } from 'twenty-shared';
+
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
-import {
-  BaseGraphQLError,
-  ErrorCode,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export const generateGraphQLErrorFromError = (error: Error) => {
   const graphqlError = new BaseGraphQLError(
