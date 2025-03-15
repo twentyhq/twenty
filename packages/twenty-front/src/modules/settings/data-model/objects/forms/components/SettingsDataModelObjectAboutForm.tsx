@@ -92,9 +92,12 @@ export const SettingsDataModelObjectAboutForm = ({
   watch('namePlural');
   watch('description');
   watch('icon');
-  const apiNameTooltipText = isLabelSyncedWithName
-    ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
-    : t`Input must be in camel case and cannot start with a number`;
+  const apiNameTooltipText =
+    !isDefined(objectMetadataItem) || objectMetadataItem.isCustom
+      ? isLabelSyncedWithName
+        ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
+        : t`Input must be in camel case and cannot start with a number`
+      : t`Can't change API names for standard objects`;
 
   const fillLabelPlural = (labelSingular: string | undefined) => {
     if (!isDefined(labelSingular)) return;
@@ -168,7 +171,9 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={disableEdition}
+              disabled={
+                !(objectMetadataItem?.isCustom ?? true) && isLabelSyncedWithName
+              }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -194,7 +199,9 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={disableEdition}
+              disabled={
+                !(objectMetadataItem?.isCustom ?? true) && isLabelSyncedWithName
+              }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -316,14 +323,13 @@ export const SettingsDataModelObjectAboutForm = ({
                       title={t`Synchronize Objects Labels and API Names`}
                       description={t`Should changing an object's label also change the API?`}
                       checked={value ?? true}
-                      disabled={
-                        isDefined(objectMetadataItem) &&
-                        !objectMetadataItem.isCustom
-                      }
                       advancedMode
                       onChange={(value) => {
                         onChange(value);
-                        if (value === true) {
+                        if (
+                          value === true &&
+                          (!objectMetadataItem || objectMetadataItem?.isCustom)
+                        ) {
                           fillNamePluralFromLabelPlural(labelPlural);
                           fillNameSingularFromLabelSingular(labelSingular);
                         }

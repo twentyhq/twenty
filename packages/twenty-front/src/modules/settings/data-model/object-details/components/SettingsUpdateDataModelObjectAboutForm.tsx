@@ -68,10 +68,21 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     try {
       setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
-      await updateOneObjectMetadataItem({
-        idToUpdate: objectMetadataItem.id,
-        updatePayload: formValues,
-      });
+      if (objectMetadataItem.isCustom) {
+        await updateOneObjectMetadataItem({
+          idToUpdate: objectMetadataItem.id,
+          updatePayload: formValues,
+        });
+      } else {
+        await updateOneObjectMetadataItem({
+          idToUpdate: objectMetadataItem.id,
+          updatePayload: {
+            isLabelSyncedWithName: formValues.isLabelSyncedWithName,
+            labelPlural: formValues.labelPlural,
+            labelSingular: formValues.labelSingular,
+          },
+        });
+      }
 
       formConfig.reset(undefined, { keepValues: true });
 

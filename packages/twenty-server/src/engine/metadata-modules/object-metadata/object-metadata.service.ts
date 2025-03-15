@@ -557,7 +557,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     labelKey: 'labelPlural' | 'labelSingular' | 'description',
     locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
-    if (objectMetadata.isCustom) {
+    if (
+      objectMetadata.isCustom ||
+      (objectMetadata.isLabelSyncedWithName === false &&
+        ['labelPlural', 'labelSingular'].includes(labelKey))
+    ) {
       return objectMetadata[labelKey];
     }
 
