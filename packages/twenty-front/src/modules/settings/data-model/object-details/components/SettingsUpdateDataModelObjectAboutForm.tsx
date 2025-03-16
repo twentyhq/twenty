@@ -74,14 +74,26 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
           updatePayload: formValues,
         });
       } else {
-        await updateOneObjectMetadataItem({
-          idToUpdate: objectMetadataItem.id,
-          updatePayload: {
-            isLabelSyncedWithName: formValues.isLabelSyncedWithName,
-            labelPlural: formValues.labelPlural,
-            labelSingular: formValues.labelSingular,
-          },
-        });
+        if (
+          formValues.isLabelSyncedWithName === false &&
+          isLabelSyncedWithName === true
+        ) {
+          await updateOneObjectMetadataItem({
+            idToUpdate: objectMetadataItem.id,
+            updatePayload: {
+              isLabelSyncedWithName: formValues.isLabelSyncedWithName,
+            },
+          });
+        } else {
+          await updateOneObjectMetadataItem({
+            idToUpdate: objectMetadataItem.id,
+            updatePayload: {
+              isLabelSyncedWithName: formValues.isLabelSyncedWithName,
+              labelPlural: formValues.labelPlural,
+              labelSingular: formValues.labelSingular,
+            },
+          });
+        }
       }
 
       formConfig.reset(undefined, { keepValues: true });
