@@ -94,6 +94,7 @@ const StyledModalHeader = styled(Modal.Header)`
 `;
 
 const StyledModalContent = styled(Modal.Content)`
+  overflow: auto;
   padding-left: 0;
   padding-right: 0;
 `;
