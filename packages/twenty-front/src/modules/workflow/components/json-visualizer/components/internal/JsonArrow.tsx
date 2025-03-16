@@ -20,7 +20,7 @@ const StyledButton = styled(motion.button)`
   cursor: pointer;
 `;
 
-const MotionIconChevronDown = motion(IconChevronDown);
+const MotionIconChevronDown = motion.create(IconChevronDown);
 
 export const JsonArrow = ({
   isOpen,

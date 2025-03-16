@@ -19,11 +19,14 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
-msgid ""
-" These are only the server values. Ensure your worker environment has the\n"
-"        same variables and values, this is required for asynchronous tasks like\n"
-"        email sync."
-msgstr " Bunlar yalnızca sunucu değerleridir. Çalışan ortamınızın da aynı değişkenlere ve değerlere sahip olduğundan emin olun, bu, e-posta senkronizasyonu gibi asenkron görevler için gereklidir."
+#~ msgid ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
+#~ msgstr ""
+#~ " These are only the server values. Ensure your worker environment has the\n"
+#~ "        same variables and values, this is required for asynchronous tasks like\n"
+#~ "        email sync."
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
@@ -118,6 +121,14 @@ msgstr "İptal"
 msgid "About"
 msgstr "Hakkında"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "About this user"
+msgstr "Bu kullanıcı hakkında"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "About this workspace"
+msgstr "Bu çalışma alanı hakkında"
+
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Account"
@@ -140,7 +151,6 @@ msgid "Actions"
 msgstr "Eylemler"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -161,8 +171,8 @@ msgid "Active API keys created by you or your team."
 msgstr "Ekip arkadaşlarınız ya da sizin tarafınızdan oluşturulan etkin API anahtarları."
 
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-msgid "Add"
-msgstr "Ekle"
+#~ msgid "Add"
+#~ msgstr "Add"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
@@ -172,6 +182,7 @@ msgstr "Yeni hesap"
 msgid "Add Approved Access Domain"
 msgstr "Onaylanmış Erişim Alanı Ekle"
 
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "Alan Ekle"
@@ -205,17 +216,16 @@ msgstr "Kara Listeye Ekle"
 msgid "Add to Favorite"
 msgstr "Sık Kullanılanlara Ekle"
 
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Add to favorites"
 msgstr "Sık Kullanılanlara Ekle"
 
@@ -286,6 +296,10 @@ msgstr "Tüm Nesneler"
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Tüm roller"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "All workspaces this user is a member of"
+msgstr "Bu kullanıcının üye olduğu tüm çalışma alanları"
 
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -622,7 +636,7 @@ msgstr "Daralt"
 msgid "Color code"
 msgstr "Renk kodu"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Kompakt Görünüm"
 
@@ -700,12 +714,13 @@ msgid "Continue with Microsoft"
 msgstr "Microsoft ile devam et"
 
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Panoya kopyalandı!"
 
 #: src/modules/command-menu/components/CommandMenu.tsx
-msgid "Copilot"
-msgstr "Yardımcı Pilot"
+#~ msgid "Copilot"
+#~ msgstr "Copilot"
 
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -720,6 +735,10 @@ msgstr "Davetiye bağlantısını kopyala"
 
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Copy link"
+msgstr "Bağlantıyı kopyala"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Copy link to view"
 msgstr "Bağlantıyı kopyala"
 
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -745,8 +764,16 @@ msgid "Count empty"
 msgstr "Boş olanları say"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
+msgid "Count false"
+msgstr "Sayımı yanlış"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count not empty"
 msgstr "Boş olmayanları say"
+
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
+msgid "Count true"
+msgstr "Gerçekleri say"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"
@@ -765,7 +792,7 @@ msgid "Create API key"
 msgstr "API anahtarı oluştur"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Create new record"
 msgstr "Yeni kayıt oluştur"
 
@@ -799,8 +826,12 @@ msgid "Created"
 msgstr "Oluşturulan"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Current version:"
-msgstr "Mevcut sürüm:"
+msgid "Current version"
+msgstr "Mevcut sürüm"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Current version:"
+#~ msgstr "Current version:"
 
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
@@ -881,7 +912,6 @@ msgid "Date format"
 msgstr "Tarih formatı"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -938,17 +968,14 @@ msgstr "İş alanınızdaki diğer kullanıcılara neyin görünür olacağını
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
-#: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBar.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete"
 msgstr "Sil"
 
@@ -967,12 +994,11 @@ msgstr "Hesabı ve tüm ilişkili verileri sil"
 msgid "Delete API key"
 msgstr "API anahtarını sil"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete record"
 msgstr "Kaydı sil"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete records"
 msgstr "Kayıtları Sil"
 
@@ -980,6 +1006,10 @@ msgstr "Kayıtları Sil"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "Bu entegrasyonu sil"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+msgid "Delete view"
+msgstr "Görünümü sil"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -1011,8 +1041,7 @@ msgstr "Silindi"
 #~ msgid "Deleted {objectNamePlural}"
 #~ msgstr "Deleted {objectNamePlural}"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Deleted records"
 msgstr "Silinmiş kayıtlar"
 
@@ -1041,8 +1070,8 @@ msgstr "Açıklama"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Destroy"
 msgstr "Yok Et"
 
@@ -1050,7 +1079,6 @@ msgstr "Yok Et"
 msgid "Developers"
 msgstr "Geliştiriciler"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
@@ -1154,6 +1182,7 @@ msgstr "Alt alan adınızı düzenleyin veya özel bir domain ayarlayın."
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "E-posta"
 
@@ -1220,11 +1249,11 @@ msgstr "Boş"
 
 #: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
 msgid "Empty Array"
-msgstr ""
+msgstr "Boş Dizi"
 
 #: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
 msgid "Empty Object"
-msgstr ""
+msgstr "Boş Nesne"
 
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
@@ -1372,7 +1401,7 @@ msgid "Expires in"
 msgstr "Bitiş süresi"
 
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1380,23 +1409,18 @@ msgstr "Bitiş süresi"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export"
 msgstr "Dışa Aktar"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export record"
 msgstr "Kaydı Dışa Aktar"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export records"
 msgstr "Kayıtları Dışa Aktar"
 
@@ -1404,7 +1428,7 @@ msgstr "Kayıtları Dışa Aktar"
 msgid "Export runs"
 msgstr "Çalıştırmaları Dışa Aktar"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export to PDF"
 msgstr "PDF olarak dışa aktar"
 
@@ -1415,8 +1439,7 @@ msgstr "Versiyonları Dışa Aktar"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export view"
 msgstr "Görünümü Dışa Aktar"
 
@@ -1437,6 +1460,7 @@ msgid "Failed to validate API key. Please check your API key and try again."
 msgstr "API anahtarı doğrulaması başarısız oldu. Lütfen API anahtarınızı kontrol edin ve tekrar deneyin."
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "False"
 msgstr "Yanlış"
 
@@ -1629,6 +1653,11 @@ msgstr "Simge"
 msgid "Icon and Name"
 msgstr "Simge ve İsim"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "ID"
+msgstr "Kimlik"
+
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "Tanımlayıcı"
@@ -1650,13 +1679,11 @@ msgid "Impersonate"
 msgstr "Kişileştir"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Import"
 msgstr "İçe Aktar"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Import records"
 msgstr "Kayıtları İçe Aktar"
 
@@ -1832,7 +1859,7 @@ msgstr "Laboratuvar"
 msgid "Language"
 msgstr "Dil"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "Son 1 saat"
 
@@ -1840,7 +1867,7 @@ msgstr "Son 1 saat"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Son 1 Saat (eskiden → yeniye)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "Son 12 saat"
 
@@ -1852,7 +1879,7 @@ msgstr "Son 12 Saat (eskiden → yeniye)"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Son 24 Saat (eskiden → yeniye)"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "Son 4 saat"
 
@@ -1878,12 +1905,21 @@ msgid "Latest date"
 msgstr "En son tarih"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "Latest version:"
-msgstr "En son sürüm:"
+msgid "Latest version"
+msgstr "En son sürüm"
+
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+#~ msgid "Latest version:"
+#~ msgstr "Latest version:"
 
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
 msgstr "Başlat"
+
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Layout"
+msgstr "Düzen"
 
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -1956,6 +1992,7 @@ msgstr "Maks"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "Üyeler"
 
@@ -2011,6 +2048,8 @@ msgstr "Sağa taşı"
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
 msgstr "İsim"
 
@@ -2031,7 +2070,7 @@ msgstr "API anahtarınızın adı"
 msgid "Name of your workspace"
 msgstr "Çalışma alanınızın adı"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Navigate to next record"
 msgstr "Bir sonraki kayda geç"
 
@@ -2047,7 +2086,7 @@ msgstr "Sonraki versiyona git"
 msgid "Navigate to next workflow"
 msgstr "Sonraki iş akışına git"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Navigate to previous record"
 msgstr "Önceki kayda git"
 
@@ -2102,7 +2141,7 @@ msgstr "Yeni Parola"
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "New record"
 msgstr "Yeni kayıt"
 
@@ -2194,12 +2233,17 @@ msgstr "Norveççe"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Not available on Default View"
 msgstr "Varsayılan Görünümde mevcut değil"
 
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
 msgstr "Boş değil"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Not Found"
+msgstr "Bulunamadı"
 
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
@@ -2251,8 +2295,8 @@ msgstr "Yalnızca zaman damgası ve katılımcılar ekibinizle paylaşılacak."
 msgid "Open command menu"
 msgstr "Komut menüsünü aç"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Açık"
 
@@ -2284,6 +2328,7 @@ msgstr "veya"
 msgid "Other"
 msgstr "Diğer"
 
+#: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "Diğer Çevre Değişkenleri"
@@ -2335,11 +2380,11 @@ msgid "Percentage"
 msgstr "Yüzde"
 
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Permanently destroy record"
 msgstr "Kaydı kalıcı olarak yok et"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Permanently destroy records"
 msgstr "Kayıtları kalıcı olarak yok et"
 
@@ -2379,6 +2424,10 @@ msgstr "Bu API Anahtarını silmek istediğinizi onaylamak için \"{confirmation
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Bu webhook'u silmek istediğinizi onaylamak için {confirmationText} yazın."
+
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+msgid "Please use different names for your source and destination fields"
+msgstr "Lütfen kaynak ve hedef alanlarınız için farklı isimler kullanın"
 
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"
@@ -2463,8 +2512,8 @@ msgstr "Kayıt görüntüsü"
 msgid "Record label"
 msgstr "Kayıt etiketi"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Kayıt Sayfası"
 
@@ -2529,9 +2578,8 @@ msgstr "Varsayılan olarak kaldır"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Remove from favorites"
 msgstr "Favorilerden çıkar"
 
@@ -2556,20 +2604,16 @@ msgstr "Sıfırla"
 msgid "REST"
 msgstr "Dinlenme"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Restore"
 msgstr "Geri Yükle"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Restore record"
 msgstr "Kaydı Geri Yükle"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Restore records"
 msgstr "Kayıtları Geri Yükle"
 
@@ -2671,8 +2715,7 @@ msgstr "Güvenlik"
 msgid "See active version"
 msgstr "Aktif sürümü gör"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "See deleted records"
 msgstr "Silinmiş kayıtları gör"
 
@@ -2802,8 +2845,8 @@ msgstr "Bir alanın etiketi değiştirilirse API adı da değiştirilsin mi?"
 msgid "Should changing an object's label also change the API?"
 msgstr "Bir nesnenin etiketini değiştirmek API'yı da değiştirmeli mi?"
 
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsOpenInContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Yan Panel"
 
@@ -2853,6 +2896,7 @@ msgstr "Tek Oturum Açma"
 msgid "Stages"
 msgstr "Aşamalar"
 
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Durum"
@@ -2958,7 +3002,6 @@ msgstr "Tablo"
 msgid "Terms of Service"
 msgstr "Kullanım Koşulları"
 
-#: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test"
 msgstr "Test"
@@ -3031,6 +3074,10 @@ msgstr "Şifre güncelleme sırasında bir hata oluştu."
 msgid "There was an issue"
 msgstr "Bir sorun oluştu"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
+msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+msgstr "Bunlar yalnızca sunucu değerleridir. Çalışan ortamınızın da aynı değişkenlere ve değerlere sahip olduğundan emin olun, bu, e-posta senkronizasyonu gibi asenkron görevler için gereklidir."
+
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Bu işlem geri alınamaz. Bu, kullanıcıyı kalıcı olarak siler ve tüm görevlerden çıkarır."
@@ -3055,7 +3102,7 @@ msgstr "Bu işlem geri alınamaz. Bu, iş alanınızı tamamen silecek. <0/>Onay
 msgid "This role is assigned to these workspace members."
 msgstr "Bu rol bu çalışma alanı üyelerine atandı."
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "Bu hafta"
 
@@ -3079,24 +3126,24 @@ msgstr "aylığa"
 msgid "to yearly"
 msgstr "yıllığa"
 
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "Bugün"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Total Users"
-msgstr "Toplam Kullanıcılar"
+#~ msgid "Total Users"
+#~ msgstr "Total Users"
 
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Trigger Type"
 msgstr "Tetikleyici Türü"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Trigger type should be Manual - when no record(s) are selected"
-msgstr "Tetikleme türü, hiçbir kayıt seçilmediğinde Manuel olmalıdır"
+#~ msgid "Trigger type should be Manual - when no record(s) are selected"
+#~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "True"
 msgstr "Doğru"
 
@@ -3175,17 +3222,16 @@ msgstr "API'mızı kullanın veya ilk {objectLabel} kaydınızı manuel olarak e
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "User"
 msgstr "Kullanıcı"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Email"
-msgstr "Kullanıcı E-postası"
+#~ msgid "User Email"
+#~ msgstr "User Email"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User ID"
-msgstr "Kullanıcı Kimliği"
+#~ msgid "User ID"
+#~ msgstr "User ID"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -3201,18 +3247,22 @@ msgid "User is not logged in"
 msgstr "Kullanıcı giriş yapmamış"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Name"
-msgstr "Kullanıcı Adı"
+#~ msgid "User Name"
+#~ msgstr "User Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Users"
-msgstr "Kullanıcılar"
+#~ msgid "Users"
+#~ msgstr "Users"
 
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "Değerler"
+
+#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+msgid "Variable not found"
+msgstr "Değişken bulunamadı"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
@@ -3236,8 +3286,8 @@ msgstr "Çalıştırma detaylarını görüntüle"
 
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-msgid "View settings"
-msgstr "Görünüm ayarları"
+#~ msgid "View settings"
+#~ msgstr "View settings"
 
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
@@ -3299,8 +3349,8 @@ msgid "When the key will be disabled"
 msgstr "Anahtarın ne zaman devre dışı bırakılacağı"
 
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
-msgid "Workflow cannot be tested"
-msgstr "İş Akışı test edilemez"
+#~ msgid "Workflow cannot be tested"
+#~ msgstr "Workflow cannot be tested"
 
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
@@ -3342,6 +3392,10 @@ msgstr "İş Alanı"
 msgid "Workspace Deletion"
 msgstr "İş Alanı Silme"
 
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Workspace Info"
+msgstr "Çalışma Alanı Bilgisi"
+
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "İş Alanı logosu"
@@ -3351,8 +3405,8 @@ msgid "Workspace name"
 msgstr "İş Alanı adı"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Workspace Name"
-msgstr "İş Alanı Adı"
+#~ msgid "Workspace Name"
+#~ msgstr "Workspace Name"
 
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"

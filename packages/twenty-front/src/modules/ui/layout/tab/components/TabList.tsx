@@ -33,7 +33,7 @@ const StyledContainer = styled.div`
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
   height: 40px;
   user-select: none;
 `;
@@ -61,38 +61,40 @@ export const TabList = ({
   }
 
   return (
-    <TabListScope tabListScopeId={tabListInstanceId}>
-      <TabListFromUrlOptionalEffect
-        isInRightDrawer={!!isInRightDrawer}
-        componentInstanceId={tabListInstanceId}
-        tabListIds={tabs.map((tab) => tab.id)}
-      />
-      <ScrollWrapper
-        defaultEnableYScroll={false}
-        contextProviderName="tabList"
-        componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
-      >
-        <StyledContainer className={className}>
-          {visibleTabs.map((tab) => (
-            <Tab
-              id={tab.id}
-              key={tab.id}
-              title={tab.title}
-              Icon={tab.Icon}
-              logo={tab.logo}
-              active={tab.id === activeTabId}
-              disabled={tab.disabled ?? loading}
-              pill={tab.pill}
-              to={behaveAsLinks ? `#${tab.id}` : undefined}
-              onClick={() => {
-                if (!behaveAsLinks) {
-                  setActiveTabId(tab.id);
-                }
-              }}
-            />
-          ))}
-        </StyledContainer>
-      </ScrollWrapper>
-    </TabListScope>
+    <div>
+      <TabListScope tabListScopeId={tabListInstanceId}>
+        <TabListFromUrlOptionalEffect
+          isInRightDrawer={!!isInRightDrawer}
+          componentInstanceId={tabListInstanceId}
+          tabListIds={tabs.map((tab) => tab.id)}
+        />
+        <ScrollWrapper
+          defaultEnableYScroll={false}
+          contextProviderName="tabList"
+          componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
+        >
+          <StyledContainer className={className}>
+            {visibleTabs.map((tab) => (
+              <Tab
+                id={tab.id}
+                key={tab.id}
+                title={tab.title}
+                Icon={tab.Icon}
+                logo={tab.logo}
+                active={tab.id === activeTabId}
+                disabled={tab.disabled ?? loading}
+                pill={tab.pill}
+                to={behaveAsLinks ? `#${tab.id}` : undefined}
+                onClick={() => {
+                  if (!behaveAsLinks) {
+                    setActiveTabId(tab.id);
+                  }
+                }}
+              />
+            ))}
+          </StyledContainer>
+        </ScrollWrapper>
+      </TabListScope>
+    </div>
   );
 };

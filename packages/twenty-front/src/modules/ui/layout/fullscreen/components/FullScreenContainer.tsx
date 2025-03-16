@@ -1,11 +1,13 @@
-import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import {
+  PAGE_BAR_MIN_HEIGHT,
+  PageHeader,
+} from '@/ui/layout/page/components/PageHeader';
 import {
   Breadcrumb,
   BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import '@scalar/api-reference-react/style.css';
 import { IconButton, IconX, useIsMobile } from 'twenty-ui';
 
 type FullScreenContainerProps = {
@@ -24,7 +26,9 @@ const StyledFullScreen = styled.div`
 
 const StyledMainContainer = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.medium};
-  height: 100%;
+  height: calc(
+    100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2)}
+  );
   width: 100%;
 `;
 

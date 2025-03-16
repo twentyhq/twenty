@@ -1,7 +1,8 @@
-import { WorkflowVersionComponentInstanceContext } from '@/workflow/states/context/WorkflowVersionComponentInstanceContext';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormUuidFieldInput } from '../FormUuidFieldInput';
 
@@ -10,15 +11,7 @@ const meta: Meta<typeof FormUuidFieldInput> = {
   component: FormUuidFieldInput,
   args: {},
   argTypes: {},
-  decorators: [
-    (Story) => (
-      <WorkflowVersionComponentInstanceContext.Provider
-        value={{ instanceId: 'workflow-version-id' }}
-      >
-        <Story />
-      </WorkflowVersionComponentInstanceContext.Provider>
-    ),
-  ],
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 export default meta;
 

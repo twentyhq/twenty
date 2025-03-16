@@ -8,6 +8,7 @@ import {
   within,
 } from '@storybook/test';
 import { getUserDevice } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormTextFieldInput } from '../FormTextFieldInput';
@@ -17,7 +18,7 @@ const meta: Meta<typeof FormTextFieldInput> = {
   component: FormTextFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator],
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -119,8 +120,12 @@ export const WithDeletableVariable: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
+    await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+    });
+
     const editor = canvasElement.querySelector('.ProseMirror > p');
-    expect(editor).toBeVisible();
 
     const variable = await canvas.findByText('Name');
     expect(variable).toBeVisible();
@@ -156,11 +161,14 @@ export const Disabled: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+      return editor;
+    });
+
     const variablePicker = canvas.queryByText('VariablePicker');
     expect(variablePicker).not.toBeInTheDocument();
-
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-    expect(editor).toBeVisible();
 
     const defaultValue = await canvas.findByText('Text field');
     expect(defaultValue).toBeVisible();
@@ -180,9 +188,11 @@ export const DisabledWithVariable: Story = {
     readonly: true,
   },
   play: async ({ canvasElement }) => {
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-
-    expect(editor).toBeVisible();
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+      return editor;
+    });
 
     await waitFor(() => {
       expect(editor).toHaveTextContent('test Name test');
@@ -217,8 +227,11 @@ export const HasHistory: Story = {
 
     const canvas = within(canvasElement);
 
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-    expect(editor).toBeVisible();
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+      return editor;
+    });
 
     const addVariableButton = await canvas.findByRole('button', {
       name: 'Add variable',

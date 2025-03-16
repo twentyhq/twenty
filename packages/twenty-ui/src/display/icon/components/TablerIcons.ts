@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 export {
-  Icon123,
-  Icon24Hours,
+  IconNumber123 as Icon123,
   IconAlertCircle,
   IconAlertTriangle,
   IconApi,
@@ -28,6 +27,7 @@ export {
   IconBrackets,
   IconBracketsAngle,
   IconBracketsContain,
+  IconBrandDaysCounter,
   IconBrandGithub,
   IconBrandGoogle,
   IconBrandGraphql,
@@ -128,6 +128,7 @@ export {
   IconExternalLink,
   IconEye,
   IconEyeOff,
+  IconEyeShare,
   IconFile,
   IconFileCheck,
   IconFileExport,
@@ -166,6 +167,8 @@ export {
   IconHistory,
   IconHistoryToggle,
   IconHome,
+  IconHours24,
+  IconId,
   IconInbox,
   IconInfoCircle,
   IconJson,

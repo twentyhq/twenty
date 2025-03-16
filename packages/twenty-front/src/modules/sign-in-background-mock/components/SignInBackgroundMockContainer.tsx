@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
@@ -32,9 +32,13 @@ export const SignInBackgroundMockContainer = () => {
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const objectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const objectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
   );
 
   return (

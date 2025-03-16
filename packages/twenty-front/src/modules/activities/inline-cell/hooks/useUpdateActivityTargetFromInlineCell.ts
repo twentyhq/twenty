@@ -88,7 +88,7 @@ export const useUpdateActivityTargetFromInlineCell = ({
 
           if (!morphItem.isSelected) {
             await deleteOneActivityTarget(
-              existingActivityTarget.targetObject.id,
+              existingActivityTarget.activityTarget.id,
             );
           }
         } else {
@@ -146,6 +146,7 @@ export const useUpdateActivityTargetFromInlineCell = ({
             ...activityTarget,
             [targetObjectName]: undefined,
             [pickedObjectMetadataItem.nameSingular]: undefined,
+            [`${pickedObjectMetadataItem.nameSingular}Id`]: morphItem.recordId,
           } as Partial<NoteTarget | TaskTarget>);
         }
 

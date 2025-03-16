@@ -30,9 +30,9 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
-import { t } from '@lingui/core/macro';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),
@@ -251,7 +251,7 @@ export const SettingsDataModelFieldSelectForm = ({
           <>
             <StyledContainer>
               <StyledLabelContainer>
-                <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
+                <AdvancedSettingsWrapper animationDimension="width" hideDot>
                   <StyledApiKeyContainer>
                     <StyledIconContainer>
                       <StyledIconPoint

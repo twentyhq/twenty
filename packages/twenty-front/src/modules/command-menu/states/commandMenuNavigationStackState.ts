@@ -5,6 +5,7 @@ export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
   pageTitle: string;
   pageIcon: IconComponent;
+  pageIconColor?: string;
   pageId: string;
 };
 

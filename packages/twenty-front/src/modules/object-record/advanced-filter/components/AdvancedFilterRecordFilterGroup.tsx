@@ -34,13 +34,10 @@ type AdvancedFilterRecordFilterGroupProps = {
 export const AdvancedFilterRecordFilterGroup = ({
   recordFilterGroupId,
 }: AdvancedFilterRecordFilterGroupProps) => {
-  const {
-    currentRecordFilterGroup,
-    childRecordFiltersAndRecordFilterGroups,
-    lastChildPosition,
-  } = useChildRecordFiltersAndRecordFilterGroups({
-    recordFilterGroupId,
-  });
+  const { currentRecordFilterGroup, childRecordFiltersAndRecordFilterGroups } =
+    useChildRecordFiltersAndRecordFilterGroups({
+      recordFilterGroupId,
+    });
 
   if (!currentRecordFilterGroup) {
     return null;
@@ -66,7 +63,6 @@ export const AdvancedFilterRecordFilterGroup = ({
       ))}
       <AdvancedFilterAddFilterRuleSelect
         recordFilterGroup={currentRecordFilterGroup}
-        lastChildPosition={lastChildPosition}
       />
     </StyledContainer>
   );

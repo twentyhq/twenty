@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableEmptyStateSoftDelete } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
@@ -19,12 +20,16 @@ const meta: Meta = {
     RecordTableDecorator,
     (Story) => (
       <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <RecordTableComponentInstance
-          recordTableId="persons"
-          onColumnsChange={() => {}}
+        <RecordFiltersComponentInstanceContext.Provider
+          value={{ instanceId: 'record-filters-component-instance' }}
         >
-          <Story />
-        </RecordTableComponentInstance>
+          <RecordTableComponentInstance
+            recordTableId="persons"
+            onColumnsChange={() => {}}
+          >
+            <Story />
+          </RecordTableComponentInstance>
+        </RecordFiltersComponentInstanceContext.Provider>
       </SnackBarProviderScope>
     ),
   ],

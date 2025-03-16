@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormAddressFieldInput } from '../FormAddressFieldInput';
@@ -9,7 +10,7 @@ const meta: Meta<typeof FormAddressFieldInput> = {
   component: FormAddressFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator],
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -57,11 +58,11 @@ export const WithVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const street1Variable = await canvas.findByText('street1');
-    const street2Variable = await canvas.findByText('street2');
-    const cityVariable = await canvas.findByText('city');
-    const stateVariable = await canvas.findByText('state');
-    const postcodeVariable = await canvas.findByText('postcode');
+    const street1Variable = await canvas.findByText('Street 1');
+    const street2Variable = await canvas.findByText('Street 2');
+    const cityVariable = await canvas.findByText('My City');
+    const stateVariable = await canvas.findByText('My State');
+    const postcodeVariable = await canvas.findByText('My Postcode');
 
     expect(street1Variable).toBeVisible();
     expect(street2Variable).toBeVisible();

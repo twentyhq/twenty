@@ -197,7 +197,9 @@ export const RecordDetailRelationSection = ({
   const handleOpenRelationPickerDropdown = () => {
     if (isToOneObject) {
       setSingleRecordPickerSearchFilter('');
-      setSingleRecordPickerSelectedId(relationRecords[0].id);
+      if (relationRecords.length > 0) {
+        setSingleRecordPickerSelectedId(relationRecords[0].id);
+      }
     }
 
     if (isToManyObjects) {
