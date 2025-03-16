@@ -50,10 +50,6 @@ export class APIsSection {
     await this.deleteButton.click();
   }
 
-  async deleteWebhook() {
-    await this.deleteButton.click();
-  }
-
   async clickCancelButton() {
     await this.cancelButton.click();
   }

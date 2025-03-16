@@ -11,7 +11,6 @@ export class StripePage {
   private readonly returnToTwentyLink: Locator;
 
   constructor(public readonly page: Page) {
-    this.page = page;
     this.cardNumberInput = page.getByPlaceholder('1234 1234 1234 1234');
     this.cardExpiryInput = page.getByPlaceholder('MM / YY');
     this.cardCvcInput = page.getByPlaceholder('CVC');

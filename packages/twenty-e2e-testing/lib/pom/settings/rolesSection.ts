@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
-export class rolesSection {
+export class RolesSection {
   private readonly page: Page;
   private readonly createRoleButton: Locator;
   private readonly defaultRoleDropdown: Locator;

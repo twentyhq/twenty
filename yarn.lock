@@ -11360,7 +11360,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:latest":
+"@playwright/test@npm:^1.51.0":
   version: 1.51.0
   resolution: "@playwright/test@npm:1.51.0"
   dependencies:
@@ -51273,7 +51273,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-e2e-testing@workspace:packages/twenty-e2e-testing"
   dependencies:
-    "@playwright/test": "npm:latest"
+    "@playwright/test": "npm:^1.51.0"
   languageName: unknown
   linkType: soft
 

@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
-export class DevelopersSection {
+export class WebhooksSection {
   private readonly createWebhookButton: Locator;
   private readonly webhookURLInput: Locator;
   private readonly webhookDescription: Locator;
@@ -14,10 +14,6 @@ export class DevelopersSection {
     this.webhookURLInput = page.getByPlaceholder('URL');
     this.webhookDescription = page.getByPlaceholder('Write a description');
     this.deleteButton = page.getByRole('button', { name: 'Delete' });
-  }
-
-  async deleteAPIKey() {
-    await this.deleteButton.click();
   }
 
   async deleteWebhook() {
