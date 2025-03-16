@@ -12,27 +12,10 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import { Equal, In, Repository } from 'typeorm';
 
-import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-
-function getStandardObjectMetadata(
-  standardId: string,
-): WorkspaceEntityMetadataArgs | undefined {
-  for (const entity of standardObjectMetadataDefinitions) {
-    const metadata = metadataArgsStorage.filterEntities(entity);
-
-    if (metadata && metadata.standardId === standardId) {
-      return metadata;
-    }
-  }
-
-  return undefined;
-}
+import { getEntityMetadataByStandardId } from 'src/engine/metadata-modules/utils/get-entity-metadata-by-standard-id';
 
 @Injectable()
 export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
@@ -96,7 +79,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
             instance.update.isLabelSyncedWithName === true &&
             objectMetadata.standardId
           ) {
-            const standardObjectMetadata = getStandardObjectMetadata(
+            const standardObjectMetadata = getEntityMetadataByStandardId(
               objectMetadata.standardId,
             );
 
