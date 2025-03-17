@@ -6,29 +6,21 @@ import { seedUserWorkspaces } from 'src/database/typeorm-seeds/core/user-workspa
 import { seedUsers } from 'src/database/typeorm-seeds/core/users';
 import { seedWorkspaces } from 'src/database/typeorm-seeds/core/workspaces';
 
-type SeedCoreSchemaCommonArgs = {
+type SeedCoreSchemaArgs = {
   workspaceDataSource: DataSource;
   workspaceId: string;
   appVersion: string | undefined;
+  seedBilling?: boolean;
+  seedFeatureFlags?: boolean;
 };
 
-type SeedCoreSchemaArgs = SeedCoreSchemaCommonArgs &
-  (
-    | {
-        type: 'dev';
-        isBillingEnabled: boolean;
-      }
-    | {
-        type: 'demo';
-      }
-  );
 export const seedCoreSchema = async ({
   appVersion,
   workspaceDataSource,
   workspaceId,
-  ...rest
+  seedBilling = true,
+  seedFeatureFlags: shouldSeedFeatureFlags = true,
 }: SeedCoreSchemaArgs) => {
-  const { type } = rest;
   const schemaName = 'core';
 
   await seedWorkspaces({
@@ -40,16 +32,15 @@ export const seedCoreSchema = async ({
   await seedUsers(workspaceDataSource, schemaName);
   await seedUserWorkspaces(workspaceDataSource, schemaName, workspaceId);
 
-  if (type === 'dev') {
-    const { isBillingEnabled } = rest;
-
+  if (shouldSeedFeatureFlags) {
     await seedFeatureFlags(workspaceDataSource, schemaName, workspaceId);
-    if (isBillingEnabled) {
-      await seedBillingSubscriptions(
-        workspaceDataSource,
-        schemaName,
-        workspaceId,
-      );
-    }
+  }
+
+  if (seedBilling) {
+    await seedBillingSubscriptions(
+      workspaceDataSource,
+      schemaName,
+      workspaceId,
+    );
   }
 };

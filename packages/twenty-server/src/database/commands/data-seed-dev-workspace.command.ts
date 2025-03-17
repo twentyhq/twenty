@@ -99,7 +99,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     await seedCoreSchema({
       workspaceDataSource: rawDataSource,
       workspaceId,
-      isBillingEnabled,
+      seedBilling: isBillingEnabled,
       appVersion: this.environmentService.get('APP_VERSION'),
     });
 

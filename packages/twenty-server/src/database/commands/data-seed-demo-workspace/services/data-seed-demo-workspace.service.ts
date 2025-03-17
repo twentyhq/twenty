@@ -48,7 +48,8 @@ export class DataSeedDemoWorkspaceService {
           workspaceDataSource: rawDataSource,
           workspaceId,
           appVersion,
-          type: 'demo',
+          seedBilling: false,
+          seedFeatureFlags: false,
         });
         await this.workspaceManagerService.initDemo(workspaceId);
       }
