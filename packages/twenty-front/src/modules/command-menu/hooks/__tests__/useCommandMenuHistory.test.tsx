@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
@@ -28,6 +29,8 @@ const renderHooks = () => {
     () => {
       const commandMenu = useCommandMenu();
       const commandMenuHistory = useCommandMenuHistory();
+      const commandMenuCloseAnimationCompleteCleanup =
+        useCommandMenuCloseAnimationCompleteCleanup();
       const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
       const commandMenuNavigationStack = useRecoilValue(
         commandMenuNavigationStackState,
@@ -42,6 +45,7 @@ const renderHooks = () => {
         commandMenuNavigationStack,
         commandMenuPage,
         commandMenuPageInfo,
+        commandMenuCloseAnimationCompleteCleanup,
       };
     },
     {
@@ -109,7 +113,7 @@ describe('useCommandMenuHistory', () => {
 
     act(() => {
       result.current.commandMenuHistory.goBackFromCommandMenu();
-      result.current.commandMenu.onCommandMenuCloseAnimationComplete();
+      result.current.commandMenuCloseAnimationCompleteCleanup.commandMenuCloseAnimationCompleteCleanup();
     });
 
     expect(result.current.commandMenuNavigationStack).toEqual([]);

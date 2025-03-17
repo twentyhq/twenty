@@ -11,8 +11,7 @@ import { useCallback } from 'react';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
-  const { navigateCommandMenu, onCommandMenuCloseAnimationComplete } =
-    useNavigateCommandMenu();
+  const { navigateCommandMenu } = useNavigateCommandMenu();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set }) =>
@@ -54,7 +53,6 @@ export const useCommandMenu = () => {
   return {
     openCommandMenu,
     closeCommandMenu,
-    onCommandMenuCloseAnimationComplete,
     navigateCommandMenu,
     toggleCommandMenu,
   };
