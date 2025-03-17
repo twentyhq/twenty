@@ -51,6 +51,11 @@ export const ShowPageActivityContainer = ({
     isNewViewableRecordLoadingState,
   );
 
+  const activityObjectNameSingular =
+    targetableObject.targetObjectNameSingular as
+      | CoreObjectNameSingular.Note
+      | CoreObjectNameSingular.Task;
+
   return !isNewViewableRecordLoading ? (
     <ScrollWrapper
       contextProviderName="showPageActivityContainer"
@@ -60,11 +65,7 @@ export const ShowPageActivityContainer = ({
         <Suspense fallback={<LoadingSkeleton />}>
           <ActivityRichTextEditor
             activityId={targetableObject.id}
-            activityObjectNameSingular={
-              targetableObject.targetObjectNameSingular as
-                | CoreObjectNameSingular.Note
-                | CoreObjectNameSingular.Task
-            }
+            activityObjectNameSingular={activityObjectNameSingular}
           />
         </Suspense>
       </StyledShowPageActivityContainer>
