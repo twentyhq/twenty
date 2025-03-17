@@ -12,6 +12,7 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 type WorkflowVariablesDropdownWorkflowStepItemsProps = {
   dropdownId: string;
@@ -37,7 +38,14 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconX} onStartIconClick={closeDropdown}>
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={closeDropdown}
+            Icon={IconX}
+          />
+        }
+      >
         <OverflowingTextWithTooltip text={'Select Step'} />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput

@@ -9,6 +9,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownFieldsContent = () => {
   const { t } = useLingui();
@@ -52,8 +53,12 @@ export const ObjectOptionsDropdownFieldsContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={resetContent}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={resetContent}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {t`Fields`}
       </DropdownMenuHeader>

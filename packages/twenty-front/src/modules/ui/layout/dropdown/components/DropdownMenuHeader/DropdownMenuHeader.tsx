@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import { ComponentProps, MouseEvent, ReactElement } from 'react';
-import { Avatar, AvatarProps, IconComponent } from 'twenty-ui';
-import { DropdownMenuHeaderStartIcon } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderStartIcon';
-import { isDefined } from 'twenty-shared';
+import { IconComponent } from 'twenty-ui';
 import { useTheme } from '@emotion/react';
 import {
   Dropdown,
@@ -53,18 +51,15 @@ const StyledEndIcon = styled.div`
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   EndIcon?: IconComponent;
   onClick?: (event: MouseEvent<HTMLLIElement>) => void;
-  onStartIconClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
   className?: string;
   DropdownOnEndIcon?: ReactElement<DropdownProps, typeof Dropdown>;
-} & (
-    | { StartIcon?: IconComponent }
-    | { StartAvatar?: ReactElement<AvatarProps, typeof Avatar> }
-  );
+  StartComponent: React.ReactNode;
+};
 export const DropdownMenuHeader = ({
   children,
+  StartComponent,
   EndIcon,
-  onStartIconClick,
   onClick,
   testId,
   className,
@@ -74,20 +69,7 @@ export const DropdownMenuHeader = ({
 
   return (
     <StyledHeader data-testid={testId} className={className} onClick={onClick}>
-      {'StartIcon' in props && isDefined(props.StartIcon) && (
-        <DropdownMenuHeaderStartIcon
-          onClick={onStartIconClick}
-          StartIcon={props.StartIcon}
-        />
-      )}
-      {!('StartIcon' in props) &&
-        'StartAvatar' in props &&
-        isDefined(props.StartAvatar) && (
-          <DropdownMenuHeaderStartIcon
-            onClick={onStartIconClick}
-            StartAvatar={props.StartAvatar}
-          />
-        )}
+      {StartComponent && StartComponent}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
       {'DropdownOnEndIcon' in props && (
         <StyledEndIcon>{props.DropdownOnEndIcon}</StyledEndIcon>

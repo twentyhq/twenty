@@ -30,6 +30,7 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { t } = useLingui();
@@ -106,11 +107,15 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={() =>
-          isDefined(recordGroupFieldMetadata)
-            ? onContentChange('recordGroups')
-            : resetContent()
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() =>
+              isDefined(recordGroupFieldMetadata)
+                ? onContentChange('recordGroups')
+                : resetContent()
+            }
+            Icon={IconChevronLeft}
+          />
         }
       >
         Group by

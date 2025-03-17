@@ -32,6 +32,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -218,11 +219,15 @@ export const ObjectSortDropdownButton = ({
             </StyledSelectedSortDirectionContainer>
           )}
           <DropdownMenuHeader
-            EndIcon={IconChevronDown}
-            onClick={() =>
-              setIsRecordSortDirectionMenuUnfolded(
-                !isRecordSortDirectionMenuUnfolded,
-              )
+            StartComponent={
+              <DropdownMenuHeaderLeftComponent
+                onClick={() =>
+                  setIsRecordSortDirectionMenuUnfolded(
+                    !isRecordSortDirectionMenuUnfolded,
+                  )
+                }
+                Icon={IconChevronDown}
+              />
             }
           >
             {selectedRecordSortDirection === 'asc'

@@ -17,6 +17,7 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();
@@ -42,8 +43,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={resetContent}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={resetContent}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {t`Layout`}
       </DropdownMenuHeader>

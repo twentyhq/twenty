@@ -23,6 +23,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -74,8 +75,12 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
     <>
       <DropdownMenuItemsContainer>
         <DropdownMenuHeader
-          StartIcon={IconChevronLeft}
-          onStartIconClick={() => onContentChange('recordGroups')}
+          StartComponent={
+            <DropdownMenuHeaderLeftComponent
+              onClick={() => onContentChange('recordGroups')}
+              Icon={IconChevronLeft}
+            />
+          }
         >
           Hidden {recordGroupFieldMetadata?.label}
         </DropdownMenuHeader>

@@ -17,6 +17,7 @@ import {
   MenuItem,
   useIcons,
 } from 'twenty-ui';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
   const {
@@ -49,11 +50,15 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={() =>
-          previousContentId
-            ? onContentChange(previousContentId)
-            : resetContent()
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() =>
+              previousContentId
+                ? onContentChange(previousContentId)
+                : resetContent()
+            }
+            Icon={IconChevronLeft}
+          />
         }
       >
         {getAggregateOperationLabel(aggregateOperation)}

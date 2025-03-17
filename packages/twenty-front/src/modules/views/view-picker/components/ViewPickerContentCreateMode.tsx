@@ -34,6 +34,7 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { useMemo, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -130,7 +131,11 @@ export const ViewPickerContentCreateMode = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconX} onStartIconClick={handleClose}>
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent onClick={handleClose} Icon={IconX} />
+        }
+      >
         {t`Create view`}
       </DropdownMenuHeader>
       <DropdownMenuSeparator />

@@ -14,6 +14,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const { onContentChange } = useOptionsDropdown();
@@ -24,8 +25,12 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={() => onContentChange('layout')}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() => onContentChange('layout')}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {t`Open in`}
       </DropdownMenuHeader>

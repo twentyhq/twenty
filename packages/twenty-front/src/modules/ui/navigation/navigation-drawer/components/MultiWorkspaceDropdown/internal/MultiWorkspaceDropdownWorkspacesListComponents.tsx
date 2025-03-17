@@ -18,6 +18,7 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { useState } from 'react';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -37,8 +38,12 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   return (
     <DropdownMenuItemsContainer>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={() => setMultiWorkspaceDropdownState('default')}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() => setMultiWorkspaceDropdownState('default')}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {t`Other workspaces`}
       </DropdownMenuHeader>

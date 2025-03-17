@@ -28,6 +28,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText] = useState('');
@@ -187,8 +188,12 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={handleSubMenuBack}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={handleSubMenuBack}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)}
       </DropdownMenuHeader>
