@@ -73,34 +73,39 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
           idToUpdate: objectMetadataItem.id,
           updatePayload: formValues,
         });
-      } else {
-        if (
-          formValues.isLabelSyncedWithName === false &&
-          isLabelSyncedWithName === true
-        ) {
-          await updateOneObjectMetadataItem({
-            idToUpdate: objectMetadataItem.id,
-            updatePayload: {
-              isLabelSyncedWithName: formValues.isLabelSyncedWithName,
-            },
-          });
-        } else {
-          await updateOneObjectMetadataItem({
-            idToUpdate: objectMetadataItem.id,
-            updatePayload: {
-              isLabelSyncedWithName: formValues.isLabelSyncedWithName,
-              labelPlural: formValues.labelPlural,
-              labelSingular: formValues.labelSingular,
-            },
-          });
-        }
+
+        formConfig.reset(undefined, { keepValues: true });
+        navigate(SettingsPath.ObjectDetail, {
+          objectNamePlural: objectNamePluralForRedirection,
+        });
+        return;
       }
 
-      formConfig.reset(undefined, { keepValues: true });
+      if (
+        formValues.isLabelSyncedWithName === false &&
+        isLabelSyncedWithName === true
+      ) {
+        await updateOneObjectMetadataItem({
+          idToUpdate: objectMetadataItem.id,
+          updatePayload: {
+            isLabelSyncedWithName: formValues.isLabelSyncedWithName,
+          },
+        });
 
-      navigate(SettingsPath.ObjectDetail, {
-        objectNamePlural: objectNamePluralForRedirection,
+        formConfig.reset(undefined, { keepValues: true });
+        return;
+      }
+
+      await updateOneObjectMetadataItem({
+        idToUpdate: objectMetadataItem.id,
+        updatePayload: {
+          isLabelSyncedWithName: formValues.isLabelSyncedWithName,
+          labelPlural: formValues.labelPlural,
+          labelSingular: formValues.labelSingular,
+        },
       });
+
+      formConfig.reset(undefined, { keepValues: true });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);
