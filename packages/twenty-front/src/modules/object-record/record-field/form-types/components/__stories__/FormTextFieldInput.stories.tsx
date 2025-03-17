@@ -8,6 +8,9 @@ import {
   within,
 } from '@storybook/test';
 import { getUserDevice } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormTextFieldInput } from '../FormTextFieldInput';
 
 const meta: Meta<typeof FormTextFieldInput> = {
@@ -15,6 +18,7 @@ const meta: Meta<typeof FormTextFieldInput> = {
   component: FormTextFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -78,7 +82,7 @@ export const WithVariable: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
           }}
         >
           Add variable
@@ -96,11 +100,11 @@ export const WithVariable: Story = {
 
     await userEvent.click(addVariableButton);
 
-    const variable = await canvas.findByText('test');
+    const variable = await canvas.findByText('Name');
     expect(variable).toBeVisible();
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith('{{test}}');
+      expect(args.onPersist).toHaveBeenCalledWith(`{{${MOCKED_STEP_ID}.name}}`);
     });
     expect(args.onPersist).toHaveBeenCalledTimes(1);
   },
@@ -110,16 +114,20 @@ export const WithDeletableVariable: Story = {
   args: {
     label: 'Text',
     placeholder: 'Text field...',
-    defaultValue: 'test {{a.b.variable}} test',
+    defaultValue: `test {{${MOCKED_STEP_ID}.name}} test`,
     onPersist: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-    expect(editor).toBeVisible();
+    await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+    });
 
-    const variable = await canvas.findByText('variable');
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+
+    const variable = await canvas.findByText('Name');
     expect(variable).toBeVisible();
 
     const deleteVariableButton = await canvas.findByRole('button', {
@@ -153,11 +161,14 @@ export const Disabled: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+      return editor;
+    });
+
     const variablePicker = canvas.queryByText('VariablePicker');
     expect(variablePicker).not.toBeInTheDocument();
-
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-    expect(editor).toBeVisible();
 
     const defaultValue = await canvas.findByText('Text field');
     expect(defaultValue).toBeVisible();
@@ -173,16 +184,18 @@ export const Disabled: Story = {
 export const DisabledWithVariable: Story = {
   args: {
     label: 'Text',
-    defaultValue: 'test {{a.b.variable}} test',
+    defaultValue: `test {{${MOCKED_STEP_ID}.name}} test`,
     readonly: true,
   },
   play: async ({ canvasElement }) => {
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-
-    expect(editor).toBeVisible();
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+      return editor;
+    });
 
     await waitFor(() => {
-      expect(editor).toHaveTextContent('test variable test');
+      expect(editor).toHaveTextContent('test Name test');
     });
 
     const deleteVariableButton = within(editor as HTMLElement).queryByRole(
@@ -200,7 +213,7 @@ export const HasHistory: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
           }}
         >
           Add variable
@@ -214,8 +227,11 @@ export const HasHistory: Story = {
 
     const canvas = within(canvasElement);
 
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-    expect(editor).toBeVisible();
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+      return editor;
+    });
 
     const addVariableButton = await canvas.findByRole('button', {
       name: 'Add variable',
@@ -225,7 +241,9 @@ export const HasHistory: Story = {
 
     await userEvent.click(addVariableButton);
 
-    expect(args.onPersist).toHaveBeenLastCalledWith('Hello World {{test}}');
+    expect(args.onPersist).toHaveBeenLastCalledWith(
+      `Hello World {{${MOCKED_STEP_ID}.name}}`,
+    );
 
     await userEvent.type(editor, `{${controlKey}>}z{/${controlKey}}`);
 
@@ -237,7 +255,9 @@ export const HasHistory: Story = {
       `{Shift>}{${controlKey}>}z{/${controlKey}}{/Shift}`,
     );
 
-    expect(editor).toHaveTextContent('Hello World test');
-    expect(args.onPersist).toHaveBeenLastCalledWith('Hello World {{test}}');
+    expect(editor).toHaveTextContent(`Hello World Name`);
+    expect(args.onPersist).toHaveBeenLastCalledWith(
+      `Hello World {{${MOCKED_STEP_ID}.name}}`,
+    );
   },
 };

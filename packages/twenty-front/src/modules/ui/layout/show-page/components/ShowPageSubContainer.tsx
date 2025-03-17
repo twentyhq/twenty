@@ -10,7 +10,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
-import { ShowPageSubContainerTabListContainer } from '@/ui/layout/show-page/components/ShowPageSubContainerTabListContainer';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -27,9 +26,9 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   overflow: auto;
 `;
 
-const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
-  display: ${({ shouldDisplay }) => (shouldDisplay ? 'flex' : 'none')};
-`.withComponent(ShowPageSubContainerTabListContainer);
+const StyledTabList = styled(TabList)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
   flex: 1;
@@ -121,15 +120,15 @@ export const ShowPageSubContainer = ({
         </ShowPageLeftContainer>
       )}
       <StyledShowPageRightContainer isMobile={isMobile}>
-        <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
-          <TabList
+        {visibleTabs.length > 1 && (
+          <StyledTabList
             behaveAsLinks={!isInRightDrawer}
             loading={loading || isNewViewableRecordLoading}
             tabListInstanceId={tabListComponentId}
             tabs={tabs}
             isInRightDrawer={isInRightDrawer}
           />
-        </StyledTabListContainer>
+        )}
         {(isMobile || isInRightDrawer) && summaryCard}
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}

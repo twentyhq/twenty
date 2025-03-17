@@ -3,7 +3,6 @@ import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { isDefined } from 'twenty-shared';
 
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
@@ -48,16 +47,13 @@ export const useInlineCell = () => {
     goBackToPreviousDropdownFocusId();
   };
 
-  const openInlineCell = (customEditHotkeyScopeForField?: HotkeyScope) => {
+  const openInlineCell = (customEditHotkeyScopeForField?: string) => {
     onOpenEditMode?.();
     setIsInlineCellInEditMode(true);
     initFieldInputDraftValue({ recordId, fieldDefinition });
 
     if (isDefined(customEditHotkeyScopeForField)) {
-      setHotkeyScopeAndMemorizePreviousScope(
-        customEditHotkeyScopeForField.scope,
-        customEditHotkeyScopeForField.customScopes,
-      );
+      setHotkeyScopeAndMemorizePreviousScope(customEditHotkeyScopeForField);
     } else {
       setHotkeyScopeAndMemorizePreviousScope(InlineCellHotkeyScope.InlineCell);
     }

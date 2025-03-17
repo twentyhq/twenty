@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { OAuth2Client } from 'google-auth-library';
+import { ConnectedAccountProvider } from 'twenty-shared';
 
 import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -20,7 +21,7 @@ export class OAuth2ClientManagerService {
     const { refreshToken } = connectedAccount;
 
     switch (connectedAccount.provider) {
-      case 'google':
+      case ConnectedAccountProvider.GOOGLE:
         return this.googleOAuth2ClientManagerService.getOAuth2Client(
           refreshToken,
         );

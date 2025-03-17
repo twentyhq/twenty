@@ -43,8 +43,6 @@ export const SettingsRoleEdit = () => {
     }
   }, [role, navigateSettings, rolesLoading]);
 
-  if (!role) return null;
-
   const tabs = [
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
@@ -67,6 +65,10 @@ export const SettingsRoleEdit = () => {
   ];
 
   const renderActiveTabContent = () => {
+    if (!role) {
+      return null;
+    }
+
     switch (activeTabId) {
       case SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT:
         return <RoleAssignment role={role} />;
@@ -81,7 +83,7 @@ export const SettingsRoleEdit = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={<H3Title title={role.label} />}
+      title={role && <H3Title title={role.label} />}
       links={[
         {
           children: 'Workspace',
@@ -92,18 +94,22 @@ export const SettingsRoleEdit = () => {
           href: getSettingsPath(SettingsPath.Roles),
         },
         {
-          children: role.label,
+          children: role?.label,
         },
       ]}
     >
-      <SettingsPageContainer>
-        <TabList
-          tabListInstanceId={SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID}
-          tabs={tabs}
-          className="tab-list"
-        />
-        {renderActiveTabContent()}
-      </SettingsPageContainer>
+      {!rolesLoading && role ? (
+        <SettingsPageContainer>
+          <TabList
+            tabListInstanceId={SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID}
+            tabs={tabs}
+            className="tab-list"
+          />
+          {renderActiveTabContent()}
+        </SettingsPageContainer>
+      ) : (
+        <></>
+      )}
     </SubMenuTopBarContainer>
   );
 };

@@ -24,9 +24,9 @@ export const CommandMenuContextChipGroups = ({
   if (contextChips.length < 3) {
     return (
       <>
-        {contextChips.map((chip) => (
+        {contextChips.map((chip, index) => (
           <CommandMenuContextChip
-            key={chip.text}
+            key={index}
             Icons={chip.Icons}
             text={chip.text}
             onClick={chip.onClick}
@@ -53,8 +53,9 @@ export const CommandMenuContextChipGroups = ({
           }
           dropdownComponents={
             <DropdownMenuItemsContainer>
-              {firstChips.map((chip) => (
+              {firstChips.map((chip, index) => (
                 <MenuItem
+                  key={index}
                   LeftComponent={chip.Icons}
                   text={chip.text}
                   onClick={() => {

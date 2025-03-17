@@ -9,8 +9,13 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
+  if (error instanceof InvalidMetadataException) {
+    throw new UserInputError(error.message);
+  }
+
   if (error instanceof ObjectMetadataException) {
     switch (error.code) {
       case ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND:

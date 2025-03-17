@@ -18,7 +18,9 @@ import {
 } from '~/testing/mock-data/users';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui';
 import {
   RelationToOneFieldInput,
@@ -30,11 +32,21 @@ const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
+  const setRecordFieldInputLayoutDirectionLoading =
+    useSetRecoilComponentStateV2(
+      recordFieldInputLayoutDirectionLoadingComponentState,
+      'relation-to-one-field-input-123-Relation',
+    );
 
   useEffect(() => {
     setCurrentWorkspace(mockCurrentWorkspace);
     setCurrentWorkspaceMember(mockedWorkspaceMemberData);
-  }, [setCurrentWorkspace, setCurrentWorkspaceMember]);
+    setRecordFieldInputLayoutDirectionLoading(false);
+  }, [
+    setCurrentWorkspace,
+    setCurrentWorkspaceMember,
+    setRecordFieldInputLayoutDirectionLoading,
+  ]);
 
   return <></>;
 };
@@ -74,12 +86,14 @@ const RelationToOneFieldInputWithContext = ({
         }}
         recordId={recordId}
       >
-        <RecordPickerComponentInstanceContext.Provider
-          value={{ instanceId: 'relation-to-one-field-input' }}
+        <RecordFieldComponentInstanceContext.Provider
+          value={{
+            instanceId: 'relation-to-one-field-input-123-Relation',
+          }}
         >
           <RelationWorkspaceSetterEffect />
           <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-        </RecordPickerComponentInstanceContext.Provider>
+        </RecordFieldComponentInstanceContext.Provider>
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
     </div>
@@ -157,9 +171,7 @@ export const Cancel: Story = {
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 
-    await waitFor(() => {
-      userEvent.click(emptyDiv);
-      expect(cancelJestFn).toHaveBeenCalledTimes(1);
-    });
+    await userEvent.click(emptyDiv);
+    expect(cancelJestFn).toHaveBeenCalledTimes(1);
   },
 };

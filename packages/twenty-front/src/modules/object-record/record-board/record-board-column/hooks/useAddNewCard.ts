@@ -1,9 +1,9 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
-import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
-import { useRecordSelectSearch } from '@/object-record/record-picker/hooks/useRecordSelectSearch';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { useSingleRecordPickerSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
 import { RecoilState, useRecoilCallback } from 'recoil';
@@ -26,7 +26,7 @@ export const useAddNewCard = ({
   const columnContext = useContext(RecordBoardColumnContext);
   const { createOneRecord, selectFieldMetadataItem, objectMetadataItem } =
     useContext(RecordBoardContext);
-  const { resetSearchFilter } = useRecordSelectSearch(
+  const { resetSearchFilter } = useSingleRecordPickerSearch(
     recordPickerComponentInstanceId,
   );
 
@@ -73,7 +73,6 @@ export const useAddNewCard = ({
 
   const createRecord = useCallback(
     (
-      labelIdentifier: string,
       labelValue: string,
       position: 'first' | 'last',
       isOpportunity: boolean,
@@ -112,7 +111,7 @@ export const useAddNewCard = ({
           ...(isOpportunity
             ? { companyId: company?.id, name: company?.name }
             : {
-                [labelIdentifier.toLowerCase()]: computedLabelIdentifierValue,
+                [labelIdentifierField.name]: computedLabelIdentifierValue,
               }),
         });
       }
@@ -129,7 +128,6 @@ export const useAddNewCard = ({
   const handleAddNewCardClick = useRecoilCallback(
     ({ set }) =>
       (
-        labelIdentifier: string,
         labelValue: string,
         position: 'first' | 'last',
         isOpportunity: boolean,
@@ -139,10 +137,10 @@ export const useAddNewCard = ({
         addNewItem(set, columnDefinitionId, position, isOpportunity);
         if (isOpportunity) {
           setHotkeyScopeAndMemorizePreviousScope(
-            RelationPickerHotkeyScope.RelationPicker,
+            SingleRecordPickerHotkeyScope.SingleRecordPicker,
           );
         } else {
-          createRecord(labelIdentifier, labelValue, position, isOpportunity);
+          createRecord(labelValue, position, isOpportunity);
         }
       },
     [
@@ -184,25 +182,17 @@ export const useAddNewCard = ({
   );
 
   const handleCreate = (
-    labelIdentifier: string,
     labelValue: string,
     position: 'first' | 'last',
     onCreateSuccess?: () => void,
   ) => {
     if (labelValue.trim() !== '' && position !== undefined) {
-      handleAddNewCardClick(
-        labelIdentifier,
-        labelValue.trim(),
-        position,
-        false,
-        '',
-      );
+      handleAddNewCardClick(labelValue.trim(), position, false, '');
       onCreateSuccess?.();
     }
   };
 
   const handleBlur = (
-    labelIdentifier: string,
     labelValue: string,
     position: 'first' | 'last',
     onCreateSuccess?: () => void,
@@ -210,17 +200,16 @@ export const useAddNewCard = ({
     if (labelValue.trim() === '') {
       onCreateSuccess?.();
     } else {
-      handleCreate(labelIdentifier, labelValue, position, onCreateSuccess);
+      handleCreate(labelValue, position, onCreateSuccess);
     }
   };
 
   const handleInputEnter = (
-    labelIdentifier: string,
     labelValue: string,
     position: 'first' | 'last',
     onCreateSuccess?: () => void,
   ) => {
-    handleCreate(labelIdentifier, labelValue, position, onCreateSuccess);
+    handleCreate(labelValue, position, onCreateSuccess);
   };
 
   const handleEntitySelect = useCallback(
@@ -230,7 +219,7 @@ export const useAddNewCard = ({
       columnId?: string,
     ) => {
       const columnDefinitionId = getColumnDefinitionId(columnId);
-      createRecord('', '', position, true, company);
+      createRecord('', position, true, company);
       handleCreateSuccess(position, columnDefinitionId, true);
     },
     [createRecord, handleCreateSuccess, getColumnDefinitionId],

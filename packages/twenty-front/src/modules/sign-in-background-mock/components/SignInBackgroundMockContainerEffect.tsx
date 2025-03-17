@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
@@ -24,12 +23,13 @@ export const SignInBackgroundMockContainerEffect = ({
   recordTableId,
   viewId,
 }: SignInBackgroundMockContainerEffectProps) => {
-  const setContextStoreCurrentObjectMetadataItem = useSetRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
+  const setContextStoreCurrentObjectMetadataItemId =
+    useSetRecoilComponentStateV2(
+      contextStoreCurrentObjectMetadataItemIdComponentState,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
+    );
 
-  const { setAvailableTableColumns, setOnEntityCountChange } = useRecordTable({
+  const { setAvailableTableColumns } = useRecordTable({
     recordTableId,
   });
 
@@ -46,8 +46,6 @@ export const SignInBackgroundMockContainerEffect = ({
   const { setAvailableFieldDefinitions, setViewObjectMetadataId } =
     useInitViewBar(viewId);
 
-  const { setRecordIndexEntityCount } = useSetRecordIndexEntityCount(viewId);
-
   useEffect(() => {
     setViewObjectMetadataId?.(objectMetadataItem.id);
 
@@ -63,7 +61,7 @@ export const SignInBackgroundMockContainerEffect = ({
       recordTableId,
     );
 
-    setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
+    setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
   }, [
     setViewObjectMetadataId,
     setAvailableFieldDefinitions,
@@ -71,14 +69,8 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableTableColumns,
     setTableColumns,
     recordTableId,
-    setContextStoreCurrentObjectMetadataItem,
+    setContextStoreCurrentObjectMetadataItemId,
   ]);
-
-  useEffect(() => {
-    setOnEntityCountChange(
-      () => (entityCount: number) => setRecordIndexEntityCount(entityCount),
-    );
-  }, [setRecordIndexEntityCount, setOnEntityCountChange]);
 
   return <></>;
 };

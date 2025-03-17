@@ -9,17 +9,23 @@ import { FieldMetadataType } from '~/generated/graphql';
 const AMOUNT_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
 const PRICE_FIELD_ID = '9d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0b';
 const NAME_FIELD_ID = '5d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0c';
+const ACTIVE_FIELD_ID = '0825d011-6006-49a2-99c5-8d67bed77e55';
 
 const FIELDS_MOCKS = [
   { id: AMOUNT_FIELD_ID, type: FieldMetadataType.NUMBER, name: 'amount' },
   { id: PRICE_FIELD_ID, type: FieldMetadataType.CURRENCY, name: 'price' },
   { id: NAME_FIELD_ID, type: FieldMetadataType.TEXT, name: 'name' },
+  { id: ACTIVE_FIELD_ID, type: FieldMetadataType.BOOLEAN, name: 'active' },
 ];
 
 jest.mock(
   '@/object-record/utils/getAvailableAggregationsFromObjectFields',
   () => ({
     getAvailableAggregationsFromObjectFields: jest.fn().mockReturnValue({
+      active: {
+        [AGGREGATE_OPERATIONS.countTrue]: 'countTrueActive',
+        [AGGREGATE_OPERATIONS.countFalse]: 'CountFalseActive',
+      },
       amount: {
         [AGGREGATE_OPERATIONS.sum]: 'sumAmount',
         [AGGREGATE_OPERATIONS.avg]: 'avgAmount',
@@ -78,13 +84,16 @@ describe('getAvailableFieldsIdsForAggregationFromObjectFields', () => {
         COUNT_AGGREGATE_OPERATION_OPTIONS,
       );
 
-      COUNT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
-        expect(result[operation]).toEqual([
+      expect(result.COUNT).toEqual(
+        expect.arrayContaining([
           AMOUNT_FIELD_ID,
           PRICE_FIELD_ID,
           NAME_FIELD_ID,
-        ]);
-      });
+        ]),
+      );
+
+      expect(result.COUNT_TRUE).toContain(ACTIVE_FIELD_ID);
+      expect(result.COUNT_FALSE).toContain(ACTIVE_FIELD_ID);
 
       PERCENT_AGGREGATE_OPERATION_OPTIONS.forEach((operation) => {
         expect(result[operation]).toBeUndefined();

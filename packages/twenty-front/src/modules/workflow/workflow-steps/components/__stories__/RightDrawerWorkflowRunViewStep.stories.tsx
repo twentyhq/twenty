@@ -5,11 +5,12 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
-import { graphql, HttpResponse } from 'msw';
+import { HttpResponse, graphql } from 'msw';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { oneFailedWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
@@ -39,7 +40,13 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
       );
       const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
 
-      setFlow(oneFailedWorkflowRunQueryResult.workflowRun.output.flow);
+      setFlow({
+        workflowVersionId:
+          oneFailedWorkflowRunQueryResult.workflowRun.workflowVersionId,
+        trigger:
+          oneFailedWorkflowRunQueryResult.workflowRun.output.flow.trigger,
+        steps: oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps,
+      });
       setWorkflowSelectedNode(
         oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps[0].id,
       );
@@ -50,13 +57,31 @@ const meta: Meta<typeof RightDrawerWorkflowRunViewStep> = {
     RouterDecorator,
     ObjectMetadataItemsDecorator,
     WorkspaceDecorator,
+    WorkflowStepDecorator,
   ],
   parameters: {
     msw: {
       handlers: [
         graphql.query('FindOneWorkflowRun', () => {
+          const workflowRunContext =
+            oneFailedWorkflowRunQueryResult.workflowRun.context;
+
+          // Rendering the whole objectMetadata information in the JSON viewer is too long for storybook
+          // so we remove it for the story
           return HttpResponse.json({
-            data: oneFailedWorkflowRunQueryResult,
+            data: {
+              ...oneFailedWorkflowRunQueryResult,
+              workflowRun: {
+                ...oneFailedWorkflowRunQueryResult.workflowRun,
+                context: {
+                  ...workflowRunContext,
+                  trigger: {
+                    ...workflowRunContext.trigger,
+                    objectMetadata: undefined,
+                  },
+                },
+              },
+            },
           });
         }),
         ...graphqlMocks.handlers,
@@ -117,7 +142,6 @@ export const InputTabNotExecutedStep: Story = {
       return <Story />;
     },
   ],
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -138,5 +162,52 @@ export const OutputTab: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('Create Record')).not.toBeInTheDocument();
     });
+
+    expect(await canvas.findByText('result')).toBeVisible();
+  },
+};
+
+export const OutputTabDisabledForTrigger: Story = {
+  decorators: [
+    (Story) => {
+      const setWorkflowSelectedNode = useSetRecoilState(
+        workflowSelectedNodeState,
+      );
+
+      setWorkflowSelectedNode(TRIGGER_STEP_ID);
+
+      return <Story />;
+    },
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const outputTab = await canvas.findByRole('button', { name: 'Output' });
+
+    expect(outputTab).toBeDisabled();
+  },
+};
+
+export const OutputTabNotExecutedStep: Story = {
+  decorators: [
+    (Story) => {
+      const setWorkflowSelectedNode = useSetRecoilState(
+        workflowSelectedNodeState,
+      );
+
+      setWorkflowSelectedNode(
+        oneFailedWorkflowRunQueryResult.workflowRun.output.flow.steps.at(-1)!
+          .id,
+      );
+
+      return <Story />;
+    },
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const outputTab = await canvas.findByRole('button', { name: 'Output' });
+
+    expect(outputTab).toBeDisabled();
   },
 };

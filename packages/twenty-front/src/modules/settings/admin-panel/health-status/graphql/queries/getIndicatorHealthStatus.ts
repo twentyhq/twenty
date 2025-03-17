@@ -7,6 +7,7 @@ export const GET_INDICATOR_HEALTH_STATUS = gql`
       label
       description
       status
+      errorMessage
       details
       queues {
         id

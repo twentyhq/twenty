@@ -21,5 +21,5 @@ export default defineConfig({
   catalogsMergePath:
     '<rootDir>/src/engine/core-modules/i18n/locales/generated/{locale}',
   compileNamespace: 'ts',
-  format: formatter({ lineNumbers: false }),
+  format: formatter({ lineNumbers: false, printLinguiId: true }),
 });

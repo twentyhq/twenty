@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 
@@ -189,6 +191,14 @@ export const useListenClickOutside = <T extends Element>({
             !isClickedOnExcluded;
 
           if (CLICK_OUTSIDE_DEBUG_MODE) {
+            const activeDropdownFocusId = snapshot
+              .getLoadable(activeDropdownFocusIdState)
+              .getValue();
+
+            const previousDropdownFocusId = snapshot
+              .getLoadable(previousDropdownFocusIdState)
+              .getValue();
+
             // eslint-disable-next-line no-console
             console.log('click outside compare refs', {
               listenerId,
@@ -198,6 +208,8 @@ export const useListenClickOutside = <T extends Element>({
               clickedOnAtLeastOneRef,
               isMouseDownInside,
               isClickedOnExcluded,
+              activeDropdownFocusId,
+              previousDropdownFocusId,
               hotkeyScope,
               enabled,
               event,

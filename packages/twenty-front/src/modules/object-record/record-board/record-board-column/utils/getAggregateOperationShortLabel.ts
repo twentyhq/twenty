@@ -29,6 +29,10 @@ export const getAggregateOperationShortLabel = (
       return msg`Earliest`;
     case DATE_AGGREGATE_OPERATIONS.latest:
       return msg`Latest`;
+    case AGGREGATE_OPERATIONS.countTrue:
+      return msg`True`;
+    case AGGREGATE_OPERATIONS.countFalse:
+      return msg`False`;
     default:
       throw new Error(`Unknown aggregate operation: ${operation}`);
   }

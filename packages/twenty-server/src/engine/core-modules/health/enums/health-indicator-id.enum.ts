@@ -5,6 +5,7 @@ export enum HealthIndicatorId {
   redis = 'redis',
   worker = 'worker',
   connectedAccount = 'connectedAccount',
+  app = 'app',
 }
 
 registerEnumType(HealthIndicatorId, {

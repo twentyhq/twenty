@@ -44,6 +44,39 @@ export const metadataGraphql = graphql.link(
 
 export const graphqlMocks = {
   handlers: [
+    graphql.query('IntrospectionQuery', () => {
+      return HttpResponse.json({
+        data: {
+          __schema: {
+            queryType: { name: 'Query' },
+            types: [
+              {
+                kind: 'OBJECT',
+                name: 'Query',
+                fields: [
+                  {
+                    name: 'name',
+                    type: { kind: 'SCALAR', name: 'String' },
+                    args: [],
+                  },
+                ],
+                interfaces: [],
+                args: [],
+              },
+              {
+                kind: 'SCALAR',
+                name: 'String',
+                fields: [],
+                interfaces: [],
+                args: [],
+              },
+            ],
+            directives: [],
+          },
+        },
+      });
+    }),
+
     graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
       return HttpResponse.json({
         data: {
