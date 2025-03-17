@@ -8,14 +8,18 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
+import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared';
 import { useDebouncedCallback } from 'use-debounce';
@@ -30,6 +34,7 @@ import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ActivityRichTextEditorProps = {
   activityId: string;
@@ -52,6 +57,20 @@ export const ActivityRichTextEditor = ({
       objectNameSingular: activityObjectNameSingular,
     });
 
+  const contextStoreCurrentViewType = useRecoilComponentValueV2(
+    contextStoreCurrentViewTypeComponentState,
+  );
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
+  const isReadOnly = isFieldValueReadOnly({
+    objectNameSingular: activityObjectNameSingular,
+    fieldName: 'bodyV2',
+    fieldType: FieldMetadataType.RICH_TEXT_V2,
+    hasObjectReadOnlyPermission,
+    contextStoreCurrentViewType,
+  });
+
   const {
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
@@ -62,6 +81,8 @@ export const ActivityRichTextEditor = ({
   });
 
   const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
+    if (isReadOnly) return;
+
     const input = {
       bodyV2: {
         blocknote,
@@ -301,6 +322,7 @@ export const ActivityRichTextEditor = ({
         onBlur={handlerBlockEditorBlur}
         onChange={handleEditorChange}
         editor={editor}
+        readonly={isReadOnly}
       />
     </>
   );
