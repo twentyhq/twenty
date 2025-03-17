@@ -130,7 +130,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     key: WorkflowSingleRecordActionKeys.SEE_RUNS,
     label: msg`See runs`,
     shortLabel: msg`See runs`,
-    isPinned: false,
+    isPinned: true,
     position: 5,
     Icon: IconHistoryToggle,
     type: ActionMenuEntryType.Standard,
@@ -198,7 +198,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
     position: 10,
-    isPinned: true,
+    isPinned: false,
     Icon: IconHeart,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -212,7 +212,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: msg`Remove from favorites`,
     shortLabel: msg`Remove from favorites`,
-    isPinned: true,
+    isPinned: false,
     position: 11,
     Icon: IconHeartOff,
     availableOn: [

@@ -1,14 +1,15 @@
-import { JsonArrayNode } from '@/workflow/components/json-visualizer/components/JsonArrayNode';
-import { JsonObjectNode } from '@/workflow/components/json-visualizer/components/JsonObjectNode';
-import { JsonValueNode } from '@/workflow/components/json-visualizer/components/JsonValueNode';
-import { isArray } from '@/workflow/components/json-visualizer/utils/isArray';
 import { isBoolean, isNull, isNumber, isString } from '@sniptt/guards';
 import {
   IconCheckbox,
   IconCircleOff,
   IconNumber9,
   IconTypography,
-} from 'twenty-ui';
+} from '@ui/display';
+import { JsonArrayNode } from '@ui/json-visualizer/components/JsonArrayNode';
+import { JsonObjectNode } from '@ui/json-visualizer/components/JsonObjectNode';
+import { JsonValueNode } from '@ui/json-visualizer/components/JsonValueNode';
+import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
+import { isArray } from '@ui/json-visualizer/utils/isArray';
 import { JsonValue } from 'type-fest';
 
 export const JsonNode = ({
@@ -16,14 +17,14 @@ export const JsonNode = ({
   value,
   depth,
   keyPath,
-  shouldHighlightNode,
 }: {
   label?: string;
   value: JsonValue;
   depth: number;
   keyPath: string;
-  shouldHighlightNode?: (keyPath: string) => boolean;
 }) => {
+  const { shouldHighlightNode } = useJsonTreeContextOrThrow();
+
   const isHighlighted = shouldHighlightNode?.(keyPath) ?? false;
 
   if (isNull(value)) {
@@ -77,7 +78,6 @@ export const JsonNode = ({
         value={value}
         depth={depth}
         keyPath={keyPath}
-        shouldHighlightNode={shouldHighlightNode}
       />
     );
   }
@@ -88,7 +88,6 @@ export const JsonNode = ({
       value={value}
       depth={depth}
       keyPath={keyPath}
-      shouldHighlightNode={shouldHighlightNode}
     />
   );
 };

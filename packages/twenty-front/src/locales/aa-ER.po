@@ -650,10 +650,15 @@ msgstr "crwdns159:0crwdne159:0"
 msgid "Calendar settings"
 msgstr "crwdns5041:0crwdne5041:0"
 
+#. js-lingui-id: LbIh3Y
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Calendar Sync"
+msgstr "crwdns5549:0crwdne5549:0"
+
 #. js-lingui-id: HlJKLT
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
-msgid "Calendar Sync Status"
-msgstr "crwdns5467:0crwdne5467:0"
+#~ msgid "Calendar Sync Status"
+#~ msgstr "Calendar Sync Status"
 
 #. js-lingui-id: EUpfsd
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -2450,10 +2455,15 @@ msgstr "crwdns483:0crwdne483:0"
 msgid "Members"
 msgstr "crwdns485:0crwdne485:0"
 
+#. js-lingui-id: elpx6r
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Message Sync"
+msgstr "crwdns5551:0crwdne5551:0"
+
 #. js-lingui-id: Lt5rXo
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
-msgid "Message Sync Status"
-msgstr "crwdns5493:0crwdne5493:0"
+#~ msgid "Message Sync Status"
+#~ msgstr "Message Sync Status"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2473,6 +2483,16 @@ msgstr "crwdns4935:0crwdne4935:0"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Min"
 msgstr "crwdns487:0crwdne487:0"
+
+#. js-lingui-id: 8g3Cgz
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Monitor the execution of your calendar events sync job"
+msgstr "crwdns5553:0crwdne5553:0"
+
+#. js-lingui-id: IL/nIb
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Monitor the execution of your emails sync job"
+msgstr "crwdns5555:0crwdne5555:0"
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx

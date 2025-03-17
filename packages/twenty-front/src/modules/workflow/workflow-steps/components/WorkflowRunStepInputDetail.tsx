@@ -1,11 +1,15 @@
-import { JsonNestedNode } from '@/workflow/components/json-visualizer/components/JsonNestedNode';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
-import { IconBrackets } from 'twenty-ui';
+import {
+  IconBrackets,
+  JsonNestedNode,
+  JsonTreeContextProvider,
+} from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: grid;
@@ -15,6 +19,8 @@ const StyledContainer = styled.div`
 `;
 
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
+  const { t } = useLingui();
+
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
   const step = workflowRun?.output?.flow.steps.find(
@@ -48,18 +54,27 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
 
   return (
     <StyledContainer>
-      <JsonNestedNode
-        elements={stepContext.map(({ id, name, context }) => ({
-          id,
-          label: name,
-          value: context,
-        }))}
-        Icon={IconBrackets}
-        emptyElementsText=""
-        depth={0}
-        keyPath=""
-        shouldHighlightNode={(keyPath) => variablesUsedInStep.has(keyPath)}
-      />
+      <JsonTreeContextProvider
+        value={{
+          emptyArrayLabel: t`Empty Array`,
+          emptyObjectLabel: t`Empty Object`,
+          arrowButtonCollapsedLabel: t`Expand`,
+          arrowButtonExpandedLabel: t`Collapse`,
+          shouldHighlightNode: (keyPath) => variablesUsedInStep.has(keyPath),
+        }}
+      >
+        <JsonNestedNode
+          elements={stepContext.map(({ id, name, context }) => ({
+            id,
+            label: name,
+            value: context,
+          }))}
+          Icon={IconBrackets}
+          depth={0}
+          keyPath=""
+          emptyElementsText=""
+        />
+      </JsonTreeContextProvider>
     </StyledContainer>
   );
 };

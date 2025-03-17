@@ -3,6 +3,7 @@ export * from './components';
 export * from './display';
 export * from './feedback';
 export * from './input';
+export * from './json-visualizer';
 export * from './layout';
 export * from './navigation';
 export * from './testing';
