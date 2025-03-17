@@ -20,7 +20,7 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { APP_LOCALES, isDefined } from 'twenty-shared';
+import { APP_LOCALES, AuthExceptionCode, isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useCheckUserExistsLazyQuery,
@@ -194,7 +194,8 @@ export const useAuth = () => {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
           error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.code === 'EMAIL_NOT_VERIFIED'
+          error.graphQLErrors[0]?.extensions?.code ===
+            AuthExceptionCode.EMAIL_NOT_VERIFIED
         ) {
           setSearchParams({ email });
           setSignInUpStep(SignInUpStep.EmailVerification);

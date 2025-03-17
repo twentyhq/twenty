@@ -1,0 +1,3 @@
+export enum WorkspaceCleanerExceptionCode {
+  BILLING_SUBSCRIPTION_NOT_FOUND = 'BILLING_SUBSCRIPTION_NOT_FOUND',
+}

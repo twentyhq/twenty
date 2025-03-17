@@ -1,6 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import { ServerlessFunctionExceptionCode, isDefined } from 'twenty-shared';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -20,7 +20,6 @@ import {
 import { getStatusCombinationFromArray } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-array.util';
 import { getStatusCombinationFromUpdate } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-update.util';
 import { getWorkflowStatusesFromCombination } from 'src/modules/workflow/workflow-status/utils/get-statuses-from-combination.util';
-import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',

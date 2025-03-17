@@ -16,6 +16,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
+import { GraphQLErrorCode } from 'twenty-shared';
 
 export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
@@ -118,7 +119,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
         const isForbidden =
           result?.error?.graphQLErrors.some(
-            (e) => e.extensions?.code === 'FORBIDDEN',
+            (e) => e.extensions?.code === GraphQLErrorCode.FORBIDDEN,
           ) ?? false;
 
         if (isForbidden) {

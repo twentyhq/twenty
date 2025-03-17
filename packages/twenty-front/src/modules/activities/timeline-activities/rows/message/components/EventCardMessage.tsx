@@ -7,7 +7,7 @@ import { EventCardMessageNotShared } from '@/activities/timeline-activities/rows
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { isDefined } from 'twenty-shared';
+import { GraphQLErrorCode, isDefined } from 'twenty-shared';
 
 const StyledEventCardMessageContainer = styled.div`
   display: flex;
@@ -81,7 +81,7 @@ export const EventCardMessage = ({
 
   if (isDefined(error)) {
     const shouldHideMessageContent = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'FORBIDDEN',
+      (e) => e.extensions?.code === GraphQLErrorCode.FORBIDDEN,
     );
 
     if (shouldHideMessageContent) {
@@ -89,7 +89,7 @@ export const EventCardMessage = ({
     }
 
     const shouldHandleNotFound = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'NOT_FOUND',
+      (e) => e.extensions?.code === GraphQLErrorCode.NOT_FOUND,
     );
 
     if (shouldHandleNotFound) {

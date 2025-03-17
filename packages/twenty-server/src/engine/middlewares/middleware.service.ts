@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request, Response } from 'express';
-import { ErrorCode, isDefined } from 'twenty-shared';
+import { AuthExceptionCode, GraphQLErrorCode, isDefined } from 'twenty-shared';
 
-import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -61,7 +60,7 @@ export class MiddlewareService {
       JSON.stringify({
         statusCode,
         messages: [error?.message || INTERNAL_SERVER_ERROR],
-        error: error?.code || ErrorCode.INTERNAL_SERVER_ERROR,
+        error: error?.code || GraphQLErrorCode.INTERNAL_SERVER_ERROR,
       }),
     );
 

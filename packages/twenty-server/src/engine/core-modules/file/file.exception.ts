@@ -1,10 +1,6 @@
-import { CustomException } from 'src/utils/custom-exception';
+import { FileExceptionCode } from 'twenty-shared';
 
-export enum FileExceptionCode {
-  UNAUTHENTICATED = 'UNAUTHENTICATED',
-  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
-  FILE_NOT_FOUND = 'FILE_NOT_FOUND',
-}
+import { CustomException } from 'src/utils/custom-exception';
 
 export class FileException extends CustomException {
   constructor(message: string, code: FileExceptionCode) {

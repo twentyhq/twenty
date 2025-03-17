@@ -1,11 +1,9 @@
+import { WorkflowExecutorExceptionCode } from 'twenty-shared';
+
 import { CustomException } from 'src/utils/custom-exception';
 
 export class WorkflowExecutorException extends CustomException {
-  constructor(message: string, code: string) {
+  constructor(message: string, code: WorkflowExecutorExceptionCode) {
     super(message, code);
   }
-}
-
-export enum WorkflowExecutorExceptionCode {
-  WORKFLOW_FAILED = 'WORKFLOW_FAILED',
 }

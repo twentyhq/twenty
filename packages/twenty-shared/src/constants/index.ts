@@ -1,4 +1,3 @@
-export * from './GraphQLErrorCode';
 export * from './FieldForTotalCountAggregateOperation';
 export * from './PermissionsOnAllObjectRecords';
 export * from './StandardObjectRecordsUnderObjectRecordsPermissions';

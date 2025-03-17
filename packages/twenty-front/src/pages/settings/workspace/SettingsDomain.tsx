@@ -24,7 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { isDefined } from 'twenty-shared';
+import { GraphQLErrorCode, isDefined } from 'twenty-shared';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -113,7 +113,7 @@ export const SettingsDomain = () => {
       onError: (error) => {
         if (
           error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+          error.graphQLErrors[0]?.extensions?.code === GraphQLErrorCode.CONFLICT
         ) {
           return form.control.setError('subdomain', {
             type: 'manual',
@@ -140,7 +140,7 @@ export const SettingsDomain = () => {
       onError: (error) => {
         if (
           error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+          error.graphQLErrors[0]?.extensions?.code === GraphQLErrorCode.CONFLICT
         ) {
           return form.control.setError('subdomain', {
             type: 'manual',

@@ -7,7 +7,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared';
+import { GraphQLErrorCode, isDefined } from 'twenty-shared';
 import {
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
@@ -110,7 +110,7 @@ export const EventCardCalendarEvent = ({
 
   if (isDefined(error)) {
     const shouldHideMessageContent = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'FORBIDDEN',
+      (e) => e.extensions?.code === GraphQLErrorCode.FORBIDDEN,
     );
 
     if (shouldHideMessageContent) {
@@ -118,7 +118,7 @@ export const EventCardCalendarEvent = ({
     }
 
     const shouldHandleNotFound = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'NOT_FOUND',
+      (e) => e.extensions?.code === GraphQLErrorCode.NOT_FOUND,
     );
 
     if (shouldHandleNotFound) {

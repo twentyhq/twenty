@@ -1,0 +1,4 @@
+export enum WorkflowStepExecutorExceptionCode {
+  SCOPED_WORKSPACE_NOT_FOUND = 'SCOPED_WORKSPACE_NOT_FOUND',
+  INVALID_STEP_TYPE = 'INVALID_STEP_TYPE',
+}
