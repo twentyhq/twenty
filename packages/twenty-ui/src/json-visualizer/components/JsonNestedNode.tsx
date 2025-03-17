@@ -78,7 +78,7 @@ export const JsonNestedNode = ({
       transition={{ duration: ANIMATION.duration.normal }}
       depth={depth}
     >
-      {!isOpen ? null : elements.length === 0 ? (
+      {elements.length === 0 ? (
         <StyledEmptyState>{emptyElementsText}</StyledEmptyState>
       ) : (
         elements.map(({ id, label, value }) => {
