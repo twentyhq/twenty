@@ -27,7 +27,7 @@ export const seedCoreSchema = async ({
     workspaceDataSource,
     schemaName,
     workspaceId,
-    appVersion: appVersion,
+    appVersion,
   });
   await seedUsers(workspaceDataSource, schemaName);
   await seedUserWorkspaces(workspaceDataSource, schemaName, workspaceId);
