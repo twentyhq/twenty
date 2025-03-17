@@ -139,7 +139,8 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
 
   @OneToMany(
     () => ObjectPermissionsEntity,
-    (objectPermissions: ObjectPermissionsEntity) => objectPermissions.role,
+    (objectPermissions: ObjectPermissionsEntity) =>
+      objectPermissions.objectMetadata,
   )
   objectPermissions: Relation<ObjectPermissionsEntity[]>;
 }

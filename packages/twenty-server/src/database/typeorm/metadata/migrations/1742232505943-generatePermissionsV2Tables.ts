@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class GeneratePermissionsV2Tables1742231337997
+export class GeneratePermissionsV2Tables1742232505943
   implements MigrationInterface
 {
-  name = 'GeneratePermissionsV2Tables1742231337997';
+  name = 'GeneratePermissionsV2Tables1742232505943';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
