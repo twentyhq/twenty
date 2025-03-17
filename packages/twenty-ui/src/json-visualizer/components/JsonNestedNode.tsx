@@ -1,18 +1,19 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconComponent } from '@ui/display';
 import { JsonArrow } from '@ui/json-visualizer/components/internal/JsonArrow';
-import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
+import { ANIMATION } from '@ui/theme';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import { JsonValue } from 'type-fest';
 
 const StyledContainer = styled.li`
-  list-style-type: none;
   display: grid;
-  row-gap: ${({ theme }) => theme.spacing(2)};
+  list-style-type: none;
 `;
 
 const StyledLabelContainer = styled.div`
@@ -27,6 +28,25 @@ const StyledElementsCount = styled.span`
 
 const StyledEmptyState = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
+const StyledJsonList = styled(motion.ul)<{ depth: number }>`
+  position: relative;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  row-gap: ${({ theme }) => theme.spacing(2)};
+
+  ${({ theme, depth }) =>
+    depth > 0 &&
+    css`
+      padding-left: ${theme.spacing(8)};
+
+      > :first-child {
+        margin-top: ${theme.spacing(2)};
+      }
+    `}
 `;
 
 export const JsonNestedNode = ({
@@ -51,8 +71,14 @@ export const JsonNestedNode = ({
   const [isOpen, setIsOpen] = useState(true);
 
   const renderedChildren = (
-    <JsonList depth={depth}>
-      {elements.length === 0 ? (
+    <StyledJsonList
+      initial={{ height: 0, overflow: 'hidden' }}
+      animate={{ height: 'auto', overflow: 'hidden' }}
+      exit={{ height: 0, opacity: 0 }}
+      transition={{ duration: ANIMATION.duration.normal }}
+      depth={depth}
+    >
+      {!isOpen ? null : elements.length === 0 ? (
         <StyledEmptyState>{emptyElementsText}</StyledEmptyState>
       ) : (
         elements.map(({ id, label, value }) => {
@@ -71,7 +97,7 @@ export const JsonNestedNode = ({
           );
         })
       )}
-    </JsonList>
+    </StyledJsonList>
   );
 
   const handleArrowClick = () => {
@@ -79,7 +105,11 @@ export const JsonNestedNode = ({
   };
 
   if (hideRoot) {
-    return <StyledContainer>{renderedChildren}</StyledContainer>;
+    return (
+      <StyledContainer>
+        <AnimatePresence initial={false}>{renderedChildren}</AnimatePresence>
+      </StyledContainer>
+    );
   }
 
   return (
@@ -96,7 +126,9 @@ export const JsonNestedNode = ({
         )}
       </StyledLabelContainer>
 
-      {isOpen && renderedChildren}
+      <AnimatePresence initial={false}>
+        {isOpen && renderedChildren}
+      </AnimatePresence>
     </StyledContainer>
   );
 };
