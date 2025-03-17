@@ -51,8 +51,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     if (!objectMetadata.isCustom) {
       if (
         Object.keys(instance.update).length === 1 &&
-        // eslint-disable-next-line no-prototype-builtins
-        instance.update.hasOwnProperty('isActive') &&
+        Object.prototype.hasOwnProperty.call(instance.update, 'isActive') &&
         instance.update.isActive !== undefined
       ) {
         return {
@@ -71,8 +70,10 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
         )
       ) {
         if (
-          // eslint-disable-next-line no-prototype-builtins
-          instance.update.hasOwnProperty('isLabelSyncedWithName') &&
+          Object.prototype.hasOwnProperty.call(
+            instance.update,
+            'isLabelSyncedWithName',
+          ) &&
           instance.update.isLabelSyncedWithName !== undefined
         ) {
           if (
