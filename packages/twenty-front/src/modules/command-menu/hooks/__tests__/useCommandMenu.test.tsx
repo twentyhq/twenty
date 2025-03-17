@@ -53,7 +53,7 @@ describe('useCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.openRootCommandMenu();
+      result.current.commandMenu.openCommandMenu();
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);
