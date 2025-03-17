@@ -22,7 +22,6 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { useLingui } from '@lingui/react/macro';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -82,6 +81,11 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         });
       },
     });
+  };
+
+  const goToInvitePage = () => {
+    setMultiWorkspaceDropdownState('default');
+    closeDropdown();
   };
 
   return (
@@ -162,12 +166,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         hasSubMenu={true}
         onClick={() => setMultiWorkspaceDropdownState('themes')}
       />
-      <NavigationDrawerItem
-        label={t`Invite user`}
+      <UndecoratedLink
         to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}
-        Icon={IconUserPlus}
         onClick={closeDropdown}
-      />
+      >
+        <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
+      </UndecoratedLink>
       <MenuItem LeftIcon={IconLogout} text={t`Log out`} onClick={signOut} />
     </DropdownMenuItemsContainer>
   );
