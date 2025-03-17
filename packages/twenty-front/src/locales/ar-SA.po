@@ -778,7 +778,9 @@ msgid "Close command menu"
 msgstr "إغلاق قائمة الأوامر"
 
 #. js-lingui-id: H86f9p
-#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Collapse"
 msgstr "طي"
 
@@ -1534,12 +1536,16 @@ msgid "Empty"
 msgstr "فارغ"
 
 #. js-lingui-id: OMbipf
-#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Empty Array"
 msgstr "مصفوفة فارغة"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Empty Object"
 msgstr "كائن فارغ"
 
@@ -1686,7 +1692,9 @@ msgid "Exit Settings"
 msgstr "خروج من الإعدادات"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Expand"
 msgstr "توسيع"
 
