@@ -18,9 +18,7 @@ const meta: Meta<typeof DropdownMenuHeader> = {
   title: 'UI/Layout/Dropdown/DropdownMenuHeader',
   component: DropdownMenuHeader,
   decorators: [ComponentDecorator],
-  args: {
-    value: 'Lorem ipsum',
-  },
+  args: {},
 };
 
 export default meta;

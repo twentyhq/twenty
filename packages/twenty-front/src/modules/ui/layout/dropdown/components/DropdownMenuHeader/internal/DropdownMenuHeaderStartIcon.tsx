@@ -17,8 +17,8 @@ const StyledNonClickableStartIcon = styled.div`
   justify-content: center;
 
   white-space: nowrap;
-  height: 24px;
-  width: 24px;
+  height: ${({ theme }) => theme.spacing(6)};
+  width: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledAvatarWrapper = styled.div`
@@ -42,7 +42,6 @@ export const DropdownMenuHeaderStartIcon = ({
       {'StartIcon' in props &&
         (onClick ? (
           <LightIconButton
-            testId="dropdown-menu-header-end-icon"
             Icon={props.StartIcon}
             accent="tertiary"
             size="small"
