@@ -15,6 +15,22 @@ export type SeedWorkspaceArgs = {
   workspaceId: string;
   appVersion: string | undefined;
 };
+
+const workspaceSeederFields = [
+  'id',
+  'displayName',
+  'subdomain',
+  'inviteHash',
+  'logo',
+  'activationStatus',
+  'version',
+] as const satisfies (keyof Workspace)[];
+
+type WorkspaceSeederFields = Pick<
+  Workspace,
+  (typeof workspaceSeederFields)[number]
+>;
+
 export const seedWorkspaces = async ({
   schemaName,
   workspaceDataSource,
@@ -23,18 +39,7 @@ export const seedWorkspaces = async ({
 }: SeedWorkspaceArgs) => {
   const version = extractVersionMajorMinorPatch(appVersion);
 
-  const workspaces: {
-    [key: string]: Pick<
-      Workspace,
-      | 'version'
-      | 'id'
-      | 'displayName'
-      | 'inviteHash'
-      | 'logo'
-      | 'subdomain'
-      | 'activationStatus'
-    >;
-  } = {
+  const workspaces: Record<string, WorkspaceSeederFields> = {
     [SEED_APPLE_WORKSPACE_ID]: {
       id: workspaceId,
       displayName: 'Apple',
@@ -58,15 +63,7 @@ export const seedWorkspaces = async ({
   await workspaceDataSource
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.${tableName}`, [
-      'id',
-      'displayName',
-      'subdomain',
-      'inviteHash',
-      'logo',
-      'activationStatus',
-      'version',
-    ])
+    .into(`${schemaName}.${tableName}`, workspaceSeederFields)
     .orIgnore()
     .values(workspaces[workspaceId])
     .execute();
