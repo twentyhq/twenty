@@ -65,7 +65,6 @@ export const isFieldValueReadOnly = ({
   }
 
   if (
-    isTableViewOrKanbanView &&
     isDefined(fieldType) &&
     (isFieldActor({ type: fieldType }) ||
       isFieldRichText({ type: fieldType }) ||

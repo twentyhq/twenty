@@ -34,7 +34,6 @@ import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ActivityRichTextEditorProps = {
   activityId: string;
@@ -65,8 +64,6 @@ export const ActivityRichTextEditor = ({
 
   const isReadOnly = isFieldValueReadOnly({
     objectNameSingular: activityObjectNameSingular,
-    fieldName: 'bodyV2',
-    fieldType: FieldMetadataType.RICH_TEXT_V2,
     hasObjectReadOnlyPermission,
     contextStoreCurrentViewType,
     isRecordDeleted: activityInStore?.deletedAt !== null,
