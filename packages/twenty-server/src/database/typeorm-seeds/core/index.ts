@@ -6,19 +6,37 @@ import { seedUserWorkspaces } from 'src/database/typeorm-seeds/core/user-workspa
 import { seedUsers } from 'src/database/typeorm-seeds/core/users';
 import { seedWorkspaces } from 'src/database/typeorm-seeds/core/workspaces';
 
-export const seedCoreSchema = async (
-  workspaceDataSource: DataSource,
-  workspaceId: string,
-  isBillingEnabled: boolean,
-) => {
+type SeedCoreSchemaArgs = {
+  workspaceDataSource: DataSource;
+  workspaceId: string;
+  appVersion: string | undefined;
+  seedBilling?: boolean;
+  seedFeatureFlags?: boolean;
+};
+
+export const seedCoreSchema = async ({
+  appVersion,
+  workspaceDataSource,
+  workspaceId,
+  seedBilling = true,
+  seedFeatureFlags: shouldSeedFeatureFlags = true,
+}: SeedCoreSchemaArgs) => {
   const schemaName = 'core';
 
-  await seedWorkspaces(workspaceDataSource, schemaName, workspaceId);
+  await seedWorkspaces({
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+    appVersion,
+  });
   await seedUsers(workspaceDataSource, schemaName);
   await seedUserWorkspaces(workspaceDataSource, schemaName, workspaceId);
-  await seedFeatureFlags(workspaceDataSource, schemaName, workspaceId);
 
-  if (isBillingEnabled) {
+  if (shouldSeedFeatureFlags) {
+    await seedFeatureFlags(workspaceDataSource, schemaName, workspaceId);
+  }
+
+  if (seedBilling) {
     await seedBillingSubscriptions(
       workspaceDataSource,
       schemaName,

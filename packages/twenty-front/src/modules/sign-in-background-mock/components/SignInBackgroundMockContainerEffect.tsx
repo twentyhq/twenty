@@ -4,7 +4,6 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
@@ -30,7 +29,7 @@ export const SignInBackgroundMockContainerEffect = ({
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 
-  const { setAvailableTableColumns, setOnEntityCountChange } = useRecordTable({
+  const { setAvailableTableColumns } = useRecordTable({
     recordTableId,
   });
 
@@ -46,8 +45,6 @@ export const SignInBackgroundMockContainerEffect = ({
 
   const { setAvailableFieldDefinitions, setViewObjectMetadataId } =
     useInitViewBar(viewId);
-
-  const { setRecordIndexEntityCount } = useSetRecordIndexEntityCount(viewId);
 
   useEffect(() => {
     setViewObjectMetadataId?.(objectMetadataItem.id);
@@ -74,12 +71,6 @@ export const SignInBackgroundMockContainerEffect = ({
     recordTableId,
     setContextStoreCurrentObjectMetadataItemId,
   ]);
-
-  useEffect(() => {
-    setOnEntityCountChange(
-      () => (entityCount: number) => setRecordIndexEntityCount(entityCount),
-    );
-  }, [setRecordIndexEntityCount, setOnEntityCountChange]);
 
   return <></>;
 };

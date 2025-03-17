@@ -90,7 +90,6 @@ export class ViewFilterGroupWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Position in the parent view filter group`,
     icon: 'IconHierarchy2',
   })
-  @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   positionInViewFilterGroup: number | null;
 }

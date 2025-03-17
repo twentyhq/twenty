@@ -10,7 +10,6 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -87,13 +86,6 @@ export const ObjectFilterDropdownFilterSelect = ({
   const visibleColumnsIds = visibleTableColumns.map(
     (column) => column.fieldMetadataId,
   );
-  const hiddenTableColumns = useRecoilComponentValueV2(
-    hiddenTableColumnsComponentSelector,
-    recordIndexId,
-  );
-  const hiddenColumnIds = hiddenTableColumns.map(
-    (column) => column.fieldMetadataId,
-  );
 
   const filteredSearchInputFieldMetadataItems =
     filterableFieldMetadataItems.filter((fieldMetadataItem) =>
@@ -112,8 +104,8 @@ export const ObjectFilterDropdownFilterSelect = ({
 
   const hiddenColumnsFieldMetadataItems = filteredSearchInputFieldMetadataItems
     .sort((a, b) => a.label.localeCompare(b.label))
-    .filter((fieldMetadataItem) =>
-      hiddenColumnIds.includes(fieldMetadataItem.id),
+    .filter(
+      (fieldMetadataItem) => !visibleColumnsIds.includes(fieldMetadataItem.id),
     );
 
   const selectableFieldMetadataItemIds = filterableFieldMetadataItems.map(

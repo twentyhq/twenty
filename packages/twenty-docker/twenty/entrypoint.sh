@@ -8,10 +8,6 @@ if [ -z "$PG_DATABASE_URL" ]; then
   echo "Erro: The variable 'PG_DATABASE_URL' ist not defined."
   exit 1
 fi
-# Set APP_VERSION only if it has a value
-if [ ! -z "${APP_VERSION}" ]; then
-    export APP_VERSION="${APP_VERSION}"
-fi
 
 # Check if the initialization has already been done and that we enabled automatic migration
 if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status ]; then

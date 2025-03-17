@@ -99,7 +99,6 @@ export const generateWorkflowRunDiagram = ({
         nodeType: 'action',
         actionType: step.type,
         name: step.name,
-        isLeafNode: false,
         runStatus,
       },
       position: {
