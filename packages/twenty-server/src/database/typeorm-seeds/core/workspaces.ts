@@ -22,7 +22,7 @@ export const seedWorkspaces = async ({
   appVersion,
 }: SeedWorkspaceArgs) => {
   const version = extractVersionMajorMinorPatch(appVersion);
-  console.log({ appVersion, version });
+
   const workspaces: {
     [key: string]: Pick<
       Workspace,
