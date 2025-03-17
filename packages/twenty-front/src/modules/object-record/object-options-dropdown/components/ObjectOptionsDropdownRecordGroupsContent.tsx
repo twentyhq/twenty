@@ -20,7 +20,7 @@ import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-gr
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -88,7 +88,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
+      <DropdownMenuHeader
+        StartIcon={IconChevronLeft}
+        onStartIconClick={resetContent}
+      >
         Group by
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
