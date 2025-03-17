@@ -156,7 +156,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           />
         )}
       </StyledDropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
+      {workspaces.length > 1 && <DropdownMenuSeparator />}
       <StyledDropdownMenuItemsContainer>
         <MenuItem
           LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}

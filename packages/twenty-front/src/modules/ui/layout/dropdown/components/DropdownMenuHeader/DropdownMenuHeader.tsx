@@ -19,8 +19,8 @@ const StyledHeader = styled.li`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
-
   padding: ${({ theme }) => theme.spacing(1)};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
   user-select: none;
 
@@ -28,10 +28,6 @@ const StyledHeader = styled.li`
     background: ${({ theme, onClick }) =>
       onClick ? theme.background.transparent.light : 'none'};
   }
-`;
-
-const StyledHeaderWrapper = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledChildrenWrapper = styled.span`
@@ -77,36 +73,30 @@ export const DropdownMenuHeader = ({
   const theme = useTheme();
 
   return (
-    <StyledHeaderWrapper>
-      <StyledHeader
-        data-testid={testId}
-        className={className}
-        onClick={onClick}
-      >
-        {'StartIcon' in props && isDefined(props.StartIcon) && (
+    <StyledHeader data-testid={testId} className={className} onClick={onClick}>
+      {'StartIcon' in props && isDefined(props.StartIcon) && (
+        <DropdownMenuHeaderStartIcon
+          onClick={onStartIconClick}
+          StartIcon={props.StartIcon}
+        />
+      )}
+      {!('StartIcon' in props) &&
+        'StartAvatar' in props &&
+        isDefined(props.StartAvatar) && (
           <DropdownMenuHeaderStartIcon
             onClick={onStartIconClick}
-            StartIcon={props.StartIcon}
+            StartAvatar={props.StartAvatar}
           />
         )}
-        {!('StartIcon' in props) &&
-          'StartAvatar' in props &&
-          isDefined(props.StartAvatar) && (
-            <DropdownMenuHeaderStartIcon
-              onClick={onStartIconClick}
-              StartAvatar={props.StartAvatar}
-            />
-          )}
-        <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-        {'DropdownOnEndIcon' in props && (
-          <StyledEndIcon>{props.DropdownOnEndIcon}</StyledEndIcon>
-        )}
-        {!('DropdownOnEndIcon' in props) && EndIcon && (
-          <StyledEndIcon>
-            <EndIcon size={theme.icon.size.md} />
-          </StyledEndIcon>
-        )}
-      </StyledHeader>
-    </StyledHeaderWrapper>
+      <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
+      {'DropdownOnEndIcon' in props && (
+        <StyledEndIcon>{props.DropdownOnEndIcon}</StyledEndIcon>
+      )}
+      {!('DropdownOnEndIcon' in props) && EndIcon && (
+        <StyledEndIcon>
+          <EndIcon size={theme.icon.size.md} />
+        </StyledEndIcon>
+      )}
+    </StyledHeader>
   );
 };
