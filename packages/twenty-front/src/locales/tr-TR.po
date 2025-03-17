@@ -653,12 +653,12 @@ msgstr "Takvim ayarları"
 #. js-lingui-id: LbIh3Y
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Calendar Sync"
-msgstr ""
+msgstr "Takvim Senkronizasyonu"
 
 #. js-lingui-id: HlJKLT
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 #~ msgid "Calendar Sync Status"
-#~ msgstr "Takvim Senkronizasyon Durumu"
+#~ msgstr "Calendar Sync Status"
 
 #. js-lingui-id: EUpfsd
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -2458,12 +2458,12 @@ msgstr "Üyeler"
 #. js-lingui-id: elpx6r
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync"
-msgstr ""
+msgstr "Mesaj Senkronizasyonu"
 
 #. js-lingui-id: Lt5rXo
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 #~ msgid "Message Sync Status"
-#~ msgstr "Mesaj Senkronizasyon Durumu"
+#~ msgstr "Message Sync Status"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2487,12 +2487,12 @@ msgstr "Dk"
 #. js-lingui-id: 8g3Cgz
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your calendar events sync job"
-msgstr ""
+msgstr "Takvim etkinlikleri senkronizasyon işinizin yürütülmesini izleyin"
 
 #. js-lingui-id: IL/nIb
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your emails sync job"
-msgstr ""
+msgstr "E-posta senkronizasyon işinizin yürütülmesini izleyin"
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
