@@ -12,13 +12,13 @@ export type SeedWorkspaceArgs = {
   workspaceDataSource: DataSource;
   schemaName: string;
   workspaceId: string;
-  version?: string | null;
+  version: string | undefined;
 };
 export const seedWorkspaces = async ({
   schemaName,
   workspaceDataSource,
   workspaceId,
-  version = null,
+  version,
 }: SeedWorkspaceArgs) => {
   const workspaces: {
     [key: string]: Pick<
@@ -39,7 +39,7 @@ export const seedWorkspaces = async ({
       inviteHash: 'apple.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      version,
+      version: version ?? null,
     },
     [SEED_ACME_WORKSPACE_ID]: {
       id: workspaceId,
@@ -48,7 +48,7 @@ export const seedWorkspaces = async ({
       inviteHash: 'acme.dev-invite-hash',
       logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      version,
+      version: version ?? null,
     },
   };
 
