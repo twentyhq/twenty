@@ -318,6 +318,11 @@ msgstr "Painel de Administração"
 msgid "Advanced filter"
 msgstr "Filtro avançado"
 
+#. js-lingui-id: WsKDNF
+#: src/modules/navigation/components/AppNavigationDrawer.tsx
+msgid "Advanced:"
+msgstr ""
+
 #. js-lingui-id: 1Cox/a
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Afrikaans"
