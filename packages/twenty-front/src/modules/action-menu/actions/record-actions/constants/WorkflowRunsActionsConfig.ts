@@ -37,7 +37,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
     position: 0,
-    isPinned: true,
+    isPinned: false,
     Icon: IconHeart,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -51,7 +51,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: msg`Remove from favorites`,
     shortLabel: msg`Remove from favorites`,
-    isPinned: true,
+    isPinned: false,
     position: 1,
     Icon: IconHeartOff,
     availableOn: [
