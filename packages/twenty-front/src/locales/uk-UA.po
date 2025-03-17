@@ -653,12 +653,12 @@ msgstr "Налаштування календаря"
 #. js-lingui-id: LbIh3Y
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Calendar Sync"
-msgstr ""
+msgstr "Синхронізація календаря"
 
 #. js-lingui-id: HlJKLT
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 #~ msgid "Calendar Sync Status"
-#~ msgstr "Статус синхронізації календаря"
+#~ msgstr "Calendar Sync Status"
 
 #. js-lingui-id: EUpfsd
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -1231,8 +1231,7 @@ msgstr "Видалити запис"
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete records"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Видалити записи"
 
@@ -1323,8 +1322,7 @@ msgstr "Опис"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Destroy"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Знищити"
 
@@ -1462,8 +1460,7 @@ msgstr "Редагуйте назву вашого субдомену або в�
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
-msgstr ""
-"\n"
+msgstr "\n"
 "              \n"
 "              Електронна адреса"
 
@@ -1533,8 +1530,7 @@ msgstr "співробітники"
 #. js-lingui-id: gqv5ZL
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Employees"
-msgstr ""
-"\n"
+msgstr "\n"
 "Співробітники"
 
 #. js-lingui-id: N2S1rs
@@ -2469,12 +2465,12 @@ msgstr "Члени"
 #. js-lingui-id: elpx6r
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync"
-msgstr ""
+msgstr "Синхронізація повідомлень"
 
 #. js-lingui-id: Lt5rXo
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 #~ msgid "Message Sync Status"
-#~ msgstr "Статус синхронізації повідомлень"
+#~ msgstr "Message Sync Status"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2498,12 +2494,12 @@ msgstr "Мінімум"
 #. js-lingui-id: 8g3Cgz
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your calendar events sync job"
-msgstr ""
+msgstr "Нагляд за виконанням вашого завдання з синхронізації подій календаря"
 
 #. js-lingui-id: IL/nIb
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your emails sync job"
-msgstr ""
+msgstr "Нагляд за виконанням вашого завдання з синхронізації електронних листів"
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
