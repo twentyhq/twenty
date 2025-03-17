@@ -13,6 +13,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 const meta: Meta<typeof DropdownMenuHeader> = {
   title: 'UI/Layout/Dropdown/DropdownMenuHeader',
@@ -31,21 +32,14 @@ export const Text: Story = {
 };
 export const StartIcon: Story = {
   args: {
-    StartIcon: IconChevronLeft,
+    StartComponent: <DropdownMenuHeaderLeftComponent Icon={IconChevronLeft} />,
     children: 'Start Icon',
-  },
-};
-
-export const EndIcon: Story = {
-  args: {
-    EndIcon: IconChevronRight,
-    children: 'End Icon',
   },
 };
 
 export const StartAndEndIcon: Story = {
   args: {
-    StartIcon: IconChevronLeft,
+    StartComponent: <DropdownMenuHeaderLeftComponent Icon={IconChevronLeft} />,
     EndIcon: IconChevronRight,
     children: 'Start and End Icon',
   },
@@ -53,7 +47,7 @@ export const StartAndEndIcon: Story = {
 
 export const StartAvatar: Story = {
   args: {
-    StartAvatar: (
+    StartComponent: (
       <Avatar placeholder="placeholder" avatarUrl={AVATAR_URL_MOCK} />
     ),
     children: 'Avatar',
@@ -63,10 +57,10 @@ export const StartAvatar: Story = {
 export const ContextDropdownAndAvatar: Story = {
   args: {
     children: 'Context Dropdown',
-    StartAvatar: (
+    StartComponent: (
       <Avatar placeholder="placeholder" avatarUrl={AVATAR_URL_MOCK} />
     ),
-    DropdownOnEndIcon: (
+    EndComponent: (
       <Dropdown
         dropdownId={'story-dropdown-id-context-menu'}
         dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}

@@ -34,7 +34,7 @@ export const MultiWorkspaceDropdownButton = () => {
       dropdownHotkeyScope={{
         scope: NavigationDrawerHotKeyScope.MultiWorkspaceDropdownButton,
       }}
-      dropdownOffset={{ y: 0, x: 0 }}
+      dropdownOffset={{ y: -35, x: -5 }}
       clickableComponent={
         <MultiWorkspaceDropdownClickableComponent
           isDropdownOpen={isDropdownOpen}

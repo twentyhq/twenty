@@ -222,7 +222,7 @@ export const WithHeaders: Story = {
       <>
         <DropdownMenuHeader
           StartComponent={
-            <DropwdownMenuHeaderLeftComponent Icon={IconChevronLeft} />
+            <DropdownMenuHeaderLeftComponent Icon={IconChevronLeft} />
           }
         >
           Header

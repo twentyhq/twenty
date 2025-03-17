@@ -102,7 +102,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             }
           />
         }
-        DropdownOnEndIcon={
+        EndComponent={
           <Dropdown
             clickableComponent={
               <LightIconButton

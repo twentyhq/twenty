@@ -1,11 +1,6 @@
 import styled from '@emotion/styled';
-import { ComponentProps, MouseEvent, ReactElement } from 'react';
+import { ComponentProps, MouseEvent } from 'react';
 import { IconComponent } from 'twenty-ui';
-import { useTheme } from '@emotion/react';
-import {
-  Dropdown,
-  DropdownProps,
-} from '@/ui/layout/dropdown/components/Dropdown';
 
 const StyledHeader = styled.li`
   align-items: center;
@@ -35,7 +30,7 @@ const StyledChildrenWrapper = styled.span`
   text-overflow: ellipsis;
 `;
 
-const StyledEndIcon = styled.div`
+const StyledEndComponent = styled.div`
   display: inline-flex;
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: ${({ theme }) => theme.spacing(1)};
@@ -53,32 +48,22 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   onClick?: (event: MouseEvent<HTMLLIElement>) => void;
   testId?: string;
   className?: string;
-  DropdownOnEndIcon?: ReactElement<DropdownProps, typeof Dropdown>;
-  StartComponent: React.ReactNode;
+  StartComponent?: React.ReactNode;
+  EndComponent?: React.ReactNode;
 };
 export const DropdownMenuHeader = ({
   children,
   StartComponent,
-  EndIcon,
   onClick,
   testId,
   className,
-  ...props
+  EndComponent,
 }: DropdownMenuHeaderProps) => {
-  const theme = useTheme();
-
   return (
     <StyledHeader data-testid={testId} className={className} onClick={onClick}>
       {StartComponent && StartComponent}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-      {'DropdownOnEndIcon' in props && (
-        <StyledEndIcon>{props.DropdownOnEndIcon}</StyledEndIcon>
-      )}
-      {!('DropdownOnEndIcon' in props) && EndIcon && (
-        <StyledEndIcon>
-          <EndIcon size={theme.icon.size.md} />
-        </StyledEndIcon>
-      )}
+      {EndComponent && <StyledEndComponent>{EndComponent}</StyledEndComponent>}
     </StyledHeader>
   );
 };
