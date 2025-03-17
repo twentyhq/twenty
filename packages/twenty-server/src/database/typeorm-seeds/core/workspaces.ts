@@ -41,7 +41,7 @@ export const seedWorkspaces = async ({
 
   const workspaces: Record<string, WorkspaceSeederFields> = {
     [SEED_APPLE_WORKSPACE_ID]: {
-      id: workspaceId,
+      id: SEED_APPLE_WORKSPACE_ID,
       displayName: 'Apple',
       subdomain: 'apple',
       inviteHash: 'apple.dev-invite-hash',
@@ -50,7 +50,7 @@ export const seedWorkspaces = async ({
       version: version,
     },
     [SEED_ACME_WORKSPACE_ID]: {
-      id: workspaceId,
+      id: SEED_ACME_WORKSPACE_ID,
       displayName: 'Acme',
       subdomain: 'acme',
       inviteHash: 'acme.dev-invite-hash',
