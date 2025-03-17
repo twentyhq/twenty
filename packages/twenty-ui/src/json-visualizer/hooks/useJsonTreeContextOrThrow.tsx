@@ -7,7 +7,7 @@ export const useJsonTreeContextOrThrow = () => {
 
   if (!isDefined(value)) {
     throw new Error(
-      'useJsonTreeContext must be used within a JsonTreeContextProvider',
+      'useJsonTreeContextOrThrow must be used within a JsonTreeContextProvider',
     );
   }
 
