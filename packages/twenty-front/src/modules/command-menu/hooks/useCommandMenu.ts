@@ -1,21 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import {
-  IconBolt,
-  IconCalendarEvent,
-  IconComponent,
-  IconDotsVertical,
-  IconMail,
-  IconSettingsAutomation,
-} from 'twenty-ui';
+import { IconCalendarEvent, IconDotsVertical, IconMail } from 'twenty-ui';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
-import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
@@ -26,7 +18,6 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
@@ -72,111 +63,6 @@ export const useCommandMenu = () => {
         }
       },
     [closeCommandMenu, openCommandMenu],
-  );
-
-  const openWorkflowTriggerTypeInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return (workflowId: string) => {
-        const pageId = v4();
-
-        set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
-          workflowId,
-        );
-
-        navigateCommandMenu({
-          page: CommandMenuPages.WorkflowStepSelectTriggerType,
-          pageTitle: t`Trigger Type`,
-          pageIcon: IconBolt,
-          pageId,
-        });
-      };
-    },
-    [navigateCommandMenu],
-  );
-
-  const openWorkflowActionInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return (workflowId: string) => {
-        const pageId = v4();
-
-        set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
-          workflowId,
-        );
-
-        navigateCommandMenu({
-          page: CommandMenuPages.WorkflowStepSelectAction,
-          pageTitle: t`Select Action`,
-          pageIcon: IconSettingsAutomation,
-          pageId,
-        });
-      };
-    },
-    [navigateCommandMenu],
-  );
-
-  const openWorkflowEditStepInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return (workflowId: string, title: string, icon: IconComponent) => {
-        const pageId = v4();
-
-        set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
-          workflowId,
-        );
-
-        navigateCommandMenu({
-          page: CommandMenuPages.WorkflowStepEdit,
-          pageTitle: title,
-          pageIcon: icon,
-          pageId,
-        });
-      };
-    },
-    [navigateCommandMenu],
-  );
-
-  const openWorkflowViewStepInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return (workflowId: string, title: string, icon: IconComponent) => {
-        const pageId = v4();
-
-        set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
-          workflowId,
-        );
-
-        navigateCommandMenu({
-          page: CommandMenuPages.WorkflowStepView,
-          pageTitle: title,
-          pageIcon: icon,
-          pageId,
-        });
-      };
-    },
-    [navigateCommandMenu],
-  );
-
-  const openWorkflowViewRunStepInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return (workflowId: string, title: string, icon: IconComponent) => {
-        const pageId = v4();
-
-        set(
-          workflowIdComponentState.atomFamily({ instanceId: pageId }),
-          workflowId,
-        );
-
-        navigateCommandMenu({
-          page: CommandMenuPages.WorkflowRunStepView,
-          pageTitle: title,
-          pageIcon: icon,
-          pageId,
-        });
-      };
-    },
-    [navigateCommandMenu],
   );
 
   const openCalendarEventInCommandMenu = useRecoilCallback(
@@ -335,10 +221,5 @@ export const useCommandMenu = () => {
     setGlobalCommandMenuContext,
     openCalendarEventInCommandMenu,
     openEmailThreadInCommandMenu,
-    openWorkflowTriggerTypeInCommandMenu,
-    openWorkflowActionInCommandMenu,
-    openWorkflowEditStepInCommandMenu,
-    openWorkflowViewStepInCommandMenu,
-    openWorkflowViewRunStepInCommandMenu,
   };
 };
