@@ -321,7 +321,7 @@ msgstr "الفلتر المتقدم"
 #. js-lingui-id: WsKDNF
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Advanced:"
-msgstr ""
+msgstr "متقدم:"
 
 #. js-lingui-id: 1Cox/a
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

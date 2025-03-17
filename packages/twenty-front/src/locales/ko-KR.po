@@ -321,7 +321,7 @@ msgstr "고급 필터"
 #. js-lingui-id: WsKDNF
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Advanced:"
-msgstr ""
+msgstr "고급:"
 
 #. js-lingui-id: 1Cox/a
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
