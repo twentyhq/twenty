@@ -1,4 +1,3 @@
-
 /*
  * _____                    _
  *|_   _|_      _____ _ __ | |_ _   _
@@ -8,7 +7,7 @@
  *                              |___/
  */
 
-    export * from './FieldForTotalCountAggregateOperation';
+export * from './FieldForTotalCountAggregateOperation';
 export * from './PermissionsOnAllObjectRecords';
 export * from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export * from './TwentyCompaniesBaseUrl';

@@ -11385,6 +11385,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prettier/sync@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "@prettier/sync@npm:0.5.2"
+  dependencies:
+    make-synchronized: "npm:^0.2.8"
+  peerDependencies:
+    prettier: "*"
+  checksum: 10c0/edd643ac8bc8937b7edbc46591378df1f6158f206622785e3699280e0435b7336f187b8a4dd8e13fb0d9925ad385afa46a1645eb1bddc962cdf8226be9661014
+  languageName: node
+  linkType: hard
+
 "@prisma/instrumentation@npm:5.19.1":
   version: 5.19.1
   resolution: "@prisma/instrumentation@npm:5.19.1"
@@ -39253,6 +39264,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"make-synchronized@npm:^0.2.8":
+  version: 0.2.9
+  resolution: "make-synchronized@npm:0.2.9"
+  checksum: 10c0/3b2d235d7f4fdb99e5a66edb3592d277986286c2f26f549ec7ca5c74523dcf7088f7238dc48644ac50305e9bc5bcb4515d0b8d8a25e0894e0a791657eb884709
+  languageName: node
+  linkType: hard
+
 "makeerror@npm:1.0.12":
   version: 1.0.12
   resolution: "makeerror@npm:1.0.12"
@@ -51402,6 +51420,9 @@ __metadata:
 "twenty-shared@workspace:*, twenty-shared@workspace:packages/twenty-shared":
   version: 0.0.0-use.local
   resolution: "twenty-shared@workspace:packages/twenty-shared"
+  dependencies:
+    "@prettier/sync": "npm:^0.5.2"
+    type-fest: "npm:^4.37.0"
   languageName: unknown
   linkType: soft
 

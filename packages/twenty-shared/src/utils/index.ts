@@ -1,4 +1,3 @@
-
 /*
  * _____                    _
  *|_   _|_      _____ _ __ | |_ _   _
@@ -8,7 +7,7 @@
  *                              |___/
  */
 
-    export * from './assertUnreachable';
+export * from './assertUnreachable';
 export * from './fieldMetadata/isFieldMetadataDateKind';
 export * from './image/getImageAbsoluteURI';
 export * from './image/getLogoUrlFromDomainName';

@@ -1,4 +1,3 @@
-
 /*
  * _____                    _
  *|_   _|_      _____ _ __ | |_ _   _
@@ -8,4 +7,4 @@
  *                              |___/
  */
 
-    export * from './types/EachTestingContext.type';
+export * from './types/EachTestingContext.type';

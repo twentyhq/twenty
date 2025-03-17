@@ -1,4 +1,3 @@
-
 /*
  * _____                    _
  *|_   _|_      _____ _ __ | |_ _   _
@@ -8,5 +7,5 @@
  *                              |___/
  */
 
-    export * from './constants/AppLocales';
+export * from './constants/AppLocales';
 export * from './constants/SourceLocale';

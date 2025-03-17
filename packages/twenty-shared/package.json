@@ -7,15 +7,44 @@
     "build": "npx vite build"
   },
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+    "constants": {
+      "types": "./dist/constants.d.ts",
+      "import": "./dist/constants.mjs",
+      "require": "./dist/constants.js"
+    },
+    "i18n": {
+      "types": "./dist/i18n.d.ts",
+      "import": "./dist/i18n.mjs",
+      "require": "./dist/i18n.js"
+    },
+    "testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    },
+    "types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.mjs",
+      "require": "./dist/types.js"
+    },
+    "utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.js"
+    },
+    "workspace": {
+      "types": "./dist/workspace.d.ts",
+      "import": "./dist/workspace.mjs",
+      "require": "./dist/workspace.js"
     }
   },
   "engines": {
     "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
+  },
+  "devDependencies": {
+    "@prettier/sync": "^0.5.2",
+    "type-fest": "^4.37.0"
   }
 }
