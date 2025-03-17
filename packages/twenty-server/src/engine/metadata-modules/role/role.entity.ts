@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ObjectPermissionsEntity } from 'src/engine/metadata-modules/object-permissions/object-permissions.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 
 @Entity('role')
@@ -56,4 +57,10 @@ export class RoleEntity {
     (userWorkspaceRole: UserWorkspaceRoleEntity) => userWorkspaceRole.role,
   )
   userWorkspaceRoles: Relation<UserWorkspaceRoleEntity[]>;
+
+  @OneToMany(
+    () => ObjectPermissionsEntity,
+    (objectPermissions: ObjectPermissionsEntity) => objectPermissions.role,
+  )
+  objectPermissions: Relation<ObjectPermissionsEntity[]>;
 }
