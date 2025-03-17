@@ -64,6 +64,12 @@ msgstr "crwdns4995:0crwdne4995:0"
 msgid ": Today"
 msgstr "crwdns4997:0crwdne4997:0"
 
+#. js-lingui-id: J/hVSQ
+#. placeholder {0}: theme.id
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
+msgid "{0}"
+msgstr "crwdns5561:0{0}crwdne5561:0"
+
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -778,7 +784,9 @@ msgid "Close command menu"
 msgstr "crwdns4859:0crwdne4859:0"
 
 #. js-lingui-id: H86f9p
-#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Collapse"
 msgstr "crwdns5381:0crwdne5381:0"
 
@@ -1009,6 +1017,11 @@ msgstr "crwdns5067:0crwdne5067:0"
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
 msgstr "crwdns239:0crwdne239:0"
+
+#. js-lingui-id: kdLGki
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Create Workspace"
+msgstr "crwdns5563:0crwdne5563:0"
 
 #. js-lingui-id: 9chYz/
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -1534,12 +1547,16 @@ msgid "Empty"
 msgstr "crwdns333:0crwdne333:0"
 
 #. js-lingui-id: OMbipf
-#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Empty Array"
 msgstr "crwdns5511:0crwdne5511:0"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Empty Object"
 msgstr "crwdns5513:0crwdne5513:0"
 
@@ -1686,7 +1703,9 @@ msgid "Exit Settings"
 msgstr "crwdns355:0crwdne355:0"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Expand"
 msgstr "crwdns5389:0crwdne5389:0"
 
@@ -1728,6 +1747,8 @@ msgstr "crwdns363:0crwdne363:0"
 #: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -1750,6 +1771,11 @@ msgstr "crwdns5391:0crwdne5391:0"
 msgid "Export records"
 msgstr "crwdns367:0crwdne367:0"
 
+#. js-lingui-id: iHK6np
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Export run"
+msgstr "crwdns5557:0crwdne5557:0"
+
 #. js-lingui-id: vwtAUW
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export runs"
@@ -1759,6 +1785,11 @@ msgstr "crwdns5393:0crwdne5393:0"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export to PDF"
 msgstr "crwdns369:0crwdne369:0"
+
+#. js-lingui-id: BuprEs
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Export version"
+msgstr "crwdns5559:0crwdne5559:0"
 
 #. js-lingui-id: 4FLUle
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2189,6 +2220,11 @@ msgstr "crwdns445:0crwdne445:0"
 msgid "Invite link sent to email addresses"
 msgstr "crwdns447:0crwdne447:0"
 
+#. js-lingui-id: x1m5RZ
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Invite user"
+msgstr "crwdns5565:0crwdne5565:0"
+
 #. js-lingui-id: d+Y+rP
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Invite your team"
@@ -2391,6 +2427,7 @@ msgstr "crwdns5491:0crwdne5491:0"
 
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Log out"
 msgstr "crwdns469:0crwdne469:0"
 
@@ -2884,6 +2921,12 @@ msgstr "crwdns5497:0crwdne5497:0"
 msgid "Other Variables"
 msgstr "crwdns5499:0crwdne5499:0"
 
+#. js-lingui-id: +vDFPm
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Other workspaces"
+msgstr "crwdns5567:0crwdne5567:0"
+
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -3272,6 +3315,7 @@ msgid "Schema"
 msgstr "crwdns5457:0crwdne5457:0"
 
 #. js-lingui-id: A1taO8
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
@@ -3778,6 +3822,16 @@ msgstr "crwdns725:0crwdne725:0"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "The whole event details will be shared with your team."
 msgstr "crwdns5297:0crwdne5297:0"
+
+#. js-lingui-id: FEr96N
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
+msgid "Theme"
+msgstr "crwdns5569:0crwdne5569:0"
+
+#. js-lingui-id: 6tNbxl
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Theme "
+msgstr "crwdns5571:0crwdne5571:0"
 
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx
