@@ -39,6 +39,7 @@ export const AppNavigationDrawer = ({
           <AdvancedSettingsToggle
             isAdvancedModeEnabled={isAdvancedModeEnabled}
             setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
+            label={t`Advanced:`}
           />
         ),
         logo: '',
