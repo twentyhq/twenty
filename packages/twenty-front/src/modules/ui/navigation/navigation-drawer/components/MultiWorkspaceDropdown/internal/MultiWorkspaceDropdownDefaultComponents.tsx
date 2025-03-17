@@ -42,6 +42,11 @@ const StyledDescription = styled.div`
   padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledDropdownMenuItemsContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(1)} 0;
+  padding: 0 ${({ theme }) => theme.spacing(1)};
+`;
+
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { t } = useLingui();
@@ -84,7 +89,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   };
 
   return (
-    <DropdownMenuItemsContainer>
+    <>
       <DropdownMenuHeader
         StartAvatar={
           <Avatar
@@ -117,57 +122,61 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       >
         {currentWorkspace?.displayName}
       </DropdownMenuHeader>
-      {workspaces
-        .filter(({ id }) => id !== currentWorkspace?.id)
-        .slice(0, 3)
-        .map((workspace) => (
-          <UndecoratedLink
-            key={workspace.id}
-            to={buildWorkspaceUrl(getWorkspaceUrl(workspace.workspaceUrls))}
-            onClick={(event) => {
-              event?.preventDefault();
-              handleChange(workspace);
-            }}
-          >
-            <MenuItemSelectAvatar
-              text={workspace.displayName ?? '(No name)'}
-              avatar={
-                <Avatar
-                  placeholder={workspace.displayName || ''}
-                  avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
-                />
-              }
-              selected={false}
-            />
-          </UndecoratedLink>
-        ))}
-      {workspaces.length > 4 && (
-        <MenuItem
-          LeftIcon={IconSwitchHorizontal}
-          text={t`Other workspaces`}
-          onClick={() => setMultiWorkspaceDropdownState('workspaces-list')}
-          hasSubMenu={true}
-        />
-      )}
+      <StyledDropdownMenuItemsContainer>
+        {workspaces
+          .filter(({ id }) => id !== currentWorkspace?.id)
+          .slice(0, 3)
+          .map((workspace) => (
+            <UndecoratedLink
+              key={workspace.id}
+              to={buildWorkspaceUrl(getWorkspaceUrl(workspace.workspaceUrls))}
+              onClick={(event) => {
+                event?.preventDefault();
+                handleChange(workspace);
+              }}
+            >
+              <MenuItemSelectAvatar
+                text={workspace.displayName ?? '(No name)'}
+                avatar={
+                  <Avatar
+                    placeholder={workspace.displayName || ''}
+                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                  />
+                }
+                selected={false}
+              />
+            </UndecoratedLink>
+          ))}
+        {workspaces.length > 4 && (
+          <MenuItem
+            LeftIcon={IconSwitchHorizontal}
+            text={t`Other workspaces`}
+            onClick={() => setMultiWorkspaceDropdownState('workspaces-list')}
+            hasSubMenu={true}
+          />
+        )}
+      </StyledDropdownMenuItemsContainer>
       <DropdownMenuSeparator />
-      <MenuItem
-        LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
-        text={
-          <>
-            {t`Theme `}
-            <StyledDescription>{` · ${colorScheme}`}</StyledDescription>
-          </>
-        }
-        hasSubMenu={true}
-        onClick={() => setMultiWorkspaceDropdownState('themes')}
-      />
-      <UndecoratedLink
-        to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}
-        onClick={closeDropdown}
-      >
-        <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
-      </UndecoratedLink>
-      <MenuItem LeftIcon={IconLogout} text={t`Log out`} onClick={signOut} />
-    </DropdownMenuItemsContainer>
+      <StyledDropdownMenuItemsContainer>
+        <MenuItem
+          LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
+          text={
+            <>
+              {t`Theme `}
+              <StyledDescription>{` · ${colorScheme}`}</StyledDescription>
+            </>
+          }
+          hasSubMenu={true}
+          onClick={() => setMultiWorkspaceDropdownState('themes')}
+        />
+        <UndecoratedLink
+          to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}
+          onClick={closeDropdown}
+        >
+          <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
+        </UndecoratedLink>
+        <MenuItem LeftIcon={IconLogout} text={t`Log out`} onClick={signOut} />
+      </StyledDropdownMenuItemsContainer>
+    </>
   );
 };
