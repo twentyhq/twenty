@@ -914,7 +914,7 @@ msgstr "Kopier lenke for å vise"
 #. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
-msgstr "Kopier denne n\fkelen da den ikke vil v\fre synlig igjen"
+msgstr "Kopier denne nkelen da den ikke vil vre synlig igjen"
 
 #. js-lingui-id: SGsgDO
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -966,12 +966,12 @@ msgstr "Opprett"
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
-msgstr "Opprett en arbeidsflyt og kom tilbake her for \fn vise versjonene"
+msgstr "Opprett en arbeidsflyt og kom tilbake hit for å vise versjonene"
 
 #. js-lingui-id: uXGLuq
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
-msgstr "Opprett API-n\fkkel"
+msgstr "Opprett API-nøkkel"
 
 #. js-lingui-id: d0DCww
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -1132,7 +1132,7 @@ msgstr "Deaktiver"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
-msgstr "Deaktiver \\"
+msgstr "Deaktiver \"Synkroniser objektetiketter og API-navn\" for å sette et egendefinert API-navn"
 
 #. js-lingui-id: T2YbXF
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

@@ -1821,8 +1821,7 @@ msgstr "F\"or\"aldrade f\"argschema"
 #. js-lingui-id: 5v4qYi
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred language"
-msgstr ""
-"F\"or\"aldrat spr\n"
+msgstr "F\"or\"aldrat spr\n"
 "k"
 
 #. js-lingui-id: WJIL29
@@ -1949,9 +1948,7 @@ msgstr "Synkkurs"
 #. js-lingui-id: awvBUx
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr ""
-"Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
-"n kalenderleverant\"oren"
+msgstr "Synkronisera markören. Används för att synkronisera händelser från kalenderleverantören"
 
 #. js-lingui-id: dNAbG6
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts

@@ -3485,10 +3485,7 @@ msgstr "Alterar o rótulo de um campo também deve alterar o nome da API?"
 #. js-lingui-id: WFtdWr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Should changing an object's label also change the API?"
-msgstr ""
-"Alterar o r\n"
-"tulo de um objeto tamb\n"
-"m deve alterar a API?"
+msgstr "Alterar o rótulo de um objeto também deve alterar a API?"
 
 #. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
@@ -3655,9 +3652,7 @@ msgstr "Sincronizar o rótulo do campo e o nome da API"
 #. js-lingui-id: WZ6bN9
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Synchronize Objects Labels and API Names"
-msgstr ""
-"Sincronizar r\n"
-"tulos dos Objetos e Nomes da API"
+msgstr "Sincronizar rótulos dos Objetos e Nomes da API"
 
 #. js-lingui-id: D4SseJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
