@@ -83,11 +83,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     });
   };
 
-  const goToInvitePage = () => {
-    setMultiWorkspaceDropdownState('default');
-    closeDropdown();
-  };
-
   return (
     <DropdownMenuItemsContainer>
       <DropdownMenuHeader
