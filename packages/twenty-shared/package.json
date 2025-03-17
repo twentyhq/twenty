@@ -12,15 +12,15 @@
       "import": "./dist/constants.mjs",
       "require": "./dist/constants.js"
     },
-    "i18n": {
-      "types": "./dist/i18n.d.ts",
-      "import": "./dist/i18n.mjs",
-      "require": "./dist/i18n.js"
-    },
     "testing": {
       "types": "./dist/testing.d.ts",
       "import": "./dist/testing.mjs",
       "require": "./dist/testing.js"
+    },
+    "translations": {
+      "types": "./dist/translations.d.ts",
+      "import": "./dist/translations.mjs",
+      "require": "./dist/translations.js"
     },
     "types": {
       "types": "./dist/types.d.ts",

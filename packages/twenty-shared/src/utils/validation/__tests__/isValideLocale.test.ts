@@ -1,4 +1,4 @@
-import { APP_LOCALES } from '@/i18n/constants/AppLocales';
+import { APP_LOCALES } from '@/translations';
 import { isValidLocale } from '@/utils/validation/isValidLocale';
 describe('isValidLocale', () => {
   it('should return true for valid locales', () => {

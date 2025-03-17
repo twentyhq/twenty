@@ -1,4 +1,4 @@
-import { SOURCE_LOCALE } from 'src/i18n/constants/SourceLocale';
+import { SOURCE_LOCALE } from '@/translations/constants/SourceLocale';
 
 export const APP_LOCALES = {
   [SOURCE_LOCALE]: SOURCE_LOCALE,
