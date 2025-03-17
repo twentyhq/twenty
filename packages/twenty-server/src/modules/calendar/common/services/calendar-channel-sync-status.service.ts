@@ -6,6 +6,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
+import { HealthCounterCacheKeys } from 'src/engine/core-modules/health/types/health-counter-cache-keys.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   CalendarChannelSyncStage,
@@ -79,11 +80,6 @@ export class CalendarChannelSyncStatusService {
       syncStatus: CalendarChannelSyncStatus.ONGOING,
       syncStageStartedAt: new Date().toISOString(),
     });
-
-    await this.healthCacheService.incrementCalendarChannelSyncJobByStatusCounter(
-      CalendarChannelSyncStatus.ONGOING,
-      calendarChannelIds.length,
-    );
   }
 
   public async resetAndScheduleFullCalendarEventListFetch(
@@ -183,9 +179,10 @@ export class CalendarChannelSyncStatusService {
 
     await this.schedulePartialCalendarEventListFetch(calendarChannelIds);
 
-    await this.healthCacheService.incrementCalendarChannelSyncJobByStatusCounter(
+    await this.healthCacheService.updateMessageOrCalendarChannelSyncJobByStatusCache(
+      HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
       CalendarChannelSyncStatus.ACTIVE,
-      calendarChannelIds.length,
+      calendarChannelIds,
     );
   }
 
@@ -213,9 +210,10 @@ export class CalendarChannelSyncStatusService {
       syncStage: CalendarChannelSyncStage.FAILED,
     });
 
-    await this.healthCacheService.incrementCalendarChannelSyncJobByStatusCounter(
+    await this.healthCacheService.updateMessageOrCalendarChannelSyncJobByStatusCache(
+      HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
       CalendarChannelSyncStatus.FAILED_UNKNOWN,
-      calendarChannelIds.length,
+      calendarChannelIds,
     );
   }
 
@@ -268,9 +266,10 @@ export class CalendarChannelSyncStatusService {
       workspaceId,
     );
 
-    await this.healthCacheService.incrementCalendarChannelSyncJobByStatusCounter(
+    await this.healthCacheService.updateMessageOrCalendarChannelSyncJobByStatusCache(
+      HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
       CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-      calendarChannelIds.length,
+      calendarChannelIds,
     );
   }
 

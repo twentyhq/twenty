@@ -1,6 +1,5 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import {
   WorkflowTriggerType,
   WorkflowWithCurrentVersion,
@@ -26,8 +25,8 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const { openRightDrawer } = useRightDrawer();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+  const { openWorkflowEditStepInCommandMenu } = useCommandMenu();
 
   const handleTriggerTypeClick = ({
     type,
@@ -49,10 +48,11 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
 
       setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
-      openRightDrawer(RightDrawerPages.WorkflowStepEdit, {
-        title: defaultLabel,
-        Icon: getIcon(icon),
-      });
+      openWorkflowEditStepInCommandMenu(
+        workflow.id,
+        defaultLabel,
+        getIcon(icon),
+      );
     };
   };
 

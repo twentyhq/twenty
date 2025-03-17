@@ -12,15 +12,20 @@ import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { AdminPanelHealthServiceData } from './dtos/admin-panel-health-service-data.dto';
 import { QueueMetricsData } from './dtos/queue-metrics-data.dto';
+
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AdminPanelResolver {
@@ -28,6 +33,7 @@ export class AdminPanelResolver {
     private adminService: AdminPanelService,
     private adminPanelHealthService: AdminPanelHealthService,
     private workerHealthIndicator: WorkerHealthIndicator,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
@@ -51,28 +57,36 @@ export class AdminPanelResolver {
   async updateWorkspaceFeatureFlag(
     @Args() updateFlagInput: UpdateWorkspaceFeatureFlagInput,
   ): Promise<boolean> {
-    await this.adminService.updateWorkspaceFeatureFlags(
-      updateFlagInput.workspaceId,
-      updateFlagInput.featureFlag,
-      updateFlagInput.value,
-    );
+    try {
+      await this.featureFlagService.upsertWorkspaceFeatureFlag({
+        workspaceId: updateFlagInput.workspaceId,
+        featureFlag: updateFlagInput.featureFlag,
+        value: updateFlagInput.value,
+      });
 
-    return true;
+      return true;
+    } catch (error) {
+      if (error instanceof FeatureFlagException) {
+        throw new UserInputError(error.message);
+      }
+
+      throw error;
+    }
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => EnvironmentVariablesOutput)
   async getEnvironmentVariablesGrouped(): Promise<EnvironmentVariablesOutput> {
     return this.adminService.getEnvironmentVariablesGrouped();
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => SystemHealth)
   async getSystemHealthStatus(): Promise<SystemHealth> {
     return this.adminPanelHealthService.getSystemHealthStatus();
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => AdminPanelHealthServiceData)
   async getIndicatorHealthStatus(
     @Args('indicatorId', {
@@ -83,7 +97,7 @@ export class AdminPanelResolver {
     return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => QueueMetricsData)
   async getQueueMetrics(
     @Args('queueName', { type: () => String })

@@ -53,7 +53,7 @@ const StyledEndIcon = styled.div`
 
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   EndIcon?: IconComponent;
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (event: MouseEvent<HTMLLIElement>) => void;
   onStartIconClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
   className?: string;
@@ -81,12 +81,14 @@ export const DropdownMenuHeader = ({
           StartIcon={props.StartIcon}
         />
       )}
-      {'StartAvatar' in props && isDefined(props.StartAvatar) && (
-        <DropdownMenuHeaderStartIcon
-          onClick={onStartIconClick}
-          StartAvatar={props.StartAvatar}
-        />
-      )}
+      {!('StartIcon' in props) &&
+        'StartAvatar' in props &&
+        isDefined(props.StartAvatar) && (
+          <DropdownMenuHeaderStartIcon
+            onClick={onStartIconClick}
+            StartAvatar={props.StartAvatar}
+          />
+        )}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
       {'DropdownOnEndIcon' in props && (
         <StyledEndIcon>{props.DropdownOnEndIcon}</StyledEndIcon>

@@ -17,9 +17,9 @@ export const createListingCustomObject = async () => {
   const createObjectOperation = createOneObjectMetadataFactory({
     input: { object: LISTING_OBJECT },
     gqlFields: `
-            id
-            nameSingular
-        `,
+      id
+      nameSingular
+    `,
   });
 
   const response = await makeMetadataAPIRequest(createObjectOperation);

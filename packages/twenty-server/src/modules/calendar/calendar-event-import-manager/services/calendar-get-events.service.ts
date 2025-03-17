@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { ConnectedAccountProvider } from 'twenty-shared';
+
 import { GoogleCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
 import { MicrosoftCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-get-events.service';
 import {
@@ -31,12 +33,12 @@ export class CalendarGetCalendarEventsService {
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
     switch (connectedAccount.provider) {
-      case 'google':
+      case ConnectedAccountProvider.GOOGLE:
         return this.googleCalendarGetEventsService.getCalendarEvents(
           connectedAccount,
           syncCursor,
         );
-      case 'microsoft':
+      case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftCalendarGetEventsService.getCalendarEvents(
           connectedAccount,
           syncCursor,

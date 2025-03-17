@@ -15,7 +15,7 @@ export type AggregateRecordsData = {
   };
 };
 
-export const useAggregateRecords = ({
+export const useAggregateRecords = <T extends AggregateRecordsData>({
   objectNameSingular,
   filter,
   recordGqlFieldsAggregate,
@@ -63,7 +63,7 @@ export const useAggregateRecords = ({
 
   return {
     objectMetadataItem,
-    data: formattedData,
+    data: formattedData as T,
     loading,
     error,
   };

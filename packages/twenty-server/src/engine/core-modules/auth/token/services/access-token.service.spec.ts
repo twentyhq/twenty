@@ -39,6 +39,7 @@ describe('AccessTokenService', () => {
             verifyWorkspaceToken: jest.fn(),
             decode: jest.fn(),
             generateAppSecret: jest.fn(),
+            extractJwtFromRequest: jest.fn(),
           },
         },
         {
@@ -180,6 +181,9 @@ describe('AccessTokenService', () => {
       };
 
       jest
+        .spyOn(jwtWrapperService, 'extractJwtFromRequest')
+        .mockReturnValue(() => mockToken);
+      jest
         .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
         .mockResolvedValue(undefined);
       jest
@@ -206,6 +210,10 @@ describe('AccessTokenService', () => {
       const mockRequest = {
         headers: {},
       } as Request;
+
+      jest
+        .spyOn(jwtWrapperService, 'extractJwtFromRequest')
+        .mockReturnValue(() => null);
 
       await expect(service.validateTokenByRequest(mockRequest)).rejects.toThrow(
         AuthException,

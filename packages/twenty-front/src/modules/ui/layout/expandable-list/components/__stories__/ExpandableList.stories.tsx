@@ -65,8 +65,3 @@ export const WithExpandedList: Story = {
     expect(await rootCanvas.findByText('Option 7')).toBeDefined();
   },
 };
-
-export const WithExpandedListBorder: Story = {
-  ...WithExpandedList,
-  args: { ...WithExpandedList.args, withExpandedListBorder: true },
-};

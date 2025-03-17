@@ -7,6 +7,38 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
 
+const SettingsApiKeys = lazy(() =>
+  import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
+    (module) => ({
+      default: module.SettingsApiKeys,
+    }),
+  ),
+);
+
+const SettingsGraphQLPlayground = lazy(() =>
+  import(
+    '~/pages/settings/developers/playground/SettingsGraphQLPlayground'
+  ).then((module) => ({
+    default: module.SettingsGraphQLPlayground,
+  })),
+);
+
+const SettingsRestPlayground = lazy(() =>
+  import('~/pages/settings/developers/playground/SettingsRestPlayground').then(
+    (module) => ({
+      default: module.SettingsRestPlayground,
+    }),
+  ),
+);
+
+const SettingsWebhooks = lazy(() =>
+  import(
+    '~/pages/settings/developers/webhooks/components/SettingsWebhooks'
+  ).then((module) => ({
+    default: module.SettingsWebhooks,
+  })),
+);
+
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
     (module) => ({
@@ -137,12 +169,6 @@ const SettingsBilling = lazy(() =>
   })),
 );
 
-const SettingsDevelopers = lazy(() =>
-  import('~/pages/settings/developers/SettingsDevelopers').then((module) => ({
-    default: module.SettingsDevelopers,
-  })),
-);
-
 const SettingsIntegrations = lazy(() =>
   import('~/pages/settings/integrations/SettingsIntegrations').then(
     (module) => ({
@@ -248,19 +274,19 @@ const SettingsAdmin = lazy(() =>
   })),
 );
 
-const SettingsAdminContent = lazy(() =>
-  import('@/settings/admin-panel/components/SettingsAdminContent').then(
-    (module) => ({
-      default: module.SettingsAdminContent,
-    }),
-  ),
-);
-
 const SettingsAdminIndicatorHealthStatus = lazy(() =>
   import(
     '~/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus'
   ).then((module) => ({
     default: module.SettingsAdminIndicatorHealthStatus,
+  })),
+);
+
+const SettingsAdminSecondaryEnvVariables = lazy(() =>
+  import(
+    '~/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables'
+  ).then((module) => ({
+    default: module.SettingsAdminSecondaryEnvVariables,
   })),
 );
 
@@ -376,9 +402,15 @@ export const SettingsRoutes = ({
           />
         }
       >
+        <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
+        <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
         <Route
-          path={SettingsPath.Developers}
-          element={<SettingsDevelopers />}
+          path={`${SettingsPath.GraphQLPlayground}`}
+          element={<SettingsGraphQLPlayground />}
+        />
+        <Route
+          path={`${SettingsPath.RestPlayground}/*`}
+          element={<SettingsRestPlayground />}
         />
         <Route
           path={SettingsPath.DevelopersNewApiKey}
@@ -452,12 +484,12 @@ export const SettingsRoutes = ({
         <>
           <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
           <Route
-            path={SettingsPath.FeatureFlags}
-            element={<SettingsAdminContent />}
-          />
-          <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelOtherEnvVariables}
+            element={<SettingsAdminSecondaryEnvVariables />}
           />
         </>
       )}

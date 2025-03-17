@@ -1,7 +1,7 @@
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -17,9 +17,7 @@ export const ViewBarRecordFilterEffect = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
-  );
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const currentView = useRecoilValue(
     prefetchViewFromViewIdFamilySelector({
@@ -42,15 +40,12 @@ export const ViewBarRecordFilterEffect = () => {
   );
 
   const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
-    contextStoreCurrentObjectMetadataItem?.id,
+    objectMetadataItem.id,
   );
 
   useEffect(() => {
     if (isDefined(currentView) && !hasInitializedCurrentRecordFilters) {
-      if (
-        currentView.objectMetadataId !==
-        contextStoreCurrentObjectMetadataItem?.id
-      ) {
+      if (currentView.objectMetadataId !== objectMetadataItem.id) {
         return;
       }
 
@@ -71,8 +66,8 @@ export const ViewBarRecordFilterEffect = () => {
     filterableFieldMetadataItems,
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
-    contextStoreCurrentObjectMetadataItem?.id,
     currentView,
+    objectMetadataItem,
   ]);
 
   return null;

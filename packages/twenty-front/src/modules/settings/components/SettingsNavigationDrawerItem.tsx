@@ -29,7 +29,7 @@ export const SettingsNavigationDrawerItem = ({
 
   if (isDefined(item.isAdvanced) && item.isAdvanced) {
     return (
-      <AdvancedSettingsWrapper navigationDrawerItem>
+      <AdvancedSettingsWrapper>
         <NavigationDrawerItem
           indentationLevel={item.indentationLevel}
           subItemState={subItemState}

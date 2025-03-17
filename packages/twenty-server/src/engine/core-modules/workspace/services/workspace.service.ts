@@ -43,6 +43,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -271,9 +272,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
+    const appVersion = this.environmentService.get('APP_VERSION');
+
     await this.workspaceRepository.update(workspace.id, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
+      version: extractVersionMajorMinorPatch(appVersion),
     });
 
     return await this.workspaceRepository.findOneBy({

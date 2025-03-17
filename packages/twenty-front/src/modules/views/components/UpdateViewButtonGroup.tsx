@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import {
   Button,
   ButtonGroup,
+  IconButton,
   IconChevronDown,
   IconPlus,
   MenuItem,
@@ -32,9 +33,7 @@ const StyledContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
 `;
-const StyledButton = styled(Button)`
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
+
 export type UpdateViewButtonGroupProps = {
   hotkeyScope: HotkeyScope;
 };
@@ -116,7 +115,7 @@ export const UpdateViewButtonGroup = ({
             dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
             dropdownHotkeyScope={hotkeyScope}
             clickableComponent={
-              <StyledButton
+              <IconButton
                 size="small"
                 accent="blue"
                 Icon={IconChevronDown}

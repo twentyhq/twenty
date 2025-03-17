@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { assertUnreachable, ConnectedAccountProvider } from 'twenty-shared';
+import { z } from 'zod';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
+import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 
 interface SendMessageInput {
   body: string;
@@ -13,7 +15,10 @@ interface SendMessageInput {
 
 @Injectable()
 export class MessagingSendMessageService {
-  constructor(private readonly gmailClientProvider: GmailClientProvider) {}
+  constructor(
+    private readonly gmailClientProvider: GmailClientProvider,
+    private readonly microsoftClientProvider: MicrosoftClientProvider,
+  ) {}
 
   public async sendMessage(
     sendMessageInput: SendMessageInput,
@@ -43,9 +48,30 @@ export class MessagingSendMessageService {
         });
         break;
       }
-      case ConnectedAccountProvider.MICROSOFT:
-        // TODO: Implement Microsoft provider
-        throw new Error('Microsoft provider not implemented');
+      case ConnectedAccountProvider.MICROSOFT: {
+        const microsoftClient =
+          await this.microsoftClientProvider.getMicrosoftClient(
+            connectedAccount,
+          );
+
+        const message = {
+          subject: sendMessageInput.subject,
+          body: {
+            contentType: 'Text',
+            content: sendMessageInput.body,
+          },
+          toRecipients: [{ emailAddress: { address: sendMessageInput.to } }],
+        };
+
+        const response = await microsoftClient
+          .api(`/me/messages`)
+          .post(message);
+
+        z.string().parse(response.id);
+
+        await microsoftClient.api(`/me/messages/${response.id}/send`).post({});
+        break;
+      }
       default:
         assertUnreachable(
           connectedAccount.provider,

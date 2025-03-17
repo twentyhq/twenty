@@ -1,4 +1,6 @@
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
+import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowState } from '@/workflow/states/flowState';
 import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
@@ -13,10 +15,12 @@ export const WorkflowRunVisualizerEffect = ({
   workflowRunId: string;
 }) => {
   const workflowRun = useWorkflowRun({ workflowRunId });
+  const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
 
   const setWorkflowRunId = useSetRecoilState(workflowRunIdState);
   const setFlow = useSetRecoilState(flowState);
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
+  const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   useEffect(() => {
     setWorkflowRunId(workflowRunId);
@@ -31,6 +35,7 @@ export const WorkflowRunVisualizerEffect = ({
     }
 
     setFlow({
+      workflowVersionId: workflowRun.workflowVersionId,
       trigger: workflowRun.output.flow.trigger,
       steps: workflowRun.output.flow.steps,
     });
@@ -42,7 +47,20 @@ export const WorkflowRunVisualizerEffect = ({
     });
 
     setWorkflowDiagram(nextWorkflowDiagram);
-  }, [setFlow, setWorkflowDiagram, workflowRun?.output]);
+  }, [
+    setFlow,
+    setWorkflowDiagram,
+    workflowRun?.output,
+    workflowRun?.workflowVersionId,
+  ]);
+
+  useEffect(() => {
+    if (!isDefined(workflowVersion)) {
+      return;
+    }
+
+    populateStepsOutputSchema(workflowVersion);
+  }, [populateStepsOutputSchema, workflowVersion]);
 
   return null;
 };

@@ -26,6 +26,10 @@ const StyledHeaderTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xl};
   width: 420px;
   overflow: hidden;
+
+  & > input:disabled {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
 `;
 
 const StyledHeaderType = styled.div`

@@ -2,10 +2,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
-const StyledLabelContainer = styled.span`
+const StyledLabelContainer = styled.span<{ isHighlighted?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border-color: ${({ theme }) => theme.border.color.medium};
+  color: ${({ theme, isHighlighted }) =>
+    isHighlighted ? theme.color.blue : theme.font.color.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border-style: solid;
   border-width: 1px;
@@ -23,15 +25,20 @@ const StyledLabelContainer = styled.span`
 export const JsonNodeLabel = ({
   label,
   Icon,
+  isHighlighted,
 }: {
   label: string;
   Icon: IconComponent;
+  isHighlighted?: boolean;
 }) => {
   const theme = useTheme();
 
   return (
-    <StyledLabelContainer>
-      <Icon size={theme.icon.size.md} color={theme.font.color.tertiary} />
+    <StyledLabelContainer isHighlighted={isHighlighted}>
+      <Icon
+        size={theme.icon.size.md}
+        color={isHighlighted ? theme.color.blue : theme.font.color.tertiary}
+      />
 
       <span>{label}</span>
     </StyledLabelContainer>

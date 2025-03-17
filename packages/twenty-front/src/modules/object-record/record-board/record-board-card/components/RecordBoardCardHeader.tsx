@@ -19,7 +19,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -125,9 +125,7 @@ export const RecordBoardCardHeader = ({
     return [updateEntity, { loading: false }];
   };
 
-  const recordIndexOpenRecordIn = useRecoilValue(
-    recordIndexOpenRecordInSelector,
-  );
+  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
   return (
     <RecordBoardCardHeaderContainer showCompactView={showCompactView}>
@@ -138,20 +136,10 @@ export const RecordBoardCardHeader = ({
               autoFocus
               value={newLabelValue}
               onInputEnter={() =>
-                handleInputEnter(
-                  identifierFieldDefinition.label ?? '',
-                  newLabelValue,
-                  position,
-                  onCreateSuccess,
-                )
+                handleInputEnter(newLabelValue, position, onCreateSuccess)
               }
               onBlur={() =>
-                handleBlur(
-                  identifierFieldDefinition.label ?? '',
-                  newLabelValue,
-                  position,
-                  onCreateSuccess,
-                )
+                handleBlur(newLabelValue, position, onCreateSuccess)
               }
               onChange={(text: string) => setNewLabelValue(text)}
               placeholder={identifierFieldDefinition.label}

@@ -8,17 +8,24 @@ import { FieldFocusContextProvider } from '@/object-record/record-field/contexts
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
-import { RelationPickerHotkeyScope } from '@/object-record/record-field/meta-types/input/types/RelationPickerHotkeyScope';
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
+import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useRecoilCallback } from 'recoil';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
@@ -39,6 +46,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     onOpenEditMode,
     onCloseEditMode,
   } = useContext(FieldContext);
+
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -101,13 +109,40 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   );
 
   const { getIcon } = useIcons();
+  const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
+
+  // TODO: deprecate this and use useOpenFieldInput hooks to set the hotkey scope
+  const computedHotkeyScope = (
+    columnDefinition: FieldDefinition<FieldMetadata>,
+  ) => {
+    if (isFieldRelation(columnDefinition)) {
+      if (
+        columnDefinition.metadata.relationType ===
+        RelationDefinitionType.MANY_TO_ONE
+      ) {
+        return SingleRecordPickerHotkeyScope.SingleRecordPicker;
+      }
+
+      if (
+        columnDefinition.metadata.relationType ===
+        RelationDefinitionType.ONE_TO_MANY
+      ) {
+        return MultipleRecordPickerHotkeyScope.MultipleRecordPicker;
+      }
+
+      return SingleRecordPickerHotkeyScope.SingleRecordPicker;
+    }
+
+    if (isFieldSelect(columnDefinition)) {
+      return SelectFieldHotkeyScope.SelectField;
+    }
+
+    return undefined;
+  };
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
     readonly: isFieldReadOnly,
     buttonIcon: buttonIcon,
-    customEditHotkeyScope: isFieldRelation(fieldDefinition)
-      ? { scope: RelationPickerHotkeyScope.RelationPicker }
-      : undefined,
     IconLabel: fieldDefinition.iconName
       ? getIcon(fieldDefinition.iconName)
       : undefined,
@@ -135,8 +170,10 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
-    onOpenEditMode,
-    onCloseEditMode,
+    customEditHotkeyScope: computedHotkeyScope(fieldDefinition),
+    onOpenEditMode:
+      onOpenEditMode ?? (() => openFieldInput({ fieldDefinition, recordId })),
+    onCloseEditMode: onCloseEditMode ?? (() => closeFieldInput()),
   };
 
   return (

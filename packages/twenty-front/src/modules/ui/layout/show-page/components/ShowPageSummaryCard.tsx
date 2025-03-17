@@ -62,10 +62,17 @@ const StyledTitle = styled.div<{ isMobile: boolean }>`
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
+  padding-left: ${({ theme, isMobile }) => (isMobile ? theme.spacing(2) : 0)};
   width: 90%;
 `;
 
-const StyledAvatarWrapper = styled.div<{ isAvatarEditable: boolean }>`
+const StyledAvatarWrapper = styled.div<{
+  isAvatarEditable: boolean;
+  hasIcon: boolean;
+}>`
+  background-color: ${({ theme, hasIcon }) =>
+    hasIcon ? theme.background.transparent.light : 'unset'};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: ${({ isAvatarEditable }) =>
     isAvatarEditable ? 'pointer' : 'default'};
 `;
@@ -133,7 +140,10 @@ export const ShowPageSummaryCard = ({
 
   return (
     <StyledShowPageSummaryCard isMobile={isMobile}>
-      <StyledAvatarWrapper isAvatarEditable={!!onUploadPicture}>
+      <StyledAvatarWrapper
+        isAvatarEditable={isDefined(onUploadPicture)}
+        hasIcon={isDefined(icon)}
+      >
         <Avatar
           avatarUrl={logoOrAvatar}
           onClick={onUploadPicture ? handleAvatarClick : undefined}
