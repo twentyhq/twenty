@@ -69,6 +69,7 @@ export const ActivityRichTextEditor = ({
     fieldType: FieldMetadataType.RICH_TEXT_V2,
     hasObjectReadOnlyPermission,
     contextStoreCurrentViewType,
+    isRecordDeleted: activityInStore?.deletedAt !== null,
   });
 
   const {
