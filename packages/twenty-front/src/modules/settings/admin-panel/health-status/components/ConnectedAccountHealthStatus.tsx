@@ -52,7 +52,7 @@ export const ConnectedAccountHealthStatus = () => {
         <SettingsAdminHealthAccountSyncCountersTable
           details={serviceDetails.messageSync.details}
           title={t`Message Sync`}
-          description={t`Monitor the execution of your email sync job`}
+          description={t`Monitor the execution of your emails sync job`}
         />
       )}
 
