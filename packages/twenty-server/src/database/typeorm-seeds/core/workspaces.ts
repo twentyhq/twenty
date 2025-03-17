@@ -2,6 +2,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared';
 import { DataSource } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 const tableName = 'workspace';
 
@@ -12,14 +13,16 @@ export type SeedWorkspaceArgs = {
   workspaceDataSource: DataSource;
   schemaName: string;
   workspaceId: string;
-  version: string | undefined;
+  appVersion: string | undefined;
 };
 export const seedWorkspaces = async ({
   schemaName,
   workspaceDataSource,
   workspaceId,
-  version,
+  appVersion,
 }: SeedWorkspaceArgs) => {
+  const version = extractVersionMajorMinorPatch(appVersion);
+  console.log({ appVersion, version });
   const workspaces: {
     [key: string]: Pick<
       Workspace,
@@ -39,7 +42,7 @@ export const seedWorkspaces = async ({
       inviteHash: 'apple.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      version: version ?? null,
+      version: version,
     },
     [SEED_ACME_WORKSPACE_ID]: {
       id: workspaceId,
@@ -48,7 +51,7 @@ export const seedWorkspaces = async ({
       inviteHash: 'acme.dev-invite-hash',
       logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      version: version ?? null,
+      version: version,
     },
   };
 
@@ -62,6 +65,7 @@ export const seedWorkspaces = async ({
       'inviteHash',
       'logo',
       'activationStatus',
+      'version',
     ])
     .orIgnore()
     .values(workspaces[workspaceId])
