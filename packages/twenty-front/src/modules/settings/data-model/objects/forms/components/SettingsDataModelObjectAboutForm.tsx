@@ -171,9 +171,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={
-                !(objectMetadataItem?.isCustom ?? true) && isLabelSyncedWithName
-              }
+              disabled={!objectMetadataItem?.isCustom && isLabelSyncedWithName}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -199,9 +197,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={
-                !(objectMetadataItem?.isCustom ?? true) && isLabelSyncedWithName
-              }
+              disabled={!objectMetadataItem?.isCustom && isLabelSyncedWithName}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
