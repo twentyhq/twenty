@@ -1,4 +1,3 @@
-import { JsonTree } from '@/workflow/components/json-visualizer/components/JsonTree';
 import { Meta, StoryObj } from '@storybook/react';
 import {
   expect,
@@ -6,14 +5,13 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
 
 const meta: Meta<typeof JsonTree> = {
   title: 'Modules/Workflow/JsonVisualizer/JsonTree',
   component: JsonTree,
   args: {},
   argTypes: {},
-  decorators: [I18nFrontDecorator],
 };
 
 export default meta;

@@ -1,12 +1,12 @@
-import { JsonArrow } from '@/workflow/components/json-visualizer/components/internal/JsonArrow';
-import { JsonList } from '@/workflow/components/json-visualizer/components/internal/JsonList';
-import { JsonNodeLabel } from '@/workflow/components/json-visualizer/components/internal/JsonNodeLabel';
-import { JsonNode } from '@/workflow/components/json-visualizer/components/JsonNode';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { IconComponent } from '@ui/display';
+import { JsonArrow } from '@ui/json-visualizer/components/internal/JsonArrow';
+import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
+import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
+import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
-import { IconComponent } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 
 const StyledContainer = styled.li`
@@ -37,7 +37,6 @@ export const JsonNestedNode = ({
   emptyElementsText,
   depth,
   keyPath,
-  shouldHighlightNode,
 }: {
   label?: string;
   Icon: IconComponent;
@@ -46,7 +45,6 @@ export const JsonNestedNode = ({
   emptyElementsText: string;
   depth: number;
   keyPath: string;
-  shouldHighlightNode?: (keyPath: string) => boolean;
 }) => {
   const hideRoot = !isDefined(label);
 
@@ -69,7 +67,6 @@ export const JsonNestedNode = ({
               value={value}
               depth={depth + 1}
               keyPath={nextKeyPath}
-              shouldHighlightNode={shouldHighlightNode}
             />
           );
         })

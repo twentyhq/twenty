@@ -1,6 +1,6 @@
-import { JsonNestedNode } from '@/workflow/components/json-visualizer/components/JsonNestedNode';
-import { useLingui } from '@lingui/react/macro';
-import { IconCube } from 'twenty-ui';
+import { IconCube } from '@ui/display';
+import { JsonNestedNode } from '@ui/json-visualizer/components/JsonNestedNode';
+import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { JsonObject } from 'type-fest';
 
 export const JsonObjectNode = ({
@@ -8,15 +8,13 @@ export const JsonObjectNode = ({
   value,
   depth,
   keyPath,
-  shouldHighlightNode,
 }: {
   label?: string;
   value: JsonObject;
   depth: number;
   keyPath: string;
-  shouldHighlightNode?: (keyPath: string) => boolean;
 }) => {
-  const { t } = useLingui();
+  const { emptyObjectLabel } = useJsonTreeContextOrThrow();
 
   return (
     <JsonNestedNode
@@ -29,9 +27,8 @@ export const JsonObjectNode = ({
       label={label}
       Icon={IconCube}
       depth={depth}
-      emptyElementsText={t`Empty Object`}
+      emptyElementsText={emptyObjectLabel}
       keyPath={keyPath}
-      shouldHighlightNode={shouldHighlightNode}
     />
   );
 };
