@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -26,6 +27,7 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const commandMenu = useCommandMenu();
+      const commandMenuHistory = useCommandMenuHistory();
       const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
       const commandMenuNavigationStack = useRecoilValue(
         commandMenuNavigationStackState,
@@ -35,6 +37,7 @@ const renderHooks = () => {
 
       return {
         commandMenu,
+        commandMenuHistory,
         isCommandMenuOpened,
         commandMenuNavigationStack,
         commandMenuPage,
@@ -186,7 +189,7 @@ describe('useCommandMenu', () => {
     ]);
 
     act(() => {
-      result.current.commandMenu.goBackFromCommandMenu();
+      result.current.commandMenuHistory.goBackFromCommandMenu();
     });
 
     expect(result.current.commandMenuNavigationStack).toEqual([
@@ -205,7 +208,7 @@ describe('useCommandMenu', () => {
     });
 
     act(() => {
-      result.current.commandMenu.goBackFromCommandMenu();
+      result.current.commandMenuHistory.goBackFromCommandMenu();
       result.current.commandMenu.onCommandMenuCloseAnimationComplete();
     });
 
@@ -232,7 +235,7 @@ describe('useCommandMenu', () => {
     });
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenuHistory(0);
+      result.current.commandMenuHistory.navigateCommandMenuHistory(0);
     });
 
     expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
