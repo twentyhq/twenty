@@ -6,27 +6,17 @@ import {
   within,
 } from '@storybook/test';
 import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
-import { JsonTreeContextProvider } from '@ui/json-visualizer/components/JsonTreeContextProvider';
 
 const meta: Meta<typeof JsonTree> = {
   title: 'UI/JsonVisualizer/JsonTree',
   component: JsonTree,
-  args: {},
+  args: {
+    emptyArrayLabel: 'Empty Array',
+    emptyObjectLabel: 'Empty Object',
+    arrowButtonCollapsedLabel: 'Expand',
+    arrowButtonExpandedLabel: 'Collapse',
+  },
   argTypes: {},
-  decorators: [
-    (Story) => (
-      <JsonTreeContextProvider
-        value={{
-          emptyArrayLabel: 'Empty Array',
-          emptyObjectLabel: 'Empty Object',
-          arrowButtonCollapsedLabel: 'Expand',
-          arrowButtonExpandedLabel: 'Collapse',
-        }}
-      >
-        <Story />
-      </JsonTreeContextProvider>
-    ),
-  ],
 };
 
 export default meta;
