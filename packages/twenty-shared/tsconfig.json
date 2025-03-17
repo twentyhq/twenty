@@ -7,7 +7,7 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "twenty-shared": ["packages/twenty-shared/dist"]
+      "@/*": ["./src/*"]
     }
   },
   "files": [],
