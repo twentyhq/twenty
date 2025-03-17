@@ -261,8 +261,11 @@ describe('SignInUpService', () => {
       .mockResolvedValue('a-subdomain');
     jest
       .spyOn(UserRepository, 'save')
+
       .mockResolvedValue({ id: 'newUserId' } as User);
-    jest.spyOn(userWorkspaceService, 'create').mockResolvedValue({} as UserWorkspace);
+    jest
+      .spyOn(userWorkspaceService, 'create')
+      .mockResolvedValue({} as UserWorkspace);
 
     const result = await service.signInUp(params);
 
