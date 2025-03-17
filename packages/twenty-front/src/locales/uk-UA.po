@@ -318,6 +318,11 @@ msgstr "Панель адміністратора"
 msgid "Advanced filter"
 msgstr "Розширений фільтр"
 
+#. js-lingui-id: WsKDNF
+#: src/modules/navigation/components/AppNavigationDrawer.tsx
+msgid "Advanced:"
+msgstr "Розширені:"
+
 #. js-lingui-id: 1Cox/a
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Afrikaans"
@@ -645,10 +650,15 @@ msgstr "Календар"
 msgid "Calendar settings"
 msgstr "Налаштування календаря"
 
+#. js-lingui-id: LbIh3Y
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Calendar Sync"
+msgstr ""
+
 #. js-lingui-id: HlJKLT
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
-msgid "Calendar Sync Status"
-msgstr "Статус синхронізації календаря"
+#~ msgid "Calendar Sync Status"
+#~ msgstr "Статус синхронізації календаря"
 
 #. js-lingui-id: EUpfsd
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -1230,10 +1240,7 @@ msgstr ""
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
-msgstr ""
-"\n"
-"              \n"
-"              Видалити цю інтеграцію"
+msgstr "Видалити цю інтеграцію"
 
 #. js-lingui-id: aRG49z
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -1244,10 +1251,7 @@ msgstr "Видалити перегляд"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Delete webhook"
-msgstr ""
-"\n"
-"              \n"
-"              Видалити вебхук"
+msgstr "Видалити вебхук"
 
 #. js-lingui-id: UA2IpC
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -1263,18 +1267,12 @@ msgstr "Видалити workflows "
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete workspace"
-msgstr ""
-"\n"
-"              \n"
-"              Видалити робочу область"
+msgstr "Видалити робочий простір"
 
 #. js-lingui-id: mk2Ygs
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete your whole workspace"
-msgstr ""
-"\n"
-"              \n"
-"              Видалити всю вашу робочу область"
+msgstr "Видалити робоче середовище"
 
 #. js-lingui-id: vGjmyl
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -1310,20 +1308,14 @@ msgstr "Видалені робочі процеси"
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
-msgstr ""
-"\n"
-"              \n"
-"              По спадаючій"
+msgstr "По спадаючій"
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Description"
-msgstr ""
-"\n"
-"              \n"
-"              Опис"
+msgstr "Опис"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -1339,19 +1331,13 @@ msgstr ""
 #. js-lingui-id: n+SX4g
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Developers"
-msgstr ""
-"\n"
-"              \n"
-"              Розробники"
+msgstr "Розробники"
 
 #. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
-msgstr ""
-"\n"
-"              \n"
-"              Відмінити чернетку"
+msgstr "Відмінити чернетку"
 
 #. js-lingui-id: Xm/s+u
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -1366,10 +1352,7 @@ msgstr "Відображати як звичайне число або відс�
 #. js-lingui-id: i66xz9
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
-msgstr ""
-"\n"
-"              \n"
-"              Показувати як відносну дату"
+msgstr "Показувати як відносну дату"
 
 #. js-lingui-id: GoHpxA
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
@@ -1387,10 +1370,7 @@ msgstr "Не містить"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
-msgstr ""
-"\n"
-"              \n"
-"              Домен"
+msgstr "Домен"
 
 #. js-lingui-id: yGpVSw
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -1431,26 +1411,17 @@ msgstr "Голландська"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "E.g. backoffice integration"
-msgstr ""
-"\n"
-"              \n"
-"              Наприклад, інтеграція з бекофісом"
+msgstr "Наприклад, інтеграція з бекофісом"
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Earliest"
-msgstr ""
-"\n"
-"              \n"
-"              Найраніше"
+msgstr "Найраніше"
 
 #. js-lingui-id: JTbQuO
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Earliest date"
-msgstr ""
-"\n"
-"              \n"
-"              Найраніша дата"
+msgstr "Найраніша дата"
 
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -1461,10 +1432,7 @@ msgstr "Редагувати"
 #. js-lingui-id: v+uKyy
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
-msgstr ""
-"\n"
-"              \n"
-"              Редагувати інтервал білінгу"
+msgstr "Редагувати інтервал білінгу"
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -1589,10 +1557,7 @@ msgstr "Порожній об'єкт"
 #. js-lingui-id: T3juzf
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
-msgstr ""
-"\n"
-"              \n"
-"              URL-адреса ендпоінту"
+msgstr "URL-адреса ендпоінту"
 
 #. js-lingui-id: lYGfRP
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2501,10 +2466,15 @@ msgstr "Максимум"
 msgid "Members"
 msgstr "Члени"
 
+#. js-lingui-id: elpx6r
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Message Sync"
+msgstr ""
+
 #. js-lingui-id: Lt5rXo
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
-msgid "Message Sync Status"
-msgstr "Статус синхронізації повідомлень"
+#~ msgid "Message Sync Status"
+#~ msgstr "Статус синхронізації повідомлень"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2524,6 +2494,16 @@ msgstr "Не вдалося згенерувати файл метаданих"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Min"
 msgstr "Мінімум"
+
+#. js-lingui-id: 8g3Cgz
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Monitor the execution of your calendar events sync job"
+msgstr ""
+
+#. js-lingui-id: IL/nIb
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Monitor the execution of your emails sync job"
+msgstr ""
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx

@@ -318,6 +318,11 @@ msgstr "Admin Panel"
 msgid "Advanced filter"
 msgstr "Avansert filter"
 
+#. js-lingui-id: WsKDNF
+#: src/modules/navigation/components/AppNavigationDrawer.tsx
+msgid "Advanced:"
+msgstr "Avansert:"
+
 #. js-lingui-id: 1Cox/a
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Afrikaans"
@@ -645,10 +650,15 @@ msgstr "Kalender"
 msgid "Calendar settings"
 msgstr "Kalenderinnstillinger"
 
+#. js-lingui-id: LbIh3Y
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Calendar Sync"
+msgstr ""
+
 #. js-lingui-id: HlJKLT
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
-msgid "Calendar Sync Status"
-msgstr "Kalendersynkroniseringsstatus"
+#~ msgid "Calendar Sync Status"
+#~ msgstr "Kalendersynkroniseringsstatus"
 
 #. js-lingui-id: EUpfsd
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -961,12 +971,12 @@ msgstr "Opprett"
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
-msgstr "Opprett en arbeidsflyt og kom tilbake her for \fn vise versjonene"
+msgstr "Opprett en arbeidsflyt og kom tilbake hit for å vise versjonene"
 
 #. js-lingui-id: uXGLuq
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
-msgstr "Opprett API-n\fkkel"
+msgstr "Opprett API-nøkkel"
 
 #. js-lingui-id: d0DCww
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -1127,7 +1137,7 @@ msgstr "Deaktiver"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
-msgstr "Deaktiver \\"
+msgstr "Deaktiver \"Synkroniser objektetiketter og API-navn\" for å sette et egendefinert API-navn"
 
 #. js-lingui-id: T2YbXF
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -2445,10 +2455,15 @@ msgstr "Maks"
 msgid "Members"
 msgstr "Medlemmer"
 
+#. js-lingui-id: elpx6r
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Message Sync"
+msgstr ""
+
 #. js-lingui-id: Lt5rXo
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
-msgid "Message Sync Status"
-msgstr "Meldingssynkroniseringsstatus"
+#~ msgid "Message Sync Status"
+#~ msgstr "Meldingssynkroniseringsstatus"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2468,6 +2483,16 @@ msgstr "Generering av metadatafil mislyktes"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Min"
 msgstr "Min"
+
+#. js-lingui-id: 8g3Cgz
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Monitor the execution of your calendar events sync job"
+msgstr ""
+
+#. js-lingui-id: IL/nIb
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Monitor the execution of your emails sync job"
+msgstr ""
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx

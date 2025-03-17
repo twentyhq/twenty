@@ -1949,9 +1949,7 @@ msgstr "Synkkurs"
 #. js-lingui-id: awvBUx
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
-msgstr ""
-"Synkkurs. Anv\"ands f\"or att synkronisera h\"andelser fr\n"
-"n kalenderleverant\"oren"
+msgstr "Synkronisera markören. Används för att synkronisera händelser från kalenderleverantören"
 
 #. js-lingui-id: dNAbG6
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts

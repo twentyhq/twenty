@@ -18,253 +18,315 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
 "X-Crowdin-File-ID: 31\n"
 
+#. js-lingui-id: Qyrd7v
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "(System) View Fields"
 msgstr "crwdns819:0crwdne819:0"
 
+#. js-lingui-id: 9Y3fTB
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "(System) View Filter Groups"
 msgstr "crwdns821:0crwdne821:0"
 
+#. js-lingui-id: TB2jLV
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "(System) View Filters"
 msgstr "crwdns823:0crwdne823:0"
 
+#. js-lingui-id: Y7M7Ro
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "(System) View Groups"
 msgstr "crwdns825:0crwdne825:0"
 
+#. js-lingui-id: 9vliLw
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "(System) View Sorts"
 msgstr "crwdns827:0crwdne827:0"
 
+#. js-lingui-id: 5B59WE
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "(System) Views"
 msgstr "crwdns829:0crwdne829:0"
 
+#. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
 msgstr "crwdns831:0crwdne831:0"
 
+#. js-lingui-id: +aeifv
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "A connected account"
 msgstr "crwdns833:0crwdne833:0"
 
+#. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "A favorite that can be accessed from the left menu"
 msgstr "crwdns835:0crwdne835:0"
 
+#. js-lingui-id: 6w8bHl
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "A Folder of favorites"
 msgstr "crwdns837:0crwdne837:0"
 
+#. js-lingui-id: sSGYmf
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "crwdns839:0crwdne839:0"
 
+#. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "crwdns841:0crwdne841:0"
 
+#. js-lingui-id: bufuBA
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "A note"
 msgstr "crwdns843:0crwdne843:0"
 
+#. js-lingui-id: 6kUkZW
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "A note target"
 msgstr "crwdns845:0crwdne845:0"
 
+#. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "A person"
 msgstr "crwdns847:0crwdne847:0"
 
+#. js-lingui-id: mkFXEH
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "A task"
 msgstr "crwdns849:0crwdne849:0"
 
+#. js-lingui-id: hk2NzW
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "A task target"
 msgstr "crwdns851:0crwdne851:0"
 
+#. js-lingui-id: HTSJFW
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "A webhook"
 msgstr "crwdns853:0crwdne853:0"
 
+#. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "A workflow"
 msgstr "crwdns855:0crwdne855:0"
 
+#. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "A workflow event listener"
 msgstr "crwdns857:0crwdne857:0"
 
+#. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "A workflow run"
 msgstr "crwdns859:0crwdne859:0"
 
+#. js-lingui-id: N0g7rp
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "A workflow version"
 msgstr "crwdns861:0crwdne861:0"
 
+#. js-lingui-id: HpZ/I5
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "A workspace member"
 msgstr "crwdns863:0crwdne863:0"
 
+#. js-lingui-id: GDKKxT
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Access Token"
 msgstr "crwdns865:0crwdne865:0"
 
+#. js-lingui-id: pd81Qb
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Account Owner"
 msgstr "crwdns867:0crwdne867:0"
 
+#. js-lingui-id: loqL/f
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Account owner for companies"
 msgstr "crwdns869:0crwdne869:0"
 
+#. js-lingui-id: HZosRi
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Account Owner For Companies"
 msgstr "crwdns871:0crwdne871:0"
 
+#. js-lingui-id: 48AxkT
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Action needed to prevent workspace deletion"
 msgstr "crwdns4965:0crwdne4965:0"
 
+#. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Reset Password"
 msgstr "crwdns4971:0crwdne4971:0"
 
+#. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
 msgstr "crwdns873:0crwdne873:0"
 
+#. js-lingui-id: JiOJxf
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address (deprecated) "
 msgstr "crwdns875:0crwdne875:0"
 
+#. js-lingui-id: Knl3c9
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address of the company"
 msgstr "crwdns877:0crwdne877:0"
 
+#. js-lingui-id: zJhwjv
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "crwdns879:0crwdne879:0"
 
+#. js-lingui-id: ZfVqbP
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Aggregate operation"
 msgstr "crwdns881:0crwdne881:0"
 
+#. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "crwdns883:0crwdne883:0"
 
+#. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
 msgstr "crwdns885:0crwdne885:0"
 
+#. js-lingui-id: qeHcQj
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "An API key"
 msgstr "crwdns887:0crwdne887:0"
 
+#. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "An attachment"
 msgstr "crwdns889:0crwdne889:0"
 
+#. js-lingui-id: +bL++X
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "An audit log of actions performed in the system"
 msgstr "crwdns891:0crwdne891:0"
 
+#. js-lingui-id: muVHgL
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "An event related to user behavior"
 msgstr "crwdns893:0crwdne893:0"
 
+#. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "An opportunity"
 msgstr "crwdns895:0crwdne895:0"
 
+#. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "crwdns897:0crwdne897:0"
 
+#. js-lingui-id: yRnk5W
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "API Key"
 msgstr "crwdns899:0crwdne899:0"
 
+#. js-lingui-id: FfSJ1Y
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "API Keys"
 msgstr "crwdns901:0crwdne901:0"
 
+#. js-lingui-id: puNs/l
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey expiration date"
 msgstr "crwdns903:0crwdne903:0"
 
+#. js-lingui-id: YHiNxr
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey name"
 msgstr "crwdns905:0crwdne905:0"
 
+#. js-lingui-id: xrndTt
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "ApiKey revocation date"
 msgstr "crwdns907:0crwdne907:0"
 
+#. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ARR"
 msgstr "crwdns909:0crwdne909:0"
 
+#. js-lingui-id: Ek7xGj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Assigned tasks"
 msgstr "crwdns911:0crwdne911:0"
 
+#. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Assignee"
 msgstr "crwdns913:0crwdne913:0"
 
+#. js-lingui-id: Max2GU
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "crwdns915:0crwdne915:0"
 
+#. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment"
 msgstr "crwdns917:0crwdne917:0"
 
+#. js-lingui-id: JAefBH
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment author"
 msgstr "crwdns919:0crwdne919:0"
 
+#. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
 msgstr "crwdns921:0crwdne921:0"
 
+#. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
 msgstr "crwdns923:0crwdne923:0"
 
+#. js-lingui-id: wjocwa
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment name"
 msgstr "crwdns925:0crwdne925:0"
 
+#. js-lingui-id: FWlOXr
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment note"
 msgstr "crwdns927:0crwdne927:0"
 
+#. js-lingui-id: YASWpH
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment opportunity"
 msgstr "crwdns929:0crwdne929:0"
 
+#. js-lingui-id: P38yED
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment person"
 msgstr "crwdns931:0crwdne931:0"
 
+#. js-lingui-id: Tx1DxS
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment task"
 msgstr "crwdns933:0crwdne933:0"
 
+#. js-lingui-id: 4qqxMt
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment type"
 msgstr "crwdns935:0crwdne935:0"
 
+#. js-lingui-id: w/Sphq
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -275,112 +337,138 @@ msgstr "crwdns935:0crwdne935:0"
 msgid "Attachments"
 msgstr "crwdns937:0crwdne937:0"
 
+#. js-lingui-id: 2tQOVc
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Attachments created by the workspace member"
 msgstr "crwdns939:0crwdne939:0"
 
+#. js-lingui-id: iVnA89
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Attachments linked to the company"
 msgstr "crwdns941:0crwdne941:0"
 
+#. js-lingui-id: MuTXtT
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "crwdns943:0crwdne943:0"
 
+#. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
 msgstr "crwdns945:0crwdne945:0"
 
+#. js-lingui-id: fCbqr7
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments tied to the {label}"
 msgstr "crwdns947:0{label}crwdne947:0"
 
+#. js-lingui-id: ilRCh1
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Audit Log"
 msgstr "crwdns949:0crwdne949:0"
 
+#. js-lingui-id: EPEFrH
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Audit Logs"
 msgstr "crwdns951:0crwdne951:0"
 
+#. js-lingui-id: RqCC/0
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Audit Logs linked to the workspace member"
 msgstr "crwdns953:0crwdne953:0"
 
+#. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Auth failed at"
 msgstr "crwdns955:0crwdne955:0"
 
+#. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Author"
 msgstr "crwdns957:0crwdne957:0"
 
+#. js-lingui-id: XJONK6
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Authored attachments"
 msgstr "crwdns959:0crwdne959:0"
 
+#. js-lingui-id: RpExX0
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "crwdns961:0crwdne961:0"
 
+#. js-lingui-id: lXxdId
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Automatically create records for people you participated with in an event."
 msgstr "crwdns963:0crwdne963:0"
 
+#. js-lingui-id: kfcRb0
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Avatar"
 msgstr "crwdns965:0crwdne965:0"
 
+#. js-lingui-id: S/mJUR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "crwdns967:0crwdne967:0"
 
+#. js-lingui-id: 20B9kW
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "Behavioral Event"
 msgstr "crwdns969:0crwdne969:0"
 
+#. js-lingui-id: Jeh/Q/
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "Behavioral Events"
 msgstr "crwdns971:0crwdne971:0"
 
+#. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Blocklist"
 msgstr "crwdns973:0crwdne973:0"
 
+#. js-lingui-id: Tv2hxv
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Blocklisted handles"
 msgstr "crwdns975:0crwdne975:0"
 
+#. js-lingui-id: L5JhJe
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Blocklists"
 msgstr "crwdns977:0crwdne977:0"
 
+#. js-lingui-id: bGQplw
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
 msgstr "crwdns979:0crwdne979:0"
 
+#. js-lingui-id: Nl8eMw
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body (deprecated)"
 msgstr "crwdns4851:0crwdne4851:0"
 
+#. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Cached record name"
 msgstr "crwdns981:0crwdne981:0"
 
+#. js-lingui-id: Nh6GTX
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Calendar Channel"
 msgstr "crwdns983:0crwdne983:0"
 
+#. js-lingui-id: jfNQ0m
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Calendar Channel Event Association"
 msgstr "crwdns985:0crwdne985:0"
 
+#. js-lingui-id: kYNT3F
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -390,6 +478,7 @@ msgstr "crwdns985:0crwdne985:0"
 msgid "Calendar Channel Event Associations"
 msgstr "crwdns987:0crwdne987:0"
 
+#. js-lingui-id: Znix/S
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -397,19 +486,23 @@ msgstr "crwdns987:0crwdne987:0"
 msgid "Calendar Channels"
 msgstr "crwdns989:0crwdne989:0"
 
+#. js-lingui-id: bRk+FR
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar event"
 msgstr "crwdns991:0crwdne991:0"
 
+#. js-lingui-id: N2kMfO
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Calendar event participant"
 msgstr "crwdns993:0crwdne993:0"
 
+#. js-lingui-id: AWDqkQ
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Calendar event participants"
 msgstr "crwdns995:0crwdne995:0"
 
+#. js-lingui-id: ZI2UyM
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -417,40 +510,49 @@ msgstr "crwdns995:0crwdne995:0"
 msgid "Calendar Event Participants"
 msgstr "crwdns997:0crwdne997:0"
 
+#. js-lingui-id: X9A2xC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar events"
 msgstr "crwdns999:0crwdne999:0"
 
+#. js-lingui-id: 4IVK41
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Channel ID"
 msgstr "crwdns1001:0crwdne1001:0"
 
+#. js-lingui-id: Ubg/B+
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Channel Type"
 msgstr "crwdns1003:0crwdne1003:0"
 
+#. js-lingui-id: 3wV73y
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "City"
 msgstr "crwdns1005:0crwdne1005:0"
 
+#. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "crwdns1007:0crwdne1007:0"
 
+#. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Color Scheme"
 msgstr "crwdns1009:0crwdne1009:0"
 
+#. js-lingui-id: 07OSD1
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Compact View"
 msgstr "crwdns1011:0crwdne1011:0"
 
+#. js-lingui-id: s2QZS6
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Companies"
 msgstr "crwdns1013:0crwdne1013:0"
 
+#. js-lingui-id: 7i8j3G
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -462,15 +564,18 @@ msgstr "crwdns1013:0crwdne1013:0"
 msgid "Company"
 msgstr "crwdns1015:0crwdne1015:0"
 
+#. js-lingui-id: yA1de7
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Company record position"
 msgstr "crwdns1017:0crwdne1017:0"
 
+#. js-lingui-id: AgktVC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Conference Solution"
 msgstr "crwdns1019:0crwdne1019:0"
 
+#. js-lingui-id: PQ1Dw2
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -479,65 +584,80 @@ msgstr "crwdns1019:0crwdne1019:0"
 msgid "Connected Account"
 msgstr "crwdns1021:0crwdne1021:0"
 
+#. js-lingui-id: 9TzudL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Connected accounts"
 msgstr "crwdns1023:0crwdne1023:0"
 
+#. js-lingui-id: AMDUqA
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Connected Accounts"
 msgstr "crwdns1025:0crwdne1025:0"
 
+#. js-lingui-id: bA6O5B
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Contact auto creation policy"
 msgstr "crwdns1027:0crwdne1027:0"
 
+#. js-lingui-id: RnsmQs
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s avatar"
 msgstr "crwdns1029:0crwdne1029:0"
 
+#. js-lingui-id: pL+pqi
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s city"
 msgstr "crwdns1031:0crwdne1031:0"
 
+#. js-lingui-id: VnWMlz
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s company"
 msgstr "crwdns1033:0crwdne1033:0"
 
+#. js-lingui-id: ITlFIB
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Emails"
 msgstr "crwdns1035:0crwdne1035:0"
 
+#. js-lingui-id: GuRtLY
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s job title"
 msgstr "crwdns1037:0crwdne1037:0"
 
+#. js-lingui-id: QrCvRQ
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s Linkedin account"
 msgstr "crwdns1039:0crwdne1039:0"
 
+#. js-lingui-id: 6xPSVt
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s name"
 msgstr "crwdns1041:0crwdne1041:0"
 
+#. js-lingui-id: Y37CZ4
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone number"
 msgstr "crwdns1043:0crwdne1043:0"
 
+#. js-lingui-id: zsW3gg
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s phone numbers"
 msgstr "crwdns1045:0crwdne1045:0"
 
+#. js-lingui-id: uuZ00G
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Contact’s X/Twitter account"
 msgstr "crwdns1047:0crwdne1047:0"
 
+#. js-lingui-id: M73whl
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Context"
 msgstr "crwdns1781:0crwdne1781:0"
 
+#. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -548,6 +668,7 @@ msgstr "crwdns1781:0crwdne1781:0"
 msgid "Created by"
 msgstr "crwdns1049:0crwdne1049:0"
 
+#. js-lingui-id: wPvFAD
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -555,38 +676,46 @@ msgstr "crwdns1049:0crwdne1049:0"
 msgid "Creation date"
 msgstr "crwdns1051:0crwdne1051:0"
 
+#. js-lingui-id: CJXWmO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Creation DateTime"
 msgstr "crwdns1053:0crwdne1053:0"
 
+#. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
 msgstr "crwdns1055:0crwdne1055:0"
 
+#. js-lingui-id: 1lL5Iu
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Date when the record was deleted"
 msgstr "crwdns1057:0crwdne1057:0"
 
+#. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Deleted at"
 msgstr "crwdns1059:0crwdne1059:0"
 
+#. js-lingui-id: U1bSSI
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Describes if the view is in compact mode"
 msgstr "crwdns1061:0crwdne1061:0"
 
+#. js-lingui-id: Nu4oKW
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Description"
 msgstr "crwdns1063:0crwdne1063:0"
 
+#. js-lingui-id: MRB7nI
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "crwdns1065:0crwdne1065:0"
 
+#. js-lingui-id: 0gS7M5
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -594,55 +723,67 @@ msgstr "crwdns1065:0crwdne1065:0"
 msgid "Display Name"
 msgstr "crwdns1067:0crwdne1067:0"
 
+#. js-lingui-id: y7HJTU
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Display the records in a side panel or in a record page"
 msgstr "crwdns4975:0crwdne4975:0"
 
+#. js-lingui-id: 0H/D9K
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Display Value"
 msgstr "crwdns1069:0crwdne1069:0"
 
+#. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
 msgstr "crwdns1071:0crwdne1071:0"
 
+#. js-lingui-id: YOowcq
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Due Date"
 msgstr "crwdns1073:0crwdne1073:0"
 
+#. js-lingui-id: BXEcos
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Emails"
 msgstr "crwdns1075:0crwdne1075:0"
 
+#. js-lingui-id: gqv5ZL
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Employees"
 msgstr "crwdns1077:0crwdne1077:0"
 
+#. js-lingui-id: VFv2ZC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "End Date"
 msgstr "crwdns1079:0crwdne1079:0"
 
+#. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "crwdns1081:0crwdne1081:0"
 
+#. js-lingui-id: FJ7QI4
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event context"
 msgstr "crwdns1083:0crwdne1083:0"
 
+#. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event details"
 msgstr "crwdns1085:0crwdne1085:0"
 
+#. js-lingui-id: 0JhmlM
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event external ID"
 msgstr "crwdns1087:0crwdne1087:0"
 
+#. js-lingui-id: aZJLAR
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -650,10 +791,12 @@ msgstr "crwdns1087:0crwdne1087:0"
 msgid "Event ID"
 msgstr "crwdns1089:0crwdne1089:0"
 
+#. js-lingui-id: 81maJp
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Event Listeners"
 msgstr "crwdns1091:0crwdne1091:0"
 
+#. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
@@ -662,141 +805,174 @@ msgstr "crwdns1091:0crwdne1091:0"
 msgid "Event name"
 msgstr "crwdns1093:0crwdne1093:0"
 
+#. js-lingui-id: evIGwh
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event name/type"
 msgstr "crwdns1095:0crwdne1095:0"
 
+#. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event note"
 msgstr "crwdns1097:0crwdne1097:0"
 
+#. js-lingui-id: eSt759
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event opportunity"
 msgstr "crwdns1099:0crwdne1099:0"
 
+#. js-lingui-id: aicVfT
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Event Participants"
 msgstr "crwdns1101:0crwdne1101:0"
 
+#. js-lingui-id: 0mp45a
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event person"
 msgstr "crwdns1103:0crwdne1103:0"
 
+#. js-lingui-id: mMq0Wy
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event task"
 msgstr "crwdns1105:0crwdne1105:0"
 
+#. js-lingui-id: dCV1dS
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow"
 msgstr "crwdns1107:0crwdne1107:0"
 
+#. js-lingui-id: W84pl6
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow run"
 msgstr "crwdns1109:0crwdne1109:0"
 
+#. js-lingui-id: vUpps9
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event workflow version"
 msgstr "crwdns1111:0crwdne1111:0"
 
+#. js-lingui-id: LxOGsB
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Event workspace member"
 msgstr "crwdns1113:0crwdne1113:0"
 
+#. js-lingui-id: tst44n
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events"
 msgstr "crwdns1115:0crwdne1115:0"
 
+#. js-lingui-id: fHL+iH
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events linked to the person"
 msgstr "crwdns1117:0crwdne1117:0"
 
+#. js-lingui-id: 3/O8MM
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Events linked to the workspace member"
 msgstr "crwdns1119:0crwdne1119:0"
 
+#. js-lingui-id: QQlMid
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Exclude group emails"
 msgstr "crwdns1121:0crwdne1121:0"
 
+#. js-lingui-id: kenYGr
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Exclude non professional emails"
 msgstr "crwdns1123:0crwdne1123:0"
 
+#. js-lingui-id: Lo5U0b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Executed by"
 msgstr "crwdns1125:0crwdne1125:0"
 
+#. js-lingui-id: sZg7s1
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "Expiration date"
 msgstr "crwdns1127:0crwdne1127:0"
 
+#. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
 msgstr "crwdns1129:0crwdne1129:0"
 
+#. js-lingui-id: aKUOPp
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite company"
 msgstr "crwdns1131:0crwdne1131:0"
 
+#. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite Folder"
 msgstr "crwdns1133:0crwdne1133:0"
 
+#. js-lingui-id: WDVfUH
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorite folder position"
 msgstr "crwdns1135:0crwdne1135:0"
 
+#. js-lingui-id: SStz54
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorite Folders"
 msgstr "crwdns1137:0crwdne1137:0"
 
+#. js-lingui-id: dz/fFp
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite note"
 msgstr "crwdns1139:0crwdne1139:0"
 
+#. js-lingui-id: RRr9Bp
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite opportunity"
 msgstr "crwdns1141:0crwdne1141:0"
 
+#. js-lingui-id: RM6B6V
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite person"
 msgstr "crwdns1143:0crwdne1143:0"
 
+#. js-lingui-id: oVA9vM
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite position"
 msgstr "crwdns1145:0crwdne1145:0"
 
+#. js-lingui-id: OaQVQH
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite task"
 msgstr "crwdns1147:0crwdne1147:0"
 
+#. js-lingui-id: VkWV1s
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite view"
 msgstr "crwdns1149:0crwdne1149:0"
 
+#. js-lingui-id: l+lx2f
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow"
 msgstr "crwdns1151:0crwdne1151:0"
 
+#. js-lingui-id: BPBnux
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow run"
 msgstr "crwdns1153:0crwdne1153:0"
 
+#. js-lingui-id: 5X6Vlz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow version"
 msgstr "crwdns1155:0crwdne1155:0"
 
+#. js-lingui-id: FDpezg
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workspace member"
 msgstr "crwdns1157:0crwdne1157:0"
 
+#. js-lingui-id: X9kySA
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -813,54 +989,67 @@ msgstr "crwdns1157:0crwdne1157:0"
 msgid "Favorites"
 msgstr "crwdns1159:0crwdne1159:0"
 
+#. js-lingui-id: 0CzeFL
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Favorites in this folder"
 msgstr "crwdns1161:0crwdne1161:0"
 
+#. js-lingui-id: zQponA
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Favorites linked to the company"
 msgstr "crwdns1163:0crwdne1163:0"
 
+#. js-lingui-id: VaKLrB
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Favorites linked to the contact"
 msgstr "crwdns1165:0crwdne1165:0"
 
+#. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Favorites linked to the note"
 msgstr "crwdns1167:0crwdne1167:0"
 
+#. js-lingui-id: 9zd8hg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Favorites linked to the opportunity"
 msgstr "crwdns1169:0crwdne1169:0"
 
+#. js-lingui-id: L5ccWD
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Favorites linked to the task"
 msgstr "crwdns1171:0crwdne1171:0"
 
+#. js-lingui-id: R+1ib/
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Favorites linked to the view"
 msgstr "crwdns1173:0crwdne1173:0"
 
+#. js-lingui-id: ee0tmj
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Favorites linked to the workflow"
 msgstr "crwdns1175:0crwdne1175:0"
 
+#. js-lingui-id: zar5jz
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Favorites linked to the workflow run"
 msgstr "crwdns1177:0crwdne1177:0"
 
+#. js-lingui-id: 499/sw
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Favorites linked to the workflow version"
 msgstr "crwdns1179:0crwdne1179:0"
 
+#. js-lingui-id: rgmtb4
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Favorites linked to the workspace member"
 msgstr "crwdns1181:0crwdne1181:0"
 
+#. js-lingui-id: GyXrE1
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites tied to the {label}"
 msgstr "crwdns1183:0{label}crwdne1183:0"
 
+#. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -868,39 +1057,48 @@ msgstr "crwdns1183:0{label}crwdne1183:0"
 msgid "Field Metadata Id"
 msgstr "crwdns1185:0crwdne1185:0"
 
+#. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Field metadata used for aggregate operation"
 msgstr "crwdns1187:0crwdne1187:0"
 
+#. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "crwdns1189:0crwdne1189:0"
 
+#. js-lingui-id: zuDgzc
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "Field Value"
 msgstr "crwdns1191:0crwdne1191:0"
 
+#. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder for Message Channel"
 msgstr "crwdns1193:0crwdne1193:0"
 
+#. js-lingui-id: cqQyPB
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder name"
 msgstr "crwdns1195:0crwdne1195:0"
 
+#. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Full path"
 msgstr "crwdns1197:0crwdne1197:0"
 
+#. js-lingui-id: UzpVUy
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "Group by this field value"
 msgstr "crwdns1199:0crwdne1199:0"
 
+#. js-lingui-id: TkE8dW
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "handle"
 msgstr "crwdns1201:0crwdne1201:0"
 
+#. js-lingui-id: Nf7oXL
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -914,46 +1112,56 @@ msgstr "crwdns1201:0crwdne1201:0"
 msgid "Handle"
 msgstr "crwdns1203:0crwdne1203:0"
 
+#. js-lingui-id: GvgxWx
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Handle Aliases"
 msgstr "crwdns1205:0crwdne1205:0"
 
+#. js-lingui-id: VehAU2
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Header message Id"
 msgstr "crwdns1207:0crwdne1207:0"
 
+#. js-lingui-id: NNJnBi
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "iCal UID"
 msgstr "crwdns1209:0crwdne1209:0"
 
+#. js-lingui-id: wwu18a
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Icon"
 msgstr "crwdns1211:0crwdne1211:0"
 
+#. js-lingui-id: CiyiKN
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ICP"
 msgstr "crwdns1213:0crwdne1213:0"
 
+#. js-lingui-id: dFb5Nt
 #: src/engine/twenty-orm/base.workspace-entity.ts
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Id"
 msgstr "crwdns1215:0crwdne1215:0"
 
+#. js-lingui-id: Ebc83S
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "crwdns1217:0crwdne1217:0"
 
+#. js-lingui-id: NrA0WZ
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "If the event is related to a particular object"
 msgstr "crwdns1219:0crwdne1219:0"
 
+#. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Is canceled"
 msgstr "crwdns1221:0crwdne1221:0"
 
+#. js-lingui-id: k+g9Uh
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -961,16 +1169,19 @@ msgstr "crwdns1221:0crwdne1221:0"
 msgid "Is Contact Auto Creation Enabled"
 msgstr "crwdns1223:0crwdne1223:0"
 
+#. js-lingui-id: uBx1xd
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Is Full Day"
 msgstr "crwdns1225:0crwdne1225:0"
 
+#. js-lingui-id: 3iAfL2
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Is Organizer"
 msgstr "crwdns1227:0crwdne1227:0"
 
+#. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -978,58 +1189,71 @@ msgstr "crwdns1227:0crwdne1227:0"
 msgid "Is Sync Enabled"
 msgstr "crwdns1229:0crwdne1229:0"
 
+#. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
 msgstr "crwdns1231:0crwdne1231:0"
 
+#. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
 msgid "Join your team on Twenty"
 msgstr "crwdns4977:0crwdne4977:0"
 
+#. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json object to provide context (user, device, workspace, etc.)"
 msgstr "crwdns1233:0crwdne1233:0"
 
+#. js-lingui-id: HgJ9jQ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Json object to provide output of the workflow run"
 msgstr "crwdns1235:0crwdne1235:0"
 
+#. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Json object to provide steps"
 msgstr "crwdns1237:0crwdne1237:0"
 
+#. js-lingui-id: fOjmZ1
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Json object to provide trigger"
 msgstr "crwdns1239:0crwdne1239:0"
 
+#. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Json value for event details"
 msgstr "crwdns1241:0crwdne1241:0"
 
+#. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "kanbanfieldMetadataId"
 msgstr "crwdns1243:0crwdne1243:0"
 
+#. js-lingui-id: 7sMeHQ
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Key"
 msgstr "crwdns1245:0crwdne1245:0"
 
+#. js-lingui-id: vXIe7J
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Language"
 msgstr "crwdns1247:0crwdne1247:0"
 
+#. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Last published Version Id"
 msgstr "crwdns1249:0crwdne1249:0"
 
+#. js-lingui-id: Y60/DC
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Last sync cursor"
 msgstr "crwdns1251:0crwdne1251:0"
 
+#. js-lingui-id: Zdx9Qq
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -1037,94 +1261,114 @@ msgstr "crwdns1251:0crwdne1251:0"
 msgid "Last sync date"
 msgstr "crwdns1253:0crwdne1253:0"
 
+#. js-lingui-id: c7uqNg
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Last sync history ID"
 msgstr "crwdns1255:0crwdne1255:0"
 
+#. js-lingui-id: tGwswq
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Last time the record was changed"
 msgstr "crwdns1257:0crwdne1257:0"
 
+#. js-lingui-id: o1zvNS
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Last update"
 msgstr "crwdns1259:0crwdne1259:0"
 
+#. js-lingui-id: wR9USP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Object Metadata Id"
 msgstr "crwdns1261:0crwdne1261:0"
 
+#. js-lingui-id: PV1Nm7
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Linked Opportunities"
 msgstr "crwdns1263:0crwdne1263:0"
 
+#. js-lingui-id: 6YiMr4
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Record cached name"
 msgstr "crwdns1265:0crwdne1265:0"
 
+#. js-lingui-id: sgHAxx
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Record id"
 msgstr "crwdns1267:0crwdne1267:0"
 
+#. js-lingui-id: uCA6be
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Linkedin"
 msgstr "crwdns1269:0crwdne1269:0"
 
+#. js-lingui-id: LeFv/R
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "crwdns1271:0crwdne1271:0"
 
+#. js-lingui-id: wJijgU
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Location"
 msgstr "crwdns1273:0crwdne1273:0"
 
+#. js-lingui-id: y+q8Lv
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Logical Operator"
 msgstr "crwdns1275:0crwdne1275:0"
 
+#. js-lingui-id: 6kQXsS
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Logical operator for the filter group"
 msgstr "crwdns1277:0crwdne1277:0"
 
+#. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Meet Link"
 msgstr "crwdns1279:0crwdne1279:0"
 
+#. js-lingui-id: xDAtGP
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message"
 msgstr "crwdns1281:0crwdne1281:0"
 
+#. js-lingui-id: g+QGD6
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel"
 msgstr "crwdns1283:0crwdne1283:0"
 
+#. js-lingui-id: DzU4a3
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel Association"
 msgstr "crwdns1285:0crwdne1285:0"
 
+#. js-lingui-id: wd/R++
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Id"
 msgstr "crwdns1287:0crwdne1287:0"
 
+#. js-lingui-id: disipM
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Association"
 msgstr "crwdns1289:0crwdne1289:0"
 
+#. js-lingui-id: ijQY3P
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Channel Message Associations"
 msgstr "crwdns1291:0crwdne1291:0"
 
+#. js-lingui-id: k7LXPQ
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -1132,41 +1376,50 @@ msgstr "crwdns1291:0crwdne1291:0"
 msgid "Message Channels"
 msgstr "crwdns1293:0crwdne1293:0"
 
+#. js-lingui-id: /4uGJc
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Direction"
 msgstr "crwdns1295:0crwdne1295:0"
 
+#. js-lingui-id: fBw8fQ
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message External Id"
 msgstr "crwdns1297:0crwdne1297:0"
 
+#. js-lingui-id: CStLnc
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Folder"
 msgstr "crwdns1299:0crwdne1299:0"
 
+#. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Folders"
 msgstr "crwdns1301:0crwdne1301:0"
 
+#. js-lingui-id: 6icznk
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Id"
 msgstr "crwdns1303:0crwdne1303:0"
 
+#. js-lingui-id: 9FJSpK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message id from the message header"
 msgstr "crwdns1305:0crwdne1305:0"
 
+#. js-lingui-id: yaC1Aq
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message id from the messaging provider"
 msgstr "crwdns1307:0crwdne1307:0"
 
+#. js-lingui-id: IUmVwu
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message Participant"
 msgstr "crwdns1309:0crwdne1309:0"
 
+#. js-lingui-id: FhIFx7
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1178,45 +1431,55 @@ msgstr "crwdns1309:0crwdne1309:0"
 msgid "Message Participants"
 msgstr "crwdns1311:0crwdne1311:0"
 
+#. js-lingui-id: IC5A8V
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Message Synced with a Message Channel"
 msgstr "crwdns1313:0crwdne1313:0"
 
+#. js-lingui-id: de2nM/
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Thread"
 msgstr "crwdns1315:0crwdne1315:0"
 
+#. js-lingui-id: km1jgD
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message Thread Id"
 msgstr "crwdns1317:0crwdne1317:0"
 
+#. js-lingui-id: RD0ecC
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Threads"
 msgstr "crwdns1319:0crwdne1319:0"
 
+#. js-lingui-id: t7TeQU
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Messages"
 msgstr "crwdns1321:0crwdne1321:0"
 
+#. js-lingui-id: WoWdku
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Messages from the channel."
 msgstr "crwdns1323:0crwdne1323:0"
 
+#. js-lingui-id: rYPBO7
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Messages from the thread."
 msgstr "crwdns1325:0crwdne1325:0"
 
+#. js-lingui-id: XcKQrV
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider access token"
 msgstr "crwdns1327:0crwdne1327:0"
 
+#. js-lingui-id: 80EvIk
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider refresh token"
 msgstr "crwdns1329:0crwdne1329:0"
 
+#. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -1235,14 +1498,17 @@ msgstr "crwdns1329:0crwdne1329:0"
 msgid "Name"
 msgstr "crwdns1331:0crwdne1331:0"
 
+#. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Name of the favorite folder"
 msgstr "crwdns1333:0crwdne1333:0"
 
+#. js-lingui-id: csMjko
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
 msgstr "crwdns1335:0crwdne1335:0"
 
+#. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
@@ -1251,35 +1517,43 @@ msgstr "crwdns1335:0crwdne1335:0"
 msgid "Note"
 msgstr "crwdns1337:0crwdne1337:0"
 
+#. js-lingui-id: GGlkb7
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note attachments"
 msgstr "crwdns1339:0crwdne1339:0"
 
+#. js-lingui-id: Q1Rz+6
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note body"
 msgstr "crwdns1341:0crwdne1341:0"
 
+#. js-lingui-id: Yp057F
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note record position"
 msgstr "crwdns1343:0crwdne1343:0"
 
+#. js-lingui-id: spaO7l
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "Note Target"
 msgstr "crwdns1345:0crwdne1345:0"
 
+#. js-lingui-id: mkchvJ
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note targets"
 msgstr "crwdns1347:0crwdne1347:0"
 
+#. js-lingui-id: tD4BxK
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "Note Targets"
 msgstr "crwdns1349:0crwdne1349:0"
 
+#. js-lingui-id: jDThel
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Note title"
 msgstr "crwdns1351:0crwdne1351:0"
 
+#. js-lingui-id: 1DBGsz
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -1288,86 +1562,106 @@ msgstr "crwdns1351:0crwdne1351:0"
 msgid "Notes"
 msgstr "crwdns1353:0crwdne1353:0"
 
+#. js-lingui-id: Ne73P/
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Notes tied to the {label}"
 msgstr "crwdns1355:0{label}crwdne1355:0"
 
+#. js-lingui-id: fXBE74
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Notes tied to the company"
 msgstr "crwdns1357:0crwdne1357:0"
 
+#. js-lingui-id: iQ5AH6
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Notes tied to the contact"
 msgstr "crwdns1359:0crwdne1359:0"
 
+#. js-lingui-id: 0bi/Eh
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Notes tied to the opportunity"
 msgstr "crwdns1361:0crwdne1361:0"
 
+#. js-lingui-id: B2Y6QU
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget company"
 msgstr "crwdns1363:0crwdne1363:0"
 
+#. js-lingui-id: /mH0jo
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget note"
 msgstr "crwdns1365:0crwdne1365:0"
 
+#. js-lingui-id: DTs4tO
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget opportunity"
 msgstr "crwdns1367:0crwdne1367:0"
 
+#. js-lingui-id: gBwbnk
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "NoteTarget person"
 msgstr "crwdns1369:0crwdne1369:0"
 
+#. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
 msgstr "crwdns1371:0crwdne1371:0"
 
+#. js-lingui-id: hhe7Ce
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 msgid "Object id"
 msgstr "crwdns1373:0crwdne1373:0"
 
+#. js-lingui-id: dnPgTI
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object metadata id"
 msgstr "crwdns1375:0crwdne1375:0"
 
+#. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "crwdns1377:0crwdne1377:0"
 
+#. js-lingui-id: afsWF6
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Object name"
 msgstr "crwdns1379:0crwdne1379:0"
 
+#. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Open Record In"
 msgstr "crwdns4979:0crwdne4979:0"
 
+#. js-lingui-id: Fzfj4N
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "crwdns1381:0crwdne1381:0"
 
+#. js-lingui-id: FZg3wM
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Operation"
 msgstr "crwdns1383:0crwdne1383:0"
 
+#. js-lingui-id: B1MDds
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Operations"
 msgstr "crwdns1385:0crwdne1385:0"
 
+#. js-lingui-id: 4MyDFl
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"
 msgstr "crwdns1387:0crwdne1387:0"
 
+#. js-lingui-id: 5QgKbT
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities linked to the company."
 msgstr "crwdns1389:0crwdne1389:0"
 
+#. js-lingui-id: SV/iis
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1377,64 +1671,79 @@ msgstr "crwdns1389:0crwdne1389:0"
 msgid "Opportunity"
 msgstr "crwdns1391:0crwdne1391:0"
 
+#. js-lingui-id: WnMlKn
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity amount"
 msgstr "crwdns1393:0crwdne1393:0"
 
+#. js-lingui-id: aj3fnv
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity close date"
 msgstr "crwdns1395:0crwdne1395:0"
 
+#. js-lingui-id: 3NYczb
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity company"
 msgstr "crwdns1397:0crwdne1397:0"
 
+#. js-lingui-id: as45IN
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity point of contact"
 msgstr "crwdns1399:0crwdne1399:0"
 
+#. js-lingui-id: 5Nu7Uw
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity probability"
 msgstr "crwdns1401:0crwdne1401:0"
 
+#. js-lingui-id: Q1dzBp
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity record position"
 msgstr "crwdns1403:0crwdne1403:0"
 
+#. js-lingui-id: 5ugYS3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity stage"
 msgstr "crwdns1405:0crwdne1405:0"
 
+#. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Optional aggregate operation"
 msgstr "crwdns1407:0crwdne1407:0"
 
+#. js-lingui-id: kdClJ/
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
 msgstr "crwdns1409:0crwdne1409:0"
 
+#. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Output"
 msgstr "crwdns1411:0crwdne1411:0"
 
+#. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Parent View Filter Group"
 msgstr "crwdns1413:0crwdne1413:0"
 
+#. js-lingui-id: YKSmIP
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Parent View Filter Group Id"
 msgstr "crwdns1415:0crwdne1415:0"
 
+#. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People"
 msgstr "crwdns1417:0crwdne1417:0"
 
+#. js-lingui-id: E1zc7W
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People linked to the company."
 msgstr "crwdns1419:0crwdne1419:0"
 
+#. js-lingui-id: OZdaTZ
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1448,22 +1757,27 @@ msgstr "crwdns1419:0crwdne1419:0"
 msgid "Person"
 msgstr "crwdns1421:0crwdne1421:0"
 
+#. js-lingui-id: c3Qq6o
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Person record Position"
 msgstr "crwdns1423:0crwdne1423:0"
 
+#. js-lingui-id: zmwvG2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phone"
 msgstr "crwdns1425:0crwdne1425:0"
 
+#. js-lingui-id: m2ivgq
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phones"
 msgstr "crwdns1427:0crwdne1427:0"
 
+#. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Point of Contact"
 msgstr "crwdns1429:0crwdne1429:0"
 
+#. js-lingui-id: p/78dY
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -1483,130 +1797,159 @@ msgstr "crwdns1429:0crwdne1429:0"
 msgid "Position"
 msgstr "crwdns1431:0crwdne1431:0"
 
+#. js-lingui-id: HH1bMC
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Position in the parent view filter group"
 msgstr "crwdns1433:0crwdne1433:0"
 
+#. js-lingui-id: CvOSME
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Position in the view filter group"
 msgstr "crwdns1435:0crwdne1435:0"
 
+#. js-lingui-id: h8PGuF
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "Position in view filter group"
 msgstr "crwdns1437:0crwdne1437:0"
 
+#. js-lingui-id: TTHIbk
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred color scheme"
 msgstr "crwdns1439:0crwdne1439:0"
 
+#. js-lingui-id: 5v4qYi
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred language"
 msgstr "crwdns1441:0crwdne1441:0"
 
+#. js-lingui-id: WJIL29
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Probability"
 msgstr "crwdns1443:0crwdne1443:0"
 
+#. js-lingui-id: CrfRPa
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "crwdns1445:0crwdne1445:0"
 
+#. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "crwdns1447:0crwdne1447:0"
 
+#. js-lingui-id: 4Tvtbu
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
 msgid "Record id"
 msgstr "crwdns1449:0crwdne1449:0"
 
+#. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Recurring Event ID"
 msgstr "crwdns1451:0crwdne1451:0"
 
+#. js-lingui-id: 2rvMKg
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Refresh Token"
 msgstr "crwdns1453:0crwdne1453:0"
 
+#. js-lingui-id: 2LpFdR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Related user email address"
 msgstr "crwdns1455:0crwdne1455:0"
 
+#. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Relations"
 msgstr "crwdns1457:0crwdne1457:0"
 
+#. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Response Status"
 msgstr "crwdns1459:0crwdne1459:0"
 
+#. js-lingui-id: MCWKAU
 #: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 msgid "Revocation date"
 msgstr "crwdns1461:0crwdne1461:0"
 
+#. js-lingui-id: GDvlUT
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Role"
 msgstr "crwdns1463:0crwdne1463:0"
 
+#. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Runs"
 msgstr "crwdns1465:0crwdne1465:0"
 
+#. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Scopes"
 msgstr "crwdns1467:0crwdne1467:0"
 
+#. js-lingui-id: PdVIJC
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "crwdns1469:0crwdne1469:0"
 
+#. js-lingui-id: 8VEDbV
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Secret"
 msgstr "crwdns1471:0crwdne1471:0"
 
+#. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Size"
 msgstr "crwdns1473:0crwdne1473:0"
 
+#. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "crwdns1475:0crwdne1475:0"
 
+#. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Start Date"
 msgstr "crwdns1477:0crwdne1477:0"
 
+#. js-lingui-id: uAQUqI
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Status"
 msgstr "crwdns1479:0crwdne1479:0"
 
+#. js-lingui-id: Db4W3/
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Statuses"
 msgstr "crwdns1481:0crwdne1481:0"
 
+#. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "crwdns1483:0crwdne1483:0"
 
+#. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor"
 msgstr "crwdns1485:0crwdne1485:0"
 
+#. js-lingui-id: awvBUx
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync Cursor. Used for syncing events from the calendar provider"
 msgstr "crwdns1487:0crwdne1487:0"
 
+#. js-lingui-id: dNAbG6
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -1614,6 +1957,7 @@ msgstr "crwdns1487:0crwdne1487:0"
 msgid "Sync stage"
 msgstr "crwdns1489:0crwdne1489:0"
 
+#. js-lingui-id: aqNjQE
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -1621,6 +1965,7 @@ msgstr "crwdns1489:0crwdne1489:0"
 msgid "Sync stage started at"
 msgstr "crwdns1491:0crwdne1491:0"
 
+#. js-lingui-id: bRUdLR
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -1628,10 +1973,12 @@ msgstr "crwdns1491:0crwdne1491:0"
 msgid "Sync status"
 msgstr "crwdns1493:0crwdne1493:0"
 
+#. js-lingui-id: 4SHJe4
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Target Url"
 msgstr "crwdns1495:0crwdne1495:0"
 
+#. js-lingui-id: Q3P/4s
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
@@ -1640,47 +1987,58 @@ msgstr "crwdns1495:0crwdne1495:0"
 msgid "Task"
 msgstr "crwdns1497:0crwdne1497:0"
 
+#. js-lingui-id: kS+Ym6
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task assignee"
 msgstr "crwdns1499:0crwdne1499:0"
 
+#. js-lingui-id: 7fYQ6E
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task attachments"
 msgstr "crwdns1501:0crwdne1501:0"
 
+#. js-lingui-id: X8fs74
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task body"
 msgstr "crwdns1503:0crwdne1503:0"
 
+#. js-lingui-id: EPxYHS
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task due date"
 msgstr "crwdns1505:0crwdne1505:0"
 
+#. js-lingui-id: fUw1j+
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task record position"
 msgstr "crwdns1507:0crwdne1507:0"
 
+#. js-lingui-id: I6+0ph
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task status"
 msgstr "crwdns1509:0crwdne1509:0"
 
+#. js-lingui-id: WSiiWf
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "Task Target"
 msgstr "crwdns1511:0crwdne1511:0"
 
+#. js-lingui-id: khGQLP
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task targets"
 msgstr "crwdns1513:0crwdne1513:0"
 
+#. js-lingui-id: 836FiO
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "Task Targets"
 msgstr "crwdns1515:0crwdne1515:0"
 
+#. js-lingui-id: R+s8S+
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Task title"
 msgstr "crwdns1517:0crwdne1517:0"
 
+#. js-lingui-id: GtycJ/
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1689,71 +2047,88 @@ msgstr "crwdns1517:0crwdne1517:0"
 msgid "Tasks"
 msgstr "crwdns1519:0crwdne1519:0"
 
+#. js-lingui-id: HlDeG3
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Tasks assigned to the workspace member"
 msgstr "crwdns1521:0crwdne1521:0"
 
+#. js-lingui-id: Ca/n4T
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Tasks tied to the {label}"
 msgstr "crwdns1523:0{label}crwdne1523:0"
 
+#. js-lingui-id: M4rBti
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Tasks tied to the company"
 msgstr "crwdns1525:0crwdne1525:0"
 
+#. js-lingui-id: /VaiDW
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Tasks tied to the contact"
 msgstr "crwdns1527:0crwdne1527:0"
 
+#. js-lingui-id: 1TfX9U
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Tasks tied to the opportunity"
 msgstr "crwdns1529:0crwdne1529:0"
 
+#. js-lingui-id: pP0Dt9
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget company"
 msgstr "crwdns1531:0crwdne1531:0"
 
+#. js-lingui-id: UJ2aPi
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget opportunity"
 msgstr "crwdns1533:0crwdne1533:0"
 
+#. js-lingui-id: I1MiSs
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget person"
 msgstr "crwdns1535:0crwdne1535:0"
 
+#. js-lingui-id: pciKLT
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "TaskTarget task"
 msgstr "crwdns1537:0crwdne1537:0"
 
+#. js-lingui-id: xeiujy
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Text"
 msgstr "crwdns1539:0crwdne1539:0"
 
+#. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account handle (email, username, phone number, etc.)"
 msgstr "crwdns1541:0crwdne1541:0"
 
+#. js-lingui-id: zUXOAB
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "crwdns1543:0crwdne1543:0"
 
+#. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Linkedin account"
 msgstr "crwdns1545:0crwdne1545:0"
 
+#. js-lingui-id: N31Pso
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company name"
 msgstr "crwdns1547:0crwdne1547:0"
 
+#. js-lingui-id: BHFCqB
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Twitter/X account"
 msgstr "crwdns1549:0crwdne1549:0"
 
+#. js-lingui-id: OBmU0K
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "crwdns1551:0crwdne1551:0"
 
+#. js-lingui-id: zGBDEH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1764,54 +2139,67 @@ msgstr "crwdns1551:0crwdne1551:0"
 msgid "The creator of the record"
 msgstr "crwdns1553:0crwdne1553:0"
 
+#. js-lingui-id: bMyVOx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The current statuses of the workflow versions"
 msgstr "crwdns1555:0crwdne1555:0"
 
+#. js-lingui-id: 0bo4Q0
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "The date the message was received"
 msgstr "crwdns1557:0crwdne1557:0"
 
+#. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
 msgstr "crwdns1559:0crwdne1559:0"
 
+#. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "The folder this favorite belongs to"
 msgstr "crwdns1561:0crwdne1561:0"
 
+#. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "crwdns1563:0crwdne1563:0"
 
+#. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "The workflow event listener name"
 msgstr "crwdns1565:0crwdne1565:0"
 
+#. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The workflow last published version id"
 msgstr "crwdns1567:0crwdne1567:0"
 
+#. js-lingui-id: /EdWx6
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The workflow name"
 msgstr "crwdns1569:0crwdne1569:0"
 
+#. js-lingui-id: EhAsND
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version name"
 msgstr "crwdns1571:0crwdne1571:0"
 
+#. js-lingui-id: dhx13p
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "The workflow version status"
 msgstr "crwdns1573:0crwdne1573:0"
 
+#. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Thread External Id"
 msgstr "crwdns1575:0crwdne1575:0"
 
+#. js-lingui-id: RSSbWN
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Thread id from the messaging provider"
 msgstr "crwdns1577:0crwdne1577:0"
 
+#. js-lingui-id: sS8v5K
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -1819,14 +2207,17 @@ msgstr "crwdns1577:0crwdne1577:0"
 msgid "Throttle Failure Count"
 msgstr "crwdns1579:0crwdne1579:0"
 
+#. js-lingui-id: n9nSNJ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time format"
 msgstr "crwdns1581:0crwdne1581:0"
 
+#. js-lingui-id: Mz2JN2
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time zone"
 msgstr "crwdns1583:0crwdne1583:0"
 
+#. js-lingui-id: az1boY
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1839,42 +2230,52 @@ msgstr "crwdns1583:0crwdne1583:0"
 msgid "Timeline Activities"
 msgstr "crwdns1585:0crwdne1585:0"
 
+#. js-lingui-id: fqKMpF
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "crwdns1587:0crwdne1587:0"
 
+#. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Timeline Activities linked to the note."
 msgstr "crwdns1589:0crwdne1589:0"
 
+#. js-lingui-id: p6feIz
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Timeline Activities linked to the opportunity."
 msgstr "crwdns1591:0crwdne1591:0"
 
+#. js-lingui-id: yvPwuF
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Timeline activities linked to the run"
 msgstr "crwdns1593:0crwdne1593:0"
 
+#. js-lingui-id: q96UvB
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Timeline Activities linked to the task."
 msgstr "crwdns1595:0crwdne1595:0"
 
+#. js-lingui-id: N9HMa/
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Timeline activities linked to the version"
 msgstr "crwdns1597:0crwdne1597:0"
 
+#. js-lingui-id: B1CYKX
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Timeline activities linked to the workflow"
 msgstr "crwdns1599:0crwdne1599:0"
 
+#. js-lingui-id: G0UmtQ
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities tied to the {label}"
 msgstr "crwdns1601:0{label}crwdne1601:0"
 
+#. js-lingui-id: K/kU4E
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Timeline Activity"
 msgstr "crwdns1603:0crwdne1603:0"
 
+#. js-lingui-id: MHrjPM
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1882,57 +2283,70 @@ msgstr "crwdns1603:0crwdne1603:0"
 msgid "Title"
 msgstr "crwdns1605:0crwdne1605:0"
 
+#. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "crwdns1607:0crwdne1607:0"
 
+#. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Update DateTime"
 msgstr "crwdns1609:0crwdne1609:0"
 
+#. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Email"
 msgstr "crwdns1611:0crwdne1611:0"
 
+#. js-lingui-id: d1BTW8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "crwdns1613:0crwdne1613:0"
 
+#. js-lingui-id: 4juE7s
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
 msgstr "crwdns1615:0crwdne1615:0"
 
+#. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
 msgstr "crwdns1617:0crwdne1617:0"
 
+#. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "crwdns1619:0crwdne1619:0"
 
+#. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Value"
 msgstr "crwdns1621:0crwdne1621:0"
 
+#. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version status"
 msgstr "crwdns1623:0crwdne1623:0"
 
+#. js-lingui-id: CdQeU7
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version steps"
 msgstr "crwdns1625:0crwdne1625:0"
 
+#. js-lingui-id: PGMPIi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version trigger"
 msgstr "crwdns1627:0crwdne1627:0"
 
+#. js-lingui-id: IYNSdp
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Versions"
 msgstr "crwdns1629:0crwdne1629:0"
 
+#. js-lingui-id: jpctdh
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -1944,158 +2358,194 @@ msgstr "crwdns1629:0crwdne1629:0"
 msgid "View"
 msgstr "crwdns1631:0crwdne1631:0"
 
+#. js-lingui-id: cZPDyy
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "crwdns1633:0crwdne1633:0"
 
+#. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field position"
 msgstr "crwdns1635:0crwdne1635:0"
 
+#. js-lingui-id: Ju6gri
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field related view"
 msgstr "crwdns1637:0crwdne1637:0"
 
+#. js-lingui-id: tvTr2y
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field size"
 msgstr "crwdns1639:0crwdne1639:0"
 
+#. js-lingui-id: BkII8t
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field target field"
 msgstr "crwdns1641:0crwdne1641:0"
 
+#. js-lingui-id: Gd/LzL
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field visibility"
 msgstr "crwdns1643:0crwdne1643:0"
 
+#. js-lingui-id: GUFYyq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Fields"
 msgstr "crwdns1645:0crwdne1645:0"
 
+#. js-lingui-id: JRtI7Y
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter"
 msgstr "crwdns1647:0crwdne1647:0"
 
+#. js-lingui-id: L2gQ5q
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter Display Value"
 msgstr "crwdns1649:0crwdne1649:0"
 
+#. js-lingui-id: l9/6pD
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "View Filter Group"
 msgstr "crwdns1651:0crwdne1651:0"
 
+#. js-lingui-id: Mbosm8
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter Group Id"
 msgstr "crwdns1653:0crwdne1653:0"
 
+#. js-lingui-id: /aP3iG
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "View Filter Groups"
 msgstr "crwdns1655:0crwdne1655:0"
 
+#. js-lingui-id: 4MG8+B
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter operand"
 msgstr "crwdns1657:0crwdne1657:0"
 
+#. js-lingui-id: OrUkUF
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter related view"
 msgstr "crwdns1659:0crwdne1659:0"
 
+#. js-lingui-id: TyXOtD
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter target field"
 msgstr "crwdns1661:0crwdne1661:0"
 
+#. js-lingui-id: 3KzkxN
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter value"
 msgstr "crwdns1663:0crwdne1663:0"
 
+#. js-lingui-id: vj5JsR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filters"
 msgstr "crwdns1665:0crwdne1665:0"
 
+#. js-lingui-id: ziEP12
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group"
 msgstr "crwdns1667:0crwdne1667:0"
 
+#. js-lingui-id: uQ3c2q
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group related view"
 msgstr "crwdns1669:0crwdne1669:0"
 
+#. js-lingui-id: EFlLpQ
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group target field"
 msgstr "crwdns1671:0crwdne1671:0"
 
+#. js-lingui-id: b1Vc+l
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group visibility"
 msgstr "crwdns1673:0crwdne1673:0"
 
+#. js-lingui-id: V4nZs/
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Groups"
 msgstr "crwdns1675:0crwdne1675:0"
 
+#. js-lingui-id: qXlovu
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View icon"
 msgstr "crwdns1677:0crwdne1677:0"
 
+#. js-lingui-id: cd/+ZD
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View Kanban column field"
 msgstr "crwdns1679:0crwdne1679:0"
 
+#. js-lingui-id: vdfZ+A
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View key"
 msgstr "crwdns1681:0crwdne1681:0"
 
+#. js-lingui-id: oOljSE
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View name"
 msgstr "crwdns1683:0crwdne1683:0"
 
+#. js-lingui-id: rhO8zp
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View position"
 msgstr "crwdns1685:0crwdne1685:0"
 
+#. js-lingui-id: EUjpwJ
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort"
 msgstr "crwdns1687:0crwdne1687:0"
 
+#. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort direction"
 msgstr "crwdns1689:0crwdne1689:0"
 
+#. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort related view"
 msgstr "crwdns1691:0crwdne1691:0"
 
+#. js-lingui-id: +du2wy
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort target field"
 msgstr "crwdns1693:0crwdne1693:0"
 
+#. js-lingui-id: UsdY3K
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sorts"
 msgstr "crwdns1695:0crwdne1695:0"
 
+#. js-lingui-id: clWwIZ
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View target object"
 msgstr "crwdns1697:0crwdne1697:0"
 
+#. js-lingui-id: bJAIqT
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"
 msgstr "crwdns1699:0crwdne1699:0"
 
+#. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Views"
 msgstr "crwdns1701:0crwdne1701:0"
 
+#. js-lingui-id: 2q/Q7x
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
@@ -2103,35 +2553,43 @@ msgstr "crwdns1701:0crwdne1701:0"
 msgid "Visibility"
 msgstr "crwdns1703:0crwdne1703:0"
 
+#. js-lingui-id: oh8+os
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Visible"
 msgstr "crwdns1705:0crwdne1705:0"
 
+#. js-lingui-id: TRDppN
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook"
 msgstr "crwdns1707:0crwdne1707:0"
 
+#. js-lingui-id: fyB2Wp
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook operation"
 msgstr "crwdns1709:0crwdne1709:0"
 
+#. js-lingui-id: gONLmX
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook operations"
 msgstr "crwdns1711:0crwdne1711:0"
 
+#. js-lingui-id: cPoSTF
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhook target url"
 msgstr "crwdns1713:0crwdne1713:0"
 
+#. js-lingui-id: v1kQyJ
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 msgid "Webhooks"
 msgstr "crwdns1715:0crwdne1715:0"
 
+#. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "crwdns4981:0crwdne4981:0"
 
+#. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2143,106 +2601,131 @@ msgstr "crwdns4981:0crwdne4981:0"
 msgid "Workflow"
 msgstr "crwdns1717:0crwdne1717:0"
 
+#. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow event listeners linked to the workflow."
 msgstr "crwdns1719:0crwdne1719:0"
 
+#. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow linked to the run."
 msgstr "crwdns1721:0crwdne1721:0"
 
+#. js-lingui-id: y9tnFx
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
 msgstr "crwdns1723:0crwdne1723:0"
 
+#. js-lingui-id: 5vIcqC
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Workflow Run"
 msgstr "crwdns1725:0crwdne1725:0"
 
+#. js-lingui-id: 3Iz+qz
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run ended at"
 msgstr "crwdns1727:0crwdne1727:0"
 
+#. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run position"
 msgstr "crwdns1729:0crwdne1729:0"
 
+#. js-lingui-id: zaN7tH
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run started at"
 msgstr "crwdns1731:0crwdne1731:0"
 
+#. js-lingui-id: 1TU2A8
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run status"
 msgstr "crwdns1733:0crwdne1733:0"
 
+#. js-lingui-id: u6DF/V
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow Runs"
 msgstr "crwdns1735:0crwdne1735:0"
 
+#. js-lingui-id: 9nOy7k
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow runs linked to the version."
 msgstr "crwdns1737:0crwdne1737:0"
 
+#. js-lingui-id: c37F3j
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow runs linked to the workflow."
 msgstr "crwdns1739:0crwdne1739:0"
 
+#. js-lingui-id: lTXctu
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version"
 msgstr "crwdns1741:0crwdne1741:0"
 
+#. js-lingui-id: +wYPET
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow Version"
 msgstr "crwdns1743:0crwdne1743:0"
 
+#. js-lingui-id: CocTJJ
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow version linked to the run."
 msgstr "crwdns1745:0crwdne1745:0"
 
+#. js-lingui-id: 9l+pJT
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow version position"
 msgstr "crwdns1747:0crwdne1747:0"
 
+#. js-lingui-id: OCyhkn
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Workflow Versions"
 msgstr "crwdns1749:0crwdne1749:0"
 
+#. js-lingui-id: 018fP9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow versions linked to the workflow."
 msgstr "crwdns1751:0crwdne1751:0"
 
+#. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener"
 msgstr "crwdns1753:0crwdne1753:0"
 
+#. js-lingui-id: HN90FO
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListener workflow"
 msgstr "crwdns1755:0crwdne1755:0"
 
+#. js-lingui-id: 3JA9se
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 msgid "WorkflowEventListeners"
 msgstr "crwdns1757:0crwdne1757:0"
 
+#. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflows"
 msgstr "crwdns1759:0crwdne1759:0"
 
+#. js-lingui-id: urCUgs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "WorkflowVersion"
 msgstr "crwdns1761:0crwdne1761:0"
 
+#. js-lingui-id: b4kire
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "WorkflowVersion workflow"
 msgstr "crwdns1763:0crwdne1763:0"
 
+#. js-lingui-id: CbGxon
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Workspace member"
 msgstr "crwdns1765:0crwdne1765:0"
 
+#. js-lingui-id: qc38qR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
@@ -2253,37 +2736,44 @@ msgstr "crwdns1765:0crwdne1765:0"
 msgid "Workspace Member"
 msgstr "crwdns1767:0crwdne1767:0"
 
+#. js-lingui-id: R1S9pO
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member avatar"
 msgstr "crwdns1769:0crwdne1769:0"
 
+#. js-lingui-id: 5VCX7o
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member name"
 msgstr "crwdns1771:0crwdne1771:0"
 
+#. js-lingui-id: NiUpuN
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
 msgstr "crwdns5353:0crwdne5353:0"
 
+#. js-lingui-id: YCAEr+
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "crwdns1773:0crwdne1773:0"
 
+#. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "WorkspaceMember"
 msgstr "crwdns1775:0crwdne1775:0"
 
+#. js-lingui-id: 0gv+T2
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "crwdns1777:0crwdne1777:0"
 
+#. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
 msgstr "crwdns4983:0crwdne4983:0"
 
+#. js-lingui-id: vPccnr
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "crwdns1779:0crwdne1779:0"
-

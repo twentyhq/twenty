@@ -38,6 +38,10 @@ const StyledContainer = styled.div`
   user-select: none;
 `;
 
+const StyledOuterContainer = styled.div`
+  width: 100%;
+`;
+
 export const TabList = ({
   tabs,
   tabListInstanceId,
@@ -61,7 +65,7 @@ export const TabList = ({
   }
 
   return (
-    <div>
+    <StyledOuterContainer>
       <TabListScope tabListScopeId={tabListInstanceId}>
         <TabListFromUrlOptionalEffect
           isInRightDrawer={!!isInRightDrawer}
@@ -95,6 +99,6 @@ export const TabList = ({
           </StyledContainer>
         </ScrollWrapper>
       </TabListScope>
-    </div>
+    </StyledOuterContainer>
   );
 };
