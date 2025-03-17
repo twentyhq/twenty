@@ -2,7 +2,7 @@ import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/heal
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { JsonTree, JsonTreeContextProvider, Section } from 'twenty-ui';
+import { JsonTree, Section } from 'twenty-ui';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
 
 const StyledDetailsContainer = styled.div`
@@ -43,16 +43,13 @@ export const JsonDataIndicatorHealthStatus = () => {
       )}
       {parsedDetails && (
         <StyledDetailsContainer>
-          <JsonTreeContextProvider
-            value={{
-              emptyArrayLabel: t`Empty Array`,
-              emptyObjectLabel: t`Empty Object`,
-              arrowButtonCollapsedLabel: t`Expand`,
-              arrowButtonExpandedLabel: t`Collapse`,
-            }}
-          >
-            <JsonTree value={parsedDetails} />
-          </JsonTreeContextProvider>
+          <JsonTree
+            value={parsedDetails}
+            emptyArrayLabel={t`Empty Array`}
+            emptyObjectLabel={t`Empty Object`}
+            arrowButtonCollapsedLabel={t`Expand`}
+            arrowButtonExpandedLabel={t`Collapse`}
+          />
         </StyledDetailsContainer>
       )}
     </Section>

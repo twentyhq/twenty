@@ -3,7 +3,7 @@ import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThro
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
-import { JsonTree, JsonTreeContextProvider } from 'twenty-ui';
+import { JsonTree } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: grid;
@@ -26,16 +26,13 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
 
   return (
     <StyledContainer>
-      <JsonTreeContextProvider
-        value={{
-          emptyArrayLabel: t`Empty Array`,
-          emptyObjectLabel: t`Empty Object`,
-          arrowButtonCollapsedLabel: t`Expand`,
-          arrowButtonExpandedLabel: t`Collapse`,
-        }}
-      >
-        <JsonTree value={stepOutput} />
-      </JsonTreeContextProvider>
+      <JsonTree
+        value={stepOutput}
+        emptyArrayLabel={t`Empty Array`}
+        emptyObjectLabel={t`Empty Object`}
+        arrowButtonCollapsedLabel={t`Expand`}
+        arrowButtonExpandedLabel={t`Collapse`}
+      />
     </StyledContainer>
   );
 };
