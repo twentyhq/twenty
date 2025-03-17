@@ -321,7 +321,7 @@ msgstr "Erweiterter Filter"
 #. js-lingui-id: WsKDNF
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Advanced:"
-msgstr ""
+msgstr "Fortgeschritten:"
 
 #. js-lingui-id: 1Cox/a
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

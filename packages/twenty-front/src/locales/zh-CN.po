@@ -321,7 +321,7 @@ msgstr "高级筛选"
 #. js-lingui-id: WsKDNF
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Advanced:"
-msgstr ""
+msgstr "高级："
 
 #. js-lingui-id: 1Cox/a
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
