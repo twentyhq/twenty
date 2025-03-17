@@ -1021,7 +1021,7 @@ msgstr "Crear Webhook"
 #. js-lingui-id: kdLGki
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Create Workspace"
-msgstr ""
+msgstr "Crear Espacio de Trabajo"
 
 #. js-lingui-id: 9chYz/
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -1774,7 +1774,7 @@ msgstr "Exportar registros"
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export run"
-msgstr ""
+msgstr "Exportar ejecución"
 
 #. js-lingui-id: vwtAUW
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1789,7 +1789,7 @@ msgstr "Exportar a PDF"
 #. js-lingui-id: BuprEs
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export version"
-msgstr ""
+msgstr "Exportar versión"
 
 #. js-lingui-id: 4FLUle
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2223,7 +2223,7 @@ msgstr "Enlace de invitación enviado a las direcciones de correo electrónico"
 #. js-lingui-id: x1m5RZ
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Invite user"
-msgstr ""
+msgstr "Invitar usuario"
 
 #. js-lingui-id: d+Y+rP
 #: src/pages/onboarding/InviteTeam.tsx
@@ -2925,7 +2925,7 @@ msgstr "Otras Variables"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
-msgstr ""
+msgstr "Otros espacios de trabajo"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -3826,12 +3826,12 @@ msgstr "Los detalles completos del evento se compartirán con tu equipo."
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #. js-lingui-id: 6tNbxl
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Theme "
-msgstr ""
+msgstr "Tema "
 
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx

@@ -68,7 +68,7 @@ msgstr ": Avui"
 #. placeholder {0}: theme.id
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "{0}"
-msgstr ""
+msgstr "{0}"
 
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
@@ -1021,7 +1021,7 @@ msgstr "Crea Webhook"
 #. js-lingui-id: kdLGki
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Create Workspace"
-msgstr ""
+msgstr "Crear Espai de Treball"
 
 #. js-lingui-id: 9chYz/
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -1774,7 +1774,7 @@ msgstr "Exportar registres"
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export run"
-msgstr ""
+msgstr "Exportar execució"
 
 #. js-lingui-id: vwtAUW
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1789,7 +1789,7 @@ msgstr "Exportar a PDF"
 #. js-lingui-id: BuprEs
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export version"
-msgstr ""
+msgstr "Exportar versió"
 
 #. js-lingui-id: 4FLUle
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2223,7 +2223,7 @@ msgstr "Enllaç d'invitació enviat a les adreces de correu electrònic"
 #. js-lingui-id: x1m5RZ
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Invite user"
-msgstr ""
+msgstr "Convidar usuari"
 
 #. js-lingui-id: d+Y+rP
 #: src/pages/onboarding/InviteTeam.tsx
@@ -2925,7 +2925,7 @@ msgstr "Altres Variables"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
-msgstr ""
+msgstr "Altres espais de treball"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -3826,12 +3826,12 @@ msgstr "Els detalls complets de l'esdeveniment seran compartits amb el teu equip
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #. js-lingui-id: 6tNbxl
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Theme "
-msgstr ""
+msgstr "Tema "
 
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx

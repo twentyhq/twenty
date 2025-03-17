@@ -68,7 +68,7 @@ msgstr ": Azi"
 #. placeholder {0}: theme.id
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "{0}"
-msgstr ""
+msgstr "{0}"
 
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
@@ -1021,7 +1021,7 @@ msgstr "Creează Webhook"
 #. js-lingui-id: kdLGki
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Create Workspace"
-msgstr ""
+msgstr "Creează Spațiul de Lucru"
 
 #. js-lingui-id: 9chYz/
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -1774,7 +1774,7 @@ msgstr "Exportul înregistrărilor"
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export run"
-msgstr ""
+msgstr "Exportare rulare"
 
 #. js-lingui-id: vwtAUW
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1789,7 +1789,7 @@ msgstr "Export în format PDF"
 #. js-lingui-id: BuprEs
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export version"
-msgstr ""
+msgstr "Exportă versiunea"
 
 #. js-lingui-id: 4FLUle
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2223,7 +2223,7 @@ msgstr "Link-ul de invitație a fost trimis la adresele de email"
 #. js-lingui-id: x1m5RZ
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Invite user"
-msgstr ""
+msgstr "Invită utilizator"
 
 #. js-lingui-id: d+Y+rP
 #: src/pages/onboarding/InviteTeam.tsx
@@ -2925,7 +2925,7 @@ msgstr "Alte variabile"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
-msgstr ""
+msgstr "Alte spații de lucru"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -3826,12 +3826,12 @@ msgstr "Detaliile întregului eveniment vor fi partajate cu echipa dvs."
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
-msgstr ""
+msgstr "Temă"
 
 #. js-lingui-id: 6tNbxl
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Theme "
-msgstr ""
+msgstr "Temă "
 
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx

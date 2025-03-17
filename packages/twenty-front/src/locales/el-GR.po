@@ -68,7 +68,7 @@ msgstr ": Σήμερα"
 #. placeholder {0}: theme.id
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "{0}"
-msgstr ""
+msgstr "{0}"
 
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
@@ -1021,7 +1021,7 @@ msgstr "Δημιουργήστε Webhook"
 #. js-lingui-id: kdLGki
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Create Workspace"
-msgstr ""
+msgstr "Δημιουργία Χώρου Εργασίας"
 
 #. js-lingui-id: 9chYz/
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -1774,7 +1774,7 @@ msgstr "Εξαγωγή εγγραφών"
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export run"
-msgstr ""
+msgstr "Εξαγωγή εκτέλεσης"
 
 #. js-lingui-id: vwtAUW
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1789,7 +1789,7 @@ msgstr "Εξαγωγή σε PDF"
 #. js-lingui-id: BuprEs
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export version"
-msgstr ""
+msgstr "Έκδοση εξαγωγής"
 
 #. js-lingui-id: 4FLUle
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2223,7 +2223,7 @@ msgstr "Ο σύνδεσμος πρόσκλησης εστάλη στις διε�
 #. js-lingui-id: x1m5RZ
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Invite user"
-msgstr ""
+msgstr "Πρόσκληση χρήστη"
 
 #. js-lingui-id: d+Y+rP
 #: src/pages/onboarding/InviteTeam.tsx
@@ -2925,7 +2925,7 @@ msgstr "Άλλες Μεταβλητές"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
-msgstr ""
+msgstr "Άλλοι χώροι εργασίας"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -3826,12 +3826,12 @@ msgstr "Όλες οι λεπτομέρειες του γεγονότος θα μ
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
-msgstr ""
+msgstr "Θέμα"
 
 #. js-lingui-id: 6tNbxl
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Theme "
-msgstr ""
+msgstr "Θέμα "
 
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx
