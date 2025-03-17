@@ -1,6 +1,9 @@
+import prettier from '@prettier/sync';
 import * as fs from 'fs';
 import path from 'path';
+import { Options } from 'prettier';
 import slash from 'slash';
+
 const INCLUDED_EXTENSIONS = ['.ts', '.tsx'];
 const EXCLUDED_EXTENSIONS = [
   '.test.ts',
@@ -22,6 +25,16 @@ const PACKAGE_JSON = 'package.json';
 const PACKAGE_PATH = path.resolve('packages/twenty-shared');
 const SRC_PATH = path.resolve(`${PACKAGE_PATH}/src`);
 
+const prettierConfigFile = prettier.resolveConfigFile();
+if (prettierConfigFile == null) {
+  throw new Error('Prettier config file not found');
+}
+const prettierConfiguration = prettier.resolveConfig(prettierConfigFile);
+const prettierFormat = (str: string, parser: Options['parser']) =>
+  prettier.format(str, {
+    ...prettierConfiguration,
+    parser,
+  });
 type createTypeScriptFileArgs = {
   path: string;
   content: string;
@@ -40,10 +53,13 @@ const createTypeScriptIndexFile = ({
  *                              |___/
  */
 `;
+  const formattedContent = prettierFormat(
+    `${header}\n${content}\n`,
+    'typescript',
+  );
   fs.writeFileSync(
     path.join(filePath, INDEX_FILENAME),
-    `${header}
-    ${content}\n`,
+    formattedContent,
     'utf-8',
   );
 };
@@ -158,12 +174,15 @@ const readPackageJson = (): Record<string, unknown> => {
   return JSON.parse(rawPackageJson);
 };
 
-const writePackageJson = (packageJson: unknown) =>
+const writePackageJson = (packageJson: unknown) => {
+  const stringified = JSON.stringify(packageJson);
+  const formattedContent = prettierFormat(stringified, 'json-stringify');
   fs.writeFileSync(
     path.join(PACKAGE_PATH, PACKAGE_JSON),
-    JSON.stringify(packageJson),
+    formattedContent,
     'utf-8',
   );
+};
 
 const writeExportsInPackageJson = (exports: ExportsConfig) => {
   const initialPackage = readPackageJson();
