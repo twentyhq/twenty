@@ -842,6 +842,7 @@ export type Mutation = {
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
   signUp: SignUpOutput;
+  signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
   track: Analytics;
@@ -2349,6 +2350,11 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
 
+export type SignUpInNewWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SignUpInNewWorkspaceMutation = { __typename?: 'Mutation', signUpInNewWorkspace: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'workspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
+
 export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
   token: Scalars['String'];
   newPassword: Scalars['String'];
@@ -3620,6 +3626,47 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export const SignUpInNewWorkspaceDocument = gql`
+    mutation SignUpInNewWorkspace {
+  signUpInNewWorkspace {
+    loginToken {
+      ...AuthTokenFragment
+    }
+    workspace {
+      id
+      workspaceUrls {
+        subdomainUrl
+        customUrl
+      }
+    }
+  }
+}
+    ${AuthTokenFragmentFragmentDoc}`;
+export type SignUpInNewWorkspaceMutationFn = Apollo.MutationFunction<SignUpInNewWorkspaceMutation, SignUpInNewWorkspaceMutationVariables>;
+
+/**
+ * __useSignUpInNewWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useSignUpInNewWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignUpInNewWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signUpInNewWorkspaceMutation, { data, loading, error }] = useSignUpInNewWorkspaceMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSignUpInNewWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<SignUpInNewWorkspaceMutation, SignUpInNewWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignUpInNewWorkspaceMutation, SignUpInNewWorkspaceMutationVariables>(SignUpInNewWorkspaceDocument, options);
+      }
+export type SignUpInNewWorkspaceMutationHookResult = ReturnType<typeof useSignUpInNewWorkspaceMutation>;
+export type SignUpInNewWorkspaceMutationResult = Apollo.MutationResult<SignUpInNewWorkspaceMutation>;
+export type SignUpInNewWorkspaceMutationOptions = Apollo.BaseMutationOptions<SignUpInNewWorkspaceMutation, SignUpInNewWorkspaceMutationVariables>;
 export const UpdatePasswordViaResetTokenDocument = gql`
     mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!) {
   updatePasswordViaResetToken(

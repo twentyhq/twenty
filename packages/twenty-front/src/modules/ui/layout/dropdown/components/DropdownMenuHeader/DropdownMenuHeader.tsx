@@ -19,9 +19,8 @@ const StyledHeader = styled.li`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-
   padding: ${({ theme }) => theme.spacing(1)};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
   user-select: none;
 

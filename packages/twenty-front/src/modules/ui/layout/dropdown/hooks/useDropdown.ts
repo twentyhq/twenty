@@ -80,12 +80,12 @@ export const useDropdown = (dropdownId?: string) => {
         }
       },
     [
-      dropdownId,
       isDropdownOpen,
+      setIsDropdownOpen,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      dropdownId,
       scopeId,
       setHotkeyScopeAndMemorizePreviousScope,
-      setActiveDropdownFocusIdAndMemorizePrevious,
-      setIsDropdownOpen,
     ],
   );
 
