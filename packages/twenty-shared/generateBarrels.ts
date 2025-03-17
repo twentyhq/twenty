@@ -93,7 +93,7 @@ const getFilesPaths = (directoryPath: string): string[] =>
       return false;
     }
 
-    const isIndexFile = filePath === INDEX_FILENAME; // Should be starts with ?
+    const isIndexFile = filePath === INDEX_FILENAME;
     if (isIndexFile) {
       return false;
     }
@@ -107,6 +107,27 @@ const getFilesPaths = (directoryPath: string): string[] =>
     return isWhiteListedExtension && isExcludedExtension;
   });
 
+type ComputeExportLineForGivenFileArgs = {
+  filePath: string;
+  moduleDirectoryPath: string; // Rename
+  directoryPath: string; // Rename
+};
+const computeExportLineForGivenFile = ({
+  filePath,
+  moduleDirectoryPath,
+  directoryPath,
+}: ComputeExportLineForGivenFileArgs) => {
+  const fileNameWithoutExtension = filePath.split('.').slice(0, -1).join('.');
+  const pathToImport = slash(
+    path.relative(
+      moduleDirectoryPath,
+      path.join(directoryPath, fileNameWithoutExtension),
+    ),
+  );
+  return `export * from './${pathToImport}';`;
+};
+
+// TODO refactor too verbose
 const generateModuleIndexFiles = (moduleDirectories: string[]) => {
   return moduleDirectories.map<createTypeScriptFileArgs>(
     (moduleDirectoryPath) => {
@@ -115,19 +136,13 @@ const generateModuleIndexFiles = (moduleDirectories: string[]) => {
         .flatMap((directoryPath) => {
           const directFilesPaths = getFilesPaths(directoryPath);
 
-          return directFilesPaths.map((filePath) => {
-            const fileNameWithoutExtension = filePath
-              .split('.')
-              .slice(0, -1)
-              .join('.');
-            const pathToImport = slash(
-              path.relative(
-                moduleDirectoryPath,
-                path.join(directoryPath, fileNameWithoutExtension),
-              ),
-            );
-            return `export * from './${pathToImport}';`;
-          });
+          return directFilesPaths.map((filePath) =>
+            computeExportLineForGivenFile({
+              directoryPath,
+              filePath,
+              moduleDirectoryPath,
+            }),
+          );
         })
         .sort((a, b) => a.localeCompare(b))
         .join('\n');
@@ -139,6 +154,7 @@ const generateModuleIndexFiles = (moduleDirectories: string[]) => {
     },
   );
 };
+///
 
 type ExportOccurence = {
   types: string;
