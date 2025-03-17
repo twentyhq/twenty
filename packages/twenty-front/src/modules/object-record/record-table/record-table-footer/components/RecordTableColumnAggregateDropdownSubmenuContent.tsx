@@ -2,7 +2,7 @@ import { RecordTableColumnAggregateFooterAggregateOperationMenuItems } from '@/o
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -32,7 +32,10 @@ export const RecordTableColumnAggregateFooterDropdownSubmenuContent = ({
   );
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
+      <DropdownMenuHeader
+        StartIcon={IconChevronLeft}
+        onStartIconClick={resetContent}
+      >
         {title}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>

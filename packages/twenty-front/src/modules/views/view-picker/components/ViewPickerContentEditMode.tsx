@@ -3,7 +3,7 @@ import { IconChevronLeft } from 'twenty-ui';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -67,7 +67,10 @@ export const ViewPickerContentEditMode = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={handleClose}>
+      <DropdownMenuHeader
+        StartIcon={IconChevronLeft}
+        onStartIconClick={handleClose}
+      >
         Edit view
       </DropdownMenuHeader>
       <DropdownMenuSeparator />
