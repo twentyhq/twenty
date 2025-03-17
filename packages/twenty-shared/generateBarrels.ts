@@ -29,12 +29,24 @@ type createTypeScriptFileArgs = {
 const createTypeScriptIndexFile = ({
   content,
   path: filePath,
-}: createTypeScriptFileArgs) =>
+}: createTypeScriptFileArgs) => {
+  const header = `
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \\ \\ /\\ / / _ \\ '_ \\| __| | | | Auto-genreated file
+ *  | |  \\ V  V /  __/ | | | |_| |_| | Any edition to this will be override
+ *  |_|   \\_/\\_/ \\___|_| |_|\\__|\\__, |
+ *                              |___/
+ */
+`;
   fs.writeFileSync(
     path.join(filePath, INDEX_FILENAME),
-    `${content}\n`,
+    `${header}
+    ${content}\n`,
     'utf-8',
   );
+};
 
 const getSubDirectoryPaths = (directoryPath: string): string[] =>
   fs
