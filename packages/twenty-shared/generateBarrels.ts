@@ -21,7 +21,7 @@ const EXCLUDED_DIRECTORIES = [
   '__stories__',
   'internal',
 ];
-const INDEX_FILENAME = 'index.ts';
+const INDEX_FILENAME = 'index';
 const PACKAGE_JSON = 'package.json';
 // TODO refactor to be config ?
 const PACKAGE_PATH = path.resolve('packages/twenty-shared');
@@ -40,10 +40,12 @@ const prettierFormat = (str: string, parser: Options['parser']) =>
 type createTypeScriptFileArgs = {
   path: string;
   content: string;
+  filename: string;
 };
-const createTypeScriptIndexFile = ({
+const createTypeScriptFile = ({
   content,
   path: filePath,
+  filename,
 }: createTypeScriptFileArgs) => {
   const header = `
 /*
@@ -60,11 +62,13 @@ const createTypeScriptIndexFile = ({
     'typescript',
   );
   fs.writeFileSync(
-    path.join(filePath, INDEX_FILENAME),
+    path.join(filePath, `${filename}.ts`),
     formattedContent,
     'utf-8',
   );
 };
+
+const getLastPathFolder = (path) => path.split('/').pop();
 
 const getSubDirectoryPaths = (directoryPath: string): string[] =>
   fs
@@ -95,7 +99,7 @@ const getFilesPaths = (directoryPath: string): string[] =>
       return false;
     }
 
-    const isIndexFile = filePath === INDEX_FILENAME;
+    const isIndexFile = filePath.startsWith(INDEX_FILENAME);
     if (isIndexFile) {
       return false;
     }
@@ -111,50 +115,48 @@ const getFilesPaths = (directoryPath: string): string[] =>
 
 type ComputeExportLineForGivenFileArgs = {
   filePath: string;
-  moduleDirectoryPath: string; // Rename
+  moduleDirectory: string; // Rename
   directoryPath: string; // Rename
 };
 const computeExportLineForGivenFile = ({
   filePath,
-  moduleDirectoryPath,
+  moduleDirectory,
   directoryPath,
 }: ComputeExportLineForGivenFileArgs) => {
   const fileNameWithoutExtension = filePath.split('.').slice(0, -1).join('.');
   const pathToImport = slash(
     path.relative(
-      moduleDirectoryPath,
+      moduleDirectory,
       path.join(directoryPath, fileNameWithoutExtension),
     ),
   );
   return `export * from './${pathToImport}';`;
 };
 
-// TODO refactor too verbose
 const generateModuleIndexFiles = (moduleDirectories: string[]) => {
-  return moduleDirectories.map<createTypeScriptFileArgs>(
-    (moduleDirectoryPath) => {
-      const directoryPaths = getDirectoryPathsRecursive(moduleDirectoryPath);
-      const content = directoryPaths
-        .flatMap((directoryPath) => {
-          const directFilesPaths = getFilesPaths(directoryPath);
+  return moduleDirectories.map<createTypeScriptFileArgs>((moduleDirectory) => {
+    const directoryPaths = getDirectoryPathsRecursive(moduleDirectory);
+    const content = directoryPaths
+      .flatMap((directoryPath) => {
+        const directFilesPaths = getFilesPaths(directoryPath);
 
-          return directFilesPaths.map((filePath) =>
-            computeExportLineForGivenFile({
-              directoryPath,
-              filePath,
-              moduleDirectoryPath,
-            }),
-          );
-        })
-        .sort((a, b) => a.localeCompare(b)) // Could be removed as using prettier afterwards anw ?
-        .join('\n');
+        return directFilesPaths.map((filePath) =>
+          computeExportLineForGivenFile({
+            directoryPath,
+            filePath,
+            moduleDirectory: moduleDirectory,
+          }),
+        );
+      })
+      .sort((a, b) => a.localeCompare(b)) // Could be removed as using prettier afterwards anw ?
+      .join('\n');
 
-      return {
-        content,
-        path: moduleDirectoryPath,
-      };
-    },
-  );
+    return {
+      content,
+      path: moduleDirectory,
+      filename: INDEX_FILENAME,
+    };
+  });
 };
 ///
 
@@ -166,7 +168,7 @@ type ExportOccurence = {
 type ExportsConfig = Record<string, ExportOccurence>;
 const generateModulePackageExports = (moduleDirectories: string[]) => {
   return moduleDirectories.reduce<ExportsConfig>((acc, moduleDirectory) => {
-    const moduleName = moduleDirectory.split('/').pop();
+    const moduleName = getLastPathFolder(moduleDirectory);
     if (moduleName === undefined) {
       throw new Error(
         `Should never occur, moduleName is undefined ${moduleDirectory}`,
@@ -217,6 +219,6 @@ const main = () => {
   const modulePackageExports = generateModulePackageExports(moduleDirectories);
 
   writeExportsInPackageJson(modulePackageExports);
-  moduleIndexFiles.forEach(createTypeScriptIndexFile);
+  moduleIndexFiles.forEach(createTypeScriptFile);
 };
 main();
