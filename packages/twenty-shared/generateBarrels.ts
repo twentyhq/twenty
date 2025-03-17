@@ -4,6 +4,8 @@ import path from 'path';
 import { Options } from 'prettier';
 import slash from 'slash';
 
+// TODO prastoin refactor this file in several one into its dedicated package and make it a TypeScript CLI
+
 const INCLUDED_EXTENSIONS = ['.ts', '.tsx'];
 const EXCLUDED_EXTENSIONS = [
   '.test.ts',
@@ -144,7 +146,7 @@ const generateModuleIndexFiles = (moduleDirectories: string[]) => {
             }),
           );
         })
-        .sort((a, b) => a.localeCompare(b))
+        .sort((a, b) => a.localeCompare(b)) // Could be removed as using prettier afterwards anw ?
         .join('\n');
 
       return {
