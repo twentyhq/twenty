@@ -1,7 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -13,7 +12,6 @@ import {
   IconMail,
   IconSearch,
   IconSettingsAutomation,
-  useIcons,
 } from 'twenty-ui';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
@@ -22,7 +20,6 @@ import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/cons
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
@@ -33,22 +30,17 @@ import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelect
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { capitalize } from 'twenty-shared';
 import { v4 } from 'uuid';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
@@ -66,14 +58,11 @@ export const useCommandMenu = () => {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
-  const { getIcon } = useIcons();
 
   const { copyContextStoreStates } = useCopyContextStoreStates();
   const { resetContextStoreStates } = useResetContextStoreStates();
 
   const { closeDropdown } = useDropdownV2();
-
-  const theme = useTheme();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set }) =>
@@ -244,134 +233,6 @@ export const useCommandMenu = () => {
         }
       },
     [closeCommandMenu, openRootCommandMenu],
-  );
-
-  const openRecordInCommandMenu = useRecoilCallback(
-    ({ set, snapshot }) => {
-      return ({
-        recordId,
-        objectNameSingular,
-        isNewRecord = false,
-      }: {
-        recordId: string;
-        objectNameSingular: string;
-        isNewRecord?: boolean;
-      }) => {
-        const pageComponentInstanceId = v4();
-
-        set(
-          viewableRecordNameSingularComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          objectNameSingular,
-        );
-        set(
-          viewableRecordIdComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          recordId,
-        );
-        set(viewableRecordIdState, recordId);
-
-        const objectMetadataItem = snapshot
-          .getLoadable(
-            objectMetadataItemFamilySelector({
-              objectName: objectNameSingular,
-              objectNameType: 'singular',
-            }),
-          )
-          .getValue();
-
-        if (!objectMetadataItem) {
-          throw new Error(
-            `No object metadata item found for object name ${objectNameSingular}`,
-          );
-        }
-
-        set(
-          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          objectMetadataItem.id,
-        );
-
-        set(
-          contextStoreTargetedRecordsRuleComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          {
-            mode: 'selection',
-            selectedRecordIds: [recordId],
-          },
-        );
-
-        set(
-          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          1,
-        );
-
-        set(
-          contextStoreCurrentViewTypeComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          ContextStoreViewType.ShowPage,
-        );
-
-        set(
-          contextStoreCurrentViewIdComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          snapshot
-            .getLoadable(
-              contextStoreCurrentViewIdComponentState.atomFamily({
-                instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-              }),
-            )
-            .getValue(),
-        );
-
-        const currentMorphItems = snapshot
-          .getLoadable(commandMenuNavigationMorphItemByPageState)
-          .getValue();
-
-        const morphItemToAdd = {
-          objectMetadataId: objectMetadataItem.id,
-          recordId,
-        };
-
-        const newMorphItems = new Map([
-          ...currentMorphItems,
-          [pageComponentInstanceId, morphItemToAdd],
-        ]);
-
-        set(commandMenuNavigationMorphItemByPageState, newMorphItems);
-
-        const Icon = objectMetadataItem?.icon
-          ? getIcon(objectMetadataItem.icon)
-          : getIcon('IconList');
-
-        const IconColor = getIconColorForObjectType({
-          objectType: objectMetadataItem.nameSingular,
-          theme,
-        });
-
-        const capitalizedObjectNameSingular = capitalize(objectNameSingular);
-
-        navigateCommandMenu({
-          page: CommandMenuPages.ViewRecord,
-          pageTitle: isNewRecord
-            ? t`New ${capitalizedObjectNameSingular}`
-            : capitalizedObjectNameSingular,
-          pageIcon: Icon,
-          pageIconColor: IconColor,
-          pageId: pageComponentInstanceId,
-          resetNavigationStack: false,
-        });
-      };
-    },
-    [getIcon, navigateCommandMenu, theme],
   );
 
   const openWorkflowTriggerTypeInCommandMenu = useRecoilCallback(
@@ -641,7 +502,6 @@ export const useCommandMenu = () => {
     onCommandMenuCloseAnimationComplete,
     navigateCommandMenu,
     openRecordsSearchPage,
-    openRecordInCommandMenu,
     toggleCommandMenu,
     setGlobalCommandMenuContext,
     openCalendarEventInCommandMenu,
