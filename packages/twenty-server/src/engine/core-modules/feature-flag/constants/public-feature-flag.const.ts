@@ -41,7 +41,8 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
           metadata: {
             label: 'Custom Domain',
             description: 'Customize your workspace URL with your own domain.',
-            imagePath: '',
+            imagePath:
+              'https://twenty.com/images/lab/is-custom-domain-enabled.png',
           },
         },
       ]

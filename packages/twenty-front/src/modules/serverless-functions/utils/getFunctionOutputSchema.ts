@@ -41,6 +41,7 @@ export const getFunctionOutputSchema = (testResult: object) => {
               value,
               type: getValueType(value),
               icon: 'IconVariable',
+              label: key,
             };
           }
           return acc;

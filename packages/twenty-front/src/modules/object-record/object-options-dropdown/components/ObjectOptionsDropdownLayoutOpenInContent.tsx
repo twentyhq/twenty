@@ -8,7 +8,7 @@ import {
 import { useObjectOptions } from '@/object-record/object-options-dropdown/hooks/useObjectOptions';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -25,7 +25,7 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
     <>
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
-        onClick={() => onContentChange('layout')}
+        onStartIconClick={() => onContentChange('layout')}
       >
         {t`Open in`}
       </DropdownMenuHeader>

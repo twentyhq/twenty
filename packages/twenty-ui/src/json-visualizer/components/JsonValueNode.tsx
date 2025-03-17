@@ -1,8 +1,8 @@
-import { JsonListItem } from '@/workflow/components/json-visualizer/components/internal/JsonListItem';
-import { JsonNodeLabel } from '@/workflow/components/json-visualizer/components/internal/JsonNodeLabel';
-import { JsonNodeValue } from '@/workflow/components/json-visualizer/components/internal/JsonNodeValue';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from '@ui/display';
+import { JsonListItem } from '@ui/json-visualizer/components/internal/JsonListItem';
+import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
+import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeValue';
 
 const StyledListItem = styled(JsonListItem)`
   column-gap: ${({ theme }) => theme.spacing(2)};

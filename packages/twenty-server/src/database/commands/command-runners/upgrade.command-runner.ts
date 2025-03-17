@@ -17,11 +17,7 @@ import {
   CompareVersionMajorAndMinorReturnType,
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
-
-type ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs = {
-  workspaceId: string;
-  appVersion: string | undefined;
-};
+import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   abstract readonly fromWorkspaceVersion: SemVer;
@@ -39,19 +35,18 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
     const { workspaceId, index, total, options } = args;
-    const appVersion = this.environmentService.get('APP_VERSION');
 
     this.logger.log(
       chalk.blue(
         `${options.dryRun ? '(dry run)' : ''} Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
       ),
     );
+    const toVersion = this.retrieveToVersionFromAppVersion();
 
     const workspaceVersionCompareResult =
-      await this.retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion({
-        appVersion,
+      await this.retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion(
         workspaceId,
-      });
+      );
 
     switch (workspaceVersionCompareResult) {
       case 'lower': {
@@ -66,7 +61,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
         await this.workspaceRepository.update(
           { id: workspaceId },
-          { version: appVersion },
+          { version: toVersion },
         );
         this.logger.log(
           chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
@@ -91,16 +86,29 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     }
   }
 
-  private async retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion({
-    appVersion,
-    workspaceId,
-  }: ValidateWorkspaceVersionEqualsWorkspaceFromVersionOrThrowArgs): Promise<CompareVersionMajorAndMinorReturnType> {
+  private retrieveToVersionFromAppVersion() {
+    const appVersion = this.environmentService.get('APP_VERSION');
+
     if (!isDefined(appVersion)) {
       throw new Error(
         'Cannot run upgrade command when APP_VERSION is not defined, please double check your env variables',
       );
     }
 
+    const parsedVersion = extractVersionMajorMinorPatch(appVersion);
+
+    if (!isDefined(parsedVersion)) {
+      throw new Error(
+        `Should never occur, APP_VERSION is invalid ${parsedVersion}`,
+      );
+    }
+
+    return parsedVersion;
+  }
+
+  private async retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion(
+    workspaceId: string,
+  ): Promise<CompareVersionMajorAndMinorReturnType> {
     // TODO remove after first release has been done using workspace_version
     if (!isDefined(this.VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG)) {
       this.logger.warn(
@@ -116,7 +124,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     const currentWorkspaceVersion = workspace.version;
 
     if (!isDefined(currentWorkspaceVersion)) {
-      throw new Error(`WORKSPACE_VERSION_NOT_DEFINED to=${appVersion}`);
+      throw new Error(`WORKSPACE_VERSION_NOT_DEFINED workspace=${workspaceId}`);
     }
 
     return compareVersionMajorAndMinor(

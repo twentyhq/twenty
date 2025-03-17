@@ -19,7 +19,6 @@ export type NavigationDrawerProps = {
   children: ReactNode;
   className?: string;
   footer?: ReactNode;
-  logo?: string;
   title: string;
 };
 
@@ -64,7 +63,6 @@ export const NavigationDrawer = ({
   children,
   className,
   footer,
-  logo,
   title,
 }: NavigationDrawerProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -113,11 +111,7 @@ export const NavigationDrawer = ({
         {isSettingsDrawer && title ? (
           !isMobile && <NavigationDrawerBackButton title={title} />
         ) : (
-          <NavigationDrawerHeader
-            name={title}
-            logo={logo || ''}
-            showCollapseButton={isHovered}
-          />
+          <NavigationDrawerHeader showCollapseButton={isHovered} />
         )}
         <StyledItemsContainer isSettings={isSettingsDrawer}>
           {children}

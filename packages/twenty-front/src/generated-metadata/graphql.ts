@@ -922,6 +922,7 @@ export type Mutation = {
   runWorkflowVersion: WorkflowRun;
   sendInvitations: SendInvitationsOutput;
   signUp: SignUpOutput;
+  signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
   syncRemoteTable: RemoteTable;

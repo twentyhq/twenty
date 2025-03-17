@@ -254,25 +254,41 @@ export class WorkspaceManagerService {
    * @param workspaceId
    */
   public async delete(workspaceId: string): Promise<void> {
+    //TODO: delete all logs when #611 closed
+    this.logger.log(`Deleting workspace ${workspaceId} ...`);
+
     // Delete data from metadata tables
     await this.relationMetadataRepository.delete({
       workspaceId,
     });
+    this.logger.log(`workspace ${workspaceId} relation metadata deleted`);
+
     await this.fieldMetadataRepository.delete({
       workspaceId,
     });
+    this.logger.log(`workspace ${workspaceId} field metadata deleted`);
+
     await this.userWorkspaceRoleRepository.delete({
       workspaceId,
     });
+    this.logger.log(`workspace ${workspaceId} user workspace role deleted`);
+
     await this.roleRepository.delete({
       workspaceId,
     });
+    this.logger.log(`workspace ${workspaceId} role deleted`);
 
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
+    this.logger.log(`workspace ${workspaceId} object metadata deleted`);
+
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
+    this.logger.log(`workspace ${workspaceId} migration deleted`);
+
     await this.dataSourceService.delete(workspaceId);
+    this.logger.log(`workspace ${workspaceId} data source deleted`);
     // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
+    this.logger.log(`workspace ${workspaceId} schema deleted`);
   }
 
   private async initPermissions({

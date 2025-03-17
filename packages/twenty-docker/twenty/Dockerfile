@@ -67,6 +67,7 @@ ARG SENTRY_RELEASE
 ENV SENTRY_RELEASE $SENTRY_RELEASE
 
 ARG APP_VERSION
+ENV APP_VERSION $APP_VERSION
 
 # Copy built applications from previous stages
 COPY --chown=1000 --from=twenty-server-build /app /app

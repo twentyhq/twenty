@@ -261,8 +261,11 @@ describe('SignInUpService', () => {
       .mockResolvedValue('a-subdomain');
     jest
       .spyOn(UserRepository, 'save')
+
       .mockResolvedValue({ id: 'newUserId' } as User);
-    jest.spyOn(userWorkspaceService, 'create').mockResolvedValue({} as any);
+    jest
+      .spyOn(userWorkspaceService, 'create')
+      .mockResolvedValue({} as UserWorkspace);
 
     const result = await service.signInUp(params);
 
@@ -332,6 +335,35 @@ describe('SignInUpService', () => {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
+  });
+
+  it('should handle signup for existing user on new workspace', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
+      workspace: null,
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'existingUser',
+        existingUser: { email: 'existinguser@example.com' } as User,
+      },
+    };
+
+    jest.spyOn(environmentService, 'get').mockReturnValue(false);
+    jest.spyOn(WorkspaceRepository, 'count').mockResolvedValue(0);
+    jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
+    jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
+      id: 'newWorkspaceId',
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+    } as Workspace);
+    jest.spyOn(userWorkspaceService, 'create').mockResolvedValue({} as any);
+
+    const result = await service.signInUp(params);
+
+    expect(result.workspace).toBeDefined();
+    expect(result.user).toBeDefined();
+    expect(WorkspaceRepository.create).toHaveBeenCalled();
+    expect(WorkspaceRepository.save).toHaveBeenCalled();
   });
 
   it('should assign default role when permissions are enabled', async () => {
