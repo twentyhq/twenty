@@ -27,11 +27,6 @@ module.exports = {
                 message:
                   "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)",
               },
-              {
-                group: ['@lingui/*'],
-                message:
-                  'Please do not use Lingui in twenty-ui. Internationalization should be handled in twenty-front/twenty-emails/twenty-server packages.',
-              },
             ],
           },
         ],
