@@ -41,10 +41,8 @@ export const AppNavigationDrawer = ({
             setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
           />
         ),
-        logo: '',
       }
     : {
-        logo: currentWorkspace?.logo ?? '',
         title: currentWorkspace?.displayName ?? '',
         children: <MainNavigationDrawerItems />,
         footer: <SupportDropdown />,
@@ -53,7 +51,6 @@ export const AppNavigationDrawer = ({
   return (
     <NavigationDrawer
       className={className}
-      logo={drawerProps.logo}
       title={drawerProps.title}
       footer={drawerProps.footer}
     >

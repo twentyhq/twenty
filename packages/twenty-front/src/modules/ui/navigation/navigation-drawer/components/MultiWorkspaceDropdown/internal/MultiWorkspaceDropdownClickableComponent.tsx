@@ -7,7 +7,7 @@ import {
   StyledLabel,
 } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspacesDropdownStyles';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useTheme } from '@emotion/react';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 
@@ -15,7 +15,7 @@ export const MultiWorkspaceDropdownClickableComponent = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const theme = useTheme();
 
-  const [isNavigationDrawerExpanded] = useRecoilState(
+  const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
   return (

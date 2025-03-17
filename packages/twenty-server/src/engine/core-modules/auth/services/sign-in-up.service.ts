@@ -192,24 +192,6 @@ export class SignInUpService {
     return updatedUser;
   }
 
-  private async persistNewUser(
-    newUser: PartialUserWithPicture,
-    workspace: Workspace,
-  ) {
-    const imagePath = await this.uploadPicture(newUser.picture, workspace.id);
-
-    delete newUser.picture;
-
-    const userToCreate = this.userRepository.create({
-      ...newUser,
-      defaultAvatarUrl: imagePath,
-      canAccessFullAdminPanel: false,
-      canImpersonate: false,
-    } as Partial<User>);
-
-    return await this.userRepository.save(userToCreate);
-  }
-
   private async throwIfWorkspaceIsNotReadyForSignInUp(
     workspace: Workspace,
     user: ExistingUserOrPartialUserWithPicture,
@@ -246,9 +228,10 @@ export class SignInUpService {
 
     const currentUser =
       params.userData.type === 'newUserWithPicture'
-        ? await this.persistNewUser(
+        ? await this.saveNewUser(
             params.userData.newUserWithPicture,
-            params.workspace,
+            params.workspace.id,
+            { canAccessFullAdminPanel: false, canImpersonate: false },
           )
         : params.userData.existingUser;
 

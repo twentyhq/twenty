@@ -26,7 +26,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MulitWorkspaceDropdownId';
+import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
@@ -138,7 +138,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                   avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
                 />
               }
-              selected={currentWorkspace?.id === workspace.id}
+              selected={false}
             />
           </UndecoratedLink>
         ))}
