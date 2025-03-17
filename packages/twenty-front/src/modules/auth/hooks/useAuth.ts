@@ -191,7 +191,6 @@ export const useAuth = () => {
 
         return getLoginTokenResult.data.getLoginTokenFromCredentials;
       } catch (error) {
-        // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
           error instanceof ApolloError &&
           error.graphQLErrors[0]?.extensions?.code ===
