@@ -5,6 +5,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useGetUserSoftfone } from '@/settings/service-center/telephony/hooks/useGetUserSoftfone';
+import DTMFButton from '@/softphone/components/DTMFButton';
 import Keyboard from '@/softphone/components/Keyboard';
 import StatusIndicator from '@/softphone/components/StatusPill';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -610,6 +611,35 @@ const WebSoftphone: React.FC = () => {
     }
   };
 
+  const sendDTMF = (tone: string) => {
+    if (
+      !sessionRef.current ||
+      sessionRef.current.state !== SessionState.Established
+    ) {
+      console.error('Cannot send DTMF: No active call session');
+      return;
+    }
+
+    try {
+      console.log(`Sending DTMF tone: ${tone}`);
+
+      const options = {
+        requestOptions: {
+          body: {
+            contentDisposition: 'render',
+            contentType: 'application/dtmf-relay',
+            content: `Signal=${tone}\r\nDuration=1000`,
+          },
+        },
+      };
+
+      sessionRef.current.info(options);
+      console.log(`DTMF tone ${tone} sent successfully`);
+    } catch (error) {
+      console.error('Error sending DTMF tone:', error);
+    }
+  };
+
   const requestMediaPermissions = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -749,7 +779,7 @@ const WebSoftphone: React.FC = () => {
     }
   };
 
-  const sendDTMF = (tone: string) => {
+  const transferCall = (to: string) => {
     const sessionManager = new SessionManager(
       'wss://webrtc.dazsoft.com:8080/ws',
       { registererOptions: { extraHeaders: ['X-oauth-dazsoft: 1'] } },
@@ -758,7 +788,7 @@ const WebSoftphone: React.FC = () => {
     if (sessionRef.current)
       sessionManager?.transfer(
         sessionRef.current,
-        `sip:${tone}@suite.pabx.digital`,
+        `sip:${to}@suite.pabx.digital`,
       );
   };
 
@@ -774,6 +804,7 @@ const WebSoftphone: React.FC = () => {
   const PhoneIncoming = getIcon('IconPhoneIncoming');
   const IconPhoneOutgoing = getIcon('IconPhoneOutgoing');
   const IconMicrophoneOff = getIcon('IconMicrophoneOff');
+  const IconDialpad = getIcon('IconDialpad');
 
   const theme = useTheme();
 
@@ -922,7 +953,8 @@ const WebSoftphone: React.FC = () => {
                   )}
               </StyledDefaultContainer>
 
-              {callState.isInCall && (
+              {/* callState.isInCall */}
+              {true && (
                 <StyledOngoingCallContainer>
                   <StyledIncomingNumber alignSelf="center">
                     {callState.currentNumber}
@@ -956,8 +988,10 @@ const WebSoftphone: React.FC = () => {
                     <TransferButton
                       session={sessionRef.current}
                       type="attended"
-                      sendDTMF={sendDTMF}
+                      sendDTMF={transferCall}
                     />
+
+                    <DTMFButton />
                   </StyledControlsContainer>
 
                   <StyledEndButton onClick={cleanupSession}>
