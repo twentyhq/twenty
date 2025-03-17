@@ -10,7 +10,6 @@ import {
   IconComponent,
   IconDotsVertical,
   IconMail,
-  IconSearch,
   IconSettingsAutomation,
 } from 'twenty-ui';
 
@@ -340,15 +339,6 @@ export const useCommandMenu = () => {
     [navigateCommandMenu],
   );
 
-  const openRecordsSearchPage = () => {
-    navigateCommandMenu({
-      page: CommandMenuPages.SearchRecords,
-      pageTitle: 'Search',
-      pageIcon: IconSearch,
-      pageId: v4(),
-    });
-  };
-
   const openCalendarEventInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (calendarEventId: string) => {
@@ -501,7 +491,6 @@ export const useCommandMenu = () => {
     closeCommandMenu,
     onCommandMenuCloseAnimationComplete,
     navigateCommandMenu,
-    openRecordsSearchPage,
     toggleCommandMenu,
     setGlobalCommandMenuContext,
     openCalendarEventInCommandMenu,
