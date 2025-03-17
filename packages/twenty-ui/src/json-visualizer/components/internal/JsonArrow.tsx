@@ -1,8 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { VisibilityHidden } from '@ui/accessibility';
+import { IconChevronDown } from '@ui/display';
+import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { motion } from 'framer-motion';
-import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
 
 const StyledButton = styled(motion.button)`
   align-items: center;
@@ -29,13 +30,16 @@ export const JsonArrow = ({
   isOpen: boolean;
   onClick: () => void;
 }) => {
-  const { t } = useLingui();
-
   const theme = useTheme();
+
+  const { arrowButtonCollapsedLabel, arrowButtonExpandedLabel } =
+    useJsonTreeContextOrThrow();
 
   return (
     <StyledButton onClick={onClick}>
-      <VisibilityHidden>{isOpen ? t`Collapse` : t`Expand`}</VisibilityHidden>
+      <VisibilityHidden>
+        {isOpen ? arrowButtonExpandedLabel : arrowButtonCollapsedLabel}
+      </VisibilityHidden>
 
       <MotionIconChevronDown
         size={theme.icon.size.md}
