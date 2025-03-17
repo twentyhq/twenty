@@ -99,7 +99,6 @@ export const useRealTimeChats = ({
       // );
 
       setChats(chats);
-      console.log('chats: ', chats);
     });
 
     return () => unsubscribe();
