@@ -15,7 +15,7 @@ import { Equal, In, Repository } from 'typeorm';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { getEntityMetadataByStandardId } from 'src/engine/metadata-modules/utils/get-entity-metadata-by-standard-id';
+import { getStandardObjectMetadataFromDefinition } from 'src/engine/metadata-modules/utils/get-standard-object-metadata-from-definition';
 
 @Injectable()
 export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
@@ -79,9 +79,10 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
             instance.update.isLabelSyncedWithName === true &&
             objectMetadata.standardId
           ) {
-            const standardObjectMetadata = getEntityMetadataByStandardId(
-              objectMetadata.standardId,
-            );
+            const standardObjectMetadata =
+              getStandardObjectMetadataFromDefinition(
+                objectMetadata.standardId,
+              );
 
             if (standardObjectMetadata) {
               instance.update.labelSingular =

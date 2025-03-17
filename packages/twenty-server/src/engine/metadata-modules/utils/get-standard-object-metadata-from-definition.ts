@@ -12,7 +12,7 @@ standardObjectMetadataDefinitions.forEach((entity) => {
   }
 });
 
-export const getEntityMetadataByStandardId = (
+export const getStandardObjectMetadataFromDefinition = (
   standardId: string,
 ): WorkspaceEntityMetadataArgs | undefined => {
   return standardObjectMap.get(standardId);
