@@ -1560,12 +1560,6 @@ export type QueryGetQueueMetricsArgs = {
 };
 
 
-export type QueryGetQueueMetricsArgs = {
-  queueName: Scalars['String']['input'];
-  timeRange?: InputMaybe<QueueMetricsTimeRange>;
-};
-
-
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
 };
