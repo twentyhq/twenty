@@ -5,6 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -13,6 +14,7 @@ import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-w
 import { SettingsPermissionsEntity } from 'src/engine/metadata-modules/settings-permissions/settings-permissions.entity';
 
 @Entity('role')
+@Unique('IndexOnRoleUnique', ['label', 'workspaceId'])
 export class RoleEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
