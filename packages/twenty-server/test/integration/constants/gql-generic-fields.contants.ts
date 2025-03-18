@@ -1,6 +1,6 @@
 export const GQL_GENERIC_FIELDS = `
     id
-    name 
+    name
     createdAt
     updatedAt
     deletedAt

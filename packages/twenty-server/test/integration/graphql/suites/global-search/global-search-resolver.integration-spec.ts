@@ -225,11 +225,6 @@ describe('GlobalSearchResolver', () => {
   it('should not return any record when search input matches no record', async () => {
     const graphqlOperation = globalSearchFactory({
       searchInput: 'noMatchingAnyRecordSearchInput',
-      filter: {
-        id: {
-          eq: listings[0].id,
-        },
-      },
     });
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
