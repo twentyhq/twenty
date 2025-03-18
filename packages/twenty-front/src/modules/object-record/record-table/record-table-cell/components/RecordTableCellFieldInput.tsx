@@ -10,28 +10,19 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 export const RecordTableCellFieldInput = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
-    useRecordTableBodyContextOrThrow();
+  const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
 
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const handleEnter: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
     onMoveFocus('down');
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
   };
@@ -46,42 +37,26 @@ export const RecordTableCellFieldInput = () => {
   ) => {
     event.stopImmediatePropagation();
 
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
   };
 
   const handleEscape: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
     onMoveFocus('right');
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
     onMoveFocus('left');

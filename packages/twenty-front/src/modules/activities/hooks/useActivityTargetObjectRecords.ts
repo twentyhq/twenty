@@ -8,13 +8,18 @@ import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDefined } from 'twenty-shared';
 
 export const useActivityTargetObjectRecords = (
-  activity?: Task | Note,
+  activityRecordId?: string,
   activityTargets?: NoteTarget[] | TaskTarget[],
 ) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  const activity = useRecoilValue(
+    recordStoreFamilyState(activityRecordId ?? ''),
+  ) as Note | Task | null;
 
   if (!isDefined(activity) && !isDefined(activityTargets)) {
     return { activityTargetObjectRecords: [] };

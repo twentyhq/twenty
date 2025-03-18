@@ -132,7 +132,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
           <TaskTargetsContextProvider>
             <ActivityTargetsInlineCell
               activityObjectNameSingular={CoreObjectNameSingular.Task}
-              activity={task}
+              activityRecordId={task.id}
               showLabel={false}
               maxWidth={200}
             />

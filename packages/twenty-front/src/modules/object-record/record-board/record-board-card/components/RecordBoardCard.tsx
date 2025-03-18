@@ -25,7 +25,6 @@ import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { AnimatedEaseInOut } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -71,15 +70,7 @@ const StyledBoardCardWrapper = styled.div`
   width: 100%;
 `;
 
-export const RecordBoardCard = ({
-  isCreating = false,
-  onCreateSuccess,
-  position,
-}: {
-  isCreating?: boolean;
-  onCreateSuccess?: () => void;
-  position?: 'first' | 'last';
-}) => {
+export const RecordBoardCard = () => {
   const navigate = useNavigateApp();
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
@@ -134,18 +125,16 @@ export const RecordBoardCard = ({
   };
 
   const handleCardClick = () => {
-    if (!isCreating) {
-      if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-        openRecordInCommandMenu({
-          recordId,
-          objectNameSingular,
-        });
-      } else {
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular,
-          objectRecordId: recordId,
-        });
-      }
+    if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+      openRecordInCommandMenu({
+        recordId,
+        objectNameSingular,
+      });
+    } else {
+      navigate(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      });
     }
   };
 
@@ -166,16 +155,12 @@ export const RecordBoardCard = ({
     (boardField) => !boardField.isLabelIdentifier,
   );
 
-  const labelIdentifierField = visibleFieldDefinitions.find(
-    (field) => field.isLabelIdentifier,
-  );
-
   return (
     <StyledBoardCardWrapper
       className="record-board-card"
       onContextMenu={handleActionMenuDropdown}
     >
-      {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
+      <RecordValueSetterEffect recordId={recordId} />
       <InView>
         <StyledBoardCard
           ref={cardRef}
@@ -183,16 +168,10 @@ export const RecordBoardCard = ({
           onMouseLeave={onMouseLeaveBoard}
           onClick={handleCardClick}
         >
-          {isDefined(labelIdentifierField) && (
-            <RecordBoardCardHeader
-              identifierFieldDefinition={labelIdentifierField}
-              isCreating={isCreating}
-              onCreateSuccess={onCreateSuccess}
-              position={position}
-              isCardExpanded={isCardExpanded}
-              setIsCardExpanded={setIsCardExpanded}
-            />
-          )}
+          <RecordBoardCardHeader
+            isCardExpanded={isCardExpanded}
+            setIsCardExpanded={setIsCardExpanded}
+          />
           <AnimatedEaseInOut
             isOpen={isCardExpanded || !isCompactModeActive}
             initial={false}
