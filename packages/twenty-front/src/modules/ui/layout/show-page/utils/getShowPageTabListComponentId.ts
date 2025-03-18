@@ -5,8 +5,8 @@ export const getShowPageTabListComponentId = ({
   targetObjectId,
 }: {
   pageId?: string;
-  targetObjectId?: string;
+  targetObjectId: string;
 }): string => {
-  const id = pageId ?? targetObjectId;
+  const id = pageId || targetObjectId;
   return `${TAB_LIST_COMPONENT_ID}-${id}`;
 };
