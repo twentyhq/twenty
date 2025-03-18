@@ -654,7 +654,7 @@ msgstr "Takvim"
 #. js-lingui-id: wRpDAv
 #: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
 msgid "Calendar Event"
-msgstr ""
+msgstr "Takvim etkinliği"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
