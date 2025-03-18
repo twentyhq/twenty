@@ -21,6 +21,9 @@ export enum PermissionsExceptionCode {
   UNKNOWN_REQUIRED_PERMISSION = 'UNKNOWN_REQUIRED_PERMISSION',
   CANNOT_UPDATE_SELF_ROLE = 'CANNOT_UPDATE_SELF_ROLE',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
+  INVALID_ARG = 'INVALID_ARG',
+  PERMISSIONS_V2_NOT_ENABLED = 'PERMISSIONS_V2_NOT_ENABLED',
+  ROLE_LABEL_ALREADY_EXISTS = 'ROLE_LABEL_ALREADY_EXISTS',
 }
 
 export enum PermissionsExceptionMessage {
@@ -38,4 +41,6 @@ export enum PermissionsExceptionMessage {
   UNKNOWN_REQUIRED_PERMISSION = 'Unknown required permission',
   CANNOT_UPDATE_SELF_ROLE = 'Cannot update self role',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'No role found for userWorkspace',
+  PERMISSIONS_V2_NOT_ENABLED = 'Permissions V2 is not enabled',
+  ROLE_LABEL_ALREADY_EXISTS = 'A role with this label already exists',
 }
