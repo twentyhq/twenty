@@ -1,14 +1,12 @@
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useAggregateRecordsForRecordBoardColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateRecordsForRecordBoardColumn';
-import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
-import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
+import { useRecordBoardAddNewRecord } from '@/object-record/record-board/record-board-column/hooks/useRecordBoardAddNewRecord';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
@@ -94,18 +92,9 @@ export const RecordBoardColumnHeader = () => {
   const { aggregateValue, aggregateLabel } =
     useAggregateRecordsForRecordBoardColumn();
 
-  const { handleNewButtonClick } = useColumnNewCardActions(
-    columnDefinition.id ?? '',
-  );
-
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
-  const { isOpportunitiesCompanyFieldDisabled } =
-    useIsOpportunitiesCompanyFieldDisabled();
-
-  const isOpportunity =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity &&
-    !isOpportunitiesCompanyFieldDisabled;
+  const { createNewBoardRecord } = useRecordBoardAddNewRecord();
 
   return (
     <StyledColumn>
@@ -153,7 +142,9 @@ export const RecordBoardColumnHeader = () => {
                   <LightIconButton
                     accent="tertiary"
                     Icon={IconPlus}
-                    onClick={() => handleNewButtonClick('first')}
+                    onClick={() => {
+                      createNewBoardRecord('first');
+                    }}
                   />
                 )}
               </StyledHeaderActions>

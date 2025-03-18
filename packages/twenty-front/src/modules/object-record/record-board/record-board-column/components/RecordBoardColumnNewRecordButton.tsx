@@ -1,4 +1,4 @@
-import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
+import { useRecordBoardAddNewRecord } from '@/object-record/record-board/record-board-column/hooks/useRecordBoardAddNewRecord';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -21,23 +21,23 @@ const StyledNewButton = styled.button`
   }
 `;
 
-export const RecordBoardColumnNewRecordButton = ({
-  columnId,
-}: {
-  columnId: string;
-}) => {
+export const RecordBoardColumnNewRecordButton = () => {
   const theme = useTheme();
 
-  const { handleNewButtonClick } = useColumnNewCardActions(columnId);
-
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
+  const { createNewBoardRecord } = useRecordBoardAddNewRecord();
 
   if (hasObjectReadOnlyPermission) {
     return null;
   }
 
   return (
-    <StyledNewButton onClick={() => handleNewButtonClick('last')}>
+    <StyledNewButton
+      onClick={() => {
+        createNewBoardRecord('last');
+      }}
+    >
       <IconPlus size={theme.icon.size.md} />
       New
     </StyledNewButton>

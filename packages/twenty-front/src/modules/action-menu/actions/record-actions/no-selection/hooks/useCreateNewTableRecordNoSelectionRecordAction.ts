@@ -15,7 +15,7 @@ export const useCreateNewTableRecordNoSelectionRecordAction: ActionHookWithObjec
       throw new Error('Current view ID is not defined');
     }
 
-    const recordTableId = getRecordIndexIdFromObjectNamePluralAndViewId(
+    const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
       objectMetadataItem.namePlural,
       currentViewId,
     );
@@ -24,7 +24,7 @@ export const useCreateNewTableRecordNoSelectionRecordAction: ActionHookWithObjec
 
     const { createNewTableRecord } = useCreateNewTableRecord({
       objectMetadataItem,
-      recordTableId,
+      recordTableId: recordIndexId,
     });
 
     const onClick = () => {

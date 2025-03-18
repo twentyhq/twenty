@@ -4,8 +4,6 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { RecordBoardCardHeaderContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeaderContainer';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
@@ -21,7 +19,6 @@ import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldVal
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -30,7 +27,7 @@ import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
-import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { Dispatch, SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import {
@@ -69,20 +66,10 @@ type RecordBoardCardHeaderProps = {
 
 export const RecordBoardCardHeader = ({
   isCreating = false,
-  onCreateSuccess,
-  position,
   identifierFieldDefinition,
   isCardExpanded,
   setIsCardExpanded,
 }: RecordBoardCardHeaderProps) => {
-  const [newLabelValue, setNewLabelValue] = useState('');
-
-  const columnId = useContext(RecordBoardColumnContext)?.columnId;
-
-  const { handleBlur, handleInputEnter } = useAddNewCard({
-    recordPickerComponentInstanceId: `add-new-card-record-picker-column-${columnId}`,
-  });
-
   const { recordId } = useContext(RecordBoardCardContext);
 
   const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
@@ -130,22 +117,7 @@ export const RecordBoardCardHeader = ({
   return (
     <RecordBoardCardHeaderContainer showCompactView={showCompactView}>
       <StopPropagationContainer>
-        {isCreating && position !== undefined ? (
-          <RecordInlineCellEditMode>
-            <StyledTextInput
-              autoFocus
-              value={newLabelValue}
-              onInputEnter={() =>
-                handleInputEnter(newLabelValue, position, onCreateSuccess)
-              }
-              onBlur={() =>
-                handleBlur(newLabelValue, position, onCreateSuccess)
-              }
-              onChange={(text: string) => setNewLabelValue(text)}
-              placeholder={identifierFieldDefinition.label}
-            />
-          </RecordInlineCellEditMode>
-        ) : isIdentifierEmpty ? (
+        {isIdentifierEmpty ? (
           <FieldContext.Provider
             value={{
               recordId,

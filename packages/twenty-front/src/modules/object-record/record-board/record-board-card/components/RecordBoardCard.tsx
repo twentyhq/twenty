@@ -72,11 +72,9 @@ const StyledBoardCardWrapper = styled.div`
 `;
 
 export const RecordBoardCard = ({
-  isCreating = false,
   onCreateSuccess,
   position,
 }: {
-  isCreating?: boolean;
   onCreateSuccess?: () => void;
   position?: 'first' | 'last';
 }) => {
@@ -134,18 +132,16 @@ export const RecordBoardCard = ({
   };
 
   const handleCardClick = () => {
-    if (!isCreating) {
-      if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-        openRecordInCommandMenu({
-          recordId,
-          objectNameSingular,
-        });
-      } else {
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular,
-          objectRecordId: recordId,
-        });
-      }
+    if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+      openRecordInCommandMenu({
+        recordId,
+        objectNameSingular,
+      });
+    } else {
+      navigate(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      });
     }
   };
 
@@ -175,7 +171,7 @@ export const RecordBoardCard = ({
       className="record-board-card"
       onContextMenu={handleActionMenuDropdown}
     >
-      {!isCreating && <RecordValueSetterEffect recordId={recordId} />}
+      <RecordValueSetterEffect recordId={recordId} />
       <InView>
         <StyledBoardCard
           ref={cardRef}
@@ -186,7 +182,6 @@ export const RecordBoardCard = ({
           {isDefined(labelIdentifierField) && (
             <RecordBoardCardHeader
               identifierFieldDefinition={labelIdentifierField}
-              isCreating={isCreating}
               onCreateSuccess={onCreateSuccess}
               position={position}
               isCardExpanded={isCardExpanded}
