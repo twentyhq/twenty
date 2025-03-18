@@ -59,7 +59,12 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   const navigate = useNavigateApp();
 
   const handleOpenRecord = useCallback(() => {
-    setActiveTabIdInRecordPage(activeTabIdInRightDrawer);
+    const tabIdToOpen =
+      activeTabIdInRightDrawer === 'home'
+        ? 'timeline'
+        : activeTabIdInRightDrawer;
+
+    setActiveTabIdInRecordPage(tabIdToOpen);
 
     navigate(AppPath.RecordShowPage, {
       objectNameSingular,
