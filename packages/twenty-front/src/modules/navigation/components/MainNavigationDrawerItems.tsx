@@ -1,6 +1,9 @@
+/* eslint-disable no-restricted-imports */
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconLink, IconRobot, IconSearch, IconSettings } from 'twenty-ui';
+
+import { IconChartBar } from '@tabler/icons-react';
 
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
@@ -99,9 +102,13 @@ export const MainNavigationDrawerItems = () => {
             }}
             Icon={IconRobot}
           />
-
           <NavigationDrawerItem
-            label="Traceable Link"
+            label="Dashboard links"
+            to={'/dashboard-links'}
+            Icon={IconChartBar}
+          />
+          <NavigationDrawerItem
+            label="Traceable link"
             to={navigationPath}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
