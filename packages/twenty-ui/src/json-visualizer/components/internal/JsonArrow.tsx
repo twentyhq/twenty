@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/display';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
+import { ANIMATION } from '@ui/theme';
 import { motion } from 'framer-motion';
 
 const StyledButton = styled(motion.button)`
@@ -46,6 +47,7 @@ export const JsonArrow = ({
         color={theme.font.color.secondary}
         initial={false}
         animate={{ rotate: isOpen ? -180 : 0 }}
+        transition={{ duration: ANIMATION.duration.normal }}
       />
     </StyledButton>
   );

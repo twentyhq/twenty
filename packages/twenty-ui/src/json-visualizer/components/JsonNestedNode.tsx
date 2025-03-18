@@ -1,8 +1,8 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconComponent } from '@ui/display';
 import { JsonArrow } from '@ui/json-visualizer/components/internal/JsonArrow';
+import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { ANIMATION } from '@ui/theme';
@@ -30,24 +30,7 @@ const StyledEmptyState = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledJsonList = styled(motion.ul)<{ depth: number }>`
-  position: relative;
-  margin: 0;
-  padding: 0;
-
-  display: grid;
-  row-gap: ${({ theme }) => theme.spacing(2)};
-
-  ${({ theme, depth }) =>
-    depth > 0 &&
-    css`
-      padding-left: ${theme.spacing(8)};
-
-      > :first-child {
-        margin-top: ${theme.spacing(2)};
-      }
-    `}
-`;
+const StyledJsonList = styled(JsonList)``.withComponent(motion.ul);
 
 export const JsonNestedNode = ({
   label,
@@ -72,9 +55,21 @@ export const JsonNestedNode = ({
 
   const renderedChildren = (
     <StyledJsonList
-      initial={{ height: 0, overflow: 'hidden' }}
-      animate={{ height: 'auto', overflow: 'hidden' }}
-      exit={{ height: 0, opacity: 0 }}
+      initial={{
+        height: 0,
+        opacity: 0,
+        overflowY: 'clip',
+      }}
+      animate={{
+        height: 'auto',
+        opacity: 1,
+        overflowY: 'clip',
+      }}
+      exit={{
+        height: 0,
+        opacity: 0,
+        overflowY: 'clip',
+      }}
       transition={{ duration: ANIMATION.duration.normal }}
       depth={depth}
     >
