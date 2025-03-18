@@ -2,6 +2,7 @@
   "name": "twenty-emails",
   "version": "0.44.0-canary",
   "description": "",
+  "type": "module",
   "author": "",
   "private": true,
   "license": "AGPL-3.0",

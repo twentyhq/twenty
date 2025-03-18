@@ -1,7 +1,7 @@
 import { lingui } from '@lingui/vite-plugin';
 import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';

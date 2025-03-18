@@ -2,7 +2,6 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "module": "commonjs",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -11,6 +10,7 @@
     "allowUnreachableCode": false,
     "esModuleInterop": true,
     "target": "es2017",
+    "moduleResolution": "bundler",
     "sourceMap": true,
     "inlineSources": true,
     "outDir": "./dist",
