@@ -1,6 +1,7 @@
 import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
@@ -61,7 +62,10 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   const handleOpenRecord = useCallback(() => {
     const tabIdToOpen =
       activeTabIdInRightDrawer === 'home'
-        ? 'timeline'
+        ? objectNameSingular === CoreObjectNameSingular.Note ||
+          objectNameSingular === CoreObjectNameSingular.Task
+          ? 'richText'
+          : 'timeline'
         : activeTabIdInRightDrawer;
 
     setActiveTabIdInRecordPage(tabIdToOpen);
