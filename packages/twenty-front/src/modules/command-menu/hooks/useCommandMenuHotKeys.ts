@@ -1,5 +1,8 @@
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
+import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
+import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -13,12 +16,13 @@ import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 export const useCommandMenuHotKeys = () => {
-  const {
-    openRecordsSearchPage,
-    toggleCommandMenu,
-    goBackFromCommandMenu,
-    setGlobalCommandMenuContext,
-  } = useCommandMenu();
+  const { toggleCommandMenu } = useCommandMenu();
+
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+
+  const { goBackFromCommandMenu } = useCommandMenuHistory();
+
+  const { setGlobalCommandMenuContext } = useSetGlobalCommandMenuContext();
 
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 

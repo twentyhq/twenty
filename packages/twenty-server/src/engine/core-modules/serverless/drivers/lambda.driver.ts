@@ -288,12 +288,9 @@ export class LambdaDriver implements ServerlessDriver {
 
     const startTime = Date.now();
 
-    const computedVersion =
-      version === 'latest' ? serverlessFunction.latestVersion : version;
-
     const folderPath = getServerlessFolder({
       serverlessFunction,
-      version: computedVersion,
+      version,
     });
 
     const tsCodeStream = await this.fileStorageService.read({

@@ -1,14 +1,13 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
-import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerHotKeyScope';
-import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
-import { useRecoilState } from 'recoil';
-import { useMemo } from 'react';
 import { MultiWorkspaceDropdownClickableComponent } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownClickableComponent';
 import { MultiWorkspaceDropdownDefaultComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents';
 import { MultiWorkspaceDropdownThemesComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents';
 import { MultiWorkspaceDropdownWorkspacesListComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
+import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
+import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerHotKeyScope';
+import { useMemo } from 'react';
+import { useRecoilState } from 'recoil';
 
 export const MultiWorkspaceDropdownButton = () => {
   const [multiWorkspaceDropdown, setMultiWorkspaceDropdown] = useRecoilState(
@@ -26,8 +25,6 @@ export const MultiWorkspaceDropdownButton = () => {
     }
   }, [multiWorkspaceDropdown]);
 
-  const { isDropdownOpen } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
-
   return (
     <Dropdown
       dropdownId={MULTI_WORKSPACE_DROPDOWN_ID}
@@ -35,11 +32,7 @@ export const MultiWorkspaceDropdownButton = () => {
         scope: NavigationDrawerHotKeyScope.MultiWorkspaceDropdownButton,
       }}
       dropdownOffset={{ y: -35, x: -5 }}
-      clickableComponent={
-        <MultiWorkspaceDropdownClickableComponent
-          isDropdownOpen={isDropdownOpen}
-        />
-      }
+      clickableComponent={<MultiWorkspaceDropdownClickableComponent />}
       dropdownComponents={<DropdownComponents />}
       onClose={() => {
         setMultiWorkspaceDropdown('default');

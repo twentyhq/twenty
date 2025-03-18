@@ -32,7 +32,11 @@ const StyledRolePermissionsContainer = styled.div`
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+`;
+
+const StyledTableRows = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 type RolePermissionsProps = {
@@ -136,12 +140,14 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
         />
         <StyledTable>
           <RolePermissionsObjectsTableHeader allPermissions={true} />
-          {objectPermissionsConfig.map((permission) => (
-            <RolePermissionsObjectsTableRow
-              key={permission.key}
-              permission={permission}
-            />
-          ))}
+          <StyledTableRows>
+            {objectPermissionsConfig.map((permission) => (
+              <RolePermissionsObjectsTableRow
+                key={permission.key}
+                permission={permission}
+              />
+            ))}
+          </StyledTableRows>
         </StyledTable>
       </Section>
       <Section>
@@ -150,12 +156,14 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
           <RolePermissionsSettingsTableHeader
             allPermissions={role.canUpdateAllSettings}
           />
-          {settingsPermissionsConfig.map((permission) => (
-            <RolePermissionsSettingsTableRow
-              key={permission.key}
-              permission={permission}
-            />
-          ))}
+          <StyledTableRows>
+            {settingsPermissionsConfig.map((permission) => (
+              <RolePermissionsSettingsTableRow
+                key={permission.key}
+                permission={permission}
+              />
+            ))}
+          </StyledTableRows>
         </StyledTable>
       </Section>
     </StyledRolePermissionsContainer>

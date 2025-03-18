@@ -346,6 +346,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       FileWorkspaceFolderDeletionJob.name,
       { workspaceId: id },
     );
+
+    if (workspace.customDomain) {
+      await this.customDomainService.deleteCustomHostnameByHostnameSilently(
+        workspace.customDomain,
+      );
+    }
+
     await this.workspaceRepository.delete(id);
 
     this.logger.log(`workspace ${id} hard deleted`);

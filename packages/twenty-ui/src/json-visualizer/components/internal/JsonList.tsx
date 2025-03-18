@@ -12,6 +12,10 @@ const StyledList = styled.ul<{ depth: number }>`
     depth > 0 &&
     css`
       padding-left: ${theme.spacing(8)};
+
+      > :first-of-type {
+        margin-top: ${theme.spacing(2)};
+      }
     `}
 `;
 
