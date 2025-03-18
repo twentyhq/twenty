@@ -1,11 +1,10 @@
 import { renderHook } from '@testing-library/react';
-import { act } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/workflowIdComponentState';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -15,9 +14,12 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIcons } from 'twenty-ui';
+import { t } from '@lingui/core/macro';
+import { act } from 'react';
+import { IconBolt, IconSettingsAutomation, useIcons } from 'twenty-ui';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { useWorkflowCommandMenu } from '../useWorkflowCommandMenu';
 
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('mocked-uuid'),
@@ -30,15 +32,21 @@ jest.mock('@/command-menu/hooks/useNavigateCommandMenu', () => ({
   }),
 }));
 
-const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'person',
+const workflowMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'workflow',
 )!;
+
+jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
+  useObjectMetadataItem: jest.fn(() => ({
+    objectMetadataItem: workflowMockObjectMetadataItem,
+  })),
+}));
 
 const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
-    personMockObjectMetadataItem.nameSingular,
+    workflowMockObjectMetadataItem.nameSingular,
   contextStoreCurrentViewId: 'my-view-id',
   contextStoreTargetedRecordsRule: {
     mode: 'selection',
@@ -51,8 +59,12 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
-
+      const {
+        openWorkflowTriggerTypeInCommandMenu,
+        openWorkflowActionInCommandMenu,
+        openWorkflowEditStepInCommandMenu,
+        openWorkflowViewStepInCommandMenu,
+      } = useWorkflowCommandMenu();
       const commandMenuPage = useRecoilValue(commandMenuPageState);
       const commandMenuNavigationMorphItemByPage = useRecoilValue(
         commandMenuNavigationMorphItemByPageState,
@@ -82,10 +94,18 @@ const renderHooks = () => {
         contextStoreCurrentViewTypeComponentState,
         'mocked-uuid',
       );
+      const workflowId = useRecoilComponentValueV2(
+        workflowIdComponentState,
+        'mocked-uuid',
+      );
       const { getIcon } = useIcons();
 
       return {
-        openRecordInCommandMenu,
+        openWorkflowTriggerTypeInCommandMenu,
+        openWorkflowActionInCommandMenu,
+        openWorkflowEditStepInCommandMenu,
+        openWorkflowViewStepInCommandMenu,
+        workflowId,
         viewableRecordId,
         commandMenuPage,
         commandMenuNavigationMorphItemByPage,
@@ -109,67 +129,79 @@ describe('useOpenRecordInCommandMenu', () => {
     jest.clearAllMocks();
   });
 
-  it('should set the correct states and navigate to the record page', () => {
+  it('should navigate to the workflow step select trigger type page', () => {
     const { result } = renderHooks();
 
-    const recordId = 'record-123';
-    const objectNameSingular = 'person';
-
     act(() => {
-      result.current.openRecordInCommandMenu({
-        recordId,
-        objectNameSingular,
-      });
+      result.current.openWorkflowTriggerTypeInCommandMenu('test-workflow-id');
     });
 
-    expect(result.current.viewableRecordId).toBe(recordId);
-    expect(result.current.viewableRecordNameSingular).toBe(objectNameSingular);
-    expect(result.current.currentObjectMetadataItemId).toBe(
-      personMockObjectMetadataItem.id,
-    );
-    expect(result.current.targetedRecordsRule).toEqual({
-      mode: 'selection',
-      selectedRecordIds: [recordId],
-    });
-    expect(result.current.numberOfSelectedRecords).toBe(1);
-    expect(result.current.currentViewType).toBe(ContextStoreViewType.ShowPage);
-
-    expect(result.current.commandMenuNavigationMorphItemByPage.size).toBe(1);
-    expect(
-      result.current.commandMenuNavigationMorphItemByPage.get('mocked-uuid'),
-    ).toEqual({
-      objectMetadataId: personMockObjectMetadataItem.id,
-      recordId,
-    });
+    expect(result.current.workflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.ViewRecord,
-      pageTitle: 'Person',
-      pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
-      pageIconColor: 'currentColor',
+      page: CommandMenuPages.WorkflowStepSelectTriggerType,
+      pageTitle: t`Trigger Type`,
+      pageIcon: IconBolt,
       pageId: 'mocked-uuid',
-      resetNavigationStack: false,
     });
   });
 
-  it('should set the correct page title for a new record', () => {
+  it('should navigate to the workflow step select action page', () => {
     const { result } = renderHooks();
 
-    const recordId = 'new-record-123';
-    const objectNameSingular = 'person';
-
     act(() => {
-      result.current.openRecordInCommandMenu({
-        recordId,
-        objectNameSingular,
-        isNewRecord: true,
-      });
+      result.current.openWorkflowActionInCommandMenu('test-workflow-id');
     });
 
-    expect(mockNavigateCommandMenu).toHaveBeenCalledWith(
-      expect.objectContaining({
-        pageTitle: 'New Person',
-      }),
-    );
+    expect(result.current.workflowId).toBe('test-workflow-id');
+
+    expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
+      page: CommandMenuPages.WorkflowStepSelectAction,
+      pageTitle: t`Select Action`,
+      pageIcon: IconSettingsAutomation,
+      pageId: 'mocked-uuid',
+    });
+  });
+
+  it('should navigate to the workflow step edit page', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.openWorkflowEditStepInCommandMenu(
+        'test-workflow-id',
+        'Edit Step',
+        IconSettingsAutomation,
+      );
+    });
+
+    expect(result.current.workflowId).toBe('test-workflow-id');
+
+    expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
+      page: CommandMenuPages.WorkflowStepEdit,
+      pageTitle: 'Edit Step',
+      pageIcon: IconSettingsAutomation,
+      pageId: 'mocked-uuid',
+    });
+  });
+
+  it('should navigate to the workflow step view page', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.openWorkflowViewStepInCommandMenu(
+        'test-workflow-id',
+        'View Step',
+        IconSettingsAutomation,
+      );
+    });
+
+    expect(result.current.workflowId).toBe('test-workflow-id');
+
+    expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
+      page: CommandMenuPages.WorkflowStepView,
+      pageTitle: 'View Step',
+      pageIcon: IconSettingsAutomation,
+      pageId: 'mocked-uuid',
+    });
   });
 });
