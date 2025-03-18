@@ -1,12 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateRoleInput {
   @IsString()
-  @IsNotEmpty()
-  @Field()
+  @Field({ nullable: false })
   label: string;
 
   @IsString()
@@ -21,7 +20,7 @@ export class CreateRoleInput {
 
   @IsBoolean()
   @IsOptional()
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   canUpdateAllSettings?: boolean;
 
   @IsBoolean()

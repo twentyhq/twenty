@@ -177,7 +177,7 @@ export class RoleService {
       } catch (error) {
         throw new PermissionsException(
           error.message,
-          PermissionsExceptionCode.INVALID_ARGS,
+          PermissionsExceptionCode.INVALID_ARG,
         );
       }
     }
