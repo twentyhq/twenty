@@ -17,14 +17,14 @@ const DEFAULT_ACTION = {
   settings: {
     input: [
       {
-        name: 'company',
+        id: 'ed00b897-519f-44cd-8201-a6502a3a9dc8',
         type: FieldMetadataType.TEXT,
         label: 'Company',
         placeholder: 'Select a company',
         settings: {},
       },
       {
-        name: 'number',
+        id: 'ed00b897-519f-44cd-8201-a6502a3a9dc9',
         type: FieldMetadataType.NUMBER,
         label: 'Number',
         placeholder: '1000',
