@@ -34,7 +34,7 @@ export const JestContextStoreSetter = ({
   contextStoreNumberOfSelectedRecords = 0,
   contextStoreCurrentObjectMetadataNameSingular = 'company',
   contextStoreFilters = [],
-  contextStoreCurrentViewType = ContextStoreViewType.Table,
+  contextStoreCurrentViewType,
   children,
 }: JestContextStoreSetterProps) => {
   const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
@@ -75,7 +75,7 @@ export const JestContextStoreSetter = ({
     setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     setContextStoreNumberOfSelectedRecords(contextStoreNumberOfSelectedRecords);
     setcontextStoreFiltersComponentState(contextStoreFilters);
-    setContextStoreCurrentViewType(contextStoreCurrentViewType);
+    setContextStoreCurrentViewType(contextStoreCurrentViewType ?? null);
     setIsLoaded(true);
   }, [
     setContextStoreTargetedRecordsRule,
