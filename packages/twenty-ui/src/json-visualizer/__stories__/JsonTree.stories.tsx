@@ -6,6 +6,7 @@ import {
   within,
 } from '@storybook/test';
 import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
+import { expandTwoDepths } from '@ui/json-visualizer/utils/expandTwoDepths';
 
 const meta: Meta<typeof JsonTree> = {
   title: 'UI/JsonVisualizer/JsonTree',
@@ -272,6 +273,41 @@ export const ExpandingElementExpandsAllItsDescendants: Story = {
 
       expect(allCollapseButtons).toHaveLength(3);
     }
+  },
+};
+
+export const ExpandTwoFirstDepths: Story = {
+  args: {
+    value: {
+      person: {
+        name: 'John Doe',
+        address: {
+          street: '123 Main St',
+          city: 'New York',
+          country: {
+            name: 'USA',
+            code: 'US',
+          },
+        },
+      },
+      isActive: true,
+    },
+    shouldExpandNodeInitially: expandTwoDepths,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nameElement = await canvas.findByText('name');
+    expect(nameElement).toBeVisible();
+
+    const addressElement = await canvas.findByText('address');
+    expect(addressElement).toBeVisible();
+
+    const streetElement = canvas.queryByText('street');
+    expect(streetElement).not.toBeInTheDocument();
+
+    const countrCodeElement = canvas.queryByText('code');
+    expect(countrCodeElement).not.toBeInTheDocument();
   },
 };
 
