@@ -101,7 +101,9 @@ export const SettingsRoleEdit = () => {
       {!rolesLoading && role ? (
         <SettingsPageContainer>
           <ActiveTabComponentInstanceContext.Provider
-            value={{ instanceId: 'settings-role-detail-tabs' }}
+            value={{
+              instanceId: SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+            }}
           >
             <TabList tabs={tabs} className="tab-list" />
             {renderActiveTabContent()}
