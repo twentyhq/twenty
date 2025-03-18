@@ -21,7 +21,6 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -38,11 +37,6 @@ import {
   IconEyeOff,
   LightIconButton,
 } from 'twenty-ui';
-
-const StyledTextInput = styled(TextInput)`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  width: ${({ theme }) => theme.spacing(53)};
-`;
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;
