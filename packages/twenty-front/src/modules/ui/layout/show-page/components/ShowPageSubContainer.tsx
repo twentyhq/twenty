@@ -45,8 +45,6 @@ const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
     isInRightDrawer ? theme.spacing(16) : 0};
 `;
 
-export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
-
 type ShowPageSubContainerProps = {
   layout?: RecordLayout;
   tabs: SingleTabProps[];

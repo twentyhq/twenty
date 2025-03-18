@@ -1,4 +1,4 @@
-import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/components/ShowPageSubContainer';
+import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/constants/ShowPageTabListComponentId';
 
 export const getShowPageTabListComponentId = ({
   pageId,
