@@ -15,12 +15,7 @@ import { IconList, IconSearch } from 'twenty-ui';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
-    <MemoryRouter
-      initialEntries={['/one', '/two', { pathname: '/three' }]}
-      initialIndex={1}
-    >
-      {children}
-    </MemoryRouter>
+    <MemoryRouter>{children}</MemoryRouter>
   </RecoilRoot>
 );
 

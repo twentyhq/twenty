@@ -74,11 +74,11 @@ export const useCommandMenuHistory = () => {
         );
       }
 
-      set(commandMenuPageState, newNavigationStackItem?.page);
+      set(commandMenuPageState, newNavigationStackItem.page);
       set(commandMenuPageInfoState, {
-        title: newNavigationStackItem?.pageTitle,
-        Icon: newNavigationStackItem?.pageIcon,
-        instanceId: newNavigationStackItem?.pageId,
+        title: newNavigationStackItem.pageTitle,
+        Icon: newNavigationStackItem.pageIcon,
+        instanceId: newNavigationStackItem.pageId,
       });
       const currentMorphItems = snapshot
         .getLoadable(commandMenuNavigationMorphItemByPageState)

@@ -83,16 +83,14 @@ export const useNavigateCommandMenu = () => {
       }: CommandMenuNavigationStackItem & {
         resetNavigationStack?: boolean;
       }) => {
-        if (!pageId) {
-          pageId = v4();
-        }
+        const computedPageId = pageId || v4();
 
         openCommandMenu();
         set(commandMenuPageState, page);
         set(commandMenuPageInfoState, {
           title: pageTitle,
           Icon: pageIcon,
-          instanceId: pageId,
+          instanceId: computedPageId,
         });
 
         const isCommandMenuClosing = snapshot
@@ -110,7 +108,7 @@ export const useNavigateCommandMenu = () => {
               pageTitle,
               pageIcon,
               pageIconColor,
-              pageId,
+              pageId: computedPageId,
             },
           ]);
 
@@ -124,7 +122,7 @@ export const useNavigateCommandMenu = () => {
               pageTitle,
               pageIcon,
               pageIconColor,
-              pageId,
+              pageId: computedPageId,
             },
           ]);
         }

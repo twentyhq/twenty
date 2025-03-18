@@ -166,10 +166,13 @@ describe('useOpenRecordInCommandMenu', () => {
       });
     });
 
-    expect(mockNavigateCommandMenu).toHaveBeenCalledWith(
-      expect.objectContaining({
-        pageTitle: 'New Person',
-      }),
-    );
+    expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
+      page: CommandMenuPages.ViewRecord,
+      pageTitle: 'New Person',
+      pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
+      pageIconColor: 'currentColor',
+      pageId: 'mocked-uuid',
+      resetNavigationStack: false,
+    });
   });
 });

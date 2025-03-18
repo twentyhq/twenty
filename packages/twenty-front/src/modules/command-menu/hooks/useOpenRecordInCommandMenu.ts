@@ -121,10 +121,8 @@ export const useOpenRecordInCommandMenu = () => {
           recordId,
         };
 
-        const newMorphItems = new Map([
-          ...currentMorphItems,
-          [pageComponentInstanceId, morphItemToAdd],
-        ]);
+        const newMorphItems = new Map(currentMorphItems);
+        newMorphItems.set(pageComponentInstanceId, morphItemToAdd);
 
         set(commandMenuNavigationMorphItemByPageState, newMorphItems);
 

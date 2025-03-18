@@ -1,11 +1,9 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -48,8 +46,6 @@ const renderHooks = () => {
       const { openEmailThreadInCommandMenu } =
         useOpenEmailThreadInCommandMenu();
 
-      const commandMenuPage = useRecoilValue(commandMenuPageState);
-
       const viewableRecordId = useRecoilComponentValueV2(
         viewableRecordIdComponentState,
         'mocked-uuid',
@@ -57,7 +53,6 @@ const renderHooks = () => {
 
       return {
         openEmailThreadInCommandMenu,
-        commandMenuPage,
         viewableRecordId,
       };
     },
