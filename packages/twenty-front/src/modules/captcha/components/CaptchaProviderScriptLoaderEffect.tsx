@@ -52,13 +52,9 @@ export const CaptchaProviderScriptLoaderEffect = () => {
       !isUndefinedOrNull(captcha?.provider) &&
       captcha?.provider === CaptchaDriverType.GoogleRecaptcha
     ) {
-      const intervalId = setInterval(() => {
-        requestFreshCaptchaToken();
-      }, 110 * 1000);
+      const interval = setInterval(requestFreshCaptchaToken, 110 * 1000);
 
-      return () => {
-        clearInterval(intervalId);
-      };
+      return () => clearInterval(interval);
     }
   }, [captcha?.provider, requestFreshCaptchaToken]);
 
