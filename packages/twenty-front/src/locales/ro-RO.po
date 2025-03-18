@@ -654,7 +654,7 @@ msgstr "Calendar"
 #. js-lingui-id: wRpDAv
 #: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
 msgid "Calendar Event"
-msgstr ""
+msgstr "Eveniment de calendar"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
