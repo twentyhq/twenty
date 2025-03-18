@@ -5,14 +5,15 @@ import { JsonArrow } from '@ui/json-visualizer/components/internal/JsonArrow';
 import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
+import { ANIMATION } from '@ui/theme';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared';
 import { JsonValue } from 'type-fest';
 
 const StyledContainer = styled.li`
-  list-style-type: none;
   display: grid;
-  row-gap: ${({ theme }) => theme.spacing(2)};
+  list-style-type: none;
 `;
 
 const StyledLabelContainer = styled.div`
@@ -28,6 +29,8 @@ const StyledElementsCount = styled.span`
 const StyledEmptyState = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
+
+const StyledJsonList = styled(JsonList)``.withComponent(motion.ul);
 
 export const JsonNestedNode = ({
   label,
@@ -51,7 +54,25 @@ export const JsonNestedNode = ({
   const [isOpen, setIsOpen] = useState(true);
 
   const renderedChildren = (
-    <JsonList depth={depth}>
+    <StyledJsonList
+      initial={{
+        height: 0,
+        opacity: 0,
+        overflowY: 'clip',
+      }}
+      animate={{
+        height: 'auto',
+        opacity: 1,
+        overflowY: 'clip',
+      }}
+      exit={{
+        height: 0,
+        opacity: 0,
+        overflowY: 'clip',
+      }}
+      transition={{ duration: ANIMATION.duration.normal }}
+      depth={depth}
+    >
       {elements.length === 0 ? (
         <StyledEmptyState>{emptyElementsText}</StyledEmptyState>
       ) : (
@@ -71,7 +92,7 @@ export const JsonNestedNode = ({
           );
         })
       )}
-    </JsonList>
+    </StyledJsonList>
   );
 
   const handleArrowClick = () => {
@@ -79,7 +100,11 @@ export const JsonNestedNode = ({
   };
 
   if (hideRoot) {
-    return <StyledContainer>{renderedChildren}</StyledContainer>;
+    return (
+      <StyledContainer>
+        <AnimatePresence initial={false}>{renderedChildren}</AnimatePresence>
+      </StyledContainer>
+    );
   }
 
   return (
@@ -96,7 +121,9 @@ export const JsonNestedNode = ({
         )}
       </StyledLabelContainer>
 
-      {isOpen && renderedChildren}
+      <AnimatePresence initial={false}>
+        {isOpen && renderedChildren}
+      </AnimatePresence>
     </StyledContainer>
   );
 };
