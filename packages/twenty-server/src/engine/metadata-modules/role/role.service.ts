@@ -76,20 +76,32 @@ export class RoleService {
     input: UpdateRoleInput;
     workspaceId: string;
   }): Promise<RoleEntity> {
+    const existingRole = await this.roleRepository.findOne({
+      where: {
+        id: input.id,
+        workspaceId,
+      },
+    });
+
+    if (!isDefined(existingRole)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
     await this.validateRoleInput({
       input: input.update,
       workspaceId,
       roleId: input.id,
     });
 
-    await this.roleRepository.update(input.id, input.update);
-
-    return await this.roleRepository.findOneOrFail({
-      where: {
-        id: input.id,
-        workspaceId,
-      },
+    const updatedRole = await this.roleRepository.save({
+      id: input.id,
+      ...input.update,
     });
+
+    return { ...existingRole, ...updatedRole };
   }
 
   public async createAdminRole({
