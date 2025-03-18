@@ -64,6 +64,12 @@ msgstr ": Quá khứ"
 msgid ": Today"
 msgstr ": Hôm nay"
 
+#. js-lingui-id: J/hVSQ
+#. placeholder {0}: theme.id
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
+msgid "{0}"
+msgstr "{0}"
+
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -651,6 +657,11 @@ msgstr "Tính toán"
 msgid "Calendar"
 msgstr "Lịch"
 
+#. js-lingui-id: wRpDAv
+#: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
+msgid "Calendar Event"
+msgstr ""
+
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Calendar settings"
@@ -784,7 +795,9 @@ msgid "Close command menu"
 msgstr "Đóng menu lệnh"
 
 #. js-lingui-id: H86f9p
-#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Collapse"
 msgstr "Thu gọn"
 
@@ -1015,6 +1028,11 @@ msgstr "Tạo chế độ xem"
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
 msgstr "Tạo Webhook"
+
+#. js-lingui-id: kdLGki
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Create Workspace"
+msgstr "Tạo không gian làm việc"
 
 #. js-lingui-id: 9chYz/
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -1545,12 +1563,16 @@ msgid "Empty"
 msgstr "Trống"
 
 #. js-lingui-id: OMbipf
-#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Empty Array"
 msgstr "Mảng trống"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Empty Object"
 msgstr "Đối tượng trống"
 
@@ -1703,7 +1725,9 @@ msgid "Exit Settings"
 msgstr "\"Thoát Cài đặt\""
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Expand"
 msgstr "Mở rộng"
 
@@ -1772,7 +1796,7 @@ msgstr "\"Xuất bản ghi\""
 #. js-lingui-id: iHK6np
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export run"
-msgstr ""
+msgstr "Xuất lần chạy"
 
 #. js-lingui-id: vwtAUW
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
@@ -1787,7 +1811,7 @@ msgstr "\"Xuất ra PDF\""
 #. js-lingui-id: BuprEs
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export version"
-msgstr ""
+msgstr "Xuất phiên bản"
 
 #. js-lingui-id: 4FLUle
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2223,6 +2247,11 @@ msgstr "Mời qua Đường Dẫn"
 msgid "Invite link sent to email addresses"
 msgstr "Đã gửi đường dẫn mời tới địa chỉ email"
 
+#. js-lingui-id: x1m5RZ
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Invite user"
+msgstr "Mời người dùng"
+
 #. js-lingui-id: d+Y+rP
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Invite your team"
@@ -2425,6 +2454,7 @@ msgstr "Đang tải dữ liệu chỉ số..."
 
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Log out"
 msgstr "Đăng xuất"
 
@@ -2636,7 +2666,7 @@ msgid "New"
 msgstr "Mới"
 
 #. js-lingui-id: Gntx7w
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "{capitalizedObjectNameSingular} Mới"
 
@@ -2718,10 +2748,26 @@ msgstr "Không có tài khoản kết nối"
 msgid "No country"
 msgstr "Không có quốc gia"
 
+#. js-lingui-id: UwvrGq
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "No members"
+msgstr "Không có thành viên nào"
+
+#. js-lingui-id: Y4qK8/
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+msgid "No members assigned"
+msgstr "Không có thành viên nào được chỉ định"
+
 #. js-lingui-id: hfYSED
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members assigned to this role yet"
 #~ msgstr "No members assigned to this role yet"
+
+#. js-lingui-id: /nLvVj
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+msgid "No members match your search"
+msgstr "Không có thành viên nào phù hợp với tìm kiếm của bạn"
 
 #. js-lingui-id: F9pWel
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
@@ -2917,6 +2963,12 @@ msgstr "Các Biến Môi Trường Khác"
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "Other Variables"
 msgstr "Các Biến Khác"
+
+#. js-lingui-id: +vDFPm
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Other workspaces"
+msgstr "Không gian làm việc khác"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -3311,9 +3363,11 @@ msgid "Schema"
 msgstr "Schema"
 
 #. js-lingui-id: A1taO8
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search"
@@ -3331,13 +3385,23 @@ msgstr "Tìm một trường..."
 
 #. js-lingui-id: t3n1Qy
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
-msgid "Search a member"
-msgstr "Tìm kiếm một thành viên"
+#~ msgid "Search a member"
+#~ msgstr "Search a member"
+
+#. js-lingui-id: xdl79x
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Search a team member..."
+msgstr "Tìm kiếm một thành viên..."
 
 #. js-lingui-id: lnDfeK
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Search a type"
 msgstr "Tìm kiếm một loại"
+
+#. js-lingui-id: x55IVv
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+msgid "Search an assigned team member..."
+msgstr "Tìm một thành viên nhóm được phân công..."
 
 #. js-lingui-id: k7kp5/
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -3428,7 +3492,8 @@ msgid "See versions history"
 msgstr "Xem lịch sử phiên bản"
 
 #. js-lingui-id: WZvt/6
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select Action"
 msgstr "Chọn Hành Động"
 
@@ -3818,6 +3883,16 @@ msgstr "Giá trị của trường này phải là duy nhất"
 msgid "The whole event details will be shared with your team."
 msgstr "Toàn bộ chi tiết sự kiện sẽ được chia sẻ với nhóm của bạn."
 
+#. js-lingui-id: FEr96N
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
+msgid "Theme"
+msgstr "Chủ đề"
+
+#. js-lingui-id: 6tNbxl
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Theme "
+msgstr "Chủ đề "
+
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
@@ -3905,7 +3980,8 @@ msgstr "Hôm nay"
 #~ msgstr "Total Users"
 
 #. js-lingui-id: PiUt3N
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Trigger Type"
 msgstr "Loại Kích hoạt"
 

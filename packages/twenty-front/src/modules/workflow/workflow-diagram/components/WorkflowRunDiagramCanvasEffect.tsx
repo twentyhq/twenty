@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { useTabListStates } from '@/ui/layout/tab/hooks/internal/useTabListStates';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
@@ -20,7 +20,7 @@ import { useIcons } from 'twenty-ui';
 export const WorkflowRunDiagramCanvasEffect = () => {
   const { getIcon } = useIcons();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
-  const { openWorkflowViewRunStepInCommandMenu } = useCommandMenu();
+  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowId = useRecoilValue(workflowIdState);
 
@@ -68,7 +68,7 @@ export const WorkflowRunDiagramCanvasEffect = () => {
       }
 
       if (isDefined(workflowId)) {
-        openWorkflowViewRunStepInCommandMenu(
+        openWorkflowRunViewStepInCommandMenu(
           workflowId,
           selectedNodeData.name,
           getIcon(getWorkflowNodeIconKey(selectedNodeData)),
@@ -80,7 +80,7 @@ export const WorkflowRunDiagramCanvasEffect = () => {
       workflowId,
       getIcon,
       goBackToFirstWorkflowRunRightDrawerTabIfNeeded,
-      openWorkflowViewRunStepInCommandMenu,
+      openWorkflowRunViewStepInCommandMenu,
     ],
   );
 

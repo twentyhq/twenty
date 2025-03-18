@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconRobot, IconSearch, IconSettings } from 'twenty-ui';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
@@ -42,7 +42,7 @@ export const MainNavigationDrawerItems = () => {
 
   const { t } = useLingui();
 
-  const { openRecordsSearchPage } = useCommandMenu();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
 
   return (
     <>

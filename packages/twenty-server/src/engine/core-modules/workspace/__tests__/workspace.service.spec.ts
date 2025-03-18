@@ -33,6 +33,7 @@ describe('WorkspaceService', () => {
   let workspaceRepository: Repository<Workspace>;
   let workspaceCacheStorageService: WorkspaceCacheStorageService;
   let messageQueueService: MessageQueueService;
+  let customDomainService: CustomDomainService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -112,6 +113,8 @@ describe('WorkspaceService', () => {
     messageQueueService = module.get<MessageQueueService>(
       getQueueToken(MessageQueue.deleteCascadeQueue),
     );
+    customDomainService = module.get<CustomDomainService>(CustomDomainService);
+    customDomainService.deleteCustomHostnameByHostnameSilently = jest.fn();
   });
 
   afterEach(() => {
@@ -223,6 +226,53 @@ describe('WorkspaceService', () => {
         id: mockWorkspace.id,
       });
       expect(workspaceRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('should delete the custom domain when hard deleting a workspace with a custom domain', async () => {
+      const customDomain = 'custom.example.com';
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+        customDomain,
+      } as Workspace;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+      jest
+        .spyOn(service, 'deleteMetadataSchemaCacheAndUserWorkspace')
+        .mockResolvedValue({} as Workspace);
+
+      await service.deleteWorkspace(mockWorkspace.id, false);
+
+      expect(
+        customDomainService.deleteCustomHostnameByHostnameSilently,
+      ).toHaveBeenCalledWith(customDomain);
+      expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
+    });
+
+    it('should not delete the custom domain when soft deleting a workspace with a custom domain', async () => {
+      const customDomain = 'custom.example.com';
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+        customDomain,
+      } as Workspace;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
+      await service.deleteWorkspace(mockWorkspace.id, true);
+
+      expect(
+        customDomainService.deleteCustomHostnameByHostnameSilently,
+      ).not.toHaveBeenCalled();
+      expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
+        id: mockWorkspace.id,
+      });
     });
   });
 });

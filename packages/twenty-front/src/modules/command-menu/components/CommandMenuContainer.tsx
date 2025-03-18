@@ -9,6 +9,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
@@ -54,11 +55,10 @@ export const CommandMenuContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const {
-    toggleCommandMenu,
-    closeCommandMenu,
-    onCommandMenuCloseAnimationComplete,
-  } = useCommandMenu();
+  const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
+
+  const { commandMenuCloseAnimationCompleteCleanup } =
+    useCommandMenuCloseAnimationCompleteCleanup();
 
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
@@ -154,7 +154,7 @@ export const CommandMenuContainer = ({
                 <ActionMenuConfirmationModals />
                 <AnimatePresence
                   mode="wait"
-                  onExitComplete={onCommandMenuCloseAnimationComplete}
+                  onExitComplete={commandMenuCloseAnimationCompleteCleanup}
                 >
                   {isCommandMenuOpened && (
                     <StyledCommandMenu
