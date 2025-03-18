@@ -505,14 +505,14 @@ export class WorkflowVersionStepWorkspaceService {
             ...BASE_STEP_DEFINITION,
             input: [
               {
+                id: v4(),
                 label: 'Company',
-                name: 'company',
                 placeholder: 'Select a company',
                 type: FieldMetadataType.TEXT,
               },
               {
+                id: v4(),
                 label: 'Number',
-                name: 'number',
                 placeholder: '1000',
                 type: FieldMetadataType.NUMBER,
               },

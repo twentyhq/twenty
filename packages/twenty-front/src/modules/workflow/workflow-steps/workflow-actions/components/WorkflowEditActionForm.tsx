@@ -33,8 +33,8 @@ type WorkflowEditActionFormProps = {
 };
 
 const StyledRowContainer = styled.div`
-  display: flex;
-  margin-right: ${({ theme }) => theme.spacing(4)};
+  display: grid;
+  grid-template-columns: 1fr 16px;
 `;
 
 const StyledButtonContainer = styled.div`
@@ -61,13 +61,7 @@ const StyledPlaceholder = styled.div`
 `;
 
 const StyledIconButtonContainer = styled(StyledButtonContainer)`
-  align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  right: -32px;
-  width: 16px;
 `;
 
 const StyledAddFieldContainer = styled.div`
@@ -123,10 +117,10 @@ export const WorkflowEditActionForm = ({
       />
       <WorkflowStepBody>
         {action.settings.input.map((field) => (
-          <StyledRowContainer key={field.id}>
-            <FormFieldInputContainer>
-              {field.label ? <InputLabel>{field.label}</InputLabel> : null}
+          <FormFieldInputContainer key={field.id}>
+            {field.label ? <InputLabel>{field.label}</InputLabel> : null}
 
+            <StyledRowContainer>
               <FormFieldInputRowContainer>
                 <FormFieldInputInputContainer
                   hasRightElement={false}
@@ -149,32 +143,32 @@ export const WorkflowEditActionForm = ({
                     )}
                   </StyledButtonContainer>
                 </FormFieldInputInputContainer>
-                {isFieldSelected(field.id) && (
-                  <StyledIconButtonContainer>
-                    <IconTrash
-                      size={theme.icon.size.md}
-                      color={theme.font.color.secondary}
-                      onClick={() => {
-                        if (actionOptions.readonly === true) {
-                          return;
-                        }
-
-                        actionOptions.onActionUpdate({
-                          ...action,
-                          settings: {
-                            ...action.settings,
-                            input: action.settings.input.filter(
-                              (f) => f.id !== field.id,
-                            ),
-                          },
-                        });
-                      }}
-                    />
-                  </StyledIconButtonContainer>
-                )}
               </FormFieldInputRowContainer>
-            </FormFieldInputContainer>
-          </StyledRowContainer>
+              {isFieldSelected(field.id) && (
+                <StyledIconButtonContainer>
+                  <IconTrash
+                    size={theme.icon.size.md}
+                    color={theme.font.color.secondary}
+                    onClick={() => {
+                      if (actionOptions.readonly === true) {
+                        return;
+                      }
+
+                      actionOptions.onActionUpdate({
+                        ...action,
+                        settings: {
+                          ...action.settings,
+                          input: action.settings.input.filter(
+                            (f) => f.id !== field.id,
+                          ),
+                        },
+                      });
+                    }}
+                  />
+                </StyledIconButtonContainer>
+              )}
+            </StyledRowContainer>
+          </FormFieldInputContainer>
         ))}
         {!actionOptions.readonly && (
           <StyledRowContainer>
