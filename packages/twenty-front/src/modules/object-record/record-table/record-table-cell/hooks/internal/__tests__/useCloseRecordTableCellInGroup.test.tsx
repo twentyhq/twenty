@@ -86,7 +86,7 @@ describe('useCloseRecordTableCellInGroup', () => {
           currentTableCellInEditModePosition,
         );
         return {
-          ...useCloseRecordTableCellInGroup(recordGroupId),
+          ...useCloseRecordTableCellInGroup(),
           ...useDragSelect(),
           isTableCellInEditMode,
         };

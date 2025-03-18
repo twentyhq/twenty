@@ -1,7 +1,9 @@
-import { useRecordBoardAddNewRecord } from '@/object-record/record-board/record-board-column/hooks/useRecordBoardAddNewRecord';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui';
 
 const StyledNewButton = styled.button`
@@ -24,9 +26,13 @@ const StyledNewButton = styled.button`
 export const RecordBoardColumnNewRecordButton = () => {
   const theme = useTheme();
 
+  const { objectMetadataItem } = useContext(RecordBoardContext);
+
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
-  const { createNewBoardRecord } = useRecordBoardAddNewRecord();
+  const { createNewIndexRecord } = useCreateNewIndexRecord({
+    objectMetadataItem: objectMetadataItem,
+  });
 
   if (hasObjectReadOnlyPermission) {
     return null;
@@ -35,7 +41,7 @@ export const RecordBoardColumnNewRecordButton = () => {
   return (
     <StyledNewButton
       onClick={() => {
-        createNewBoardRecord('last');
+        createNewIndexRecord();
       }}
     >
       <IconPlus size={theme.icon.size.md} />

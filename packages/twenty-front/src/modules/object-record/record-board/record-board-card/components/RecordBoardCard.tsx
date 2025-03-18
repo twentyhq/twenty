@@ -25,7 +25,6 @@ import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { AnimatedEaseInOut } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -71,13 +70,7 @@ const StyledBoardCardWrapper = styled.div`
   width: 100%;
 `;
 
-export const RecordBoardCard = ({
-  onCreateSuccess,
-  position,
-}: {
-  onCreateSuccess?: () => void;
-  position?: 'first' | 'last';
-}) => {
+export const RecordBoardCard = () => {
   const navigate = useNavigateApp();
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
@@ -162,10 +155,6 @@ export const RecordBoardCard = ({
     (boardField) => !boardField.isLabelIdentifier,
   );
 
-  const labelIdentifierField = visibleFieldDefinitions.find(
-    (field) => field.isLabelIdentifier,
-  );
-
   return (
     <StyledBoardCardWrapper
       className="record-board-card"
@@ -179,15 +168,10 @@ export const RecordBoardCard = ({
           onMouseLeave={onMouseLeaveBoard}
           onClick={handleCardClick}
         >
-          {isDefined(labelIdentifierField) && (
-            <RecordBoardCardHeader
-              identifierFieldDefinition={labelIdentifierField}
-              onCreateSuccess={onCreateSuccess}
-              position={position}
-              isCardExpanded={isCardExpanded}
-              setIsCardExpanded={setIsCardExpanded}
-            />
-          )}
+          <RecordBoardCardHeader
+            isCardExpanded={isCardExpanded}
+            setIsCardExpanded={setIsCardExpanded}
+          />
           <AnimatedEaseInOut
             isOpen={isCardExpanded || !isCompactModeActive}
             initial={false}

@@ -6,9 +6,9 @@ import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/reco
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useAggregateRecordsForRecordBoardColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateRecordsForRecordBoardColumn';
-import { useRecordBoardAddNewRecord } from '@/object-record/record-board/record-board-column/hooks/useRecordBoardAddNewRecord';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
@@ -94,7 +94,9 @@ export const RecordBoardColumnHeader = () => {
 
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
-  const { createNewBoardRecord } = useRecordBoardAddNewRecord();
+  const { createNewIndexRecord } = useCreateNewIndexRecord({
+    objectMetadataItem: objectMetadataItem,
+  });
 
   return (
     <StyledColumn>
@@ -143,7 +145,7 @@ export const RecordBoardColumnHeader = () => {
                     accent="tertiary"
                     Icon={IconPlus}
                     onClick={() => {
-                      createNewBoardRecord('first');
+                      createNewIndexRecord();
                     }}
                   />
                 )}

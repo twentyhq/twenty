@@ -7,19 +7,9 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
-import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
-import {
-  FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
-} from '@/object-record/record-field/contexts/FieldContext';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
-import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
+
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -50,17 +40,11 @@ const StyledCheckboxContainer = styled.div`
 `;
 
 type RecordBoardCardHeaderProps = {
-  isCreating?: boolean;
-  onCreateSuccess?: () => void;
-  position?: 'first' | 'last';
-  identifierFieldDefinition: RecordBoardFieldDefinition<FieldMetadata>;
   isCardExpanded?: boolean;
   setIsCardExpanded?: Dispatch<SetStateAction<boolean>>;
 };
 
 export const RecordBoardCardHeader = ({
-  isCreating = false,
-  identifierFieldDefinition,
   isCardExpanded,
   setIsCardExpanded,
 }: RecordBoardCardHeaderProps) => {
@@ -70,8 +54,7 @@ export const RecordBoardCardHeader = ({
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const { updateOneRecord, objectMetadataItem } =
-    useContext(RecordBoardContext);
+  const { objectMetadataItem } = useContext(RecordBoardContext);
 
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
@@ -80,11 +63,6 @@ export const RecordBoardCardHeader = ({
   const showCompactView = useRecoilComponentValueV2(
     isRecordBoardCompactModeActiveComponentState,
   );
-
-  const isIdentifierEmpty = isFieldValueEmpty({
-    fieldDefinition: identifierFieldDefinition,
-    fieldValue: record?.[identifierFieldDefinition.metadata.fieldName],
-  });
 
   const { checkIfLastUnselectAndCloseDropdown } =
     useRecordBoardSelection(recordBoardId);
@@ -95,97 +73,52 @@ export const RecordBoardCardHeader = ({
       recordId,
     );
 
-  const useUpdateOneRecordHook: RecordUpdateHook = () => {
-    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRecord?.({
-        idToUpdate: variables.where.id as string,
-        updateOneRecordInput: variables.updateOneRecordInput,
-      });
-    };
-
-    return [updateEntity, { loading: false }];
-  };
-
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
   return (
     <RecordBoardCardHeaderContainer showCompactView={showCompactView}>
       <StopPropagationContainer>
-        {isIdentifierEmpty ? (
-          <FieldContext.Provider
-            value={{
-              recordId,
-              maxWidth: 156,
-              recoilScopeId:
-                (isCreating ? 'new' : recordId) +
-                identifierFieldDefinition.fieldMetadataId,
-              isLabelIdentifier: true,
-              fieldDefinition: {
-                disableTooltip: false,
-                fieldMetadataId: identifierFieldDefinition.fieldMetadataId,
-                label: `Set ${identifierFieldDefinition.label}`,
-                iconName: identifierFieldDefinition.iconName,
-                type: identifierFieldDefinition.type,
-                metadata: identifierFieldDefinition.metadata,
-                defaultValue: identifierFieldDefinition.defaultValue,
-                editButtonIcon: getFieldButtonIcon({
-                  metadata: identifierFieldDefinition.metadata,
-                  type: identifierFieldDefinition.type,
-                }),
-              },
-              useUpdateRecord: useUpdateOneRecordHook,
-              hotkeyScope: InlineCellHotkeyScope.InlineCell,
-            }}
-          >
-            <RecordInlineCell />
-          </FieldContext.Provider>
-        ) : (
-          isDefined(record) && (
-            <RecordChip
-              objectNameSingular={objectMetadataItem.nameSingular}
-              record={record}
-              variant={AvatarChipVariant.Transparent}
-              maxWidth={150}
-              to={
-                recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-                  ? indexIdentifierUrl(recordId)
-                  : undefined
-              }
-            />
-          )
+        {isDefined(record) && (
+          <RecordChip
+            objectNameSingular={objectMetadataItem.nameSingular}
+            record={record}
+            variant={AvatarChipVariant.Transparent}
+            maxWidth={150}
+            to={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
+                ? indexIdentifierUrl(recordId)
+                : undefined
+            }
+          />
         )}
       </StopPropagationContainer>
 
-      {!isCreating && (
-        <>
-          {showCompactView && (
-            <StyledCompactIconContainer className="compact-icon-container">
-              <StopPropagationContainer>
-                <LightIconButton
-                  Icon={isCardExpanded ? IconEyeOff : IconEye}
-                  accent="tertiary"
-                  onClick={() => {
-                    setIsCardExpanded?.((prev) => !prev);
-                  }}
-                />
-              </StopPropagationContainer>
-            </StyledCompactIconContainer>
-          )}
-          <StyledCheckboxContainer className="checkbox-container">
-            <StopPropagationContainer>
-              <Checkbox
-                hoverable
-                checked={isCurrentCardSelected}
-                onChange={() => {
-                  setIsCurrentCardSelected(!isCurrentCardSelected);
-                  checkIfLastUnselectAndCloseDropdown();
-                }}
-                variant={CheckboxVariant.Secondary}
-              />
-            </StopPropagationContainer>
-          </StyledCheckboxContainer>
-        </>
+      {showCompactView && (
+        <StyledCompactIconContainer className="compact-icon-container">
+          <StopPropagationContainer>
+            <LightIconButton
+              Icon={isCardExpanded ? IconEyeOff : IconEye}
+              accent="tertiary"
+              onClick={() => {
+                setIsCardExpanded?.((prev) => !prev);
+              }}
+            />
+          </StopPropagationContainer>
+        </StyledCompactIconContainer>
       )}
+      <StyledCheckboxContainer className="checkbox-container">
+        <StopPropagationContainer>
+          <Checkbox
+            hoverable
+            checked={isCurrentCardSelected}
+            onChange={() => {
+              setIsCurrentCardSelected(!isCurrentCardSelected);
+              checkIfLastUnselectAndCloseDropdown();
+            }}
+            variant={CheckboxVariant.Secondary}
+          />
+        </StopPropagationContainer>
+      </StyledCheckboxContainer>
     </RecordBoardCardHeaderContainer>
   );
 };

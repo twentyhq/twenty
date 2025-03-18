@@ -3,7 +3,6 @@ import { availableRecordGroupIdsComponentSelector } from '@/object-record/record
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useCreateNewTableRecordInGroup } from '@/object-record/record-table/hooks/useCreateNewTableRecordInGroup';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -44,21 +43,17 @@ export const RecordIndexAddRecordInGroupDropdown = ({
     (field) => field.id === recordGroupFieldMetadata?.id,
   );
 
-  const { createNewTableRecordInGroup } = useCreateNewTableRecordInGroup();
-
   const { closeDropdown } = useDropdown(dropdownId);
 
   const handleCreateNewTableRecordInGroup = useRecoilCallback(
     ({ set }) =>
       (recordGroup: RecordGroupDefinition) => {
         set(isRecordGroupTableSectionToggledState(recordGroup.id), true);
-        createNewTableRecordInGroup(recordGroup.id);
         setActiveDropdownFocusIdAndMemorizePrevious(null);
         closeDropdown();
       },
     [
       closeDropdown,
-      createNewTableRecordInGroup,
       setActiveDropdownFocusIdAndMemorizePrevious,
       isRecordGroupTableSectionToggledState,
     ],

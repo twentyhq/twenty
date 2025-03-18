@@ -1,38 +1,40 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { AppPath } from '@/types/AppPath';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const useRecordBoardAddNewRecord = () => {
-  const columnContext = useContext(RecordBoardColumnContext);
-  const { createOneRecord, selectFieldMetadataItem, objectMetadataItem } =
-    useContext(RecordBoardContext);
-
+export const useCreateNewIndexRecord = ({
+  objectMetadataItem,
+}: {
+  objectMetadataItem: ObjectMetadataItem;
+}) => {
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
-  const { openRecordTitleCell } = useRecordTitleCell();
+
+  const { createOneRecord } = useCreateOneRecord({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    shouldMatchRootQueryFilter: true,
+  });
+
   const navigate = useNavigateApp();
 
-  const createNewBoardRecord = useRecoilCallback(
+  const { openRecordTitleCell } = useRecordTitleCell();
+
+  const createNewIndexRecord = useRecoilCallback(
     ({ snapshot }) =>
-      async (position: 'first' | 'last' | number) => {
+      async () => {
         const recordId = v4();
 
         const recordIndexOpenRecordIn = snapshot
           .getLoadable(recordIndexOpenRecordInState)
           .getValue();
 
-        await createOneRecord({
-          id: recordId,
-          [selectFieldMetadataItem.name]: columnContext?.columnDefinition.value,
-          position: position,
-        });
+        await createOneRecord({ id: recordId });
 
         if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
           openRecordInCommandMenu({
@@ -53,18 +55,16 @@ export const useRecordBoardAddNewRecord = () => {
         }
       },
     [
-      columnContext?.columnDefinition.value,
       createOneRecord,
       navigate,
       objectMetadataItem.labelIdentifierFieldMetadataId,
       objectMetadataItem.nameSingular,
       openRecordInCommandMenu,
       openRecordTitleCell,
-      selectFieldMetadataItem.name,
     ],
   );
 
   return {
-    createNewBoardRecord,
+    createNewIndexRecord,
   };
 };
