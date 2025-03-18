@@ -37,7 +37,7 @@ export const JsonNode = ({
     return (
       <JsonValueNode
         label={label}
-        valueAsString="[null]"
+        valueAsString="null"
         Icon={IconCircleOff}
         isHighlighted={isHighlighted}
       />
