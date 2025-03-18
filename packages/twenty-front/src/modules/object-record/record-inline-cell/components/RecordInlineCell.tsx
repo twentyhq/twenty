@@ -21,10 +21,7 @@ import { isFieldSelect } from '@/object-record/record-field/types/guards/isField
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useRecoilCallback } from 'recoil';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
@@ -83,30 +80,15 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     closeInlineCell();
   };
 
-  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
-    ({ snapshot }) =>
-      (persistField, event) => {
-        const recordFieldDropdownId = getDropdownFocusIdForRecordField(
-          recordId,
-          fieldDefinition.fieldMetadataId,
-          'inline-cell',
-        );
+  const handleClickOutside: FieldInputClickOutsideEvent = (
+    persistField,
+    event,
+  ) => {
+    event.stopImmediatePropagation();
 
-        const activeDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
-          .getValue();
-
-        if (recordFieldDropdownId !== activeDropdownFocusId) {
-          return;
-        }
-
-        event.stopImmediatePropagation();
-
-        persistField();
-        closeInlineCell();
-      },
-    [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
-  );
+    persistField();
+    closeInlineCell();
+  };
 
   const { getIcon } = useIcons();
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
