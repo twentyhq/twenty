@@ -1,5 +1,6 @@
 {
   "name": "twenty-shared",
+  "type": "module",
   "version": "0.44.0-canary",
   "license": "AGPL-3.0",
   "main": "./dist/index.js",
@@ -19,32 +20,32 @@
     "./constants": {
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants.mjs",
-      "require": "./dist/constants.js"
+      "require": "./dist/constants.cjs"
     },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing.mjs",
-      "require": "./dist/testing.js"
+      "require": "./dist/testing.cjs"
     },
     "./translations": {
       "types": "./dist/translations/index.d.ts",
       "import": "./dist/translations.mjs",
-      "require": "./dist/translations.js"
+      "require": "./dist/translations.cjs"
     },
     "./types": {
       "types": "./dist/types/index.d.ts",
       "import": "./dist/types.mjs",
-      "require": "./dist/types.js"
+      "require": "./dist/types.cjs"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils.mjs",
-      "require": "./dist/utils.js"
+      "require": "./dist/utils.cjs"
     },
     "./workspace": {
       "types": "./dist/workspace/index.d.ts",
       "import": "./dist/workspace.mjs",
-      "require": "./dist/workspace.js"
+      "require": "./dist/workspace.cjs"
     }
   }
 }
