@@ -4,10 +4,6 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Checkbox } from 'twenty-ui';
 
-const StyledTableHeaderRow = styled(TableRow)`
-  display: flex;
-`;
-
 const StyledNameHeader = styled(TableHeader)`
   flex: 1;
 `;
@@ -26,10 +22,14 @@ type RolePermissionsObjectsTableHeaderProps = {
 export const RolePermissionsObjectsTableHeader = ({
   allPermissions,
 }: RolePermissionsObjectsTableHeaderProps) => (
-  <StyledTableHeaderRow>
+  <TableRow>
     <StyledNameHeader>{t`Name`}</StyledNameHeader>
     <StyledActionsHeader aria-label={t`Actions`}>
-      <Checkbox checked={allPermissions} disabled />
+      <Checkbox
+        checked={allPermissions}
+        indeterminate={!allPermissions}
+        disabled
+      />
     </StyledActionsHeader>
-  </StyledTableHeaderRow>
+  </TableRow>
 );
