@@ -124,7 +124,7 @@ const renderHooks = () => {
   return { result };
 };
 
-describe('useOpenRecordInCommandMenu', () => {
+describe('useWorkflowCommandMenu', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
