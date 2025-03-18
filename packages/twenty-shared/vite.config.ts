@@ -5,7 +5,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 
 const exports = Object.keys(packageJson.exports);
-const entries = exports.map((module) => `src/${module}`);
+const entries = exports.map((module) => `src/${module}/index.ts`);
 console.log(entries);
 export default defineConfig({
   root: __dirname,
@@ -13,6 +13,7 @@ export default defineConfig({
 
   plugins: [
     tsconfigPaths(),
+    // Refactor DTS
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
@@ -41,7 +42,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         entryFileNames: (chunk) => {
-          console.log(chunk);
           if (!chunk.isEntry) {
             return `${chunk.name}.js`;
           }

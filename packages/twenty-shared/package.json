@@ -8,32 +8,32 @@
   },
   "exports": {
     "constants": {
-      "types": "./dist/constants.d.ts",
+      "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants.mjs",
       "require": "./dist/constants.js"
     },
     "testing": {
-      "types": "./dist/testing.d.ts",
+      "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing.mjs",
       "require": "./dist/testing.js"
     },
     "translations": {
-      "types": "./dist/translations.d.ts",
+      "types": "./dist/translations/index.d.ts",
       "import": "./dist/translations.mjs",
       "require": "./dist/translations.js"
     },
     "types": {
-      "types": "./dist/types.d.ts",
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/types.mjs",
       "require": "./dist/types.js"
     },
     "utils": {
-      "types": "./dist/utils.d.ts",
+      "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils.mjs",
       "require": "./dist/utils.js"
     },
     "workspace": {
-      "types": "./dist/workspace.d.ts",
+      "types": "./dist/workspace/index.d.ts",
       "import": "./dist/workspace.mjs",
       "require": "./dist/workspace.js"
     }
