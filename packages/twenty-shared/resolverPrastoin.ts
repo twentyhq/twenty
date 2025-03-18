@@ -1,7 +1,13 @@
+import prettier from '@prettier/sync';
 import * as fs from 'fs';
 import glob from 'glob';
 import * as path from 'path';
 import ts from 'typescript';
+const prettierConfigFile = prettier.resolveConfigFile();
+if (prettierConfigFile == null) {
+  throw new Error('Prettier config file not found');
+}
+const prettierConfiguration = prettier.resolveConfig(prettierConfigFile);
 
 type DeclarationOccurence = { kind: string; name: string };
 type ExtractedExports = Array<{
@@ -358,12 +364,87 @@ function insertImportAtTop({
     sourceText.substring(insertPos);
 
   // Write back to file
-  fs.writeFileSync(filePath, updatedSourceText, 'utf8');
+  fs.writeFileSync(
+    filePath,
+    prettier.format(updatedSourceText, {
+      parser: 'typescript',
+      ...prettierConfiguration,
+    }),
+    'utf8',
+  );
+}
+
+type RemoveSpecificImports = {
+  filePath: string;
+  moduleSpecifier: string;
+};
+function removeSpecificImports({
+  filePath,
+  moduleSpecifier,
+}: RemoveSpecificImports) {
+  const sourceText = fs.readFileSync(filePath, 'utf8');
+
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true,
+  );
+
+  type Replacement = {
+    start: number;
+    end: number;
+    newText: string;
+  };
+  let replacement: Replacement | undefined;
+
+  function visit(node: ts.Node) {
+    if (ts.isImportDeclaration(node)) {
+      const importSource = node.moduleSpecifier
+        .getText(sourceFile)
+        .replace(/^['"]|['"]$/g, '');
+
+      if (importSource === moduleSpecifier && node.importClause) {
+        replacement = {
+          start: node.getFullStart(),
+          end: node.getEnd(),
+          newText: '',
+        };
+      }
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+
+  let updatedSourceText = sourceText;
+
+  if (replacement) {
+    const { end, newText, start } = replacement;
+    updatedSourceText =
+      updatedSourceText.substring(0, start) +
+      newText +
+      updatedSourceText.substring(end);
+    fs.writeFileSync(
+      filePath,
+      prettier.format(updatedSourceText, {
+        parser: 'typescript',
+        ...prettierConfiguration,
+      }),
+      'utf8',
+    );
+  }
 }
 
 const migrateImports = (mappedResolutions: MappedResolution[]) => {
   for (const { file, newImports } of mappedResolutions) {
     for (const { barrel, modules } of Object.values(newImports)) {
+      // TODO could refactor to avoid double source file and read
+      removeSpecificImports({
+        filePath: file,
+        moduleSpecifier: 'twenty-shared',
+      });
       insertImportAtTop({
         filePath: file,
         importSpecifier: `twenty-shared/${barrel}`,
