@@ -318,6 +318,7 @@
     "jest-environment-jsdom": "29.7.0",
     "jest-environment-node": "^29.4.1",
     "jest-fetch-mock": "^3.0.3",
+    "jest-silent-reporter": "^0.6.0",
     "jsdom": "~22.1.0",
     "msw": "^2.0.11",
     "msw-storybook-addon": "2.0.0--canary.122.b3ed3b1.0",

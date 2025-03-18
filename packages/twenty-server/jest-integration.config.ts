@@ -24,6 +24,7 @@ const jestConfig: JestConfigWithTsJest = {
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
   testTimeout: 20000,
   maxWorkers: 1,
+  reporters: [['jest-silent-reporter', { useDots: true }]],
   transform: {
     '^.+\\.(t|j)s$': [
       '@swc/jest',
