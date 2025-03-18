@@ -165,7 +165,7 @@ export const ChatCell = ({ chat, isSelected, onSelect, platform }: any) => {
             />
             {integration?.label}
           </StyledIntegrationCard>
-          {isAdmin && (
+          {isAdmin && chat.agent !== 'empty' && (
             <StyledIntegrationCard isSelected={isSelected}>
               {member?.name.firstName} {member?.name.lastName}
             </StyledIntegrationCard>

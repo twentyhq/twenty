@@ -207,13 +207,13 @@ export const CallCenterProvider = ({
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.STARTED} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
     });
 
-    setActiveTabId('mine');
-
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (selectedChat) {
       const chatId = `${selectedChat.integrationId}_${selectedChat.client.phone}`;
       setSelectedChatId(chatId);
     }
+
+    setActiveTabId('mine');
   };
 
   const finalizeService = () => {
