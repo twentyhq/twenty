@@ -12,6 +12,7 @@ const StyledContainer = styled.div`
   display: flex;
   height: ${({ theme }) => theme.spacing(8)};
   user-select: none;
+  width: calc(100% - ${({ theme }) => theme.spacing(1.5)});
 `;
 
 const StyledNavigationDrawerCollapseButton = styled(
@@ -19,6 +20,7 @@ const StyledNavigationDrawerCollapseButton = styled(
 )<{ show?: boolean }>`
   margin-left: auto;
   opacity: ${({ show }) => (show ? 1 : 0)};
+  padding-right: ${({ theme }) => theme.spacing(0.5)};
   transition: opacity ${({ theme }) => theme.animation.duration.normal}s;
 `;
 
