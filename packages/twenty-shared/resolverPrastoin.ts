@@ -48,34 +48,46 @@ function findAllExports(directoryPath: string): ExtractedExports {
 function findAllImports(directoryPath: string): ExtractedImports {
   const results: ExtractedImports = [];
 
-  const files = getTypeScriptFiles(directoryPath);
+  const includeIndex = true;
+  const files = getTypeScriptFiles(directoryPath, includeIndex);
 
   for (const file of files) {
-    const sourceFile = ts.createSourceFile(
-      file,
-      fs.readFileSync(file, 'utf8'),
-      ts.ScriptTarget.Latest,
-      true,
-    );
-
-    const imports = extractImports(sourceFile);
-    if (imports.length > 0) {
-      results.push({
+    try {
+      const sourceFile = ts.createSourceFile(
         file,
-        imports,
-      });
+        fs.readFileSync(file, 'utf8'),
+        ts.ScriptTarget.Latest,
+        true,
+      );
+
+      const imports = extractImports(sourceFile);
+      if (imports.length > 0) {
+        results.push({
+          file,
+          imports,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+      console.log('Becasue of file: ', file);
+      throw e;
     }
   }
 
   return results;
 }
 
-function getTypeScriptFiles(directoryPath: string): string[] {
+function getTypeScriptFiles(
+  directoryPath: string,
+  includeIndex: boolean = false,
+): string[] {
   const pattern = path.join(directoryPath, '**/*.{ts,tsx}');
   const files = glob.sync(pattern);
 
   return files.filter(
-    (file) => !file.endsWith('.d.ts') && !file.endsWith('index.ts'),
+    (file) =>
+      !file.endsWith('.d.ts') &&
+      (includeIndex ? true : !file.endsWith('index.ts')),
   );
 }
 
@@ -269,7 +281,6 @@ const mapSourceImportToBarrel = ({
       );
 
       if (findResult === undefined) {
-        console.log({ importedDeclaration });
         throw new Error(
           `Should never occurs no barrel exports ${importedDeclaration}`,
         );
@@ -457,18 +468,27 @@ const migrateImports = (mappedResolutions: MappedResolution[]) => {
 const main = () => {
   const packageSrcPath = 'packages/twenty-shared/src';
   const exportsPerModule = retrievePackageExportsPerModule(packageSrcPath);
-  console.log(exportsPerModule);
 
-  const sourceSrcPath = 'packages/twenty-front/src';
-  const importsPerFile = retrieveImportFromPackageInSource(sourceSrcPath);
-  console.log(importsPerFile);
+  const packagesToMigrate = [
+    'twenty-front',
+    'twenty-ui',
+    'twenty-server',
+    'twenty-emails',
+    'twenty-zapier',
+  ];
+  for (const currPackage of packagesToMigrate) {
+    console.log(`About to run over ${currPackage}`);
+    const importsPerFile = retrieveImportFromPackageInSource(
+      `packages/${currPackage}`,
+    );
 
-  const mappedResolutions = mapSourceImportToBarrel({
-    exportsPerModule,
-    importsPerFile,
-  });
-  console.log(JSON.stringify(mappedResolutions));
-
-  migrateImports(mappedResolutions);
+    const mappedResolutions = mapSourceImportToBarrel({
+      exportsPerModule,
+      importsPerFile,
+    });
+    migrateImports(mappedResolutions);
+    console.log(`${currPackage} migrated`);
+  }
+  console.log('SUCCESSFULY COMPLETED');
 };
 main();
