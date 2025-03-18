@@ -168,4 +168,13 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The creator of the record`,
   })
   createdBy: ActorMetadata;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The updater of the record`,
+  })
+  updatedBy: ActorMetadata;
 }

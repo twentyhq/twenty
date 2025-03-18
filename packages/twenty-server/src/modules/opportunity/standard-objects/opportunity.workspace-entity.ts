@@ -128,6 +128,15 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   })
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The updator of the record`,
+  })
+  updatedBy: ActorMetadata;
+
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
     type: RelationMetadataType.MANY_TO_ONE,

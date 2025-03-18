@@ -23,7 +23,10 @@ export const seedPersonWithDemoData = async (
     createdBySource: person.createdBySource,
     createdByWorkspaceMemberId: person.createdByWorkspaceMemberId,
     createdByName: person.createdByName,
-    position: index
+    updatedBySource: person.updatedBySource,
+    updatedByWorkspaceMemberId: person.updatedByWorkspaceMemberId,
+    updatedByName: person.updatedByName,
+    position: index,
   }));
 
   await entityManager
@@ -41,6 +44,9 @@ export const seedPersonWithDemoData = async (
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
+      'updatedBySource',
+      'updatedByWorkspaceMemberId',
+      'updatedByName',
       'position',
     ])
     .orIgnore()

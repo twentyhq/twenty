@@ -29,6 +29,9 @@ const generateOpportunities = (companies) => {
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
     createdByName: 'Noah A',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    updatedByName: 'Noah A',
   }));
 };
 
@@ -60,6 +63,9 @@ export const seedOpportunityWithDemoData = async (
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
+      'updatedBySource',
+      'updatedByWorkspaceMemberId',
+      'updatedByName',
       'position',
     ])
     .orIgnore()

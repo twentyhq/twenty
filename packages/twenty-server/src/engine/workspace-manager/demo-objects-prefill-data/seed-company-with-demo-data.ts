@@ -18,7 +18,10 @@ export const seedCompanyWithDemoData = async (
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
-      'position'
+      'updatedBySource',
+      'updatedByWorkspaceMemberId',
+      'updatedByName',
+      'position',
     ])
     .orIgnore()
     .values(

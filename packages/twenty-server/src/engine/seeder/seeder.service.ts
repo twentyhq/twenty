@@ -146,6 +146,9 @@ export class SeederService {
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
+      'updatedBySource',
+      'updatedByWorkspaceMemberId',
+      'updatedByName',
     ];
 
     const sqlValues = objectRecordSeedsAsSQLFlattenedSeeds.map(
@@ -155,6 +158,9 @@ export class SeederService {
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
         createdByName: 'Tim Apple',
+        updatedBySource: 'MANUAL',
+        updatedByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        updatedByName: 'Tim Apple',
       }),
     );
 

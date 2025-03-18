@@ -100,6 +100,15 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   })
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: NOTE_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The updater of the record`,
+  })
+  updatedBy: ActorMetadata;
+
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,
     label: msg`Relations`,

@@ -132,6 +132,15 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
 
   @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The updater of the workflow`,
+  })
+  updatedBy: ActorMetadata;
+
+  @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.output,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Output`,

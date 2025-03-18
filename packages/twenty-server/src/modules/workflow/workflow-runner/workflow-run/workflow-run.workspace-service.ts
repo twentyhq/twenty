@@ -43,6 +43,7 @@ export class WorkflowRunWorkspaceService {
         name: `Execution of ${workflowVersion.name}`,
         workflowVersionId,
         createdBy,
+        updatedBy: createdBy,
         workflowId: workflowVersion.workflowId,
         status: WorkflowRunStatus.NOT_STARTED,
       })

@@ -1,4 +1,4 @@
-import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from "src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data";
+import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data';
 
 export const peopleDemo = [
   {
@@ -13,6 +13,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gabriel',
@@ -26,6 +29,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -39,6 +45,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cindy',
@@ -52,6 +61,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -65,6 +77,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Vicki',
@@ -78,6 +93,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Billy',
@@ -91,6 +109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -104,6 +125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Todd',
@@ -117,6 +141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -130,6 +157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -143,6 +173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -156,6 +189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -169,6 +205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Debbie',
@@ -182,6 +221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathy',
@@ -195,6 +237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -208,6 +253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -221,6 +269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Regina',
@@ -234,6 +285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -247,6 +301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -260,6 +317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -273,6 +333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -286,6 +349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -299,6 +365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Victor',
@@ -312,6 +381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -325,6 +397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jack',
@@ -338,6 +413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Manuel',
@@ -351,6 +429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -364,6 +445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Theodore',
@@ -377,6 +461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -390,6 +477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alejandro',
@@ -403,6 +493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -416,6 +509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Leslie',
@@ -429,6 +525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Barbara',
@@ -442,6 +541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Maria',
@@ -455,6 +557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Paul',
@@ -468,6 +573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -481,6 +589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -494,6 +605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nancy',
@@ -507,6 +621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cindy',
@@ -520,6 +637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lori',
@@ -533,6 +653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathryn',
@@ -546,6 +669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -559,6 +685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -572,6 +701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Steve',
@@ -585,6 +717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Allison',
@@ -598,6 +733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tamara',
@@ -611,6 +749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -624,6 +765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -637,6 +781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kirsten',
@@ -650,6 +797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -663,6 +813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -676,6 +829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rodney',
@@ -689,6 +845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lindsay',
@@ -702,6 +861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -715,6 +877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -728,6 +893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -741,6 +909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rachel',
@@ -754,6 +925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rhonda',
@@ -767,6 +941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lauren',
@@ -780,6 +957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shannon',
@@ -793,6 +973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -806,6 +989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Willie',
@@ -819,6 +1005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Donna',
@@ -832,6 +1021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Morgan',
@@ -845,6 +1037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -858,6 +1053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nathaniel',
@@ -871,6 +1069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -884,6 +1085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristina',
@@ -897,6 +1101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -910,6 +1117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kendra',
@@ -923,6 +1133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Donna',
@@ -936,6 +1149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -949,6 +1165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -962,6 +1181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Katie',
@@ -975,6 +1197,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -988,6 +1213,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -1001,6 +1229,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandi',
@@ -1014,6 +1245,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sara',
@@ -1027,6 +1261,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Allison',
@@ -1040,6 +1277,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -1053,6 +1293,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -1066,6 +1309,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -1079,6 +1325,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Luis',
@@ -1092,6 +1341,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Travis',
@@ -1105,6 +1357,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -1118,6 +1373,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -1131,6 +1389,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -1144,6 +1405,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -1157,6 +1421,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -1170,6 +1437,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -1183,6 +1453,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -1196,6 +1469,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -1209,6 +1485,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Teresa',
@@ -1222,6 +1501,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -1235,6 +1517,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -1248,6 +1533,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -1261,6 +1549,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alison',
@@ -1274,6 +1565,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -1287,6 +1581,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Barry',
@@ -1300,6 +1597,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -1313,6 +1613,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Troy',
@@ -1326,6 +1629,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -1339,6 +1645,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -1352,6 +1661,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -1365,6 +1677,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Colin',
@@ -1378,6 +1693,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jesus',
@@ -1391,6 +1709,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brooke',
@@ -1404,6 +1725,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Meredith',
@@ -1417,6 +1741,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Crystal',
@@ -1430,6 +1757,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -1443,6 +1773,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -1456,6 +1789,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -1469,6 +1805,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -1482,6 +1821,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -1495,6 +1837,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tara',
@@ -1508,6 +1853,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anna',
@@ -1521,6 +1869,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -1534,6 +1885,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sergio',
@@ -1547,6 +1901,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -1560,6 +1917,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -1573,6 +1933,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -1586,6 +1949,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cindy',
@@ -1599,6 +1965,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -1612,6 +1981,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -1625,6 +1997,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -1638,6 +2013,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -1651,6 +2029,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -1664,6 +2045,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -1677,6 +2061,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -1690,6 +2077,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bonnie',
@@ -1703,6 +2093,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -1716,6 +2109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -1729,6 +2125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -1742,6 +2141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ann',
@@ -1755,6 +2157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Billy',
@@ -1768,6 +2173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kelsey',
@@ -1781,6 +2189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -1794,6 +2205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -1807,6 +2221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -1820,6 +2237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -1833,6 +2253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rodney',
@@ -1846,6 +2269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -1859,6 +2285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Spencer',
@@ -1872,6 +2301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -1885,6 +2317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -1898,6 +2333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -1911,6 +2349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -1924,6 +2365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -1937,6 +2381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -1950,6 +2397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -1963,6 +2413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kara',
@@ -1976,6 +2429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -1989,6 +2445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -2002,6 +2461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Wanda',
@@ -2015,6 +2477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -2028,6 +2493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -2041,6 +2509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -2054,6 +2525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Karen',
@@ -2067,6 +2541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathy',
@@ -2080,6 +2557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -2093,6 +2573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -2106,6 +2589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bryan',
@@ -2119,6 +2605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -2132,6 +2621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lori',
@@ -2145,6 +2637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -2158,6 +2653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -2171,6 +2669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -2184,6 +2685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -2197,6 +2701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -2210,6 +2717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ebony',
@@ -2223,6 +2733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jesse',
@@ -2236,6 +2749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -2249,6 +2765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Barbara',
@@ -2262,6 +2781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jordan',
@@ -2275,6 +2797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jorge',
@@ -2288,6 +2813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anna',
@@ -2301,6 +2829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Steve',
@@ -2314,6 +2845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brianna',
@@ -2327,6 +2861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -2340,6 +2877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -2353,6 +2893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -2366,6 +2909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Carl',
@@ -2379,6 +2925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Erica',
@@ -2392,6 +2941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sandy',
@@ -2405,6 +2957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tracy',
@@ -2418,6 +2973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -2431,6 +2989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -2444,6 +3005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -2457,6 +3021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -2470,6 +3037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Hunter',
@@ -2483,6 +3053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christian',
@@ -2496,6 +3069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -2509,6 +3085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brent',
@@ -2522,6 +3101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -2535,6 +3117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brittney',
@@ -2548,6 +3133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -2561,6 +3149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathy',
@@ -2574,6 +3165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -2587,6 +3181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Troy',
@@ -2600,6 +3197,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Corey',
@@ -2613,6 +3213,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Angela',
@@ -2626,6 +3229,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jenna',
@@ -2639,6 +3245,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Johnny',
@@ -2652,6 +3261,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Curtis',
@@ -2665,6 +3277,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Paula',
@@ -2678,6 +3293,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -2691,6 +3309,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Candace',
@@ -2704,6 +3325,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -2717,6 +3341,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -2730,6 +3357,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -2743,6 +3373,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Megan',
@@ -2756,6 +3389,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kim',
@@ -2769,6 +3405,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -2782,6 +3421,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lauren',
@@ -2795,6 +3437,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jordan',
@@ -2808,6 +3453,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -2821,6 +3469,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Peter',
@@ -2834,6 +3485,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jill',
@@ -2847,6 +3501,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joyce',
@@ -2860,6 +3517,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -2873,6 +3533,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -2886,6 +3549,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -2899,6 +3565,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ronald',
@@ -2912,6 +3581,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Curtis',
@@ -2925,6 +3597,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stacy',
@@ -2938,6 +3613,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Susan',
@@ -2951,6 +3629,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -2964,6 +3645,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Keith',
@@ -2977,6 +3661,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristen',
@@ -2990,6 +3677,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Leroy',
@@ -3003,6 +3693,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -3016,6 +3709,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -3029,6 +3725,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -3042,6 +3741,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Carolyn',
@@ -3055,6 +3757,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Harry',
@@ -3068,6 +3773,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -3081,6 +3789,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristen',
@@ -3094,6 +3805,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -3107,6 +3821,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alicia',
@@ -3120,6 +3837,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -3133,6 +3853,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -3146,6 +3869,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Deanna',
@@ -3159,6 +3885,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -3172,6 +3901,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tony',
@@ -3185,6 +3917,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -3198,6 +3933,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lucas',
@@ -3211,6 +3949,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -3224,6 +3965,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jon',
@@ -3237,6 +3981,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -3250,6 +3997,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'George',
@@ -3263,6 +4013,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rhonda',
@@ -3276,6 +4029,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kyle',
@@ -3289,6 +4045,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Valerie',
@@ -3302,6 +4061,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -3315,6 +4077,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Terri',
@@ -3328,6 +4093,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -3341,6 +4109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Troy',
@@ -3354,6 +4125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Beth',
@@ -3367,6 +4141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Erin',
@@ -3380,6 +4157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -3393,6 +4173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -3406,6 +4189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Carrie',
@@ -3419,6 +4205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -3432,6 +4221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Adam',
@@ -3445,6 +4237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bryan',
@@ -3458,6 +4253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -3471,6 +4269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -3484,6 +4285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jack',
@@ -3497,6 +4301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rhonda',
@@ -3510,6 +4317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -3523,6 +4333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Casey',
@@ -3536,6 +4349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathleen',
@@ -3549,6 +4365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -3562,6 +4381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rachel',
@@ -3575,6 +4397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Charlene',
@@ -3588,6 +4413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Donna',
@@ -3601,6 +4429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -3614,6 +4445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -3627,6 +4461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christy',
@@ -3640,6 +4477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -3653,6 +4493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jasmine',
@@ -3666,6 +4509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Morgan',
@@ -3679,6 +4525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Laura',
@@ -3692,6 +4541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anne',
@@ -3705,6 +4557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tiffany',
@@ -3718,6 +4573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ian',
@@ -3731,6 +4589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shelly',
@@ -3744,6 +4605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Philip',
@@ -3757,6 +4621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -3770,6 +4637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -3783,6 +4653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -3796,6 +4669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -3809,6 +4685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -3822,6 +4701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -3835,6 +4717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -3848,6 +4733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -3861,6 +4749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -3874,6 +4765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dawn',
@@ -3887,6 +4781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -3900,6 +4797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -3913,6 +4813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jesus',
@@ -3926,6 +4829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Maurice',
@@ -3939,6 +4845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -3952,6 +4861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -3965,6 +4877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -3978,6 +4893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -3991,6 +4909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -4004,6 +4925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -4017,6 +4941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joanna',
@@ -4030,6 +4957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Denise',
@@ -4043,6 +4973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Marie',
@@ -4056,6 +4989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -4069,6 +5005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -4082,6 +5021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -4095,6 +5037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Megan',
@@ -4108,6 +5053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -4121,6 +5069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rachael',
@@ -4134,6 +5085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -4147,6 +5101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Faith',
@@ -4160,6 +5117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -4173,6 +5133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stanley',
@@ -4186,6 +5149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -4199,6 +5165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -4212,6 +5181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -4225,6 +5197,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -4238,6 +5213,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -4251,6 +5229,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -4264,6 +5245,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -4277,6 +5261,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Billy',
@@ -4290,6 +5277,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -4303,6 +5293,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jose',
@@ -4316,6 +5309,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -4329,6 +5325,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -4342,6 +5341,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristopher',
@@ -4355,6 +5357,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Regina',
@@ -4368,6 +5373,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Angela',
@@ -4381,6 +5389,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -4394,6 +5405,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Angela',
@@ -4407,6 +5421,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Walter',
@@ -4420,6 +5437,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -4433,6 +5453,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -4446,6 +5469,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Monica',
@@ -4459,6 +5485,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -4472,6 +5501,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Austin',
@@ -4485,6 +5517,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mitchell',
@@ -4498,6 +5533,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -4511,6 +5549,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -4524,6 +5565,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Wendy',
@@ -4537,6 +5581,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -4550,6 +5597,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -4563,6 +5613,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -4576,6 +5629,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Judith',
@@ -4589,6 +5645,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -4602,6 +5661,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Darren',
@@ -4615,6 +5677,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Regina',
@@ -4628,6 +5693,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -4641,6 +5709,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Miguel',
@@ -4654,6 +5725,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -4667,6 +5741,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -4680,6 +5757,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -4693,6 +5773,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -4706,6 +5789,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -4719,6 +5805,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Helen',
@@ -4732,6 +5821,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cameron',
@@ -4745,6 +5837,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Troy',
@@ -4758,6 +5853,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tonya',
@@ -4771,6 +5869,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'April',
@@ -4784,6 +5885,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -4797,6 +5901,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bobby',
@@ -4810,6 +5917,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -4823,6 +5933,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lance',
@@ -4836,6 +5949,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -4849,6 +5965,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kaitlyn',
@@ -4862,6 +5981,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alan',
@@ -4875,6 +5997,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kaylee',
@@ -4888,6 +6013,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Deanna',
@@ -4901,6 +6029,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michele',
@@ -4914,6 +6045,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tommy',
@@ -4927,6 +6061,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -4940,6 +6077,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -4953,6 +6093,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -4966,6 +6109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Louis',
@@ -4979,6 +6125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melvin',
@@ -4992,6 +6141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -5005,6 +6157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Candice',
@@ -5018,6 +6173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -5031,6 +6189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Henry',
@@ -5044,6 +6205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kaitlyn',
@@ -5057,6 +6221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -5070,6 +6237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -5083,6 +6253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -5096,6 +6269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -5109,6 +6285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -5122,6 +6301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Edward',
@@ -5135,6 +6317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Beth',
@@ -5148,6 +6333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Craig',
@@ -5161,6 +6349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -5174,6 +6365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -5187,6 +6381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -5200,6 +6397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -5213,6 +6413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sierra',
@@ -5226,6 +6429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -5239,6 +6445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Devin',
@@ -5252,6 +6461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -5265,6 +6477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anita',
@@ -5278,6 +6493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -5291,6 +6509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -5304,6 +6525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -5317,6 +6541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -5330,6 +6557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kyle',
@@ -5343,6 +6573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -5356,6 +6589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Hannah',
@@ -5369,6 +6605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tina',
@@ -5382,6 +6621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -5395,6 +6637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Carrie',
@@ -5408,6 +6653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alan',
@@ -5421,6 +6669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alan',
@@ -5434,6 +6685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ellen',
@@ -5447,6 +6701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -5460,6 +6717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -5473,6 +6733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kenneth',
@@ -5486,6 +6749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kent',
@@ -5499,6 +6765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -5512,6 +6781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -5525,6 +6797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cole',
@@ -5538,6 +6813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -5551,6 +6829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Denise',
@@ -5564,6 +6845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Deanna',
@@ -5577,6 +6861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -5590,6 +6877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dylan',
@@ -5603,6 +6893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amber',
@@ -5616,6 +6909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kirsten',
@@ -5629,6 +6925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Holly',
@@ -5642,6 +6941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -5655,6 +6957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -5668,6 +6973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sophia',
@@ -5681,6 +6989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -5694,6 +7005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Colin',
@@ -5707,6 +7021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -5720,6 +7037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -5733,6 +7053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffery',
@@ -5746,6 +7069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mike',
@@ -5759,6 +7085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Chelsea',
@@ -5772,6 +7101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Derek',
@@ -5785,6 +7117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robin',
@@ -5798,6 +7133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alexander',
@@ -5811,6 +7149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -5824,6 +7165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathleen',
@@ -5837,6 +7181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Miguel',
@@ -5850,6 +7197,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -5863,6 +7213,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -5876,6 +7229,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -5889,6 +7245,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kim',
@@ -5902,6 +7261,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -5915,6 +7277,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Spencer',
@@ -5928,6 +7293,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alison',
@@ -5941,6 +7309,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alicia',
@@ -5954,6 +7325,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Edward',
@@ -5967,6 +7341,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -5980,6 +7357,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dawn',
@@ -5993,6 +7373,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Douglas',
@@ -6006,6 +7389,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -6019,6 +7405,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -6032,6 +7421,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anne',
@@ -6045,6 +7437,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jenny',
@@ -6058,6 +7453,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -6071,6 +7469,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -6084,6 +7485,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -6097,6 +7501,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robin',
@@ -6110,6 +7517,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Wanda',
@@ -6123,6 +7533,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -6136,6 +7549,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -6149,6 +7565,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -6162,6 +7581,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -6175,6 +7597,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -6188,6 +7613,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cameron',
@@ -6201,6 +7629,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -6214,6 +7645,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Roy',
@@ -6227,6 +7661,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Valerie',
@@ -6240,6 +7677,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -6253,6 +7693,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Spencer',
@@ -6266,6 +7709,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -6279,6 +7725,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joanne',
@@ -6292,6 +7741,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -6305,6 +7757,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -6318,6 +7773,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Monica',
@@ -6331,6 +7789,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -6344,6 +7805,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Chelsey',
@@ -6357,6 +7821,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Marie',
@@ -6370,6 +7837,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gail',
@@ -6383,6 +7853,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -6396,6 +7869,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Vicki',
@@ -6409,6 +7885,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Paul',
@@ -6422,6 +7901,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -6435,6 +7917,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dennis',
@@ -6448,6 +7933,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gail',
@@ -6461,6 +7949,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stacey',
@@ -6474,6 +7965,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -6487,6 +7981,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sheri',
@@ -6500,6 +7997,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -6513,6 +8013,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -6526,6 +8029,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -6539,6 +8045,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandy',
@@ -6552,6 +8061,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -6565,6 +8077,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -6578,6 +8093,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -6591,6 +8109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tanner',
@@ -6604,6 +8125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bobby',
@@ -6617,6 +8141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -6630,6 +8157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Misty',
@@ -6643,6 +8173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Erin',
@@ -6656,6 +8189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -6669,6 +8205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -6682,6 +8221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Krista',
@@ -6695,6 +8237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Calvin',
@@ -6708,6 +8253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Terry',
@@ -6721,6 +8269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -6734,6 +8285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -6747,6 +8301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tim',
@@ -6760,6 +8317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Claudia',
@@ -6773,6 +8333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -6786,6 +8349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -6799,6 +8365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -6812,6 +8381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Monica',
@@ -6825,6 +8397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jillian',
@@ -6838,6 +8413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Roberta',
@@ -6851,6 +8429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Clarence',
@@ -6864,6 +8445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -6877,6 +8461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -6890,6 +8477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lee',
@@ -6903,6 +8493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -6916,6 +8509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Henry',
@@ -6929,6 +8525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristin',
@@ -6942,6 +8541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Derek',
@@ -6955,6 +8557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dan',
@@ -6968,6 +8573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Edwin',
@@ -6981,6 +8589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tonya',
@@ -6994,6 +8605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -7007,6 +8621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Earl',
@@ -7020,6 +8637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -7033,6 +8653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -7046,6 +8669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -7059,6 +8685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffery',
@@ -7072,6 +8701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -7085,6 +8717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -7098,6 +8733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -7111,6 +8749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -7124,6 +8765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Whitney',
@@ -7137,6 +8781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -7150,6 +8797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -7163,6 +8813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -7176,6 +8829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rachael',
@@ -7189,6 +8845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -7202,6 +8861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -7215,6 +8877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Albert',
@@ -7228,6 +8893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Laura',
@@ -7241,6 +8909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Hannah',
@@ -7254,6 +8925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -7267,6 +8941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -7280,6 +8957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ronald',
@@ -7293,6 +8973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -7306,6 +8989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -7319,6 +9005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Judith',
@@ -7332,6 +9021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -7345,6 +9037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Louis',
@@ -7358,6 +9053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lori',
@@ -7371,6 +9069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anna',
@@ -7384,6 +9085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -7397,6 +9101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -7410,6 +9117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cody',
@@ -7423,6 +9133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -7436,6 +9149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -7449,6 +9165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -7462,6 +9181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Randy',
@@ -7475,6 +9197,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -7488,6 +9213,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Adriana',
@@ -7501,6 +9229,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lindsey',
@@ -7514,6 +9245,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sophia',
@@ -7527,6 +9261,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -7540,6 +9277,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -7553,6 +9293,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Maureen',
@@ -7566,6 +9309,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brenda',
@@ -7579,6 +9325,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathy',
@@ -7592,6 +9341,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -7605,6 +9357,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dylan',
@@ -7618,6 +9373,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Derek',
@@ -7631,6 +9389,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -7644,6 +9405,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lauren',
@@ -7657,6 +9421,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -7670,6 +9437,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joel',
@@ -7683,6 +9453,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -7696,6 +9469,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elaine',
@@ -7709,6 +9485,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -7722,6 +9501,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rachel',
@@ -7735,6 +9517,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alyssa',
@@ -7748,6 +9533,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -7761,6 +9549,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -7774,6 +9565,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jerome',
@@ -7787,6 +9581,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -7800,6 +9597,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -7813,6 +9613,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -7826,6 +9629,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christy',
@@ -7839,6 +9645,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -7852,6 +9661,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stanley',
@@ -7865,6 +9677,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Hannah',
@@ -7878,6 +9693,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -7891,6 +9709,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -7904,6 +9725,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Erin',
@@ -7917,6 +9741,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -7930,6 +9757,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alexandra',
@@ -7943,6 +9773,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Raymond',
@@ -7956,6 +9789,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -7969,6 +9805,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -7982,6 +9821,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Erica',
@@ -7995,6 +9837,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Adam',
@@ -8008,6 +9853,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -8021,6 +9869,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Margaret',
@@ -8034,6 +9885,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -8047,6 +9901,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Holly',
@@ -8060,6 +9917,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cory',
@@ -8073,6 +9933,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -8086,6 +9949,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ronnie',
@@ -8099,6 +9965,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -8112,6 +9981,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patrick',
@@ -8125,6 +9997,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sean',
@@ -8138,6 +10013,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Valerie',
@@ -8151,6 +10029,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -8164,6 +10045,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mckenzie',
@@ -8177,6 +10061,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Parker',
@@ -8190,6 +10077,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -8203,6 +10093,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sierra',
@@ -8216,6 +10109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -8229,6 +10125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Valerie',
@@ -8242,6 +10141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -8255,6 +10157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Martin',
@@ -8268,6 +10173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brittany',
@@ -8281,6 +10189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -8294,6 +10205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sheila',
@@ -8307,6 +10221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lee',
@@ -8320,6 +10237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -8333,6 +10253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Diana',
@@ -8346,6 +10269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -8359,6 +10285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Suzanne',
@@ -8372,6 +10301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kelsey',
@@ -8385,6 +10317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alexander',
@@ -8398,6 +10333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cynthia',
@@ -8411,6 +10349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brittany',
@@ -8424,6 +10365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -8437,6 +10381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -8450,6 +10397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -8463,6 +10413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -8476,6 +10429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samuel',
@@ -8489,6 +10445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -8502,6 +10461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -8515,6 +10477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -8528,6 +10493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -8541,6 +10509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -8554,6 +10525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robin',
@@ -8567,6 +10541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -8580,6 +10557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -8593,6 +10573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -8606,6 +10589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -8619,6 +10605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -8632,6 +10621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Billy',
@@ -8645,6 +10637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kim',
@@ -8658,6 +10653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cristian',
@@ -8671,6 +10669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -8684,6 +10685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dennis',
@@ -8697,6 +10701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -8710,6 +10717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Pamela',
@@ -8723,6 +10733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -8736,6 +10749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -8749,6 +10765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Randy',
@@ -8762,6 +10781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Barbara',
@@ -8775,6 +10797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -8788,6 +10813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -8801,6 +10829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Breanna',
@@ -8814,6 +10845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ivan',
@@ -8827,6 +10861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -8840,6 +10877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stacey',
@@ -8853,6 +10893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Randall',
@@ -8866,6 +10909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dennis',
@@ -8879,6 +10925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -8892,6 +10941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Katrina',
@@ -8905,6 +10957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -8918,6 +10973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anna',
@@ -8931,6 +10989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Karen',
@@ -8944,6 +11005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Casey',
@@ -8957,6 +11021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mathew',
@@ -8970,6 +11037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -8983,6 +11053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Martha',
@@ -8996,6 +11069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Latasha',
@@ -9009,6 +11085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -9022,6 +11101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Taylor',
@@ -9035,6 +11117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'George',
@@ -9048,6 +11133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -9061,6 +11149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patrick',
@@ -9074,6 +11165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -9087,6 +11181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nancy',
@@ -9100,6 +11197,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -9113,6 +11213,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -9126,6 +11229,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -9139,6 +11245,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Teresa',
@@ -9152,6 +11261,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -9165,6 +11277,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -9178,6 +11293,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -9191,6 +11309,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -9204,6 +11325,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -9217,6 +11341,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -9230,6 +11357,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Beth',
@@ -9243,6 +11373,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gerald',
@@ -9256,6 +11389,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -9269,6 +11405,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -9282,6 +11421,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -9295,6 +11437,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -9308,6 +11453,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -9321,6 +11469,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tina',
@@ -9334,6 +11485,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dustin',
@@ -9347,6 +11501,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -9360,6 +11517,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Allen',
@@ -9373,6 +11533,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Meghan',
@@ -9386,6 +11549,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Garrett',
@@ -9399,6 +11565,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -9412,6 +11581,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -9425,6 +11597,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Desiree',
@@ -9438,6 +11613,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Teresa',
@@ -9451,6 +11629,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Catherine',
@@ -9464,6 +11645,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Marvin',
@@ -9477,6 +11661,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -9490,6 +11677,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dawn',
@@ -9503,6 +11693,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Travis',
@@ -9516,6 +11709,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -9529,6 +11725,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -9542,6 +11741,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Laura',
@@ -9555,6 +11757,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -9568,6 +11773,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -9581,6 +11789,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Derek',
@@ -9594,6 +11805,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -9607,6 +11821,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -9620,6 +11837,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shannon',
@@ -9633,6 +11853,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Teresa',
@@ -9646,6 +11869,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -9659,6 +11885,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -9672,6 +11901,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -9685,6 +11917,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -9698,6 +11933,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lee',
@@ -9711,6 +11949,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samuel',
@@ -9724,6 +11965,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -9737,6 +11981,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Darlene',
@@ -9750,6 +11997,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -9763,6 +12013,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cheryl',
@@ -9776,6 +12029,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -9789,6 +12045,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Douglas',
@@ -9802,6 +12061,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephanie',
@@ -9815,6 +12077,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Meghan',
@@ -9828,6 +12093,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Caitlin',
@@ -9841,6 +12109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -9854,6 +12125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Levi',
@@ -9867,6 +12141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tracy',
@@ -9880,6 +12157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -9893,6 +12173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -9906,6 +12189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristin',
@@ -9919,6 +12205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bruce',
@@ -9932,6 +12221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephanie',
@@ -9945,6 +12237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Denise',
@@ -9958,6 +12253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -9971,6 +12269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -9984,6 +12285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -9997,6 +12301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nichole',
@@ -10010,6 +12317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -10023,6 +12333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -10036,6 +12349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -10049,6 +12365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -10062,6 +12381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -10075,6 +12397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeanette',
@@ -10088,6 +12413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -10101,6 +12429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brenda',
@@ -10114,6 +12445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -10127,6 +12461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -10140,6 +12477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melanie',
@@ -10153,6 +12493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -10166,6 +12509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -10179,6 +12525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joann',
@@ -10192,6 +12541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -10205,6 +12557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeremy',
@@ -10218,6 +12573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -10231,6 +12589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristine',
@@ -10244,6 +12605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephanie',
@@ -10257,6 +12621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Benjamin',
@@ -10270,6 +12637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -10283,6 +12653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -10296,6 +12669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -10309,6 +12685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kenneth',
@@ -10322,6 +12701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Barbara',
@@ -10335,6 +12717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -10348,6 +12733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shannon',
@@ -10361,6 +12749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lucas',
@@ -10374,6 +12765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Theodore',
@@ -10387,6 +12781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -10400,6 +12797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sara',
@@ -10413,6 +12813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -10426,6 +12829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -10439,6 +12845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -10452,6 +12861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -10465,6 +12877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Haley',
@@ -10478,6 +12893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -10491,6 +12909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ellen',
@@ -10504,6 +12925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -10517,6 +12941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -10530,6 +12957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Roger',
@@ -10543,6 +12973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Logan',
@@ -10556,6 +12989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -10569,6 +13005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tony',
@@ -10582,6 +13021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mercedes',
@@ -10595,6 +13037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -10608,6 +13053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nathan',
@@ -10621,6 +13069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -10634,6 +13085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathleen',
@@ -10647,6 +13101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -10660,6 +13117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -10673,6 +13133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Meghan',
@@ -10686,6 +13149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lauren',
@@ -10699,6 +13165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jesse',
@@ -10712,6 +13181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Antonio',
@@ -10725,6 +13197,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gabriela',
@@ -10738,6 +13213,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kyle',
@@ -10751,6 +13229,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -10764,6 +13245,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -10777,6 +13261,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -10790,6 +13277,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -10803,6 +13293,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -10816,6 +13309,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -10829,6 +13325,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Makayla',
@@ -10842,6 +13341,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -10855,6 +13357,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -10868,6 +13373,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Molly',
@@ -10881,6 +13389,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -10894,6 +13405,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -10907,6 +13421,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Edward',
@@ -10920,6 +13437,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephanie',
@@ -10933,6 +13453,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Francisco',
@@ -10946,6 +13469,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -10959,6 +13485,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -10972,6 +13501,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Courtney',
@@ -10985,6 +13517,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samuel',
@@ -10998,6 +13533,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Paul',
@@ -11011,6 +13549,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -11024,6 +13565,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -11037,6 +13581,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sherry',
@@ -11050,6 +13597,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -11063,6 +13613,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -11076,6 +13629,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Abigail',
@@ -11089,6 +13645,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Craig',
@@ -11102,6 +13661,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -11115,6 +13677,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lynn',
@@ -11128,6 +13693,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Veronica',
@@ -11141,6 +13709,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -11154,6 +13725,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathleen',
@@ -11167,6 +13741,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -11180,6 +13757,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -11193,6 +13773,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cheyenne',
@@ -11206,6 +13789,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -11219,6 +13805,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -11232,6 +13821,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -11245,6 +13837,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alexandra',
@@ -11258,6 +13853,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -11271,6 +13869,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melinda',
@@ -11284,6 +13885,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Phillip',
@@ -11297,6 +13901,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristin',
@@ -11310,6 +13917,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Randy',
@@ -11323,6 +13933,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -11336,6 +13949,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Taylor',
@@ -11349,6 +13965,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -11362,6 +13981,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mike',
@@ -11375,6 +13997,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bonnie',
@@ -11388,6 +14013,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -11401,6 +14029,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brenda',
@@ -11414,6 +14045,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -11427,6 +14061,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -11440,6 +14077,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -11453,6 +14093,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Janet',
@@ -11466,6 +14109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashlee',
@@ -11479,6 +14125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -11492,6 +14141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -11505,6 +14157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -11518,6 +14173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -11531,6 +14189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Martin',
@@ -11544,6 +14205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joyce',
@@ -11557,6 +14221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -11570,6 +14237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -11583,6 +14253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kathryn',
@@ -11596,6 +14269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -11609,6 +14285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dustin',
@@ -11622,6 +14301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eugene',
@@ -11635,6 +14317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gwendolyn',
@@ -11648,6 +14333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -11661,6 +14349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -11674,6 +14365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jack',
@@ -11687,6 +14381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -11700,6 +14397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Louis',
@@ -11713,6 +14413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Fernando',
@@ -11726,6 +14429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tammy',
@@ -11739,6 +14445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -11752,6 +14461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -11765,6 +14477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -11778,6 +14493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Allison',
@@ -11791,6 +14509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stacey',
@@ -11804,6 +14525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stacey',
@@ -11817,6 +14541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -11830,6 +14557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -11843,6 +14573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -11856,6 +14589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -11869,6 +14605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -11882,6 +14621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Grant',
@@ -11895,6 +14637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Megan',
@@ -11908,6 +14653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ronald',
@@ -11921,6 +14669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tonya',
@@ -11934,6 +14685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jose',
@@ -11947,6 +14701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -11960,6 +14717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -11973,6 +14733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Wendy',
@@ -11986,6 +14749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patrick',
@@ -11999,6 +14765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -12012,6 +14781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Walter',
@@ -12025,6 +14797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -12038,6 +14813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nathan',
@@ -12051,6 +14829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Roger',
@@ -12064,6 +14845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cynthia',
@@ -12077,6 +14861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jenna',
@@ -12090,6 +14877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Trevor',
@@ -12103,6 +14893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -12116,6 +14909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Zachary',
@@ -12129,6 +14925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -12142,6 +14941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mckenzie',
@@ -12155,6 +14957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -12168,6 +14973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sheri',
@@ -12181,6 +14989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -12194,6 +15005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -12207,6 +15021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -12220,6 +15037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -12233,6 +15053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -12246,6 +15069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -12259,6 +15085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -12272,6 +15101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Paul',
@@ -12285,6 +15117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shelby',
@@ -12298,6 +15133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cheryl',
@@ -12311,6 +15149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brianna',
@@ -12324,6 +15165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -12337,6 +15181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -12350,6 +15197,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joy',
@@ -12363,6 +15213,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -12376,6 +15229,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -12389,6 +15245,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -12402,6 +15261,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -12415,6 +15277,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -12428,6 +15293,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -12441,6 +15309,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Colin',
@@ -12454,6 +15325,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -12467,6 +15341,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -12480,6 +15357,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -12493,6 +15373,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -12506,6 +15389,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Terry',
@@ -12519,6 +15405,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Charlene',
@@ -12532,6 +15421,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Yvonne',
@@ -12545,6 +15437,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -12558,6 +15453,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -12571,6 +15469,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shelly',
@@ -12584,6 +15485,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Holly',
@@ -12597,6 +15501,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -12610,6 +15517,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Adam',
@@ -12623,6 +15533,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -12636,6 +15549,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jenna',
@@ -12649,6 +15565,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -12662,6 +15581,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -12675,6 +15597,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -12688,6 +15613,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Patrick',
@@ -12701,6 +15629,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -12714,6 +15645,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -12727,6 +15661,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joyce',
@@ -12740,6 +15677,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -12753,6 +15693,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -12766,6 +15709,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tammy',
@@ -12779,6 +15725,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Susan',
@@ -12792,6 +15741,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -12805,6 +15757,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -12818,6 +15773,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -12831,6 +15789,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Maria',
@@ -12844,6 +15805,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -12857,6 +15821,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Caitlin',
@@ -12870,6 +15837,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -12883,6 +15853,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -12896,6 +15869,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -12909,6 +15885,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Douglas',
@@ -12922,6 +15901,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shelia',
@@ -12935,6 +15917,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Diana',
@@ -12948,6 +15933,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -12961,6 +15949,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -12974,6 +15965,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -12987,6 +15981,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ruben',
@@ -13000,6 +15997,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Briana',
@@ -13013,6 +16013,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -13026,6 +16029,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -13039,6 +16045,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Carla',
@@ -13052,6 +16061,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -13065,6 +16077,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Denise',
@@ -13078,6 +16093,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cassidy',
@@ -13091,6 +16109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Angela',
@@ -13104,6 +16125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shirley',
@@ -13117,6 +16141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -13130,6 +16157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kurt',
@@ -13143,6 +16173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -13156,6 +16189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -13169,6 +16205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -13182,6 +16221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -13195,6 +16237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -13208,6 +16253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -13221,6 +16269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -13234,6 +16285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Crystal',
@@ -13247,6 +16301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ann',
@@ -13260,6 +16317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Corey',
@@ -13273,6 +16333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -13286,6 +16349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Karen',
@@ -13299,6 +16365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -13312,6 +16381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Susan',
@@ -13325,6 +16397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -13338,6 +16413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kelsey',
@@ -13351,6 +16429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jill',
@@ -13364,6 +16445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -13377,6 +16461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -13390,6 +16477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -13403,6 +16493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ruben',
@@ -13416,6 +16509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -13429,6 +16525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Carl',
@@ -13442,6 +16541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -13455,6 +16557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicolas',
@@ -13468,6 +16573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -13481,6 +16589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -13494,6 +16605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -13507,6 +16621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Chris',
@@ -13520,6 +16637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ebony',
@@ -13533,6 +16653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bonnie',
@@ -13546,6 +16669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tom',
@@ -13559,6 +16685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -13572,6 +16701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rodney',
@@ -13585,6 +16717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jordan',
@@ -13598,6 +16733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -13611,6 +16749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Hannah',
@@ -13624,6 +16765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -13637,6 +16781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -13650,6 +16797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -13663,6 +16813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -13676,6 +16829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melanie',
@@ -13689,6 +16845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -13702,6 +16861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -13715,6 +16877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -13728,6 +16893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jesse',
@@ -13741,6 +16909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kaylee',
@@ -13754,6 +16925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ernest',
@@ -13767,6 +16941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -13780,6 +16957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Karen',
@@ -13793,6 +16973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Erin',
@@ -13806,6 +16989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -13819,6 +17005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -13832,6 +17021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -13845,6 +17037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Zachary',
@@ -13858,6 +17053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -13871,6 +17069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -13884,6 +17085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -13897,6 +17101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Marcus',
@@ -13910,6 +17117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Norma',
@@ -13923,6 +17133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jody',
@@ -13936,6 +17149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ronald',
@@ -13949,6 +17165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -13962,6 +17181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -13975,6 +17197,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cody',
@@ -13988,6 +17213,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Allison',
@@ -14001,6 +17229,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -14014,6 +17245,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -14027,6 +17261,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Chad',
@@ -14040,6 +17277,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -14053,6 +17293,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -14066,6 +17309,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Judith',
@@ -14079,6 +17325,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Evan',
@@ -14092,6 +17341,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Deborah',
@@ -14105,6 +17357,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -14118,6 +17373,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Marie',
@@ -14131,6 +17389,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brent',
@@ -14144,6 +17405,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Catherine',
@@ -14157,6 +17421,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Evan',
@@ -14170,6 +17437,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -14183,6 +17453,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -14196,6 +17469,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -14209,6 +17485,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -14222,6 +17501,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Corey',
@@ -14235,6 +17517,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -14248,6 +17533,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alicia',
@@ -14261,6 +17549,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Antonio',
@@ -14274,6 +17565,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -14287,6 +17581,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Devin',
@@ -14300,6 +17597,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -14313,6 +17613,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Erica',
@@ -14326,6 +17629,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Regina',
@@ -14339,6 +17645,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -14352,6 +17661,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -14365,6 +17677,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -14378,6 +17693,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -14391,6 +17709,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sara',
@@ -14404,6 +17725,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -14417,6 +17741,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Katrina',
@@ -14430,6 +17757,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -14443,6 +17773,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -14456,6 +17789,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cory',
@@ -14469,6 +17805,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brittany',
@@ -14482,6 +17821,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -14495,6 +17837,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -14508,6 +17853,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristine',
@@ -14521,6 +17869,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lindsey',
@@ -14534,6 +17885,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -14547,6 +17901,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Bryan',
@@ -14560,6 +17917,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Norma',
@@ -14573,6 +17933,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kara',
@@ -14586,6 +17949,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -14599,6 +17965,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Annette',
@@ -14612,6 +17981,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -14625,6 +17997,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -14638,6 +18013,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Wanda',
@@ -14651,6 +18029,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -14664,6 +18045,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Devin',
@@ -14677,6 +18061,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gina',
@@ -14690,6 +18077,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ronnie',
@@ -14703,6 +18093,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -14716,6 +18109,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -14729,6 +18125,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -14742,6 +18141,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -14755,6 +18157,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -14768,6 +18173,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Beth',
@@ -14781,6 +18189,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -14794,6 +18205,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -14807,6 +18221,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandy',
@@ -14820,6 +18237,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Zachary',
@@ -14833,6 +18253,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Carrie',
@@ -14846,6 +18269,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -14859,6 +18285,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Peter',
@@ -14872,6 +18301,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -14885,6 +18317,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samuel',
@@ -14898,6 +18333,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -14911,6 +18349,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alexis',
@@ -14924,6 +18365,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sophia',
@@ -14937,6 +18381,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lori',
@@ -14950,6 +18397,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Dennis',
@@ -14963,6 +18413,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -14976,6 +18429,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Megan',
@@ -14989,6 +18445,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kristine',
@@ -15002,6 +18461,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brandy',
@@ -15015,6 +18477,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brad',
@@ -15028,6 +18493,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Caleb',
@@ -15041,6 +18509,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -15054,6 +18525,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Cynthia',
@@ -15067,6 +18541,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -15080,6 +18557,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gloria',
@@ -15093,6 +18573,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Connie',
@@ -15106,6 +18589,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -15119,6 +18605,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -15132,6 +18621,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -15145,6 +18637,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -15158,6 +18653,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Devin',
@@ -15171,6 +18669,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sara',
@@ -15184,6 +18685,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Robin',
@@ -15197,6 +18701,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Sergio',
@@ -15210,6 +18717,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -15223,6 +18733,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Courtney',
@@ -15236,6 +18749,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -15249,6 +18765,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tim',
@@ -15262,6 +18781,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -15275,6 +18797,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -15288,6 +18813,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Casey',
@@ -15301,6 +18829,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Crystal',
@@ -15314,6 +18845,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rachel',
@@ -15327,6 +18861,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Shannon',
@@ -15340,6 +18877,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Catherine',
@@ -15353,6 +18893,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -15366,6 +18909,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tracy',
@@ -15379,6 +18925,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Jenna',
@@ -15392,6 +18941,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Alice',
@@ -15405,6 +18957,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Theresa',
@@ -15418,6 +18973,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -15431,6 +18989,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -15444,6 +19005,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -15457,6 +19021,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -15470,6 +19037,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -15483,6 +19053,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Tiffany',
@@ -15496,6 +19069,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -15509,6 +19085,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -15522,6 +19101,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -15535,6 +19117,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Pamela',
@@ -15548,6 +19133,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -15561,6 +19149,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Rodney',
@@ -15574,6 +19165,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -15587,6 +19181,9 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
   {
     firstName: 'Abigail',
@@ -15600,5 +19197,8 @@ export const peopleDemo = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
     createdByName: 'Hugo I',
+    updatedBySource: 'MANUAL',
+    updatedByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    updatedByName: 'Hugo I',
   },
 ];

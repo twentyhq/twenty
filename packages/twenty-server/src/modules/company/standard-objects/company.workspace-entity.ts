@@ -161,6 +161,15 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The updater of the record`,
+  })
+  updatedBy: ActorMetadata;
+
   // Relations
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.people,
