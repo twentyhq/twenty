@@ -290,6 +290,89 @@ const retrieveImportFromPackageInSource = (srcPath: string) => {
   return findAllImports(srcPath);
 };
 
+/**
+ * Inserts a new import statement at the top of a TypeScript file
+ * @param filePath Path to the TypeScript file
+ * @param importSpecifier The module to import from (e.g., 'twenty-shared/utils')
+ * @param namedImports Array of named imports (e.g., ['useQuery', 'useMutation'])
+ */
+type InsertImportAtTopArgs = {
+  filePath: string;
+  importSpecifier: string;
+  namedImports: string[];
+};
+function insertImportAtTop({
+  filePath,
+  importSpecifier,
+  namedImports,
+}: InsertImportAtTopArgs): void {
+  // Read the file content
+  const sourceText = fs.readFileSync(filePath, 'utf8');
+
+  // Create a source file
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true,
+  );
+
+  // Build the new import statement
+  let newImport = `import { ${namedImports.join(', ')} } from '${importSpecifier}';\n`;
+
+  // Find the position to insert the import
+  let insertPos = 0;
+
+  // Case 1: File has imports - insert after the last import
+  let lastImportEnd = 0;
+
+  ts.forEachChild(sourceFile, (node) => {
+    if (
+      ts.isImportDeclaration(node) ||
+      ts.isImportEqualsDeclaration(node) ||
+      (ts.isExpressionStatement(node) &&
+        ts.isCallExpression(node.expression) &&
+        node.expression.expression.kind === ts.SyntaxKind.ImportKeyword) // Overkill ?
+    ) {
+      const end = node.getEnd();
+      if (end > lastImportEnd) {
+        lastImportEnd = end;
+      }
+    }
+  });
+
+  if (lastImportEnd > 0) {
+    // Insert after the last import with a newline
+    insertPos = lastImportEnd;
+
+    // Check if there's already a newline after the last import
+    if (sourceText[insertPos] !== '\n') {
+      newImport = '\n' + newImport;
+    }
+  }
+
+  // Insert the new import
+  const updatedSourceText =
+    sourceText.substring(0, insertPos) +
+    newImport +
+    sourceText.substring(insertPos);
+
+  // Write back to file
+  fs.writeFileSync(filePath, updatedSourceText, 'utf8');
+}
+
+const migrateImports = (mappedResolutions: MappedResolution[]) => {
+  for (const { file, newImports } of mappedResolutions) {
+    for (const { barrel, modules } of Object.values(newImports)) {
+      insertImportAtTop({
+        filePath: file,
+        importSpecifier: `twenty-shared/${barrel}`,
+        namedImports: modules,
+      });
+    }
+  }
+};
+
 const main = () => {
   const packageSrcPath = 'packages/twenty-shared/src';
   const exportsPerModule = retrievePackageExportsPerModule(packageSrcPath);
@@ -299,10 +382,12 @@ const main = () => {
   const importsPerFile = retrieveImportFromPackageInSource(sourceSrcPath);
   console.log(importsPerFile);
 
-  const mappedResolution = mapSourceImportToBarrel({
+  const mappedResolutions = mapSourceImportToBarrel({
     exportsPerModule,
     importsPerFile,
   });
-  console.log(JSON.stringify(mappedResolution));
+  console.log(JSON.stringify(mappedResolutions));
+
+  migrateImports(mappedResolutions);
 };
 main();
