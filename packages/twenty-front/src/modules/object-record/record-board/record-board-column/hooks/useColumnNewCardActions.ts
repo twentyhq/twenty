@@ -5,11 +5,8 @@ export const useColumnNewCardActions = (columnId: string) => {
     recordPickerComponentInstanceId: `add-new-card-record-picker-column-${columnId}`,
   });
 
-  const handleNewButtonClick = (
-    position: 'first' | 'last',
-    isOpportunity: boolean,
-  ) => {
-    handleAddNewCardClick('', position, isOpportunity, columnId);
+  const handleNewButtonClick = (position: 'first' | 'last') => {
+    handleAddNewCardClick('', position, columnId);
   };
 
   return {

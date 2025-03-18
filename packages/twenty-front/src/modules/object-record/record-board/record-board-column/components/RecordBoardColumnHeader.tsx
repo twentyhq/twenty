@@ -153,7 +153,7 @@ export const RecordBoardColumnHeader = () => {
                   <LightIconButton
                     accent="tertiary"
                     Icon={IconPlus}
-                    onClick={() => handleNewButtonClick('first', isOpportunity)}
+                    onClick={() => handleNewButtonClick('first')}
                   />
                 )}
               </StyledHeaderActions>

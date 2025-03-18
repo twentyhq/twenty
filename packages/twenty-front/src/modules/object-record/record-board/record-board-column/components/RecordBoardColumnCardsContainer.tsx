@@ -3,12 +3,10 @@ import { Draggable, DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnCardContainerSkeletonLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardContainerSkeletonLoader';
 import { RecordBoardColumnCardsMemo } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsMemo';
 import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnFetchMoreLoader';
-import { RecordBoardColumnNewOpportunity } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunity';
 import { RecordBoardColumnNewRecord } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecord';
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -88,19 +86,10 @@ export const RecordBoardColumnCardsContainer = ({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
           >
-            {objectMetadataItem.nameSingular ===
-              CoreObjectNameSingular.Opportunity &&
-            !isOpportunitiesCompanyFieldDisabled ? (
-              <RecordBoardColumnNewOpportunity
-                columnId={columnDefinition.id}
-                position="first"
-              />
-            ) : (
-              <RecordBoardColumnNewRecord
-                columnId={columnDefinition.id}
-                position="first"
-              />
-            )}
+            <RecordBoardColumnNewRecord
+              columnId={columnDefinition.id}
+              position="first"
+            />
           </div>
         )}
       </Draggable>
@@ -138,19 +127,10 @@ export const RecordBoardColumnCardsContainer = ({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
           >
-            {objectMetadataItem.nameSingular ===
-              CoreObjectNameSingular.Opportunity &&
-            !isOpportunitiesCompanyFieldDisabled ? (
-              <RecordBoardColumnNewOpportunity
-                columnId={columnDefinition.id}
-                position="last"
-              />
-            ) : (
-              <RecordBoardColumnNewRecord
-                columnId={columnDefinition.id}
-                position="last"
-              />
-            )}
+            <RecordBoardColumnNewRecord
+              columnId={columnDefinition.id}
+              position="last"
+            />
             <StyledNewButtonContainer>
               <RecordBoardColumnNewRecordButton
                 columnId={columnDefinition.id}

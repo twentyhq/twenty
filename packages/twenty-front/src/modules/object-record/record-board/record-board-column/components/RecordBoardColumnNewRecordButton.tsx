@@ -37,7 +37,7 @@ export const RecordBoardColumnNewRecordButton = ({
   }
 
   return (
-    <StyledNewButton onClick={() => handleNewButtonClick('last', false)}>
+    <StyledNewButton onClick={() => handleNewButtonClick('last')}>
       <IconPlus size={theme.icon.size.md} />
       New
     </StyledNewButton>

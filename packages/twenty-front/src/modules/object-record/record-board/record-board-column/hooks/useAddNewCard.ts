@@ -2,8 +2,6 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { useSingleRecordPickerSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
 import { RecoilState, useRecoilCallback } from 'recoil';
@@ -30,10 +28,7 @@ export const useAddNewCard = ({
     recordPickerComponentInstanceId,
   );
 
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const getColumnDefinitionId = useCallback(
     (columnId?: string) => {
@@ -51,7 +46,6 @@ export const useAddNewCard = ({
       set: SetFunction,
       columnDefinitionId: string,
       position: 'first' | 'last',
-      isOpportunity: boolean,
     ) => {
       set(
         recordBoardNewRecordByColumnIdSelector({
@@ -63,7 +57,6 @@ export const useAddNewCard = ({
           columnId: columnDefinitionId,
           isCreating: true,
           position,
-          isOpportunity,
           company: null,
         },
       );
@@ -72,16 +65,8 @@ export const useAddNewCard = ({
   );
 
   const createRecord = useCallback(
-    (
-      labelValue: string,
-      position: 'first' | 'last',
-      isOpportunity: boolean,
-      company?: SingleRecordPickerRecord,
-    ) => {
-      if (
-        (isOpportunity && company !== null) ||
-        (!isOpportunity && labelValue !== '')
-      ) {
+    (labelValue: string, position: 'first' | 'last') => {
+      if (labelValue !== '') {
         // TODO: Refactor this whole section (Add new card): this should be:
         // - simpler
         // - piloted by metadata,
@@ -108,11 +93,7 @@ export const useAddNewCard = ({
         createOneRecord({
           [selectFieldMetadataItem.name]: columnContext?.columnDefinition.value,
           position,
-          ...(isOpportunity
-            ? { companyId: company?.id, name: company?.name }
-            : {
-                [labelIdentifierField.name]: computedLabelIdentifierValue,
-              }),
+          [labelIdentifierField.name]: computedLabelIdentifierValue,
         });
       }
     },
@@ -130,25 +111,14 @@ export const useAddNewCard = ({
       (
         labelValue: string,
         position: 'first' | 'last',
-        isOpportunity: boolean,
         columnId?: string,
       ): void => {
         const columnDefinitionId = getColumnDefinitionId(columnId);
-        addNewItem(set, columnDefinitionId, position, isOpportunity);
-        if (isOpportunity) {
-          setHotkeyScopeAndMemorizePreviousScope(
-            SingleRecordPickerHotkeyScope.SingleRecordPicker,
-          );
-        } else {
-          createRecord(labelValue, position, isOpportunity);
-        }
+        addNewItem(set, columnDefinitionId, position);
+
+        createRecord(labelValue, position);
       },
-    [
-      addNewItem,
-      createRecord,
-      getColumnDefinitionId,
-      setHotkeyScopeAndMemorizePreviousScope,
-    ],
+    [addNewItem, createRecord, getColumnDefinitionId],
   );
 
   const handleCreateSuccess = useRecoilCallback(
@@ -169,7 +139,6 @@ export const useAddNewCard = ({
             columnId: columnDefinitionId,
             isCreating: false,
             position,
-            isOpportunity: Boolean(isOpportunity),
             company: null,
           },
         );
@@ -187,7 +156,7 @@ export const useAddNewCard = ({
     onCreateSuccess?: () => void,
   ) => {
     if (labelValue.trim() !== '' && position !== undefined) {
-      handleAddNewCardClick(labelValue.trim(), position, false, '');
+      handleAddNewCardClick(labelValue.trim(), position, '');
       onCreateSuccess?.();
     }
   };
@@ -212,24 +181,10 @@ export const useAddNewCard = ({
     handleCreate(labelValue, position, onCreateSuccess);
   };
 
-  const handleEntitySelect = useCallback(
-    (
-      position: 'first' | 'last',
-      company: SingleRecordPickerRecord,
-      columnId?: string,
-    ) => {
-      const columnDefinitionId = getColumnDefinitionId(columnId);
-      createRecord('', position, true, company);
-      handleCreateSuccess(position, columnDefinitionId, true);
-    },
-    [createRecord, handleCreateSuccess, getColumnDefinitionId],
-  );
-
   return {
     handleAddNewCardClick,
     handleCreateSuccess,
     handleBlur,
     handleInputEnter,
-    handleEntitySelect,
   };
 };

@@ -44,22 +44,10 @@ export const RecordIndexPageKanbanAddButton = () => {
 
   const handleItemClick = useCallback(
     (columnDefinition: RecordGroupDefinition) => {
-      const isOpportunityEnabled =
-        isOpportunity && !isOpportunitiesCompanyFieldDisabled;
-      handleAddNewCardClick(
-        '',
-        'first',
-        isOpportunityEnabled,
-        columnDefinition.id,
-      );
+      handleAddNewCardClick('', 'first', columnDefinition.id);
       closeDropdown();
     },
-    [
-      isOpportunity,
-      handleAddNewCardClick,
-      closeDropdown,
-      isOpportunitiesCompanyFieldDisabled,
-    ],
+    [handleAddNewCardClick, closeDropdown],
   );
 
   if (!selectFieldMetadataItem) {

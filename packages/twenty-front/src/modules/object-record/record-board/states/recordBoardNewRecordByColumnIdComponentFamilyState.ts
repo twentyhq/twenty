@@ -6,7 +6,6 @@ export type NewCard = {
   columnId: string;
   isCreating: boolean;
   position: 'first' | 'last';
-  isOpportunity: boolean;
   company: SingleRecordPickerRecord | null;
 };
 
@@ -18,7 +17,6 @@ export const recordBoardNewRecordByColumnIdComponentFamilyState =
       columnId: '',
       isCreating: false,
       position: 'last',
-      isOpportunity: false,
       company: null,
     },
   });
