@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared';
 const StyledChip = styled.button<{
   withText: boolean;
   maxWidth?: string;
-  isGap?: boolean;
   onClick?: () => void;
 }>`
   all: unset;
@@ -18,7 +17,7 @@ const StyledChip = styled.button<{
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  gap: ${({ theme, isGap }) => (isGap ? theme.spacing(1) : 0)};
+  gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(6)};
   /* If the chip has text, we add extra padding to have a more balanced design */
   padding: 0
@@ -50,7 +49,6 @@ export type CommandMenuContextChipProps = {
   onClick?: () => void;
   testId?: string;
   maxWidth?: string;
-  isGap?: boolean;
 };
 
 export const CommandMenuContextChip = ({
@@ -59,7 +57,6 @@ export const CommandMenuContextChip = ({
   onClick,
   testId,
   maxWidth,
-  isGap = true,
 }: CommandMenuContextChipProps) => {
   return (
     <StyledChip
@@ -67,7 +64,6 @@ export const CommandMenuContextChip = ({
       onClick={onClick}
       data-testid={testId}
       maxWidth={maxWidth}
-      isGap={isGap}
     >
       <StyledIconsContainer>
         {Icons.map((Icon, index) => (

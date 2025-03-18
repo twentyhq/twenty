@@ -127,7 +127,6 @@ export const CommandMenuTopBar = () => {
                 Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
                 onClick={goBackFromCommandMenu}
                 testId="command-menu-go-back-button"
-                isGap={false}
               />
             </motion.div>
           )}
