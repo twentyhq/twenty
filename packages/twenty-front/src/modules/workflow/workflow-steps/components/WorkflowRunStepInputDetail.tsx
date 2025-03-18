@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import {
+  expandTwoDepths,
   IconBrackets,
   JsonNestedNode,
   JsonTreeContextProvider,
@@ -62,6 +63,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
           arrowButtonCollapsedLabel: t`Expand`,
           arrowButtonExpandedLabel: t`Collapse`,
           shouldHighlightNode: (keyPath) => variablesUsedInStep.has(keyPath),
+          shouldExpandNodeInitially: expandTwoDepths,
         }}
       >
         <JsonNestedNode

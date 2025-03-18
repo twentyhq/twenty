@@ -6,6 +6,7 @@ import { JsonValue } from 'type-fest';
 export const JsonTree = ({
   value,
   shouldHighlightNode,
+  shouldExpandNodeInitially,
   emptyArrayLabel,
   emptyObjectLabel,
   emptyStringLabel,
@@ -14,6 +15,7 @@ export const JsonTree = ({
 }: {
   value: JsonValue;
   shouldHighlightNode?: (keyPath: string) => boolean;
+  shouldExpandNodeInitially: (keyPath: string, depth: number) => boolean;
   emptyArrayLabel: string;
   emptyObjectLabel: string;
   emptyStringLabel: string;
@@ -24,6 +26,7 @@ export const JsonTree = ({
     <JsonTreeContextProvider
       value={{
         shouldHighlightNode,
+        shouldExpandNodeInitially,
         emptyArrayLabel,
         emptyObjectLabel,
         emptyStringLabel,

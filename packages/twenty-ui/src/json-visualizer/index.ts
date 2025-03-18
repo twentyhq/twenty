@@ -7,4 +7,6 @@ export * from './components/JsonTreeContextProvider';
 export * from './components/JsonValueNode';
 export * from './contexts/JsonTreeContext';
 export * from './hooks/useJsonTreeContextOrThrow';
+export * from './utils/expandTwoDepths';
 export * from './utils/isArray';
+

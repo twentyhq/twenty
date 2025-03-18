@@ -6,11 +6,13 @@ import {
   within,
 } from '@storybook/test';
 import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
+import { expandTwoDepths } from '@ui/json-visualizer/utils/expandTwoDepths';
 
 const meta: Meta<typeof JsonTree> = {
   title: 'UI/JsonVisualizer/JsonTree',
   component: JsonTree,
   args: {
+    shouldExpandNodeInitially: expandTwoDepths,
     emptyArrayLabel: 'Empty Array',
     emptyObjectLabel: 'Empty Object',
     emptyStringLabel: '[empty string]',
