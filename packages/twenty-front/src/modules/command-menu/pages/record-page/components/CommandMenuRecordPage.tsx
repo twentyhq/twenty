@@ -1,4 +1,5 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { isNewViewableRecordLoadingComponentState } from '@/command-menu/pages/record-page/states/isNewViewableRecordLoadingComponentState';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
@@ -75,17 +76,23 @@ export const CommandMenuRecordPage = () => {
                   {!isNewViewableRecordLoading && (
                     <RecordValueSetterEffect recordId={objectRecordId} />
                   )}
-                  <RecordShowEffect
-                    objectNameSingular={objectNameSingular}
-                    recordId={objectRecordId}
-                  />
-                  <RecordShowContainer
-                    objectNameSingular={objectNameSingular}
-                    objectRecordId={objectRecordId}
-                    loading={false}
-                    isInRightDrawer={true}
-                    isNewRightDrawerItemLoading={isNewViewableRecordLoading}
-                  />
+                  <TimelineActivityContext.Provider
+                    value={{
+                      recordId: objectRecordId,
+                    }}
+                  >
+                    <RecordShowEffect
+                      objectNameSingular={objectNameSingular}
+                      recordId={objectRecordId}
+                    />
+                    <RecordShowContainer
+                      objectNameSingular={objectNameSingular}
+                      objectRecordId={objectRecordId}
+                      loading={false}
+                      isInRightDrawer={true}
+                      isNewRightDrawerItemLoading={isNewViewableRecordLoading}
+                    />
+                  </TimelineActivityContext.Provider>
                 </RecordFieldValueSelectorContextProvider>
               </StyledRightDrawerRecord>
             </ActionMenuComponentInstanceContext.Provider>

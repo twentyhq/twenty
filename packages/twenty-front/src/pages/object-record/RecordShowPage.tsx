@@ -8,6 +8,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
+import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
@@ -61,9 +62,13 @@ export const RecordShowPage = () => {
                   <PageBody>
                     <TimelineActivityContext.Provider
                       value={{
-                        labelIdentifierValue: objectRecordId,
+                        recordId: objectRecordId,
                       }}
                     >
+                      <RecordShowEffect
+                        objectNameSingular={objectNameSingular}
+                        recordId={objectRecordId}
+                      />
                       <RecordShowContainer
                         objectNameSingular={objectNameSingular}
                         objectRecordId={objectRecordId}
