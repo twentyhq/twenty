@@ -2724,12 +2724,12 @@ msgstr "Không có quốc gia"
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
-msgstr ""
+msgstr "Không có thành viên nào"
 
 #. js-lingui-id: Y4qK8/
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No members assigned"
-msgstr ""
+msgstr "Không có thành viên nào được chỉ định"
 
 #. js-lingui-id: hfYSED
 #: src/pages/settings/roles/components/RoleAssignment.tsx
@@ -2740,7 +2740,7 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No members match your search"
-msgstr ""
+msgstr "Không có thành viên nào phù hợp với tìm kiếm của bạn"
 
 #. js-lingui-id: F9pWel
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
@@ -3353,12 +3353,12 @@ msgstr "Tìm một trường..."
 #. js-lingui-id: t3n1Qy
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 #~ msgid "Search a member"
-#~ msgstr "Tìm kiếm một thành viên"
+#~ msgstr "Search a member"
 
 #. js-lingui-id: xdl79x
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Search a team member..."
-msgstr ""
+msgstr "Tìm kiếm một thành viên..."
 
 #. js-lingui-id: lnDfeK
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -3368,7 +3368,7 @@ msgstr "Tìm kiếm một loại"
 #. js-lingui-id: x55IVv
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search an assigned team member..."
-msgstr ""
+msgstr "Tìm một thành viên nhóm được phân công..."
 
 #. js-lingui-id: k7kp5/
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
