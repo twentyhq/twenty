@@ -104,7 +104,7 @@ const StyledInput = styled.input<InputProps>`
       disabled && isChecked
         ? theme.adaptiveColors.blue3
         : indeterminate || isChecked
-          ? theme.adaptiveColors.blue3
+          ? theme.color.blue
           : 'transparent'};
     border-color: ${({
       theme,

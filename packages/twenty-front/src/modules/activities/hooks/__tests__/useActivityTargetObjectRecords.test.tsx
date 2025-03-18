@@ -130,8 +130,9 @@ describe('useActivityTargetObjectRecords', () => {
           objectMetadataItemsState,
         );
 
-        const { activityTargetObjectRecords } =
-          useActivityTargetObjectRecords(task);
+        const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
+          task.id,
+        );
 
         return {
           activityTargetObjectRecords,

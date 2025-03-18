@@ -4,10 +4,13 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -25,28 +28,36 @@ export const SummaryCard = ({
   isNewRightDrawerItemLoading,
   isInRightDrawer,
 }: SummaryCardProps) => {
-  const {
-    recordFromStore,
-    recordLoading,
-    labelIdentifierFieldMetadataItem,
-    isPrefetchLoading,
-    recordIdentifier,
-  } = useRecordShowContainerData({
-    objectNameSingular,
-    objectRecordId,
-  });
+  const { recordLoading, labelIdentifierFieldMetadataItem, isPrefetchLoading } =
+    useRecordShowContainerData({
+      objectNameSingular,
+      objectRecordId,
+    });
+
+  const recordCreatedAt = useRecoilValue<string | null>(
+    recordStoreFamilySelector({
+      recordId: objectRecordId,
+      fieldName: 'createdAt',
+    }),
+  );
 
   const { onUploadPicture, useUpdateOneObjectRecordMutation } =
     useRecordShowContainerActions({
       objectNameSingular,
       objectRecordId,
-      recordFromStore,
     });
 
   const { Icon, IconColor } = useGetStandardObjectIcon(objectNameSingular);
   const isMobile = useIsMobile() || isInRightDrawer;
 
-  if (isNewRightDrawerItemLoading || !isDefined(recordFromStore)) {
+  const recordIdentifier = useRecoilValue(
+    recordStoreIdentifierFamilySelector({
+      objectNameSingular,
+      recordId: objectRecordId,
+    }),
+  );
+
+  if (isNewRightDrawerItemLoading || !isDefined(recordCreatedAt)) {
     return <ShowPageSummaryCardSkeletonLoader />;
   }
 
@@ -58,7 +69,7 @@ export const SummaryCard = ({
       icon={Icon}
       iconColor={IconColor}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
-      date={recordFromStore.createdAt ?? ''}
+      date={recordCreatedAt ?? ''}
       loading={isPrefetchLoading || recordLoading}
       title={
         <FieldContext.Provider

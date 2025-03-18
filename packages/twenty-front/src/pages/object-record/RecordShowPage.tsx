@@ -14,8 +14,8 @@ import { RecordValueSetterEffect } from '@/object-record/record-store/components
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
-import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
+import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
 
 export const RecordShowPage = () => {
   const parameters = useParams<{
@@ -23,14 +23,7 @@ export const RecordShowPage = () => {
     objectRecordId: string;
   }>();
 
-  const {
-    pageTitle,
-    objectNameSingular,
-    objectRecordId,
-    headerIcon,
-    loading,
-    pageName,
-  } = useRecordShowPage(
+  const { objectNameSingular, objectRecordId, headerIcon } = useRecordShowPage(
     parameters.objectNameSingular ?? '',
     parameters.objectRecordId ?? '',
   );
@@ -54,7 +47,10 @@ export const RecordShowPage = () => {
               >
                 <RecordValueSetterEffect recordId={objectRecordId} />
                 <PageContainer>
-                  <PageTitle title={pageTitle} />
+                  <RecordShowPageTitle
+                    objectNameSingular={objectNameSingular}
+                    objectRecordId={objectRecordId}
+                  />
                   <RecordShowPageHeader
                     objectNameSingular={objectNameSingular}
                     objectRecordId={objectRecordId}
@@ -64,12 +60,14 @@ export const RecordShowPage = () => {
                   </RecordShowPageHeader>
                   <PageBody>
                     <TimelineActivityContext.Provider
-                      value={{ labelIdentifierValue: pageName }}
+                      value={{
+                        labelIdentifierValue: objectRecordId,
+                      }}
                     >
                       <RecordShowContainer
                         objectNameSingular={objectNameSingular}
                         objectRecordId={objectRecordId}
-                        loading={loading}
+                        loading={false}
                       />
                     </TimelineActivityContext.Provider>
                   </PageBody>
