@@ -11,7 +11,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { CrudByFromAuthContextService } from 'src/engine/core-modules/actor/services/crud-by-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -31,7 +31,7 @@ export class CreatedByCreateOnePreQueryHook
   constructor(
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    private readonly createdByFromAuthContextService: CreatedByFromAuthContextService,
+    private readonly crudByFromAuthContextService: CrudByFromAuthContextService,
   ) {}
 
   async execute(
@@ -62,7 +62,7 @@ export class CreatedByCreateOnePreQueryHook
     }
 
     const createdBy =
-      await this.createdByFromAuthContextService.buildCreatedBy(authContext);
+      await this.crudByFromAuthContextService.buildCrudBy(authContext);
 
     // Front-end can fill the source field
     if (

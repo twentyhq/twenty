@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -37,6 +36,7 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { assertNever } from 'src/utils/assert';
+import { buildCrudByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-crud-by-from-full-name-metadata.util';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -80,7 +80,7 @@ export class WorkflowTriggerWorkspaceService {
       this.getWorkspaceId(),
       workflowVersionId,
       payload,
-      buildCreatedByFromFullNameMetadata({
+      buildCrudByFromFullNameMetadata({
         fullNameMetadata: { firstName, lastName },
         workspaceMemberId,
       }),

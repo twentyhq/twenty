@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { CrudByFromAuthContextService } from 'src/engine/core-modules/actor/services/crud-by-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -24,8 +24,8 @@ const fromFullNameMetadataToName = ({
   lastName,
 }: FullNameMetadata) => `${firstName} ${lastName}`;
 
-describe('CreatedByFromAuthContextService', () => {
-  let service: CreatedByFromAuthContextService;
+describe('CrudByFromAuthContextService', () => {
+  let service: CrudByFromAuthContextService;
   const mockWorkspaceMemberRepository = {
     findOneOrFail: jest.fn(),
   };
@@ -40,7 +40,7 @@ describe('CreatedByFromAuthContextService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CreatedByFromAuthContextService,
+        CrudByFromAuthContextService,
         {
           provide: TwentyORMGlobalManager,
           useValue: twentyORMGlobalManager,
@@ -48,8 +48,8 @@ describe('CreatedByFromAuthContextService', () => {
       ],
     }).compile();
 
-    service = module.get<CreatedByFromAuthContextService>(
-      CreatedByFromAuthContextService,
+    service = module.get<CrudByFromAuthContextService>(
+      CrudByFromAuthContextService,
     );
   });
 
@@ -60,7 +60,7 @@ describe('CreatedByFromAuthContextService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-  describe('buildCreatedBy', () => {
+  describe('buildCrudBy', () => {
     it('should build metadata from workspaceMemberId and user when both are present', async () => {
       const authContext = {
         workspaceMemberId: '20202020-0b5c-4178-bed7-d371f6411eaa',
@@ -72,7 +72,7 @@ describe('CreatedByFromAuthContextService', () => {
         workspace: { id: '20202020-bdec-497f-847a-1bb334fefe58' },
       } as const satisfies TestingAuthContext;
 
-      const result = await service.buildCreatedBy(authContext as AuthContext);
+      const result = await service.buildCrudBy(authContext as AuthContext);
 
       expect(result).toEqual<ActorMetadata>({
         context: {},
@@ -104,7 +104,7 @@ describe('CreatedByFromAuthContextService', () => {
         mockedWorkspaceMember,
       );
 
-      const result = await service.buildCreatedBy(authContext as AuthContext);
+      const result = await service.buildCrudBy(authContext as AuthContext);
 
       expect(result).toEqual<ActorMetadata>({
         context: {},
@@ -123,7 +123,7 @@ describe('CreatedByFromAuthContextService', () => {
         workspace: { id: '20202020-bdec-497f-847a-1bb334fefe58' },
       } as const satisfies TestingAuthContext;
 
-      const result = await service.buildCreatedBy(authContext as AuthContext);
+      const result = await service.buildCrudBy(authContext as AuthContext);
 
       expect(result).toEqual<ActorMetadata>({
         source: FieldActorSource.API,
@@ -139,9 +139,9 @@ describe('CreatedByFromAuthContextService', () => {
       } as const satisfies TestingAuthContext;
 
       await expect(
-        service.buildCreatedBy(authContext as AuthContext),
+        service.buildCrudBy(authContext as AuthContext),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"Unable to build createdBy metadata - no valid actor information found in auth context"`,
+        `"Unable to build crudBy metadata - no valid actor information found in auth context"`,
       );
     });
   });

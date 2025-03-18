@@ -2,29 +2,27 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared';
 
-import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
-import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { buildCrudByFromApiKey } from 'src/engine/core-modules/actor/utils/build-crud-by-from-api-key.util';
+import { buildCrudByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-crud-by-from-full-name-metadata.util';
 
 @Injectable()
-export class CreatedByFromAuthContextService {
-  private readonly logger = new Logger(CreatedByFromAuthContextService.name);
+export class CrudByFromAuthContextService {
+  private readonly logger = new Logger(CrudByFromAuthContextService.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  public async buildCreatedBy(
-    authContext: AuthContext,
-  ): Promise<ActorMetadata> {
+  public async buildCrudBy(authContext: AuthContext): Promise<ActorMetadata> {
     const { workspace, workspaceMemberId, user, apiKey } = authContext;
 
     // TODO: remove that code once we have the workspace member id in all tokens
     if (isDefined(workspaceMemberId) && isDefined(user)) {
-      return buildCreatedByFromFullNameMetadata({
+      return buildCrudByFromFullNameMetadata({
         fullNameMetadata: {
           firstName: user.firstName,
           lastName: user.lastName,
@@ -48,20 +46,20 @@ export class CreatedByFromAuthContextService {
         },
       });
 
-      return buildCreatedByFromFullNameMetadata({
+      return buildCrudByFromFullNameMetadata({
         fullNameMetadata: workspaceMember.name,
         workspaceMemberId: workspaceMember.id,
       });
     }
 
     if (isDefined(apiKey)) {
-      return buildCreatedByFromApiKey({
+      return buildCrudByFromApiKey({
         apiKey,
       });
     }
 
     throw new Error(
-      'Unable to build createdBy metadata - no valid actor information found in auth context',
+      'Unable to build crudBy metadata - no valid actor information found in auth context',
     );
   }
 }

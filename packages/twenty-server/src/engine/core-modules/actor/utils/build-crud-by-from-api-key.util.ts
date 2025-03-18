@@ -7,7 +7,7 @@ import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-
 type BuildCreatedByFromApiKeyArgs = {
   apiKey: ApiKeyWorkspaceEntity;
 };
-export const buildCreatedByFromApiKey = ({
+export const buildCrudByFromApiKey = ({
   apiKey,
 }: BuildCreatedByFromApiKeyArgs): ActorMetadata => ({
   source: FieldActorSource.API,

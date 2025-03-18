@@ -10,6 +10,12 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         name
         context
       }
+      updatedBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
       deletedAt
       emails {
         primaryEmail
@@ -118,6 +124,12 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
           name
           context
         }
+        updatedBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
         deletedAt
         domainName {
           primaryLinkUrl
@@ -152,6 +164,12 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       companyId
       createdAt
       createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      updatedBy {
         source
         workspaceMemberId
         name
@@ -252,6 +270,12 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             companyId
             createdAt
             createdBy {
+              source
+              workspaceMemberId
+              name
+              context
+            }
+            updatedBy {
               source
               workspaceMemberId
               name
