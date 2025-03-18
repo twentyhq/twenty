@@ -7,13 +7,11 @@ import packageJson from './package.json';
 const exports = Object.keys(packageJson.exports);
 const entries = exports.map((module) => `src/${module}/index.ts`);
 
-const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs' | 'js') => {
+const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
-    console.log('*'.repeat(100));
-    console.log(chunk);
-    console.log('*'.repeat(100));
-    // Should throw ?
-    return `${chunk.name}.${extension}`;
+    throw new Error(
+      `Should never occurs, encountered a non entry chunk ${chunk.facadeModuleId}`,
+    );
   }
 
   const splitFaceModuleId = chunk.facadeModuleId?.split('/');
@@ -27,10 +25,7 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs' | 'js') => {
   if (moduleDirectory === 'src') {
     return `${chunk.name}.${extension}`;
   }
-  console.log('*'.repeat(100));
-  console.log(chunk);
-  console.log('*'.repeat(100));
-  return `${moduleDirectory}.${extension}`; //TODO format for extensions ?
+  return `${moduleDirectory}.${extension}`;
 };
 
 export default defineConfig({
@@ -39,7 +34,6 @@ export default defineConfig({
 
   plugins: [
     tsconfigPaths(),
-    // Refactor DTS
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
@@ -54,16 +48,9 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
-    // Should read package.json
     lib: {
       entry: ['src/index.ts', ...entries],
       name: 'twenty-shared',
-      // fileName: (format, fileName) => {
-      //   console.log(format, fileName);
-      //   const extension = format === 'cjs' ? 'js' : 'mjs';
-      //   return `${fileName}.${extension}`;
-      // },
-      formats: ['es', 'cjs'],
     },
     rollupOptions: {
       output: [
@@ -73,7 +60,7 @@ export default defineConfig({
         },
         {
           format: 'cjs',
-          entryFileNames: (chunk) => entryFileNames(chunk, 'js'),
+          entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),
         },
       ],
     },

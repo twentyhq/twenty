@@ -180,7 +180,7 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
       [`./${moduleName}`]: {
         types: `./dist/${moduleName}/index.d.ts`,
         import: `./dist/${moduleName}.mjs`,
-        require: `./dist/${moduleName}.js`,
+        require: `./dist/${moduleName}.cjs`,
       },
     };
   }, {});
