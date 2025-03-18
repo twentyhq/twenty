@@ -11,11 +11,7 @@ import { useRecoilValue } from 'recoil';
 import { useTheme } from '@emotion/react';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 
-export const MultiWorkspaceDropdownClickableComponent = ({
-  isDropdownOpen,
-}: {
-  isDropdownOpen?: boolean;
-}) => {
+export const MultiWorkspaceDropdownClickableComponent = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const theme = useTheme();
 
@@ -36,7 +32,6 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       </NavigationDrawerAnimatedCollapseWrapper>
       <NavigationDrawerAnimatedCollapseWrapper>
         <StyledIconChevronDown
-          isDropdownOpen={isDropdownOpen}
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
         />

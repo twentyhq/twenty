@@ -32,12 +32,9 @@ export const StyledLabel = styled.div`
 
 export const StyledIconChevronDown = styled(IconChevronDown)<{
   disabled?: boolean;
-  isDropdownOpen?: boolean;
 }>`
   align-items: center;
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
   display: flex;
-  rotate: ${({ isDropdownOpen }) => (isDropdownOpen ? '-180deg' : '0deg')};
-  transition: rotate 0.1s ease-in-out;
 `;
