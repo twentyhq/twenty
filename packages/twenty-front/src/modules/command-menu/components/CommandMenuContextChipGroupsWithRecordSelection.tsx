@@ -23,7 +23,7 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
       limit: 3,
     });
 
-  const { openRootCommandMenu } = useCommandMenu();
+  const { openCommandMenu } = useCommandMenu();
 
   if (loading) {
     return null;
@@ -46,7 +46,7 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
             totalCount,
           ),
           Icons: Avatars,
-          onClick: contextChips.length > 0 ? openRootCommandMenu : undefined,
+          onClick: contextChips.length > 0 ? openCommandMenu : undefined,
           withIconBackground: false,
         }
       : undefined;

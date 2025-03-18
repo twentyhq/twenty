@@ -2,9 +2,9 @@ import { useCallback, useContext } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -27,7 +27,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
   const {
     openWorkflowTriggerTypeInCommandMenu,
     openWorkflowEditStepInCommandMenu,
-  } = useCommandMenu();
+  } = useWorkflowCommandMenu();
 
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
 
