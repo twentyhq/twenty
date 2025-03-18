@@ -61,7 +61,7 @@ const renderHooks = () => {
     () => {
       const {
         openWorkflowTriggerTypeInCommandMenu,
-        openWorkflowActionInCommandMenu,
+        openStepSelectInCommandMenu,
         openWorkflowEditStepInCommandMenu,
         openWorkflowViewStepInCommandMenu,
       } = useWorkflowCommandMenu();
@@ -102,7 +102,7 @@ const renderHooks = () => {
 
       return {
         openWorkflowTriggerTypeInCommandMenu,
-        openWorkflowActionInCommandMenu,
+        openStepSelectInCommandMenu,
         openWorkflowEditStepInCommandMenu,
         openWorkflowViewStepInCommandMenu,
         workflowId,
@@ -150,7 +150,7 @@ describe('useOpenRecordInCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openWorkflowActionInCommandMenu('test-workflow-id');
+      result.current.openStepSelectInCommandMenu('test-workflow-id');
     });
 
     expect(result.current.workflowId).toBe('test-workflow-id');

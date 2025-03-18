@@ -10,7 +10,7 @@ export const useStartNodeCreation = () => {
   const setWorkflowCreateStepFromParentStepId = useSetRecoilState(
     workflowCreateStepFromParentStepIdState,
   );
-  const { openWorkflowActionInCommandMenu } = useWorkflowCommandMenu();
+  const { openStepSelectInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowId = useRecoilValue(workflowIdState);
 
@@ -23,14 +23,14 @@ export const useStartNodeCreation = () => {
       setWorkflowCreateStepFromParentStepId(parentNodeId);
 
       if (isDefined(workflowId)) {
-        openWorkflowActionInCommandMenu(workflowId);
+        openStepSelectInCommandMenu(workflowId);
         return;
       }
     },
     [
       setWorkflowCreateStepFromParentStepId,
       workflowId,
-      openWorkflowActionInCommandMenu,
+      openStepSelectInCommandMenu,
     ],
   );
 

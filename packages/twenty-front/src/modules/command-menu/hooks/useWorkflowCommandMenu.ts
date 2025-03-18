@@ -30,7 +30,7 @@ export const useWorkflowCommandMenu = () => {
     [navigateCommandMenu],
   );
 
-  const openWorkflowActionInCommandMenu = useRecoilCallback(
+  const openStepSelectInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (workflowId: string) => {
         const pageId = v4();
@@ -93,7 +93,7 @@ export const useWorkflowCommandMenu = () => {
     [navigateCommandMenu],
   );
 
-  const openWorkflowViewRunStepInCommandMenu = useRecoilCallback(
+  const openWorkflowRunViewStepInCommandMenu = useRecoilCallback(
     ({ set }) => {
       return (workflowId: string, title: string, icon: IconComponent) => {
         const pageId = v4();
@@ -116,9 +116,9 @@ export const useWorkflowCommandMenu = () => {
 
   return {
     openWorkflowTriggerTypeInCommandMenu,
-    openWorkflowActionInCommandMenu,
+    openStepSelectInCommandMenu,
     openWorkflowEditStepInCommandMenu,
     openWorkflowViewStepInCommandMenu,
-    openWorkflowViewRunStepInCommandMenu,
+    openWorkflowRunViewStepInCommandMenu,
   };
 };
