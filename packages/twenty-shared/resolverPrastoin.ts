@@ -479,7 +479,7 @@ const main = () => {
   for (const currPackage of packagesToMigrate) {
     console.log(`About to run over ${currPackage}`);
     const importsPerFile = retrieveImportFromPackageInSource(
-      `packages/${currPackage}/src`,
+      `packages/${currPackage}`,
     );
 
     const mappedResolutions = mapSourceImportToBarrel({
