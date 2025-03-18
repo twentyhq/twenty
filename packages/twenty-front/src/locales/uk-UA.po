@@ -1249,7 +1249,8 @@ msgstr "Видалити запис"
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete records"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Видалити записи"
 
@@ -1341,7 +1342,8 @@ msgstr "Опис"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Destroy"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Знищити"
 
@@ -1479,7 +1481,8 @@ msgstr "Редагуйте назву вашого субдомену або в�
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
-msgstr "\n"
+msgstr ""
+"\n"
 "              \n"
 "              Електронна адреса"
 
@@ -1549,7 +1552,8 @@ msgstr "співробітники"
 #. js-lingui-id: gqv5ZL
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Employees"
-msgstr "\n"
+msgstr ""
+"\n"
 "Співробітники"
 
 #. js-lingui-id: N2S1rs

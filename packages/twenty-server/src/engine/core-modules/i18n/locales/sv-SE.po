@@ -1821,7 +1821,8 @@ msgstr "F\"or\"aldrade f\"argschema"
 #. js-lingui-id: 5v4qYi
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Preferred language"
-msgstr "F\"or\"aldrat spr\n"
+msgstr ""
+"F\"or\"aldrat spr\n"
 "k"
 
 #. js-lingui-id: WJIL29
