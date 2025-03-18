@@ -107,7 +107,7 @@ type RecordTableHeaderCellProps = {
 export const RecordTableHeaderCell = ({
   column,
 }: RecordTableHeaderCellProps) => {
-  const { recordTableId, objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const resizeFieldOffsetState = useRecoilComponentCallbackStateV2(
     resizeFieldOffsetComponentState,

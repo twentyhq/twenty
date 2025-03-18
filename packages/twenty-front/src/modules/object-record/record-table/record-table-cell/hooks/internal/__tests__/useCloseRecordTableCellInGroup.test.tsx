@@ -32,7 +32,6 @@ jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
 
 const onColumnsChange = jest.fn();
 const recordTableId = 'scopeId';
-const recordGroupId = 'recordGroupId';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot
