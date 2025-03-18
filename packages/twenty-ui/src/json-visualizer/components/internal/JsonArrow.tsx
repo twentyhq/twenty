@@ -46,7 +46,7 @@ export const JsonArrow = ({
         size={theme.icon.size.md}
         color={theme.font.color.secondary}
         initial={false}
-        animate={{ rotate: isOpen ? -180 : 0 }}
+        animate={{ rotate: isOpen ? 0 : -90 }}
         transition={{ duration: ANIMATION.duration.normal }}
       />
     </StyledButton>
