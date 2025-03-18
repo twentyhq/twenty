@@ -37,7 +37,7 @@ export const RecordTableCellFieldInput = () => {
   ) => {
     event.stopImmediatePropagation();
 
-   
+    persistField();
 
     onCloseTableCell();
   };
