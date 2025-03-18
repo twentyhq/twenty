@@ -181,18 +181,20 @@ function extractImports(sourceFile: ts.SourceFile): string[] {
     }
 
     if (ts.isNamedImports(node.importClause.namedBindings)) {
-      const namedImports = node.importClause.namedBindings.elements
-        .map((element) => {
+      const namedImports = node.importClause.namedBindings.elements.map(
+        (element) => {
           if (element.propertyName) {
             return `${element.propertyName.text} as ${element.name.text}`;
           }
 
           return element.name.text;
-        })
-        .join(', ');
+        },
+      );
 
       // imports.push(`import { ${namedImports} } from ${modulePath}`);
-      imports.push(namedImports);
+      namedImports.forEach((namedImport) => {
+        imports.push(namedImport);
+      });
     }
 
     ts.forEachChild(node, visit);
@@ -234,22 +236,51 @@ const retrievePackageExportsPerModule = (srcPath: string) => {
   });
 };
 
+type NewImport = { barrel: string; modules: string[] };
 type MappedResolution = {
-  barrel: string;
-  declarations: string[];
+  newImports: Record<string, NewImport>;
   file: string;
 };
 type MapSourceImportToBarrelArgs = {
-  imports: ExtractedImports;
-  exports: ExtractedExports;
+  importsPerFile: ExtractedImports;
+  exportsPerModule: ExportPerModule;
 };
 const mapSourceImportToBarrel = ({
-  exports,
-  imports,
+  exportsPerModule,
+  importsPerFile,
 }: MapSourceImportToBarrelArgs): MappedResolution[] => {
   const mappedResolution: MappedResolution[] = [];
+  for (const fileImport of importsPerFile) {
+    const { file, imports } = fileImport;
+    let result: MappedResolution = {
+      file,
+      newImports: {},
+    };
 
-  for (const importOcc of imports) {
+    for (const importedDeclaration of imports) {
+      const findResult = exportsPerModule.find(({ exports }) =>
+        exports.some((el) => el.name === importedDeclaration),
+      );
+
+      if (findResult === undefined) {
+        console.log({ importedDeclaration });
+        throw new Error(
+          `Should never occurs no barrel exports ${importedDeclaration}`,
+        );
+      }
+
+      const { moduleName } = findResult;
+      if (result.newImports[moduleName]) {
+        result.newImports[moduleName].modules.push(importedDeclaration);
+      } else {
+        result.newImports[moduleName] = {
+          barrel: moduleName,
+          modules: [importedDeclaration],
+        };
+      }
+    }
+
+    mappedResolution.push(result);
   }
 
   return mappedResolution;
@@ -261,12 +292,17 @@ const retrieveImportFromPackageInSource = (srcPath: string) => {
 
 const main = () => {
   const packageSrcPath = 'packages/twenty-shared/src';
-  const packageExportPerModule =
-    retrievePackageExportsPerModule(packageSrcPath);
-  console.log(packageExportPerModule);
+  const exportsPerModule = retrievePackageExportsPerModule(packageSrcPath);
+  console.log(exportsPerModule);
 
   const sourceSrcPath = 'packages/twenty-front/src';
-  const sourceImports = retrieveImportFromPackageInSource(sourceSrcPath);
-  console.log(sourceImports);
+  const importsPerFile = retrieveImportFromPackageInSource(sourceSrcPath);
+  console.log(importsPerFile);
+
+  const mappedResolution = mapSourceImportToBarrel({
+    exportsPerModule,
+    importsPerFile,
+  });
+  console.log(JSON.stringify(mappedResolution));
 };
 main();
