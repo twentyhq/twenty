@@ -646,6 +646,11 @@ msgstr "Calculate"
 msgid "Calendar"
 msgstr "Calendar"
 
+#. js-lingui-id: wRpDAv
+#: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
+msgid "Calendar Event"
+msgstr "Calendar Event"
+
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Calendar settings"
@@ -2634,7 +2639,7 @@ msgid "New"
 msgstr "New"
 
 #. js-lingui-id: Gntx7w
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "New {capitalizedObjectNameSingular}"
 
@@ -3330,6 +3335,7 @@ msgstr "Schema"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search"
@@ -3454,7 +3460,8 @@ msgid "See versions history"
 msgstr "See versions history"
 
 #. js-lingui-id: WZvt/6
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select Action"
 msgstr "Select Action"
 
@@ -3941,7 +3948,8 @@ msgstr "Today"
 #~ msgstr "Total Users"
 
 #. js-lingui-id: PiUt3N
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Trigger Type"
 msgstr "Trigger Type"
 
