@@ -12,10 +12,10 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 const WORKSPACE_MEMBER_GQL_FIELDS = `
-    id
-    name {
-      firstName
-    } 
+  id
+  name {
+    firstName
+  } 
 `;
 
 describe('workspace members permissions', () => {
