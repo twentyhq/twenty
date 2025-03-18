@@ -50,10 +50,6 @@ const StyledSearchInput = styled(TextInput)`
   input {
     background: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
-
-    &:hover {
-      border: 1px solid ${({ theme }) => theme.border.color.medium};
-    }
   }
 `;
 

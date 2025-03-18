@@ -54,8 +54,6 @@ const StyledButtonContainer = styled.div`
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  /* padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)}; */
 `;
 
 const StyledIconWrapper = styled.div`
@@ -78,10 +76,6 @@ const StyledSearchInput = styled(TextInput)`
   input {
     background: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
-
-    &:hover {
-      border: 1px solid ${({ theme }) => theme.border.color.medium};
-    }
   }
 `;
 
