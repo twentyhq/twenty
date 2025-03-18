@@ -13,7 +13,7 @@ const StyledList = styled.ul<{ depth: number }>`
     css`
       padding-left: ${theme.spacing(8)};
 
-      > :first-child {
+      > :first-of-type {
         margin-top: ${theme.spacing(2)};
       }
     `}
