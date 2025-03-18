@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 
@@ -68,7 +68,7 @@ export const NoteCard = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 

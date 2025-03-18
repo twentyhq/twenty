@@ -1,5 +1,5 @@
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
 import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
@@ -24,7 +24,7 @@ export const useCommandMenuContextChips = () => {
     commandMenuNavigationStackState,
   );
 
-  const { navigateCommandMenuHistory } = useCommandMenu();
+  const { navigateCommandMenuHistory } = useCommandMenuHistory();
 
   const theme = useTheme();
 

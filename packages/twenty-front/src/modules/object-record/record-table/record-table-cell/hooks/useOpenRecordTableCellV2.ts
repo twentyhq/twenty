@@ -17,7 +17,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -75,7 +75,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const { openFieldInput } = useOpenFieldInputEditMode();
 

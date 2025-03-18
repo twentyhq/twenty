@@ -3,7 +3,7 @@ import { Avatar, GRAY_SCALE } from 'twenty-ui';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
 import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
@@ -68,7 +68,7 @@ type EmailThreadPreviewProps = {
 };
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
-  const { openEmailThreadInCommandMenu } = useCommandMenu();
+  const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
 
   const visibility = thread.visibility;
 

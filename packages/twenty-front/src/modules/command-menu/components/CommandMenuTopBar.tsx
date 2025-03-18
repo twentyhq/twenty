@@ -7,6 +7,7 @@ import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/Command
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
+import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -91,7 +92,9 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu, goBackFromCommandMenu } = useCommandMenu();
+  const { closeCommandMenu } = useCommandMenu();
+
+  const { goBackFromCommandMenu } = useCommandMenuHistory();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
