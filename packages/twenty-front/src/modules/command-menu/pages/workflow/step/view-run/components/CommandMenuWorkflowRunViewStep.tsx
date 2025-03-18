@@ -1,5 +1,7 @@
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
@@ -8,7 +10,6 @@ import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hook
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
-import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import styled from '@emotion/styled';
@@ -29,8 +30,9 @@ export const CommandMenuWorkflowRunViewStep = () => {
 
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  const { activeTabId } = useTabList<TabId>(
-    WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
+    'command-menu-workflow-run-view-step',
   );
 
   const stepExecutionStatus = isDefined(workflowRun)
@@ -66,31 +68,31 @@ export const CommandMenuWorkflowRunViewStep = () => {
   }
 
   return (
-    <WorkflowStepContextProvider
-      value={{ workflowVersionId: workflowRun.workflowVersionId }}
+    <ActiveTabComponentInstanceContext.Provider
+      value={{ instanceId: 'command-menu-workflow-run-view-step' }}
     >
-      <StyledTabList
-        tabListInstanceId={WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID}
-        tabs={tabs}
-        behaveAsLinks={false}
-      />
+      <WorkflowStepContextProvider
+        value={{ workflowVersionId: workflowRun.workflowVersionId }}
+      >
+        <StyledTabList tabs={tabs} behaveAsLinks={false} />
 
-      {activeTabId === 'node' ? (
-        <WorkflowStepDetail
-          readonly
-          stepId={workflowSelectedNode}
-          trigger={flow.trigger}
-          steps={flow.steps}
-        />
-      ) : null}
+        {activeTabId === 'node' ? (
+          <WorkflowStepDetail
+            readonly
+            stepId={workflowSelectedNode}
+            trigger={flow.trigger}
+            steps={flow.steps}
+          />
+        ) : null}
 
-      {activeTabId === 'input' ? (
-        <WorkflowRunStepInputDetail stepId={workflowSelectedNode} />
-      ) : null}
+        {activeTabId === 'input' ? (
+          <WorkflowRunStepInputDetail stepId={workflowSelectedNode} />
+        ) : null}
 
-      {activeTabId === 'output' ? (
-        <WorkflowRunStepOutputDetail stepId={workflowSelectedNode} />
-      ) : null}
-    </WorkflowStepContextProvider>
+        {activeTabId === 'output' ? (
+          <WorkflowRunStepOutputDetail stepId={workflowSelectedNode} />
+        ) : null}
+      </WorkflowStepContextProvider>
+    </ActiveTabComponentInstanceContext.Provider>
   );
 };

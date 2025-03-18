@@ -12,12 +12,14 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import {
@@ -68,9 +70,7 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemByNamePlural(objectNamePlural) ??
     findActiveObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  const { activeTabId } = useTabList(
-    SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
-  );
+  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
@@ -168,16 +168,14 @@ export const SettingsObjectDetailPage = () => {
         }
       >
         <SettingsPageContainer>
-          <TabList
-            tabListInstanceId={
-              SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
-            }
-            tabs={tabs}
-            className="tab-list"
-          />
-          <StyledContentContainer>
-            {renderActiveTabContent()}
-          </StyledContentContainer>
+          <ActiveTabComponentInstanceContext.Provider
+            value={{ instanceId: 'settings-object-detail-tabs' }}
+          >
+            <TabList tabs={tabs} className="tab-list" />
+            <StyledContentContainer>
+              {renderActiveTabContent()}
+            </StyledContentContainer>
+          </ActiveTabComponentInstanceContext.Provider>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </>

@@ -1,6 +1,8 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
+import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-export const activeTabIdComponentState = createComponentState<string | null>({
+export const activeTabIdComponentState = createComponentStateV2<string | null>({
   key: 'activeTabIdComponentState',
   defaultValue: null,
+  componentInstanceContext: ActiveTabComponentInstanceContext,
 });

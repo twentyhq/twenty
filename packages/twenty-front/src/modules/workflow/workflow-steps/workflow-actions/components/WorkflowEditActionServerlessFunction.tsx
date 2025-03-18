@@ -19,7 +19,9 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionServerlessFunctionFields';
@@ -78,7 +80,7 @@ export const WorkflowEditActionServerlessFunction = ({
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
-  const { activeTabId } = useTabList(tabListId);
+  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
@@ -283,11 +285,11 @@ export const WorkflowEditActionServerlessFunction = ({
   return (
     !loading && (
       <StyledContainer>
-        <StyledTabList
-          tabListInstanceId={tabListId}
-          tabs={tabs}
-          behaveAsLinks={false}
-        />
+        <ActiveTabComponentInstanceContext.Provider
+          value={{ instanceId: tabListId }}
+        >
+          <StyledTabList tabs={tabs} behaveAsLinks={false} />
+        </ActiveTabComponentInstanceContext.Provider>
         <WorkflowStepHeader
           onTitleChange={(newName: string) => {
             updateAction({ name: newName });

@@ -2,6 +2,7 @@ import { SettingsAdminContent } from '@/settings/admin-panel/components/Settings
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -20,7 +21,11 @@ export const SettingsAdmin = () => {
       ]}
     >
       <SettingsPageContainer>
-        <SettingsAdminContent />
+        <ActiveTabComponentInstanceContext.Provider
+          value={{ instanceId: 'settings-admin-tabs' }}
+        >
+          <SettingsAdminContent />
+        </ActiveTabComponentInstanceContext.Provider>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

@@ -14,7 +14,9 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -31,7 +33,9 @@ const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
-  const { activeTabId, setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+    activeTabIdComponentState,
+  );
   const [isCodeValid, setIsCodeValid] = useState(true);
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
@@ -208,12 +212,12 @@ export const SettingsServerlessFunctionDetail = () => {
         ]}
       >
         <SettingsPageContainer>
-          <TabList
-            tabListInstanceId={TAB_LIST_COMPONENT_ID}
-            tabs={tabs}
-            behaveAsLinks={false}
-          />
-          {renderActiveTabContent()}
+          <ActiveTabComponentInstanceContext.Provider
+            value={{ instanceId: 'serverless-function-detail' }}
+          >
+            <TabList tabs={tabs} behaveAsLinks={false} />
+            {renderActiveTabContent()}
+          </ActiveTabComponentInstanceContext.Provider>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     )

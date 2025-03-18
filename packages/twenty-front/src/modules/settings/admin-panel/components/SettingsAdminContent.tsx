@@ -1,7 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsAdminTabContent } from '@/settings/admin-panel/components/SettingsAdminTabContent';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
-import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -35,11 +34,7 @@ export const SettingsAdminContent = () => {
 
   return (
     <>
-      <TabList
-        tabs={tabs}
-        tabListInstanceId={SETTINGS_ADMIN_TABS_ID}
-        behaveAsLinks={true}
-      />
+      <TabList tabs={tabs} behaveAsLinks={true} />
       <SettingsAdminTabContent />
     </>
   );
