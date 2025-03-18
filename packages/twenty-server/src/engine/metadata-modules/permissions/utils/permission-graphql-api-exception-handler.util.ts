@@ -18,6 +18,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
     case PermissionsExceptionCode.INVALID_ARG:
     case PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED:
+    case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
       throw new ForbiddenError(error.message);
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:

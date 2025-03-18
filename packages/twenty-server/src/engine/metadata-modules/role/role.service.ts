@@ -8,6 +8,7 @@ import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/const
 import {
   PermissionsException,
   PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/createRoleInput.dto';
 import {
@@ -190,7 +191,10 @@ export class RoleService {
       }
 
       if (workspaceRoles.some((role) => role.label === input.label)) {
-        throw new Error('Role label must be unique');
+        throw new PermissionsException(
+          PermissionsExceptionMessage.ROLE_LABEL_ALREADY_EXISTS,
+          PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS,
+        );
       }
     }
   }
