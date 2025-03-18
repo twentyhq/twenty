@@ -30,6 +30,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
         value={stepOutput}
         emptyArrayLabel={t`Empty Array`}
         emptyObjectLabel={t`Empty Object`}
+        emptyStringLabel={t`[empty string]`}
         arrowButtonCollapsedLabel={t`Expand`}
         arrowButtonExpandedLabel={t`Collapse`}
       />

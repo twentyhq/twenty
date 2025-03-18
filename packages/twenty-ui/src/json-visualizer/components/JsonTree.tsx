@@ -8,6 +8,7 @@ export const JsonTree = ({
   shouldHighlightNode,
   emptyArrayLabel,
   emptyObjectLabel,
+  emptyStringLabel,
   arrowButtonCollapsedLabel,
   arrowButtonExpandedLabel,
 }: {
@@ -15,6 +16,7 @@ export const JsonTree = ({
   shouldHighlightNode?: (keyPath: string) => boolean;
   emptyArrayLabel: string;
   emptyObjectLabel: string;
+  emptyStringLabel: string;
   arrowButtonCollapsedLabel: string;
   arrowButtonExpandedLabel: string;
 }) => {
@@ -24,6 +26,7 @@ export const JsonTree = ({
         shouldHighlightNode,
         emptyArrayLabel,
         emptyObjectLabel,
+        emptyStringLabel,
         arrowButtonCollapsedLabel,
         arrowButtonExpandedLabel,
       }}

@@ -58,6 +58,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
         value={{
           emptyArrayLabel: t`Empty Array`,
           emptyObjectLabel: t`Empty Object`,
+          emptyStringLabel: t`[empty string]`,
           arrowButtonCollapsedLabel: t`Expand`,
           arrowButtonExpandedLabel: t`Collapse`,
           shouldHighlightNode: (keyPath) => variablesUsedInStep.has(keyPath),

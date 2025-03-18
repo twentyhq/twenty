@@ -13,6 +13,7 @@ const meta: Meta<typeof JsonTree> = {
   args: {
     emptyArrayLabel: 'Empty Array',
     emptyObjectLabel: 'Empty Object',
+    emptyStringLabel: '[empty string]',
     arrowButtonCollapsedLabel: 'Expand',
     arrowButtonExpandedLabel: 'Collapse',
   },
