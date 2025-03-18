@@ -84,6 +84,7 @@ const StyledHeader = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
+  min-height: 40px;
 `;
 
 const StyledModalTitle = styled.span`
