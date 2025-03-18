@@ -65,6 +65,7 @@ export const RecordTitleCellTextFieldInput = ({
 
   return (
     <TextInputV2
+      ref={wrapperRef}
       autoGrow
       sizeVariant={sizeVariant}
       inheritFontStyles

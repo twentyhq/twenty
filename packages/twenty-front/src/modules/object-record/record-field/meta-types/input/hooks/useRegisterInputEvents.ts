@@ -28,6 +28,7 @@ export const useRegisterInputEvents = <T>({
   useListenClickOutside({
     refs: [inputRef, copyRef].filter(isDefined),
     callback: (event) => {
+      console.log('test IN useRegisterInputEvents');
       onClickOutside?.(event, inputValue);
     },
     enabled: isDefined(onClickOutside),
