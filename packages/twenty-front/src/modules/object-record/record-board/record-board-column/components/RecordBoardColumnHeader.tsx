@@ -67,7 +67,8 @@ export const RecordBoardColumnHeader = () => {
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
   const [isHeaderHovered, setIsHeaderHovered] = useState(false);
 
-  const { objectMetadataItem } = useContext(RecordBoardContext);
+  const { objectMetadataItem, selectFieldMetadataItem } =
+    useContext(RecordBoardContext);
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -145,7 +146,10 @@ export const RecordBoardColumnHeader = () => {
                     accent="tertiary"
                     Icon={IconPlus}
                     onClick={() => {
-                      createNewIndexRecord();
+                      createNewIndexRecord({
+                        position: 'first',
+                        [selectFieldMetadataItem.name]: columnDefinition.value,
+                      });
                     }}
                   />
                 )}

@@ -1,4 +1,5 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTheme } from '@emotion/react';
@@ -26,7 +27,10 @@ const StyledNewButton = styled.button`
 export const RecordBoardColumnNewRecordButton = () => {
   const theme = useTheme();
 
-  const { objectMetadataItem } = useContext(RecordBoardContext);
+  const { objectMetadataItem, selectFieldMetadataItem } =
+    useContext(RecordBoardContext);
+
+  const { columnDefinition } = useContext(RecordBoardColumnContext);
 
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
@@ -41,7 +45,10 @@ export const RecordBoardColumnNewRecordButton = () => {
   return (
     <StyledNewButton
       onClick={() => {
-        createNewIndexRecord();
+        createNewIndexRecord({
+          position: 'last',
+          [selectFieldMetadataItem.name]: columnDefinition.value,
+        });
       }}
     >
       <IconPlus size={theme.icon.size.md} />

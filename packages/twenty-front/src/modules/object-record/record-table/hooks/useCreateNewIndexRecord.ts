@@ -3,6 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
@@ -27,14 +28,14 @@ export const useCreateNewIndexRecord = ({
 
   const createNewIndexRecord = useRecoilCallback(
     ({ snapshot }) =>
-      async () => {
+      async (recordInput?: Partial<ObjectRecord>) => {
         const recordId = v4();
 
         const recordIndexOpenRecordIn = snapshot
           .getLoadable(recordIndexOpenRecordInState)
           .getValue();
 
-        await createOneRecord({ id: recordId });
+        await createOneRecord({ id: recordId, ...recordInput });
 
         if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
           openRecordInCommandMenu({
