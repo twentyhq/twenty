@@ -54,14 +54,17 @@ const StyledButton = styled.button<
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  height: ${({ size, theme }) =>
+    size === 'small' ? theme.spacing(6) : theme.spacing(8)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(1)};
   transition: background 0.1s ease;
 
   white-space: nowrap;
-  width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  min-width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  width: ${({ size, theme }) =>
+    size === 'small' ? theme.spacing(6) : theme.spacing(8)};
+  min-width: ${({ size, theme }) =>
+    size === 'small' ? theme.spacing(6) : theme.spacing(8)};
 
   &:hover {
     background: ${({ theme, disabled }) =>

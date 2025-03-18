@@ -12,6 +12,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useRecoilValue } from 'recoil';
 
 import { ActivityList } from '@/activities/components/ActivityList';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AttachmentRow } from './AttachmentRow';
 
 const DocumentViewer = lazy(() =>
@@ -83,6 +84,7 @@ const StyledHeader = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
+  min-height: 40px;
 `;
 
 const StyledModalTitle = styled.span`
@@ -90,12 +92,17 @@ const StyledModalTitle = styled.span`
 `;
 
 const StyledModalHeader = styled(Modal.Header)`
+  height: auto;
   padding: 0;
 `;
 
 const StyledModalContent = styled(Modal.Content)`
-  padding-left: 0;
-  padding-right: 0;
+  padding: 0;
+`;
+
+const StyledModal = styled(Modal)`
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -169,7 +176,7 @@ export const AttachmentList = ({
         </StyledContainer>
       )}
       {previewedAttachment && isAttachmentPreviewEnabled && (
-        <Modal size="large" isClosable onClose={handleClosePreview}>
+        <StyledModal size="large" isClosable onClose={handleClosePreview}>
           <StyledModalHeader>
             <StyledHeader>
               <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>
@@ -187,23 +194,30 @@ export const AttachmentList = ({
               </StyledButtonContainer>
             </StyledHeader>
           </StyledModalHeader>
-          <StyledModalContent>
-            <Suspense
-              fallback={
-                <StyledLoadingContainer>
-                  <StyledLoadingText>
-                    Loading document viewer...
-                  </StyledLoadingText>
-                </StyledLoadingContainer>
-              }
-            >
-              <DocumentViewer
-                documentName={previewedAttachment.name}
-                documentUrl={previewedAttachment.fullPath}
-              />
-            </Suspense>
-          </StyledModalContent>
-        </Modal>
+          <ScrollWrapper
+            contextProviderName="modalContent"
+            componentInstanceId={`preview-modal-${previewedAttachment.id}`}
+            scrollbarVariant="no-padding"
+            heightMode="fit-content"
+          >
+            <StyledModalContent>
+              <Suspense
+                fallback={
+                  <StyledLoadingContainer>
+                    <StyledLoadingText>
+                      Loading document viewer...
+                    </StyledLoadingText>
+                  </StyledLoadingContainer>
+                }
+              >
+                <DocumentViewer
+                  documentName={previewedAttachment.name}
+                  documentUrl={previewedAttachment.fullPath}
+                />
+              </Suspense>
+            </StyledModalContent>
+          </ScrollWrapper>
+        </StyledModal>
       )}
     </>
   );

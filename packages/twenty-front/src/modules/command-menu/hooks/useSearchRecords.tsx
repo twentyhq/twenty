@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { t } from '@lingui/core/macro';
@@ -24,7 +24,7 @@ export const useSearchRecords = () => {
     },
   });
 
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const commands = useMemo(() => {
     return (globalSearchData?.globalSearch ?? []).map((searchRecord) => {

@@ -1007,6 +1007,7 @@ export type Mutation = {
   sendMessage: Scalars['Boolean']['output'];
   sendTemplate: Scalars['Boolean']['output'];
   signUp: SignUpOutput;
+  signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
   syncRemoteTable: RemoteTable;

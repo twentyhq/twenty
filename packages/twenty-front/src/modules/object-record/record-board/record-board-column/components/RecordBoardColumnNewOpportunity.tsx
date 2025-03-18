@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
@@ -38,7 +38,7 @@ export const RecordBoardColumnNewOpportunity = ({
     viewableRecordNameSingularState,
   );
 
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const createCompanyOpportunityAndOpenCommandMenu = async (
     searchInput?: string,

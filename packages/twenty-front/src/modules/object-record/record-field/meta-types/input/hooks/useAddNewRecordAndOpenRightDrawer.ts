@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -42,7 +42,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
         .nameSingular ?? 'workspaceMember',
   });
 
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   if (
     relationObjectMetadataNameSingular === 'workspaceMember' ||

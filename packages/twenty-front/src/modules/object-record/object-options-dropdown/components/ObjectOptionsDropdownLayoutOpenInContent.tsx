@@ -8,12 +8,13 @@ import {
 import { useObjectOptions } from '@/object-record/object-options-dropdown/hooks/useObjectOptions';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const { onContentChange } = useOptionsDropdown();
@@ -24,8 +25,12 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onClick={() => onContentChange('layout')}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() => onContentChange('layout')}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {t`Open in`}
       </DropdownMenuHeader>

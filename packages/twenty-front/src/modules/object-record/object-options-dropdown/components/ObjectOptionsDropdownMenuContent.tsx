@@ -19,7 +19,7 @@ import { recordGroupFieldMetadataComponentState } from '@/object-record/record-g
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -31,6 +31,7 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
@@ -82,7 +83,11 @@ export const ObjectOptionsDropdownMenuContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={CurrentViewIcon ?? IconList}>
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent Icon={CurrentViewIcon ?? IconList} />
+        }
+      >
         {currentView?.name}
       </DropdownMenuHeader>
 
