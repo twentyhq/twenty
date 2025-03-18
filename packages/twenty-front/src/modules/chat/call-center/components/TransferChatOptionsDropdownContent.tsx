@@ -1,15 +1,14 @@
 import { useContext, useState } from 'react';
-import { IconChevronLeft, IconUsers, MenuItem } from 'twenty-ui';
+import { IconChevronLeft, IconIdBadge2, IconUsers, MenuItem } from 'twenty-ui';
 
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
+import { TRANSFER_CHAT_OPTIONS_DROPDOWN_ID } from '@/chat/call-center/components/TransferChatOptionsDropdown';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
-import { TRANSFER_CHAT_OPTIONS_DROPDOWN_ID } from '@/chat/call-center/components/TransferChatOptionsDropdown';
+import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 // eslint-disable-next-line no-restricted-imports
-import { IconIdBadge2 } from '@tabler/icons-react';
 import { TransferChatOption } from '@/chat/call-center/components/TransferChatOption';
 
 type TransferChatOptionsMenu = 'agents' | 'sectors';
@@ -52,7 +51,10 @@ export const TransferChatOptionsDropdownContent = () => {
       )}
       {currentMenu === 'agents' && (
         <>
-          <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
+          <DropdownMenuHeader
+            StartComponent={<IconChevronLeft />}
+            onClick={resetMenu}
+          >
             Agents
           </DropdownMenuHeader>
           {workspaceAgents.map((agent: any) => (
@@ -70,7 +72,10 @@ export const TransferChatOptionsDropdownContent = () => {
       )}
       {currentMenu === 'sectors' && (
         <>
-          <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
+          <DropdownMenuHeader
+            StartComponent={<IconChevronLeft />}
+            onClick={resetMenu}
+          >
             Sectors
           </DropdownMenuHeader>
           {sectors.map((sector) => (

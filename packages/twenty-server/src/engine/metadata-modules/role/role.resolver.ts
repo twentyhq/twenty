@@ -8,6 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,7 +23,9 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/createRoleInput.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/updateRoleInput.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -34,6 +38,7 @@ export class RoleResolver {
     private readonly userRoleService: UserRoleService,
     private readonly roleService: RoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -89,6 +94,54 @@ export class RoleResolver {
       userWorkspaceId: userWorkspace.id,
       roles,
     } as WorkspaceMember;
+  }
+
+  @Mutation(() => RoleDTO)
+  async createOneRole(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('createRoleInput') createRoleInput: CreateRoleInput,
+  ): Promise<RoleDTO> {
+    const isPermissionsV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsPermissionsV2Enabled,
+        workspace.id,
+      );
+
+    if (!isPermissionsV2Enabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSIONS_V2_NOT_ENABLED,
+        PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED,
+      );
+    }
+
+    return this.roleService.createRole({
+      workspaceId: workspace.id,
+      input: createRoleInput,
+    });
+  }
+
+  @Mutation(() => RoleDTO)
+  async updateOneRole(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
+  ): Promise<RoleDTO> {
+    const isPermissionsV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsPermissionsV2Enabled,
+        workspace.id,
+      );
+
+    if (!isPermissionsV2Enabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSIONS_V2_NOT_ENABLED,
+        PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED,
+      );
+    }
+
+    return this.roleService.updateRole({
+      input: updateRoleInput,
+      workspaceId: workspace.id,
+    });
   }
 
   @ResolveField('workspaceMembers', () => [WorkspaceMember])

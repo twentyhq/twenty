@@ -9,7 +9,7 @@ export const generateFakeFormResponse = (
   formMetadata: FormFieldMetadata[],
 ): Record<string, Leaf | Node> => {
   return formMetadata.reduce((acc, formFieldMetadata) => {
-    acc[formFieldMetadata.name] = generateFakeField({
+    acc[formFieldMetadata.id] = generateFakeField({
       type: formFieldMetadata.type,
       label: formFieldMetadata.label,
     });
