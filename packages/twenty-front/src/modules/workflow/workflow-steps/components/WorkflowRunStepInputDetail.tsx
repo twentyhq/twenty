@@ -1,12 +1,12 @@
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
+import { getWorkflowPreviousStepId } from '@/workflow/workflow-steps/utils/getWorkflowPreviousStep';
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import {
-  expandTwoDepths,
   IconBrackets,
   JsonNestedNode,
   JsonTreeContextProvider,
@@ -39,6 +39,15 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     return null;
   }
 
+  const previousStepId = getWorkflowPreviousStepId({
+    stepId,
+    steps: workflowRun.output.flow.steps,
+  });
+
+  if (previousStepId === undefined) {
+    return null;
+  }
+
   const variablesUsedInStep = getWorkflowVariablesUsedInStep({
     step,
   });
@@ -48,10 +57,12 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     flow: workflowRun.output.flow,
     stepId,
   });
-
   if (stepContext.length === 0) {
     throw new Error('The input tab must be rendered with a non-empty context.');
   }
+
+  const expandPreviousStep = (keyPath: string, depth: number) =>
+    keyPath.startsWith(previousStepId) && depth < 2;
 
   return (
     <StyledContainer>
@@ -63,7 +74,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
           arrowButtonCollapsedLabel: t`Expand`,
           arrowButtonExpandedLabel: t`Collapse`,
           shouldHighlightNode: (keyPath) => variablesUsedInStep.has(keyPath),
-          shouldExpandNodeInitially: expandTwoDepths,
+          shouldExpandNodeInitially: expandPreviousStep,
         }}
       >
         <JsonNestedNode
