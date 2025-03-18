@@ -36,6 +36,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import styled from '@emotion/styled';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -91,13 +92,17 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartAvatar={
-          <Avatar
-            placeholder={currentWorkspace?.displayName || ''}
-            avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            Avatar={
+              <Avatar
+                placeholder={currentWorkspace?.displayName || ''}
+                avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
+              />
+            }
           />
         }
-        DropdownOnEndIcon={
+        EndComponent={
           <Dropdown
             clickableComponent={
               <LightIconButton

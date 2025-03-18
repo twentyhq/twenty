@@ -32,6 +32,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
+import { useTheme } from '@emotion/react';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -187,6 +188,8 @@ export const ObjectSortDropdownButton = ({
 
   const { t } = useLingui();
 
+  const theme = useTheme();
+
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
@@ -218,12 +221,12 @@ export const ObjectSortDropdownButton = ({
             </StyledSelectedSortDirectionContainer>
           )}
           <DropdownMenuHeader
-            EndIcon={IconChevronDown}
             onClick={() =>
               setIsRecordSortDirectionMenuUnfolded(
                 !isRecordSortDirectionMenuUnfolded,
               )
             }
+            EndComponent={<IconChevronDown size={theme.icon.size.md} />}
           >
             {selectedRecordSortDirection === 'asc'
               ? t`Ascending`

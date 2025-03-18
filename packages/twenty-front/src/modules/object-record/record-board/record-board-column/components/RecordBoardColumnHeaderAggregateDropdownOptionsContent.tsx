@@ -21,6 +21,7 @@ import isEmpty from 'lodash.isempty';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconChevronLeft } from 'twenty-ui';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
   availableAggregations,
@@ -59,8 +60,12 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={resetContent}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={resetContent}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {title}
       </DropdownMenuHeader>

@@ -15,6 +15,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   const { currentContentId, onContentChange } = useOptionsDropdown();
@@ -43,8 +44,12 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={() => onContentChange('recordGroups')}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() => onContentChange('recordGroups')}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         Sort
       </DropdownMenuHeader>

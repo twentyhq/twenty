@@ -9,6 +9,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconChevronLeft } from 'twenty-ui';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const RecordTableColumnAggregateFooterDropdownSubmenuContent = ({
   aggregateOperations,
@@ -33,8 +34,12 @@ export const RecordTableColumnAggregateFooterDropdownSubmenuContent = ({
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={resetContent}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={resetContent}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {title}
       </DropdownMenuHeader>

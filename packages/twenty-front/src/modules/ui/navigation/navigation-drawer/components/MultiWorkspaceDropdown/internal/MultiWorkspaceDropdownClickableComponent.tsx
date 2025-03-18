@@ -14,7 +14,7 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 export const MultiWorkspaceDropdownClickableComponent = ({
   isDropdownOpen,
 }: {
-  isDropdownOpen: boolean;
+  isDropdownOpen?: boolean;
 }) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const theme = useTheme();

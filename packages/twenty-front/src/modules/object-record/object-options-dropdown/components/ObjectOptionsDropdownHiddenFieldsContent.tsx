@@ -21,6 +21,7 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const { t } = useLingui();
@@ -66,8 +67,12 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={() => onContentChange('fields')}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() => onContentChange('fields')}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {t`Hidden Fields`}
       </DropdownMenuHeader>

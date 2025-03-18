@@ -5,6 +5,7 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { useSetRecoilState } from 'recoil';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const MultiWorkspaceDropdownThemesComponents = () => {
   const { t } = useLingui();
@@ -18,8 +19,12 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
   return (
     <DropdownMenuItemsContainer>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={() => setMultiWorkspaceDropdownState('default')}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() => setMultiWorkspaceDropdownState('default')}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         {t`Theme`}
       </DropdownMenuHeader>

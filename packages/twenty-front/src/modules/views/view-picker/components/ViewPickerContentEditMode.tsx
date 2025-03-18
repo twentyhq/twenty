@@ -21,6 +21,7 @@ import { viewPickerInputNameComponentState } from '@/views/view-picker/states/vi
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ViewPickerContentEditMode = () => {
   const { setViewPickerMode } = useViewPickerMode();
@@ -68,8 +69,12 @@ export const ViewPickerContentEditMode = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onStartIconClick={handleClose}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={handleClose}
+            Icon={IconChevronLeft}
+          />
+        }
       >
         Edit view
       </DropdownMenuHeader>

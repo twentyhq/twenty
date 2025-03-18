@@ -1,13 +1,6 @@
 import styled from '@emotion/styled';
-import { ComponentProps, MouseEvent, ReactElement } from 'react';
-import { Avatar, AvatarProps, IconComponent } from 'twenty-ui';
-import { DropdownMenuHeaderStartIcon } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderStartIcon';
-import { isDefined } from 'twenty-shared';
-import { useTheme } from '@emotion/react';
-import {
-  Dropdown,
-  DropdownProps,
-} from '@/ui/layout/dropdown/components/Dropdown';
+import { ComponentProps, MouseEvent } from 'react';
+import { IconComponent } from 'twenty-ui';
 
 const StyledHeader = styled.li`
   align-items: center;
@@ -37,7 +30,7 @@ const StyledChildrenWrapper = styled.span`
   text-overflow: ellipsis;
 `;
 
-const StyledEndIcon = styled.div`
+const StyledEndComponent = styled.div`
   display: inline-flex;
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: ${({ theme }) => theme.spacing(1)};
@@ -53,50 +46,24 @@ const StyledEndIcon = styled.div`
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   EndIcon?: IconComponent;
   onClick?: (event: MouseEvent<HTMLLIElement>) => void;
-  onStartIconClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
   className?: string;
-  DropdownOnEndIcon?: ReactElement<DropdownProps, typeof Dropdown>;
-} & (
-    | { StartIcon?: IconComponent }
-    | { StartAvatar?: ReactElement<AvatarProps, typeof Avatar> }
-  );
+  StartComponent?: React.ReactNode;
+  EndComponent?: React.ReactNode;
+};
 export const DropdownMenuHeader = ({
   children,
-  EndIcon,
-  onStartIconClick,
+  StartComponent,
   onClick,
   testId,
   className,
-  ...props
+  EndComponent,
 }: DropdownMenuHeaderProps) => {
-  const theme = useTheme();
-
   return (
     <StyledHeader data-testid={testId} className={className} onClick={onClick}>
-      {'StartIcon' in props && isDefined(props.StartIcon) && (
-        <DropdownMenuHeaderStartIcon
-          onClick={onStartIconClick}
-          StartIcon={props.StartIcon}
-        />
-      )}
-      {!('StartIcon' in props) &&
-        'StartAvatar' in props &&
-        isDefined(props.StartAvatar) && (
-          <DropdownMenuHeaderStartIcon
-            onClick={onStartIconClick}
-            StartAvatar={props.StartAvatar}
-          />
-        )}
+      {StartComponent && StartComponent}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-      {'DropdownOnEndIcon' in props && (
-        <StyledEndIcon>{props.DropdownOnEndIcon}</StyledEndIcon>
-      )}
-      {!('DropdownOnEndIcon' in props) && EndIcon && (
-        <StyledEndIcon>
-          <EndIcon size={theme.icon.size.md} />
-        </StyledEndIcon>
-      )}
+      {EndComponent && <StyledEndComponent>{EndComponent}</StyledEndComponent>}
     </StyledHeader>
   );
 };

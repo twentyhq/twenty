@@ -25,13 +25,13 @@ const StyledAvatarWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const DropdownMenuHeaderStartIcon = ({
+export const DropdownMenuHeaderLeftComponent = ({
   onClick,
   ...props
 }: { onClick?: (event: MouseEvent<HTMLButtonElement>) => void } & (
-  | { StartIcon: IconComponent }
+  | { Icon: IconComponent }
   | {
-      StartAvatar: ReactElement<AvatarProps, typeof Avatar>;
+      Avatar: ReactElement<AvatarProps, typeof Avatar>;
     }
   | Record<never, never>
 )) => {
@@ -39,25 +39,25 @@ export const DropdownMenuHeaderStartIcon = ({
 
   return (
     <>
-      {'StartIcon' in props &&
+      {'Icon' in props &&
         (onClick ? (
           <LightIconButton
-            Icon={props.StartIcon}
+            Icon={props.Icon}
             accent="tertiary"
             size="small"
             onClick={onClick}
           />
         ) : (
           <StyledNonClickableStartIcon>
-            <props.StartIcon
+            <props.Icon
               size={theme.icon.size.sm}
               color={theme.font.color.tertiary}
             />
           </StyledNonClickableStartIcon>
         ))}
 
-      {'StartAvatar' in props && (
-        <StyledAvatarWrapper>{props.StartAvatar}</StyledAvatarWrapper>
+      {'Avatar' in props && (
+        <StyledAvatarWrapper>{props.Avatar}</StyledAvatarWrapper>
       )}
     </>
   );

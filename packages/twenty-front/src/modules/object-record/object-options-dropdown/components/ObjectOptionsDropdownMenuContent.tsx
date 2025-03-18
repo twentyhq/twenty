@@ -31,6 +31,7 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
@@ -82,7 +83,11 @@ export const ObjectOptionsDropdownMenuContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={CurrentViewIcon ?? IconList}>
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent Icon={CurrentViewIcon ?? IconList} />
+        }
+      >
         {currentView?.name}
       </DropdownMenuHeader>
 
