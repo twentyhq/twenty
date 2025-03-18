@@ -33,11 +33,12 @@ type WorkflowEditActionFormProps = {
 };
 
 const StyledRowContainer = styled.div`
+  column-gap: ${({ theme }) => theme.spacing(1)};
   display: grid;
   grid-template-columns: 1fr 16px;
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledFieldContainer = styled.div`
   align-items: center;
   background: transparent;
   border: none;
@@ -60,8 +61,19 @@ const StyledPlaceholder = styled.div`
   width: 100%;
 `;
 
-const StyledIconButtonContainer = styled(StyledButtonContainer)`
+const StyledIconButtonContainer = styled.div`
+  align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.md};
+  display: flex;
+  justify-content: center;
+  width: 24px;
+
+  cursor: pointer;
+
+  &:hover,
+  &[data-open='true'] {
+    background-color: ${({ theme }) => theme.background.transparent.lighter};
+  }
 `;
 
 const StyledAddFieldContainer = styled.div`
@@ -128,7 +140,7 @@ export const WorkflowEditActionForm = ({
                     handleFieldClick(field.id);
                   }}
                 >
-                  <StyledButtonContainer>
+                  <StyledFieldContainer>
                     <StyledPlaceholder>{field.placeholder}</StyledPlaceholder>
                     {isFieldSelected(field.id) ? (
                       <IconChevronUp
@@ -141,7 +153,7 @@ export const WorkflowEditActionForm = ({
                         color={theme.font.color.tertiary}
                       />
                     )}
-                  </StyledButtonContainer>
+                  </StyledFieldContainer>
                 </FormFieldInputInputContainer>
               </FormFieldInputRowContainer>
               {isFieldSelected(field.id) && (
@@ -195,12 +207,12 @@ export const WorkflowEditActionForm = ({
                     });
                   }}
                 >
-                  <StyledButtonContainer>
+                  <StyledFieldContainer>
                     <StyledAddFieldContainer>
                       <IconPlus size={theme.icon.size.sm} />
                       {t`Add Field`}
                     </StyledAddFieldContainer>
-                  </StyledButtonContainer>
+                  </StyledFieldContainer>
                 </FormFieldInputInputContainer>
               </FormFieldInputRowContainer>
             </FormFieldInputContainer>
