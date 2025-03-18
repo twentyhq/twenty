@@ -7,6 +7,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -41,19 +42,14 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTable = styled.div<{ hasRows: boolean }>`
-  border-bottom: ${({ hasRows, theme }) =>
-    hasRows ? `1px solid ${theme.border.color.light}` : 'none'};
+const StyledTable = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledSearchInput = styled(TextInput)`
   input {
     background: ${({ theme }) => theme.background.transparent.lighter};
     border: 1px solid ${({ theme }) => theme.border.color.medium};
-
-    &:hover {
-      border: 1px solid ${({ theme }) => theme.border.color.medium};
-    }
   }
 `;
 
@@ -61,6 +57,10 @@ const StyledTableRows = styled.div`
   gap: ${({ theme }) => theme.spacing(0.5)};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledNoMembers = styled(TableCell)`
+  color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
 type RoleAssignmentProps = {
@@ -175,21 +175,29 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
           <StyledSearchInput
             value={searchFilter}
             onChange={handleSearchChange}
-            placeholder={t`Search a member`}
+            placeholder={t`Search an assigned team member...`}
             fullWidth
             LeftIcon={IconSearch}
             sizeVariant="lg"
           />
         </StyledSearchContainer>
-        <StyledTable hasRows={filteredWorkspaceMembers.length > 0}>
+        <StyledTable>
           <RoleAssignmentTableHeader />
           <StyledTableRows>
-            {filteredWorkspaceMembers.map((workspaceMember) => (
-              <RoleAssignmentTableRow
-                key={workspaceMember.id}
-                workspaceMember={workspaceMember}
-              />
-            ))}
+            {filteredWorkspaceMembers.length > 0 ? (
+              filteredWorkspaceMembers.map((workspaceMember) => (
+                <RoleAssignmentTableRow
+                  key={workspaceMember.id}
+                  workspaceMember={workspaceMember}
+                />
+              ))
+            ) : (
+              <StyledNoMembers>
+                {!searchFilter
+                  ? t`No members assigned`
+                  : t`No members match your search`}
+              </StyledNoMembers>
+            )}
           </StyledTableRows>
         </StyledTable>
 
