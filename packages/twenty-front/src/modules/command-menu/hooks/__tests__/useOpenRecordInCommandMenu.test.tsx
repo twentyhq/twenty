@@ -44,7 +44,7 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
     mode: 'selection',
     selectedRecordIds: [],
   },
-  contextStoreNumberOfSelectedRecords: 2,
+  contextStoreNumberOfSelectedRecords: 0,
   contextStoreCurrentViewType: ContextStoreViewType.Table,
 });
 
