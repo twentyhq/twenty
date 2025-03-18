@@ -1,10 +1,13 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { OverflowingTextWithTooltip } from '@ui/display';
 import { Fragment } from 'react/jsx-runtime';
 import { isDefined } from 'twenty-shared';
 
 const StyledChip = styled.button<{
   withText: boolean;
+  maxWidth?: string;
+  isGap?: boolean;
   onClick?: () => void;
 }>`
   all: unset;
@@ -15,7 +18,7 @@ const StyledChip = styled.button<{
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme, isGap }) => (isGap ? theme.spacing(1) : 0)};
   height: ${({ theme }) => theme.spacing(6)};
   /* If the chip has text, we add extra padding to have a more balanced design */
   padding: 0
@@ -33,6 +36,7 @@ const StyledChip = styled.button<{
         ? theme.background.transparent.medium
         : theme.background.transparent.light};
   }
+  max-width: ${({ maxWidth }) => maxWidth};
 `;
 
 const StyledIconsContainer = styled.div`
@@ -45,6 +49,8 @@ export type CommandMenuContextChipProps = {
   text?: string;
   onClick?: () => void;
   testId?: string;
+  maxWidth?: string;
+  isGap?: boolean;
 };
 
 export const CommandMenuContextChip = ({
@@ -52,19 +58,23 @@ export const CommandMenuContextChip = ({
   text,
   onClick,
   testId,
+  maxWidth,
+  isGap = true,
 }: CommandMenuContextChipProps) => {
   return (
     <StyledChip
       withText={isNonEmptyString(text)}
       onClick={onClick}
       data-testid={testId}
+      maxWidth={maxWidth}
+      isGap={isGap}
     >
       <StyledIconsContainer>
         {Icons.map((Icon, index) => (
           <Fragment key={index}>{Icon}</Fragment>
         ))}
       </StyledIconsContainer>
-      {text && <span>{text}</span>}
+      <OverflowingTextWithTooltip text={text} />
     </StyledChip>
   );
 };
