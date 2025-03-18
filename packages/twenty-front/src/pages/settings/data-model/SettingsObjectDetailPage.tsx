@@ -70,7 +70,10 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemByNamePlural(objectNamePlural) ??
     findActiveObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
+    SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+  );
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
@@ -169,7 +172,9 @@ export const SettingsObjectDetailPage = () => {
       >
         <SettingsPageContainer>
           <ActiveTabComponentInstanceContext.Provider
-            value={{ instanceId: 'settings-object-detail-tabs' }}
+            value={{
+              instanceId: SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+            }}
           >
             <TabList tabs={tabs} className="tab-list" />
             <StyledContentContainer>

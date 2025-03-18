@@ -28,8 +28,6 @@ import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
-
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
