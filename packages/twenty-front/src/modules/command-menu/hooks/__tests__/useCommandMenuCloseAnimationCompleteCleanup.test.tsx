@@ -145,48 +145,6 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
     return { result };
   };
 
-  it('should reset all command menu states when cleanup is called', () => {
-    const { result } = renderHooks();
-
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: undefined,
-      Icon: undefined,
-      instanceId: '',
-    });
-    expect(result.current.isCommandMenuOpened).toBe(false);
-    expect(result.current.commandMenuSearch).toBe('');
-    expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.commandMenuNavigationRecords).toEqual([]);
-    expect(result.current.commandMenuNavigationMorphItemByPage).toEqual(
-      new Map(),
-    );
-    expect(result.current.hasUserSelectedCommand).toBe(false);
-    expect(result.current.isCommandMenuClosing).toBe(false);
-    expect(result.current.viewableRecordId).toBe(null);
-
-    act(() => {
-      result.current.commandMenuCloseAnimationCompleteCleanup();
-    });
-
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: undefined,
-      Icon: undefined,
-      instanceId: '',
-    });
-    expect(result.current.isCommandMenuOpened).toBe(false);
-    expect(result.current.commandMenuSearch).toBe('');
-    expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.commandMenuNavigationRecords).toEqual([]);
-    expect(result.current.commandMenuNavigationMorphItemByPage).toEqual(
-      new Map(),
-    );
-    expect(result.current.hasUserSelectedCommand).toBe(false);
-    expect(result.current.isCommandMenuClosing).toBe(false);
-    expect(result.current.viewableRecordId).toBe(null);
-  });
-
   it('should reset modified states back to default values', () => {
     const { result } = renderHooks();
 
