@@ -4,9 +4,18 @@ import * as path from 'path';
 import ts from 'typescript';
 
 type DeclarationOccurence = { kind: string; name: string };
+type ExtractedExports = Array<{
+  file: string;
+  exports: DeclarationOccurence[];
+}>;
+type ExtractedImports = Array<{ file: string; imports: string[] }>;
 
-function findAllExports(directoryPath: string) {
-  const results: Record<string, DeclarationOccurence[]> = {};
+type ExportPerModule = Array<{
+  moduleName: string;
+  exports: ExtractedExports[number]['exports'];
+}>;
+function findAllExports(directoryPath: string): ExtractedExports {
+  const results: ExtractedExports = [];
 
   const files = getTypeScriptFiles(directoryPath);
 
@@ -20,7 +29,35 @@ function findAllExports(directoryPath: string) {
 
     const exports = extractExports(sourceFile);
     if (exports.length > 0) {
-      results[file] = exports;
+      results.push({
+        file,
+        exports,
+      });
+    }
+  }
+
+  return results;
+}
+
+function findAllImports(directoryPath: string): ExtractedImports {
+  const results: ExtractedImports = [];
+
+  const files = getTypeScriptFiles(directoryPath);
+
+  for (const file of files) {
+    const sourceFile = ts.createSourceFile(
+      file,
+      fs.readFileSync(file, 'utf8'),
+      ts.ScriptTarget.Latest,
+      true,
+    );
+
+    const imports = extractImports(sourceFile);
+    if (imports.length > 0) {
+      results.push({
+        file,
+        imports,
+      });
     }
   }
 
@@ -121,6 +158,50 @@ function extractExports(sourceFile: ts.SourceFile) {
   return exports;
 }
 
+function extractImports(sourceFile: ts.SourceFile): string[] {
+  const imports: string[] = [];
+
+  function visit(node: ts.Node) {
+    if (!ts.isImportDeclaration(node)) {
+      return ts.forEachChild(node, visit);
+    }
+
+    const modulePath = node.moduleSpecifier.getText(sourceFile);
+    // Quite static
+    if (modulePath !== `'twenty-shared'`) {
+      return ts.forEachChild(node, visit);
+    }
+
+    if (!node.importClause) {
+      return ts.forEachChild(node, visit);
+    }
+
+    if (!node.importClause.namedBindings) {
+      return ts.forEachChild(node, visit);
+    }
+
+    if (ts.isNamedImports(node.importClause.namedBindings)) {
+      const namedImports = node.importClause.namedBindings.elements
+        .map((element) => {
+          if (element.propertyName) {
+            return `${element.propertyName.text} as ${element.name.text}`;
+          }
+
+          return element.name.text;
+        })
+        .join(', ');
+
+      // imports.push(`import { ${namedImports} } from ${modulePath}`);
+      imports.push(namedImports);
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return imports;
+}
+
 const getSubDirectoryPaths = (directoryPath: string): string[] =>
   fs
     .readdirSync(directoryPath)
@@ -132,10 +213,9 @@ const getSubDirectoryPaths = (directoryPath: string): string[] =>
     })
     .map((subDirectoryName) => path.join(directoryPath, subDirectoryName));
 
-const main = () => {
-  const srcPath = 'packages/twenty-shared/src';
+const retrievePackageExportsPerModule = (srcPath: string) => {
   const subdirectories = getSubDirectoryPaths(srcPath);
-  const allExports = subdirectories.reduce((acc, moduleDirectory) => {
+  return subdirectories.map<ExportPerModule[number]>((moduleDirectory) => {
     const moduleExportsPerFile = findAllExports(moduleDirectory);
     const moduleName = moduleDirectory.split('/').pop();
     if (!moduleName) {
@@ -145,14 +225,48 @@ const main = () => {
     }
 
     const flattenExports = Object.values(moduleExportsPerFile).flatMap(
-      (arr) => arr,
+      (arr) => arr.exports,
     );
     return {
-      ...acc,
-      [moduleName]: flattenExports,
+      moduleName,
+      exports: flattenExports,
     };
-  }, {});
+  });
+};
 
-  console.log(allExports);
+type MappedResolution = {
+  barrel: string;
+  declarations: string[];
+  file: string;
+};
+type MapSourceImportToBarrelArgs = {
+  imports: ExtractedImports;
+  exports: ExtractedExports;
+};
+const mapSourceImportToBarrel = ({
+  exports,
+  imports,
+}: MapSourceImportToBarrelArgs): MappedResolution[] => {
+  const mappedResolution: MappedResolution[] = [];
+
+  for (const importOcc of imports) {
+  }
+
+  return mappedResolution;
+};
+
+const retrieveImportFromPackageInSource = (srcPath: string) => {
+  return findAllImports(srcPath);
+};
+
+const main = () => {
+  const packageSrcPath = 'packages/twenty-shared/src';
+  const packageExportPerModule =
+    retrievePackageExportsPerModule(packageSrcPath);
+  console.log(packageExportPerModule);
+
+  const sourceSrcPath = 'packages/twenty-front/src';
+  const sourceImports = retrieveImportFromPackageInSource(sourceSrcPath);
+  console.log(sourceImports);
 };
 main();
