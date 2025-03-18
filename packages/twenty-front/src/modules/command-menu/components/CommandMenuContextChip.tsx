@@ -74,7 +74,7 @@ export const CommandMenuContextChip = ({
           <Fragment key={index}>{Icon}</Fragment>
         ))}
       </StyledIconsContainer>
-      <OverflowingTextWithTooltip text={text} />
+      {text && <OverflowingTextWithTooltip text={text} />}
     </StyledChip>
   );
 };
