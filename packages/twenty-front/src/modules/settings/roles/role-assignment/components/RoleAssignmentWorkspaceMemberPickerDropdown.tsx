@@ -41,7 +41,7 @@ export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
         placeholder="Search"
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         <RoleAssignmentWorkspaceMemberPickerDropdownContent
           loading={loading}
           searchFilter={searchFilter}
