@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { GQL_GENERIC_FIELDS } from 'test/integration/constants/gql-generic-fields.contants';
+import { CUSTOM_OR_STANDARD_OBJECT_GQL_BASIC_FIELDS } from 'test/integration/constants/custom-or-standard-object-gql-generic-fields.contants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -41,7 +41,7 @@ describe('GlobalSearchResolver', () => {
         createManyOperationFactory({
           objectMetadataSingularName: LISTING_NAME_SINGULAR,
           objectMetadataPluralName: LISTING_NAME_PLURAL,
-          gqlFields: GQL_GENERIC_FIELDS,
+          gqlFields: CUSTOM_OR_STANDARD_OBJECT_GQL_BASIC_FIELDS,
           data: [
             {
               id: randomUUID(),
@@ -93,7 +93,7 @@ describe('GlobalSearchResolver', () => {
       await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'apiKey',
-          gqlFields: GQL_GENERIC_FIELDS,
+          gqlFields: CUSTOM_OR_STANDARD_OBJECT_GQL_BASIC_FIELDS,
           data: {
             id: randomUUID(),
             name: 'record not searchable',
@@ -123,7 +123,7 @@ describe('GlobalSearchResolver', () => {
     await makeGraphqlAPIRequest(
       destroyOneOperationFactory({
         objectMetadataSingularName: 'apiKey',
-        gqlFields: GQL_GENERIC_FIELDS,
+        gqlFields: CUSTOM_OR_STANDARD_OBJECT_GQL_BASIC_FIELDS,
         recordId: apiKey.id,
       }),
     );
