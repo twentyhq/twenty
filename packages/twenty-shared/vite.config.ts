@@ -6,7 +6,33 @@ import packageJson from './package.json';
 
 const exports = Object.keys(packageJson.exports);
 const entries = exports.map((module) => `src/${module}/index.ts`);
-console.log(entries);
+
+const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs' | 'js') => {
+  if (!chunk.isEntry) {
+    console.log('*'.repeat(100));
+    console.log(chunk);
+    console.log('*'.repeat(100));
+    // Should throw ?
+    return `${chunk.name}.${extension}`;
+  }
+
+  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
+  if (splitFaceModuleId === undefined) {
+    throw new Error(
+      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
+    );
+  }
+
+  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
+  if (moduleDirectory === 'src') {
+    return `${chunk.name}.${extension}`;
+  }
+  console.log('*'.repeat(100));
+  console.log(chunk);
+  console.log('*'.repeat(100));
+  return `${moduleDirectory}.${extension}`; //TODO format for extensions ?
+};
+
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/twenty-shared',
@@ -40,28 +66,16 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      output: {
-        entryFileNames: (chunk) => {
-          if (!chunk.isEntry) {
-            return `${chunk.name}.js`;
-          }
-
-          const splitFaceModuleId = chunk.facadeModuleId?.split('/');
-          if (splitFaceModuleId === undefined) {
-            throw new Error(
-              `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
-            );
-          }
-
-          const moduleDirectory =
-            splitFaceModuleId[splitFaceModuleId?.length - 2];
-          if (moduleDirectory === 'src') {
-            return `${chunk.name}.js`;
-          }
-
-          return `${moduleDirectory}.js`; //TODO format for extensions ?
+      output: [
+        {
+          format: 'es',
+          entryFileNames: (chunk) => entryFileNames(chunk, 'mjs'),
         },
-      },
+        {
+          format: 'cjs',
+          entryFileNames: (chunk) => entryFileNames(chunk, 'js'),
+        },
+      ],
     },
   },
 });

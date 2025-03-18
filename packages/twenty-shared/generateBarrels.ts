@@ -177,7 +177,7 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
 
     return {
       ...acc,
-      [moduleName]: {
+      [`./${moduleName}`]: {
         types: `./dist/${moduleName}/index.d.ts`,
         import: `./dist/${moduleName}.mjs`,
         require: `./dist/${moduleName}.js`,
