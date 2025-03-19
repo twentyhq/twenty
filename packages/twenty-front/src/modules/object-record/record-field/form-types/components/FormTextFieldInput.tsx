@@ -4,12 +4,12 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/form-ty
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
-import { InputHint } from '@/ui/input/components/InputHint';
 
 type FormTextFieldInputProps = {
   label?: string;
@@ -22,6 +22,7 @@ type FormTextFieldInputProps = {
   multiline?: boolean;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
+  color?: string;
 };
 
 export const FormTextFieldInput = ({
@@ -35,6 +36,7 @@ export const FormTextFieldInput = ({
   multiline,
   readonly,
   VariablePicker,
+  color,
 }: FormTextFieldInputProps) => {
   const inputId = useId();
 
@@ -79,6 +81,7 @@ export const FormTextFieldInput = ({
             editor={editor}
             multiline={multiline}
             readonly={readonly}
+            color={color}
           />
         </FormFieldInputInputContainer>
 

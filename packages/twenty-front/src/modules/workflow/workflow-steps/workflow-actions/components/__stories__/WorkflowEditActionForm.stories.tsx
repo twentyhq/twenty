@@ -1,5 +1,5 @@
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
-import { WorkflowEditActionForm } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm';
+import { WorkflowEditActionForm } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, within } from '@storybook/test';
 import { FieldMetadataType } from 'twenty-shared';

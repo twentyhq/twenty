@@ -5,6 +5,8 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
+import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -12,15 +14,15 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { FieldMetadataType, isDefined } from 'twenty-shared';
 import {
-  IconChevronDown,
-  IconChevronUp,
-  IconPlus,
-  IconTrash,
-  useIcons,
+    IconChevronDown,
+    IconChevronUp,
+    IconPlus,
+    IconTrash,
+    useIcons,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-type WorkflowEditActionFormProps = {
+export type WorkflowEditActionFormProps = {
   action: WorkflowFormAction;
   actionOptions:
     | {
@@ -179,6 +181,16 @@ export const WorkflowEditActionForm = ({
                   />
                 </StyledIconButtonContainer>
               )}
+              {isFieldSelected(field.id) && (
+                <WorkflowEditActionFormFieldSettings
+                  action={action}
+                  actionOptions={actionOptions}
+                  field={field}
+                  onClose={() => {
+                    setSelectedField(null);
+                  }}
+                />
+              )}
             </StyledRowContainer>
           </FormFieldInputContainer>
         ))}
@@ -189,6 +201,10 @@ export const WorkflowEditActionForm = ({
                 <FormFieldInputInputContainer
                   hasRightElement={false}
                   onClick={() => {
+                    const { label, placeholder } = getDefaultFormFieldSettings(
+                      FieldMetadataType.TEXT,
+                    );
+
                     actionOptions.onActionUpdate({
                       ...action,
                       settings: {
@@ -198,8 +214,8 @@ export const WorkflowEditActionForm = ({
                           {
                             id: v4(),
                             type: FieldMetadataType.TEXT,
-                            label: 'New Field',
-                            placeholder: 'New Field',
+                            label,
+                            placeholder,
                             settings: {},
                           },
                         ],

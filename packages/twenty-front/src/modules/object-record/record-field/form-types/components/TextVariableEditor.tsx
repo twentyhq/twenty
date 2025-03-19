@@ -1,7 +1,11 @@
 import styled from '@emotion/styled';
 import { Editor, EditorContent } from '@tiptap/react';
 
-const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
+const StyledEditor = styled.div<{
+  multiline?: boolean;
+  readonly?: boolean;
+  color?: string;
+}>`
   width: 100%;
   display: flex;
   box-sizing: border-box;
@@ -18,8 +22,8 @@ const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
     display: flex;
     height: 100%;
     overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
-    color: ${({ theme, readonly }) =>
-      readonly ? theme.font.color.light : theme.font.color.primary};
+    color: ${({ theme, readonly, color }) =>
+      color ?? (readonly ? theme.font.color.light : theme.font.color.primary)};
     font-family: ${({ theme }) => theme.font.family};
     font-weight: ${({ theme }) => theme.font.weight.regular};
     border: none !important;
@@ -56,15 +60,17 @@ type TextVariableEditorProps = {
   multiline: boolean | undefined;
   readonly: boolean | undefined;
   editor: Editor;
+  color?: string;
 };
 
 export const TextVariableEditor = ({
   multiline,
   readonly,
   editor,
+  color,
 }: TextVariableEditorProps) => {
   return (
-    <StyledEditor multiline={multiline} readonly={readonly}>
+    <StyledEditor multiline={multiline} readonly={readonly} color={color}>
       <EditorContent className="editor-content" editor={editor} />
     </StyledEditor>
   );
