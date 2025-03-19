@@ -155,4 +155,79 @@ describe('AppHealthIndicator', () => {
     expect(result.app.details.stateHistory.timestamp).toBeDefined();
     expect(result.app.details.stateHistory.details).toBeDefined();
   });
+
+  describe('distributed sampling', () => {
+    it('should return all workspaces when count is less than sample size', async () => {
+      objectMetadataService.findMany.mockResolvedValue([
+        { id: '1', workspaceId: 'workspace1' } as any,
+        { id: '2', workspaceId: 'workspace2' } as any,
+      ]);
+      workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
+
+      const result = await service.isHealthy();
+
+      expect(result.app.details.overview.totalWorkspacesCount).toBe(2);
+      expect(result.app.details.overview.checkedWorkspacesCount).toBe(2);
+    });
+
+    it('should handle distributed sampling for large number of workspaces', async () => {
+      // Create 200 unique workspaces
+      const workspaces = Array.from({ length: 200 }, (_, i) => ({
+        id: `${i}`,
+        workspaceId: `workspace${i}`,
+      }));
+
+      objectMetadataService.findMany.mockResolvedValue(workspaces as any);
+      workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
+
+      const result = await service.isHealthy();
+
+      // Should sample 100 workspaces total
+      expect(result.app.details.overview.totalWorkspacesCount).toBe(200);
+      expect(result.app.details.overview.checkedWorkspacesCount).toBe(100);
+    });
+
+    it('should handle duplicate workspace IDs correctly', async () => {
+      // Create workspaces with duplicate IDs
+      const workspaces = [
+        { id: '1', workspaceId: 'workspace1' },
+        { id: '2', workspaceId: 'workspace1' }, // Duplicate
+        { id: '3', workspaceId: 'workspace2' },
+        { id: '4', workspaceId: 'workspace2' }, // Duplicate
+      ];
+
+      objectMetadataService.findMany.mockResolvedValue(workspaces as any);
+      workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
+
+      const result = await service.isHealthy();
+
+      // Should count unique workspace IDs
+      expect(result.app.details.overview.totalWorkspacesCount).toBe(2);
+      expect(result.app.details.overview.checkedWorkspacesCount).toBe(2);
+    });
+
+    it('should maintain distribution ratios for large workspaces', async () => {
+      // Create 1000 workspaces to test distribution
+      const workspaces = Array.from({ length: 1000 }, (_, i) => ({
+        id: `${i}`,
+        workspaceId: `workspace${i}`,
+      }));
+
+      objectMetadataService.findMany.mockResolvedValue(workspaces as any);
+      workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
+
+      const result = await service.isHealthy();
+
+      // Total sampled should be close to 100 (might be 99 due to Math.floor)
+      expect(
+        result.app.details.overview.checkedWorkspacesCount,
+      ).toBeGreaterThanOrEqual(99);
+      expect(
+        result.app.details.overview.checkedWorkspacesCount,
+      ).toBeLessThanOrEqual(100);
+
+      // Total count should be accurate
+      expect(result.app.details.overview.totalWorkspacesCount).toBe(1000);
+    });
+  });
 });
