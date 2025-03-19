@@ -50,37 +50,45 @@ describe('GlobalSearchResolver', () => {
   };
 
   beforeAll(async () => {
-    const objectsMetadata = await findManyObjectsMetadataItems();
-    const listingObjectMetadata = objectsMetadata.find(
-      (object) => object.nameSingular === LISTING_NAME_SINGULAR,
-    );
+    try {
+      const objectsMetadata = await findManyObjectsMetadataItems();
+      const listingObjectMetadata = objectsMetadata.find(
+        (object) => object.nameSingular === LISTING_NAME_SINGULAR,
+      );
 
-    if (listingObjectMetadata) {
-      listingObjectMetadataId = { objectMetadataId: listingObjectMetadata.id };
-    } else {
-      listingObjectMetadataId = await createListingCustomObject();
+      if (listingObjectMetadata) {
+        listingObjectMetadataId = {
+          objectMetadataId: listingObjectMetadata.id,
+        };
+      } else {
+        listingObjectMetadataId = await createListingCustomObject();
+      }
+
+      await performCreateManyOperation(
+        LISTING_NAME_SINGULAR,
+        LISTING_NAME_PLURAL,
+        OBJECT_MODEL_COMMON_FIELDS,
+        listings,
+      );
+
+      await performCreateManyOperation(
+        'person',
+        'people',
+        PERSON_GQL_FIELDS,
+        people,
+      );
+
+      await performCreateManyOperation(
+        'apiKey',
+        'apiKeys',
+        OBJECT_MODEL_COMMON_FIELDS,
+        apiKeys,
+      );
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      throw new Error('beforeAll failed');
     }
-
-    await performCreateManyOperation(
-      LISTING_NAME_SINGULAR,
-      LISTING_NAME_PLURAL,
-      OBJECT_MODEL_COMMON_FIELDS,
-      listings,
-    );
-
-    await performCreateManyOperation(
-      'person',
-      'people',
-      PERSON_GQL_FIELDS,
-      people,
-    );
-
-    await performCreateManyOperation(
-      'apiKey',
-      'apiKeys',
-      OBJECT_MODEL_COMMON_FIELDS,
-      apiKeys,
-    );
   });
 
   afterAll(async () => {
@@ -95,9 +103,11 @@ describe('GlobalSearchResolver', () => {
           },
         },
       }),
-    );
+    ).catch();
 
-    await deleteOneObjectMetadataItem(listingObjectMetadataId.objectMetadataId);
+    await deleteOneObjectMetadataItem(
+      listingObjectMetadataId.objectMetadataId,
+    ).catch();
 
     await makeGraphqlAPIRequest(
       destroyOneOperationFactory({
@@ -105,7 +115,7 @@ describe('GlobalSearchResolver', () => {
         gqlFields: OBJECT_MODEL_COMMON_FIELDS,
         recordId: apiKeys[0].id,
       }),
-    );
+    ).catch();
   });
 
   const testsUseCases: EachTestingContext<{
