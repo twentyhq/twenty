@@ -4,7 +4,6 @@ import { RecordTableNoRecordGroupRows } from '@/object-record/record-table/compo
 import { RecordTableBodyDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContextProvider';
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
-import { RecordTablePendingRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRow';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -25,7 +24,6 @@ export const RecordTableNoRecordGroupBody = () => {
     <RecordTableNoRecordGroupBodyContextProvider>
       <RecordTableBodyDragDropContextProvider>
         <RecordTableBodyDroppable>
-          <RecordTablePendingRow />
           <RecordTableNoRecordGroupRows />
         </RecordTableBodyDroppable>
       </RecordTableBodyDragDropContextProvider>

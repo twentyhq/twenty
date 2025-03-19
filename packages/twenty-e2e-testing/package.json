@@ -1,11 +1,11 @@
 {
   "name": "twenty-e2e-testing",
-  "version": "0.44.0-canary",
+  "version": "0.50.0-canary",
   "description": "",
   "author": "",
   "private": true,
   "license": "AGPL-3.0",
   "devDependencies": {
-    "@playwright/test": "^1.49.0"
+    "@playwright/test": "^1.51.0"
   }
 }

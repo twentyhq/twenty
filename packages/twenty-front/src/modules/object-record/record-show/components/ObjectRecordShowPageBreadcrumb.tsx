@@ -41,7 +41,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectLabelPlural: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
-  const { record, loading } = useFindOneRecord({
+  const { loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
     recordGqlFields: {
@@ -52,7 +52,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
     objectRecordId,
-    recordFromStore: record ?? null,
   });
 
   if (loading) {

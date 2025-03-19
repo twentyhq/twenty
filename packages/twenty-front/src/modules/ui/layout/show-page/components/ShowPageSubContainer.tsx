@@ -1,7 +1,6 @@
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
 import { RecordShowRightDrawerOpenRecordButton } from '@/action-menu/components/RecordShowRightDrawerOpenRecordButton';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
@@ -14,7 +13,7 @@ import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -62,7 +61,6 @@ export const ShowPageSubContainer = ({
   targetableObject,
   loading,
   isInRightDrawer = false,
-  isNewRightDrawerItemLoading = false,
 }: ShowPageSubContainerProps) => {
   const tabListComponentId = `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}-${targetableObject.id}`;
 
@@ -70,15 +68,10 @@ export const ShowPageSubContainer = ({
 
   const isMobile = useIsMobile();
 
-  const isNewViewableRecordLoading = useRecoilValue(
-    isNewViewableRecordLoadingState,
-  );
-
   const summaryCard = (
     <SummaryCard
       objectNameSingular={targetableObject.targetObjectNameSingular}
       objectRecordId={targetableObject.id}
-      isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
       isInRightDrawer={isInRightDrawer}
     />
   );
@@ -127,7 +120,7 @@ export const ShowPageSubContainer = ({
         <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
           <StyledTabList
             behaveAsLinks={!isInRightDrawer}
-            loading={loading || isNewViewableRecordLoading}
+            loading={loading}
             tabListInstanceId={tabListComponentId}
             tabs={tabs}
             isInRightDrawer={isInRightDrawer}

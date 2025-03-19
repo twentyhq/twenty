@@ -64,6 +64,13 @@ msgstr ": Παρελθόν"
 msgid ": Today"
 msgstr ": Σήμερα"
 
+#. js-lingui-id: ZBGbuw
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+msgid "[empty string]"
+msgstr ""
+
 #. js-lingui-id: J/hVSQ
 #. placeholder {0}: theme.id
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
@@ -650,6 +657,11 @@ msgstr "Υπολογίστε"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Calendar"
 msgstr "Ημερολόγιο"
+
+#. js-lingui-id: wRpDAv
+#: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
+msgid "Calendar Event"
+msgstr "Γεγονός Ημερολογίου"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -1324,6 +1336,7 @@ msgstr "Φθίνουσα"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Description"
 msgstr "Περιγραφή"
 
@@ -2639,7 +2652,7 @@ msgid "New"
 msgstr "Νέο"
 
 #. js-lingui-id: Gntx7w
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Νέο {capitalizedObjectNameSingular}"
 
@@ -2724,12 +2737,12 @@ msgstr "Χωρίς χώρα"
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
-msgstr ""
+msgstr "Κανένα μέλος"
 
 #. js-lingui-id: Y4qK8/
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No members assigned"
-msgstr ""
+msgstr "Δεν έχουν ανατεθεί μέλη"
 
 #. js-lingui-id: hfYSED
 #: src/pages/settings/roles/components/RoleAssignment.tsx
@@ -2740,7 +2753,7 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No members match your search"
-msgstr ""
+msgstr "Κανένα μέλος δεν ταιριάζει με την αναζήτησή σας"
 
 #. js-lingui-id: F9pWel
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
@@ -3335,6 +3348,7 @@ msgstr "Σχήμα"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search"
@@ -3353,12 +3367,12 @@ msgstr "Αναζήτηση πεδίου..."
 #. js-lingui-id: t3n1Qy
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 #~ msgid "Search a member"
-#~ msgstr "Αναζήτηση ενός μέλους"
+#~ msgstr "Search a member"
 
 #. js-lingui-id: xdl79x
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Search a team member..."
-msgstr ""
+msgstr "Αναζήτηση ενός μέλους..."
 
 #. js-lingui-id: lnDfeK
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -3368,7 +3382,7 @@ msgstr "Αναζήτηση τύπου"
 #. js-lingui-id: x55IVv
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search an assigned team member..."
-msgstr ""
+msgstr "Αναζητήστε ένα ανατεθέν μέλος της ομάδας..."
 
 #. js-lingui-id: k7kp5/
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -3459,7 +3473,8 @@ msgid "See versions history"
 msgstr "Δείτε το ιστορικό των εκδόσεων"
 
 #. js-lingui-id: WZvt/6
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select Action"
 msgstr "Επιλέξτε Ενέργεια"
 
@@ -3946,7 +3961,8 @@ msgstr "Σήμερα"
 #~ msgstr "Total Users"
 
 #. js-lingui-id: PiUt3N
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Trigger Type"
 msgstr "Τύπος Εναύσματος"
 
@@ -3975,7 +3991,6 @@ msgstr "Τουρκικά"
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "Τύπος"
 

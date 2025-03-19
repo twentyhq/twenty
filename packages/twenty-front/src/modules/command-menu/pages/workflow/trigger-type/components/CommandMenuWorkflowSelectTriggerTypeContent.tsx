@@ -1,4 +1,4 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import {
   WorkflowTriggerType,
@@ -26,7 +26,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
-  const { openWorkflowEditStepInCommandMenu } = useCommandMenu();
+  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
 
   const handleTriggerTypeClick = ({
     type,

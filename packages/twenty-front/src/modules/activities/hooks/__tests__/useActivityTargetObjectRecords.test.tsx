@@ -7,6 +7,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -130,13 +131,19 @@ describe('useActivityTargetObjectRecords', () => {
           objectMetadataItemsState,
         );
 
-        const { activityTargetObjectRecords } =
-          useActivityTargetObjectRecords(task);
+        const setRecordFromStore = useSetRecoilState(
+          recordStoreFamilyState(task.id),
+        );
+
+        const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
+          task.id,
+        );
 
         return {
           activityTargetObjectRecords,
           setCurrentWorkspaceMember,
           setObjectMetadataItems,
+          setRecordFromStore,
         };
       },
       { wrapper: Wrapper },
@@ -145,6 +152,7 @@ describe('useActivityTargetObjectRecords', () => {
     act(() => {
       result.current.setCurrentWorkspaceMember(mockWorkspaceMembers[0]);
       result.current.setObjectMetadataItems(generatedMockObjectMetadataItems);
+      result.current.setRecordFromStore(task);
     });
 
     const activityTargetObjectRecords =

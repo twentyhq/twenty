@@ -64,6 +64,13 @@ msgstr ": Verlede"
 msgid ": Today"
 msgstr ": Vandag"
 
+#. js-lingui-id: ZBGbuw
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+msgid "[empty string]"
+msgstr ""
+
 #. js-lingui-id: J/hVSQ
 #. placeholder {0}: theme.id
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
@@ -650,6 +657,11 @@ msgstr "Bereken"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Calendar"
 msgstr "Kalender"
+
+#. js-lingui-id: wRpDAv
+#: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
+msgid "Calendar Event"
+msgstr "Kalendergebeurtenis"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -1324,6 +1336,7 @@ msgstr "Aflopend"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Description"
 msgstr "Beskrywing"
 
@@ -2639,7 +2652,7 @@ msgid "New"
 msgstr "Nuut"
 
 #. js-lingui-id: Gntx7w
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Nuwe {capitalizedObjectNameSingular}"
 
@@ -2724,12 +2737,12 @@ msgstr "Geen land nie"
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
-msgstr ""
+msgstr "Geen lede nie"
 
 #. js-lingui-id: Y4qK8/
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No members assigned"
-msgstr ""
+msgstr "Geen lede toegewys nie"
 
 #. js-lingui-id: hfYSED
 #: src/pages/settings/roles/components/RoleAssignment.tsx
@@ -2740,7 +2753,7 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No members match your search"
-msgstr ""
+msgstr "Geen lede voldoen aan jou soektog nie"
 
 #. js-lingui-id: F9pWel
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
@@ -3335,6 +3348,7 @@ msgstr "Skema"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search"
@@ -3353,12 +3367,12 @@ msgstr "Soek 'n veld..."
 #. js-lingui-id: t3n1Qy
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 #~ msgid "Search a member"
-#~ msgstr "Soek 'n lid"
+#~ msgstr "Search a member"
 
 #. js-lingui-id: xdl79x
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Search a team member..."
-msgstr ""
+msgstr "Soek 'n spanlid..."
 
 #. js-lingui-id: lnDfeK
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -3368,7 +3382,7 @@ msgstr "Soek 'n tipe"
 #. js-lingui-id: x55IVv
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search an assigned team member..."
-msgstr ""
+msgstr "Soek 'n toegewysde spanlid..."
 
 #. js-lingui-id: k7kp5/
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -3459,7 +3473,8 @@ msgid "See versions history"
 msgstr "Sien weergawes geskiedenis"
 
 #. js-lingui-id: WZvt/6
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select Action"
 msgstr "Kies Aksie"
 
@@ -3946,7 +3961,8 @@ msgstr "Vandag"
 #~ msgstr "Total Users"
 
 #. js-lingui-id: PiUt3N
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Trigger Type"
 msgstr "Sneller Tipe"
 
@@ -3975,7 +3991,6 @@ msgstr "Turks"
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "Tipe"
 

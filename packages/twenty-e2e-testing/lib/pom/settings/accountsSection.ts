@@ -6,6 +6,7 @@ export class AccountsSection {
   private readonly addBlocklistField: Locator;
   private readonly addBlocklistButton: Locator;
   private readonly connectWithGoogleButton: Locator;
+  private readonly connectWithMicrosoftButton: Locator;
 
   constructor(public readonly page: Page) {
     this.page = page;
@@ -21,6 +22,9 @@ export class AccountsSection {
     });
     this.connectWithGoogleButton = page.getByRole('button', {
       name: 'Connect with Google',
+    });
+    this.connectWithMicrosoftButton = page.getByRole('button', {
+      name: 'Connect with Microsoft',
     });
   }
 
@@ -50,5 +54,9 @@ export class AccountsSection {
 
   async linkGoogleAccount() {
     await this.connectWithGoogleButton.click();
+  }
+
+  async linkMicrosoftAccount() {
+    await this.connectWithMicrosoftButton.click();
   }
 }

@@ -1,4 +1,4 @@
-import { defineConfig } from '@lingui/cli';
+import { defineConfig } from '@lingui/conf';
 import { formatter } from '@lingui/format-po';
 import { APP_LOCALES } from 'twenty-shared';
 

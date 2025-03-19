@@ -86,8 +86,8 @@ export const workflowFormActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.array(
       z.object({
+        id: z.string().uuid(),
         label: z.string(),
-        name: z.string(),
         type: z.nativeEnum(FieldMetadataType),
         placeholder: z.string().optional(),
         settings: z.record(z.any()),

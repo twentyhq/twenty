@@ -64,6 +64,13 @@ msgstr ": 過去"
 msgid ": Today"
 msgstr ": 今天"
 
+#. js-lingui-id: ZBGbuw
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+msgid "[empty string]"
+msgstr "[空字串]"
+
 #. js-lingui-id: J/hVSQ
 #. placeholder {0}: theme.id
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
@@ -650,6 +657,11 @@ msgstr "計算"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Calendar"
 msgstr "日曆"
+
+#. js-lingui-id: wRpDAv
+#: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
+msgid "Calendar Event"
+msgstr "日曆事件"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -1324,6 +1336,7 @@ msgstr "降序"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Description"
 msgstr "描述"
 
@@ -2639,7 +2652,7 @@ msgid "New"
 msgstr "新"
 
 #. js-lingui-id: Gntx7w
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "新{capitalizedObjectNameSingular}"
 
@@ -2724,12 +2737,12 @@ msgstr "無國家"
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
-msgstr ""
+msgstr "沒有成員"
 
 #. js-lingui-id: Y4qK8/
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No members assigned"
-msgstr ""
+msgstr "沒有成員被指派"
 
 #. js-lingui-id: hfYSED
 #: src/pages/settings/roles/components/RoleAssignment.tsx
@@ -2740,7 +2753,7 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No members match your search"
-msgstr ""
+msgstr "沒有成員符合您的搜索"
 
 #. js-lingui-id: F9pWel
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
@@ -3335,6 +3348,7 @@ msgstr "結構"
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search"
@@ -3353,12 +3367,12 @@ msgstr "搜索字段..."
 #. js-lingui-id: t3n1Qy
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 #~ msgid "Search a member"
-#~ msgstr "搜索成員"
+#~ msgstr "Search a member"
 
 #. js-lingui-id: xdl79x
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Search a team member..."
-msgstr ""
+msgstr "搜索團隊成員……"
 
 #. js-lingui-id: lnDfeK
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -3368,7 +3382,7 @@ msgstr "搜索類型"
 #. js-lingui-id: x55IVv
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Search an assigned team member..."
-msgstr ""
+msgstr "搜尋已分配的團隊成員……"
 
 #. js-lingui-id: k7kp5/
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -3459,7 +3473,8 @@ msgid "See versions history"
 msgstr "查看版本歷史"
 
 #. js-lingui-id: WZvt/6
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select Action"
 msgstr "選擇操作"
 
@@ -3946,7 +3961,8 @@ msgstr "今天"
 #~ msgstr "Total Users"
 
 #. js-lingui-id: PiUt3N
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Trigger Type"
 msgstr "觸發類型"
 
@@ -3975,7 +3991,6 @@ msgstr "土耳其語"
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "類型"
 
