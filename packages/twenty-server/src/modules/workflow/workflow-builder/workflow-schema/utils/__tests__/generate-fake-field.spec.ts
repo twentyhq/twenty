@@ -10,16 +10,16 @@ jest.mock('src/engine/metadata-modules/field-metadata/composite-types', () => {
   const actualTypes = jest.requireActual('twenty-shared');
   const { FieldMetadataType } = actualTypes;
 
-  const mockMap = new Map();
+  const compositeTypeDefinitions = new Map();
 
-  mockMap.set(FieldMetadataType.LINKS, {
+  compositeTypeDefinitions.set(FieldMetadataType.LINKS, {
     properties: [
       { name: 'label', type: FieldMetadataType.TEXT },
       { name: 'url', type: FieldMetadataType.TEXT },
     ],
   });
 
-  mockMap.set(FieldMetadataType.CURRENCY, {
+  compositeTypeDefinitions.set(FieldMetadataType.CURRENCY, {
     properties: [
       { name: 'amount', type: FieldMetadataType.NUMBER },
       { name: 'currencyCode', type: FieldMetadataType.TEXT },
@@ -27,7 +27,7 @@ jest.mock('src/engine/metadata-modules/field-metadata/composite-types', () => {
   });
 
   return {
-    compositeTypeDefinitions: mockMap,
+    compositeTypeDefinitions,
   };
 });
 
