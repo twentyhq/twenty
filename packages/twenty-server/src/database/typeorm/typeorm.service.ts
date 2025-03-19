@@ -23,6 +23,7 @@ import { PostgresCredentials } from 'src/engine/core-modules/postgres-credential
 import { Sector } from 'src/engine/core-modules/sector/sector.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { StripeIntegration } from 'src/engine/core-modules/stripe/integrations/stripe-integration.entity';
+import { TraceableLinkLog } from 'src/engine/core-modules/traceable-links-logs/traceable-links-logs.entity';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -64,6 +65,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         WhatsappIntegration,
         Sector,
         Agent,
+        TraceableLinkLog,
         Inbox,
         StripeIntegration,
       ],

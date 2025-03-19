@@ -48,6 +48,7 @@ import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TelephonyModule } from 'src/engine/core-modules/telephony/telephony.module';
+import { TraceableLinkLogsModule } from 'src/engine/core-modules/traceable-links-logs/traceable-links-logs.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
@@ -92,6 +93,7 @@ import { StripeModule } from './stripe/stripe.module';
     MetaModule,
     SectorModule,
     AgentModule,
+    TraceableLinkLogsModule,
     InboxModule,
     GoogleStorageModule,
     TelephonyModule,
