@@ -2147,7 +2147,7 @@ msgstr "Вхідні дані мають бути у camelCase та не мож�
 #. js-lingui-id: /6i28D
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 msgid "Input settings"
-msgstr ""
+msgstr "Налаштування введення"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -3805,7 +3805,7 @@ msgstr "Тестування Workflows"
 #. js-lingui-id: xeiujy
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 msgid "Text"
-msgstr ""
+msgstr "Текст"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
