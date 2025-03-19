@@ -44,7 +44,7 @@ const DEFAULT_ACTION = {
 } satisfies WorkflowFormAction;
 
 const meta: Meta<typeof WorkflowEditActionForm> = {
-  title: 'Modules/Workflow/WorkflowEditActionForm',
+  title: 'Modules/Workflow/Actions/Form/WorkflowEditActionForm',
   component: WorkflowEditActionForm,
   parameters: {
     msw: graphqlMocks,
