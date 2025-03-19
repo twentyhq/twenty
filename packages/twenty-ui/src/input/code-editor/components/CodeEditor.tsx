@@ -7,7 +7,10 @@ import { editor } from 'monaco-editor';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
+type CodeEditorProps = Pick<
+  EditorProps,
+  'value' | 'language' | 'onMount' | 'onValidate' | 'height' | 'options'
+> & {
   onChange?: (value: string) => void;
   setMarkers?: (value: string) => editor.IMarkerData[];
   withHeader?: boolean;
@@ -121,9 +124,11 @@ export const CodeEditor = ({
         scrollbar: {
           vertical: 'hidden',
           horizontal: 'hidden',
+          ...options?.scrollbar,
         },
         minimap: {
           enabled: false,
+          ...options?.minimap,
         },
         ...options,
       }}
