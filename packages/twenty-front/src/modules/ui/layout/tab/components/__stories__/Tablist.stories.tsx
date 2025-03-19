@@ -38,6 +38,7 @@ const meta: Meta<typeof TabList> = {
   component: TabList,
   args: {
     tabs: tabs,
+    componentInstanceId: 'tab-list',
   },
   decorators: [ComponentWithRouterDecorator],
 };

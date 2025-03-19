@@ -2,6 +2,7 @@ import {
   File,
   SettingsServerlessFunctionCodeEditor,
 } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditor';
+import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/serverless-functions/constants/SettingsServerlessFunctionTabListComponentId';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -84,6 +85,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
         .map((file) => {
           return { id: file.path, title: file.path.split('/').at(-1) || '' };
         })}
+      componentInstanceId={SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}
     />
   );
 
