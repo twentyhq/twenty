@@ -10,7 +10,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "rimraf dist/esm",
+          "rimraf dist/esm dist/assets",
           "nest build --path ./tsconfig.build.json",
           "nx build:typeormcjs"
         ]
