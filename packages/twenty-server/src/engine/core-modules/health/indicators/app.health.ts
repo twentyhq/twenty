@@ -28,10 +28,7 @@ export class AppHealthIndicator {
         ...new Set(workspaces.map((w) => w.workspaceId)),
       ];
 
-      const workspaceIds = this.getDistributedSample(
-        allWorkspaceIds,
-        SAMPLE_SIZE,
-      );
+      const workspaceIds = allWorkspaceIds.slice(0, SAMPLE_SIZE);
 
       const workspaceStats = await Promise.all(
         workspaceIds.map(async (workspaceId) => {
@@ -99,31 +96,5 @@ export class AppHealthIndicator {
         },
       });
     }
-  }
-
-  private getDistributedSample(array: string[], sampleSize: number): string[] {
-    if (array.length <= sampleSize) {
-      return array;
-    }
-
-    const result: string[] = [];
-
-    const startCount = Math.floor(sampleSize * 0.4);
-
-    result.push(...array.slice(0, startCount));
-
-    const midCount = Math.floor(sampleSize * 0.3);
-    const midStart = Math.max(
-      startCount,
-      Math.floor((array.length - midCount) / 2),
-    );
-
-    result.push(...array.slice(midStart, midStart + midCount));
-
-    const remainingCount = sampleSize - result.length;
-
-    result.push(...array.slice(-remainingCount));
-
-    return result;
   }
 }

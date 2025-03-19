@@ -156,7 +156,7 @@ describe('AppHealthIndicator', () => {
     expect(result.app.details.stateHistory.details).toBeDefined();
   });
 
-  describe('distributed sampling', () => {
+  describe('workspace sampling', () => {
     it('should return all workspaces when count is less than sample size', async () => {
       objectMetadataService.findMany.mockResolvedValue([
         { id: '1', workspaceId: 'workspace1' } as any,
@@ -168,6 +168,21 @@ describe('AppHealthIndicator', () => {
 
       expect(result.app.details.overview.totalWorkspacesCount).toBe(2);
       expect(result.app.details.overview.checkedWorkspacesCount).toBe(2);
+    });
+
+    it('should sample exactly 100 workspaces for large datasets', async () => {
+      const workspaces = Array.from({ length: 1000 }, (_, i) => ({
+        id: `${i}`,
+        workspaceId: `workspace${i}`,
+      }));
+
+      objectMetadataService.findMany.mockResolvedValue(workspaces as any);
+      workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
+
+      const result = await service.isHealthy();
+
+      expect(result.app.details.overview.checkedWorkspacesCount).toBe(100);
+      expect(result.app.details.overview.totalWorkspacesCount).toBe(1000);
     });
 
     it('should handle duplicate workspace IDs correctly', async () => {
@@ -185,38 +200,6 @@ describe('AppHealthIndicator', () => {
 
       expect(result.app.details.overview.totalWorkspacesCount).toBe(2);
       expect(result.app.details.overview.checkedWorkspacesCount).toBe(2);
-    });
-
-    it('should sample exactly sampleSize workspaces for large datasets', async () => {
-      // Create 1000 workspaces
-      const workspaces = Array.from({ length: 1000 }, (_, i) => ({
-        id: `${i}`,
-        workspaceId: `workspace${i}`,
-      }));
-
-      objectMetadataService.findMany.mockResolvedValue(workspaces as any);
-      workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
-
-      const result = await service.isHealthy();
-
-      expect(result.app.details.overview.checkedWorkspacesCount).toBe(100);
-      expect(result.app.details.overview.totalWorkspacesCount).toBe(1000);
-    });
-
-    it('should handle small datasets without section overlap', async () => {
-      // Create 150 workspaces (small enough to potentially cause overlap)
-      const workspaces = Array.from({ length: 150 }, (_, i) => ({
-        id: `${i}`,
-        workspaceId: `workspace${i}`,
-      }));
-
-      objectMetadataService.findMany.mockResolvedValue(workspaces as any);
-      workspaceMigrationService.getPendingMigrations.mockResolvedValue([]);
-
-      const result = await service.isHealthy();
-
-      expect(result.app.details.overview.checkedWorkspacesCount).toBe(100);
-      expect(result.app.details.overview.totalWorkspacesCount).toBe(150);
     });
   });
 });
