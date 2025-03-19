@@ -17,7 +17,7 @@ type CardData = {
 const CardsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  margin: ${({ theme }) => theme.spacing(3)};
 `;
 
 const Card = styled.div`
@@ -26,7 +26,7 @@ const Card = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   max-width: 300px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ebebeb;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
