@@ -3,6 +3,7 @@
   "version": "0.50.0-canary",
   "description": "",
   "author": "",
+  "type": "module",
   "private": true,
   "license": "AGPL-3.0",
   "main": "./dist/index.js",
