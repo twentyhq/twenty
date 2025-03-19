@@ -1,39 +1,37 @@
-import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
-import { FieldMetadataType } from 'twenty-shared';
+import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm';
+import { assertUnreachable, FieldMetadataType } from 'twenty-shared';
 import { WorkflowFormFieldSettingsNumber } from './WorkflowFormFieldSettingsNumber';
 import { WorkflowFormFieldSettingsText } from './WorkflowFormFieldSettingsText';
 
 export const WorkflowFormFieldSettingsByType = ({
   field,
-  onFieldUpdate,
+  onChange,
 }: {
   field: WorkflowFormActionField;
-  onFieldUpdate: (id: string, field: string, value: string | null) => void;
+  onChange: (fieldName: string, value: string | null) => void;
 }) => {
   switch (field.type) {
     case FieldMetadataType.TEXT:
       return (
         <WorkflowFormFieldSettingsText
-          id={field.id}
           label={field.label}
           placeholder={field.placeholder}
-          onFieldUpdate={(id, field, value) => {
-            onFieldUpdate(id, field, value);
+          onChange={(fieldName, value) => {
+            onChange(fieldName, value);
           }}
         />
       );
     case FieldMetadataType.NUMBER:
       return (
         <WorkflowFormFieldSettingsNumber
-          id={field.id}
           label={field.label}
           placeholder={field.placeholder}
-          onFieldUpdate={(id, field, value) => {
-            onFieldUpdate(id, field, value);
+          onChange={(fieldName, value) => {
+            onChange(fieldName, value);
           }}
         />
       );
     default:
-      return null;
+      return assertUnreachable(field.type, 'Unknown form field type');
   }
 };

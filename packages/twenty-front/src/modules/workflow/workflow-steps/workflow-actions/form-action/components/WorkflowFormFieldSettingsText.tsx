@@ -1,15 +1,12 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 
 type WorkflowFormFieldSettingsTextProps = {
-  id: string;
   label?: string;
   placeholder?: string;
-  onFieldUpdate: (id: string, field: string, value: any) => void;
+  onChange: (fieldName: string, value: string | null) => void;
 };
 
 const StyledContainer = styled.div`
@@ -19,35 +16,30 @@ const StyledContainer = styled.div`
 `;
 
 export const WorkflowFormFieldSettingsText = ({
-  id,
   label,
   placeholder,
-  onFieldUpdate,
+  onChange,
 }: WorkflowFormFieldSettingsTextProps) => {
-  const theme = useTheme();
-
   return (
     <StyledContainer>
       <FormFieldInputContainer>
         <InputLabel>Label</InputLabel>
         <FormTextFieldInput
           onPersist={(newLabel: string | null) => {
-            onFieldUpdate(id, 'label', newLabel);
+            onChange('label', newLabel);
           }}
-          defaultValue={label ?? t`Text`}
-          placeholder={t`Set your label`}
-          color={theme.font.color.light}
+          defaultValue={label}
+          placeholder={'Text'}
         />
       </FormFieldInputContainer>
       <FormFieldInputContainer>
         <InputLabel>Placeholder</InputLabel>
         <FormTextFieldInput
           onPersist={(newPlaceholder: string | null) => {
-            onFieldUpdate(id, 'placeholder', newPlaceholder);
+            onChange('placeholder', newPlaceholder);
           }}
-          defaultValue={placeholder ?? 'Enter your text'}
-          placeholder={t`Set your placeholder`}
-          color={theme.font.color.light}
+          defaultValue={placeholder}
+          placeholder={'Enter your text'}
         />
       </FormFieldInputContainer>
     </StyledContainer>

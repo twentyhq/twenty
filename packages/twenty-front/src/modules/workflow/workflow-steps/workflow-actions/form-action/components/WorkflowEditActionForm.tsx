@@ -35,6 +35,16 @@ export type WorkflowEditActionFormProps = {
       };
 };
 
+export type WorkflowFormActionField = {
+  id: string;
+  label: string;
+  type: FieldMetadataType.TEXT | FieldMetadataType.NUMBER;
+  placeholder?: string;
+  settings?: Record<string, unknown>;
+};
+
+type FormData = WorkflowFormActionField[];
+
 const StyledRowContainer = styled.div`
   column-gap: ${({ theme }) => theme.spacing(1)};
   display: grid;
@@ -95,6 +105,9 @@ export const WorkflowEditActionForm = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { t } = useLingui();
+
+  const [formData, setFormData] = useState<FormData>(action.settings.input);
+
   const headerTitle = isDefined(action.name) ? action.name : `Form`;
   const headerIcon = getActionIcon(action.type);
   const [selectedField, setSelectedField] = useState<string | null>(null);
@@ -109,6 +122,26 @@ export const WorkflowEditActionForm = ({
     } else {
       setSelectedField(fieldName);
     }
+  };
+
+  const onFieldUpdate = (field: WorkflowFormActionField) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    const updatedFormData = formData.map((f) =>
+      f.id === field.id ? field : f,
+    );
+
+    setFormData(updatedFormData);
+
+    actionOptions.onActionUpdate({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: updatedFormData,
+      },
+    });
   };
 
   return (
@@ -169,13 +202,17 @@ export const WorkflowEditActionForm = ({
                         return;
                       }
 
+                      const updatedFormData = formData.filter(
+                        (f) => f.id !== field.id,
+                      );
+
+                      setFormData(updatedFormData);
+
                       actionOptions.onActionUpdate({
                         ...action,
                         settings: {
                           ...action.settings,
-                          input: action.settings.input.filter(
-                            (f) => f.id !== field.id,
-                          ),
+                          input: updatedFormData,
                         },
                       });
                     }}
@@ -184,9 +221,8 @@ export const WorkflowEditActionForm = ({
               )}
               {isFieldSelected(field.id) && (
                 <WorkflowEditActionFormFieldSettings
-                  action={action}
-                  actionOptions={actionOptions}
                   field={field}
+                  onChange={onFieldUpdate}
                   onClose={() => {
                     setSelectedField(null);
                   }}
@@ -206,20 +242,20 @@ export const WorkflowEditActionForm = ({
                       FieldMetadataType.TEXT,
                     );
 
+                    const newField: WorkflowFormActionField = {
+                      id: v4(),
+                      type: FieldMetadataType.TEXT,
+                      label,
+                      placeholder,
+                    };
+
+                    setFormData([...formData, newField]);
+
                     actionOptions.onActionUpdate({
                       ...action,
                       settings: {
                         ...action.settings,
-                        input: [
-                          ...action.settings.input,
-                          {
-                            id: v4(),
-                            type: FieldMetadataType.TEXT,
-                            label,
-                            placeholder,
-                            settings: {},
-                          },
-                        ],
+                        input: [...action.settings.input, newField],
                       },
                     });
                   }}

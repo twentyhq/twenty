@@ -1,7 +1,7 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { WorkflowEditActionFormProps } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm';
+import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm';
 import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { useTheme } from '@emotion/react';
@@ -16,17 +16,10 @@ import {
   LightIconButton,
 } from 'twenty-ui';
 
-type WorkflowEditActionFormFieldSettingsProps = WorkflowEditActionFormProps & {
+type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
+  onChange: (field: WorkflowFormActionField) => void;
   onClose: () => void;
-};
-
-export type WorkflowFormActionField = {
-  id: string;
-  label: string;
-  type: FieldMetadataType;
-  placeholder?: string;
-  settings?: Record<string, unknown>;
 };
 
 const StyledFormFieldSettingsContainer = styled.div`
@@ -67,32 +60,15 @@ const StyledCloseButtonContainer = styled.div`
 `;
 
 export const WorkflowEditActionFormFieldSettings = ({
-  action,
-  actionOptions,
   field,
+  onChange,
   onClose,
 }: WorkflowEditActionFormFieldSettingsProps) => {
   const theme = useTheme();
-  const onFieldUpdate = (id: string, field: string, value: any) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: action.settings.input.map((f) => {
-          if (f.id !== id) {
-            return f;
-          }
-
-          return {
-            ...f,
-            [field]: value,
-          };
-        }),
-      },
+  const onSubFieldUpdate = (fieldName: string, value: any) => {
+    onChange({
+      ...field,
+      [fieldName]: value,
     });
   };
 
@@ -111,9 +87,7 @@ export const WorkflowEditActionFormFieldSettings = ({
             Icon={IconX}
             size="small"
             accent="secondary"
-            onClick={() => {
-              onClose?.();
-            }}
+            onClick={onClose}
           />
         </StyledCloseButtonContainer>
       </StyledSettingsHeader>
@@ -136,35 +110,20 @@ export const WorkflowEditActionFormFieldSettings = ({
               },
             ]}
             onPersist={(newType: string | null) => {
-              if (actionOptions.readonly === true) {
-                return;
-              }
-
               if (newType === null) {
                 return;
               }
 
-              actionOptions.onActionUpdate({
-                ...action,
-                settings: {
-                  ...action.settings,
-                  input: action.settings.input.map((f) => {
-                    if (f.id !== field.id) {
-                      return f;
-                    }
+              const type = newType as
+                | FieldMetadataType.TEXT
+                | FieldMetadataType.NUMBER;
+              const { label, placeholder } = getDefaultFormFieldSettings(type);
 
-                    const type = newType as FieldMetadataType;
-                    const { label, placeholder } =
-                      getDefaultFormFieldSettings(type);
-
-                    return {
-                      ...f,
-                      type,
-                      label,
-                      placeholder,
-                    };
-                  }),
-                },
+              onChange({
+                ...field,
+                type,
+                label,
+                placeholder,
               });
             }}
             defaultValue={field.type}
@@ -173,7 +132,7 @@ export const WorkflowEditActionFormFieldSettings = ({
         </FormFieldInputContainer>
         <WorkflowFormFieldSettingsByType
           field={field}
-          onFieldUpdate={onFieldUpdate}
+          onChange={onSubFieldUpdate}
         />
       </StyledSettingsContent>
     </StyledFormFieldSettingsContainer>

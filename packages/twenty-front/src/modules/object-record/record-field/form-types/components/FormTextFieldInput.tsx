@@ -22,7 +22,6 @@ type FormTextFieldInputProps = {
   multiline?: boolean;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
-  color?: string;
 };
 
 export const FormTextFieldInput = ({
@@ -36,7 +35,6 @@ export const FormTextFieldInput = ({
   multiline,
   readonly,
   VariablePicker,
-  color,
 }: FormTextFieldInputProps) => {
   const inputId = useId();
 
@@ -81,7 +79,6 @@ export const FormTextFieldInput = ({
             editor={editor}
             multiline={multiline}
             readonly={readonly}
-            color={color}
           />
         </FormFieldInputInputContainer>
 

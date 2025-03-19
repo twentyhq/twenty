@@ -45,11 +45,6 @@ const mockAction: WorkflowFormAction = {
 
 export const TextFieldSettings: Story = {
   args: {
-    action: mockAction,
-    actionOptions: {
-      readonly: false,
-      onActionUpdate: fn(),
-    },
     field: mockAction.settings.input[0],
     onClose: fn(),
   },
@@ -57,10 +52,10 @@ export const TextFieldSettings: Story = {
     const canvas = within(canvasElement);
 
     const typeSelect = await canvas.findByText('Text');
-    expect(typeSelect).toBeInTheDocument();
+    expect(typeSelect).toBeVisible();
 
     const placeholderInput = await canvas.findByText('Enter text');
-    expect(placeholderInput).toBeInTheDocument();
+    expect(placeholderInput).toBeVisible();
 
     const closeButton = await canvas.findByRole('button');
     await userEvent.click(closeButton);
@@ -70,29 +65,6 @@ export const TextFieldSettings: Story = {
 
 export const NumberFieldSettings: Story = {
   args: {
-    action: {
-      ...mockAction,
-      settings: {
-        input: [
-          {
-            id: 'field-2',
-            label: 'Number Field',
-            type: FieldMetadataType.NUMBER,
-            placeholder: 'Enter number',
-            settings: {},
-          },
-        ],
-        outputSchema: {},
-        errorHandlingOptions: {
-          retryOnFailure: { value: false },
-          continueOnFailure: { value: false },
-        },
-      },
-    },
-    actionOptions: {
-      readonly: false,
-      onActionUpdate: fn(),
-    },
     field: {
       id: 'field-2',
       label: 'Number Field',
@@ -106,7 +78,7 @@ export const NumberFieldSettings: Story = {
     const canvas = within(canvasElement);
 
     const typeSelect = await canvas.findByText('Number');
-    expect(typeSelect).toBeInTheDocument();
+    expect(typeSelect).toBeVisible();
 
     const placeholderInput = await canvas.findByText('Enter number');
     expect(placeholderInput).toBeInTheDocument();
