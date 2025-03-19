@@ -46,7 +46,10 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   onChange: (filePath: string, value: string) => void;
   setIsCodeValid: (isCodeValid: boolean) => void;
 }) => {
-  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
+    SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+  );
   const TestButton = (
     <Button
       title="Test"
