@@ -230,12 +230,19 @@ export class SignInUpService {
     const isSigningUpOnTwenty = params.userData.type === 'newUserWithPicture';
 
     if (isSigningUpOnTwenty) {
-      const userData = params.userData as PartialUserWithPicture;
+      const userData = params.userData as {
+        type: 'newUserWithPicture';
+        newUserWithPicture: PartialUserWithPicture;
+      };
 
-      currentUser = await this.saveNewUser(userData, params.workspace.id, {
-        canAccessFullAdminPanel: false,
-        canImpersonate: false,
-      });
+      currentUser = await this.saveNewUser(
+        userData.newUserWithPicture,
+        params.workspace.id,
+        {
+          canAccessFullAdminPanel: false,
+          canImpersonate: false,
+        },
+      );
 
       await this.activateOnboardingForUser(currentUser, params.workspace);
     } else {
