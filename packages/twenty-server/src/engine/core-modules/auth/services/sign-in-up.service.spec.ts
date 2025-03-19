@@ -419,13 +419,6 @@ describe('SignInUpService', () => {
 
     jest.spyOn(featureFlagService, 'isFeatureEnabled').mockResolvedValue(true);
 
-    jest.spyOn(environmentService, 'get').mockReturnValue(false);
-    jest.spyOn(WorkspaceRepository, 'count').mockResolvedValue(0);
-    jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
-    jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
-      id: 'newWorkspaceId',
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-    } as Workspace);
     jest.spyOn(fileUploadService, 'uploadImage').mockResolvedValue({
       id: '',
       mimeType: '',
@@ -433,11 +426,7 @@ describe('SignInUpService', () => {
     });
     jest.spyOn(UserRepository, 'create').mockReturnValue({} as User);
     jest
-      .spyOn(domainManagerService, 'generateSubdomain')
-      .mockResolvedValue('a-subdomain');
-    jest
       .spyOn(UserRepository, 'save')
-
       .mockResolvedValue({ id: 'newUserId' } as User);
     jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
       user: {} as User,
