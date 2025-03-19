@@ -96,7 +96,7 @@ export const NoteCard = ({
         {NoteTargetsContextProvider && (
           <NoteTargetsContextProvider>
             <ActivityTargetsInlineCell
-              activity={note}
+              activityRecordId={note.id}
               activityObjectNameSingular={CoreObjectNameSingular.Note}
             />
           </NoteTargetsContextProvider>

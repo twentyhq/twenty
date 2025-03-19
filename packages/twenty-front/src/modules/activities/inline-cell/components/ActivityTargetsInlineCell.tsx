@@ -7,8 +7,6 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { useOpenActivityTargetInlineCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetInlineCellEditMode';
 import { useUpdateActivityTargetFromInlineCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromInlineCell';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
-import { Note } from '@/activities/types/Note';
-import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -22,7 +20,7 @@ import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-rec
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 type ActivityTargetsInlineCellProps = {
-  activity: Task | Note;
+  activityRecordId: string;
   showLabel?: boolean;
   maxWidth?: number;
   activityObjectNameSingular:
@@ -31,15 +29,15 @@ type ActivityTargetsInlineCellProps = {
 };
 
 export const ActivityTargetsInlineCell = ({
-  activity,
+  activityRecordId,
   showLabel = true,
   maxWidth,
   activityObjectNameSingular,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } =
-    useActivityTargetObjectRecords(activity);
+    useActivityTargetObjectRecords(activityRecordId);
 
-  const multipleRecordPickerInstanceId = `multiple-record-picker-target-${activity.id}`;
+  const multipleRecordPickerInstanceId = `multiple-record-picker-target-${activityRecordId}`;
 
   const { closeInlineCell } = useInlineCell();
 
@@ -58,7 +56,7 @@ export const ActivityTargetsInlineCell = ({
   const { FieldContextProvider: ActivityTargetsContextProvider } =
     useFieldContext({
       objectNameSingular: activityObjectNameSingular,
-      objectRecordId: activity.id,
+      objectRecordId: activityRecordId,
       fieldMetadataName: fieldDefinition.metadata.fieldName,
       fieldPosition: 3,
       overridenIsFieldEmpty: activityTargetObjectRecords.length === 0,
@@ -70,11 +68,11 @@ export const ActivityTargetsInlineCell = ({
   const { updateActivityTargetFromInlineCell } =
     useUpdateActivityTargetFromInlineCell({
       activityObjectNameSingular,
-      activityId: activity.id,
+      activityId: activityRecordId,
     });
 
   return (
-    <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
+    <RecordFieldInputScope recordFieldInputScopeId={activityRecordId}>
       <FieldFocusContextProvider>
         {ActivityTargetsContextProvider && (
           <ActivityTargetsContextProvider>

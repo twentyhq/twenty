@@ -15,10 +15,7 @@ import {
 } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useRecoilCallback } from 'recoil';
 
 type RecordTitleCellProps = {
   loading?: boolean;
@@ -54,30 +51,15 @@ export const RecordTitleCell = ({
     closeInlineCell();
   };
 
-  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
-    ({ snapshot }) =>
-      (persistField, event) => {
-        const recordFieldDropdownId = getDropdownFocusIdForRecordField(
-          recordId,
-          fieldDefinition.fieldMetadataId,
-          'inline-cell',
-        );
+  const handleClickOutside: FieldInputClickOutsideEvent = (
+    persistField,
+    event,
+  ) => {
+    event.stopImmediatePropagation();
 
-        const activeDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
-          .getValue();
-
-        if (recordFieldDropdownId !== activeDropdownFocusId) {
-          return;
-        }
-
-        event.stopImmediatePropagation();
-
-        persistField();
-        closeInlineCell();
-      },
-    [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
-  );
+    persistField();
+    closeInlineCell();
+  };
 
   const recordTitleCellContextValue: RecordTitleCellContextProps = {
     editModeContent: (

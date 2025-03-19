@@ -176,7 +176,12 @@ export const useLoadRecordIndexStates = () => {
           .getValue();
 
         onViewFieldsChange(view.viewFields, objectMetadataItem, recordIndexId);
-        setRecordGroupsFromViewGroups(view.id, view.viewGroups);
+
+        setRecordGroupsFromViewGroups(
+          view.id,
+          view.viewGroups,
+          objectMetadataItem,
+        );
 
         setContextStoreTargetedRecordsRuleComponentState((prev) => ({
           ...prev,

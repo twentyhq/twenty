@@ -6,7 +6,7 @@ import { IconPlus, LightIconButton } from 'twenty-ui';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
@@ -107,7 +107,7 @@ type RecordTableHeaderCellProps = {
 export const RecordTableHeaderCell = ({
   column,
 }: RecordTableHeaderCellProps) => {
-  const { recordTableId, objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const resizeFieldOffsetState = useRecoilComponentCallbackStateV2(
     resizeFieldOffsetComponentState,
@@ -202,13 +202,12 @@ export const RecordTableHeaderCell = ({
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
-  const { createNewTableRecord } = useCreateNewTableRecord({
+  const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
-    recordTableId,
   });
 
   const handlePlusButtonClick = () => {
-    createNewTableRecord();
+    createNewIndexRecord();
   };
 
   const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);

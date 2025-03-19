@@ -18,7 +18,7 @@ export const RelationFromManyFieldDisplay = () => {
     fieldDefinition?.metadata.relationObjectMetadataNameSingular;
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
-    undefined,
+    '',
     fieldValue as NoteTarget[] | TaskTarget[],
   );
 
