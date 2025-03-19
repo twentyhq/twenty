@@ -33,7 +33,6 @@
   "ts-node": {
     "files": true,
     "esm": true,
-    "transpileOnly": true,
     "require": ["tsconfig-paths/register"]
   },
   "exclude": ["dist"]
