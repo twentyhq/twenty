@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseFilters } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared';
 
@@ -6,8 +6,14 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
+import {
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
+} from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 @Controller('webhooks')
+@UseFilters(WorkflowTriggerRestApiExceptionFilter)
 export class WorkflowTriggerController {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
@@ -28,8 +34,18 @@ export class WorkflowTriggerController {
       where: { id: workflowId },
     });
 
-    if (!isDefined(workflow?.lastPublishedVersionId)) {
-      throw new Error('Workflow not activated');
+    if (!isDefined(workflow)) {
+      throw new WorkflowTriggerException(
+        'Workflow not found',
+        WorkflowTriggerExceptionCode.NOT_FOUND,
+      );
+    }
+
+    if (!isDefined(workflow.lastPublishedVersionId)) {
+      throw new WorkflowTriggerException(
+        'Workflow not activated',
+        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
+      );
     }
 
     return await this.workflowTriggerWorkspaceService.runWorkflowVersion({
