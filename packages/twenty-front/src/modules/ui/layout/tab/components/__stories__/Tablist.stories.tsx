@@ -2,8 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { ComponentWithRouterDecorator, IconCheckbox } from 'twenty-ui';
 
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-
+import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
 import { TabList } from '../TabList';
 
 const tabs = [
@@ -43,9 +42,11 @@ const meta: Meta<typeof TabList> = {
   },
   decorators: [
     (Story) => (
-      <RecoilScope>
+      <ActiveTabComponentInstanceContext.Provider
+        value={{ instanceId: 'tab-list-component' }}
+      >
         <Story />
-      </RecoilScope>
+      </ActiveTabComponentInstanceContext.Provider>
     ),
     ComponentWithRouterDecorator,
   ],
