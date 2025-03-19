@@ -17,7 +17,6 @@ import { FieldMetadataType } from '~/generated/graphql';
 type SummaryCardProps = {
   objectNameSingular: string;
   objectRecordId: string;
-  isNewRightDrawerItemLoading: boolean;
   isInRightDrawer: boolean;
 };
 
@@ -25,7 +24,6 @@ type SummaryCardProps = {
 export const SummaryCard = ({
   objectNameSingular,
   objectRecordId,
-  isNewRightDrawerItemLoading,
   isInRightDrawer,
 }: SummaryCardProps) => {
   const { recordLoading, labelIdentifierFieldMetadataItem, isPrefetchLoading } =
@@ -57,7 +55,7 @@ export const SummaryCard = ({
     }),
   );
 
-  if (isNewRightDrawerItemLoading || !isDefined(recordCreatedAt)) {
+  if (!isDefined(recordCreatedAt)) {
     return <ShowPageSummaryCardSkeletonLoader />;
   }
 

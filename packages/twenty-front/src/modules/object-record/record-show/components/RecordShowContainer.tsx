@@ -24,7 +24,6 @@ export const RecordShowContainer = ({
   objectRecordId,
   loading,
   isInRightDrawer = false,
-  isNewRightDrawerItemLoading = false,
 }: RecordShowContainerProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -70,7 +69,6 @@ export const RecordShowContainer = ({
           }}
           isInRightDrawer={isInRightDrawer}
           loading={isPrefetchLoading || loading || recordLoading}
-          isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
         />
       </ShowPageContainer>
     </>

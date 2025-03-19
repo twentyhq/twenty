@@ -151,7 +151,10 @@ export const ActivityRichTextEditor = ({
           return {
             ...oldActivity,
             id: activityId,
-            body: newStringifiedBody,
+            bodyV2: {
+              blocknote: newStringifiedBody,
+              markdown: null,
+            },
             __typename: 'Activity',
           };
         });
@@ -159,8 +162,11 @@ export const ActivityRichTextEditor = ({
         modifyRecordFromCache({
           recordId: activityId,
           fieldModifiers: {
-            body: () => {
-              return newStringifiedBody;
+            bodyV2: () => {
+              return {
+                blocknote: newStringifiedBody,
+                markdown: null,
+              };
             },
           },
           cache,
