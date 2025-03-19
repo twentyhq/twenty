@@ -34,6 +34,7 @@ export const SettingsServerlessFunctionDetail = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
     activeTabIdComponentState,
+    SERVERLESS_FUNCTION_DETAIL_ID,
   );
   const [isCodeValid, setIsCodeValid] = useState(true);
   const { updateOneServerlessFunction } =
