@@ -121,7 +121,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     });
   }
 
-  async addUserToWorkspace(user: User, workspace: Workspace) {
+  async addUserToWorkspaceIfUserNotInWorkspace(
+    user: User,
+    workspace: Workspace,
+  ) {
     let userWorkspace = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,

@@ -83,7 +83,7 @@ describe('SignInUpService', () => {
         {
           provide: UserWorkspaceService,
           useValue: {
-            addUserToWorkspace: jest.fn(),
+            addUserToWorkspaceIfUserNotInWorkspace: jest.fn(),
             checkUserWorkspaceExists: jest.fn(),
             create: jest.fn(),
           },
@@ -179,10 +179,12 @@ describe('SignInUpService', () => {
       .spyOn(workspaceInvitationService, 'invalidateWorkspaceInvitation')
       .mockResolvedValue(undefined);
 
-    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
-      user: {} as User,
-      userWorkspace: {} as UserWorkspace,
-    });
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
+      .mockResolvedValue({
+        user: {} as User,
+        userWorkspace: {} as UserWorkspace,
+      });
 
     const result = await service.signInUp(params);
 
@@ -217,16 +219,20 @@ describe('SignInUpService', () => {
       },
     };
 
-    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
-      user: {} as User,
-      userWorkspace: {} as UserWorkspace,
-    });
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
+      .mockResolvedValue({
+        user: {} as User,
+        userWorkspace: {} as UserWorkspace,
+      });
 
     const result = await service.signInUp(params);
 
     expect(result.workspace).toEqual(params.workspace);
     expect(result.user).toBeDefined();
-    expect(userWorkspaceService.addUserToWorkspace).toHaveBeenCalled();
+    expect(
+      userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace,
+    ).toHaveBeenCalled();
   });
 
   it('should handle signUp on new workspace for a new user', async () => {
@@ -294,10 +300,12 @@ describe('SignInUpService', () => {
     };
 
     jest.spyOn(environmentService, 'get').mockReturnValue(false);
-    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
-      user: {} as User,
-      userWorkspace: {} as UserWorkspace,
-    });
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
+      .mockResolvedValue({
+        user: {} as User,
+        userWorkspace: {} as UserWorkspace,
+      });
     jest
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
       .mockResolvedValue({} as UserWorkspace);
@@ -306,7 +314,9 @@ describe('SignInUpService', () => {
 
     expect(result.workspace).toEqual(params.workspace);
     expect(result.user).toBeDefined();
-    expect(userWorkspaceService.addUserToWorkspace).toHaveBeenCalled();
+    expect(
+      userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace,
+    ).toHaveBeenCalled();
   });
 
   it('should throw - handle signUp on workspace in pending state', async () => {
@@ -385,10 +395,12 @@ describe('SignInUpService', () => {
     const mockUserWorkspace = { id: 'userWorkspaceId' };
 
     jest.spyOn(featureFlagService, 'isFeatureEnabled').mockResolvedValue(true);
-    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
-      user: {} as User,
-      userWorkspace: mockUserWorkspace as UserWorkspace,
-    });
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
+      .mockResolvedValue({
+        user: {} as User,
+        userWorkspace: mockUserWorkspace as UserWorkspace,
+      });
 
     await service.signInUp(params);
 
@@ -428,10 +440,12 @@ describe('SignInUpService', () => {
     jest
       .spyOn(UserRepository, 'save')
       .mockResolvedValue({ id: 'newUserId' } as User);
-    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
-      user: {} as User,
-      userWorkspace: mockUserWorkspace as UserWorkspace,
-    });
+    jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
+      .mockResolvedValue({
+        user: {} as User,
+        userWorkspace: mockUserWorkspace as UserWorkspace,
+      });
 
     await service.signInUp(params);
 
