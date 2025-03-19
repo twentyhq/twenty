@@ -8,7 +8,7 @@ import dts, { PluginOptions } from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-import { UserPluginConfig } from 'vite-plugin-checker/dist/esm/types';
+type UserPluginConfig = Parameters<typeof checker>[0]
 
 // eslint-disable-next-line @nx/enforce-module-boundaries, import/no-relative-packages
 import packageJson from '../../package.json';
