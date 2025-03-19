@@ -16,9 +16,6 @@ import {
   SaveOptions,
   UpdateResult,
 } from 'typeorm';
-import { PickKeysByType } from 'typeorm/common/PickKeysByType';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -27,6 +24,9 @@ import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modu
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { PickKeysByType } from 'typeorm/common/PickKeysByType.js';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
+import { UpsertOptions } from 'typeorm/repository/UpsertOptions.js';
 
 export class WorkspaceRepository<
   Entity extends ObjectLiteral,
