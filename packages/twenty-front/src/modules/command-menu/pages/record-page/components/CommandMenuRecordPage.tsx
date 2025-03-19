@@ -1,6 +1,5 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
-import { isNewViewableRecordLoadingComponentState } from '@/command-menu/pages/record-page/states/isNewViewableRecordLoadingComponentState';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
@@ -29,14 +28,12 @@ export const CommandMenuRecordPage = () => {
   const viewableRecordNameSingular = useRecoilComponentValueV2(
     viewableRecordNameSingularComponentState,
   );
-  const isNewViewableRecordLoading = useRecoilComponentValueV2(
-    isNewViewableRecordLoadingComponentState,
-  );
+
   const viewableRecordId = useRecoilComponentValueV2(
     viewableRecordIdComponentState,
   );
 
-  if (!viewableRecordNameSingular && !isNewViewableRecordLoading) {
+  if (!viewableRecordNameSingular) {
     throw new Error(`Object name is not defined`);
   }
 
@@ -73,9 +70,7 @@ export const CommandMenuRecordPage = () => {
             >
               <StyledRightDrawerRecord isMobile={isMobile}>
                 <RecordFieldValueSelectorContextProvider>
-                  {!isNewViewableRecordLoading && (
-                    <RecordValueSetterEffect recordId={objectRecordId} />
-                  )}
+                  <RecordValueSetterEffect recordId={objectRecordId} />
                   <TimelineActivityContext.Provider
                     value={{
                       recordId: objectRecordId,
@@ -90,7 +85,6 @@ export const CommandMenuRecordPage = () => {
                       objectRecordId={objectRecordId}
                       loading={false}
                       isInRightDrawer={true}
-                      isNewRightDrawerItemLoading={isNewViewableRecordLoading}
                     />
                   </TimelineActivityContext.Provider>
                 </RecordFieldValueSelectorContextProvider>

@@ -44,7 +44,7 @@ export class InsertFieldData {
       '//label[contains(., "POST CODE")]/../div[last()]/input',
     );
     this.countrySelect = page.locator(
-      '//span[contains(., "COUNTRY")]/../div[last()]/input',
+      '//span[contains(., "COUNTRY")]/../div[last()]/div',
     );
     this.arrayValueInput = page.locator("//input[@placeholder='Enter value']");
     this.arrayAddValueButton = page.locator(

@@ -14,7 +14,6 @@ import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 
 export const useOpenCreateActivityDrawer = ({
   activityObjectNameSingular,
@@ -46,9 +45,7 @@ export const useOpenCreateActivityDrawer = ({
   const setViewableRecordNameSingular = useSetRecoilState(
     viewableRecordNameSingularState,
   );
-  const setIsNewViewableRecordLoading = useSetRecoilState(
-    isNewViewableRecordLoadingState,
-  );
+
   const setIsUpsertingActivityInDB = useSetRecoilState(
     isUpsertingActivityInDBState,
   );
@@ -62,7 +59,6 @@ export const useOpenCreateActivityDrawer = ({
     targetableObjects: ActivityTargetableObject[];
     customAssignee?: WorkspaceMember;
   }) => {
-    setIsNewViewableRecordLoading(true);
     setViewableRecordId(null);
     setViewableRecordNameSingular(activityObjectNameSingular);
 
@@ -113,7 +109,6 @@ export const useOpenCreateActivityDrawer = ({
     setViewableRecordId(activity.id);
 
     setIsUpsertingActivityInDB(false);
-    setIsNewViewableRecordLoading(false);
   };
 
   return openCreateActivityDrawer;

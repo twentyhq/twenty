@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import deepEqual from 'deep-equal';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
@@ -156,30 +157,31 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       objectMetadataItemWithFieldsMaps,
     );
 
-    await repository.update(workflowActionInput.objectRecordId, {
-      ...objectRecordFormatted,
-    });
-
     const updatedObjectRecord = {
       ...previousObjectRecord,
       ...objectRecordWithFilteredFields,
     };
 
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: workflowActionInput.objectName,
-      action: DatabaseEventAction.UPDATED,
-      events: [
-        {
-          recordId: previousObjectRecord.id,
-          objectMetadata,
-          properties: {
-            before: previousObjectRecord,
-            after: updatedObjectRecord,
+    if (!deepEqual(updatedObjectRecord, previousObjectRecord)) {
+      await repository.update(workflowActionInput.objectRecordId, {
+        ...objectRecordFormatted,
+      });
+      this.workspaceEventEmitter.emitDatabaseBatchEvent({
+        objectMetadataNameSingular: workflowActionInput.objectName,
+        action: DatabaseEventAction.UPDATED,
+        events: [
+          {
+            recordId: previousObjectRecord.id,
+            objectMetadata,
+            properties: {
+              before: previousObjectRecord,
+              after: updatedObjectRecord,
+            },
           },
-        },
-      ],
-      workspaceId,
-    });
+        ],
+        workspaceId,
+      });
+    }
 
     return {
       result: updatedObjectRecord,

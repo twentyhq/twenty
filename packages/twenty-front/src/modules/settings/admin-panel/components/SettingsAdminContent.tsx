@@ -37,8 +37,8 @@ export const SettingsAdminContent = () => {
     <>
       <TabList
         tabs={tabs}
-        tabListInstanceId={SETTINGS_ADMIN_TABS_ID}
         behaveAsLinks={true}
+        componentInstanceId={SETTINGS_ADMIN_TABS_ID}
       />
       <SettingsAdminTabContent />
     </>

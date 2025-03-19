@@ -1893,9 +1893,7 @@ msgstr "Køringer"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Scopes"
-msgstr ""
-"R\n"
-"ettigheder"
+msgstr "Rettigheder"
 
 #. js-lingui-id: PdVIJC
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts

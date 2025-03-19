@@ -1,12 +1,10 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
-import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -29,6 +27,9 @@ import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
+import { SETTINGS_ADMIN_GENERAL_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminGeneralTabsId';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -49,8 +50,9 @@ export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueSnackBar } = useSnackBar();
 
-  const { activeTabId, setActiveTabId } = useTabList(
-    SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
+  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+    activeTabIdComponentState,
+    'settings-admin-general',
   );
   const [userLookupResult, setUserLookupResult] = useRecoilState(
     userLookupResultState,
@@ -200,8 +202,8 @@ export const SettingsAdminGeneral = () => {
             <StyledTabListContainer>
               <TabList
                 tabs={tabs}
-                tabListInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
                 behaveAsLinks={false}
+                componentInstanceId={SETTINGS_ADMIN_GENERAL_TABS_ID}
               />
             </StyledTabListContainer>
 
