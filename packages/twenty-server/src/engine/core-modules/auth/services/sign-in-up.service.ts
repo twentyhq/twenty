@@ -235,7 +235,7 @@ export class SignInUpService {
           )
         : params.userData.existingUser;
 
-    const { user: updatedUser, userWorkspace } =
+    const { user: updatedUser } =
       await this.userWorkspaceService.addUserToWorkspace(
         currentUser,
         params.workspace,
@@ -247,14 +247,6 @@ export class SignInUpService {
 
     if (isSignUp) {
       await this.activateOnboardingForUser(user, params.workspace);
-
-      if (params.workspace.defaultRoleId) {
-        await this.userRoleService.assignRoleToUserWorkspace({
-          workspaceId: params.workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          roleId: params.workspace.defaultRoleId,
-        });
-      }
     }
 
     return user;

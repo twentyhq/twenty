@@ -21,6 +21,12 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -30,6 +36,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -40,6 +48,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly userRoleService: UserRoleService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -128,6 +137,35 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       workspace.id,
       user.email,
     );
+
+    let defaultRoleId = workspace.defaultRoleId;
+
+    if (!isDefined(defaultRoleId)) {
+      await this.workspaceRepository
+        .findOne({
+          where: {
+            id: workspace.id,
+          },
+        })
+        .then((workspace) => {
+          if (isDefined(workspace)) {
+            defaultRoleId = workspace.defaultRoleId;
+          }
+        });
+    }
+
+    if (!isDefined(defaultRoleId)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
+        PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+      );
+    }
+
+    await this.userRoleService.assignRoleToUserWorkspace({
+      workspaceId: workspace.id,
+      userWorkspaceId: userWorkspace.id,
+      roleId: defaultRoleId,
+    });
 
     return {
       user,
