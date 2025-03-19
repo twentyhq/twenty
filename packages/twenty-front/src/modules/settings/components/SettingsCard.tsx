@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Card, CardContent, IconChevronRight, Label, Pill } from 'twenty-ui';
+import { Card, CardContent, IconChevronRight, Pill } from 'twenty-ui';
 
 import { ReactNode } from 'react';
 
@@ -58,7 +58,7 @@ const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-const StyledDescription = styled(Label)`
+const StyledDescription = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(7)};
 `;

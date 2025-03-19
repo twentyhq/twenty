@@ -3,8 +3,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared';
-
-import { CardContent, IconChevronRight, IconComponent, Label } from 'twenty-ui';
+import { CardContent, IconChevronRight, IconComponent } from 'twenty-ui';
 
 const StyledRow = styled(CardContent)<{ to?: boolean }>`
   align-items: center;
@@ -35,7 +34,8 @@ const StyledContent = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledDescription = styled(Label)`
+const StyledDescription = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   padding-left: ${({ theme }) => theme.spacing(1)};
 `;
