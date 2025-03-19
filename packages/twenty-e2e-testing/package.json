@@ -6,6 +6,6 @@
   "private": true,
   "license": "AGPL-3.0",
   "devDependencies": {
-    "@playwright/test": "^1.49.0"
+    "@playwright/test": "^1.51.0"
   }
 }
