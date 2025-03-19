@@ -9,7 +9,7 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 type EmailsFieldInputProps = {
   onCancel?: () => void;
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
-  onError?: (hasError: boolean, hasItem: boolean) => void;
+  onError?: (hasError: boolean, value: any) => void;
 };
 
 export const EmailsFieldInput = ({

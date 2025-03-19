@@ -17,12 +17,12 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { hasRecordInlineCellDangerBorderScopedState } from '@/object-record/record-inline-cell/states/hasRecordInlineCellDangerBorderScopedState';
+import { hasRecordInlineCellDangerBorderComponentState } from '@/object-record/record-inline-cell/states/hasRecordInlineCellDangerBorderComponentState';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
@@ -44,10 +44,8 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     onCloseEditMode,
   } = useContext(FieldContext);
 
-  const setHasRecordInlineCellDangerBorder = useSetRecoilState(
-    hasRecordInlineCellDangerBorderScopedState(
-      `${recordId}-${fieldDefinition.fieldMetadataId}`,
-    ),
+  const setHasRecordInlineCellDangerBorder = useSetRecoilComponentStateV2(
+    hasRecordInlineCellDangerBorderComponentState,
   );
 
   const buttonIcon = useGetButtonIcon();
@@ -96,8 +94,8 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     closeInlineCell();
   };
 
-  const handleError = (hasError: boolean, hasItem: boolean) => {
-    setHasRecordInlineCellDangerBorder(hasError && !hasItem);
+  const handleError = (hasError: boolean, value: any[]) => {
+    setHasRecordInlineCellDangerBorder(hasError && value.length === 0);
   };
 
   const { getIcon } = useIcons();
@@ -143,7 +141,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     showLabel: fieldDefinition.showLabel,
     isCentered,
     editModeContent: (
-      //here I know if I have a recordInlineCell / instead of recordTablecell - so it's from here I can toggle the right container border
       <FieldInput
         recordFieldInputdId={getRecordFieldInputId(
           recordId,

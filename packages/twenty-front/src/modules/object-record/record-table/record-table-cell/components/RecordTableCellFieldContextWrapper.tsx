@@ -9,6 +9,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
+import { RecordTableCellComponentInstanceContext } from '@/object-record/record-table/contexts/RecordTableCellComponentInstanceContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -87,7 +88,11 @@ export const RecordTableCellFieldContextWrapper = ({
         displayedMaxRows: 1,
       }}
     >
-      {children}
+      <RecordTableCellComponentInstanceContext.Provider
+        value={{ instanceId: recordId + columnDefinition.label }}
+      >
+        {children}
+      </RecordTableCellComponentInstanceContext.Provider>
     </FieldContext.Provider>
   );
 };

@@ -15,6 +15,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { RecordInlineCellComponentInstanceContext } from '@/object-record/record-inline-cell/contexts/RecordInlineCellComponentInstanceContext';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -113,7 +114,13 @@ export const CalendarEventDetails = ({
           maxWidth: 300,
         }}
       >
-        <RecordInlineCell readonly />
+        <RecordInlineCellComponentInstanceContext.Provider
+          value={{
+            instanceId: `${calendarEvent.id}-${fieldName}`,
+          }}
+        >
+          <RecordInlineCell readonly />
+        </RecordInlineCellComponentInstanceContext.Provider>
       </FieldContext.Provider>
     </StyledPropertyBox>
   ));

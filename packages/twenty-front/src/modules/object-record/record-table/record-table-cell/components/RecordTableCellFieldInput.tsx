@@ -5,9 +5,9 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { hasRecordTableCellDangerBorderScopedState } from '@/object-record/record-table/record-table-cell/states/hasRecordTableCellDangerBorderScopedState';
+import { hasRecordTableCellDangerBorderComponentState } from '@/object-record/record-table/record-table-cell/states/hasRecordTableCellDangerBorderComponentState';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 export const RecordTableCellFieldInput = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
@@ -16,10 +16,8 @@ export const RecordTableCellFieldInput = () => {
 
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
-  const setHasRecordTableCellDangerBorder = useSetRecoilState(
-    hasRecordTableCellDangerBorderScopedState(
-      `${recordId}-${fieldDefinition.fieldMetadataId}`,
-    ),
+  const setHasRecordTableCellDangerBorder = useSetRecoilComponentStateV2(
+    hasRecordTableCellDangerBorderComponentState,
   );
 
   const handleEnter: FieldInputEvent = (persistField) => {
@@ -70,8 +68,8 @@ export const RecordTableCellFieldInput = () => {
     onMoveFocus('left');
   };
 
-  const handleError = (hasError: boolean, hasItem: boolean) => {
-    setHasRecordTableCellDangerBorder(hasError && !hasItem);
+  const handleError = (hasError: boolean, value: any) => {
+    setHasRecordTableCellDangerBorder(hasError && value.length === 0);
   };
 
   return (

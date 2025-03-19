@@ -55,7 +55,7 @@ type FieldInputProps = {
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
-  onError?: (hasError: boolean, hasItem: boolean) => void;
+  onError?: (hasError: boolean, value: any) => void;
   isReadOnly?: boolean;
 };
 

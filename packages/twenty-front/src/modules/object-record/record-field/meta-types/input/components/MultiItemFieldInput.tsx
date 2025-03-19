@@ -36,7 +36,7 @@ type MultiItemFieldInputProps<T> = {
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
-  onError?: (hasError: boolean, hasItem: boolean) => void;
+  onError?: (hasError: boolean, value: any) => void;
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
@@ -87,7 +87,7 @@ export const MultiItemFieldInput = <T,>({
     setErrorData(
       errorData.isValid ? errorData : { isValid: true, errorMessage: '' },
     );
-    onError?.(false, items.length > 0);
+    onError?.(false, items);
   };
 
   const handleAddButtonClick = () => {
@@ -126,7 +126,7 @@ export const MultiItemFieldInput = <T,>({
     if (validateInput !== undefined) {
       const validationData = validateInput(inputValue) ?? { isValid: true };
       if (!validationData.isValid) {
-        onError?.(true, items.length > 0);
+        onError?.(true, items);
         setErrorData(validationData);
         return;
       }

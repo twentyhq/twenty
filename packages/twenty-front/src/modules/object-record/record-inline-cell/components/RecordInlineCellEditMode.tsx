@@ -2,9 +2,10 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
-import { hasRecordInlineCellDangerBorderScopedState } from '@/object-record/record-inline-cell/states/hasRecordInlineCellDangerBorderScopedState';
+import { hasRecordInlineCellDangerBorderComponentState } from '@/object-record/record-inline-cell/states/hasRecordInlineCellDangerBorderComponentState';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
@@ -16,7 +17,6 @@ import {
 } from '@floating-ui/react';
 import { useContext } from 'react';
 import { createPortal } from 'react-dom';
-import { useRecoilValue } from 'recoil';
 
 const StyledInlineCellEditModeContainer = styled.div`
   align-items: center;
@@ -65,10 +65,8 @@ export const RecordInlineCellEditMode = ({
     },
   };
 
-  const hasRecordInlineCellDangerBorder = useRecoilValue(
-    hasRecordInlineCellDangerBorderScopedState(
-      `${recordId}-${fieldDefinition.fieldMetadataId}`,
-    ),
+  const hasRecordInlineCellDangerBorder = useRecoilComponentValueV2(
+    hasRecordInlineCellDangerBorderComponentState,
   );
 
   const { refs, floatingStyles } = useFloating({
