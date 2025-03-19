@@ -226,30 +226,36 @@ export class SignInUpService {
   ) {
     await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
 
-    const currentUser =
-      params.userData.type === 'newUserWithPicture'
-        ? await this.saveNewUser(
-            params.userData.newUserWithPicture,
-            params.workspace.id,
-            { canAccessFullAdminPanel: false, canImpersonate: false },
-          )
-        : params.userData.existingUser;
+    const isSigningUp = params.userData.type === 'newUserWithPicture';
 
-    const { user: updatedUser } =
-      await this.userWorkspaceService.addUserToWorkspace(
-        currentUser,
-        params.workspace,
+    if (isSigningUp) {
+      const userData = params.userData as PartialUserWithPicture;
+
+      const currentUser = await this.saveNewUser(
+        userData,
+        params.workspace.id,
+        { canAccessFullAdminPanel: false, canImpersonate: false },
       );
 
-    const user = Object.assign(currentUser, updatedUser);
+      const { user: updatedUser } =
+        await this.userWorkspaceService.addUserToWorkspace(
+          currentUser,
+          params.workspace,
+        );
 
-    const isSignUp = params.userData.type === 'newUserWithPicture';
+      const user = Object.assign(currentUser, updatedUser);
 
-    if (isSignUp) {
       await this.activateOnboardingForUser(user, params.workspace);
-    }
 
-    return user;
+      return user;
+    } else {
+      const userData = params.userData as {
+        type: 'existingUser';
+        existingUser: User;
+      };
+
+      return userData.existingUser;
+    }
   }
 
   private async activateOnboardingForUser(user: User, workspace: Workspace) {

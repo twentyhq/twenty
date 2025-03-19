@@ -131,41 +131,41 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       userWorkspace = await this.create(user.id, workspace.id);
 
       await this.createWorkspaceMember(workspace.id, user);
-    }
 
-    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-      workspace.id,
-      user.email,
-    );
+      let defaultRoleId = workspace.defaultRoleId;
 
-    let defaultRoleId = workspace.defaultRoleId;
+      if (!isDefined(defaultRoleId)) {
+        await this.workspaceRepository
+          .findOne({
+            where: {
+              id: workspace.id,
+            },
+          })
+          .then((workspace) => {
+            if (isDefined(workspace)) {
+              defaultRoleId = workspace.defaultRoleId;
+            }
+          });
+      }
 
-    if (!isDefined(defaultRoleId)) {
-      await this.workspaceRepository
-        .findOne({
-          where: {
-            id: workspace.id,
-          },
-        })
-        .then((workspace) => {
-          if (isDefined(workspace)) {
-            defaultRoleId = workspace.defaultRoleId;
-          }
-        });
-    }
+      if (!isDefined(defaultRoleId)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
+          PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+        );
+      }
 
-    if (!isDefined(defaultRoleId)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
-        PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceId: userWorkspace.id,
+        roleId: defaultRoleId,
+      });
+
+      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+        workspace.id,
+        user.email,
       );
     }
-
-    await this.userRoleService.assignRoleToUserWorkspace({
-      workspaceId: workspace.id,
-      userWorkspaceId: userWorkspace.id,
-      roleId: defaultRoleId,
-    });
 
     return {
       user,
