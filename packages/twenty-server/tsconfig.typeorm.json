@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.build.json",
+    "compilerOptions": {
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "declaration": false,
+        "declarationMap": false,
+        "baseUrl": ".",
+        "outDir": "./dist/cjs",
+        "incremental": false,
+        "tsBuildInfoFile": null,
+    },
+    "include": ["src/database/typeorm/core", "src/database/typeorm/metadata", "src/database/typeorm/raw"],
+  }
+  

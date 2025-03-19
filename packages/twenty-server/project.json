@@ -9,9 +9,24 @@
       "cache": true,
       "options": {
         "cwd": "packages/twenty-server",
-        "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
+        "commands": [
+          "rimraf dist/esm",
+          "nest build --path ./tsconfig.build.json",
+          "nx build:typeormcjs"
+        ]
       },
       "dependsOn": ["^build"]
+    },
+    "build:typeormcjs": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "rimraf dist/cjs",
+          "npx tsc --build tsconfig.typeorm.json && nx ts-node-no-deps-transpile-only -- ./scripts/rename-to-cjs.ts ./dist/cjs"
+        ]
+      }
     },
     "test:integration": {
       "executor": "nx:run-commands",
@@ -34,7 +49,7 @@
     "build:packageJson": {
       "executor": "@nx/js:tsc",
       "options": {
-        "main": "packages/twenty-server/dist/src/main.js",
+        "main": "packages/twenty-server/dist/esm/src/main.js",
         "tsConfig": "packages/twenty-server/tsconfig.json",
         "outputPath": "packages/twenty-server/dist",
         "updateBuildableProjectDepsInPackageJson": true
@@ -72,14 +87,14 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/src/command/command.js"
+        "command": "node dist/esm/src/command/command.js"
       }
     },
     "command-no-deps": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/src/command/command.js"
+        "command": "node dist/esm/src/command/command.js"
       }
     },
     "worker": {
@@ -87,7 +102,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/src/queue-worker/queue-worker.js"
+        "command": "node dist/esm/src/queue-worker/queue-worker.js"
       }
     },
     "typeorm": {

@@ -14,7 +14,7 @@
     "target": "es2017",
     "sourceMap": true,
     "inlineSources": true,
-    "outDir": "./dist",
+    "outDir": "./dist/esm",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
