@@ -179,13 +179,10 @@ export const PageChangeEffect = () => {
   const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
 
   useEffect(() => {
-    if (
-      isCaptchaScriptLoaded &&
-      isCaptchaRequiredForPath(window.location.pathname)
-    ) {
+    if (isCaptchaScriptLoaded && isCaptchaRequiredForPath(location.pathname)) {
       requestFreshCaptchaToken();
     }
-  }, [isCaptchaScriptLoaded, isMatchingLocation, requestFreshCaptchaToken]);
+  }, [isCaptchaScriptLoaded, location.pathname, requestFreshCaptchaToken]);
 
   return <></>;
 };
