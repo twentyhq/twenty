@@ -12,6 +12,8 @@ export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
       return getDatabaseEventTriggerStepName(trigger);
     case 'CRON':
       return 'On a Schedule';
+    case 'WEBHOOK':
+      return 'Webhook';
     case 'MANUAL':
       if (!isDefined(trigger.settings.objectType)) {
         return 'Manual trigger';
