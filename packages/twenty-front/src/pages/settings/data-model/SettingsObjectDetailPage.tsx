@@ -12,12 +12,13 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
 import {
@@ -68,7 +69,8 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemByNamePlural(objectNamePlural) ??
     findActiveObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  const { activeTabId } = useTabList(
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
     SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
 
@@ -169,11 +171,10 @@ export const SettingsObjectDetailPage = () => {
       >
         <SettingsPageContainer>
           <TabList
-            tabListInstanceId={
+            tabs={tabs}
+            componentInstanceId={
               SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
             }
-            tabs={tabs}
-            className="tab-list"
           />
           <StyledContentContainer>
             {renderActiveTabContent()}
