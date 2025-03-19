@@ -341,6 +341,7 @@ export class WorkflowTriggerWorkspaceService {
 
         return;
       case WorkflowTriggerType.MANUAL:
+      case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.CRON: {
         const pattern = computeCronPatternFromSchedule(workflowVersion.trigger);
@@ -383,6 +384,7 @@ export class WorkflowTriggerWorkspaceService {
 
         return;
       case WorkflowTriggerType.MANUAL:
+      case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.CRON:
         await this.messageQueueService.removeCron({
