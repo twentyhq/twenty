@@ -21,7 +21,12 @@ const StyledShowPageActivityContainer = styled.div`
 `;
 
 const StyledSkeletonContainer = styled.div`
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  gap: ${({ theme }) => theme.spacing(3)};
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
 const LoadingSkeleton = () => {
@@ -34,7 +39,9 @@ const LoadingSkeleton = () => {
         highlightColor={theme.background.transparent.lighter}
         borderRadius={theme.border.radius.sm}
       >
-        <Skeleton height={200} />
+        <Skeleton height={24} />
+        <Skeleton height={24} />
+        <Skeleton height={24} />
       </SkeletonTheme>
     </StyledSkeletonContainer>
   );
@@ -61,7 +68,7 @@ export const ShowPageActivityContainer = ({
   );
 
   if (!isDefined(activityBodyV2)) {
-    return <></>;
+    return <LoadingSkeleton />;
   }
 
   return (
