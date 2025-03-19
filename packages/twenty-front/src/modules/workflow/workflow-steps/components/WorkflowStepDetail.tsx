@@ -13,6 +13,7 @@ import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/compo
 import { Suspense, lazy } from 'react';
 import { isDefined } from 'twenty-shared';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { WorkflowEditTriggerWebhookForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm';
 
 const WorkflowEditActionServerlessFunction = lazy(() =>
   import(
@@ -79,6 +80,15 @@ export const WorkflowStepDetail = ({
         case 'MANUAL': {
           return (
             <WorkflowEditTriggerManualForm
+              key={stepId}
+              trigger={stepDefinition.definition}
+              triggerOptions={props}
+            />
+          );
+        }
+        case 'WEBHOOK': {
+          return (
+            <WorkflowEditTriggerWebhookForm
               key={stepId}
               trigger={stepDefinition.definition}
               triggerOptions={props}

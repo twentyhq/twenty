@@ -57,6 +57,16 @@ export const WorkflowDiagramStepNodeIcon = ({
             </StyledStepNodeLabelIconContainer>
           );
         }
+        case 'WEBHOOK': {
+          return (
+            <StyledStepNodeLabelIconContainer>
+              <Icon
+                size={theme.icon.size.md}
+                color={theme.font.color.tertiary}
+              />
+            </StyledStepNodeLabelIconContainer>
+          );
+        }
       }
 
       return assertUnreachable(data.triggerType);
