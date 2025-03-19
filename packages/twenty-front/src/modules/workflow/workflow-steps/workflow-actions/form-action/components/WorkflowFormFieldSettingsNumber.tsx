@@ -9,7 +9,7 @@ type WorkflowFormFieldSettingsNumberProps = {
   id: string;
   label?: string;
   placeholder?: string;
-  onFieldUpdate: (id: string, field: string, value: any) => void;
+  onFieldUpdate: (id: string, field: string, value: string | null) => void;
 };
 
 const StyledContainer = styled.div`

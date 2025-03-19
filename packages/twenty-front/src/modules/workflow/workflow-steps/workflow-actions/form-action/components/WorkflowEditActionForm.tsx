@@ -14,12 +14,13 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { FieldMetadataType, isDefined } from 'twenty-shared';
 import {
-    IconChevronDown,
-    IconChevronUp,
-    IconPlus,
-    IconTrash,
-    useIcons,
+  IconChevronDown,
+  IconChevronUp,
+  IconPlus,
+  IconTrash,
+  useIcons,
 } from 'twenty-ui';
+
 import { v4 } from 'uuid';
 
 export type WorkflowEditActionFormProps = {

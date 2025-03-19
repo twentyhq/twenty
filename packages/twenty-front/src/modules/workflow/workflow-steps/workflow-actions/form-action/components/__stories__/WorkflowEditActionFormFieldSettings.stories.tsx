@@ -56,8 +56,6 @@ export const TextFieldSettings: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Input settings');
-
     const typeSelect = await canvas.findByText('Text');
     expect(typeSelect).toBeInTheDocument();
 
@@ -106,8 +104,6 @@ export const NumberFieldSettings: Story = {
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-
-    await canvas.findByText('Input settings');
 
     const typeSelect = await canvas.findByText('Number');
     expect(typeSelect).toBeInTheDocument();

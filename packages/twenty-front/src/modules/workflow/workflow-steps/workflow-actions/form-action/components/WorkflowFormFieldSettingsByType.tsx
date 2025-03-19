@@ -8,7 +8,7 @@ export const WorkflowFormFieldSettingsByType = ({
   onFieldUpdate,
 }: {
   field: WorkflowFormActionField;
-  onFieldUpdate: (id: string, field: string, value: any) => void;
+  onFieldUpdate: (id: string, field: string, value: string | null) => void;
 }) => {
   switch (field.type) {
     case FieldMetadataType.TEXT:

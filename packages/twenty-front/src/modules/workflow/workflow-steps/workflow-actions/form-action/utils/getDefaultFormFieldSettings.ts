@@ -10,7 +10,7 @@ export const getDefaultFormFieldSettings = (type: FieldMetadataType) => {
     case FieldMetadataType.NUMBER:
       return {
         label: 'Number',
-        placeholder: '1,000',
+        placeholder: '1000',
       };
     default:
       return {
