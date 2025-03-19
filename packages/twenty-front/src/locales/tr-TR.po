@@ -69,7 +69,7 @@ msgstr ": Bugün"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "[empty string]"
-msgstr ""
+msgstr "[boş dize]"
 
 #. js-lingui-id: J/hVSQ
 #. placeholder {0}: theme.id

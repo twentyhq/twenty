@@ -69,7 +69,7 @@ msgstr ": I dag"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "[empty string]"
-msgstr ""
+msgstr "[tom streng]"
 
 #. js-lingui-id: J/hVSQ
 #. placeholder {0}: theme.id
@@ -939,7 +939,7 @@ msgstr "Kopier lenke for å vise"
 #. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
-msgstr "Kopier denne n\fkelen da den ikke vil v\fre synlig igjen"
+msgstr "Kopier denne nøkelen da den ikke vil vre synlig igjen"
 
 #. js-lingui-id: SGsgDO
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx

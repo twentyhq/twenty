@@ -69,7 +69,7 @@ msgstr ": I dag"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "[empty string]"
-msgstr ""
+msgstr "[tom streng]"
 
 #. js-lingui-id: J/hVSQ
 #. placeholder {0}: theme.id
