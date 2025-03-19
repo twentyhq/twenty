@@ -1,10 +1,10 @@
+import { RelationType } from 'typeorm/metadata/types/RelationTypes.js';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
-import { RelationType } from 'typeorm/metadata/types/RelationTypes.js';
 
 interface RelationDetails {
   relationType: RelationType;

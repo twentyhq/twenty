@@ -8,7 +8,7 @@ import {
   FindOptionsWhere,
   In,
   ObjectLiteral,
-  Repository
+  Repository,
 } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
