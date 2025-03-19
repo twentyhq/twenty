@@ -243,16 +243,18 @@ export class SignInUpService {
 
     const user = Object.assign(currentUser, updatedUser);
 
-    if (params.userData.type === 'newUserWithPicture') {
-      await this.activateOnboardingForUser(user, params.workspace);
-    }
+    const isSignUp = params.userData.type === 'newUserWithPicture';
 
-    if (params.workspace.defaultRoleId) {
-      await this.userRoleService.assignRoleToUserWorkspace({
-        workspaceId: params.workspace.id,
-        userWorkspaceId: userWorkspace.id,
-        roleId: params.workspace.defaultRoleId,
-      });
+    if (isSignUp) {
+      await this.activateOnboardingForUser(user, params.workspace);
+
+      if (params.workspace.defaultRoleId) {
+        await this.userRoleService.assignRoleToUserWorkspace({
+          workspaceId: params.workspace.id,
+          userWorkspaceId: userWorkspace.id,
+          roleId: params.workspace.defaultRoleId,
+        });
+      }
     }
 
     return user;
