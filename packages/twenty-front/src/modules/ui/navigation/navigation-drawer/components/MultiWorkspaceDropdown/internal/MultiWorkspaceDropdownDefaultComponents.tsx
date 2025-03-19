@@ -127,41 +127,49 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       >
         {currentWorkspace?.displayName}
       </DropdownMenuHeader>
-      <StyledDropdownMenuItemsContainer>
-        {workspaces
-          .filter(({ id }) => id !== currentWorkspace?.id)
-          .slice(0, 3)
-          .map((workspace) => (
-            <UndecoratedLink
-              key={workspace.id}
-              to={buildWorkspaceUrl(getWorkspaceUrl(workspace.workspaceUrls))}
-              onClick={(event) => {
-                event?.preventDefault();
-                handleChange(workspace);
-              }}
-            >
-              <MenuItemSelectAvatar
-                text={workspace.displayName ?? '(No name)'}
-                avatar={
-                  <Avatar
-                    placeholder={workspace.displayName || ''}
-                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+      {workspaces.length > 1 && (
+        <>
+          <StyledDropdownMenuItemsContainer>
+            {workspaces
+              .filter(({ id }) => id !== currentWorkspace?.id)
+              .slice(0, 3)
+              .map((workspace) => (
+                <UndecoratedLink
+                  key={workspace.id}
+                  to={buildWorkspaceUrl(
+                    getWorkspaceUrl(workspace.workspaceUrls),
+                  )}
+                  onClick={(event) => {
+                    event?.preventDefault();
+                    handleChange(workspace);
+                  }}
+                >
+                  <MenuItemSelectAvatar
+                    text={workspace.displayName ?? '(No name)'}
+                    avatar={
+                      <Avatar
+                        placeholder={workspace.displayName || ''}
+                        avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                      />
+                    }
+                    selected={false}
                   />
+                </UndecoratedLink>
+              ))}
+            {workspaces.length > 4 && (
+              <MenuItem
+                LeftIcon={IconSwitchHorizontal}
+                text={t`Other workspaces`}
+                onClick={() =>
+                  setMultiWorkspaceDropdownState('workspaces-list')
                 }
-                selected={false}
+                hasSubMenu={true}
               />
-            </UndecoratedLink>
-          ))}
-        {workspaces.length > 4 && (
-          <MenuItem
-            LeftIcon={IconSwitchHorizontal}
-            text={t`Other workspaces`}
-            onClick={() => setMultiWorkspaceDropdownState('workspaces-list')}
-            hasSubMenu={true}
-          />
-        )}
-      </StyledDropdownMenuItemsContainer>
-      {workspaces.length > 1 && <DropdownMenuSeparator />}
+            )}
+          </StyledDropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+        </>
+      )}
       <StyledDropdownMenuItemsContainer>
         <MenuItem
           LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
