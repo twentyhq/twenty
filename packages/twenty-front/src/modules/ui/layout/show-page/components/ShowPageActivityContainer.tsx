@@ -1,7 +1,6 @@
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -49,24 +48,23 @@ export const ShowPageActivityContainer = ({
     'targetObjectNameSingular' | 'id'
   >;
 }) => {
-  const isNewViewableRecordLoading = useRecoilValue(
-    isNewViewableRecordLoadingState,
-  );
-
   const activityObjectNameSingular =
     targetableObject.targetObjectNameSingular as
       | CoreObjectNameSingular.Note
       | CoreObjectNameSingular.Task;
 
-  const recordFromStore = useRecoilValue(
-    recordStoreFamilyState(targetableObject.id),
+  const activityBodyV2 = useRecoilValue(
+    recordStoreFamilySelector({
+      recordId: targetableObject.id,
+      fieldName: 'bodyV2',
+    }),
   );
 
-  if (!isDefined(recordFromStore)) {
+  if (!isDefined(activityBodyV2)) {
     return <></>;
   }
 
-  return !isNewViewableRecordLoading ? (
+  return (
     <ScrollWrapper
       contextProviderName="showPageActivityContainer"
       componentInstanceId={`scroll-wrapper-tab-list-${targetableObject.id}`}
@@ -80,7 +78,5 @@ export const ShowPageActivityContainer = ({
         </Suspense>
       </StyledShowPageActivityContainer>
     </ScrollWrapper>
-  ) : (
-    <></>
   );
 };
