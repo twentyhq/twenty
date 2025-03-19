@@ -1,5 +1,6 @@
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
@@ -9,6 +10,10 @@ import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
+import {
+  WorkflowRunTabId,
+  WorkflowRunTabIdType,
+} from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import styled from '@emotion/styled';
@@ -20,7 +25,7 @@ const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-type TabId = 'node' | 'input' | 'output';
+type TabId = WorkflowRunTabIdType;
 
 export const CommandMenuWorkflowRunViewStep = () => {
   const flow = useFlowOrThrow();
@@ -29,7 +34,8 @@ export const CommandMenuWorkflowRunViewStep = () => {
 
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  const { activeTabId } = useTabList<TabId>(
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
     WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
   );
 
@@ -46,15 +52,15 @@ export const CommandMenuWorkflowRunViewStep = () => {
     stepExecutionStatus === 'not-executed';
 
   const tabs: SingleTabProps<TabId>[] = [
-    { id: 'node', title: 'Node', Icon: IconStepInto },
+    { id: WorkflowRunTabId.NODE, title: 'Node', Icon: IconStepInto },
     {
-      id: 'input',
+      id: WorkflowRunTabId.INPUT,
       title: 'Input',
       Icon: IconLogin2,
       disabled: areInputAndOutputTabsDisabled,
     },
     {
-      id: 'output',
+      id: WorkflowRunTabId.OUTPUT,
       title: 'Output',
       Icon: IconLogout,
       disabled: areInputAndOutputTabsDisabled,
@@ -70,12 +76,12 @@ export const CommandMenuWorkflowRunViewStep = () => {
       value={{ workflowVersionId: workflowRun.workflowVersionId }}
     >
       <StyledTabList
-        tabListInstanceId={WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID}
         tabs={tabs}
         behaveAsLinks={false}
+        componentInstanceId={WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID}
       />
 
-      {activeTabId === 'node' ? (
+      {activeTabId === WorkflowRunTabId.NODE ? (
         <WorkflowStepDetail
           readonly
           stepId={workflowSelectedNode}
@@ -84,14 +90,14 @@ export const CommandMenuWorkflowRunViewStep = () => {
         />
       ) : null}
 
-      {activeTabId === 'input' ? (
+      {activeTabId === WorkflowRunTabId.INPUT ? (
         <WorkflowRunStepInputDetail
           key={workflowSelectedNode}
           stepId={workflowSelectedNode}
         />
       ) : null}
 
-      {activeTabId === 'output' ? (
+      {activeTabId === WorkflowRunTabId.OUTPUT ? (
         <WorkflowRunStepOutputDetail
           key={workflowSelectedNode}
           stepId={workflowSelectedNode}
