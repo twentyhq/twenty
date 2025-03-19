@@ -1,4 +1,4 @@
-import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/constants/ShowPageTabListComponentId';
+import { SHOW_PAGE_RIGHT_TAB_LIST } from '@/ui/layout/show-page/constants/ShowPageTabListComponentId';
 
 export const getShowPageTabListComponentId = ({
   pageId,
@@ -8,5 +8,5 @@ export const getShowPageTabListComponentId = ({
   targetObjectId: string;
 }): string => {
   const id = pageId || targetObjectId;
-  return `${TAB_LIST_COMPONENT_ID}-${id}`;
+  return `${SHOW_PAGE_RIGHT_TAB_LIST}-${id}`;
 };
