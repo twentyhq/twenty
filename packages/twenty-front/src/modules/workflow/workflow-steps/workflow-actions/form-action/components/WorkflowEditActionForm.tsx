@@ -5,11 +5,13 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
+import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldMetadataType, isDefined } from 'twenty-shared';
 import {
   IconChevronDown,
@@ -18,9 +20,11 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
+
 import { v4 } from 'uuid';
 
-type WorkflowEditActionFormProps = {
+export type WorkflowEditActionFormProps = {
   action: WorkflowFormAction;
   actionOptions:
     | {
@@ -31,6 +35,16 @@ type WorkflowEditActionFormProps = {
         onActionUpdate: (action: WorkflowFormAction) => void;
       };
 };
+
+export type WorkflowFormActionField = {
+  id: string;
+  label: string;
+  type: FieldMetadataType.TEXT | FieldMetadataType.NUMBER;
+  placeholder?: string;
+  settings?: Record<string, unknown>;
+};
+
+type FormData = WorkflowFormActionField[];
 
 const StyledRowContainer = styled.div`
   column-gap: ${({ theme }) => theme.spacing(1)};
@@ -92,6 +106,9 @@ export const WorkflowEditActionForm = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { t } = useLingui();
+
+  const [formData, setFormData] = useState<FormData>(action.settings.input);
+
   const headerTitle = isDefined(action.name) ? action.name : `Form`;
   const headerIcon = getActionIcon(action.type);
   const [selectedField, setSelectedField] = useState<string | null>(null);
@@ -107,6 +124,40 @@ export const WorkflowEditActionForm = ({
       setSelectedField(fieldName);
     }
   };
+
+  const onFieldUpdate = (updatedField: WorkflowFormActionField) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    const updatedFormData = formData.map((currentField) =>
+      currentField.id === updatedField.id ? updatedField : currentField,
+    );
+
+    setFormData(updatedFormData);
+
+    saveAction(updatedFormData);
+  };
+
+  const saveAction = useDebouncedCallback(async (formData: FormData) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    actionOptions.onActionUpdate({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: formData,
+      },
+    });
+  }, 1_000);
+
+  useEffect(() => {
+    return () => {
+      saveAction.flush();
+    };
+  }, [saveAction]);
 
   return (
     <>
@@ -128,7 +179,7 @@ export const WorkflowEditActionForm = ({
         disabled={actionOptions.readonly}
       />
       <WorkflowStepBody>
-        {action.settings.input.map((field) => (
+        {formData.map((field) => (
           <FormFieldInputContainer key={field.id}>
             {field.label ? <InputLabel>{field.label}</InputLabel> : null}
 
@@ -166,18 +217,31 @@ export const WorkflowEditActionForm = ({
                         return;
                       }
 
+                      const updatedFormData = formData.filter(
+                        (currentField) => currentField.id !== field.id,
+                      );
+
+                      setFormData(updatedFormData);
+
                       actionOptions.onActionUpdate({
                         ...action,
                         settings: {
                           ...action.settings,
-                          input: action.settings.input.filter(
-                            (f) => f.id !== field.id,
-                          ),
+                          input: updatedFormData,
                         },
                       });
                     }}
                   />
                 </StyledIconButtonContainer>
+              )}
+              {isFieldSelected(field.id) && (
+                <WorkflowEditActionFormFieldSettings
+                  field={field}
+                  onChange={onFieldUpdate}
+                  onClose={() => {
+                    setSelectedField(null);
+                  }}
+                />
               )}
             </StyledRowContainer>
           </FormFieldInputContainer>
@@ -189,20 +253,24 @@ export const WorkflowEditActionForm = ({
                 <FormFieldInputInputContainer
                   hasRightElement={false}
                   onClick={() => {
+                    const { label, placeholder } = getDefaultFormFieldSettings(
+                      FieldMetadataType.TEXT,
+                    );
+
+                    const newField: WorkflowFormActionField = {
+                      id: v4(),
+                      type: FieldMetadataType.TEXT,
+                      label,
+                      placeholder,
+                    };
+
+                    setFormData([...formData, newField]);
+
                     actionOptions.onActionUpdate({
                       ...action,
                       settings: {
                         ...action.settings,
-                        input: [
-                          ...action.settings.input,
-                          {
-                            id: v4(),
-                            type: FieldMetadataType.TEXT,
-                            label: 'New Field',
-                            placeholder: 'New Field',
-                            settings: {},
-                          },
-                        ],
+                        input: [...action.settings.input, newField],
                       },
                     });
                   }}

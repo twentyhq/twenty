@@ -88,9 +88,12 @@ export const workflowFormActionSettingsSchema =
       z.object({
         id: z.string().uuid(),
         label: z.string(),
-        type: z.nativeEnum(FieldMetadataType),
+        type: z.union([
+          z.literal(FieldMetadataType.TEXT),
+          z.literal(FieldMetadataType.NUMBER),
+        ]),
         placeholder: z.string().optional(),
-        settings: z.record(z.any()),
+        settings: z.record(z.any()).optional(),
       }),
     ),
   });
