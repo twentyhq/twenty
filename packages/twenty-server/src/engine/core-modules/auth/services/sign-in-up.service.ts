@@ -227,9 +227,9 @@ export class SignInUpService {
     await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
 
     let currentUser: User;
-    const isSigningUpOnTwenty = params.userData.type === 'newUserWithPicture';
+    const isNewUser = params.userData.type === 'newUserWithPicture';
 
-    if (isSigningUpOnTwenty) {
+    if (isNewUser) {
       const userData = params.userData as {
         type: 'newUserWithPicture';
         newUserWithPicture: PartialUserWithPicture;
