@@ -157,16 +157,15 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       objectMetadataItemWithFieldsMaps,
     );
 
-    await repository.update(workflowActionInput.objectRecordId, {
-      ...objectRecordFormatted,
-    });
-
     const updatedObjectRecord = {
       ...previousObjectRecord,
       ...objectRecordWithFilteredFields,
     };
 
     if (!deepEqual(updatedObjectRecord, previousObjectRecord)) {
+      await repository.update(workflowActionInput.objectRecordId, {
+        ...objectRecordFormatted,
+      });
       this.workspaceEventEmitter.emitDatabaseBatchEvent({
         objectMetadataNameSingular: workflowActionInput.objectName,
         action: DatabaseEventAction.UPDATED,
