@@ -69,7 +69,7 @@ msgstr ": Hoje"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "[empty string]"
-msgstr ""
+msgstr "[string vazia]"
 
 #. js-lingui-id: J/hVSQ
 #. placeholder {0}: theme.id
