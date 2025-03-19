@@ -14,7 +14,8 @@ export class ScopedWorkspaceContextFactory {
     workspaceMetadataVersion: number | null;
   } {
     const workspaceId: string | undefined =
-      this.request?.['req']?.['workspaceId'];
+      this.request?.['req']?.['workspaceId'] ||
+      this.request?.['params']?.['workspaceId'];
     const workspaceMetadataVersion: number | undefined =
       this.request?.['req']?.['workspaceMetadataVersion'];
 
