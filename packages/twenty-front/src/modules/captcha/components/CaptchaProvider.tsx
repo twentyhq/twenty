@@ -2,9 +2,12 @@ import React from 'react';
 
 import { CaptchaProviderScriptLoaderEffect } from '@/captcha/components/CaptchaProviderScriptLoaderEffect';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
+import { useLocation } from 'react-router-dom';
 
 export const CaptchaProvider = ({ children }: React.PropsWithChildren) => {
-  if (!isCaptchaRequiredForPath(window.location.pathname)) {
+  const location = useLocation();
+
+  if (!isCaptchaRequiredForPath(location.pathname)) {
     return <>{children}</>;
   }
 
