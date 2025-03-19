@@ -366,7 +366,7 @@ describe('SignInUpService', () => {
     expect(WorkspaceRepository.save).toHaveBeenCalled();
   });
 
-  it('should assign default role when permissions are enabled', async () => {
+  it('should not assign default role when permissions are enabled and user exists', async () => {
     const params: SignInUpBaseParams &
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType = {
@@ -385,6 +385,49 @@ describe('SignInUpService', () => {
     const mockUserWorkspace = { id: 'userWorkspaceId' };
 
     jest.spyOn(featureFlagService, 'isFeatureEnabled').mockResolvedValue(true);
+    jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
+      user: {} as User,
+      userWorkspace: mockUserWorkspace as UserWorkspace,
+    });
+
+    await service.signInUp(params);
+
+    expect(params.workspace).toBeDefined();
+    expect(userRoleService.assignRoleToUserWorkspace).not.toHaveBeenCalled();
+  });
+
+  it('should assign default role when permissions are enabled and user does not exist', async () => {
+    const params: SignInUpBaseParams &
+      ExistingUserOrPartialUserWithPicture &
+      AuthProviderWithPasswordType = {
+      workspace: {
+        id: 'workspaceId',
+        defaultRoleId: 'defaultRoleId',
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as Workspace,
+      authParams: { provider: 'password', password: 'validPassword' },
+      userData: {
+        type: 'newUserWithPicture',
+        newUserWithPicture: {
+          email: 'newuser@example.com',
+          picture: 'pictureUrl',
+        },
+      },
+    };
+
+    const mockUserWorkspace = { id: 'userWorkspaceId' };
+
+    jest.spyOn(featureFlagService, 'isFeatureEnabled').mockResolvedValue(true);
+
+    jest.spyOn(fileUploadService, 'uploadImage').mockResolvedValue({
+      id: '',
+      mimeType: '',
+      paths: ['path/to/image'],
+    });
+    jest.spyOn(UserRepository, 'create').mockReturnValue({} as User);
+    jest
+      .spyOn(UserRepository, 'save')
+      .mockResolvedValue({ id: 'newUserId' } as User);
     jest.spyOn(userWorkspaceService, 'addUserToWorkspace').mockResolvedValue({
       user: {} as User,
       userWorkspace: mockUserWorkspace as UserWorkspace,

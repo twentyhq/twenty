@@ -1,7 +1,6 @@
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -15,24 +14,14 @@ export const useCreateNewTableRecordNoSelectionRecordAction: ActionHookWithObjec
       throw new Error('Current view ID is not defined');
     }
 
-    const recordTableId = getRecordIndexIdFromObjectNamePluralAndViewId(
-      objectMetadataItem.namePlural,
-      currentViewId,
-    );
-
     const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
-    const { createNewTableRecord } = useCreateNewTableRecord({
+    const { createNewIndexRecord } = useCreateNewIndexRecord({
       objectMetadataItem,
-      recordTableId,
     });
-
-    const onClick = () => {
-      createNewTableRecord();
-    };
 
     return {
       shouldBeRegistered: !hasObjectReadOnlyPermission,
-      onClick,
+      onClick: createNewIndexRecord,
     };
   };

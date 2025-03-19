@@ -1,5 +1,5 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { isNewViewableRecordLoadingComponentState } from '@/command-menu/pages/record-page/states/isNewViewableRecordLoadingComponentState';
+import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
@@ -7,6 +7,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
+import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
@@ -27,14 +28,12 @@ export const CommandMenuRecordPage = () => {
   const viewableRecordNameSingular = useRecoilComponentValueV2(
     viewableRecordNameSingularComponentState,
   );
-  const isNewViewableRecordLoading = useRecoilComponentValueV2(
-    isNewViewableRecordLoadingComponentState,
-  );
+
   const viewableRecordId = useRecoilComponentValueV2(
     viewableRecordIdComponentState,
   );
 
-  if (!viewableRecordNameSingular && !isNewViewableRecordLoading) {
+  if (!viewableRecordNameSingular) {
     throw new Error(`Object name is not defined`);
   }
 
@@ -71,16 +70,23 @@ export const CommandMenuRecordPage = () => {
             >
               <StyledRightDrawerRecord isMobile={isMobile}>
                 <RecordFieldValueSelectorContextProvider>
-                  {!isNewViewableRecordLoading && (
-                    <RecordValueSetterEffect recordId={objectRecordId} />
-                  )}
-                  <RecordShowContainer
-                    objectNameSingular={objectNameSingular}
-                    objectRecordId={objectRecordId}
-                    loading={false}
-                    isInRightDrawer={true}
-                    isNewRightDrawerItemLoading={isNewViewableRecordLoading}
-                  />
+                  <RecordValueSetterEffect recordId={objectRecordId} />
+                  <TimelineActivityContext.Provider
+                    value={{
+                      recordId: objectRecordId,
+                    }}
+                  >
+                    <RecordShowEffect
+                      objectNameSingular={objectNameSingular}
+                      recordId={objectRecordId}
+                    />
+                    <RecordShowContainer
+                      objectNameSingular={objectNameSingular}
+                      objectRecordId={objectRecordId}
+                      loading={false}
+                      isInRightDrawer={true}
+                    />
+                  </TimelineActivityContext.Provider>
                 </RecordFieldValueSelectorContextProvider>
               </StyledRightDrawerRecord>
             </ActionMenuComponentInstanceContext.Provider>

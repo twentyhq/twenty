@@ -1,10 +1,12 @@
+import {
+  LISTING_NAME_PLURAL,
+  LISTING_NAME_SINGULAR,
+} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-const LISTING_NAME_SINGULAR = 'listing';
-
 const LISTING_OBJECT = {
-  namePlural: 'listings',
+  namePlural: LISTING_NAME_PLURAL,
   nameSingular: LISTING_NAME_SINGULAR,
   labelPlural: 'Listings',
   labelSingular: 'Listing',

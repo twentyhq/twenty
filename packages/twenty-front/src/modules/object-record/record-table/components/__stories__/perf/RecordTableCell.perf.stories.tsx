@@ -90,7 +90,6 @@ const meta: Meta = {
               >
                 <RecordTableBodyContextProvider
                   value={{
-                    onUpsertRecord: () => {},
                     onOpenTableCell: () => {},
                     onMoveFocus: () => {},
                     onCloseTableCell: () => {},

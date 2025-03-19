@@ -1,12 +1,13 @@
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -20,7 +21,12 @@ const StyledShowPageActivityContainer = styled.div`
 `;
 
 const StyledSkeletonContainer = styled.div`
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  gap: ${({ theme }) => theme.spacing(3)};
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
 const LoadingSkeleton = () => {
@@ -33,7 +39,9 @@ const LoadingSkeleton = () => {
         highlightColor={theme.background.transparent.lighter}
         borderRadius={theme.border.radius.sm}
       >
-        <Skeleton height={200} />
+        <Skeleton height={24} />
+        <Skeleton height={24} />
+        <Skeleton height={24} />
       </SkeletonTheme>
     </StyledSkeletonContainer>
   );
@@ -47,16 +55,23 @@ export const ShowPageActivityContainer = ({
     'targetObjectNameSingular' | 'id'
   >;
 }) => {
-  const isNewViewableRecordLoading = useRecoilValue(
-    isNewViewableRecordLoadingState,
-  );
-
   const activityObjectNameSingular =
     targetableObject.targetObjectNameSingular as
       | CoreObjectNameSingular.Note
       | CoreObjectNameSingular.Task;
 
-  return !isNewViewableRecordLoading ? (
+  const activityBodyV2 = useRecoilValue(
+    recordStoreFamilySelector({
+      recordId: targetableObject.id,
+      fieldName: 'bodyV2',
+    }),
+  );
+
+  if (!isDefined(activityBodyV2)) {
+    return <LoadingSkeleton />;
+  }
+
+  return (
     <ScrollWrapper
       contextProviderName="showPageActivityContainer"
       componentInstanceId={`scroll-wrapper-tab-list-${targetableObject.id}`}
@@ -70,7 +85,5 @@ export const ShowPageActivityContainer = ({
         </Suspense>
       </StyledShowPageActivityContainer>
     </ScrollWrapper>
-  ) : (
-    <></>
   );
 };

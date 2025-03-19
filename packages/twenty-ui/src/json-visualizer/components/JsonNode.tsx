@@ -1,4 +1,10 @@
-import { isBoolean, isNull, isNumber, isString } from '@sniptt/guards';
+import {
+  isBoolean,
+  isNonEmptyString,
+  isNull,
+  isNumber,
+  isString,
+} from '@sniptt/guards';
 import {
   IconCheckbox,
   IconCircleOff,
@@ -23,7 +29,7 @@ export const JsonNode = ({
   depth: number;
   keyPath: string;
 }) => {
-  const { shouldHighlightNode } = useJsonTreeContextOrThrow();
+  const { shouldHighlightNode, emptyStringLabel } = useJsonTreeContextOrThrow();
 
   const isHighlighted = shouldHighlightNode?.(keyPath) ?? false;
 
@@ -31,7 +37,7 @@ export const JsonNode = ({
     return (
       <JsonValueNode
         label={label}
-        valueAsString="[null]"
+        valueAsString="null"
         Icon={IconCircleOff}
         isHighlighted={isHighlighted}
       />
@@ -42,7 +48,7 @@ export const JsonNode = ({
     return (
       <JsonValueNode
         label={label}
-        valueAsString={value}
+        valueAsString={isNonEmptyString(value) ? value : emptyStringLabel}
         Icon={IconTypography}
         isHighlighted={isHighlighted}
       />
