@@ -11,7 +11,7 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldMetadataType, isDefined } from 'twenty-shared';
 import {
   IconChevronDown,
@@ -20,6 +20,7 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { v4 } from 'uuid';
 
@@ -124,25 +125,39 @@ export const WorkflowEditActionForm = ({
     }
   };
 
-  const onFieldUpdate = (field: WorkflowFormActionField) => {
+  const onFieldUpdate = (updatedField: WorkflowFormActionField) => {
     if (actionOptions.readonly === true) {
       return;
     }
 
-    const updatedFormData = formData.map((f) =>
-      f.id === field.id ? field : f,
+    const updatedFormData = formData.map((currentField) =>
+      currentField.id === updatedField.id ? updatedField : currentField,
     );
 
     setFormData(updatedFormData);
+
+    saveAction(updatedFormData);
+  };
+
+  const saveAction = useDebouncedCallback(async (formData: FormData) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
 
     actionOptions.onActionUpdate({
       ...action,
       settings: {
         ...action.settings,
-        input: updatedFormData,
+        input: formData,
       },
     });
-  };
+  }, 1_000);
+
+  useEffect(() => {
+    return () => {
+      saveAction.flush();
+    };
+  }, [saveAction]);
 
   return (
     <>
@@ -164,7 +179,7 @@ export const WorkflowEditActionForm = ({
         disabled={actionOptions.readonly}
       />
       <WorkflowStepBody>
-        {action.settings.input.map((field) => (
+        {formData.map((field) => (
           <FormFieldInputContainer key={field.id}>
             {field.label ? <InputLabel>{field.label}</InputLabel> : null}
 
@@ -203,7 +218,7 @@ export const WorkflowEditActionForm = ({
                       }
 
                       const updatedFormData = formData.filter(
-                        (f) => f.id !== field.id,
+                        (currentField) => currentField.id !== field.id,
                       );
 
                       setFormData(updatedFormData);
