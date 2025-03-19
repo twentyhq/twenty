@@ -146,7 +146,7 @@ export class MessagingMessagesImportService {
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
 
-      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreationJob(
+      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
         messagesToSave,
         messageChannel,
         connectedAccount,
