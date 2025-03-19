@@ -27,6 +27,8 @@ import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
+const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
+
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
@@ -212,7 +214,7 @@ export const SettingsServerlessFunctionDetail = () => {
           <TabList
             tabs={tabs}
             behaveAsLinks={false}
-            componentInstanceId="serverless-function-detail"
+            componentInstanceId={SERVERLESS_FUNCTION_DETAIL_ID}
           />
           {renderActiveTabContent()}
         </SettingsPageContainer>

@@ -27,6 +27,7 @@ import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
+import { SETTINGS_ADMIN_GENERAL_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminGeneralTabsId';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
@@ -202,7 +203,7 @@ export const SettingsAdminGeneral = () => {
               <TabList
                 tabs={tabs}
                 behaveAsLinks={false}
-                componentInstanceId="settings-admin-workspaces-tab-list"
+                componentInstanceId={SETTINGS_ADMIN_GENERAL_TABS_ID}
               />
             </StyledTabListContainer>
 
