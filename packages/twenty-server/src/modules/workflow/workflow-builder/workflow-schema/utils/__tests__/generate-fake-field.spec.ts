@@ -6,7 +6,7 @@ import { FieldMetadataType } from 'twenty-shared';
 jest.mock('src/engine/utils/generate-fake-value');
 jest.mock('src/utils/camel-to-title-case');
 jest.mock('src/engine/metadata-modules/field-metadata/composite-types', () => {
-  const actualTypes = jest.requireActual('twenty-shared/types');
+  const actualTypes = jest.requireActual('twenty-shared');
   const { FieldMetadataType } = actualTypes;
 
   const mockMap = new Map();
