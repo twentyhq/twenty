@@ -172,7 +172,9 @@ export const SettingsObjectDetailPage = () => {
         <SettingsPageContainer>
           <TabList
             tabs={tabs}
-            componentInstanceId={`settings-object-detail-${objectMetadataItem.labelSingular}-tabs`}
+            componentInstanceId={
+              SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
+            }
           />
           <StyledContentContainer>
             {renderActiveTabContent()}
