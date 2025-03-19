@@ -84,13 +84,14 @@ export class CreateCompanyAndContactService {
     });
 
     const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
-      ({ emails }) => emails?.primaryEmail,
+      ({ emails }) => emails?.primaryEmail?.toLowerCase(),
     );
 
     const filteredContactsToCreate = uniqueContacts.filter(
       (participant) =>
-        !alreadyCreatedContactEmails.includes(participant.handle) &&
-        participant.handle.includes('@'),
+        !alreadyCreatedContactEmails.includes(
+          participant.handle.toLowerCase(),
+        ) && participant.handle.includes('@'),
     );
 
     const filteredContactsToCreateWithCompanyDomainNames =

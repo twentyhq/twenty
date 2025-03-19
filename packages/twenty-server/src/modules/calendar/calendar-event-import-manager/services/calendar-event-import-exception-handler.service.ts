@@ -85,7 +85,10 @@ export class CalendarEventImportErrorHandlerService {
         workspaceId,
       );
 
-      return;
+      throw new CalendarEventImportException(
+        `Unknown temporary error occurred while importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId} with throttleFailureCount${calendarChannel.throttleFailureCount}`,
+        CalendarEventImportExceptionCode.UNKNOWN,
+      );
     }
 
     const calendarChannelRepository =
