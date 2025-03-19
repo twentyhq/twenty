@@ -1,16 +1,8 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
-import { DatabaseEventTriggerService } from 'src/modules/workflow/workflow-trigger/database-event-trigger/database-event-trigger.service';
+import { TraceableEventListener } from 'src/modules/traceable/traceable.listener';
 
 @Module({
-  providers: [DatabaseEventTriggerService],
+  providers: [TraceableEventListener],
 })
-export class TraceableModule implements OnModuleInit {
-  constructor(
-    private readonly databaseEventTriggerService: DatabaseEventTriggerService,
-  ) {}
-
-  async onModuleInit() {
-    await this.databaseEventTriggerService.registerTraceableSubscriber();
-  }
-}
+export class TraceableModule {}
