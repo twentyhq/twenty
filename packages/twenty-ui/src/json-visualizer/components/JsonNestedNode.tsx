@@ -5,6 +5,7 @@ import { JsonArrow } from '@ui/json-visualizer/components/internal/JsonArrow';
 import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
+import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { ANIMATION } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
@@ -49,9 +50,13 @@ export const JsonNestedNode = ({
   depth: number;
   keyPath: string;
 }) => {
+  const { shouldExpandNodeInitially } = useJsonTreeContextOrThrow();
+
   const hideRoot = !isDefined(label);
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(
+    shouldExpandNodeInitially({ keyPath, depth }),
+  );
 
   const renderedChildren = (
     <StyledJsonList

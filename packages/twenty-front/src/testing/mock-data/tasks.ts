@@ -26,7 +26,6 @@ export const mockedTasks: Array<MockedTask> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
     title: 'My very first note',
-    body: null,
     bodyV2: {
       blocknote: null,
       markdown: null,

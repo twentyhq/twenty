@@ -86,11 +86,17 @@ export const CommandMenuWorkflowRunViewStep = () => {
         ) : null}
 
         {activeTabId === 'input' ? (
-          <WorkflowRunStepInputDetail stepId={workflowSelectedNode} />
+          <WorkflowRunStepInputDetail
+            key={workflowSelectedNode}
+            stepId={workflowSelectedNode}
+          />
         ) : null}
 
         {activeTabId === 'output' ? (
-          <WorkflowRunStepOutputDetail stepId={workflowSelectedNode} />
+          <WorkflowRunStepOutputDetail
+            key={workflowSelectedNode}
+            stepId={workflowSelectedNode}
+          />
         ) : null}
       </WorkflowStepContextProvider>
     </ActiveTabComponentInstanceContext.Provider>
