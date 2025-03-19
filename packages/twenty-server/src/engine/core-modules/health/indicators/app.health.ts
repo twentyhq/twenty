@@ -20,10 +20,18 @@ export class AppHealthIndicator {
 
   async isHealthy(): Promise<HealthIndicatorResult> {
     const indicator = this.healthIndicatorService.check('app');
+    const SAMPLE_SIZE = 100;
 
     try {
       const workspaces = await this.objectMetadataService.findMany();
-      const workspaceIds = [...new Set(workspaces.map((w) => w.workspaceId))];
+      const allWorkspaceIds = [
+        ...new Set(workspaces.map((w) => w.workspaceId)),
+      ];
+
+      const workspaceIds = this.getDistributedSample(
+        allWorkspaceIds,
+        SAMPLE_SIZE,
+      );
 
       const workspaceStats = await Promise.all(
         workspaceIds.map(async (workspaceId) => {
@@ -46,7 +54,8 @@ export class AppHealthIndicator {
           timestamp: new Date().toISOString(),
         },
         overview: {
-          totalWorkspacesCount: workspaceIds.length,
+          totalWorkspacesCount: allWorkspaceIds.length,
+          checkedWorkspacesCount: workspaceIds.length,
           criticalWorkspacesCount: workspaceStats.filter(
             (stat) => stat.isCritical,
           ).length,
@@ -90,5 +99,28 @@ export class AppHealthIndicator {
         },
       });
     }
+  }
+
+  private getDistributedSample(array: string[], sampleSize: number): string[] {
+    if (array.length <= sampleSize) {
+      return array;
+    }
+
+    const result: string[] = [];
+
+    const startCount = Math.floor(sampleSize * 0.4);
+
+    result.push(...array.slice(0, startCount));
+
+    const midCount = Math.floor(sampleSize * 0.3);
+    const midStart = Math.floor((array.length - midCount) / 2);
+
+    result.push(...array.slice(midStart, midStart + midCount));
+
+    const endCount = Math.floor(sampleSize * 0.3);
+
+    result.push(...array.slice(-endCount));
+
+    return result;
   }
 }
