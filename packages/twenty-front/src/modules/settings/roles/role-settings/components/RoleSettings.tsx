@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useState } from 'react';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useState } from 'react';
 import { Section } from 'twenty-ui';
 import { FeatureFlagKey, Role } from '~/generated-metadata/graphql';
 import { useUpdateOneRoleMutation } from '~/generated/graphql';
@@ -28,21 +28,18 @@ type RoleSettingsProps = {
 
 export const RoleSettings = ({ role }: RoleSettingsProps) => {
   const [updateRole] = useUpdateOneRoleMutation();
-
   const isUpdateEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsV2Enabled,
   );
 
   const [label, setLabel] = useState(role.label);
   const [description, setDescription] = useState(role.description);
-  const [icon, setIcon] = useState(role.icon);
 
   const handleFieldUpdate = async (
     value: string | null,
     field: 'label' | 'description' | 'icon',
   ) => {
     if (!isUpdateEnabled) return;
-
     if (value === role[field]) return;
 
     await updateRole({
@@ -63,10 +60,9 @@ export const RoleSettings = ({ role }: RoleSettingsProps) => {
         <StyledInputContainer>
           <IconPicker
             disabled={!isUpdateEnabled}
-            selectedIconKey={icon ?? 'IconUser'}
+            selectedIconKey={role.icon ?? 'IconUser'}
             dropdownId="role-settings-icon-picker"
             onChange={({ iconKey }: { iconKey: string }) => {
-              setIcon(iconKey);
               handleFieldUpdate(iconKey, 'icon');
             }}
           />
@@ -75,10 +71,8 @@ export const RoleSettings = ({ role }: RoleSettingsProps) => {
           value={label}
           disabled={!isUpdateEnabled}
           fullWidth
-          onChange={(newLabel: string) => {
-            setLabel(newLabel);
-          }}
-          onBlur={() => handleFieldUpdate(label, 'label')}
+          onChange={setLabel}
+          onBlur={(event) => handleFieldUpdate(event.target.value, 'label')}
         />
       </StyledInputsContainer>
       <TextArea
@@ -86,10 +80,8 @@ export const RoleSettings = ({ role }: RoleSettingsProps) => {
         placeholder={t`Write a description`}
         value={description ?? ''}
         disabled={!isUpdateEnabled}
-        onChange={(newDescription: string) => {
-          setDescription(newDescription);
-        }}
-        onBlur={() => handleFieldUpdate(description ?? '', 'description')}
+        onChange={setDescription}
+        onBlur={(event) => handleFieldUpdate(event.target.value, 'description')}
       />
     </Section>
   );

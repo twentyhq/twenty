@@ -19,7 +19,7 @@ export type TextAreaProps = {
   placeholder?: string;
   value?: string;
   className?: string;
-  onBlur?: () => void;
+  onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
 };
 
 const StyledContainer = styled.div`
@@ -93,9 +93,9 @@ export const TextArea = ({
     setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
   };
 
-  const handleBlur: FocusEventHandler<HTMLTextAreaElement> = () => {
+  const handleBlur: FocusEventHandler<HTMLTextAreaElement> = (event) => {
     goBackToPreviousHotkeyScope();
-    onBlur?.();
+    onBlur?.(event);
   };
 
   return (
