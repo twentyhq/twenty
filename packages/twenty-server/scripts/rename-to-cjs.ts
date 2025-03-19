@@ -17,17 +17,21 @@ function renameJsToCjs(directory: string) {
 
       if (file.name.endsWith('.js') || file.name.endsWith('.js.map')) {
         const newPath = fullPath.replace(/\.js(\.map)?$/, '.cjs$1');
+
         fs.renameSync(fullPath, newPath);
       }
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error renaming files:', error);
   }
 }
 
 // Usage: provide the directory as a command line argument
 const directory = process.argv[2];
+
 if (!directory) {
+  // eslint-disable-next-line no-console
   console.error('Please provide a directory path');
   process.exit(1);
 }
