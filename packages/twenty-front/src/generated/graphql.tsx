@@ -318,6 +318,17 @@ export type CreateOneFieldMetadataInput = {
   field: CreateFieldInput;
 };
 
+export type CreateRoleInput = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label: Scalars['String'];
+};
+
 export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -497,6 +508,7 @@ export enum FeatureFlagKey {
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsEnabled = 'IsPermissionsEnabled',
+  IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
@@ -810,6 +822,7 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
+  createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
@@ -850,6 +863,7 @@ export type Mutation = {
   updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
+  updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWorkflowVersionStep: WorkflowAction;
@@ -912,6 +926,11 @@ export type MutationCreateOidcIdentityProviderArgs = {
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
+};
+
+
+export type MutationCreateOneRoleArgs = {
+  createRoleInput: CreateRoleInput;
 };
 
 
@@ -1085,6 +1104,11 @@ export type MutationUpdateOneFieldArgs = {
 
 export type MutationUpdateOneObjectArgs = {
   input: UpdateOneObjectInput;
+};
+
+
+export type MutationUpdateOneRoleArgs = {
+  updateRoleInput: UpdateRoleInput;
 };
 
 
@@ -1904,6 +1928,23 @@ export type UpdateOneObjectInput = {
   update: UpdateObjectPayload;
 };
 
+export type UpdateRoleInput = {
+  /** The id of the role to update */
+  id: Scalars['UUID'];
+  update: UpdateRolePayload;
+};
+
+export type UpdateRolePayload = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateServerlessFunctionInput = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
@@ -2478,6 +2519,13 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlag', id: any, key: FeatureFlagKey, value: boolean } };
 
 export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean };
+
+export type UpdateOneRoleMutationVariables = Exact<{
+  updateRoleInput: UpdateRoleInput;
+}>;
+
+
+export type UpdateOneRoleMutation = { __typename?: 'Mutation', updateOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } };
 
 export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
   workspaceMemberId: Scalars['String'];
@@ -4479,6 +4527,39 @@ export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.Mutat
 export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
+export const UpdateOneRoleDocument = gql`
+    mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
+  updateOneRole(updateRoleInput: $updateRoleInput) {
+    ...RoleFragment
+  }
+}
+    ${RoleFragmentFragmentDoc}`;
+export type UpdateOneRoleMutationFn = Apollo.MutationFunction<UpdateOneRoleMutation, UpdateOneRoleMutationVariables>;
+
+/**
+ * __useUpdateOneRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateOneRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOneRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOneRoleMutation, { data, loading, error }] = useUpdateOneRoleMutation({
+ *   variables: {
+ *      updateRoleInput: // value for 'updateRoleInput'
+ *   },
+ * });
+ */
+export function useUpdateOneRoleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneRoleMutation, UpdateOneRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOneRoleMutation, UpdateOneRoleMutationVariables>(UpdateOneRoleDocument, options);
+      }
+export type UpdateOneRoleMutationHookResult = ReturnType<typeof useUpdateOneRoleMutation>;
+export type UpdateOneRoleMutationResult = Apollo.MutationResult<UpdateOneRoleMutation>;
+export type UpdateOneRoleMutationOptions = Apollo.BaseMutationOptions<UpdateOneRoleMutation, UpdateOneRoleMutationVariables>;
 export const UpdateWorkspaceMemberRoleDocument = gql`
     mutation UpdateWorkspaceMemberRole($workspaceMemberId: String!, $roleId: String!) {
   updateWorkspaceMemberRole(

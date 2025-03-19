@@ -24,6 +24,7 @@ export enum PermissionsExceptionCode {
   INVALID_ARG = 'INVALID_ARG',
   PERMISSIONS_V2_NOT_ENABLED = 'PERMISSIONS_V2_NOT_ENABLED',
   ROLE_LABEL_ALREADY_EXISTS = 'ROLE_LABEL_ALREADY_EXISTS',
+  ROLE_NOT_EDITABLE = 'ROLE_NOT_EDITABLE',
 }
 
 export enum PermissionsExceptionMessage {
@@ -43,4 +44,5 @@ export enum PermissionsExceptionMessage {
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'No role found for userWorkspace',
   PERMISSIONS_V2_NOT_ENABLED = 'Permissions V2 is not enabled',
   ROLE_LABEL_ALREADY_EXISTS = 'A role with this label already exists',
+  ROLE_NOT_EDITABLE = 'Role is not editable',
 }

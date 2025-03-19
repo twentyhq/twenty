@@ -90,6 +90,13 @@ export class RoleService {
       );
     }
 
+    if (!existingRole.isEditable) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
+        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+      );
+    }
+
     await this.validateRoleInput({
       input: input.update,
       workspaceId,
@@ -97,11 +104,11 @@ export class RoleService {
     });
 
     const updatedRole = await this.roleRepository.save({
-      id: input.id,
+      ...existingRole,
       ...input.update,
     });
 
-    return { ...existingRole, ...updatedRole };
+    return updatedRole;
   }
 
   public async createAdminRole({
