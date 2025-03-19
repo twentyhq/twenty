@@ -84,5 +84,5 @@ RUN chown -R 1000 /app
 # Use non root user with uid 1000
 USER 1000
 
-CMD ["node", "dist/src/main"]
+CMD ["node", "dist/esm/src/main"]
 ENTRYPOINT ["/app/entrypoint.sh"]

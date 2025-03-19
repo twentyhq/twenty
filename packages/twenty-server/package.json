@@ -8,11 +8,11 @@
   "license": "AGPL-3.0",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",
-    "start:prod": "node dist/src/main",
-    "command:prod": "node dist/src/command/command",
-    "worker:prod": "node dist/src/queue-worker/queue-worker",
+    "start:prod": "node dist/esm/src/main",
+    "command:prod": "node dist/esm/src/command/command",
+    "worker:prod": "node dist/esm/src/queue-worker/queue-worker",
     "database:init:prod": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate:prod",
-    "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource",
+    "database:migrate:prod": "npx -y typeorm migration:run -d dist/cjs/src/database/typeorm/metadata/metadata.datasource.cjs && npx -y typeorm migration:run -d dist/cjs/src/database/typeorm/core/core.datasource.cjs",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
   "dependencies": {
