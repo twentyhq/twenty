@@ -61,7 +61,6 @@ export type WorkflowCronTrigger = BaseTrigger & {
 
 export type WorkflowWebhookTrigger = BaseTrigger & {
   type: WorkflowTriggerType.WEBHOOK;
-  settings: { outputSchema: object };
 };
 
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];

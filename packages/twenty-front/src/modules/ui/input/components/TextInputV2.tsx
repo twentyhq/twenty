@@ -357,7 +357,9 @@ const TextInputV2Component = forwardRef<
               </StyledTrailingIcon>
             )}
             {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
-              <StyledTrailingIcon onClick={onRightIconClick}>
+              <StyledTrailingIcon
+                onClick={onRightIconClick ? onRightIconClick : undefined}
+              >
                 <RightIcon size={theme.icon.size.md} />
               </StyledTrailingIcon>
             )}
