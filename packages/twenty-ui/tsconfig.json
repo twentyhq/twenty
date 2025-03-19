@@ -5,6 +5,7 @@
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "noEmit": true,
     "types": ["node"],
