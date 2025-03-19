@@ -18,7 +18,6 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
@@ -171,16 +170,13 @@ export const SettingsObjectDetailPage = () => {
         }
       >
         <SettingsPageContainer>
-          <ActiveTabComponentInstanceContext.Provider
-            value={{
-              instanceId: SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
-            }}
-          >
-            <TabList tabs={tabs} className="tab-list" />
-            <StyledContentContainer>
-              {renderActiveTabContent()}
-            </StyledContentContainer>
-          </ActiveTabComponentInstanceContext.Provider>
+          <TabList
+            tabs={tabs}
+            componentInstanceId={`settings-object-detail-${objectMetadataItem.labelSingular}-tabs`}
+          />
+          <StyledContentContainer>
+            {renderActiveTabContent()}
+          </StyledContentContainer>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </>

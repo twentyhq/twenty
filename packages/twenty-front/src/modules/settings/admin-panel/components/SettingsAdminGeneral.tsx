@@ -198,7 +198,11 @@ export const SettingsAdminGeneral = () => {
               description={t`All workspaces this user is a member of`}
             />
             <StyledTabListContainer>
-              <TabList tabs={tabs} behaveAsLinks={false} />
+              <TabList
+                tabs={tabs}
+                behaveAsLinks={false}
+                componentInstanceId="settings-admin-workspaces-tab-list"
+              />
             </StyledTabListContainer>
 
             <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />

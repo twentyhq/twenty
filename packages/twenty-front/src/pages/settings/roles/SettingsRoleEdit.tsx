@@ -11,7 +11,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetRolesQuery } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -100,14 +99,14 @@ export const SettingsRoleEdit = () => {
     >
       {!rolesLoading && role ? (
         <SettingsPageContainer>
-          <ActiveTabComponentInstanceContext.Provider
-            value={{
-              instanceId: SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
-            }}
-          >
-            <TabList tabs={tabs} className="tab-list" />
-            {renderActiveTabContent()}
-          </ActiveTabComponentInstanceContext.Provider>
+          <TabList
+            tabs={tabs}
+            className="tab-list"
+            componentInstanceId={
+              SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID
+            }
+          />
+          {renderActiveTabContent()}
         </SettingsPageContainer>
       ) : (
         <></>

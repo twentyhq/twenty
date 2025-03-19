@@ -3,7 +3,6 @@ import { SettingsAdminGeneral } from '@/settings/admin-panel/components/Settings
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
 import { SettingsAdminHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatus';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const SettingsAdminTabContent = () => {
@@ -11,29 +10,11 @@ export const SettingsAdminTabContent = () => {
 
   switch (activeTabId) {
     case SETTINGS_ADMIN_TABS.GENERAL:
-      return (
-        <ActiveTabComponentInstanceContext.Provider
-          value={{ instanceId: 'settings-admin-general' }}
-        >
-          <SettingsAdminGeneral />
-        </ActiveTabComponentInstanceContext.Provider>
-      );
+      return <SettingsAdminGeneral />;
     case SETTINGS_ADMIN_TABS.ENV_VARIABLES:
-      return (
-        <ActiveTabComponentInstanceContext.Provider
-          value={{ instanceId: 'settings-admin-env-variables' }}
-        >
-          <SettingsAdminEnvVariables />
-        </ActiveTabComponentInstanceContext.Provider>
-      );
+      return <SettingsAdminEnvVariables />;
     case SETTINGS_ADMIN_TABS.HEALTH_STATUS:
-      return (
-        <ActiveTabComponentInstanceContext.Provider
-          value={{ instanceId: 'settings-admin-health-status' }}
-        >
-          <SettingsAdminHealthStatus />
-        </ActiveTabComponentInstanceContext.Provider>
-      );
+      return <SettingsAdminHealthStatus />;
     default:
       return null;
   }

@@ -34,7 +34,11 @@ export const SettingsAdminContent = () => {
 
   return (
     <>
-      <TabList tabs={tabs} behaveAsLinks={true} />
+      <TabList
+        tabs={tabs}
+        behaveAsLinks={true}
+        componentInstanceId="settings-admin-tabs"
+      />
       <SettingsAdminTabContent />
     </>
   );

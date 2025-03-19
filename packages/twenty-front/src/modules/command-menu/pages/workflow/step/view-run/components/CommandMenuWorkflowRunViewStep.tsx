@@ -1,6 +1,5 @@
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -68,37 +67,37 @@ export const CommandMenuWorkflowRunViewStep = () => {
   }
 
   return (
-    <ActiveTabComponentInstanceContext.Provider
-      value={{ instanceId: 'command-menu-workflow-run-view-step' }}
+    <WorkflowStepContextProvider
+      value={{ workflowVersionId: workflowRun.workflowVersionId }}
     >
-      <WorkflowStepContextProvider
-        value={{ workflowVersionId: workflowRun.workflowVersionId }}
-      >
-        <StyledTabList tabs={tabs} behaveAsLinks={false} />
+      <StyledTabList
+        tabs={tabs}
+        behaveAsLinks={false}
+        componentInstanceId="command-menu-workflow-run-view-step"
+      />
 
-        {activeTabId === 'node' ? (
-          <WorkflowStepDetail
-            readonly
-            stepId={workflowSelectedNode}
-            trigger={flow.trigger}
-            steps={flow.steps}
-          />
-        ) : null}
+      {activeTabId === 'node' ? (
+        <WorkflowStepDetail
+          readonly
+          stepId={workflowSelectedNode}
+          trigger={flow.trigger}
+          steps={flow.steps}
+        />
+      ) : null}
 
-        {activeTabId === 'input' ? (
-          <WorkflowRunStepInputDetail
-            key={workflowSelectedNode}
-            stepId={workflowSelectedNode}
-          />
-        ) : null}
+      {activeTabId === 'input' ? (
+        <WorkflowRunStepInputDetail
+          key={workflowSelectedNode}
+          stepId={workflowSelectedNode}
+        />
+      ) : null}
 
-        {activeTabId === 'output' ? (
-          <WorkflowRunStepOutputDetail
-            key={workflowSelectedNode}
-            stepId={workflowSelectedNode}
-          />
-        ) : null}
-      </WorkflowStepContextProvider>
-    </ActiveTabComponentInstanceContext.Provider>
+      {activeTabId === 'output' ? (
+        <WorkflowRunStepOutputDetail
+          key={workflowSelectedNode}
+          stepId={workflowSelectedNode}
+        />
+      ) : null}
+    </WorkflowStepContextProvider>
   );
 };

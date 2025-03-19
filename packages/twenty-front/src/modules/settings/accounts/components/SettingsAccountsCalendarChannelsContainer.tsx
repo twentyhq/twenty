@@ -60,7 +60,10 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
     <>
       {tabs.length > 1 && (
         <StyledCalenderContainer>
-          <TabList tabs={tabs} />
+          <TabList
+            tabs={tabs}
+            componentInstanceId="settings-accounts-calendars-tabs"
+          />
         </StyledCalenderContainer>
       )}
       {calendarChannels.map((calendarChannel) => (

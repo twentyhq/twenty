@@ -15,7 +15,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
@@ -210,12 +209,12 @@ export const SettingsServerlessFunctionDetail = () => {
         ]}
       >
         <SettingsPageContainer>
-          <ActiveTabComponentInstanceContext.Provider
-            value={{ instanceId: 'serverless-function-detail' }}
-          >
-            <TabList tabs={tabs} behaveAsLinks={false} />
-            {renderActiveTabContent()}
-          </ActiveTabComponentInstanceContext.Provider>
+          <TabList
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId="serverless-function-detail"
+          />
+          {renderActiveTabContent()}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     )

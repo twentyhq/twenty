@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { ComponentWithRouterDecorator, IconCheckbox } from 'twenty-ui';
 
-import { ActiveTabComponentInstanceContext } from '@/ui/layout/tab/states/contexts/ActiveTabComponentInstanceContext';
 import { TabList } from '../TabList';
 
 const tabs = [
@@ -40,16 +39,7 @@ const meta: Meta<typeof TabList> = {
   args: {
     tabs: tabs,
   },
-  decorators: [
-    (Story) => (
-      <ActiveTabComponentInstanceContext.Provider
-        value={{ instanceId: 'tab-list-component' }}
-      >
-        <Story />
-      </ActiveTabComponentInstanceContext.Provider>
-    ),
-    ComponentWithRouterDecorator,
-  ],
+  decorators: [ComponentWithRouterDecorator],
 };
 
 export default meta;
