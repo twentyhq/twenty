@@ -78,10 +78,9 @@ export const WorkflowEditActionServerlessFunction = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
-  const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
   const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
-    tabListId,
+    WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
@@ -290,7 +289,9 @@ export const WorkflowEditActionServerlessFunction = ({
         <StyledTabList
           tabs={tabs}
           behaveAsLinks={false}
-          componentInstanceId={tabListId}
+          componentInstanceId={
+            WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID
+          }
         />
         <WorkflowStepHeader
           onTitleChange={(newName: string) => {

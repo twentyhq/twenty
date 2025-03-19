@@ -16,7 +16,10 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
+import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
 import { useRecoilCallback } from 'recoil';
 
 export const useCommandMenuCloseAnimationCompleteCleanup = () => {
@@ -54,6 +57,18 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
 
         emitRightDrawerCloseEvent();
         set(isCommandMenuClosingState, false);
+        set(
+          activeTabIdComponentState.atomFamily({
+            instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+          }),
+          'node',
+        );
+        set(
+          activeTabIdComponentState.atomFamily({
+            instanceId: WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+          }),
+          'code',
+        );
       },
     [
       closeDropdown,
