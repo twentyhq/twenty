@@ -1,12 +1,14 @@
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -55,6 +57,14 @@ export const ShowPageActivityContainer = ({
     targetableObject.targetObjectNameSingular as
       | CoreObjectNameSingular.Note
       | CoreObjectNameSingular.Task;
+
+  const recordFromStore = useRecoilValue(
+    recordStoreFamilyState(targetableObject.id),
+  );
+
+  if (!isDefined(recordFromStore)) {
+    return <></>;
+  }
 
   return !isNewViewableRecordLoading ? (
     <ScrollWrapper
