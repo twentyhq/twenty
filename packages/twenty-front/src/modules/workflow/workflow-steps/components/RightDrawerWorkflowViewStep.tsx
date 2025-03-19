@@ -1,22 +1,22 @@
-import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { workflowVersionIdState } from '@/workflow/states/workflowVersionIdState';
-import { RightDrawerWorkflowViewStepContent } from '@/workflow/workflow-steps/components/RightDrawerWorkflowViewStepContent';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
+import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
+import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
+import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 
 export const RightDrawerWorkflowViewStep = () => {
-  const workflowVersionId = useRecoilValue(workflowVersionIdState);
-  if (!isDefined(workflowVersionId)) {
-    throw new Error('Expected a workflow version id');
-  }
-
-  const workflowVersion = useWorkflowVersion(workflowVersionId);
-
-  if (!isDefined(workflowVersion)) {
-    return null;
-  }
+  const flow = useFlowOrThrow();
+  const workflowSelectedNode = useWorkflowSelectedNodeOrThrow();
 
   return (
-    <RightDrawerWorkflowViewStepContent workflowVersion={workflowVersion} />
+    <WorkflowStepContextProvider
+      value={{ workflowVersionId: flow.workflowVersionId }}
+    >
+      <WorkflowStepDetail
+        stepId={workflowSelectedNode}
+        trigger={flow.trigger}
+        steps={flow.steps}
+        readonly
+      />
+    </WorkflowStepContextProvider>
   );
 };

@@ -12,6 +12,11 @@ COPY ./packages/twenty-website/package.json /app/packages/twenty-website/package
 
 RUN yarn
 
+ENV KEYSTATIC_GITHUB_CLIENT_ID="<fake build value>"
+ENV KEYSTATIC_GITHUB_CLIENT_SECRET="<fake build value>"
+ENV KEYSTATIC_SECRET="<fake build value>"
+ENV NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG="<fake build value>"
+
 COPY ./packages/twenty-website /app/packages/twenty-website
 RUN npx nx build twenty-website
 
@@ -25,5 +30,10 @@ WORKDIR /app/packages/twenty-website
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the website."
+
+RUN chown -R 1000 /app
+
+# Use non root user with uid 1000
+USER 1000
 
 CMD ["/bin/sh", "-c", "npx nx start"]

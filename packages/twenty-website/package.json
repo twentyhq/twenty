@@ -1,6 +1,6 @@
 {
   "name": "twenty-website",
-  "version": "0.42.0-canary",
+  "version": "0.50.0-canary",
   "private": true,
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-website node ../../node_modules/nx/bin/nx.js",
@@ -15,6 +15,9 @@
   },
   "dependencies": {
     "@docsearch/react": "^3.6.2",
+    "@keystatic/core": "^0.5.45",
+    "@keystatic/next": "^5.0.3",
+    "@markdoc/markdoc": "^0.5.1",
     "@nivo/calendar": "^0.87.0",
     "gray-matter": "^4.0.3",
     "next-runtime-env": "^3.2.2",

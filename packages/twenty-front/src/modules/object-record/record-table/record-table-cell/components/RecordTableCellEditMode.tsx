@@ -1,8 +1,18 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
+import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { hasRecordTableCellDangerBorderScopedState } from '@/object-record/record-table/record-table-cell/states/hasRecordTableCellDangerBorderScopedState';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
+import {
+  MiddlewareState,
+  autoUpdate,
+  flip,
+  offset,
+  useFloating,
+} from '@floating-ui/react';
 import { ReactElement, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -32,15 +42,43 @@ export const RecordTableCellEditMode = ({
       `${recordId}-${fieldDefinition.fieldMetadataId}`,
     ),
   );
+  const instanceId = getRecordFieldInputId(
+    recordId,
+    fieldDefinition?.metadata?.fieldName,
+  );
+
+  const setFieldInputLayoutDirection = useSetRecoilComponentStateV2(
+    recordFieldInputLayoutDirectionComponentState,
+    instanceId,
+  );
+
+  const setFieldInputLayoutDirectionLoading = useSetRecoilComponentStateV2(
+    recordFieldInputLayoutDirectionLoadingComponentState,
+    instanceId,
+  );
+
+  const setFieldInputLayoutDirectionMiddleware = {
+    name: 'middleware',
+    fn: async (state: MiddlewareState) => {
+      setFieldInputLayoutDirection(
+        state.placement.startsWith('bottom') ? 'downward' : 'upward',
+      );
+      setFieldInputLayoutDirectionLoading(false);
+      return {};
+    },
+  };
+
   const { refs, floatingStyles } = useFloating({
-    placement: 'top-start',
+    placement: 'bottom-start',
     middleware: [
       flip(),
       offset({
         mainAxis: -33,
         crossAxis: -3,
       }),
+      setFieldInputLayoutDirectionMiddleware,
     ],
+
     whileElementsMounted: autoUpdate,
   });
 

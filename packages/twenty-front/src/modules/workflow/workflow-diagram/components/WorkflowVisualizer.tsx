@@ -7,17 +7,18 @@ import { isDefined } from 'twenty-shared';
 export const WorkflowVisualizer = ({ workflowId }: { workflowId: string }) => {
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
+  if (!isDefined(workflowWithCurrentVersion)) {
+    return null;
+  }
+
   return (
     <>
       <WorkflowDiagramEffect
         workflowWithCurrentVersion={workflowWithCurrentVersion}
       />
-
-      {isDefined(workflowWithCurrentVersion) ? (
-        <WorkflowDiagramCanvasEditable
-          versionStatus={workflowWithCurrentVersion.currentVersion.status}
-        />
-      ) : null}
+      <WorkflowDiagramCanvasEditable
+        versionStatus={workflowWithCurrentVersion.currentVersion.status}
+      />
     </>
   );
 };

@@ -1,15 +1,16 @@
 import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
-import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
+
 import { ObjectFilterDropdownFilterSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
 import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterGroupIdComponentState';
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -25,7 +26,13 @@ export const AdvancedFilterViewFilterFieldSelect = ({
 }: AdvancedFilterViewFilterFieldSelectProps) => {
   const { advancedFilterDropdownId } = useAdvancedFilterDropdown(viewFilterId);
 
-  const recordFilter = useCurrentViewFilter({ viewFilterId });
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
+
+  const recordFilter = currentRecordFilters.find(
+    (recordFilter) => recordFilter.id === viewFilterId,
+  );
 
   const selectedFieldLabel = recordFilter?.label ?? '';
 
@@ -59,7 +66,7 @@ export const AdvancedFilterViewFilterFieldSelect = ({
         }
         onOpen={() => {
           setAdvancedFilterViewFilterId(recordFilter?.id);
-          setAdvancedFilterViewFilterGroupId(recordFilter?.viewFilterGroupId);
+          setAdvancedFilterViewFilterGroupId(recordFilter?.recordFilterGroupId);
         }}
         dropdownComponents={
           shouldShowCompositeSelectionSubMenu ? (
@@ -68,7 +75,7 @@ export const AdvancedFilterViewFilterFieldSelect = ({
             <ObjectFilterDropdownFilterSelect />
           )
         }
-        dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
+        dropdownHotkeyScope={{ scope: advancedFilterDropdownId }}
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"
       />

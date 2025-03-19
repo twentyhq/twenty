@@ -3,9 +3,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import graphqlFields from 'graphql-fields';
 import {
   capitalize,
-  isObjectRecordUnderObjectRecordsPermissions,
+  isDefined,
   PermissionsOnAllObjectRecords,
-  SettingsFeatures,
 } from 'twenty-shared';
 import { DataSource, ObjectLiteral } from 'typeorm';
 
@@ -29,12 +28,9 @@ import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-r
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -103,12 +99,9 @@ export abstract class GraphqlQueryBaseResolverService<
 
       if (
         featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled] &&
-        isObjectRecordUnderObjectRecordsPermissions({
-          isCustom: objectMetadataItemWithFieldMaps.isCustom,
-          nameSingular: objectMetadataItemWithFieldMaps.nameSingular,
-        })
+        !objectMetadataItemWithFieldMaps.isSystem
       ) {
-        await this.validateCustomObjectPermissionsOrThrow({
+        await this.validateObjectRecordPermissionsOrThrow({
           operationName,
           options,
         });
@@ -170,6 +163,7 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps,
         authContext.workspace.id,
         options.objectMetadataMaps,
+        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       );
 
       const resultWithGettersArray = Array.isArray(resultWithGetters)
@@ -199,59 +193,17 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.nameSingular,
       )
     ) {
-      if (!authContext.apiKey) {
-        if (!authContext.userWorkspaceId) {
-          throw new AuthException(
-            'Missing userWorkspaceId in authContext',
-            AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-          );
-        }
-
-        const permissionRequired: SettingsFeatures =
-          SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
-            objectMetadataItemWithFieldMaps.nameSingular
-          ];
-
-        const userHasPermission =
-          await this.permissionsService.userHasWorkspaceSettingPermission({
-            userWorkspaceId: authContext.userWorkspaceId,
-            _setting: permissionRequired,
-            workspaceId: authContext.workspace.id,
-          });
-
-        if (!userHasPermission) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.PERMISSION_DENIED,
-            PermissionsExceptionCode.PERMISSION_DENIED,
-          );
-        }
-      }
-    }
-  }
-
-  private async validateCustomObjectPermissionsOrThrow({
-    operationName,
-    options,
-  }: {
-    operationName: WorkspaceResolverBuilderMethodNames;
-    options: WorkspaceQueryRunnerOptions;
-  }) {
-    if (!options.authContext.apiKey) {
-      if (!options.authContext.userWorkspaceId) {
-        throw new AuthException(
-          'Missing userWorkspaceId in authContext',
-          AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-        );
-      }
-
-      const requiredPermission =
-        this.getRequiredPermissionForMethod(operationName);
+      const permissionRequired: SettingsPermissions =
+        SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
+          objectMetadataItemWithFieldMaps.nameSingular
+        ];
 
       const userHasPermission =
-        await this.permissionsService.userHasObjectRecordsPermission({
-          userWorkspaceId: options.authContext.userWorkspaceId,
-          requiredPermission,
-          workspaceId: options.authContext.workspace.id,
+        await this.permissionsService.userHasWorkspaceSettingPermission({
+          userWorkspaceId: authContext.userWorkspaceId,
+          _setting: permissionRequired,
+          workspaceId: authContext.workspace.id,
+          isExecutedByApiKey: isDefined(authContext.apiKey),
         });
 
       if (!userHasPermission) {
@@ -260,6 +212,32 @@ export abstract class GraphqlQueryBaseResolverService<
           PermissionsExceptionCode.PERMISSION_DENIED,
         );
       }
+    }
+  }
+
+  private async validateObjectRecordPermissionsOrThrow({
+    operationName,
+    options,
+  }: {
+    operationName: WorkspaceResolverBuilderMethodNames;
+    options: WorkspaceQueryRunnerOptions;
+  }) {
+    const requiredPermission =
+      this.getRequiredPermissionForMethod(operationName);
+
+    const userHasPermission =
+      await this.permissionsService.userHasObjectRecordsPermission({
+        userWorkspaceId: options.authContext.userWorkspaceId,
+        requiredPermission,
+        workspaceId: options.authContext.workspace.id,
+        isExecutedByApiKey: isDefined(options.authContext.apiKey),
+      });
+
+    if (!userHasPermission) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
     }
   }
 

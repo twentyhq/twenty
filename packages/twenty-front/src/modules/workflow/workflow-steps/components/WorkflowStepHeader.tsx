@@ -26,6 +26,10 @@ const StyledHeaderTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xl};
   width: 420px;
   overflow: hidden;
+
+  & > input:disabled {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
 `;
 
 const StyledHeaderType = styled.div`
@@ -43,24 +47,38 @@ const StyledHeaderIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+type WorkflowStepHeaderProps = {
+  Icon: IconComponent;
+  iconColor: string;
+  initialTitle: string;
+  headerType: string;
+} & (
+  | {
+      disabled: true;
+      onTitleChange?: never;
+    }
+  | {
+      disabled?: boolean;
+      onTitleChange: (newTitle: string) => void;
+    }
+);
+
 export const WorkflowStepHeader = ({
-  onTitleChange,
   Icon,
   iconColor,
   initialTitle,
   headerType,
   disabled,
-}: {
-  onTitleChange: (newTitle: string) => void;
-  Icon: IconComponent;
-  iconColor: string;
-  initialTitle: string;
-  headerType: string;
-  disabled?: boolean;
-}) => {
+  onTitleChange,
+}: WorkflowStepHeaderProps) => {
   const theme = useTheme();
+
   const [title, setTitle] = useState(initialTitle);
-  const debouncedOnTitleChange = useDebouncedCallback(onTitleChange, 100);
+
+  const debouncedOnTitleChange = useDebouncedCallback((newTitle: string) => {
+    onTitleChange?.(newTitle);
+  }, 100);
+
   const handleChange = (newTitle: string) => {
     setTitle(newTitle);
     debouncedOnTitleChange(newTitle);

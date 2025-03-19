@@ -6,7 +6,7 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -33,6 +33,8 @@ import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-pick
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { useMemo, useState } from 'react';
+import { useLingui } from '@lingui/react/macro';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -43,6 +45,7 @@ const StyledNoKanbanFieldAvailableContainer = styled.div`
 `;
 
 export const ViewPickerContentCreateMode = () => {
+  const { t } = useLingui();
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
 
@@ -128,8 +131,12 @@ export const ViewPickerContentCreateMode = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconX} onClick={handleClose}>
-        Create view
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent onClick={handleClose} Icon={IconX} />
+        }
+      >
+        {t`Create view`}
       </DropdownMenuHeader>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
@@ -150,7 +157,7 @@ export const ViewPickerContentCreateMode = () => {
         </ViewPickerIconAndNameContainer>
         <ViewPickerSelectContainer>
           <Select
-            label="View type"
+            label={t`View type`}
             fullWidth
             value={viewPickerType}
             onChange={(value) => {
@@ -158,10 +165,10 @@ export const ViewPickerContentCreateMode = () => {
               setViewPickerType(value);
             }}
             options={[
-              { value: ViewType.Table, label: 'Table', Icon: IconTable },
+              { value: ViewType.Table, label: t`Table`, Icon: IconTable },
               {
                 value: ViewType.Kanban,
-                label: 'Kanban',
+                label: t`Kanban`,
                 Icon: IconLayoutKanban,
               },
             ]}
@@ -172,7 +179,7 @@ export const ViewPickerContentCreateMode = () => {
           <>
             <ViewPickerSelectContainer>
               <Select
-                label="Stages"
+                label={t`Stages`}
                 fullWidth
                 value={viewPickerKanbanFieldMetadataId}
                 onChange={(value) => {
@@ -185,7 +192,7 @@ export const ViewPickerContentCreateMode = () => {
                         value: field.id,
                         label: field.label,
                       }))
-                    : [{ value: '', label: 'No Select field' }]
+                    : [{ value: '', label: t`No Select field` }]
                 }
                 dropdownId={VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID}
               />

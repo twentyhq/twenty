@@ -4,17 +4,18 @@ import {
   WorkflowDiagramRunStatus,
   WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 
 const getNodeVariantFromRunStatus = (
   runStatus: WorkflowDiagramRunStatus | undefined,
-) => {
+): WorkflowDiagramNodeVariant => {
   switch (runStatus) {
     case 'success':
       return 'success';
     case 'failure':
       return 'failure';
     case 'running':
-      return 'default';
+      return 'running';
     case 'not-executed':
       return 'not-executed';
     default:
@@ -33,7 +34,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
       variant={getNodeVariantFromRunStatus(data.runStatus)}
       nodeType={data.nodeType}
       Icon={<WorkflowDiagramStepNodeIcon data={data} />}
-      isLeafNode={data.isLeafNode}
     />
   );
 };

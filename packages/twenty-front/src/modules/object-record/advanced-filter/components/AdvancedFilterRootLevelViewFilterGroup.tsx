@@ -1,9 +1,13 @@
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
-import { AdvancedFilterRuleOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdown';
+import { AdvancedFilterRecordFilterGroupChildOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupChildOptionsDropdown';
+
+import { AdvancedFilterRecordFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroup';
 import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilter';
-import { AdvancedFilterViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterGroup';
-import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
+import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
+import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
 
@@ -27,51 +31,60 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   overflow: hidden;
 `;
 
-type AdvancedFilterRootLevelViewFilterGroupProps = {
-  rootLevelViewFilterGroupId: string;
-};
+export const AdvancedFilterRootLevelViewFilterGroup = () => {
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
+  );
 
-export const AdvancedFilterRootLevelViewFilterGroup = ({
-  rootLevelViewFilterGroupId,
-}: AdvancedFilterRootLevelViewFilterGroupProps) => {
+  const rootRecordFilterGroupId = currentRecordFilterGroups.find(
+    (recordFilterGroup) => !recordFilterGroup.parentRecordFilterGroupId,
+  )?.id;
+
   const {
-    currentViewFilterGroup: rootLevelViewFilterGroup,
-    childViewFiltersAndViewFilterGroups,
-    lastChildPosition,
-  } = useCurrentViewViewFilterGroup({
-    viewFilterGroupId: rootLevelViewFilterGroupId,
+    currentRecordFilterGroup: rootLevelRecordFilterGroup,
+    childRecordFiltersAndRecordFilterGroups,
+  } = useChildRecordFiltersAndRecordFilterGroups({
+    recordFilterGroupId: rootRecordFilterGroupId,
   });
 
-  if (!isDefined(rootLevelViewFilterGroup)) {
+  if (!isDefined(rootLevelRecordFilterGroup)) {
     return null;
   }
 
   return (
     <StyledContainer>
-      {childViewFiltersAndViewFilterGroups.map((child, i) =>
-        child.__typename === 'ViewFilterGroup' ? (
-          <StyledRow key={child.id}>
-            <AdvancedFilterLogicalOperatorCell
-              index={i}
-              viewFilterGroup={rootLevelViewFilterGroup}
-            />
-            <AdvancedFilterViewFilterGroup viewFilterGroupId={child.id} />
-            <AdvancedFilterRuleOptionsDropdown viewFilterGroupId={child.id} />
-          </StyledRow>
-        ) : (
-          <StyledRow key={child.id}>
-            <AdvancedFilterLogicalOperatorCell
-              index={i}
-              viewFilterGroup={rootLevelViewFilterGroup}
-            />
-            <AdvancedFilterViewFilter viewFilterId={child.id} />
-            <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
-          </StyledRow>
-        ),
+      {childRecordFiltersAndRecordFilterGroups.map(
+        (recordFilterGroupChild, recordFilterGroupChildIndex) =>
+          isRecordFilterGroupChildARecordFilterGroup(recordFilterGroupChild) ? (
+            <StyledRow key={recordFilterGroupChild.id}>
+              <AdvancedFilterLogicalOperatorCell
+                index={recordFilterGroupChildIndex}
+                recordFilterGroup={rootLevelRecordFilterGroup}
+              />
+              <AdvancedFilterRecordFilterGroup
+                recordFilterGroupId={recordFilterGroupChild.id}
+              />
+              <AdvancedFilterRecordFilterGroupChildOptionsDropdown
+                recordFilterGroupChild={recordFilterGroupChild}
+              />
+            </StyledRow>
+          ) : (
+            <StyledRow key={recordFilterGroupChild.id}>
+              <AdvancedFilterLogicalOperatorCell
+                index={recordFilterGroupChildIndex}
+                recordFilterGroup={rootLevelRecordFilterGroup}
+              />
+              <AdvancedFilterViewFilter
+                viewFilterId={recordFilterGroupChild.id}
+              />
+              <AdvancedFilterRecordFilterGroupChildOptionsDropdown
+                recordFilterGroupChild={recordFilterGroupChild}
+              />
+            </StyledRow>
+          ),
       )}
       <AdvancedFilterAddFilterRuleSelect
-        viewFilterGroup={rootLevelViewFilterGroup}
-        lastChildPosition={lastChildPosition}
+        recordFilterGroup={rootLevelRecordFilterGroup}
       />
     </StyledContainer>
   );

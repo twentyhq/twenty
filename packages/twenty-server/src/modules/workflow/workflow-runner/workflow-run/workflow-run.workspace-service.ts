@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
+  StepOutput,
   WorkflowRunOutput,
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
@@ -125,11 +126,11 @@ export class WorkflowRunWorkspaceService {
 
   async saveWorkflowRunState({
     workflowRunId,
-    output,
+    stepOutput,
     context,
   }: {
     workflowRunId: string;
-    output: Pick<WorkflowRunOutput, 'error' | 'stepsOutput'>;
+    stepOutput: StepOutput;
     context: Record<string, any>;
   }) {
     const workflowRunRepository =
@@ -154,9 +155,34 @@ export class WorkflowRunWorkspaceService {
           trigger: undefined,
           steps: [],
         },
-        ...output,
+        stepsOutput: {
+          ...(workflowRunToUpdate.output?.stepsOutput ?? {}),
+          [stepOutput.id]: stepOutput.output,
+        },
       },
       context,
     });
+  }
+
+  async getWorkflowRunOrFail(
+    workflowRunId: string,
+  ): Promise<WorkflowRunWorkspaceEntity> {
+    const workflowRunRepository =
+      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+        'workflowRun',
+      );
+
+    const workflowRun = await workflowRunRepository.findOne({
+      where: { id: workflowRunId },
+    });
+
+    if (!workflowRun) {
+      throw new WorkflowRunException(
+        'Workflow run not found',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+      );
+    }
+
+    return workflowRun;
   }
 }

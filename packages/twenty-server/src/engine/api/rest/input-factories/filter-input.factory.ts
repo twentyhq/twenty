@@ -6,10 +6,18 @@ import { addDefaultConjunctionIfMissing } from 'src/engine/api/rest/core/query-b
 import { checkFilterQuery } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/check-filter-query.utils';
 import { parseFilter } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter.utils';
 import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class FilterInputFactory {
-  create(request: Request, objectMetadata): Record<string, FieldValue> {
+  create(
+    request: Request,
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    },
+  ): Record<string, FieldValue> {
     let filterQuery = request.query.filter;
 
     if (typeof filterQuery !== 'string') {
@@ -20,6 +28,6 @@ export class FilterInputFactory {
 
     filterQuery = addDefaultConjunctionIfMissing(filterQuery);
 
-    return parseFilter(filterQuery, objectMetadata.objectMetadataItem);
+    return parseFilter(filterQuery, objectMetadata.objectMetadataMapItem);
   }
 }

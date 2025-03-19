@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import {
   actorFieldDefinition,
   phonesFieldDefinition,
@@ -17,34 +18,39 @@ import { JestRecordStoreSetter } from '~/testing/jest/JestRecordStoreSetter';
 import { useIsFieldValueReadOnly } from '../useIsFieldValueReadOnly';
 
 const recordId = 'recordId';
+const mockInstanceId = 'mock-instance-id';
 
 const getWrapper =
   (fieldDefinition: FieldDefinition<FieldMetadata>, isRecordDeleted: boolean) =>
   ({ children }: { children: ReactNode }) => {
     return (
       <RecoilRoot>
-        <JestObjectMetadataItemSetter>
-          <JestRecordStoreSetter
-            records={[
-              {
-                id: recordId,
-                deletedAt: isRecordDeleted ? new Date().toISOString() : null,
-                __typename: 'standardObject',
-              } as ObjectRecord,
-            ]}
-          >
-            <FieldContext.Provider
-              value={{
-                fieldDefinition,
-                recordId,
-                hotkeyScope: 'hotkeyScope',
-                isLabelIdentifier: false,
-              }}
+        <ContextStoreComponentInstanceContext.Provider
+          value={{ instanceId: mockInstanceId }}
+        >
+          <JestObjectMetadataItemSetter>
+            <JestRecordStoreSetter
+              records={[
+                {
+                  id: recordId,
+                  deletedAt: isRecordDeleted ? new Date().toISOString() : null,
+                  __typename: 'standardObject',
+                } as ObjectRecord,
+              ]}
             >
-              {children}
-            </FieldContext.Provider>
-          </JestRecordStoreSetter>
-        </JestObjectMetadataItemSetter>
+              <FieldContext.Provider
+                value={{
+                  fieldDefinition,
+                  recordId,
+                  hotkeyScope: 'hotkeyScope',
+                  isLabelIdentifier: false,
+                }}
+              >
+                {children}
+              </FieldContext.Provider>
+            </JestRecordStoreSetter>
+          </JestObjectMetadataItemSetter>
+        </ContextStoreComponentInstanceContext.Provider>
       </RecoilRoot>
     );
   };

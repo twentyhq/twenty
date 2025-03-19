@@ -14,8 +14,6 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @Injectable()
 export class BillingUsageService {
@@ -23,21 +21,13 @@ export class BillingUsageService {
   constructor(
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly environmentService: EnvironmentService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
-    const isBillingEnabled = this.environmentService.get('IS_BILLING_ENABLED');
-    const isBillingPlansEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsBillingPlansEnabled,
-        workspaceId,
-      );
-
-    if (!isBillingPlansEnabled || !isBillingEnabled) {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
       return true;
     }
 

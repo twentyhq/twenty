@@ -38,8 +38,7 @@ describe('getViewFiltersToDelete', () => {
     const filterToKeep = {
       ...baseFilter,
       id: 'filter-2',
-      fieldMetadataId: 'field-2',
-    };
+    } satisfies ViewFilter;
 
     const currentViewFilters: ViewFilter[] = [filterToDelete, filterToKeep];
     const newViewFilters: ViewFilter[] = [filterToKeep];
@@ -52,45 +51,6 @@ describe('getViewFiltersToDelete', () => {
   it('should handle empty arrays for both inputs', () => {
     const currentViewFilters: ViewFilter[] = [];
     const newViewFilters: ViewFilter[] = [];
-
-    const result = getViewFiltersToDelete(currentViewFilters, newViewFilters);
-
-    expect(result).toEqual([]);
-  });
-
-  it('should identify filters to delete based on fieldMetadataId and viewFilterGroupId', () => {
-    const filterInGroup1 = { ...baseFilter };
-    const filterInGroup2 = {
-      ...baseFilter,
-      viewFilterGroupId: 'group-2',
-    };
-    const filterWithDifferentField = {
-      ...baseFilter,
-      fieldMetadataId: 'field-2',
-    };
-
-    const currentViewFilters: ViewFilter[] = [
-      filterInGroup1,
-      filterInGroup2,
-      filterWithDifferentField,
-    ];
-    const newViewFilters: ViewFilter[] = [filterInGroup1];
-
-    const result = getViewFiltersToDelete(currentViewFilters, newViewFilters);
-
-    expect(result).toEqual([filterInGroup2, filterWithDifferentField]);
-  });
-
-  it('should not delete filters that match in both fieldMetadataId and viewFilterGroupId', () => {
-    const existingFilter = { ...baseFilter };
-    const matchingFilter = {
-      ...baseFilter,
-      value: 'different-value',
-      displayValue: 'different-value',
-    };
-
-    const currentViewFilters: ViewFilter[] = [existingFilter];
-    const newViewFilters: ViewFilter[] = [matchingFilter];
 
     const result = getViewFiltersToDelete(currentViewFilters, newViewFilters);
 

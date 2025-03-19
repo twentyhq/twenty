@@ -14,13 +14,17 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { CacheManager } from 'src/engine/twenty-orm/storage/cache-manager.storage';
+import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class WorkspaceDatasourceFactory {
   private readonly logger = new Logger(WorkspaceDatasourceFactory.name);
   private cacheManager = new CacheManager<WorkspaceDataSource>();
-  private cachedDatasourcePromise: Record<string, Promise<WorkspaceDataSource>>;
+  private cachedDataSourcePromise: Record<
+    CacheKey,
+    Promise<WorkspaceDataSource>
+  >;
 
   constructor(
     private readonly dataSourceService: DataSourceService,
@@ -29,7 +33,7 @@ export class WorkspaceDatasourceFactory {
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
   ) {
-    this.cachedDatasourcePromise = {};
+    this.cachedDataSourcePromise = {};
   }
 
   public async create(
@@ -53,21 +57,17 @@ export class WorkspaceDatasourceFactory {
       );
     }
 
-    const cacheKey = `${workspaceId}-${cachedWorkspaceMetadataVersion}`;
+    const cacheKey: CacheKey = `${workspaceId}-${cachedWorkspaceMetadataVersion}`;
 
-    if (cacheKey in this.cachedDatasourcePromise) {
-      return this.cachedDatasourcePromise[cacheKey];
+    if (cacheKey in this.cachedDataSourcePromise) {
+      return this.cachedDataSourcePromise[cacheKey];
     }
 
     const creationPromise = (async (): Promise<WorkspaceDataSource> => {
       try {
         const result = await this.cacheManager.execute(
-          cacheKey as '`${string}-${string}`',
+          cacheKey,
           async () => {
-            this.logger.log(
-              `Creating workspace data source for workspace ${workspaceId} and metadata version ${cachedWorkspaceMetadataVersion}`,
-            );
-
             const dataSourceMetadata =
               await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
                 workspaceId,
@@ -96,7 +96,7 @@ export class WorkspaceDatasourceFactory {
 
             if (!cachedObjectMetadataMaps) {
               throw new TwentyORMException(
-                `Workspace Schema not found for workspace ${workspaceId}`,
+                `Object metadata collection not found for workspace ${workspaceId}`,
                 TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
               );
             }
@@ -178,22 +178,23 @@ export class WorkspaceDatasourceFactory {
 
         return result;
       } finally {
-        delete this.cachedDatasourcePromise[cacheKey];
+        delete this.cachedDataSourcePromise[cacheKey];
       }
     })();
 
-    this.cachedDatasourcePromise[cacheKey] = creationPromise;
+    this.cachedDataSourcePromise[cacheKey] = creationPromise;
 
     return creationPromise;
   }
 
   public async destroy(workspaceId: string): Promise<void> {
-    const cachedWorkspaceMetadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+    const cacheKeys = (
+      Object.keys(this.cachedDataSourcePromise) as CacheKey[]
+    ).filter((key) => key.startsWith(`${workspaceId}`));
 
-    await this.cacheManager.clearKey(
-      `${workspaceId}-${cachedWorkspaceMetadataVersion}`,
-    );
+    for (const cacheKey of cacheKeys) {
+      await this.cacheManager.clearKey(cacheKey);
+    }
   }
 
   private async getWorkspaceMetadataVersionFromCache(

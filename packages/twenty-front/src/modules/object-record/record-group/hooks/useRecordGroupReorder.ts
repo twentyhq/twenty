@@ -1,6 +1,7 @@
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 
-import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
@@ -23,13 +24,14 @@ export const useRecordGroupReorder = ({
   viewBarId,
   viewType,
 }: UseRecordGroupHandlersParams) => {
-  const setRecordGroup = useSetRecordGroup();
+  const { setRecordGroups } = useSetRecordGroups();
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackStateV2(
     visibleRecordGroupIdsComponentFamilySelector,
   );
 
-  const { saveViewGroups } = useSaveCurrentViewGroups(viewBarId);
+  const { saveViewGroups } = useSaveCurrentViewGroups();
 
   const handleOrderChange: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
@@ -78,14 +80,15 @@ export const useRecordGroupReorder = ({
           ];
         }, []);
 
-        setRecordGroup(updatedRecordGroups, viewBarId);
+        setRecordGroups(updatedRecordGroups, viewBarId, objectMetadataItem.id);
         saveViewGroups(
           mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
         );
       },
     [
+      objectMetadataItem,
       saveViewGroups,
-      setRecordGroup,
+      setRecordGroups,
       viewBarId,
       viewType,
       visibleRecordGroupIdsFamilySelector,

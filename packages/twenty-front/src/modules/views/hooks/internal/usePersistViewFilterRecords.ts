@@ -14,7 +14,6 @@ import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRe
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { isDefined } from 'twenty-shared';
-import { v4 } from 'uuid';
 
 export const usePersistViewFilterRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -51,14 +50,15 @@ export const usePersistViewFilterRecords = () => {
             mutation: createOneRecordMutation,
             variables: {
               input: {
-                id: v4(),
+                id: viewFilter.id,
                 fieldMetadataId: viewFilter.fieldMetadataId,
                 viewId: view.id,
                 value: viewFilter.value,
                 displayValue: viewFilter.displayValue,
                 operand: viewFilter.operand,
                 viewFilterGroupId: viewFilter.viewFilterGroupId,
-              },
+                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+              } satisfies Partial<ViewFilter>,
             },
             update: (cache, { data }) => {
               const record = data?.['createViewFilter'];
@@ -96,7 +96,9 @@ export const usePersistViewFilterRecords = () => {
                 value: viewFilter.value,
                 displayValue: viewFilter.displayValue,
                 operand: viewFilter.operand,
-              },
+                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+                viewFilterGroupId: viewFilter.viewFilterGroupId,
+              } satisfies Partial<ViewFilter>,
             },
             update: (cache, { data }) => {
               const record = data?.['updateViewFilter'];

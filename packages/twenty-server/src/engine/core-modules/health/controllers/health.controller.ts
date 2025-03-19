@@ -1,11 +1,12 @@
 import { BadRequestException, Controller, Get, Param } from '@nestjs/common';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 
-import { HealthServiceName } from 'src/engine/core-modules/health/enums/health-service-name.enum';
+import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
+import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
-
 @Controller('healthz')
 export class HealthController {
   constructor(
@@ -13,6 +14,8 @@ export class HealthController {
     private readonly databaseHealth: DatabaseHealthIndicator,
     private readonly redisHealth: RedisHealthIndicator,
     private readonly workerHealth: WorkerHealthIndicator,
+    private readonly connectedAccountHealth: ConnectedAccountHealth,
+    private readonly appHealth: AppHealthIndicator,
   ) {}
 
   @Get()
@@ -21,19 +24,22 @@ export class HealthController {
     return this.health.check([]);
   }
 
-  @Get('/:serviceName')
+  @Get('/:indicatorId')
   @HealthCheck()
-  checkService(@Param('serviceName') serviceName: HealthServiceName) {
+  checkService(@Param('indicatorId') indicatorId: HealthIndicatorId) {
     const checks = {
-      [HealthServiceName.DATABASE]: () => this.databaseHealth.isHealthy(),
-      [HealthServiceName.REDIS]: () => this.redisHealth.isHealthy(),
-      [HealthServiceName.WORKER]: () => this.workerHealth.isHealthy(),
+      [HealthIndicatorId.database]: () => this.databaseHealth.isHealthy(),
+      [HealthIndicatorId.redis]: () => this.redisHealth.isHealthy(),
+      [HealthIndicatorId.worker]: () => this.workerHealth.isHealthy(),
+      [HealthIndicatorId.connectedAccount]: () =>
+        this.connectedAccountHealth.isHealthy(),
+      [HealthIndicatorId.app]: () => this.appHealth.isHealthy(),
     };
 
-    if (!(serviceName in checks)) {
-      throw new BadRequestException(`Invalid service name: ${serviceName}`);
+    if (!(indicatorId in checks)) {
+      throw new BadRequestException(`Invalid indicatorId: ${indicatorId}`);
     }
 
-    return this.health.check([checks[serviceName]]);
+    return this.health.check([checks[indicatorId]]);
   }
 }

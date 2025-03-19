@@ -4,15 +4,12 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 
 type RecordFilterChipProps = {
   recordFilter: RecordFilter;
 };
 
 export const RecordFilterChip = ({ recordFilter }: RecordFilterChipProps) => {
-  const { deleteCombinedViewFilter } = useDeleteCombinedViewFilters();
-
   const { fieldMetadataItem } = useFieldMetadataItemById(
     recordFilter.fieldMetadataId,
   );
@@ -24,8 +21,7 @@ export const RecordFilterChip = ({ recordFilter }: RecordFilterChipProps) => {
   const FieldMetadataItemIcon = getIcon(fieldMetadataItem.icon);
 
   const handleRemoveClick = () => {
-    deleteCombinedViewFilter(recordFilter.id);
-    removeRecordFilter(recordFilter.fieldMetadataId);
+    removeRecordFilter({ recordFilterId: recordFilter.id });
   };
 
   return (

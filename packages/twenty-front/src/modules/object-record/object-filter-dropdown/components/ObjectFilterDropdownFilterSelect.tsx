@@ -10,7 +10,6 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -18,7 +17,6 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -28,6 +26,8 @@ import { advancedFilterViewFilterIdComponentState } from '@/object-record/object
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useLingui } from '@lingui/react/macro';
 
 export const StyledInput = styled.input`
@@ -65,17 +65,12 @@ export const ObjectFilterDropdownFilterSelect = ({
 }: ObjectFilterDropdownFilterSelectProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
-    objectFilterDropdownSearchInputComponentState,
-  );
-
   const advancedFilterViewFilterId = useRecoilComponentValueV2(
     advancedFilterViewFilterIdComponentState,
   );
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
-    objectFilterDropdownSearchInputComponentState,
-  );
+  const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
+    useRecoilComponentStateV2(objectFilterDropdownSearchInputComponentState);
 
   const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
     advancedFilterViewFilterId,
@@ -89,13 +84,6 @@ export const ObjectFilterDropdownFilterSelect = ({
     recordIndexId,
   );
   const visibleColumnsIds = visibleTableColumns.map(
-    (column) => column.fieldMetadataId,
-  );
-  const hiddenTableColumns = useRecoilComponentValueV2(
-    hiddenTableColumnsComponentSelector,
-    recordIndexId,
-  );
-  const hiddenColumnIds = hiddenTableColumns.map(
     (column) => column.fieldMetadataId,
   );
 
@@ -116,8 +104,8 @@ export const ObjectFilterDropdownFilterSelect = ({
 
   const hiddenColumnsFieldMetadataItems = filteredSearchInputFieldMetadataItems
     .sort((a, b) => a.label.localeCompare(b.label))
-    .filter((fieldMetadataItem) =>
-      hiddenColumnIds.includes(fieldMetadataItem.id),
+    .filter(
+      (fieldMetadataItem) => !visibleColumnsIds.includes(fieldMetadataItem.id),
     );
 
   const selectableFieldMetadataItemIds = filterableFieldMetadataItems.map(
@@ -156,16 +144,14 @@ export const ObjectFilterDropdownFilterSelect = ({
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
 
-  const { currentViewId, currentViewWithCombinedFiltersAndSorts } =
-    useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
   const isAdvancedFiltersEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsAdvancedFiltersEnabled,
   );
 
   const shouldShowAdvancedFilterButton =
-    isDefined(currentViewId) &&
-    isDefined(currentViewWithCombinedFiltersAndSorts?.objectMetadataId) &&
+    isDefined(currentView?.objectMetadataId) &&
     isAdvancedFilterButtonVisible &&
     isAdvancedFiltersEnabled;
 

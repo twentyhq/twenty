@@ -1,6 +1,6 @@
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
+import { RecordShowRightDrawerOpenRecordButton } from '@/action-menu/components/RecordShowRightDrawerOpenRecordButton';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
@@ -13,7 +13,7 @@ import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -26,13 +26,11 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
 `;
 
 const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
-  align-items: center;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
   display: ${({ shouldDisplay }) => (shouldDisplay ? 'flex' : 'none')};
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
+`;
+
+const StyledTabList = styled(TabList)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
@@ -63,7 +61,6 @@ export const ShowPageSubContainer = ({
   targetableObject,
   loading,
   isInRightDrawer = false,
-  isNewRightDrawerItemLoading = false,
 }: ShowPageSubContainerProps) => {
   const tabListComponentId = `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}-${targetableObject.id}`;
 
@@ -71,15 +68,10 @@ export const ShowPageSubContainer = ({
 
   const isMobile = useIsMobile();
 
-  const isNewViewableRecordLoading = useRecoilValue(
-    isNewViewableRecordLoadingState,
-  );
-
   const summaryCard = (
     <SummaryCard
       objectNameSingular={targetableObject.targetObjectNameSingular}
       objectRecordId={targetableObject.id}
-      isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
       isInRightDrawer={isInRightDrawer}
     />
   );
@@ -126,9 +118,9 @@ export const ShowPageSubContainer = ({
       )}
       <StyledShowPageRightContainer isMobile={isMobile}>
         <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
-          <TabList
+          <StyledTabList
             behaveAsLinks={!isInRightDrawer}
-            loading={loading || isNewViewableRecordLoading}
+            loading={loading}
             tabListInstanceId={tabListComponentId}
             tabs={tabs}
             isInRightDrawer={isInRightDrawer}
@@ -138,8 +130,16 @@ export const ShowPageSubContainer = ({
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}
         </StyledContentContainer>
-        {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
-          <RightDrawerFooter actions={[<RecordShowRightDrawerActionMenu />]} />
+        {isInRightDrawer && recordFromStore && (
+          <RightDrawerFooter
+            actions={[
+              <RecordShowRightDrawerActionMenu />,
+              <RecordShowRightDrawerOpenRecordButton
+                objectNameSingular={targetableObject.targetObjectNameSingular}
+                record={recordFromStore}
+              />,
+            ]}
+          />
         )}
       </StyledShowPageRightContainer>
     </>

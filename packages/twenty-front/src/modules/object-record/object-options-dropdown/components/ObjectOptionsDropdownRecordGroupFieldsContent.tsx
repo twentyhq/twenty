@@ -18,19 +18,22 @@ import { recordGroupFieldMetadataComponentState } from '@/object-record/record-g
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
 import { SettingsPath } from '@/types/SettingsPath';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
+import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
 
   const {
@@ -104,11 +107,15 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   return (
     <>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onClick={() =>
-          isDefined(recordGroupFieldMetadata)
-            ? onContentChange('recordGroups')
-            : resetContent()
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() =>
+              isDefined(recordGroupFieldMetadata)
+                ? onContentChange('recordGroups')
+                : resetContent()
+            }
+            Icon={IconChevronLeft}
+          />
         }
       >
         Group by
@@ -116,13 +123,13 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <StyledInput
         autoFocus
         value={recordGroupFieldSearchInput}
-        placeholder="Search fields"
+        placeholder={t`Search fields`}
         onChange={(event) => setRecordGroupFieldSearchInput(event.target.value)}
       />
       <DropdownMenuItemsContainer>
         {viewType === ViewType.Table && (
           <MenuItemSelect
-            text="None"
+            text={t`None`}
             selected={!isDefined(recordGroupFieldMetadata)}
             onClick={handleResetRecordGroupField}
           />
@@ -138,7 +145,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer scrollable={false}>
         <UndecoratedLink
           to={newSelectFieldSettingsUrl}
           onClick={() => {
@@ -146,7 +153,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             closeDropdown();
           }}
         >
-          <MenuItem LeftIcon={IconSettings} text="Create select field" />
+          <MenuItem LeftIcon={IconSettings} text={t`Create select field`} />
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </>

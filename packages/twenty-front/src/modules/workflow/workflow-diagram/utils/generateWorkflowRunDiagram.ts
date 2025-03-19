@@ -86,12 +86,7 @@ export const generateWorkflowRunDiagram = ({
     } else if (!isDefined(runResult)) {
       runStatus = 'running';
     } else {
-      const lastAttempt = runResult.outputs.at(-1);
-
-      if (!isDefined(lastAttempt)) {
-        // Should never happen. Should we throw instead?
-        runStatus = 'failure';
-      } else if (isDefined(lastAttempt.error)) {
+      if (isDefined(runResult.error)) {
         runStatus = 'failure';
       } else {
         runStatus = 'success';
@@ -104,7 +99,6 @@ export const generateWorkflowRunDiagram = ({
         nodeType: 'action',
         actionType: step.type,
         name: step.name,
-        isLeafNode: false,
         runStatus,
       },
       position: {

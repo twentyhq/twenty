@@ -15,11 +15,13 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -28,6 +30,7 @@ registerEnumType(WorkspaceActivationStatus, {
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType()
 export class Workspace {
+  // Fields
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -56,6 +59,15 @@ export class Workspace {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @Field()
+  @Column({ default: true })
+  allowImpersonation: boolean;
+
+  @Field()
+  @Column({ default: true })
+  isPublicInviteLinkEnabled: boolean;
+
+  // Relations
   @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
     cascade: true,
   })
@@ -71,16 +83,14 @@ export class Workspace {
   })
   workspaceUsers: Relation<UserWorkspace[]>;
 
-  @Field()
-  @Column({ default: true })
-  allowImpersonation: boolean;
-
-  @Field()
-  @Column({ default: true })
-  isPublicInviteLinkEnabled: boolean;
-
   @OneToMany(() => FeatureFlag, (featureFlag) => featureFlag.workspace)
   featureFlags: Relation<FeatureFlag[]>;
+
+  @OneToMany(
+    () => ApprovedAccessDomain,
+    (approvedAccessDomain) => approvedAccessDomain.workspace,
+  )
+  approvedAccessDomains: Relation<ApprovedAccessDomain[]>;
 
   @Field({ nullable: true })
   workspaceMembersCount: number;
@@ -141,4 +151,14 @@ export class Workspace {
   @Field()
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
+
+  @Column({ nullable: true, type: 'uuid' })
+  defaultRoleId: string | null;
+
+  @Field(() => RoleDTO, { nullable: true })
+  defaultRole: RoleDTO | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  version: string | null;
 }

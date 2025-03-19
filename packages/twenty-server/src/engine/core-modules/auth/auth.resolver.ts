@@ -2,9 +2,9 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { SettingsFeatures, SOURCE_LOCALE } from 'twenty-shared';
-import { Repository } from 'typeorm';
 import omit from 'lodash.omit';
+import { SOURCE_LOCALE } from 'twenty-shared';
+import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -24,7 +24,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
+import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
 import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
@@ -36,6 +37,7 @@ import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -47,10 +49,9 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
-import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -75,6 +76,7 @@ export class AuthResolver {
     private apiKeyService: ApiKeyService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
+    private signInUpService: SignInUpService,
     private transientTokenService: TransientTokenService,
     private emailVerificationService: EmailVerificationService,
     // private oauthService: OAuthService,
@@ -241,6 +243,29 @@ export class AuthResolver {
       user.id,
       user.email,
       workspace,
+      signUpInput.locale ?? SOURCE_LOCALE,
+    );
+
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+      workspace.id,
+    );
+
+    return {
+      loginToken,
+      workspace: {
+        id: workspace.id,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      },
+    };
+  }
+
+  @Mutation(() => SignUpOutput)
+  async signUpInNewWorkspace(
+    @AuthUser() currentUser: User,
+  ): Promise<SignUpOutput> {
+    const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
+      { type: 'existingUser', existingUser: currentUser },
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
@@ -342,7 +367,7 @@ export class AuthResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsFeatures.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionsGuard(SettingsPermissions.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
@@ -364,6 +389,7 @@ export class AuthResolver {
     const resetToken =
       await this.resetPasswordService.generatePasswordResetToken(
         emailPasswordResetInput.email,
+        emailPasswordResetInput.workspaceId,
       );
 
     return await this.resetPasswordService.sendEmailPasswordResetLink(
@@ -400,12 +426,5 @@ export class AuthResolver {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
-  }
-
-  @Query(() => [AvailableWorkspaceOutput])
-  async findAvailableWorkspacesByEmail(
-    @Args('email') email: string,
-  ): Promise<AvailableWorkspaceOutput[]> {
-    return this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
   }
 }

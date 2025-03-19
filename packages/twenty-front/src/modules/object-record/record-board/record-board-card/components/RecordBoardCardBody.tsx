@@ -1,18 +1,18 @@
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
+import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import {
   FieldContext,
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useContext } from 'react';
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
-import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 
 export const RecordBoardCardBody = ({
   fieldDefinitions,
@@ -42,8 +42,7 @@ export const RecordBoardCardBody = ({
             value={{
               recordId,
               maxWidth: 156,
-              recoilScopeId:
-                (recordId || 'new') + fieldDefinition.fieldMetadataId,
+              recoilScopeId: `board-card-${recordId}-${fieldDefinition.fieldMetadataId}`,
               isLabelIdentifier: false,
               fieldDefinition: {
                 disableTooltip: false,

@@ -17,6 +17,7 @@ import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import groupBy from 'lodash.groupby';
 import { AddTaskButton } from './AddTaskButton';
@@ -37,6 +38,8 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
   const { tasks, tasksLoading } = useTasks({
     targetableObjects: targetableObjects ?? [],
   });
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
@@ -71,16 +74,18 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
             All tasks addressed. Maintain the momentum.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        <Button
-          Icon={IconPlus}
-          title="New task"
-          variant={'secondary'}
-          onClick={() =>
-            openCreateActivity({
-              targetableObjects: targetableObjects ?? [],
-            })
-          }
-        />
+        {!hasObjectReadOnlyPermission && (
+          <Button
+            Icon={IconPlus}
+            title="New task"
+            variant={'secondary'}
+            onClick={() =>
+              openCreateActivity({
+                targetableObjects: targetableObjects ?? [],
+              })
+            }
+          />
+        )}
       </AnimatedPlaceholderEmptyContainer>
     );
   }

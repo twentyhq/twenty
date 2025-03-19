@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -14,7 +14,7 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 });
 
 describe('useUpsertRecordFilter', () => {
-  it('should add a new filter when fieldMetadataId does not exist', () => {
+  it('should add a new filter when record filter id does not exist', () => {
     const { result } = renderHook(
       () => {
         const currentRecordFilters = useRecoilComponentValueV2(
@@ -30,7 +30,7 @@ describe('useUpsertRecordFilter', () => {
       },
     );
 
-    const newFilter: RecordFilter = {
+    const mockNewRecordFilter: RecordFilter = {
       id: 'filter-1',
       fieldMetadataId: 'field-1',
       value: 'test-value',
@@ -41,14 +41,14 @@ describe('useUpsertRecordFilter', () => {
     };
 
     act(() => {
-      result.current.upsertRecordFilter(newFilter);
+      result.current.upsertRecordFilter(mockNewRecordFilter);
     });
 
     expect(result.current.currentRecordFilters).toHaveLength(1);
-    expect(result.current.currentRecordFilters[0]).toEqual(newFilter);
+    expect(result.current.currentRecordFilters[0]).toEqual(mockNewRecordFilter);
   });
 
-  it('should update an existing filter when fieldMetadataId exists', () => {
+  it('should update an existing filter when record filter id exists', () => {
     const { result } = renderHook(
       () => {
         const currentRecordFilters = useRecoilComponentValueV2(
@@ -64,7 +64,7 @@ describe('useUpsertRecordFilter', () => {
       },
     );
 
-    const initialFilter: RecordFilter = {
+    const mockInitialRecordFilter: RecordFilter = {
       id: 'filter-1',
       fieldMetadataId: 'field-1',
       value: 'initial-value',
@@ -74,7 +74,7 @@ describe('useUpsertRecordFilter', () => {
       type: FieldMetadataType.TEXT,
     };
 
-    const updatedFilter: RecordFilter = {
+    const mockUpdatedRecordFilter: RecordFilter = {
       id: 'filter-1',
       fieldMetadataId: 'field-1',
       value: 'updated-value',
@@ -85,17 +85,21 @@ describe('useUpsertRecordFilter', () => {
     };
 
     act(() => {
-      result.current.upsertRecordFilter(initialFilter);
+      result.current.upsertRecordFilter(mockInitialRecordFilter);
     });
 
     expect(result.current.currentRecordFilters).toHaveLength(1);
-    expect(result.current.currentRecordFilters[0]).toEqual(initialFilter);
+    expect(result.current.currentRecordFilters[0]).toEqual(
+      mockInitialRecordFilter,
+    );
 
     act(() => {
-      result.current.upsertRecordFilter(updatedFilter);
+      result.current.upsertRecordFilter(mockUpdatedRecordFilter);
     });
 
     expect(result.current.currentRecordFilters).toHaveLength(1);
-    expect(result.current.currentRecordFilters[0]).toEqual(updatedFilter);
+    expect(result.current.currentRecordFilters[0]).toEqual(
+      mockUpdatedRecordFilter,
+    );
   });
 });

@@ -5,9 +5,20 @@ import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-pan
 
 @ObjectType()
 export class AdminPanelHealthServiceData {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  label: string;
+
+  @Field(() => String)
+  description: string;
+
   @Field(() => AdminPanelHealthServiceStatus)
   status: AdminPanelHealthServiceStatus;
 
+  @Field(() => String, { nullable: true })
+  errorMessage?: string;
   @Field(() => String, { nullable: true })
   details?: string;
 

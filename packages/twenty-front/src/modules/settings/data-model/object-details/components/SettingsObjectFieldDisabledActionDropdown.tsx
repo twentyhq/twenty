@@ -11,6 +11,7 @@ import {
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
@@ -64,18 +65,18 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <MenuItem
-            text={isCustomField ? 'Edit' : 'View'}
+            text={isCustomField ? t`Edit` : t`View`}
             LeftIcon={isCustomField ? IconPencil : IconEye}
             onClick={handleEdit}
           />
           <MenuItem
-            text="Activate"
+            text={t`Activate`}
             LeftIcon={IconArchiveOff}
             onClick={handleActivate}
           />
           {isDeletable && (
             <MenuItem
-              text="Delete"
+              text={t`Delete`}
               accent="danger"
               LeftIcon={IconTrash}
               onClick={handleDelete}

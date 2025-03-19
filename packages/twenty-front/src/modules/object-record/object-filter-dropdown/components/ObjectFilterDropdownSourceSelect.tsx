@@ -11,13 +11,12 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared';
 
@@ -57,12 +56,6 @@ export const ObjectFilterDropdownSourceSelect = ({
 
   const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
 
-  const { deleteCombinedViewFilter } =
-    useDeleteCombinedViewFilters(viewComponentId);
-
-  const { currentViewWithCombinedFiltersAndSorts } =
-    useGetCurrentView(viewComponentId);
-
   // TODO: this should be removed as it is not consistent across re-renders
   const [fieldId] = useState(v4());
 
@@ -77,6 +70,10 @@ export const ObjectFilterDropdownSourceSelect = ({
   const { emptyRecordFilter } = useEmptyRecordFilter();
 
   const { removeRecordFilter } = useRemoveRecordFilter();
+
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
 
   const handleMultipleItemSelectChange = (
     itemToSelect: SelectableItem,
@@ -97,7 +94,7 @@ export const ObjectFilterDropdownSourceSelect = ({
     if (newSelectedItemIds.length === 0) {
       emptyRecordFilter();
       removeRecordFilter(fieldMetadataItemUsedInFilterDropdown.id);
-      deleteCombinedViewFilter(fieldId);
+
       return;
     }
 
@@ -121,14 +118,13 @@ export const ObjectFilterDropdownSourceSelect = ({
           ? JSON.stringify(newSelectedItemIds)
           : EMPTY_FILTER_VALUE;
 
-      const viewFilter =
-        currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
-          (viewFilter) =>
-            viewFilter.fieldMetadataId ===
-            fieldMetadataItemUsedInFilterDropdown.id,
-        );
+      const recordFilter = currentRecordFilters.find(
+        (recordFilter) =>
+          recordFilter.fieldMetadataId ===
+          fieldMetadataItemUsedInFilterDropdown.id,
+      );
 
-      const filterId = viewFilter?.id ?? fieldId;
+      const filterId = recordFilter?.id ?? fieldId;
 
       applyRecordFilter({
         id: selectedFilter?.id ? selectedFilter.id : filterId,
@@ -140,7 +136,7 @@ export const ObjectFilterDropdownSourceSelect = ({
         displayValue: filterDisplayValue,
         fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
         value: newFilterValue,
-        viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+        recordFilterGroupId: selectedFilter?.recordFilterGroupId,
       });
     }
   };
@@ -148,7 +144,7 @@ export const ObjectFilterDropdownSourceSelect = ({
   return (
     <MultipleSelectDropdown
       selectableListId="object-filter-source-select-id"
-      hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+      hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
       itemsToSelect={sourceTypes.filter(
         (item) =>
           !filteredSelectedItems.some((selected) => selected.id === item.id),

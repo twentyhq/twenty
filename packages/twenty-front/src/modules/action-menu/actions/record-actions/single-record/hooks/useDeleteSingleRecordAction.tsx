@@ -1,17 +1,18 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { t } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
+import { getOsControlSymbol } from 'twenty-ui';
 
 export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
@@ -20,6 +21,8 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const { resetTableRowSelection } = useRecordTable({
     recordTableId: objectMetadataItem.namePlural,
@@ -33,8 +36,6 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
-
-  const { closeRightDrawer } = useRightDrawer();
 
   const handleDeleteClick = useCallback(async () => {
     resetTableRowSelection();
@@ -58,10 +59,10 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
-
   const shouldBeRegistered =
-    !isRemoteObject && isNull(selectedRecord?.deletedAt);
+    !isRemoteObject &&
+    isNull(selectedRecord?.deletedAt) &&
+    !hasObjectReadOnlyPermission;
 
   const onClick = () => {
     if (!shouldBeRegistered) {
@@ -71,6 +72,8 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
     setIsDeleteRecordsModalOpen(true);
   };
 
+  const osControlSymbol = getOsControlSymbol();
+
   return {
     shouldBeRegistered,
     onClick,
@@ -79,16 +82,11 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
         isOpen={isDeleteRecordsModalOpen}
         setIsOpen={setIsDeleteRecordsModalOpen}
         title={'Delete Record'}
-        subtitle={
-          'Are you sure you want to delete this record? It can be recovered from the Options menu.'
-        }
+        subtitle={t`Are you sure you want to delete this record? It can be recovered from the Command menu (${osControlSymbol} + K).`}
         onConfirmClick={() => {
           handleDeleteClick();
-          if (isInRightDrawer) {
-            closeRightDrawer({ emitCloseEvent: false });
-          }
         }}
-        deleteButtonText={'Delete Record'}
+        confirmButtonText={'Delete Record'}
       />
     ),
   };

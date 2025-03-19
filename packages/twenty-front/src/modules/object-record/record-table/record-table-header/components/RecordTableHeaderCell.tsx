@@ -6,13 +6,14 @@ import { IconPlus, LightIconButton } from 'twenty-ui';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -106,7 +107,7 @@ type RecordTableHeaderCellProps = {
 export const RecordTableHeaderCell = ({
   column,
 }: RecordTableHeaderCellProps) => {
-  const { recordTableId, objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const resizeFieldOffsetState = useRecoilComponentCallbackStateV2(
     resizeFieldOffsetComponentState,
@@ -201,16 +202,17 @@ export const RecordTableHeaderCell = ({
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
-  const { createNewTableRecord } = useCreateNewTableRecord({
+  const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
-    recordTableId,
   });
 
   const handlePlusButtonClick = () => {
-    createNewTableRecord();
+    createNewIndexRecord();
   };
 
   const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   return (
     <StyledColumnHeaderCell
@@ -229,7 +231,8 @@ export const RecordTableHeaderCell = ({
         <RecordTableColumnHeadWithDropdown column={column} />
         {(useIsMobile() || iconVisibility) &&
           !!column.isLabelIdentifier &&
-          !isReadOnly && (
+          !isReadOnly &&
+          !hasObjectReadOnlyPermission && (
             <StyledHeaderIcon>
               <LightIconButton
                 Icon={IconPlus}

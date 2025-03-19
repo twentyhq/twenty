@@ -9,7 +9,9 @@ type FeatureFlagMetadata = {
 export type PublicFeatureFlag = {
   key: Extract<
     FeatureFlagKey,
-    FeatureFlagKey.IsWorkflowEnabled | FeatureFlagKey.IsCommandMenuV2Enabled
+    | FeatureFlagKey.IsWorkflowEnabled
+    | FeatureFlagKey.IsPermissionsEnabled
+    | FeatureFlagKey.IsCustomDomainEnabled
   >;
   metadata: FeatureFlagMetadata;
 };
@@ -24,12 +26,25 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IsCommandMenuV2Enabled,
+    key: FeatureFlagKey.IsPermissionsEnabled,
     metadata: {
-      label: 'Side Panel',
+      label: 'Permissions V1',
       description:
-        'Click on the 3 dots menu at the top right or press command K to open your new side panel.',
-      imagePath: 'https://twenty.com/images/lab/side-panel.png',
+        'Role-based access control system for workspace security management (Admin/Member)',
+      imagePath: 'https://twenty.com/images/lab/is-permissions-enabled.png',
     },
   },
+  ...(process.env.CLOUDFLARE_API_KEY
+    ? [
+        {
+          key: FeatureFlagKey.IsCustomDomainEnabled as PublicFeatureFlag['key'],
+          metadata: {
+            label: 'Custom Domain',
+            description: 'Customize your workspace URL with your own domain.',
+            imagePath:
+              'https://twenty.com/images/lab/is-custom-domain-enabled.png',
+          },
+        },
+      ]
+    : []),
 ];

@@ -1,3 +1,4 @@
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
@@ -12,6 +13,8 @@ type isFieldValueReadOnlyParams = {
   fieldType?: FieldMetadataType;
   isObjectRemote?: boolean;
   isRecordDeleted?: boolean;
+  hasObjectReadOnlyPermission?: boolean;
+  contextStoreCurrentViewType: ContextStoreViewType | null;
 };
 
 export const isFieldValueReadOnly = ({
@@ -20,8 +23,17 @@ export const isFieldValueReadOnly = ({
   fieldType,
   isObjectRemote = false,
   isRecordDeleted = false,
+  hasObjectReadOnlyPermission = false,
+  contextStoreCurrentViewType,
 }: isFieldValueReadOnlyParams) => {
-  if (fieldName === 'noteTargets' || fieldName === 'taskTargets') {
+  const isTableViewOrKanbanView =
+    contextStoreCurrentViewType === ContextStoreViewType.Table ||
+    contextStoreCurrentViewType === ContextStoreViewType.Kanban;
+
+  const isTargetField =
+    fieldName === 'noteTargets' || fieldName === 'taskTargets';
+
+  if (isTableViewOrKanbanView && isTargetField) {
     return true;
   }
 
@@ -30,6 +42,10 @@ export const isFieldValueReadOnly = ({
   }
 
   if (isRecordDeleted) {
+    return true;
+  }
+
+  if (hasObjectReadOnlyPermission) {
     return true;
   }
 

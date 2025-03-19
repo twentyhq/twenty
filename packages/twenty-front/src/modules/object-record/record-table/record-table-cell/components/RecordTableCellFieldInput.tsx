@@ -6,16 +6,13 @@ import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useI
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { hasRecordTableCellDangerBorderScopedState } from '@/object-record/record-table/record-table-cell/states/hasRecordTableCellDangerBorderScopedState';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
-    useRecordTableBodyContextOrThrow();
+  const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
 
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
@@ -26,22 +23,14 @@ export const RecordTableCellFieldInput = () => {
   );
 
   const handleEnter: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
     onMoveFocus('down');
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
   };
@@ -50,63 +39,32 @@ export const RecordTableCellFieldInput = () => {
     onCloseTableCell();
   };
 
-  const handleClickOutside = useRecoilCallback(
-    ({ snapshot }) =>
-      (persistField: () => void, event: MouseEvent | TouchEvent) => {
-        const dropdownFocusId = getDropdownFocusIdForRecordField(
-          recordId,
-          fieldDefinition.fieldMetadataId,
-          'table-cell',
-        );
+  const handleClickOutside = (
+    persistField: () => void,
+    event: MouseEvent | TouchEvent,
+  ) => {
+    event.stopImmediatePropagation();
 
-        const activeDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
-          .getValue();
+    persistField();
 
-        if (activeDropdownFocusId !== dropdownFocusId) {
-          return;
-        }
-
-        event.stopImmediatePropagation();
-
-        onUpsertRecord({
-          persistField,
-          recordId,
-          fieldName: fieldDefinition.metadata.fieldName,
-        });
-
-        onCloseTableCell();
-      },
-    [fieldDefinition, onCloseTableCell, onUpsertRecord, recordId],
-  );
+    onCloseTableCell();
+  };
 
   const handleEscape: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
     onMoveFocus('right');
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+    persistField();
 
     onCloseTableCell();
     onMoveFocus('left');

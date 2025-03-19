@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  UnauthorizedException,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { UnauthorizedException, UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -13,10 +8,11 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { FieldMetadataType, SettingsFeatures } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -36,6 +32,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
@@ -72,7 +69,7 @@ export class FieldMetadataResolver {
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
@@ -88,7 +85,7 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
@@ -104,7 +101,7 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsFeatures.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async deleteOneField(
     @Args('input') input: DeleteOneFieldInput,
@@ -122,19 +119,19 @@ export class FieldMetadataResolver {
       });
 
     if (!fieldMetadata) {
-      throw new BadRequestException('Field does not exist');
+      throw new ValidationError('Field does not exist');
     }
 
     if (!fieldMetadata.isCustom) {
-      throw new BadRequestException("Standard Fields can't be deleted");
+      throw new ValidationError("Standard Fields can't be deleted");
     }
 
     if (fieldMetadata.isActive) {
-      throw new BadRequestException("Active fields can't be deleted");
+      throw new ValidationError("Active fields can't be deleted");
     }
 
     if (fieldMetadata.type === FieldMetadataType.RELATION) {
-      throw new BadRequestException(
+      throw new ValidationError(
         "Relation fields can't be deleted, you need to delete the RelationMetadata instead",
       );
     }

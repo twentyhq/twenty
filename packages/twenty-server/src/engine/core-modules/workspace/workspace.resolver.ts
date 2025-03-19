@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { isDefined, SettingsFeatures } from 'twenty-shared';
+import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -39,6 +39,7 @@ import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -46,7 +47,10 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -69,6 +73,7 @@ export class WorkspaceResolver {
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly roleService: RoleService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
@@ -106,6 +111,7 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApiKey() apiKey?: string,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
@@ -114,6 +120,7 @@ export class WorkspaceResolver {
           id: workspace.id,
         },
         userWorkspaceId,
+        apiKey,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
@@ -123,7 +130,7 @@ export class WorkspaceResolver {
   @Mutation(() => String)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
   )
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,
@@ -167,7 +174,7 @@ export class WorkspaceResolver {
   @Mutation(() => Workspace)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsFeatures.WORKSPACE),
+    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
@@ -188,6 +195,18 @@ export class WorkspaceResolver {
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }
+  }
+
+  @ResolveField(() => RoleDTO, { nullable: true })
+  async defaultRole(@Parent() workspace: Workspace): Promise<RoleDTO | null> {
+    if (!workspace.defaultRoleId) {
+      return null;
+    }
+
+    return await this.roleService.getRoleById(
+      workspace.defaultRoleId,
+      workspace.id,
+    );
   }
 
   @ResolveField(() => BillingSubscription, { nullable: true })

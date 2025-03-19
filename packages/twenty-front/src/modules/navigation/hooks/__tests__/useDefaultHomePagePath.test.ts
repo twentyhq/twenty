@@ -7,8 +7,9 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
-import { getCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedUserData } from '~/testing/mock-data/users';
 
@@ -34,10 +35,11 @@ const renderHooks = ({
           {
             id: 'viewId',
             name: 'Test View',
-            objectMetadataId: getCompanyObjectMetadataItem().id,
+            objectMetadataId: getMockCompanyObjectMetadataItem().id,
             type: ViewType.Table,
             key: null,
             isCompact: false,
+            openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
             viewFields: [],
             viewGroups: [],
             viewSorts: [],

@@ -3,10 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  deleteCoreSchema,
-  seedCoreSchema,
-} from 'src/database/typeorm-seeds/core/demo';
+import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
+import { deleteCoreSchema } from 'src/database/typeorm-seeds/core/demo';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -18,12 +16,12 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 @Injectable()
 export class DataSeedDemoWorkspaceService {
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly workspaceManagerService: WorkspaceManagerService,
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly workspaceSchemaCache: CacheStorageService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async seedDemo(): Promise<void> {
@@ -45,7 +43,15 @@ export class DataSeedDemoWorkspaceService {
           await deleteCoreSchema(rawDataSource, workspaceId);
         }
 
-        await seedCoreSchema(rawDataSource, workspaceId);
+        const appVersion = this.environmentService.get('APP_VERSION');
+
+        await seedCoreSchema({
+          workspaceDataSource: rawDataSource,
+          workspaceId,
+          appVersion,
+          seedBilling: false,
+          seedFeatureFlags: false,
+        });
         await this.workspaceManagerService.initDemo(workspaceId);
       }
     } catch (error) {

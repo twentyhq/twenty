@@ -14,15 +14,6 @@ const StyledDomainFormWrapper = styled.div`
   display: flex;
 `;
 
-const StyledDomain = styled.h2`
-  align-self: flex-start;
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin: ${({ theme }) => theme.spacing(2)};
-  white-space: nowrap;
-`;
-
 export const SettingsSubdomain = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
   const { t } = useLingui();
@@ -51,13 +42,13 @@ export const SettingsSubdomain = () => {
                 onChange={onChange}
                 error={error?.message}
                 disabled={!!currentWorkspace?.customDomain}
+                rightAdornment={
+                  isDefined(domainConfiguration.frontDomain)
+                    ? `.${domainConfiguration.frontDomain}`
+                    : undefined
+                }
                 fullWidth
               />
-              {isDefined(domainConfiguration.frontDomain) && (
-                <StyledDomain>
-                  {`.${domainConfiguration.frontDomain}`}
-                </StyledDomain>
-              )}
             </>
           )}
         />

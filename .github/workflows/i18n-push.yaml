@@ -1,4 +1,4 @@
-name: 'Extract translations when there is a push to main, and upload them to Crowdin'
+name: 'Push translations to Crowdin'
 
 on:
   workflow_dispatch:
@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4

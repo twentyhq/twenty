@@ -10,15 +10,19 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared';
 import { MenuItemSelect, useIcons } from 'twenty-ui';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
@@ -67,6 +71,14 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     advancedFilterViewFilterId,
   );
 
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
+
+  const setSelectedFilter = useSetRecoilComponentStateV2(
+    selectedFilterComponentState,
+  );
+
   const handleSelectFilter = (fieldMetadataItem: FieldMetadataItem) => {
     closeAdvancedFilterDropdown();
 
@@ -75,16 +87,38 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
     if (filterType === 'RELATION' || filterType === 'SELECT') {
-      setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
+      setHotkeyScope(SingleRecordPickerHotkeyScope.SingleRecordPicker);
     }
 
-    setSelectedOperandInDropdown(
-      getRecordFilterOperands({
-        filterType,
-      })[0],
-    );
+    const defaultOperand = getRecordFilterOperands({
+      filterType,
+    })[0];
 
     setObjectFilterDropdownFilterIsSelected(true);
+
+    const duplicateFilterInCurrentRecordFilters =
+      findDuplicateRecordFilterInNonAdvancedRecordFilters({
+        recordFilters: currentRecordFilters,
+        fieldMetadataItemId: fieldMetadataItem.id,
+      });
+
+    const filterIsAlreadyInCurrentRecordFilters = isDefined(
+      duplicateFilterInCurrentRecordFilters,
+    );
+
+    const isSimpleFilter = !isDefined(advancedFilterViewFilterId);
+
+    if (isSimpleFilter && filterIsAlreadyInCurrentRecordFilters) {
+      setSelectedFilter({
+        ...duplicateFilterInCurrentRecordFilters,
+      });
+
+      setSelectedOperandInDropdown(
+        duplicateFilterInCurrentRecordFilters.operand,
+      );
+    } else {
+      setSelectedOperandInDropdown(defaultOperand);
+    }
   };
 
   const { getIcon } = useIcons();

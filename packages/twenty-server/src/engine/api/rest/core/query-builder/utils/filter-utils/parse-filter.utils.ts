@@ -1,14 +1,13 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
-import { parseFilterContent } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter-content.utils';
-import { parseBaseFilter } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-base-filter.utils';
 import { checkFields } from 'src/engine/api/rest/core/query-builder/utils/check-fields.utils';
-import { formatFieldValue } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/format-field-values.utils';
-import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
 import { checkFilterEnumValues } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/check-filter-enum-values';
+import { formatFieldValue } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/format-field-values.utils';
+import { parseBaseFilter } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-base-filter.utils';
+import { parseFilterContent } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter-content.utils';
 import { getFieldType } from 'src/engine/api/rest/core/query-builder/utils/get-field-type.utils';
+import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export enum Conjunctions {
   or = 'or',
@@ -18,7 +17,7 @@ export enum Conjunctions {
 
 export const parseFilter = (
   filterQuery: string,
-  objectMetadataItem: ObjectMetadataInterface,
+  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
 ): Record<string, FieldValue> => {
   const result = {};
   const match = filterQuery.match(
