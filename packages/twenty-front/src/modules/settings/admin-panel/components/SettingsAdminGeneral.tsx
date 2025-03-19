@@ -51,6 +51,7 @@ export const SettingsAdminGeneral = () => {
 
   const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
     activeTabIdComponentState,
+    'settings-admin-general',
   );
   const [userLookupResult, setUserLookupResult] = useRecoilState(
     userLookupResultState,
