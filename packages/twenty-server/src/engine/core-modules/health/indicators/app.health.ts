@@ -113,13 +113,16 @@ export class AppHealthIndicator {
     result.push(...array.slice(0, startCount));
 
     const midCount = Math.floor(sampleSize * 0.3);
-    const midStart = Math.floor((array.length - midCount) / 2);
+    const midStart = Math.max(
+      startCount,
+      Math.floor((array.length - midCount) / 2),
+    );
 
     result.push(...array.slice(midStart, midStart + midCount));
 
-    const endCount = Math.floor(sampleSize * 0.3);
+    const remainingCount = sampleSize - result.length;
 
-    result.push(...array.slice(-endCount));
+    result.push(...array.slice(-remainingCount));
 
     return result;
   }
