@@ -16,6 +16,7 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
@@ -32,7 +33,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
   const { closeDropdown } = useDropdownV2();
 
   const commandMenuCloseAnimationCompleteCleanup = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       () => {
         closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
 
@@ -69,6 +70,20 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
           }),
           'code',
         );
+
+        for (const [pageId, morphItem] of snapshot
+          .getLoadable(commandMenuNavigationMorphItemByPageState)
+          .getValue()) {
+          set(
+            activeTabIdComponentState.atomFamily({
+              instanceId: getShowPageTabListComponentId({
+                pageId,
+                targetObjectId: morphItem.recordId,
+              }),
+            }),
+            null,
+          );
+        }
       },
     [
       closeDropdown,
