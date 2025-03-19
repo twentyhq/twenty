@@ -41,7 +41,10 @@ export class WorkflowTriggerController {
       );
     }
 
-    if (!isDefined(workflow.lastPublishedVersionId)) {
+    if (
+      !isDefined(workflow.lastPublishedVersionId) ||
+      workflow.lastPublishedVersionId === ''
+    ) {
       throw new WorkflowTriggerException(
         'Workflow not activated',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
