@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import {
   ComputedPartialFieldMetadata,
   PartialComputedFieldMetadata,
@@ -9,7 +11,6 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export const computeStandardFields = (
   standardFieldMetadataCollection: (

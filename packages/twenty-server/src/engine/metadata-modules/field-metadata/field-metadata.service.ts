@@ -6,6 +6,9 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4, v4 } from 'uuid';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { settings } from 'src/engine/constants/settings';
@@ -66,9 +69,6 @@ import { FieldMetadataEntity } from './field-metadata.entity';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
-import { APP_LOCALES } from 'twenty-shared/translations';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {

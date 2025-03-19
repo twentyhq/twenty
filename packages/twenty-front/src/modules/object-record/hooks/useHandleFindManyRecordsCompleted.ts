@@ -8,7 +8,7 @@ import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamily
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useHandleFindManyRecordsCompleted = <T,>({
+export const useHandleFindManyRecordsCompleted = <T>({
   queryIdentifier,
   onCompleted,
   objectMetadataItem,

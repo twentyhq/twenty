@@ -13,6 +13,7 @@ import {
   ValidationError,
   validateSync,
 } from 'class-validator';
+import { isDefined } from 'twenty-shared/utils';
 
 import { EmailDriver } from 'src/engine/core-modules/email/interfaces/email.interface';
 import { AwsRegion } from 'src/engine/core-modules/environment/interfaces/aws-region.interface';
@@ -36,7 +37,6 @@ import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handle
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
-import { isDefined } from 'twenty-shared/utils';
 
 export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({

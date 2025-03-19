@@ -1,5 +1,6 @@
-import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
 describe('computeCompositeColumnName', () => {
   it('should compute composite column name for rich text v2 field', () => {

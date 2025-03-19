@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { z } from 'zod';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
@@ -23,7 +24,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/exceptions/send-email-action.exception';
 import { isWorkflowSendEmailAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/guards/is-workflow-send-email-action.guard';
 import { WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export type WorkflowSendEmailStepOutputSchema = {
   success: boolean;

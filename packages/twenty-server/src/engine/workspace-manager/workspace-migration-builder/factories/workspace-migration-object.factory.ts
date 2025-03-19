@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -13,7 +15,6 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export interface ObjectMetadataUpdate {
   current: ObjectMetadataEntity;

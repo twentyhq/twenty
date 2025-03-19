@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-metadata-seed';
 
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
@@ -10,8 +13,6 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { capitalize, isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class SeederService {

@@ -1,7 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const checkFilterEnumValues = (
   fieldType: FieldMetadataType | undefined,

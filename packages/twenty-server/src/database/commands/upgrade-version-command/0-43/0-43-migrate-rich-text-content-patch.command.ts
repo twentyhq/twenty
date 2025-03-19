@@ -4,6 +4,7 @@ import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandOptions,
@@ -18,7 +19,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type MigrateRichTextContentArgs = {
   richTextFieldsWithObjectMetadata: RichTextFieldsWithObjectMetadata[];

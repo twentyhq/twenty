@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -13,8 +16,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { isDefined } from 'twenty-shared/utils';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 @Injectable()
 export class PermissionsService {

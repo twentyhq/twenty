@@ -1,7 +1,8 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export function generateDefaultValue(
   type: FieldMetadataType,

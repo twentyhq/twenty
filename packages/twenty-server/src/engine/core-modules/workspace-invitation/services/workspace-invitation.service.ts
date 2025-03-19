@@ -10,6 +10,7 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
 import { IsNull, Repository } from 'typeorm';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import {
   AppToken,
@@ -32,7 +33,6 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { APP_LOCALES } from 'twenty-shared/translations';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

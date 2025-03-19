@@ -15,7 +15,7 @@ type StringFilter = {
   notIn?: Array<string>;
 };
 
-const filterData = <DataT,>(
+const filterData = <DataT>(
   data: Array<DataT>,
   where: Record<string, any>,
 ): Array<DataT> =>
@@ -92,7 +92,7 @@ const filterData = <DataT,>(
     return isMatch;
   });
 
-export const filterAndSortData = <DataT,>(
+export const filterAndSortData = <DataT>(
   data: Array<DataT>,
   where?: Record<string, any>,
   orderBy?: Array<any>,

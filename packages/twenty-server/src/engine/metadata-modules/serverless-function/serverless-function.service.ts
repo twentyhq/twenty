@@ -5,6 +5,7 @@ import { basename, dirname, join } from 'path';
 
 import deepEqual from 'deep-equal';
 import { IsNull, Not, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
@@ -34,7 +35,6 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class ServerlessFunctionService {

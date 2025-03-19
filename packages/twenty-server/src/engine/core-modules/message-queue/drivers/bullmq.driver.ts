@@ -2,6 +2,7 @@ import { OnModuleDestroy } from '@nestjs/common';
 
 import { JobsOptions, MetricsTime, Queue, QueueOptions, Worker } from 'bullmq';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   QueueCronJobOptions,
@@ -13,7 +14,6 @@ import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
-import { isDefined } from 'twenty-shared/utils';
 
 export type BullMQDriverOptions = QueueOptions;
 

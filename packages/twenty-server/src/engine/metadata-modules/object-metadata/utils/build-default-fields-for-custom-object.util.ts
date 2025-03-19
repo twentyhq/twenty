@@ -1,9 +1,10 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export const buildDefaultFieldsForCustomObject = (
   workspaceId: string,

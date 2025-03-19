@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
@@ -10,7 +12,6 @@ import {
   MessageImportExceptionCode,
 } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 export type GetFullMessageListResponse = {
   messageExternalIds: string[];

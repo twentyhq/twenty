@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
 import { DataSource, ObjectLiteral } from 'typeorm';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
@@ -34,8 +36,6 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { capitalize, isDefined } from 'twenty-shared/utils';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;

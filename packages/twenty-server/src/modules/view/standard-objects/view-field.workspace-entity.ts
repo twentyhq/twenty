@@ -2,6 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { Relation } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -18,7 +19,6 @@ import { VIEW_FIELD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/work
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 registerEnumType(AGGREGATE_OPERATIONS, {
   name: 'AggregateOperations',

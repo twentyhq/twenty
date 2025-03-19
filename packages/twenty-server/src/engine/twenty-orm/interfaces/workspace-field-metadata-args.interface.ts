@@ -1,10 +1,11 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export interface WorkspaceFieldMetadataArgs {
   /**

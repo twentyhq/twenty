@@ -1,10 +1,11 @@
 import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 
+import { capitalize } from 'twenty-shared/utils';
+
 import { metadataToRepositoryMapping } from 'src/engine/object-metadata-repository/metadata-to-repository.mapping';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
-import { capitalize } from 'twenty-shared/utils';
 
 @Global()
 @Module({})

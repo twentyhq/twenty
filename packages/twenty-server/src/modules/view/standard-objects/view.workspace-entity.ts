@@ -1,6 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -25,7 +26,6 @@ import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-object
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export enum ViewOpenRecordInType {
   SIDE_PANEL = 'SIDE_PANEL',

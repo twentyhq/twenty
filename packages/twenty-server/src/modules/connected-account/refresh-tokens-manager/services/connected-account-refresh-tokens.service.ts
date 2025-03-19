@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { assertUnreachable } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   GoogleAPIRefreshAccessTokenService,
@@ -14,8 +17,6 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { assertUnreachable } from 'twenty-shared/utils';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 export type ConnectedAccountTokens = GoogleTokens | MicrosoftTokens;
 

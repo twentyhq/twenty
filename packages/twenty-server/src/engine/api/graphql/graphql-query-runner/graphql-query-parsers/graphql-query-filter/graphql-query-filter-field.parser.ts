@@ -1,4 +1,5 @@
 import { WhereExpressionBuilder } from 'typeorm';
+import { capitalize } from 'twenty-shared/utils';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -12,7 +13,6 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
-import { capitalize } from 'twenty-shared/utils';
 
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 

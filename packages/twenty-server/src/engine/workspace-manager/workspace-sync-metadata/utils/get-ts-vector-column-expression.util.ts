@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   computeColumnName,
@@ -13,7 +15,6 @@ import {
   SearchableFieldType,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 import { isSearchableSubfield } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-subfield.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export type FieldTypeAndNameMetadata = {
   name: string;

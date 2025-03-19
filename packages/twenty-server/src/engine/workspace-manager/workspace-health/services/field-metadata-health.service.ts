@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
   WorkspaceHealthIssue,
@@ -26,7 +28,6 @@ import { customNamePrefix } from 'src/engine/utils/compute-table-name.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { validName } from 'src/engine/workspace-manager/workspace-health/utils/valid-name.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class FieldMetadataHealthService {

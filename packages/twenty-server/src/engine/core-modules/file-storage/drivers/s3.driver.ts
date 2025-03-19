@@ -18,13 +18,13 @@ import {
   S3,
   S3ClientConfig,
 } from '@aws-sdk/client-s3';
+import { isDefined } from 'twenty-shared/utils';
 
 import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { isDefined } from 'twenty-shared/utils';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;

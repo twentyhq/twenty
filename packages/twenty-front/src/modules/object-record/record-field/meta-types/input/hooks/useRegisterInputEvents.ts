@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRegisterInputEvents = <T,>({
+export const useRegisterInputEvents = <T>({
   inputRef,
   copyRef,
   inputValue,

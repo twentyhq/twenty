@@ -13,7 +13,7 @@ type CreateComponentStateV2Type<ValueType> = {
   effects?: AtomEffect<ValueType>[];
 };
 
-export const createComponentStateV2_alpha = <ValueType,>({
+export const createComponentStateV2_alpha = <ValueType>({
   key,
   defaultValue,
   componentContext,

@@ -1,8 +1,8 @@
 import camelCase from 'lodash.camelcase';
 import { slugify } from 'transliteration';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
-import { isDefined } from 'twenty-shared/utils';
 
 export const validateNameAndLabelAreSyncOrThrow = (
   label: string,

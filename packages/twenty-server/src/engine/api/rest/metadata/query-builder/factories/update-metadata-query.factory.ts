@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { fetchMetadataFields } from 'src/engine/api/rest/metadata/query-builder/utils/fetch-metadata-fields.utils';
 import { capitalize } from 'twenty-shared/utils';
+
+import { fetchMetadataFields } from 'src/engine/api/rest/metadata/query-builder/utils/fetch-metadata-fields.utils';
 
 @Injectable()
 export class UpdateMetadataQueryFactory {

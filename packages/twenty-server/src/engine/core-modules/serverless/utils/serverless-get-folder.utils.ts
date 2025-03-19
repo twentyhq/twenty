@@ -1,5 +1,7 @@
 import { join } from 'path';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -7,7 +9,6 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getServerlessFolder = ({
   serverlessFunction,

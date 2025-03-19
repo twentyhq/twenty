@@ -1,7 +1,8 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { SSOIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getAuthProvidersByWorkspace = ({
   workspace,

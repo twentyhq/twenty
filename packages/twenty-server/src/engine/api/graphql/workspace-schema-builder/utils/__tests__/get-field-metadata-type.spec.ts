@@ -1,5 +1,6 @@
-import { getFieldMetadataType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-field-metadata-type.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { getFieldMetadataType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-field-metadata-type.util';
 
 describe('getFieldMetadataType', () => {
   it.each([

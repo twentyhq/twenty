@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import FileType from 'file-type';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -39,8 +41,6 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { isWorkEmail } from 'src/utils/is-work-email';
-import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

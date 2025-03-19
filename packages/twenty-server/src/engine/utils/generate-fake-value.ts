@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+
 type FakeValueTypes =
   | string
   | number

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ObjectRecord,
@@ -28,7 +29,6 @@ import {
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 import { RecordPositionFactory } from './record-position.factory';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type ArgPositionBackfillInput = {
   argIndex?: number;

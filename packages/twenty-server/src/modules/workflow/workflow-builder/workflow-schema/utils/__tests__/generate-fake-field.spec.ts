@@ -1,7 +1,8 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import * as generateFakeValueModule from 'src/engine/utils/generate-fake-value';
 import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
 import * as camelToTitleCaseModule from 'src/utils/camel-to-title-case';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 jest.mock('src/engine/utils/generate-fake-value');
 jest.mock('src/utils/camel-to-title-case');

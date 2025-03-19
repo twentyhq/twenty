@@ -1,5 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { Any, Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -15,7 +17,6 @@ import {
   CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 export const CALENDAR_EVENT_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
 

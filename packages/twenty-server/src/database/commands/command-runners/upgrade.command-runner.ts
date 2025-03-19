@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { SemVer } from 'semver';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -17,7 +18,6 @@ import {
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
-import { isDefined } from 'twenty-shared/utils';
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   abstract readonly fromWorkspaceVersion: SemVer;

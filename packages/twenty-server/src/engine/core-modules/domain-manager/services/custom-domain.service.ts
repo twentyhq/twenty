@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 
 import Cloudflare from 'cloudflare';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   DomainManagerException,
@@ -11,7 +12,6 @@ import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class CustomDomainService {

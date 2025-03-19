@@ -1,9 +1,10 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { isTextColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/is-text-column-type.util';
 import {
   WorkspaceMigrationException,
   WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
   fieldMetadataType: Type,

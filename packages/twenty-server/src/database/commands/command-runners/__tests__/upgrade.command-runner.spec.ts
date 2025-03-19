@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { SemVer } from 'semver';
 import { Repository } from 'typeorm';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
@@ -10,7 +11,6 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { EachTestingContext } from 'twenty-shared/testing';
 
 class TestUpgradeCommandRunnerV1 extends UpgradeCommandRunner {
   fromWorkspaceVersion = new SemVer('1.0.0');

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
@@ -17,7 +19,6 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
 import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class StandardFieldFactory {

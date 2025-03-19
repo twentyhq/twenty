@@ -1,5 +1,6 @@
-import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 
 describe('generateNullable', () => {
   it('should generate a nullable value false for TEXT, EMAIL, PHONE no matter what the input is', () => {

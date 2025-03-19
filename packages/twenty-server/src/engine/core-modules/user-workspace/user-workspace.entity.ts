@@ -14,13 +14,13 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 registerEnumType(SettingsPermissions, {
   name: 'SettingsPermissions',

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -8,7 +10,6 @@ import {
   MessageImportException,
   MessageImportExceptionCode,
 } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 @Injectable()
 export class MessagingCursorService {

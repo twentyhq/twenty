@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
+import { capitalize } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -37,7 +38,6 @@ import {
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { getServerUrl } from 'src/utils/get-server-url';
-import { capitalize } from 'twenty-shared/utils';
 
 @Injectable()
 export class OpenApiService {

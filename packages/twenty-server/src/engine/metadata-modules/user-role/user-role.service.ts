@@ -1,5 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { In, Not, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
@@ -12,7 +14,6 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { isDefined } from 'twenty-shared/utils';
 
 export class UserRoleService {
   constructor(

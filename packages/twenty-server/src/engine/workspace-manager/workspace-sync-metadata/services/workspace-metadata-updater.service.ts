@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
+
+import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 import {
+  DeepPartial,
   EntityManager,
   EntityTarget,
   FindOptionsWhere,
@@ -7,7 +11,6 @@ import {
   ObjectLiteral,
   Repository,
 } from 'typeorm';
-import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { v4 as uuidV4 } from 'uuid';
 
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
@@ -25,8 +28,6 @@ import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspac
 import { FieldMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { ObjectMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-object.factory';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
-import { capitalize } from 'twenty-shared/utils';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {

@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { DeepPartial, EntityManager, ILike } from 'typeorm';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -12,8 +14,6 @@ import { extractDomainFromLink } from 'src/modules/contact-creation-manager/util
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
 
 type CompanyToCreate = {
   domainName: string | undefined;

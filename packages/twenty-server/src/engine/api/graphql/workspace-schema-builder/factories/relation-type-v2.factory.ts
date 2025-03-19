@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLOutputType } from 'graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -8,7 +9,6 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 
 import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class RelationTypeV2Factory {

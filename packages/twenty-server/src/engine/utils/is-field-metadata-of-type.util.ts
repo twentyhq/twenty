@@ -1,7 +1,8 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export function isFieldMetadataOfType<
   Field extends FieldMetadataInterface<FieldMetadataType>,

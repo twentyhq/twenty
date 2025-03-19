@@ -6,6 +6,7 @@ import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'class-validator';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
@@ -41,7 +42,6 @@ import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sy
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
 import { CreateObjectInput } from './dtos/create-object.input';
-import { APP_LOCALES } from 'twenty-shared/translations';
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {

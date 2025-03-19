@@ -1,5 +1,6 @@
-import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { EachTestingContext } from 'twenty-shared/testing';
+
+import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
 type ValidateMetadataNameTestContext = EachTestingContext<{
   input: string;

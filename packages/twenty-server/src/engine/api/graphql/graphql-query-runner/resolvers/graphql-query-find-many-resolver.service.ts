@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
@@ -28,7 +30,6 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolverService<

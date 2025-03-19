@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+
 import {
   DataSource,
   FindOptionsRelations,
   ObjectLiteral,
   SelectQueryBuilder,
 } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -22,7 +24,6 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {

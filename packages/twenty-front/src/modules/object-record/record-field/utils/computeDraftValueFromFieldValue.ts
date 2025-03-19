@@ -21,7 +21,7 @@ type computeDraftValueFromFieldValueParams<FieldValue> = {
   fieldValue: FieldValue;
 };
 
-export const computeDraftValueFromFieldValue = <FieldValue,>({
+export const computeDraftValueFromFieldValue = <FieldValue>({
   fieldValue,
   fieldDefinition,
 }: computeDraftValueFromFieldValueParams<FieldValue>): FieldInputDraftValue<FieldValue> => {

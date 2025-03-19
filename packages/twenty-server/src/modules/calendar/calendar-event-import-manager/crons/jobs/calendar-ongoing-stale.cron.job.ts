@@ -1,5 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -13,7 +15,6 @@ import {
   CalendarOngoingStaleJob,
   CalendarOngoingStaleJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 export const CALENDAR_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 

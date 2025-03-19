@@ -1,5 +1,6 @@
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 export const linksCompositeType: CompositeType = {
   type: FieldMetadataType.LINKS,

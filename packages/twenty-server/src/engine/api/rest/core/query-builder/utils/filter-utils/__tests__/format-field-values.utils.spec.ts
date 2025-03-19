@@ -1,5 +1,6 @@
-import { formatFieldValue } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/format-field-values.utils';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { formatFieldValue } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/format-field-values.utils';
 
 describe('formatFieldValue', () => {
   it('should format fieldNumber value', () => {

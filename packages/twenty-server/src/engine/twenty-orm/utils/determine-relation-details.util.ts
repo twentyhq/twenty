@@ -1,4 +1,4 @@
-import { RelationType } from 'typeorm/metadata/types/RelationTypes';
+import { RelationType } from 'typeorm/metadata/types/RelationTypes.js';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 

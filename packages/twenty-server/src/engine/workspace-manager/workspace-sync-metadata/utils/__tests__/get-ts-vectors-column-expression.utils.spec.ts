@@ -1,8 +1,9 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 const nameTextField = { name: 'name', type: FieldMetadataType.TEXT };
 const nameFullNameField = {

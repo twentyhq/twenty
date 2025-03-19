@@ -5,6 +5,7 @@ import {
   GraphQLFieldConfigMap,
   GraphQLObjectType,
 } from 'graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -17,7 +18,6 @@ import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-sc
 import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 import { ArgsFactory } from './args.factory';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export enum ObjectTypeDefinitionKind {
   Connection = 'Connection',

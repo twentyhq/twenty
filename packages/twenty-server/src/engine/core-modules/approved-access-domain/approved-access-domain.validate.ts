@@ -1,10 +1,11 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { CustomException } from 'src/utils/custom-exception';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
-import { isDefined } from 'twenty-shared/utils';
 
 const assertIsDefinedOrThrow = (
   approvedAccessDomain: ApprovedAccessDomain | undefined | null,

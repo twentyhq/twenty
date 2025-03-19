@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+
 import { EntityManager, Repository } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -10,7 +12,6 @@ import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sy
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/sync-metadata.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class WorkspaceSyncObjectMetadataIdentifiersService {

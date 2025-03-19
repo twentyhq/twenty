@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -29,7 +30,6 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 const TITLE_FIELD_NAME = 'title';
 const BODY_V2_FIELD_NAME = 'bodyV2';

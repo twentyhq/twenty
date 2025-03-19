@@ -1,5 +1,6 @@
-import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 
 export type FormFieldMetadata = {
   label: string;

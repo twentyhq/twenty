@@ -13,6 +13,7 @@ import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -56,7 +57,6 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
-import { isDefined } from 'twenty-shared/utils';
 
 @Resolver(() => Workspace)
 @UseFilters(

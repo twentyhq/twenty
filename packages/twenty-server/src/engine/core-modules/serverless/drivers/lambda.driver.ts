@@ -20,6 +20,7 @@ import {
   LogType,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ServerlessDriver,
@@ -47,7 +48,6 @@ import {
 import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
-import { isDefined } from 'twenty-shared/utils';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 10 * 60 * 60; // 10h

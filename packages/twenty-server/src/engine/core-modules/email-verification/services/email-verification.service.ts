@@ -8,6 +8,7 @@ import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { Repository } from 'typeorm';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import {
   AppToken,
@@ -23,7 +24,6 @@ import {
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { APP_LOCALES } from 'twenty-shared/translations';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

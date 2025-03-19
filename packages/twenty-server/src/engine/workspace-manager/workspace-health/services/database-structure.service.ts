@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+
+import { FieldMetadataType } from 'twenty-shared/types';
 import { ColumnType } from 'typeorm';
-import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
+import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata.js';
 
 import {
   FieldMetadataDefaultValue,
@@ -21,7 +23,6 @@ import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class DatabaseStructureService {

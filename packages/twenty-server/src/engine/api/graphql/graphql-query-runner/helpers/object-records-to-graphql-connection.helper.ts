@@ -1,3 +1,6 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   ObjectRecord,
   ObjectRecordOrderBy,
@@ -23,8 +26,6 @@ import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modu
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isPlainObject } from 'src/utils/is-plain-object';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 export class ObjectRecordsToGraphqlConnectionHelper {
   private objectMetadataMaps: ObjectMetadataMaps;

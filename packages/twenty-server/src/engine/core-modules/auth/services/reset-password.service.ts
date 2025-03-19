@@ -10,6 +10,7 @@ import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
 import { IsNull, MoreThan, Repository } from 'typeorm';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import {
   AppToken,
@@ -29,7 +30,6 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { APP_LOCALES } from 'twenty-shared/translations';
 
 @Injectable()
 export class ResetPasswordService {

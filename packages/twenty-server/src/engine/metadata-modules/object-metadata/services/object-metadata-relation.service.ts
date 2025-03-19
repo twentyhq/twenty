@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { In, Repository } from 'typeorm';
+import { capitalize } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -25,8 +28,6 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
-import { capitalize } from 'twenty-shared/utils';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   STANDARD_OBJECT_IDS.timelineActivity,

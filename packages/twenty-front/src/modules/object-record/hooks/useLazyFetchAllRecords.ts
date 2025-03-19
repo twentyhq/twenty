@@ -21,7 +21,7 @@ type ExportProgress = {
   displayType: 'percentage' | 'number';
 };
 
-export const useLazyFetchAllRecords = <T,>({
+export const useLazyFetchAllRecords = <T>({
   objectNameSingular,
   filter,
   orderBy,

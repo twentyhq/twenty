@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { messages as afMessages } from 'src/engine/core-modules/i18n/locales/generated/af-ZA';
 import { messages as arMessages } from 'src/engine/core-modules/i18n/locales/generated/ar-SA';
@@ -33,7 +34,6 @@ import { messages as ukMessages } from 'src/engine/core-modules/i18n/locales/gen
 import { messages as viMessages } from 'src/engine/core-modules/i18n/locales/generated/vi-VN';
 import { messages as zhHansMessages } from 'src/engine/core-modules/i18n/locales/generated/zh-CN';
 import { messages as zhHantMessages } from 'src/engine/core-modules/i18n/locales/generated/zh-TW';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 @Injectable()
 export class I18nService implements OnModuleInit {

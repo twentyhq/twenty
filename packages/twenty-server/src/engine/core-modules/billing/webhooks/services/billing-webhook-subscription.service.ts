@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
 import { Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -22,7 +23,6 @@ import {
   CleanWorkspaceDeletionWarningUserVarsJob,
   CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 const BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS = {
   [WorkspaceActivationStatus.ACTIVE]: [

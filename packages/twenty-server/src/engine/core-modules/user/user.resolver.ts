@@ -14,6 +14,7 @@ import crypto from 'crypto';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { In, Repository } from 'typeorm';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -54,7 +55,6 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;

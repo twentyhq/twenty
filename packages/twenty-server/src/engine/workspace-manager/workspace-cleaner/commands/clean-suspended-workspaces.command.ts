@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, Option } from 'nest-commander';
 import { In, Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import {
   MigrationCommandOptions,
@@ -9,7 +10,6 @@ import {
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 @Command({
   name: 'workspace:clean',

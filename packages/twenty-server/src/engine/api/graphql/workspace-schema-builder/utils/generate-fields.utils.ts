@@ -4,6 +4,7 @@ import {
   GraphQLInputType,
   GraphQLOutputType,
 } from 'graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -12,7 +13,6 @@ import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
   {
