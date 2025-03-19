@@ -11,7 +11,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { ApolloClient, useApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useMultipleRecordPickerPerformSearch = () => {
   const client = useApolloClient();

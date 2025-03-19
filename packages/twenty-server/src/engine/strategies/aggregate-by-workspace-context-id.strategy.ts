@@ -7,9 +7,9 @@ import {
 
 import { Request } from 'express';
 import { jwtDecode } from 'jwt-decode';
-import { isDefined } from 'twenty-shared';
 
 import { JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { isDefined } from 'twenty-shared/utils';
 
 const workspaces = new Map<string, ContextId>();
 

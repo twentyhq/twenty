@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
@@ -15,6 +14,7 @@ import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-
 import { pascalCase } from 'src/utils/pascal-case';
 
 import { InputTypeFactory } from './input-type.factory';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const hiddenAllowListKind = [
   InputTypeDefinitionKind.Create,

@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
-
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -18,6 +16,7 @@ import {
   WorkspaceMigrationException,
   WorkspaceMigrationExceptionCode,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 // TODO: could we export this to GraphQL ?
 export type CompositeFieldMetadataType =

@@ -5,7 +5,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowWithCurrentVersion = (
   workflowId: string | undefined,

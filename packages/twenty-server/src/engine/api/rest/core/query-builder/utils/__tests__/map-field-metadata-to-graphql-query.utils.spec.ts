@@ -1,5 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
@@ -13,6 +11,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('mapFieldMetadataToGraphqlQuery', () => {
   const typedFieldNumberMock: FieldMetadataInterface = {

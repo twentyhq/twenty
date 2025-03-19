@@ -7,7 +7,7 @@ import {
   ClickOutsideMode,
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const containerRef = React.createRef<HTMLDivElement>();
 const nullRef = React.createRef<HTMLDivElement>();

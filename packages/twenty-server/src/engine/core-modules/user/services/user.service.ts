@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -30,6 +29,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class UserService extends TypeOrmQueryService<User> {

@@ -14,8 +14,9 @@ import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);

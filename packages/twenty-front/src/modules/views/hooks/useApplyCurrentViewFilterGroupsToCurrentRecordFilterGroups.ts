@@ -6,9 +6,8 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useRecoilCallback } from 'recoil';
-
-import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
   () => {

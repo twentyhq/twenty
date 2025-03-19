@@ -1,6 +1,5 @@
-import { EachTestingContext } from 'twenty-shared';
-
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 type IsSameVersionTestCase = EachTestingContext<{
   version: string | undefined;

@@ -12,7 +12,6 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
-import { isDefined } from 'twenty-shared';
 import {
   AppTooltip,
   Card,
@@ -22,6 +21,7 @@ import {
 } from 'twenty-ui';
 import { StringKeyOf } from 'type-fest';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;

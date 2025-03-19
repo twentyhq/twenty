@@ -20,7 +20,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { isDefined } from 'twenty-shared';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
@@ -28,6 +27,7 @@ import {
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from 'twenty-shared/utils';
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;

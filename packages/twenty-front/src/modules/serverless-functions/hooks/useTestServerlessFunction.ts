@@ -2,8 +2,8 @@ import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useTestServerlessFunction = ({
   serverlessFunctionId,

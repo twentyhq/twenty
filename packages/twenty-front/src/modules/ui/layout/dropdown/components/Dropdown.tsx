@@ -17,10 +17,10 @@ import {
 import { MouseEvent, ReactNode } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
 import { useDropdown } from '../hooks/useDropdown';
 import { flushSync } from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledDropdownFallbackAnchor = styled.div`
   left: 0;

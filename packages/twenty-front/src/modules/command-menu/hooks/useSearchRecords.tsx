@@ -4,10 +4,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
 import { Avatar } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { useGlobalSearchQuery } from '~/generated/graphql';
+import { capitalize } from 'twenty-shared/utils';
 
 const MAX_SEARCH_RESULTS = 30;
 

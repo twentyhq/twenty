@@ -11,7 +11,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseAggregateRecordsProps = {
   objectMetadataItem: ObjectMetadataItem;

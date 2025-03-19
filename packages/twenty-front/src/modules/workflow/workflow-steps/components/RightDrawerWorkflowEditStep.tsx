@@ -3,7 +3,7 @@ import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowS
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { RightDrawerWorkflowEditStepContent } from '@/workflow/workflow-steps/components/RightDrawerWorkflowEditStepContent';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RightDrawerWorkflowEditStep = () => {
   const workflowId = useRecoilValue(workflowIdState);

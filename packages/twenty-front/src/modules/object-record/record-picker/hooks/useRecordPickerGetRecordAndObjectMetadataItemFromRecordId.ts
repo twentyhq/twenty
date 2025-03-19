@@ -3,7 +3,7 @@ import { multipleRecordPickerSinglePickableMorphItemComponentFamilySelector } fr
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordPickerGetRecordAndObjectMetadataItemFromRecordIdProps = {
   recordId: string;

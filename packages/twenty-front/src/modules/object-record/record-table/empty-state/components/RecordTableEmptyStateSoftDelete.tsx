@@ -9,7 +9,7 @@ import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableEmptyStateSoftDelete = () => {
   const { objectMetadataItem, objectNameSingular, recordTableId } =

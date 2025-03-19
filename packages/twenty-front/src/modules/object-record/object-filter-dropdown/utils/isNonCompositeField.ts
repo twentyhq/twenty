@@ -1,5 +1,5 @@
 import { FieldType } from '@/settings/data-model/types/FieldType';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 // TODO: see why RELATION is considered as a non composite type in settings, because it prevents this function
 // to be a typeguard

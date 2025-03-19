@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
-import { isDefined } from 'twenty-shared';
 import { Brackets } from 'typeorm';
 
 import {
@@ -22,6 +20,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { formatSearchTerms } from 'src/engine/core-modules/global-search/utils/format-search-terms';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverService<

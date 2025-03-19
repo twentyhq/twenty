@@ -1,6 +1,5 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
@@ -14,6 +13,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
 import { isEnumFieldMetadataType } from './is-enum-field-metadata-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const optionsValidatorsMap = {
   // RATING doesn't need to be provided as it's the backend that will generate the options

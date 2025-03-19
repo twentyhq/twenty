@@ -9,7 +9,6 @@ import {
   Min,
   validateOrReject,
 } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -17,6 +16,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 enum ValueType {
   PERCENTAGE = 'percentage',

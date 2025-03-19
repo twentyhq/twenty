@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
 import { Relation } from 'typeorm';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -14,6 +13,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { VIEW_FILTER_GROUP_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export enum ViewFilterGroupLogicalOperator {
   AND = 'AND',

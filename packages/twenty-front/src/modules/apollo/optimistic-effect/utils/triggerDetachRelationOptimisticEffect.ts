@@ -1,7 +1,7 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 export const triggerDetachRelationOptimisticEffect = ({
   cache,

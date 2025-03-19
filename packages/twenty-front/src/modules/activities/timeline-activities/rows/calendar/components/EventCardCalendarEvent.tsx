@@ -7,13 +7,13 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared';
 import {
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
   formatToHumanReadableTime,
 } from '~/utils/format/formatDate';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledEventCardCalendarEventContainer = styled.div`
   cursor: pointer;

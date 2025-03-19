@@ -1,6 +1,4 @@
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -15,6 +13,7 @@ import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/s
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { isDefined } from 'twenty-shared/utils';
 
 type CustomWorkspaceItem = Omit<
   CustomWorkspaceEntity,

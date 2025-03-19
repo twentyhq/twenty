@@ -7,8 +7,8 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
-import { capitalize } from 'twenty-shared';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
+import { capitalize } from 'twenty-shared/utils';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({
   operationSignatures,

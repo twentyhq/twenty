@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { ConnectedAccountProvider } from 'twenty-shared';
 import { EntityManager, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -38,6 +36,8 @@ import {
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 @Injectable()
 export class MicrosoftAPIsService {
   constructor(

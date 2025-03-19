@@ -4,7 +4,7 @@ import { ScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-interna
 
 import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
 import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type CreateComponentStateV2Type<ValueType> = {
   key: string;
@@ -13,7 +13,7 @@ type CreateComponentStateV2Type<ValueType> = {
   effects?: AtomEffect<ValueType>[];
 };
 
-export const createComponentStateV2_alpha = <ValueType>({
+export const createComponentStateV2_alpha = <ValueType,>({
   key,
   defaultValue,
   componentContext,

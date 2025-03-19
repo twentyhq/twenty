@@ -1,7 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -22,6 +21,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',

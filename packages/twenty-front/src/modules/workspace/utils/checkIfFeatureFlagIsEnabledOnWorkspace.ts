@@ -1,6 +1,6 @@
 import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const checkIfFeatureFlagIsEnabledOnWorkspace = (
   featureKey: FeatureFlagKey | null | undefined,

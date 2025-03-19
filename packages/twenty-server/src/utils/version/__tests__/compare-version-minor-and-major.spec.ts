@@ -1,9 +1,8 @@
-import { EachTestingContext } from 'twenty-shared';
-
 import {
   CompareVersionMajorAndMinorReturnType,
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 type IsSameVersionTestCase = EachTestingContext<{
   version1: string;

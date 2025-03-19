@@ -1,9 +1,12 @@
-import { ConnectedAccountProvider, FieldMetadataType } from 'twenty-shared';
 import { v4 } from 'uuid';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import {
+  ConnectedAccountProvider,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 export enum FieldActorSource {
   EMAIL = 'EMAIL',

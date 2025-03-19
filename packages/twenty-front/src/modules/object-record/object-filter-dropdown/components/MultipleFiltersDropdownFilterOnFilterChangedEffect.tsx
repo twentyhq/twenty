@@ -4,7 +4,7 @@ import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldM
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const MultipleFiltersDropdownFilterOnFilterChangedEffect = () => {
   const { setDropdownWidth } = useDropdown();

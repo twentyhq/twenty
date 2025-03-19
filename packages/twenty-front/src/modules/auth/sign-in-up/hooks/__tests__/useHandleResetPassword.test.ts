@@ -2,7 +2,6 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
-import { SOURCE_LOCALE } from 'twenty-shared';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -13,6 +12,7 @@ import {
 } from '~/generated/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 // Mocks
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');

@@ -1,5 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
@@ -8,6 +6,7 @@ import {
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { checkFilterEnumValues } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/check-filter-enum-values';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('checkFilterEnumValues', () => {
   const completeFieldSelectMock: FieldMetadataInterface = {

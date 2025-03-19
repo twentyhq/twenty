@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -21,6 +19,7 @@ import {
   WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkflowSchemaWorkspaceService {

@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
-
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
@@ -10,6 +8,7 @@ import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message
 
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
+import { isDefined } from 'twenty-shared/utils';
 
 type ConnectedAccountType = Pick<
   ConnectedAccountWorkspaceEntity,

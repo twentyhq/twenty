@@ -5,7 +5,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { BlockNoteEditor } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useExportNoteAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,

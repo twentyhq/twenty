@@ -9,12 +9,12 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableCellButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
-import { isDefined } from 'twenty-shared';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellSoftFocusModeProps = {
   editModeContent: ReactElement;

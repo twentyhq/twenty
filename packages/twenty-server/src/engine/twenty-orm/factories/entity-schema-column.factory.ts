@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -13,6 +12,7 @@ import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadat
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type EntitySchemaColumnMap = {
   [key: string]: EntitySchemaColumnOptions;

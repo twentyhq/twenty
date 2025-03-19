@@ -1,10 +1,7 @@
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import {
-  NumberDataType
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-metadata-seed';
-
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const SURVEY_RESULTS_METADATA_SEEDS: ObjectMetadataSeed = {
   labelPlural: 'Survey results',

@@ -4,8 +4,8 @@ import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { isDefined } from 'twenty-shared';
 import { ComponentDecorator, MAIN_COLOR_NAMES, Tag } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};

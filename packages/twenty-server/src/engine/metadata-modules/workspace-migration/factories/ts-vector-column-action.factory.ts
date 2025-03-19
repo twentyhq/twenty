@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
-
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -12,6 +10,7 @@ import {
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export type TsVectorFieldMetadataType = FieldMetadataType.TS_VECTOR;
 

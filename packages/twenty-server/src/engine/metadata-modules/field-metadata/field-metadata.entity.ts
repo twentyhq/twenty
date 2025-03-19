@@ -1,4 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
@@ -22,6 +21,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 @Entity('fieldMetadata')
 @Unique('IndexOnNameObjectMetadataIdAndWorkspaceIdUnique', [

@@ -1,5 +1,5 @@
 import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export type EventGroup = {
   month: number;

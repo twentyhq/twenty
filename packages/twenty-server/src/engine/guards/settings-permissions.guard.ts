@@ -7,8 +7,6 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared';
-
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
@@ -18,6 +16,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SettingsPermissionsGuard = (
   requiredPermission: SettingsPermissions,

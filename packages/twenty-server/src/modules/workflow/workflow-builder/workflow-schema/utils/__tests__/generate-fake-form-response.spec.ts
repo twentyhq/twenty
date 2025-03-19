@@ -1,6 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('generateFakeFormResponse', () => {
   it('should generate fake responses for a form schema', () => {

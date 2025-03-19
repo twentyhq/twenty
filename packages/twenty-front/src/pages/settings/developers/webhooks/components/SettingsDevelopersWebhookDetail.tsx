@@ -31,9 +31,9 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from 'twenty-shared/utils';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;

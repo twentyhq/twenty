@@ -1,6 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const getDevSeedCompanyCustomFields = (
   objectMetadataId: string,

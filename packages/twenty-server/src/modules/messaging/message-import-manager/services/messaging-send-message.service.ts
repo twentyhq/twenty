@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-
-import { assertUnreachable, ConnectedAccountProvider } from 'twenty-shared';
 import { z } from 'zod';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 interface SendMessageInput {
   body: string;

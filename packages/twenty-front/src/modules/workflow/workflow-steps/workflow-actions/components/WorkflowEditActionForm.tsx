@@ -9,8 +9,8 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
 import { IconChevronDown, IconPlus, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionFormProps = {
   action: WorkflowFormAction;

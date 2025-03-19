@@ -1,6 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { ConnectedAccountProvider } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -11,6 +9,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 
 import { EmailAliasManagerService } from './email-alias-manager.service';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 describe('Email Alias Manager Service', () => {
   let emailAliasManagerService: EmailAliasManagerService;

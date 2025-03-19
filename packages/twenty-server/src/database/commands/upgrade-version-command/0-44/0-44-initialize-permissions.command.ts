@@ -2,7 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import {
@@ -17,6 +16,7 @@ import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/const
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { isDefined } from 'twenty-shared/utils';
 
 @Command({
   name: 'upgrade:0-44:initialize-permissions',

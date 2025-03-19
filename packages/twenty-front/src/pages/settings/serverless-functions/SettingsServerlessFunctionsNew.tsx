@@ -10,10 +10,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigateSettings();

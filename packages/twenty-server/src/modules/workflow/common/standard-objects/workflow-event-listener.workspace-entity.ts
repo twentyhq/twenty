@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -15,6 +14,7 @@ import { WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS } from 'src/engine/workspace
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowEventListener,

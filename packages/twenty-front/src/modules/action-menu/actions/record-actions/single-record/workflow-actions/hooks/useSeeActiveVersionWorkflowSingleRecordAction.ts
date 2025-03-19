@@ -4,8 +4,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { AppPath } from '@/types/AppPath';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { isDefined } from 'twenty-shared';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {

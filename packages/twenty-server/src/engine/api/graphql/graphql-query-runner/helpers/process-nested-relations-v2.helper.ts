@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
-import { FieldMetadataType } from 'twenty-shared';
 import {
   DataSource,
   FindOptionsRelations,
@@ -24,6 +22,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {

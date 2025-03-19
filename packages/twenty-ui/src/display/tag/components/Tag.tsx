@@ -9,7 +9,7 @@ import {
   ThemeContext,
   ThemeType,
 } from '@ui/theme';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const spacing5 = THEME_COMMON.spacing(5);
 const spacing2 = THEME_COMMON.spacing(2);

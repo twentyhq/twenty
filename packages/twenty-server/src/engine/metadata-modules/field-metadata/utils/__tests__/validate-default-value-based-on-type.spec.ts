@@ -1,6 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-default-value-for-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('validateDefaultValueForType', () => {
   it('should return true for null defaultValue', () => {

@@ -6,8 +6,8 @@ import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { getAppPath } from '~/utils/navigation/getAppPath';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);

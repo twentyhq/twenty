@@ -3,7 +3,6 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import omit from 'lodash.omit';
-import { SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
@@ -63,6 +62,7 @@ import { CheckUserExistsInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)

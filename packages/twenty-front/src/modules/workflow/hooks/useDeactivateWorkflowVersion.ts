@@ -6,11 +6,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { DEACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/deactivateWorkflowVersion';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-shared';
 import {
   DeactivateWorkflowVersionMutation,
   DeactivateWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDeactivateWorkflowVersion = () => {
   const apolloClient = useApolloClient();

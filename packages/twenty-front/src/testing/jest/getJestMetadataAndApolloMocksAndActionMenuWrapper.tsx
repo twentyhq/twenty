@@ -7,13 +7,13 @@ import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
   JestContextStoreSetter,
   JestContextStoreSetterMocks,
 } from '~/testing/jest/JestContextStoreSetter';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { isDefined } from 'twenty-shared/utils';
 
 export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   apolloMocks:

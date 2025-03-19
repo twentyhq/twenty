@@ -1,11 +1,11 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { isDefined } from 'twenty-shared';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { ViewField } from '../types/ViewField';
+import { isDefined } from 'twenty-shared/utils';
 
 export const mapViewFieldsToColumnDefinitions = ({
   columnDefinitions,

@@ -8,7 +8,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { getDestroyOneRecordMutationResponseField } from '@/object-record/utils/getDestroyOneRecordMutationResponseField';
-import { capitalize, isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 type useDestroyOneRecordProps = {
   objectNameSingular: string;

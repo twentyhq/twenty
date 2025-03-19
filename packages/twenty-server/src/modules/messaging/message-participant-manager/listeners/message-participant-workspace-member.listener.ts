@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
@@ -23,6 +21,8 @@ import {
   MessageParticipantUnmatchParticipantJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
 @Injectable()
 export class MessageParticipantWorkspaceMemberListener {
   constructor(

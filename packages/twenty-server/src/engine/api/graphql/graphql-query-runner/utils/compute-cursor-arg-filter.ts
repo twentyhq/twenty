@@ -1,5 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import {
   ObjectRecordFilter,
   ObjectRecordOrderBy,
@@ -13,6 +11,7 @@ import {
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const computeOperator = (
   isAscending: boolean,

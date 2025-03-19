@@ -10,8 +10,8 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordShowRightDrawerActionMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(

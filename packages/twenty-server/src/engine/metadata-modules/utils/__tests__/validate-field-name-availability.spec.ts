@@ -1,5 +1,3 @@
-import { EachTestingContext } from 'twenty-shared';
-
 import {
   FIELD_ACTOR_MOCK_NAME,
   FIELD_ADDRESS_MOCK_NAME,
@@ -9,6 +7,7 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 type ValidateFieldNameAvailabilityTestContext = EachTestingContext<{
   input: string;

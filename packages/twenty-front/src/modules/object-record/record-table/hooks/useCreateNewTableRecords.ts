@@ -13,9 +13,9 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateNewTableRecord = ({
   objectMetadataItem,

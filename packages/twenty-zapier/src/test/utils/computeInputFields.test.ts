@@ -1,6 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared';
 import { computeInputFields } from '../../utils/computeInputFields';
 import { InputField } from '../../utils/data.types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('computeInputFields', () => {
   test('should create Person input fields properly', () => {

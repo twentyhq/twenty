@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared';
-
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -10,6 +8,7 @@ import { InvalidMetadataNameException } from 'src/engine/metadata-modules/utils/
 import { validateMetadataNameIsNotTooLongOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils';
 import { validateMetadataNameIsNotTooShortOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const validateObjectMetadataInputNamesOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,

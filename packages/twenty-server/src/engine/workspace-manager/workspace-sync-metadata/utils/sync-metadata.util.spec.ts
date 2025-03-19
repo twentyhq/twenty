@@ -1,8 +1,7 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { mapObjectMetadataByUniqueIdentifier } from './sync-metadata.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('mapObjectMetadataByUniqueIdentifier', () => {
   it('should convert an array of ObjectMetadataEntity objects into a map', () => {

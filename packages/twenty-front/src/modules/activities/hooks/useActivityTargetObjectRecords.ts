@@ -8,7 +8,7 @@ import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useActivityTargetObjectRecords = (
   activity?: Task | Note,

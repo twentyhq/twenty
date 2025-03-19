@@ -13,8 +13,8 @@ import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/sin
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 type SelectFilterParams = {
   fieldMetadataItemId: string;

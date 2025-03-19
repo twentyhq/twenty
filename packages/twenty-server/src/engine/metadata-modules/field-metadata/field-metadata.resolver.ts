@@ -8,8 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { FieldMetadataType } from 'twenty-shared';
-
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -35,6 +33,7 @@ import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mod
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => FieldMetadataDTO)

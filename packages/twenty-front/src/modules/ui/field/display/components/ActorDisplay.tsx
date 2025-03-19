@@ -1,5 +1,4 @@
 import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
-import { ConnectedAccountProvider } from 'twenty-shared';
 
 import { useMemo } from 'react';
 import {
@@ -15,6 +14,7 @@ import {
   IconRobot,
   IconSettingsAutomation,
 } from 'twenty-ui';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;

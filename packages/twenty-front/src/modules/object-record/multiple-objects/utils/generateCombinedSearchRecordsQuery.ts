@@ -4,7 +4,7 @@ import { RecordGqlOperationSignature } from '@/object-record/graphql/types/Recor
 import { getSearchRecordsQueryResponseField } from '@/object-record/utils/getSearchRecordsQueryResponseField';
 import { isUndefined } from '@sniptt/guards';
 import gql from 'graphql-tag';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 export const generateCombinedSearchRecordsQuery = ({
   objectMetadataItems,

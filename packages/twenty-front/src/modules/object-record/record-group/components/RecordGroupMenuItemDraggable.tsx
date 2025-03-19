@@ -6,7 +6,7 @@ import {
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordGroupMenuItemDraggableProps = {
   recordGroupId: string;

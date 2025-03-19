@@ -13,7 +13,6 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
   H2Title,
@@ -29,6 +28,7 @@ import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   align-items: center;

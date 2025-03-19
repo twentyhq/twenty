@@ -6,13 +6,13 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { DELETE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/deleteWorkflowVersionStep';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useApolloClient, useMutation } from '@apollo/client';
-import { isDefined } from 'twenty-shared';
 import {
   DeleteWorkflowVersionStepInput,
   DeleteWorkflowVersionStepMutation,
   DeleteWorkflowVersionStepMutationVariables,
   WorkflowAction,
 } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();

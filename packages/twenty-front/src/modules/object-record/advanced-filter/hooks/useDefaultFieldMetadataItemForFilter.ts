@@ -3,7 +3,7 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDefaultFieldMetadataItemForFilter = () => {
   const { currentView } = useGetCurrentViewOnly();

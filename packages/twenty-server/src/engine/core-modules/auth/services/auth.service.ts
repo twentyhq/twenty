@@ -9,7 +9,6 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
-import { APP_LOCALES, isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
@@ -59,6 +58,8 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

@@ -1,8 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ConnectedAccountProvider } from 'twenty-shared';
-
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import {
@@ -15,6 +13,7 @@ import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-impor
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
 
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 describe('Microsoft get messages service', () => {
   let service: MicrosoftGetMessagesService;

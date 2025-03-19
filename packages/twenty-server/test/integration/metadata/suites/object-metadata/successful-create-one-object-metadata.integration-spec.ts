@@ -1,9 +1,9 @@
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/utils/object-metadata/generate-mock-create-object-metadata-input';
 import { performObjectMetadataCreation } from 'test/integration/utils/object-metadata/perform-object-metadata-creation';
-import { EachTestingContext } from 'twenty-shared';
 
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 type CreateObjectInputPayload = Omit<
   CreateObjectInput,

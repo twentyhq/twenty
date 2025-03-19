@@ -3,10 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import FileType from 'file-type';
-import {
-  TWENTY_ICONS_BASE_URL,
-  WorkspaceActivationStatus,
-} from 'twenty-shared';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -43,6 +39,8 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

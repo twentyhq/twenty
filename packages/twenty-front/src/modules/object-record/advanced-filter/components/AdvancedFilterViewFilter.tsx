@@ -7,7 +7,7 @@ import { configurableViewFilterOperands } from '@/object-record/object-filter-dr
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledValueDropdownContainer = styled.div`
   flex: 3;

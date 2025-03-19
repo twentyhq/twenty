@@ -6,7 +6,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuHistory = () => {
   const { closeCommandMenu } = useCommandMenu();

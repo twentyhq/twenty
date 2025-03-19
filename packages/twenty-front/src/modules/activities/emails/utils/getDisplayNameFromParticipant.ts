@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getDisplayNameFromParticipant = ({
   participant,

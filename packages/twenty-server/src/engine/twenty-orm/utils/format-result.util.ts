@@ -2,7 +2,6 @@ import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -16,6 +15,7 @@ import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isDate } from 'src/utils/date/isDate';
 import { isValidDate } from 'src/utils/date/isValidDate';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export function formatResult<T>(
   data: any,

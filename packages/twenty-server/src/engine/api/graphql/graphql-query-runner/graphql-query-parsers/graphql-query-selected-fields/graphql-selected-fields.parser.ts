@@ -1,5 +1,3 @@
-import { capitalize } from 'twenty-shared';
-
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -10,6 +8,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { capitalize } from 'twenty-shared/utils';
 
 export type GraphqlQuerySelectedFieldsResult = {
   select: Record<string, any>;

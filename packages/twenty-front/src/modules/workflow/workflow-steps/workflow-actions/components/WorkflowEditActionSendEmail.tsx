@@ -17,15 +17,12 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  assertUnreachable,
-  ConnectedAccountProvider,
-  isDefined,
-} from 'twenty-shared';
 import { IconPlus, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;

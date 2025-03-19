@@ -1,7 +1,6 @@
-import { isDefined } from 'twenty-shared';
-
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { ViewSort } from '../types/ViewSort';
+import { isDefined } from 'twenty-shared/utils';
 
 export const mapViewSortsToSorts = (viewSorts: ViewSort[]): RecordSort[] => {
   return viewSorts

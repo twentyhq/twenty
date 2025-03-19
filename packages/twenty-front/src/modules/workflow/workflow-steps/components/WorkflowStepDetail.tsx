@@ -11,8 +11,8 @@ import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/compone
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
 import { Suspense, lazy } from 'react';
-import { isDefined } from 'twenty-shared';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { isDefined } from 'twenty-shared/utils';
 
 const WorkflowEditActionServerlessFunction = lazy(() =>
   import(

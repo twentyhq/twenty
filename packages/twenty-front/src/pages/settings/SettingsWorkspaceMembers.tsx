@@ -36,7 +36,6 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { formatDistanceToNow } from 'date-fns';
-import { isDefined } from 'twenty-shared';
 import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
@@ -44,6 +43,7 @@ import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledButtonContainer = styled.div`
   align-items: center;

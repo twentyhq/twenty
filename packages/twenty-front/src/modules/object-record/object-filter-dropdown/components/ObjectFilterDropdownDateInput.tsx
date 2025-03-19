@@ -16,8 +16,8 @@ import {
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ObjectFilterDropdownDateInput = () => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(

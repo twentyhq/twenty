@@ -8,8 +8,8 @@ import { RecordTitleCell } from '@/object-record/record-title-cell/components/Re
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type SummaryCardProps = {
   objectNameSingular: string;

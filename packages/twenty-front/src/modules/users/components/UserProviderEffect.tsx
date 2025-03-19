@@ -17,10 +17,11 @@ import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { APP_LOCALES, isDefined, SOURCE_LOCALE } from 'twenty-shared';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 export const UserProviderEffect = () => {
   const [isLoading, setIsLoading] = useState(true);

@@ -9,7 +9,6 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -33,6 +32,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

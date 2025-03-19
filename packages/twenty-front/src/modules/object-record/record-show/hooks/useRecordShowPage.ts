@@ -12,8 +12,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { capitalize, isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useRecordShowPage = (
   propsObjectNameSingular: string,

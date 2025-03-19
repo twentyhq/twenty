@@ -1,9 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import {
   FieldMetadataSettings,
   NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const mapUdtNameToFieldType = (udtName: string): FieldMetadataType => {
   switch (udtName) {

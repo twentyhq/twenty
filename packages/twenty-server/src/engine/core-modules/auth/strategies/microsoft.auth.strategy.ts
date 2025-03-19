@@ -3,13 +3,13 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { VerifyCallback } from 'passport-google-oauth20';
 import { Strategy } from 'passport-microsoft';
-import { APP_LOCALES } from 'twenty-shared';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 export type MicrosoftRequest = Omit<
   Request,

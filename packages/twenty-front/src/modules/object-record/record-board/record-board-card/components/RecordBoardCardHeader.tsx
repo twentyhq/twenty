@@ -32,7 +32,6 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   AvatarChipVariant,
   Checkbox,
@@ -41,6 +40,7 @@ import {
   IconEyeOff,
   LightIconButton,
 } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledTextInput = styled(TextInput)`
   border-radius: ${({ theme }) => theme.border.radius.sm};

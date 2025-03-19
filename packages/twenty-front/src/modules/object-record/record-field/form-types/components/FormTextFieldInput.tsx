@@ -7,9 +7,9 @@ import { VariablePickerComponent } from '@/object-record/record-field/form-types
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
-import { isDefined } from 'twenty-shared';
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputHint } from '@/ui/input/components/InputHint';
+import { isDefined } from 'twenty-shared/utils';
 
 type FormTextFieldInputProps = {
   label?: string;

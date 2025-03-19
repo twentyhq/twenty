@@ -8,7 +8,7 @@ import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-obje
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuContextChipRecordSetterEffect = () => {
   const commandMenuNavigationMorphItemByPage = useRecoilValue(

@@ -1,6 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const getSubfieldsForAggregateOperation = (
   fieldType: FieldMetadataType,

@@ -28,7 +28,7 @@ import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/h
 import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpandedComponentState';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;

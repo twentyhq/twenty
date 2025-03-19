@@ -13,8 +13,8 @@ import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRec
 import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import { isDefined } from 'twenty-shared';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+import { isDefined } from 'twenty-shared/utils';
 
 /*
   TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.

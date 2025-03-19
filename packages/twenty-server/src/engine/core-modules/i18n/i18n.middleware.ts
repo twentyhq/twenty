@@ -2,7 +2,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
 import { NextFunction, Request, Response } from 'express';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 @Injectable()
 export class I18nMiddleware implements NestMiddleware {

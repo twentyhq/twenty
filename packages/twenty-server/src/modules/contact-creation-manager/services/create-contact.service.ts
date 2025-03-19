@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
-import { ConnectedAccountProvider } from 'twenty-shared';
 import { DeepPartial, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -11,6 +9,7 @@ import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/con
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 type ContactToCreate = {
   handle: string;

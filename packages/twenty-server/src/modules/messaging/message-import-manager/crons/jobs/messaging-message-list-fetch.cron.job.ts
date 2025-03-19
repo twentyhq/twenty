@@ -1,6 +1,4 @@
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -20,6 +18,8 @@ import {
   MessagingMessageListFetchJob,
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
 export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
 
 @Processor(MessageQueue.cronQueue)

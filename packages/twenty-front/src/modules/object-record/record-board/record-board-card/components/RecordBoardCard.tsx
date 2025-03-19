@@ -25,10 +25,10 @@ import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { AnimatedEaseInOut } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>

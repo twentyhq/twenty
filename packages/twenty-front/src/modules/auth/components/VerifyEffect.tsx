@@ -6,8 +6,8 @@ import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isDefined } from 'twenty-shared';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isDefined } from 'twenty-shared/utils';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();

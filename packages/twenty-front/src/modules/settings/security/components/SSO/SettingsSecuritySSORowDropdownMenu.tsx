@@ -18,8 +18,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { UnwrapRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsSecuritySSORowDropdownMenuProps = {
   SSOIdp: UnwrapRecoilValue<typeof SSOIdentitiesProvidersState>[0];

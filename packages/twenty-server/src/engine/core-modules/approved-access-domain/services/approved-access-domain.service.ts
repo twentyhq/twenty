@@ -5,7 +5,6 @@ import crypto from 'crypto';
 
 import { render } from '@react-email/render';
 import { Repository } from 'typeorm';
-import { APP_LOCALES } from 'twenty-shared';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -20,6 +19,7 @@ import {
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 import { isWorkDomain } from 'src/utils/is-work-email';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

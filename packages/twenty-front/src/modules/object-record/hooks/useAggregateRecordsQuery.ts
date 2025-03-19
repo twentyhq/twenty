@@ -5,7 +5,7 @@ import { ExtendedAggregateOperations } from '@/object-record/record-table/types/
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export type GqlFieldToFieldMap = {
   [gqlField: string]: [

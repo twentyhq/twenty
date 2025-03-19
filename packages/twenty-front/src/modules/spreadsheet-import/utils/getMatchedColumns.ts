@@ -6,10 +6,10 @@ import {
   MatchColumnsStepProps,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Field, Fields } from '@/spreadsheet-import/types';
-import { isDefined } from 'twenty-shared';
 
 import { findMatch } from './findMatch';
 import { setColumn } from './setColumn';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getMatchedColumns = <T extends string>(
   columns: Columns<T>,

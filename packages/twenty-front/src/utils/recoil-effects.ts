@@ -1,12 +1,11 @@
 import omit from 'lodash.omit';
 import { AtomEffect } from 'recoil';
 import { z } from 'zod';
-
-import { isDefined } from 'twenty-shared';
 import { cookieStorage } from '~/utils/cookie-storage';
+import { isDefined } from 'twenty-shared/utils';
 
 export const localStorageEffect =
-  <T>(key?: string): AtomEffect<T> =>
+  <T,>(key?: string): AtomEffect<T> =>
   ({ setSelf, onSet, node }) => {
     const savedValue = localStorage.getItem(key ?? node.key);
     if (savedValue != null) {
@@ -35,7 +34,7 @@ export const isCustomCookiesAttributesValue = (
   customCookieAttributeZodSchema.safeParse(value).success;
 
 export const cookieStorageEffect =
-  <T>(
+  <T,>(
     key: string,
     attributes?: Cookies.CookieAttributes,
     hooks?: {

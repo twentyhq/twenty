@@ -8,8 +8,8 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { plural } from 'pluralize';
-import { isDefined } from 'twenty-shared';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
+import { isDefined } from 'twenty-shared/utils';
 
 export const AdvancedFilterChip = () => {
   const currentRecordFilterGroups = useRecoilComponentValueV2(

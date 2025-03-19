@@ -4,7 +4,7 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const hasPendingRecordComponentSelector = createComponentSelectorV2({
   key: 'hasPendingRecordComponentSelector',

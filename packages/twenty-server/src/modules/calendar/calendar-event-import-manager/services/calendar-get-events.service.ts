@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConnectedAccountProvider } from 'twenty-shared';
-
 import { GoogleCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
 import { MicrosoftCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-get-events.service';
 import {
@@ -10,6 +8,7 @@ import {
 } from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 export type GetCalendarEventsResponse = {
   fullEvents: boolean;

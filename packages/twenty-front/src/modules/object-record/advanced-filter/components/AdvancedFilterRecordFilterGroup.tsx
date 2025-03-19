@@ -5,7 +5,7 @@ import { AdvancedFilterRecordFilterGroupChildOptionsDropdown } from '@/object-re
 import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilter';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledRow = styled.div`
   display: flex;

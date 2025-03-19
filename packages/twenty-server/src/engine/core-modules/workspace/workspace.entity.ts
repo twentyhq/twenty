@@ -1,7 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import {
   Column,
   CreateDateColumn,
@@ -22,6 +21,7 @@ import { PostgresCredentials } from 'src/engine/core-modules/postgres-credential
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',

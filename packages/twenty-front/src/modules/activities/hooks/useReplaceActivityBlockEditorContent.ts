@@ -2,8 +2,8 @@ import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useReplaceActivityBlockEditorContent = (
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor,

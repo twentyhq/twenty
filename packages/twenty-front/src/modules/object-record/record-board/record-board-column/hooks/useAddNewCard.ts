@@ -7,9 +7,9 @@ import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-r
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
 import { RecoilState, useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type SetFunction = <T>(
   recoilVal: RecoilState<T>,

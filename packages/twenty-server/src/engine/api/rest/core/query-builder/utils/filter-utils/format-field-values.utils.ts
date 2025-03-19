@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { FieldMetadataType, isDefined } from 'twenty-shared';
-
 import { FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const formatFieldValue = (
   value: string,

@@ -6,9 +6,9 @@ import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
-export const useHandleFindManyRecordsCompleted = <T>({
+export const useHandleFindManyRecordsCompleted = <T,>({
   queryIdentifier,
   onCompleted,
   objectMetadataItem,

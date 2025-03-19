@@ -19,7 +19,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   IconMinus,
   IconPlus,
@@ -33,6 +32,7 @@ import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;

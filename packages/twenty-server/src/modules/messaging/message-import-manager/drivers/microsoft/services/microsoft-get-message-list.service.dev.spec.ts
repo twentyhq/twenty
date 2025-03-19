@@ -1,8 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ConnectedAccountProvider } from 'twenty-shared';
-
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -13,6 +11,8 @@ import { MessageFolderName } from 'src/modules/messaging/message-import-manager/
 
 import { MicrosoftGetMessageListService } from './microsoft-get-message-list.service';
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 // in case you have "Please provide a valid token" it may be because you need to pass the env varible to the .env.test file
 const refreshToken = 'replace-with-your-refresh-token';
 const syncCursor = `replace-with-your-sync-cursor`;

@@ -27,10 +27,10 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { t } = useLingui();

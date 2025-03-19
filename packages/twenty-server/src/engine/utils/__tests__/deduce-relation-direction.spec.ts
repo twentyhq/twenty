@@ -1,5 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { RelationMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-metadata.interface';
 
@@ -8,6 +6,7 @@ import {
   deduceRelationDirection,
   RelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('deduceRelationDirection', () => {
   it('should return FROM when the current object Metadata ID matches fromObjectMetadataId and id matches fromFieldMetadataId', () => {

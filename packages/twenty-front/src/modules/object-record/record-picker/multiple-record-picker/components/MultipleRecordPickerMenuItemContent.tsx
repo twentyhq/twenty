@@ -13,7 +13,7 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;

@@ -13,8 +13,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { logError } from '~/utils/logError';
+import { isDefined } from 'twenty-shared/utils';
 
 export type UseSearchRecordsParams = ObjectMetadataItemIdentifier &
   Pick<RecordGqlOperationVariables, 'filter' | 'limit'> & {

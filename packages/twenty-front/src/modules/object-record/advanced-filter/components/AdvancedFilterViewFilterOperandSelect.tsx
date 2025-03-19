@@ -13,8 +13,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
 import { MenuItem } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   flex: 1;

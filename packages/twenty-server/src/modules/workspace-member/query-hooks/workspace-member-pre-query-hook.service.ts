@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
-
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
@@ -12,6 +10,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceMemberPreQueryHookService {

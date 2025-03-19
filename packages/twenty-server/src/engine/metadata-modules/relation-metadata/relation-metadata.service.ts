@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import camelCase from 'lodash.camelcase';
-import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -40,6 +39,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from './relation-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class RelationMetadataService extends TypeOrmQueryService<RelationMetadataEntity> {

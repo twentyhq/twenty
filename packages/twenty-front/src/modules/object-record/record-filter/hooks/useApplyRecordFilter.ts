@@ -4,7 +4,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyRecordFilter = (componentInstanceId?: string) => {
   const selectedFilterCallbackState = useRecoilComponentCallbackStateV2(

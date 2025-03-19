@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -16,6 +15,7 @@ import { VIEW_FILTER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/wor
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewFilter,

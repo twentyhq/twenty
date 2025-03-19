@@ -9,9 +9,10 @@ import { Select } from '@/ui/input/components/Select';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useLingui } from '@lingui/react/macro';
-import { APP_LOCALES, isDefined } from 'twenty-shared';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;

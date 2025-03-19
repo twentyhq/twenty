@@ -1,6 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const shouldGenerateFieldFakeValue = (field: FieldMetadataEntity) => {
   return (

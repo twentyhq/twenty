@@ -9,7 +9,6 @@ import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
 } from 'twenty-emails';
-import { isDefined, WorkspaceActivationStatus } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -26,6 +25,8 @@ import {
   WorkspaceCleanerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 @Injectable()
 export class CleanerWorkspaceService {

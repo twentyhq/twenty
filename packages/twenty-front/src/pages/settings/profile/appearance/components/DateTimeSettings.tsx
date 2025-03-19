@@ -13,7 +13,6 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/getWorkspaceDateFormatFromDateFormat';
 import { getWorkspaceTimeFormatFromTimeFormat } from '@/localization/utils/getWorkspaceTimeFormatFromTimeFormat';
-import { isDefined } from 'twenty-shared';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
@@ -23,6 +22,7 @@ import { DateTimeSettingsTimeFormatSelect } from '~/pages/settings/profile/appea
 import { DateTimeSettingsTimeZoneSelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { logError } from '~/utils/logError';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;

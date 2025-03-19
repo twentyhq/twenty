@@ -9,8 +9,8 @@ import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
-import { isDefined } from 'twenty-shared';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+import { isDefined } from 'twenty-shared/utils';
 
 // TODO: add extensive unit tests for this function
 // That will also serve as documentation

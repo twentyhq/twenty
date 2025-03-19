@@ -1,6 +1,4 @@
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -10,6 +8,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { cleanSuspendedWorkspaceCronPattern } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-suspended-workspaces.cron.pattern';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 @Processor(MessageQueue.cronQueue)
 export class CleanSuspendedWorkspacesJob {

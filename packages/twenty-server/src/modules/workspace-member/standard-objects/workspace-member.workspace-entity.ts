@@ -1,7 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { APP_LOCALES, FieldMetadataType, SOURCE_LOCALE } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -38,6 +37,8 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export enum WorkspaceMemberDateFormatEnum {
   SYSTEM = 'SYSTEM',

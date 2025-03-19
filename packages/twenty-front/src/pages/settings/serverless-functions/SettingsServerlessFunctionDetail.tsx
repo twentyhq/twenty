@@ -19,12 +19,12 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { IconCode, IconGauge, IconSettings, IconTestPipe } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from 'twenty-shared/utils';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 

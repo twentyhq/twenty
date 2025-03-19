@@ -1,6 +1,4 @@
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -15,6 +13,8 @@ import {
   CalendarOngoingStaleJob,
   CalendarOngoingStaleJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
 export const CALENDAR_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)

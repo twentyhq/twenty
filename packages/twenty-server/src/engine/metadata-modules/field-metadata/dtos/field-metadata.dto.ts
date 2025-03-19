@@ -24,7 +24,6 @@ import {
   Validate,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
@@ -38,6 +37,7 @@ import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metada
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { RelationMetadataDTO } from 'src/engine/metadata-modules/relation-metadata/dtos/relation-metadata.dto';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 registerEnumType(FieldMetadataType, {
   name: 'FieldMetadataType',

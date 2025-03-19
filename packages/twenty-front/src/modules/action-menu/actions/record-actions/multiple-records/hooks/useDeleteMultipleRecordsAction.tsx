@@ -18,8 +18,8 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { getOsControlSymbol } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {

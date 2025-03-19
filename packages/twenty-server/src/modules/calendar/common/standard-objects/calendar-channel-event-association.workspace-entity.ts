@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -16,6 +15,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,

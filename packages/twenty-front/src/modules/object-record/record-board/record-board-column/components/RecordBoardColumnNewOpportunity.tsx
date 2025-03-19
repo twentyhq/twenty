@@ -8,8 +8,8 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordBoardColumnNewOpportunity = ({
   columnId,

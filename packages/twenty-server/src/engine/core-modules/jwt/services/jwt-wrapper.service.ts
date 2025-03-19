@@ -6,13 +6,13 @@ import { createHash } from 'crypto';
 import { Request as ExpressRequest } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
-import { isDefined } from 'twenty-shared';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { isDefined } from 'twenty-shared/utils';
 
 export type WorkspaceTokenType =
   | 'ACCESS'

@@ -1,8 +1,8 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilValue } from 'recoil';
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { SettingsPermissions } from '~/generated/graphql';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 export const useHasSettingsPermission = (
   settingsPermission?: SettingsPermissions,

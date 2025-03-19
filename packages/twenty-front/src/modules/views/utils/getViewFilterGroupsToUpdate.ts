@@ -1,7 +1,7 @@
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { areViewFilterGroupsEqual } from '@/views/utils/areViewFilterGroupsEqual';
-import { isDefined } from 'twenty-shared';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getViewFilterGroupsToUpdate = (
   currentViewFilterGroups: ViewFilterGroup[],

@@ -10,11 +10,11 @@ import {
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
+import { isDefined } from 'twenty-shared/utils';
 
 type BuildRecordFromImportedStructuredRowArgs = {
   importedStructuredRow: ImportedStructuredRow<any>;

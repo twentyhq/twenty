@@ -5,8 +5,8 @@ import { Column } from '@/spreadsheet-import/steps/components/MatchColumnsStep/M
 import { Fields } from '@/spreadsheet-import/types';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { AnimatedExpandableContainer } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const getExpandableContainerTitle = <T extends string>(
   fields: Fields<T>,

@@ -19,7 +19,6 @@ import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepH
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   IconChevronLeft,
   MenuItemSelect,
@@ -27,6 +26,7 @@ import {
   useIcons,
 } from 'twenty-ui';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowVariablesDropdownFieldItemsProps = {
   step: StepOutputSchema;

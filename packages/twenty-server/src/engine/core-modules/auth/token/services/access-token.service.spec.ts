@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Request } from 'express';
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -18,6 +17,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 import { AccessTokenService } from './access-token.service';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 describe('AccessTokenService', () => {
   let service: AccessTokenService;

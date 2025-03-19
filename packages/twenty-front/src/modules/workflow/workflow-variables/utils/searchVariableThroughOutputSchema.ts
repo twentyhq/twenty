@@ -5,7 +5,7 @@ import {
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const getDisplayedSubStepObjectLabel = (outputSchema: OutputSchema) => {
   if (!isRecordOutputSchema(outputSchema)) {

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request, Response } from 'express';
-import { isDefined } from 'twenty-shared';
 
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -20,6 +19,7 @@ import {
 } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { CustomException } from 'src/utils/custom-exception';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class MiddlewareService {

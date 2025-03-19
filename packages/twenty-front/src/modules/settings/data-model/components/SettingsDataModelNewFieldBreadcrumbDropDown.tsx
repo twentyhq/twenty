@@ -7,10 +7,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { isDefined } from 'twenty-shared';
 import { Button, IconChevronDown, MenuItem } from 'twenty-ui';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   align-items: center;

@@ -3,7 +3,6 @@ import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { isDefined } from 'twenty-shared';
 
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
@@ -12,6 +11,7 @@ import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/u
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
 import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useInlineCell = () => {
   const {

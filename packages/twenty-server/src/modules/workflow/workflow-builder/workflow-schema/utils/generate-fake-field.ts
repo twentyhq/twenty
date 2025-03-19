@@ -1,5 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import {
@@ -7,6 +5,7 @@ import {
   Node,
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const generateFakeField = ({
   type,

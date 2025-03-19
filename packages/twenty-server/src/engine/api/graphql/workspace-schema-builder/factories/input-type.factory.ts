@@ -6,7 +6,6 @@ import {
   GraphQLInputType,
   GraphQLList,
 } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 
@@ -19,6 +18,7 @@ import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 import { InputTypeDefinitionKind } from './input-type-definition.factory';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 @Injectable()
 export class InputTypeFactory {

@@ -11,7 +11,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,

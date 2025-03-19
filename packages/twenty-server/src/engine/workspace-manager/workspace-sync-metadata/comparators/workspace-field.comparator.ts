@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import diff from 'microdiff';
-import { FieldMetadataType } from 'twenty-shared';
 
 import {
   ComparatorAction,
@@ -11,6 +10,7 @@ import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/works
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const commonFieldPropertiesToIgnore = [
   'id',

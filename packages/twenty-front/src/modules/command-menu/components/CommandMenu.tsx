@@ -11,7 +11,7 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export type CommandGroupConfig = {
   heading: string;

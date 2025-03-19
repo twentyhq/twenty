@@ -2,13 +2,13 @@ import { AppPath } from '@/types/AppPath';
 import { useCallback } from 'react';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { ConnectedAccountProvider } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
   useGenerateTransientTokenMutation,
 } from '~/generated/graphql';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 const getProviderUrl = (provider: ConnectedAccountProvider) => {
   switch (provider) {

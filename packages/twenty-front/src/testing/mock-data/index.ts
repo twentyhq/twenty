@@ -6,7 +6,7 @@ import {
   isString,
 } from '@sniptt/guards';
 import { GraphQLVariables } from 'msw';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type StringFilter = {
   equals?: string;
@@ -15,7 +15,7 @@ type StringFilter = {
   notIn?: Array<string>;
 };
 
-const filterData = <DataT>(
+const filterData = <DataT,>(
   data: Array<DataT>,
   where: Record<string, any>,
 ): Array<DataT> =>
@@ -92,7 +92,7 @@ const filterData = <DataT>(
     return isMatch;
   });
 
-export const filterAndSortData = <DataT>(
+export const filterAndSortData = <DataT,>(
   data: Array<DataT>,
   where?: Record<string, any>,
   orderBy?: Array<any>,

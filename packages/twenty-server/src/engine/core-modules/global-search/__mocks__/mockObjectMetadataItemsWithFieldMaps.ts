@@ -1,6 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const mockObjectMetadataItemsWithFieldMaps: ObjectMetadataItemWithFieldMaps[] =
   [

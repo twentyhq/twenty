@@ -2,7 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { FieldMetadataType } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -19,6 +18,7 @@ import {
   deduceRelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
 import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 @Command({
   name: 'upgrade:0-50:migrate-relations-to-field-metadata',

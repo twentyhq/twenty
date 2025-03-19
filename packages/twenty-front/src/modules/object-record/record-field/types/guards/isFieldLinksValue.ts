@@ -1,7 +1,6 @@
 import { z } from 'zod';
-
-import { absoluteUrlSchema } from 'twenty-shared';
 import { FieldLinksValue } from '../FieldMetadata';
+import { absoluteUrlSchema } from 'twenty-shared/utils';
 
 export const linksSchema = z.object({
   primaryLinkLabel: z.string(),

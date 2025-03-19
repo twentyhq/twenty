@@ -1,9 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared';
-
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const DEFAULT_DEPTH_VALUE = 1;
 

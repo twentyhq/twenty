@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
@@ -13,6 +11,7 @@ import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class DomainManagerService {

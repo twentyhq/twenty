@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
-import { FieldMetadataType, getLogoUrlFromDomainName } from 'twenty-shared';
 import { Brackets, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -20,6 +18,8 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/searc
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 
 @Injectable()
 export class GlobalSearchService {

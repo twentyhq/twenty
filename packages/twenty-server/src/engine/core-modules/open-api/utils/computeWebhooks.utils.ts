@@ -1,8 +1,8 @@
 import { OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { capitalize } from 'twenty-shared/utils';
 
 export const computeWebhooks = (
   type: DatabaseEventAction,

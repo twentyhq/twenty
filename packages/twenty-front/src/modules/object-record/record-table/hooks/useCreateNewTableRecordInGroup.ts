@@ -7,8 +7,8 @@ import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/drop
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateNewTableRecordInGroup = () => {
   const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();

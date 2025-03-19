@@ -3,8 +3,8 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseLazyFetchAllRecordIdsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
@@ -21,7 +21,7 @@ type ExportProgress = {
   displayType: 'percentage' | 'number';
 };
 
-export const useLazyFetchAllRecords = <T>({
+export const useLazyFetchAllRecords = <T,>({
   objectNameSingular,
   filter,
   orderBy,
