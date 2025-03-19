@@ -1,5 +1,6 @@
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
+import { getWorkflowPreviousStepId } from '@/workflow/workflow-steps/utils/getWorkflowPreviousStep';
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import styled from '@emotion/styled';
@@ -9,6 +10,7 @@ import {
   IconBrackets,
   JsonNestedNode,
   JsonTreeContextProvider,
+  ShouldExpandNodeInitiallyProps,
 } from 'twenty-ui';
 
 const StyledContainer = styled.div`
@@ -38,6 +40,15 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     return null;
   }
 
+  const previousStepId = getWorkflowPreviousStepId({
+    stepId,
+    steps: workflowRun.output.flow.steps,
+  });
+
+  if (previousStepId === undefined) {
+    return null;
+  }
+
   const variablesUsedInStep = getWorkflowVariablesUsedInStep({
     step,
   });
@@ -47,10 +58,15 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     flow: workflowRun.output.flow,
     stepId,
   });
-
   if (stepContext.length === 0) {
     throw new Error('The input tab must be rendered with a non-empty context.');
   }
+
+  const isFirstNodeDepthOfPreviousStep = ({
+    keyPath,
+    depth,
+  }: ShouldExpandNodeInitiallyProps) =>
+    keyPath.startsWith(previousStepId) && depth < 2;
 
   return (
     <StyledContainer>
@@ -58,9 +74,11 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
         value={{
           emptyArrayLabel: t`Empty Array`,
           emptyObjectLabel: t`Empty Object`,
+          emptyStringLabel: t`[empty string]`,
           arrowButtonCollapsedLabel: t`Expand`,
           arrowButtonExpandedLabel: t`Collapse`,
           shouldHighlightNode: (keyPath) => variablesUsedInStep.has(keyPath),
+          shouldExpandNodeInitially: isFirstNodeDepthOfPreviousStep,
         }}
       >
         <JsonNestedNode
