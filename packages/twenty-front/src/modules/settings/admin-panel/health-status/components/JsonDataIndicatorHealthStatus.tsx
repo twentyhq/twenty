@@ -33,7 +33,7 @@ export const JsonDataIndicatorHealthStatus = () => {
     !indicatorHealth.status ||
     indicatorHealth.status === AdminPanelHealthServiceStatus.OUTAGE;
 
-  const expandEveryNode = (_keyPath: string, _depth: number) => true;
+  const isAnyNode = () => true;
 
   return (
     <Section>
@@ -47,7 +47,7 @@ export const JsonDataIndicatorHealthStatus = () => {
         <StyledDetailsContainer>
           <JsonTree
             value={parsedDetails}
-            shouldExpandNodeInitially={expandEveryNode}
+            shouldExpandNodeInitially={isAnyNode}
             emptyArrayLabel={t`Empty Array`}
             emptyObjectLabel={t`Empty Object`}
             emptyStringLabel={t`[empty string]`}

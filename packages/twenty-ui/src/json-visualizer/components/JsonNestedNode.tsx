@@ -55,7 +55,7 @@ export const JsonNestedNode = ({
   const hideRoot = !isDefined(label);
 
   const [isOpen, setIsOpen] = useState(
-    shouldExpandNodeInitially(keyPath, depth),
+    shouldExpandNodeInitially({ keyPath, depth }),
   );
 
   const renderedChildren = (

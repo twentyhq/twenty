@@ -6,7 +6,7 @@ import {
   within,
 } from '@storybook/test';
 import { JsonTree } from '@ui/json-visualizer/components/JsonTree';
-import { expandTwoDepths } from '@ui/json-visualizer/utils/expandTwoDepths';
+import { isTwoFirstDepths } from '@ui/json-visualizer/utils/isTwoFirstDepths';
 
 const meta: Meta<typeof JsonTree> = {
   title: 'UI/JsonVisualizer/JsonTree',
@@ -292,7 +292,7 @@ export const ExpandTwoFirstDepths: Story = {
       },
       isActive: true,
     },
-    shouldExpandNodeInitially: expandTwoDepths,
+    shouldExpandNodeInitially: isTwoFirstDepths,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

@@ -1,8 +1,12 @@
 import { createContext } from 'react';
 
+export type ShouldExpandNodeInitiallyProps = { keyPath: string; depth: number };
+
 export type JsonTreeContextType = {
   shouldHighlightNode?: (keyPath: string) => boolean;
-  shouldExpandNodeInitially: (keyPath: string, depth: number) => boolean;
+  shouldExpandNodeInitially: (
+    params: ShouldExpandNodeInitiallyProps,
+  ) => boolean;
   emptyStringLabel: string;
   emptyArrayLabel: string;
   emptyObjectLabel: string;

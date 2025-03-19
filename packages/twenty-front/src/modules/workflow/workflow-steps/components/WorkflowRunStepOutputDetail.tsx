@@ -3,7 +3,7 @@ import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThro
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
-import { expandTwoDepths, JsonTree } from 'twenty-ui';
+import { isTwoFirstDepths, JsonTree } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: grid;
@@ -28,7 +28,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
     <StyledContainer>
       <JsonTree
         value={stepOutput}
-        shouldExpandNodeInitially={expandTwoDepths}
+        shouldExpandNodeInitially={isTwoFirstDepths}
         emptyArrayLabel={t`Empty Array`}
         emptyObjectLabel={t`Empty Object`}
         emptyStringLabel={t`[empty string]`}

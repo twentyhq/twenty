@@ -1,6 +1,7 @@
 import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { JsonTreeContextProvider } from '@ui/json-visualizer/components/JsonTreeContextProvider';
+import { ShouldExpandNodeInitiallyProps } from '@ui/json-visualizer/contexts/JsonTreeContext';
 import { JsonValue } from 'type-fest';
 
 export const JsonTree = ({
@@ -15,7 +16,9 @@ export const JsonTree = ({
 }: {
   value: JsonValue;
   shouldHighlightNode?: (keyPath: string) => boolean;
-  shouldExpandNodeInitially: (keyPath: string, depth: number) => boolean;
+  shouldExpandNodeInitially: (
+    params: ShouldExpandNodeInitiallyProps,
+  ) => boolean;
   emptyArrayLabel: string;
   emptyObjectLabel: string;
   emptyStringLabel: string;

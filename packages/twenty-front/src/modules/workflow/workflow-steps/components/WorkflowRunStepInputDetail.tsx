@@ -10,6 +10,7 @@ import {
   IconBrackets,
   JsonNestedNode,
   JsonTreeContextProvider,
+  ShouldExpandNodeInitiallyProps,
 } from 'twenty-ui';
 
 const StyledContainer = styled.div`
@@ -61,7 +62,10 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     throw new Error('The input tab must be rendered with a non-empty context.');
   }
 
-  const expandPreviousStep = (keyPath: string, depth: number) =>
+  const isFirstNodeDepthOfPreviousStep = ({
+    keyPath,
+    depth,
+  }: ShouldExpandNodeInitiallyProps) =>
     keyPath.startsWith(previousStepId) && depth < 2;
 
   return (
@@ -74,7 +78,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
           arrowButtonCollapsedLabel: t`Expand`,
           arrowButtonExpandedLabel: t`Collapse`,
           shouldHighlightNode: (keyPath) => variablesUsedInStep.has(keyPath),
-          shouldExpandNodeInitially: expandPreviousStep,
+          shouldExpandNodeInitially: isFirstNodeDepthOfPreviousStep,
         }}
       >
         <JsonNestedNode
