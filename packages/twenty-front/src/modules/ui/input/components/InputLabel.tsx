@@ -1,7 +1,12 @@
 import styled from '@emotion/styled';
+import { HTMLAttributes } from 'react';
 import { Label } from 'twenty-ui';
 
-const StyledInputLabel = styled(Label)`
+type InputLabelProps = HTMLAttributes<HTMLLabelElement> & {
+  htmlFor?: string;
+};
+
+const StyledInputLabel = styled(Label)<InputLabelProps>`
   display: block;
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
