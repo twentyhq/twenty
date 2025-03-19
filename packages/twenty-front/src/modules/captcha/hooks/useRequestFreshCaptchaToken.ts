@@ -65,7 +65,7 @@ export const useRequestFreshCaptchaToken = () => {
             });
         }
       },
-    [setCaptchaToken, setIsRequestingCaptchaToken],
+    [location.pathname, setCaptchaToken, setIsRequestingCaptchaToken],
   );
 
   return { requestFreshCaptchaToken };
