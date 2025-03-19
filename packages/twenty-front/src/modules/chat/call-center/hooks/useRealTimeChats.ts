@@ -45,19 +45,7 @@ export const useRealTimeChats = ({
 
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (agent?.isAdmin) {
-      chatsQuery = query(
-        collection(firestoreDb, collectionName),
-        and(
-          where('integrationId', 'in', integrationIds),
-          or(
-            where('status', '==', status),
-            where('status', '==', statusEnum.OnHold),
-            where('status', '==', statusEnum.Resolved),
-          ),
-        ),
-      );
-    } else {
-      if (activeTabId === ChatStatus.Mine) {
+      if (integrationIds.length > 0) {
         chatsQuery = query(
           collection(firestoreDb, collectionName),
           and(
@@ -67,30 +55,56 @@ export const useRealTimeChats = ({
               where('status', '==', statusEnum.OnHold),
               where('status', '==', statusEnum.Resolved),
             ),
-            where('agent', '==', agent?.id || ''),
-          ),
-        );
-      } else {
-        chatsQuery = query(
-          collection(firestoreDb, collectionName),
-          and(
-            where('integrationId', 'in', integrationIds),
-            or(
-              where('status', '==', status),
-              where('status', '==', statusEnum.Resolved),
-            ),
-            or(where('sector', 'in', sectors), where('sector', '==', 'empty')),
-            or(
-              where('agent', '==', 'empty'),
-              where('status', '==', statusEnum.Resolved),
-            ),
           ),
         );
       }
+    } else {
+      if (activeTabId === ChatStatus.Mine) {
+        if (integrationIds.length > 0) {
+          chatsQuery = query(
+            collection(firestoreDb, collectionName),
+            and(
+              where('integrationId', 'in', integrationIds),
+              or(
+                where('status', '==', status),
+                where('status', '==', statusEnum.OnHold),
+                where('status', '==', statusEnum.Resolved),
+              ),
+              where('agent', '==', agent?.id || ''),
+            ),
+          );
+        }
+      } else {
+        // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+        if (integrationIds.length > 0 && sectors && sectors.length > 0) {
+          chatsQuery = query(
+            collection(firestoreDb, collectionName),
+            and(
+              where('integrationId', 'in', integrationIds),
+              or(
+                where('status', '==', status),
+                where('status', '==', statusEnum.Resolved),
+              ),
+              or(
+                where('sector', 'in', sectors),
+                where('sector', '==', 'empty'),
+              ),
+              or(
+                where('agent', '==', 'empty'),
+                where('status', '==', statusEnum.Resolved),
+              ),
+            ),
+          );
+        }
+      }
     }
 
+    if (!chatsQuery) return;
+
     const unsubscribe = onSnapshot(chatsQuery, (snapshot) => {
-      const chats = snapshot.docs.map((doc) => doc.data() as WhatsappDocument);
+      const chats = snapshot.docs.map(
+        (doc: any) => doc.data() as WhatsappDocument,
+      );
 
       // const chats = snapshot.docs.map((doc) =>
       //   platform === 'whatsapp'
