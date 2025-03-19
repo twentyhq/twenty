@@ -23,28 +23,28 @@ import { GlobalSearchRecordDTO } from 'src/engine/core-modules/global-search/dto
 
 describe('GlobalSearchResolver', () => {
   let listingObjectMetadataId: { objectMetadataId: string };
-  const people = [
+  const [firstPerson, secondPerson, thirdPerson] = [
     { id: randomUUID(), name: { firstName: 'searchInput1' } },
     { id: randomUUID(), name: { firstName: 'searchInput2' } },
     { id: randomUUID(), name: { firstName: 'searchInput3' } },
   ];
-  const apiKeys = [
+  const [apiKey] = [
     {
       id: randomUUID(),
       name: 'record not searchable',
       expiresAt: new Date(Date.now()),
     },
   ];
-  const listings = [
+  const [firstListing, secondListing] = [
     { id: randomUUID(), name: 'searchInput1' },
     { id: randomUUID(), name: 'searchInput2' },
   ];
 
-  const getSearchRecord = (
+  const hasSearchRecord = (
     globalSearch: GlobalSearchRecordDTO[],
     recordId: string,
   ) => {
-    return globalSearch.find(
+    return globalSearch.some(
       (item: GlobalSearchRecordDTO) => item.recordId === recordId,
     );
   };
@@ -68,21 +68,20 @@ describe('GlobalSearchResolver', () => {
         LISTING_NAME_SINGULAR,
         LISTING_NAME_PLURAL,
         OBJECT_MODEL_COMMON_FIELDS,
-        listings,
+        [firstListing, secondListing],
       );
 
-      await performCreateManyOperation(
-        'person',
-        'people',
-        PERSON_GQL_FIELDS,
-        people,
-      );
+      await performCreateManyOperation('person', 'people', PERSON_GQL_FIELDS, [
+        firstPerson,
+        secondPerson,
+        thirdPerson,
+      ]);
 
       await performCreateManyOperation(
         'apiKey',
         'apiKeys',
         OBJECT_MODEL_COMMON_FIELDS,
-        apiKeys,
+        [apiKey],
       );
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -99,23 +98,32 @@ describe('GlobalSearchResolver', () => {
         gqlFields: PERSON_GQL_FIELDS,
         filter: {
           id: {
-            in: people.map((person) => person.id),
+            in: [firstPerson.id, secondPerson.id, thirdPerson.id],
           },
         },
       }),
-    ).catch();
+    ).catch((error) => {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    });
 
     await deleteOneObjectMetadataItem(
       listingObjectMetadataId.objectMetadataId,
-    ).catch();
+    ).catch((error) => {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    });
 
     await makeGraphqlAPIRequest(
       destroyOneOperationFactory({
         objectMetadataSingularName: 'apiKey',
         gqlFields: OBJECT_MODEL_COMMON_FIELDS,
-        recordId: apiKeys[0].id,
+        recordId: apiKey.id,
       }),
-    ).catch();
+    ).catch((error) => {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    });
   });
 
   const testsUseCases: EachTestingContext<{
@@ -133,8 +141,8 @@ describe('GlobalSearchResolver', () => {
           searchInput: '',
         },
         eval: {
-          definedRecordIds: [listings[0].id, listings[1].id],
-          undefinedRecordIds: [apiKeys[0].id],
+          definedRecordIds: [firstListing.id, secondListing.id],
+          undefinedRecordIds: [apiKey.id],
         },
       },
     },
@@ -145,8 +153,8 @@ describe('GlobalSearchResolver', () => {
           searchInput: 'searchInput1',
         },
         eval: {
-          definedRecordIds: [people[0].id, listings[0].id],
-          undefinedRecordIds: [people[1].id, listings[1].id],
+          definedRecordIds: [firstPerson.id, firstListing.id],
+          undefinedRecordIds: [secondPerson.id, secondListing.id],
         },
       },
     },
@@ -158,8 +166,8 @@ describe('GlobalSearchResolver', () => {
           includedObjectNameSingulars: [LISTING_NAME_SINGULAR],
         },
         eval: {
-          definedRecordIds: [listings[0].id, listings[1].id],
-          undefinedRecordIds: [people[0].id, people[1].id],
+          definedRecordIds: [firstListing.id, secondListing.id],
+          undefinedRecordIds: [firstPerson.id, secondPerson.id],
         },
       },
     },
@@ -171,8 +179,8 @@ describe('GlobalSearchResolver', () => {
           excludedObjectNameSingulars: ['person'],
         },
         eval: {
-          definedRecordIds: [listings[0].id, listings[1].id],
-          undefinedRecordIds: [people[0].id, people[1].id],
+          definedRecordIds: [firstListing.id, secondListing.id],
+          undefinedRecordIds: [firstPerson.id, secondPerson.id],
         },
       },
     },
@@ -182,12 +190,12 @@ describe('GlobalSearchResolver', () => {
         input: {
           searchInput: '',
           filter: {
-            id: { eq: listings[0].id },
+            id: { eq: firstListing.id },
           },
         },
         eval: {
-          definedRecordIds: [listings[0].id],
-          undefinedRecordIds: [listings[1].id],
+          definedRecordIds: [firstListing.id],
+          undefinedRecordIds: [secondListing.id],
         },
       },
     },
@@ -207,11 +215,11 @@ describe('GlobalSearchResolver', () => {
       : expect(globalSearch).toHaveLength(0);
 
     context.eval.definedRecordIds.forEach((recordId) => {
-      expect(getSearchRecord(globalSearch, recordId)).toBeDefined();
+      expect(hasSearchRecord(globalSearch, recordId)).toBeTruthy();
     });
 
     context.eval.undefinedRecordIds.forEach((recordId) => {
-      expect(getSearchRecord(globalSearch, recordId)).toBeUndefined();
+      expect(hasSearchRecord(globalSearch, recordId)).toBeFalsy();
     });
   });
 });
