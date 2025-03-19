@@ -1,4 +1,4 @@
-export const CUSTOM_OR_STANDARD_OBJECT_GQL_BASIC_FIELDS = `
+export const OBJECT_MODEL_COMMON_FIELDS = `
     id
     name
     createdAt

@@ -2,17 +2,19 @@ import gql from 'graphql-tag';
 
 import { ObjectRecordFilterInput } from 'src/engine/core-modules/global-search/dtos/object-record-filter-input';
 
+export type GlobalSearchFactoryParams = {
+  searchInput: string;
+  excludedObjectNameSingulars?: string[];
+  includedObjectNameSingulars?: string[];
+  filter?: ObjectRecordFilterInput;
+};
+
 export const globalSearchFactory = ({
   searchInput,
   excludedObjectNameSingulars,
   includedObjectNameSingulars,
   filter,
-}: {
-  searchInput: string;
-  excludedObjectNameSingulars?: string[];
-  includedObjectNameSingulars?: string[];
-  filter?: ObjectRecordFilterInput;
-}) => ({
+}: GlobalSearchFactoryParams) => ({
   query: gql`
     query GlobalSearch(
       $searchInput: String!
