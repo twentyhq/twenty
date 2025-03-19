@@ -9,6 +9,7 @@ import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hook
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
+import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import styled from '@emotion/styled';
@@ -31,7 +32,7 @@ export const CommandMenuWorkflowRunViewStep = () => {
 
   const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
-    'command-menu-workflow-run-view-step',
+    WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
   );
 
   const stepExecutionStatus = isDefined(workflowRun)
@@ -73,7 +74,7 @@ export const CommandMenuWorkflowRunViewStep = () => {
       <StyledTabList
         tabs={tabs}
         behaveAsLinks={false}
-        componentInstanceId="command-menu-workflow-run-view-step"
+        componentInstanceId={WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID}
       />
 
       {activeTabId === 'node' ? (
