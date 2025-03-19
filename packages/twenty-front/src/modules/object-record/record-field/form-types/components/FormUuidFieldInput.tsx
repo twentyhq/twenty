@@ -18,7 +18,7 @@ type FormUuidFieldInputProps = {
   label?: string;
   defaultValue: string | null | undefined;
   placeholder: string;
-  onPersist: (value: string | null) => void;
+  onChange: (value: string | null) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 };
@@ -27,7 +27,7 @@ export const FormUuidFieldInput = ({
   label,
   defaultValue,
   placeholder,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
 }: FormUuidFieldInputProps) => {
@@ -63,12 +63,12 @@ export const FormUuidFieldInput = ({
     const trimmedNewText = newText.trim();
 
     if (trimmedNewText === '') {
-      onPersist(null);
+      onChange(null);
 
       return;
     }
 
-    onPersist(trimmedNewText);
+    onChange(trimmedNewText);
   };
 
   const handleUnlinkVariable = () => {
@@ -77,7 +77,7 @@ export const FormUuidFieldInput = ({
       value: '',
     });
 
-    onPersist(null);
+    onChange(null);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -86,7 +86,7 @@ export const FormUuidFieldInput = ({
       value: variableName,
     });
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   return (

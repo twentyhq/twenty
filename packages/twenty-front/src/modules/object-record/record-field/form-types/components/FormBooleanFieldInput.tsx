@@ -17,7 +17,7 @@ const StyledBooleanInputContainer = styled.div`
 type FormBooleanFieldInputProps = {
   label?: string;
   defaultValue: boolean | string | undefined;
-  onPersist: (value: boolean | null | string) => void;
+  onChange: (value: boolean | null | string) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -25,7 +25,7 @@ type FormBooleanFieldInputProps = {
 export const FormBooleanFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
 }: FormBooleanFieldInputProps) => {
@@ -58,7 +58,7 @@ export const FormBooleanFieldInput = ({
       value: newValue,
     });
 
-    onPersist(newValue);
+    onChange(newValue);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -67,7 +67,7 @@ export const FormBooleanFieldInput = ({
       value: variableName,
     });
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   const handleUnlinkVariable = () => {
@@ -76,7 +76,7 @@ export const FormBooleanFieldInput = ({
       value: false,
     });
 
-    onPersist(false);
+    onChange(false);
   };
 
   return (

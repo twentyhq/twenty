@@ -4,6 +4,8 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/form-ty
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
@@ -13,8 +15,6 @@ import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
-import { InputHint } from '@/ui/input/components/InputHint';
 
 const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
@@ -25,7 +25,7 @@ type FormNumberFieldInputProps = {
   error?: string;
   placeholder: string;
   defaultValue: number | string | undefined;
-  onPersist: (value: number | null | string) => void;
+  onChange: (value: number | null | string) => void;
   onBlur?: () => void;
   VariablePicker?: VariablePickerComponent;
   hint?: string;
@@ -37,7 +37,7 @@ export const FormNumberFieldInput = ({
   error,
   placeholder,
   defaultValue,
-  onPersist,
+  onChange,
   onBlur,
   VariablePicker,
   hint,
@@ -73,7 +73,7 @@ export const FormNumberFieldInput = ({
 
     const castedValue = castAsNumberOrNull(newValue);
 
-    onPersist(castedValue);
+    onChange(castedValue);
   };
 
   const handleChange = (newText: string) => {
@@ -91,7 +91,7 @@ export const FormNumberFieldInput = ({
       value: '',
     });
 
-    onPersist(null);
+    onChange(null);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -100,7 +100,7 @@ export const FormNumberFieldInput = ({
       value: variableName,
     });
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   return (

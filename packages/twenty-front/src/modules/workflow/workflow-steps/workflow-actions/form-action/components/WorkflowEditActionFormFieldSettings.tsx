@@ -109,7 +109,7 @@ export const WorkflowEditActionFormFieldSettings = ({
                 icon: IllustrationIconNumbers,
               },
             ]}
-            onPersist={(newType: string | null) => {
+            onChange={(newType: string | null) => {
               if (newType === null) {
                 return;
               }
