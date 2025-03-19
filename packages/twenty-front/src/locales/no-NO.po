@@ -939,7 +939,7 @@ msgstr "Kopier lenke for å vise"
 #. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
-msgstr "Kopier denne nøkelen da den ikke vil vre synlig igjen"
+msgstr "Kopier denne nøkelen da den ikke vil v\fre synlig igjen"
 
 #. js-lingui-id: SGsgDO
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
