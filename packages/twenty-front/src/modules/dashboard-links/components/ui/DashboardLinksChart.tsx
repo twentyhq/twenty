@@ -17,6 +17,7 @@ const ChartContainer = styled.div`
   background-color: #fcfcfc;
   height: 400px;
   padding: ${({ theme }: any) => theme.spacing(2)};
+  margin: ${({ theme }) => theme.spacing(3)};
   width: 100%;
   border: 1px solid #EBEBEB; 
   border-radius: 8px;
