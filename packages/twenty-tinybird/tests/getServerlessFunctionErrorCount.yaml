@@ -1,0 +1,20 @@
+
+- name: basic_daily_granularity
+  description: Test with default daily granularity and default date range
+  parameters: workspaceId=20202020-1c25-4d02-bf25-6aeccf7ea419&functionId=ad018fc5-eace-4f7e-942f-929560a16459&start=2024-11-01T00:00:00.000Z&end=2024-11-02T00:00:00.000Z
+  expected_result: ''
+
+- name: hourly_granularity
+  description: Test with hourly granularity
+  parameters: workspaceId=20202020-1c25-4d02-bf25-6aeccf7ea419&functionId=ad018fc5-eace-4f7e-942f-929560a16459&start=2024-11-01T00:00:00.000Z&end=2024-11-02T00:00:00.000Z&granularity=hour
+  expected_result: ''
+
+- name: custom_date_range_daily
+  description: Test with custom date range using daily granularity
+  parameters: workspaceId=20202020-1c25-4d02-bf25-6aeccf7ea419&functionId=ad018fc5-eace-4f7e-942f-929560a16459&start=2024-01-01T00:00:00.000Z&end=2024-01-05T00:00:00.000Z
+  expected_result: ''
+
+- name: custom_workspace_function
+  description: Test with different workspace and function IDs
+  parameters: workspaceId=11111111-2222-3333-4444-555555555555&functionId=99999999-8888-7777-6666-555555555555&start=2024-11-01T00:00:00.000Z&end=2024-11-02T00:00:00.000Z
+  expected_result: ''
