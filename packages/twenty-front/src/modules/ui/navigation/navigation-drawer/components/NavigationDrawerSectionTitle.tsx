@@ -8,14 +8,12 @@ import styled from '@emotion/styled';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
+import { Label } from 'twenty-ui';
 
 const StyledTitle = styled.div`
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.light};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   height: ${({ theme }) => theme.spacing(5)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   padding-right: ${({ theme }) => theme.spacing(0.5)};
@@ -29,7 +27,7 @@ const StyledTitle = styled.div`
   }
 `;
 
-const StyledLabel = styled.div`
+const StyledLabelContainer = styled.div`
   flex-grow: 1;
 `;
 
@@ -77,7 +75,9 @@ export const NavigationDrawerSectionTitle = ({
 
   return (
     <StyledTitle className="section-title-container">
-      <StyledLabel onClick={handleTitleClick}>{label}</StyledLabel>
+      <StyledLabelContainer onClick={handleTitleClick}>
+        <Label>{label}</Label>
+      </StyledLabelContainer>
       {rightIcon && (
         <StyledRightIcon isMobile={isMobile}>{rightIcon}</StyledRightIcon>
       )}
