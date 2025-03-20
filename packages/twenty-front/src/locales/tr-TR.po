@@ -2452,7 +2452,7 @@ msgstr "Oturumu kapat"
 #. js-lingui-id: nOhz3x
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #~ msgid "Logout"
-#~ msgstr "Çıkış yap"
+#~ msgstr "Logout"
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
