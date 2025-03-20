@@ -10,6 +10,9 @@ export const getTriggerIcon = (
         type: 'CRON';
       }
     | {
+        type: 'WEBHOOK';
+      }
+    | {
         type: 'DATABASE_EVENT';
         eventName: string;
       },

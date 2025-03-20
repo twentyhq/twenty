@@ -79,7 +79,7 @@ type FormDateTimeFieldInputProps = {
   label?: string;
   placeholder?: string;
   defaultValue: string | undefined;
-  onPersist: (value: string | null) => void;
+  onChange: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -88,7 +88,7 @@ export const FormDateTimeFieldInput = ({
   dateOnly,
   label,
   defaultValue,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
 }: FormDateTimeFieldInputProps) => {
@@ -130,11 +130,11 @@ export const FormDateTimeFieldInput = ({
 
   const persistDate = (newDate: Nullable<Date>) => {
     if (!isDefined(newDate)) {
-      onPersist(null);
+      onChange(null);
     } else {
       const newDateISO = newDate.toISOString();
 
-      onPersist(newDateISO);
+      onChange(newDateISO);
     }
   };
 
@@ -312,7 +312,7 @@ export const FormDateTimeFieldInput = ({
 
     setInputDateTime('');
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   const handleUnlinkVariable = () => {
@@ -324,7 +324,7 @@ export const FormDateTimeFieldInput = ({
 
     setPickerDate(null);
 
-    onPersist(null);
+    onChange(null);
   };
 
   return (

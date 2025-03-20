@@ -8,7 +8,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 type FormEmailsFieldInputProps = {
   label?: string;
   defaultValue?: FieldEmailsValue;
-  onPersist: (value: FieldEmailsValue) => void;
+  onChange: (value: FieldEmailsValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -16,12 +16,12 @@ type FormEmailsFieldInputProps = {
 export const FormEmailsFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
 }: FormEmailsFieldInputProps) => {
   const handleChange = (email: string) => {
-    onPersist({
+    onChange({
       primaryEmail: email,
       additionalEmails: [],
     });
@@ -34,7 +34,7 @@ export const FormEmailsFieldInput = ({
         <FormTextFieldInput
           label="Primary Email"
           defaultValue={defaultValue?.primaryEmail}
-          onPersist={handleChange}
+          onChange={handleChange}
           placeholder={'Primary Email'}
           readonly={readonly}
           VariablePicker={VariablePicker}

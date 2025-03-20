@@ -65,7 +65,7 @@ export const WithVariablePicker: Story = {
         color: 'blue',
       },
     ],
-    onPersist: fn(),
+    onChange: fn(),
     VariablePicker: () => <div>VariablePicker</div>,
   },
   play: async ({ canvasElement }) => {
@@ -102,7 +102,7 @@ export const Disabled: Story = {
         color: 'yellow',
       },
     ],
-    onPersist: fn(),
+    onChange: fn(),
     readonly: true,
   },
   play: async ({ canvasElement }) => {
@@ -122,7 +122,7 @@ export const DisabledWithVariable: Story = {
   args: {
     label: 'Created At',
     defaultValue: `{{${MOCKED_STEP_ID}.stage}}`,
-    onPersist: fn(),
+    onChange: fn(),
     readonly: true,
   },
   play: async ({ canvasElement }) => {

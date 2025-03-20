@@ -26,7 +26,7 @@ export const WorkflowFormFieldSettingsNumber = ({
       <FormFieldInputContainer>
         <InputLabel>Label</InputLabel>
         <FormTextFieldInput
-          onPersist={(newLabel: string | null) => {
+          onChange={(newLabel: string | null) => {
             onChange('label', newLabel);
           }}
           defaultValue={label ?? t`Number`}
@@ -36,7 +36,7 @@ export const WorkflowFormFieldSettingsNumber = ({
       <FormFieldInputContainer>
         <InputLabel>Placeholder</InputLabel>
         <FormTextFieldInput
-          onPersist={(newPlaceholder: string | null) => {
+          onChange={(newPlaceholder: string | null) => {
             onChange('placeholder', newPlaceholder);
           }}
           defaultValue={placeholder ?? '1000'}

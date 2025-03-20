@@ -5,8 +5,8 @@ import { AdvancedFilterRecordFilterGroupChildOptionsDropdown } from '@/object-re
 import { AdvancedFilterRecordFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroup';
 import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilter';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
+import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared';
@@ -32,20 +32,14 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
 `;
 
 export const AdvancedFilterRootLevelViewFilterGroup = () => {
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
-    currentRecordFilterGroupsComponentState,
+  const rootLevelRecordFilterGroup = useRecoilComponentValueV2(
+    rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const rootRecordFilterGroupId = currentRecordFilterGroups.find(
-    (recordFilterGroup) => !recordFilterGroup.parentRecordFilterGroupId,
-  )?.id;
-
-  const {
-    currentRecordFilterGroup: rootLevelRecordFilterGroup,
-    childRecordFiltersAndRecordFilterGroups,
-  } = useChildRecordFiltersAndRecordFilterGroups({
-    recordFilterGroupId: rootRecordFilterGroupId,
-  });
+  const { childRecordFiltersAndRecordFilterGroups } =
+    useChildRecordFiltersAndRecordFilterGroups({
+      recordFilterGroupId: rootLevelRecordFilterGroup?.id,
+    });
 
   if (!isDefined(rootLevelRecordFilterGroup)) {
     return null;
