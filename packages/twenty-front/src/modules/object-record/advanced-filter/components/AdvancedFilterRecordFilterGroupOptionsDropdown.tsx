@@ -1,5 +1,6 @@
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
+import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -20,6 +21,8 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
 
   const { removeRecordFilter } = useRemoveRecordFilter();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
+  const { removeRootRecordFilterGroupIfEmpty } =
+    useRemoveRootRecordFilterGroupIfEmpty();
 
   const { childRecordFilters } = useChildRecordFiltersAndRecordFilterGroups({
     recordFilterGroupId,
@@ -31,6 +34,8 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
     }
 
     removeRecordFilterGroup(recordFilterGroupId);
+
+    removeRootRecordFilterGroupIfEmpty();
 
     closeDropdown();
   };
