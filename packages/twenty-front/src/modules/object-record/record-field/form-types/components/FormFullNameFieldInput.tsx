@@ -1,6 +1,6 @@
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
+import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
+import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/FirstNamePlaceholder';
 import { LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/LastNamePlaceholder';
@@ -10,7 +10,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 type FormFullNameFieldInputProps = {
   label?: string;
   defaultValue: FieldFullNameValue | undefined;
-  onPersist: (value: FieldFullNameValue) => void;
+  onChange: (value: FieldFullNameValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -18,19 +18,19 @@ type FormFullNameFieldInputProps = {
 export const FormFullNameFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
 }: FormFullNameFieldInputProps) => {
   const handleFirstNameChange = (newText: string) => {
-    onPersist({
+    onChange({
       lastName: defaultValue?.lastName ?? '',
       firstName: newText,
     });
   };
 
   const handleLastNameChange = (newText: string) => {
-    onPersist({
+    onChange({
       firstName: defaultValue?.firstName ?? '',
       lastName: newText,
     });
@@ -43,7 +43,7 @@ export const FormFullNameFieldInput = ({
         <FormTextFieldInput
           label="First Name"
           defaultValue={defaultValue?.firstName}
-          onPersist={handleFirstNameChange}
+          onChange={handleFirstNameChange}
           placeholder={
             FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
           }
@@ -53,7 +53,7 @@ export const FormFullNameFieldInput = ({
         <FormTextFieldInput
           label="Last Name"
           defaultValue={defaultValue?.lastName}
-          onPersist={handleLastNameChange}
+          onChange={handleLastNameChange}
           placeholder={
             LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
           }

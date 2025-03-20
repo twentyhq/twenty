@@ -240,7 +240,7 @@ export const WorkflowEditActionSendEmail = ({
             placeholder="Enter receiver email"
             readonly={actionOptions.readonly}
             defaultValue={formData.email}
-            onPersist={(email) => {
+            onChange={(email) => {
               handleFieldChange('email', email);
             }}
             VariablePicker={WorkflowVariablePicker}
@@ -250,7 +250,7 @@ export const WorkflowEditActionSendEmail = ({
             placeholder="Enter email subject"
             readonly={actionOptions.readonly}
             defaultValue={formData.subject}
-            onPersist={(subject) => {
+            onChange={(subject) => {
               handleFieldChange('subject', subject);
             }}
             VariablePicker={WorkflowVariablePicker}
@@ -260,7 +260,7 @@ export const WorkflowEditActionSendEmail = ({
             placeholder="Enter email body"
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
-            onPersist={(body) => {
+            onChange={(body) => {
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}

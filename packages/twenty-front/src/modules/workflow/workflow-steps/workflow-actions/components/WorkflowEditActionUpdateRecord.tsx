@@ -227,7 +227,7 @@ export const WorkflowEditActionUpdateRecord = ({
             icon: getIcon(field.iconName),
             color: 'gray',
           }))}
-          onPersist={(fieldsToUpdate) =>
+          onChange={(fieldsToUpdate) =>
             handleFieldChange('fieldsToUpdate', fieldsToUpdate)
           }
           placeholder="Select fields to update"
@@ -254,7 +254,7 @@ export const WorkflowEditActionUpdateRecord = ({
               key={fieldDefinition.metadata.fieldName}
               defaultValue={currentValue}
               field={fieldDefinition}
-              onPersist={(value) => {
+              onChange={(value) => {
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}

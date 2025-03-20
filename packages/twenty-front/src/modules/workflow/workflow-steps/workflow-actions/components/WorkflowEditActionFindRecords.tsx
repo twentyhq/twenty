@@ -138,7 +138,7 @@ export const WorkflowEditActionFindRecords = ({
           label="Limit"
           defaultValue={formData.limit}
           placeholder="Enter limit"
-          onPersist={() => {}}
+          onChange={() => {}}
           readonly
         />
       </WorkflowStepBody>

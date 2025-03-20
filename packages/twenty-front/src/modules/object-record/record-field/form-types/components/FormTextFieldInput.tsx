@@ -17,7 +17,7 @@ type FormTextFieldInputProps = {
   hint?: string;
   defaultValue: string | undefined;
   placeholder: string;
-  onPersist: (value: string) => void;
+  onChange: (value: string) => void;
   onBlur?: () => void;
   multiline?: boolean;
   readonly?: boolean;
@@ -30,7 +30,7 @@ export const FormTextFieldInput = ({
   hint,
   defaultValue,
   placeholder,
-  onPersist,
+  onChange,
   onBlur,
   multiline,
   readonly,
@@ -47,7 +47,7 @@ export const FormTextFieldInput = ({
       const jsonContent = editor.getJSON();
       const parsedContent = parseEditorContent(jsonContent);
 
-      onPersist(parsedContent);
+      onChange(parsedContent);
     },
   });
 
