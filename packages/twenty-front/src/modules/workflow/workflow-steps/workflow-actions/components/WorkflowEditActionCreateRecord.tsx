@@ -210,7 +210,7 @@ export const WorkflowEditActionCreateRecord = ({
               key={field.metadata.fieldName}
               defaultValue={currentValue}
               field={field}
-              onPersist={(value) => {
+              onChange={(value) => {
                 handleFieldChange(field.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}

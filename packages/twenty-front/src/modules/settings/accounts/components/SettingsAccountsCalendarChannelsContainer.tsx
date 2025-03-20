@@ -11,7 +11,8 @@ import { SettingsAccountsCalendarChannelsGeneral } from '@/settings/accounts/com
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountCalendarChannelsTabListComponentId';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import React from 'react';
 
 const StyledCalenderContainer = styled.div`
@@ -19,7 +20,8 @@ const StyledCalenderContainer = styled.div`
 `;
 
 export const SettingsAccountsCalendarChannelsContainer = () => {
-  const { activeTabId } = useTabList(
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
     SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID,
   );
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -63,10 +65,10 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
       {tabs.length > 1 && (
         <StyledCalenderContainer>
           <TabList
-            tabListInstanceId={
+            tabs={tabs}
+            componentInstanceId={
               SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID
             }
-            tabs={tabs}
           />
         </StyledCalenderContainer>
       )}

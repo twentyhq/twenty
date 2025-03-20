@@ -6,6 +6,8 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { isDefined } from 'twenty-shared';
 
 export const useCommandMenuHistory = () => {
@@ -47,6 +49,19 @@ export const useCommandMenuHistory = () => {
             const newMorphItems = new Map(currentMorphItems);
             newMorphItems.delete(removedItem.pageId);
             set(commandMenuNavigationMorphItemByPageState, newMorphItems);
+
+            const morphItem = currentMorphItems.get(removedItem.pageId);
+            if (isDefined(morphItem)) {
+              set(
+                activeTabIdComponentState.atomFamily({
+                  instanceId: getShowPageTabListComponentId({
+                    pageId: removedItem.pageId,
+                    targetObjectId: morphItem.recordId,
+                  }),
+                }),
+                null,
+              );
+            }
           }
         }
 
@@ -83,6 +98,20 @@ export const useCommandMenuHistory = () => {
       const currentMorphItems = snapshot
         .getLoadable(commandMenuNavigationMorphItemByPageState)
         .getValue();
+
+      for (const [pageId, morphItem] of currentMorphItems.entries()) {
+        if (!newNavigationStack.some((item) => item.pageId === pageId)) {
+          set(
+            activeTabIdComponentState.atomFamily({
+              instanceId: getShowPageTabListComponentId({
+                pageId,
+                targetObjectId: morphItem.recordId,
+              }),
+            }),
+            null,
+          );
+        }
+      }
 
       const newMorphItems = new Map(
         Array.from(currentMorphItems.entries()).filter(([pageId]) =>

@@ -211,6 +211,7 @@ const getSchemaComponentsProperties = ({
                 'IMPORT',
                 'MANUAL',
                 'SYSTEM',
+                'WEBHOOK',
               ],
             },
             ...(forResponse

@@ -24,7 +24,7 @@ type FormMultiSelectFieldInputProps = {
   label?: string;
   defaultValue: FieldMultiSelectValue | string | undefined;
   options: SelectOption[];
-  onPersist: (value: FieldMultiSelectValue | string) => void;
+  onChange: (value: FieldMultiSelectValue | string) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
@@ -66,7 +66,7 @@ export const FormMultiSelectFieldInput = ({
   label,
   defaultValue,
   options,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
   placeholder,
@@ -132,7 +132,7 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'edit',
     });
 
-    onPersist(value);
+    onChange(value);
   };
 
   const onCancel = () => {
@@ -154,7 +154,7 @@ export const FormMultiSelectFieldInput = ({
       value: variableName,
     });
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   const handleUnlinkVariable = () => {
@@ -164,7 +164,7 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'view',
     });
 
-    onPersist([]);
+    onChange([]);
   };
 
   const selectedNames =

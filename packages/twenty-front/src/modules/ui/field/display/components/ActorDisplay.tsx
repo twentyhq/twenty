@@ -14,6 +14,7 @@ import {
   IconMicrosoftOutlook,
   IconRobot,
   IconSettingsAutomation,
+  IconWebhook,
 } from 'twenty-ui';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
@@ -54,6 +55,8 @@ export const ActorDisplay = ({
         return IconRobot;
       case 'WORKFLOW':
         return IconSettingsAutomation;
+      case 'WEBHOOK':
+        return IconWebhook;
       default:
         return undefined;
     }

@@ -1,3 +1,4 @@
+import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
@@ -32,46 +33,48 @@ export const AppRouterProviders = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <ApolloProvider>
-      <BaseThemeProvider>
-        <ClientConfigProviderEffect />
-        <ClientConfigProvider>
-          <ChromeExtensionSidecarEffect />
-          <ChromeExtensionSidecarProvider>
-            <UserProviderEffect />
-            <WorkspaceProviderEffect />
-            <UserProvider>
-              <AuthProvider>
-                <ApolloMetadataClientProvider>
-                  <ObjectMetadataItemsProvider>
-                    <ObjectMetadataItemsGater>
-                      <PrefetchDataProvider>
-                        <UserThemeProviderEffect />
-                        <SnackBarProvider>
-                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                            <DialogManager>
-                              <StrictMode>
-                                <PromiseRejectionEffect />
-                                <GotoHotkeysEffectsProvider />
-                                <ServerPreconnect />
-                                <PageTitle title={pageTitle} />
-                                <PageFavicon />
-                                <Outlet />
-                              </StrictMode>
-                            </DialogManager>
-                          </DialogManagerScope>
-                        </SnackBarProvider>
-                        <MainContextStoreProvider />
-                      </PrefetchDataProvider>
-                      <PageChangeEffect />
-                    </ObjectMetadataItemsGater>
-                  </ObjectMetadataItemsProvider>
-                </ApolloMetadataClientProvider>
-              </AuthProvider>
-            </UserProvider>
-          </ChromeExtensionSidecarProvider>
-        </ClientConfigProvider>
-      </BaseThemeProvider>
-    </ApolloProvider>
+    <CaptchaProvider>
+      <ApolloProvider>
+        <BaseThemeProvider>
+          <ClientConfigProviderEffect />
+          <ClientConfigProvider>
+            <ChromeExtensionSidecarEffect />
+            <ChromeExtensionSidecarProvider>
+              <UserProviderEffect />
+              <WorkspaceProviderEffect />
+              <UserProvider>
+                <AuthProvider>
+                  <ApolloMetadataClientProvider>
+                    <ObjectMetadataItemsProvider>
+                      <ObjectMetadataItemsGater>
+                        <PrefetchDataProvider>
+                          <UserThemeProviderEffect />
+                          <SnackBarProvider>
+                            <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                              <DialogManager>
+                                <StrictMode>
+                                  <PromiseRejectionEffect />
+                                  <GotoHotkeysEffectsProvider />
+                                  <ServerPreconnect />
+                                  <PageTitle title={pageTitle} />
+                                  <PageFavicon />
+                                  <Outlet />
+                                </StrictMode>
+                              </DialogManager>
+                            </DialogManagerScope>
+                          </SnackBarProvider>
+                          <MainContextStoreProvider />
+                        </PrefetchDataProvider>
+                        <PageChangeEffect />
+                      </ObjectMetadataItemsGater>
+                    </ObjectMetadataItemsProvider>
+                  </ApolloMetadataClientProvider>
+                </AuthProvider>
+              </UserProvider>
+            </ChromeExtensionSidecarProvider>
+          </ClientConfigProvider>
+        </BaseThemeProvider>
+      </ApolloProvider>
+    </CaptchaProvider>
   );
 };

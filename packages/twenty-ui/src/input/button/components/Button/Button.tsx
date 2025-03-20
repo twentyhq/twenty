@@ -35,7 +35,7 @@ export type ButtonProps = {
   dataTestId?: string;
   hotkeys?: string[];
   ariaLabel?: string;
-  loading?: boolean;
+  isLoading?: boolean;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled('button', {
@@ -54,7 +54,7 @@ const StyledButton = styled('button', {
     | 'justify'
     | 'to'
     | 'target'
-    | 'loading'
+    | 'isLoading'
   > & { hasIcon: boolean }
 >`
   align-items: center;
@@ -359,7 +359,10 @@ const StyledButton = styled('button', {
 `;
 
 const StyledButtonWrapper = styled.div<
-  Pick<ButtonProps, 'loading' | 'variant' | 'accent' | 'inverted' | 'disabled'>
+  Pick<
+    ButtonProps,
+    'isLoading' | 'variant' | 'accent' | 'inverted' | 'disabled'
+  >
 >`
   ${({ theme, variant, accent, inverted, disabled }) => css`
     --tw-button-color: ${(() => {
@@ -404,8 +407,8 @@ const StyledButtonWrapper = styled.div<
     })()};
   `}
 
-  max-width: ${({ loading, theme }) =>
-    loading ? `calc(100% - ${theme.spacing(8)})` : 'none'};
+  max-width: ${({ isLoading, theme }) =>
+    isLoading ? `calc(100% - ${theme.spacing(8)})` : 'none'};
   position: relative;
 `;
 
@@ -430,21 +433,22 @@ export const Button = ({
   hotkeys,
   ariaLabel,
   type,
-  loading,
+  isLoading,
 }: ButtonProps) => {
   const isMobile = useIsMobile();
 
   const [isFocused, setIsFocused] = useState(propFocus);
-
   return (
     <StyledButtonWrapper
-      loading={loading}
+      isLoading={!!isLoading}
       variant={variant}
       accent={accent}
       inverted={inverted}
       disabled={soon || disabled}
     >
-      {(loading || Icon) && <ButtonIcon Icon={Icon} loading={loading} />}
+      {(isLoading || Icon) && (
+        <ButtonIcon Icon={Icon} isLoading={!!isLoading} />
+      )}
       <StyledButton
         fullWidth={fullWidth}
         variant={variant}
@@ -463,12 +467,12 @@ export const Button = ({
         data-testid={dataTestId}
         aria-label={ariaLabel}
         type={type}
-        loading={loading}
+        isLoading={isLoading}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         size={size}
       >
-        <ButtonText hasIcon={!!Icon} title={title} loading={loading} />
+        <ButtonText hasIcon={!!Icon} title={title} isLoading={isLoading} />
         {hotkeys && !isMobile && (
           <ButtonHotkeys
             hotkeys={hotkeys}
