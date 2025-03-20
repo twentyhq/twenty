@@ -13,6 +13,7 @@ import {
   IconColorSwatch,
   IconMail,
   IconSearch,
+  IconServer,
   IconSettings,
   IconTargetArrow,
   IconUser,
@@ -183,6 +184,11 @@ export const Settings: Story = {
 
         <NavigationDrawerSection>
           <NavigationDrawerSectionTitle label="Other" />
+          <NavigationDrawerItem
+            label="Admin Panel"
+            to={getSettingsPath(SettingsPath.AdminPanel)}
+            Icon={IconServer}
+          />
         </NavigationDrawerSection>
       </>
     ),
