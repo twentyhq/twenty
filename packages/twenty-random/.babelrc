@@ -1,0 +1,4 @@
+{
+    "$schema": "https://json.schemastore.org/babelrc.json",
+    "presets": ["@babel/preset-env"]
+}
