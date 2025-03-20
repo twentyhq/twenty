@@ -472,7 +472,7 @@ const main = () => {
   const packagesToMigrate = [
     'twenty-front',
     'twenty-ui',
-    'twenty-server',
+    // 'twenty-server', // sticking to one for all barrel as in commonjs
     'twenty-emails',
     'twenty-zapier',
   ];

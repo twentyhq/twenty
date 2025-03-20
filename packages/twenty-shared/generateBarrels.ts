@@ -134,39 +134,60 @@ const computeExportLineForGivenFile = ({
 };
 
 const generateModuleIndexFiles = (moduleDirectories: string[]) => {
-  return moduleDirectories.map<createTypeScriptFileArgs>((moduleDirectory) => {
-    const directoryPaths = getDirectoryPathsRecursive(moduleDirectory);
-    const content = directoryPaths
-      .flatMap((directoryPath) => {
-        const directFilesPaths = getFilesPaths(directoryPath);
+  const dynamicBarrels = moduleDirectories.map<createTypeScriptFileArgs>(
+    (moduleDirectory) => {
+      const directoryPaths = getDirectoryPathsRecursive(moduleDirectory);
+      const content = directoryPaths
+        .flatMap((directoryPath) => {
+          const directFilesPaths = getFilesPaths(directoryPath);
 
-        return directFilesPaths.map((filePath) =>
-          computeExportLineForGivenFile({
-            directoryPath,
-            filePath,
-            moduleDirectory: moduleDirectory,
-          }),
-        );
-      })
-      .sort((a, b) => a.localeCompare(b)) // Could be removed as using prettier afterwards anw ?
-      .join('\n');
+          return directFilesPaths.map((filePath) =>
+            computeExportLineForGivenFile({
+              directoryPath,
+              filePath,
+              moduleDirectory: moduleDirectory,
+            }),
+          );
+        })
+        .sort((a, b) => a.localeCompare(b)) // Could be removed as using prettier afterwards anw ?
+        .join('\n');
 
-    return {
-      content,
-      path: moduleDirectory,
-      filename: INDEX_FILENAME,
-    };
-  });
+      return {
+        content,
+        path: moduleDirectory,
+        filename: INDEX_FILENAME,
+      };
+    },
+  );
+
+  const rootBarrel: createTypeScriptFileArgs = {
+    content: moduleDirectories
+      .map((el) => `export * from "./${el.split('/').pop()}"`)
+      .join('\n'),
+    path: SRC_PATH,
+    filename: 'index',
+  };
+
+  return [...dynamicBarrels, rootBarrel];
 };
 ///
 
 type ExportOccurence = {
   types: string;
-  import: string;
   require: string;
+} | {
+  types: string;
+  require: string;
+  import: string;
 };
 type ExportsConfig = Record<string, ExportOccurence>;
 const generateModulePackageExports = (moduleDirectories: string[]) => {
+  const initialExports = {
+    ".": {
+      types: `./dist/index.d.ts`,
+      require: `./dist/index.js`,
+    }
+  }
   return moduleDirectories.reduce<ExportsConfig>((acc, moduleDirectory) => {
     const moduleName = getLastPathFolder(moduleDirectory);
     if (moduleName === undefined) {
@@ -183,7 +204,7 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
         require: `./dist/${moduleName}.cjs`,
       },
     };
-  }, {});
+  }, initialExports);
 };
 
 const readPackageJson = (): Record<string, unknown> => {
@@ -208,7 +229,7 @@ const writeExportsInPackageJson = (exports: ExportsConfig) => {
   const initialPackage = readPackageJson();
   const updatedPackage = {
     ...initialPackage,
-    exports,
+    exports
   };
   writePackageJson(updatedPackage);
 };
