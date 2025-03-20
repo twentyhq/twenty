@@ -16,7 +16,7 @@ import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspa
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { ObjectPermissionsEntity } from 'src/engine/metadata-modules/object-permissions/object-permissions.entity';
+import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Entity('objectMetadata')
@@ -138,9 +138,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   updatedAt: Date;
 
   @OneToMany(
-    () => ObjectPermissionsEntity,
-    (objectPermissions: ObjectPermissionsEntity) =>
-      objectPermissions.objectMetadata,
+    () => ObjectPermissionEntity,
+    (objectPermission: ObjectPermissionEntity) =>
+      objectPermission.objectMetadata,
   )
-  objectPermissions: Relation<ObjectPermissionsEntity[]>;
+  objectPermissions: Relation<ObjectPermissionEntity[]>;
 }
