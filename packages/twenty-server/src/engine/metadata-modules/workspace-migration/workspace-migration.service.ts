@@ -65,7 +65,7 @@ export class WorkspaceMigrationService {
 
     return results.map((result) => ({
       workspaceId: result.workspaceId,
-      pendingMigrations: parseInt(result.pendingCount),
+      pendingMigrations: Number(result.pendingCount) || 0,
     }));
   }
 
