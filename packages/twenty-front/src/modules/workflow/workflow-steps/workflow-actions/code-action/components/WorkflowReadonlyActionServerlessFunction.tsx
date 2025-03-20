@@ -5,9 +5,9 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 
 import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionServerlessFunctionFields';
+import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunctionFields';
+import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';

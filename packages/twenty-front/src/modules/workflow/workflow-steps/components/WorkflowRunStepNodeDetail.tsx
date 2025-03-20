@@ -7,37 +7,23 @@ import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workfl
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
-import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
 import { WorkflowEditTriggerWebhookForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm';
 import { isDefined } from 'twenty-shared';
 
-type WorkflowStepDetailProps = {
+type WorkflowRunStepNodeDetailProps = {
   stepId: string;
   trigger: WorkflowTrigger | null;
   steps: Array<WorkflowAction> | null;
-} & (
-  | {
-      readonly: true;
-      onTriggerUpdate?: undefined;
-      onActionUpdate?: undefined;
-    }
-  | {
-      stepId: string;
-      readonly?: false;
-      onTriggerUpdate: (trigger: WorkflowTrigger) => void;
-      onActionUpdate: (action: WorkflowAction) => void;
-    }
-);
+};
 
-export const WorkflowStepDetail = ({
+export const WorkflowRunStepNodeDetail = ({
   stepId,
   trigger,
   steps,
-  ...props
-}: WorkflowStepDetailProps) => {
+}: WorkflowRunStepNodeDetailProps) => {
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
     trigger,
@@ -56,7 +42,9 @@ export const WorkflowStepDetail = ({
             <WorkflowEditTriggerDatabaseEventForm
               key={stepId}
               trigger={stepDefinition.definition}
-              triggerOptions={props}
+              triggerOptions={{
+                readonly: true,
+              }}
             />
           );
         }
@@ -65,7 +53,9 @@ export const WorkflowStepDetail = ({
             <WorkflowEditTriggerManualForm
               key={stepId}
               trigger={stepDefinition.definition}
-              triggerOptions={props}
+              triggerOptions={{
+                readonly: true,
+              }}
             />
           );
         }
@@ -74,7 +64,9 @@ export const WorkflowStepDetail = ({
             <WorkflowEditTriggerWebhookForm
               key={stepId}
               trigger={stepDefinition.definition}
-              triggerOptions={props}
+              triggerOptions={{
+                readonly: true,
+              }}
             />
           );
         }
@@ -83,7 +75,9 @@ export const WorkflowStepDetail = ({
             <WorkflowEditTriggerCronForm
               key={stepId}
               trigger={stepDefinition.definition}
-              triggerOptions={props}
+              triggerOptions={{
+                readonly: true,
+              }}
             />
           );
         }
@@ -101,7 +95,9 @@ export const WorkflowStepDetail = ({
             <WorkflowActionServerlessFunction
               key={stepId}
               action={stepDefinition.definition}
-              actionOptions={props}
+              actionOptions={{
+                readonly: true,
+              }}
             />
           );
         }
@@ -110,7 +106,9 @@ export const WorkflowStepDetail = ({
             <WorkflowEditActionSendEmail
               key={stepId}
               action={stepDefinition.definition}
-              actionOptions={props}
+              actionOptions={{
+                readonly: true,
+              }}
             />
           );
         }
@@ -119,7 +117,9 @@ export const WorkflowStepDetail = ({
             <WorkflowEditActionCreateRecord
               key={stepId}
               action={stepDefinition.definition}
-              actionOptions={props}
+              actionOptions={{
+                readonly: true,
+              }}
             />
           );
         }
@@ -129,7 +129,9 @@ export const WorkflowStepDetail = ({
             <WorkflowEditActionUpdateRecord
               key={stepId}
               action={stepDefinition.definition}
-              actionOptions={props}
+              actionOptions={{
+                readonly: true,
+              }}
             />
           );
         }
@@ -139,7 +141,9 @@ export const WorkflowStepDetail = ({
             <WorkflowEditActionDeleteRecord
               key={stepId}
               action={stepDefinition.definition}
-              actionOptions={props}
+              actionOptions={{
+                readonly: true,
+              }}
             />
           );
         }
@@ -149,19 +153,16 @@ export const WorkflowStepDetail = ({
             <WorkflowEditActionFindRecords
               key={stepId}
               action={stepDefinition.definition}
-              actionOptions={props}
+              actionOptions={{
+                readonly: true,
+              }}
             />
           );
         }
 
         case 'FORM': {
-          return (
-            <WorkflowEditActionFormBuilder
-              key={stepId}
-              action={stepDefinition.definition}
-              actionOptions={props}
-            />
-          );
+          // TODO: Implement form filler
+          return null;
         }
       }
     }
