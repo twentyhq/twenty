@@ -70,7 +70,7 @@ export const FormCurrencyFieldInput = ({
           defaultValue={defaultValue?.amountMicros ?? ''}
           onChange={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
-          placeholder="Set 3210000 for 3.21$"
+          placeholder="Set 3210000 for $3.21"
           readonly={readonly}
         />
       </FormNestedFieldInputContainer>
