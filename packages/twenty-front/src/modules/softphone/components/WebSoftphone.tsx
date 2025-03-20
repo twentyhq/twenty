@@ -5,6 +5,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useGetUserSoftfone } from '@/settings/service-center/telephony/hooks/useGetUserSoftfone';
+import DTMFButton from '@/softphone/components/DTMFButton';
 import Keyboard from '@/softphone/components/Keyboard';
 import StatusIndicator from '@/softphone/components/StatusPill';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -28,7 +29,7 @@ import {
   SessionDescriptionHandler,
   SessionManager,
 } from 'sip.js/lib/platform/web';
-import { IconPhone, useIcons } from 'twenty-ui';
+import { IconArrowLeft, IconPhone, useIcons } from 'twenty-ui';
 import defaultCallState from '../constants/defaultCallState';
 import { useRingTone } from '../hooks/useRingTone';
 import { CallState } from '../types/callState';
@@ -335,6 +336,9 @@ const WebSoftphone: React.FC = () => {
       ringingStartTime: null,
     }));
 
+    setDtmf('');
+    setIsSendingDTMF(false);
+
     if (remoteAudioRef.current) {
       remoteAudioRef.current.srcObject = null;
     }
@@ -458,24 +462,24 @@ const WebSoftphone: React.FC = () => {
       // Manter o UserAgent na referência
       userAgentRef.current = userAgent;
 
-      // Enviar pacotes OPTIONS a cada 30 segundos
-      setInterval(() => {
-        // const optionsRequest = new Request('OPTIONS', {
-        //   to: uri,
-        //   from: uri,
-        //   headers: {
-        //     to: { uri: uri },
-        //     from: { uri: uri },
-        //     'max-forwards': 70,
-        //   },
-        // }); ISSO NAO FAZ SENTIDO MAS TA FUNCIONANDO.
-        try {
-          userAgent.transport.send('aa');
-        } catch (err) {
-          console.error('Error sending OPTIONS packet:', err);
-        }
-        console.log('Pacote OPTIONS enviado para manter a conexão ativa.');
-      }, 30000); // Intervalo de 30 segundos
+      // // Enviar pacotes OPTIONS a cada 30 segundos
+      // setInterval(() => {
+      //   // const optionsRequest = new Request('OPTIONS', {
+      //   //   to: uri,
+      //   //   from: uri,
+      //   //   headers: {
+      //   //     to: { uri: uri },
+      //   //     from: { uri: uri },
+      //   //     'max-forwards': 70,
+      //   //   },
+      //   // }); ISSO NAO FAZ SENTIDO MAS TA FUNCIONANDO.
+      //   try {
+      //     userAgent.transport.send('aa');
+      //   } catch (err) {
+      //     console.error('Error sending OPTIONS packet:', err);
+      //   }
+      //   console.log('Pacote OPTIONS enviado para manter a conexão ativa.');
+      // }, 30000); // Intervalo de 30 segundos
 
       // Evento para encerrar a conexão quando a página for fechada ou recarregada
       window.addEventListener('beforeunload', () => {
@@ -577,7 +581,7 @@ const WebSoftphone: React.FC = () => {
                 console.error('Error renewing registration:', error);
               });
             }
-          }, 20000); // Renew registration every 4.5 minutes (270000 ms)
+          }, 270000); // Renew registration every 4.5 minutes (270000 ms) // it was 20000
         } catch (error) {
           console.error('Registration error:', error);
           setCallState((prev) => ({
@@ -607,6 +611,35 @@ const WebSoftphone: React.FC = () => {
         isRegistered: false,
         isRegistering: false,
       }));
+    }
+  };
+
+  const sendDTMF = (tone: string) => {
+    if (
+      !sessionRef.current ||
+      sessionRef.current.state !== SessionState.Established
+    ) {
+      console.error('Cannot send DTMF: No active call session');
+      return;
+    }
+
+    try {
+      console.log(`Sending DTMF tone: ${tone}`);
+
+      const options = {
+        requestOptions: {
+          body: {
+            contentDisposition: 'render',
+            contentType: 'application/dtmf-relay',
+            content: `Signal=${tone}\r\nDuration=1000`,
+          },
+        },
+      };
+
+      sessionRef.current.info(options);
+      console.log(`DTMF tone ${tone} sent successfully`);
+    } catch (error) {
+      console.error('Error sending DTMF tone:', error);
     }
   };
 
@@ -749,7 +782,7 @@ const WebSoftphone: React.FC = () => {
     }
   };
 
-  const sendDTMF = (tone: string) => {
+  const transferCall = (to: string) => {
     const sessionManager = new SessionManager(
       'wss://webrtc.dazsoft.com:8080/ws',
       { registererOptions: { extraHeaders: ['X-oauth-dazsoft: 1'] } },
@@ -758,7 +791,7 @@ const WebSoftphone: React.FC = () => {
     if (sessionRef.current)
       sessionManager?.transfer(
         sessionRef.current,
-        `sip:${tone}@suite.pabx.digital`,
+        `sip:${to}@suite.pabx.digital`,
       );
   };
 
@@ -775,7 +808,20 @@ const WebSoftphone: React.FC = () => {
   const IconPhoneOutgoing = getIcon('IconPhoneOutgoing');
   const IconMicrophoneOff = getIcon('IconMicrophoneOff');
 
+  const [isSendingDTMF, setIsSendingDTMF] = useState(false);
+  const [dtmf, setDtmf] = useState('');
+
   const theme = useTheme();
+
+  const handleSendDtmf = (key: string) => {
+    if (sessionRef.current?.state === SessionState.Established) {
+      const keyTrimmedLastChar = key.trim()[key.length - 1];
+
+      console.log('Sending DTMF tone from app:', keyTrimmedLastChar);
+      setDtmf(dtmf + keyTrimmedLastChar);
+      sendDTMF(keyTrimmedLastChar);
+    }
+  };
 
   return (
     <Draggable>
@@ -897,10 +943,64 @@ const WebSoftphone: React.FC = () => {
                         }}
                       />
                     )}
+
+                  {isSendingDTMF && (
+                    <TextInput
+                      placeholder={t`Dial the phone number`}
+                      fullWidth
+                      value={dtmf}
+                      onChange={(e) => {
+                        handleSendDtmf(e);
+                      }}
+                      RightIcon={() =>
+                        isKeyboardExpanded ? (
+                          <KeyboardOffIcon
+                            color={theme.font.color.tertiary}
+                            size={theme.icon.size.md}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              setIsKeyboardExpanded(!isKeyboardExpanded)
+                            }
+                          />
+                        ) : (
+                          <KeyboardIcon
+                            color={theme.font.color.tertiary}
+                            size={theme.icon.size.md}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              setIsKeyboardExpanded(!isKeyboardExpanded)
+                            }
+                          />
+                        )
+                      }
+                    />
+                  )}
+
+                  {isSendingDTMF && !isKeyboardExpanded && (
+                    <IconArrowLeft
+                      onClick={() => {
+                        setIsSendingDTMF(false);
+                        setIsKeyboardExpanded(false);
+                      }}
+                      size={theme.icon.size.lg}
+                      stroke={theme.icon.stroke.sm}
+                      color={theme.color.gray30}
+                      style={{
+                        cursor: 'pointer',
+                        padding: theme.spacing(1),
+                        borderRadius: '50%',
+                        backgroundColor: theme.color.red60,
+                      }}
+                    />
+                  )}
                 </StyledTextAndCallButton>
 
                 {isKeyboardExpanded && (
-                  <Keyboard onClick={handleKeyboardClick} />
+                  <Keyboard
+                    onClick={
+                      !isSendingDTMF ? handleKeyboardClick : handleSendDtmf
+                    }
+                  />
                 )}
 
                 {callState.isRegistered &&
@@ -920,9 +1020,28 @@ const WebSoftphone: React.FC = () => {
                       }}
                     />
                   )}
+
+                {isSendingDTMF && isKeyboardExpanded && (
+                  <IconArrowLeft
+                    onClick={() => {
+                      setIsSendingDTMF(false);
+                      setIsKeyboardExpanded(false);
+                    }}
+                    size={theme.icon.size.lg}
+                    stroke={theme.icon.stroke.sm}
+                    color={theme.color.gray30}
+                    style={{
+                      cursor: 'pointer',
+                      padding: theme.spacing(5),
+                      borderRadius: '50%',
+                      backgroundColor: theme.color.red60,
+                    }}
+                  />
+                )}
               </StyledDefaultContainer>
 
-              {callState.isInCall && (
+              {/* callState.isInCall */}
+              {callState.isInCall && !isSendingDTMF && (
                 <StyledOngoingCallContainer>
                   <StyledIncomingNumber alignSelf="center">
                     {callState.currentNumber}
@@ -956,8 +1075,10 @@ const WebSoftphone: React.FC = () => {
                     <TransferButton
                       session={sessionRef.current}
                       type="attended"
-                      sendDTMF={sendDTMF}
+                      sendDTMF={transferCall}
                     />
+
+                    <DTMFButton setIsSendingDTMF={setIsSendingDTMF} />
                   </StyledControlsContainer>
 
                   <StyledEndButton onClick={cleanupSession}>
