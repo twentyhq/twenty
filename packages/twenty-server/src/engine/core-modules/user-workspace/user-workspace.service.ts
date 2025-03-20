@@ -155,11 +155,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         user.email,
       );
     }
-
-    return {
-      user,
-      userWorkspace,
-    };
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {
