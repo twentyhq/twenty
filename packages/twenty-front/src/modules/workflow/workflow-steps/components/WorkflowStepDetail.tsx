@@ -6,7 +6,7 @@ import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workfl
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
-import { WorkflowEditActionForm } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm';
+import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
@@ -182,7 +182,7 @@ export const WorkflowStepDetail = ({
 
         case 'FORM': {
           return (
-            <WorkflowEditActionForm
+            <WorkflowEditActionFormBuilder
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}

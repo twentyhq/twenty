@@ -24,7 +24,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { v4 } from 'uuid';
 
-export type WorkflowEditActionFormProps = {
+export type WorkflowEditActionFormBuilderProps = {
   action: WorkflowFormAction;
   actionOptions:
     | {
@@ -99,10 +99,10 @@ const StyledAddFieldContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-export const WorkflowEditActionForm = ({
+export const WorkflowEditActionFormBuilder = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormProps) => {
+}: WorkflowEditActionFormBuilderProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { t } = useLingui();
