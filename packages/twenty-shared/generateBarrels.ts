@@ -175,17 +175,20 @@ const generateModuleIndexFiles = (moduleDirectories: string[]) => {
 type ExportOccurence = {
   types: string;
   require: string;
+  default: string;
 } | {
   types: string;
   require: string;
   import: string;
+  default: string;
 };
 type ExportsConfig = Record<string, ExportOccurence>;
 const generateModulePackageExports = (moduleDirectories: string[]) => {
   const initialExports = {
     ".": {
       types: `./dist/index.d.ts`,
-      require: `./dist/index.js`,
+      require: `./dist/root.cjs`,
+      default: `./dist/root.cjs`
     }
   }
   return moduleDirectories.reduce<ExportsConfig>((acc, moduleDirectory) => {
@@ -202,6 +205,7 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
         types: `./dist/${moduleName}/index.d.ts`,
         import: `./dist/${moduleName}.mjs`,
         require: `./dist/${moduleName}.cjs`,
+        default: `./dist/${moduleName}.cjs`
       },
     };
   }, initialExports);
