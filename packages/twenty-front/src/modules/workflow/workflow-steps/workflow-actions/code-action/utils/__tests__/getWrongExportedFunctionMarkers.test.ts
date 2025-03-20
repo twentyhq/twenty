@@ -1,4 +1,4 @@
-import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
+import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 
 describe('getWrongExportedFunctionMarkers', () => {
   it('should return marker when no exported function', () => {

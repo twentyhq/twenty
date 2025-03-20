@@ -1,5 +1,5 @@
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
-import { WorkflowEditActionForm } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm';
+import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, within } from '@storybook/test';
 import { FieldMetadataType } from 'twenty-shared';
@@ -43,9 +43,9 @@ const DEFAULT_ACTION = {
   },
 } satisfies WorkflowFormAction;
 
-const meta: Meta<typeof WorkflowEditActionForm> = {
-  title: 'Modules/Workflow/Actions/Form/WorkflowEditActionForm',
-  component: WorkflowEditActionForm,
+const meta: Meta<typeof WorkflowEditActionFormBuilder> = {
+  title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormBuilder',
+  component: WorkflowEditActionFormBuilder,
   parameters: {
     msw: graphqlMocks,
   },
@@ -62,7 +62,7 @@ const meta: Meta<typeof WorkflowEditActionForm> = {
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowEditActionForm>;
+type Story = StoryObj<typeof WorkflowEditActionFormBuilder>;
 
 export const Default: Story = {
   args: {

@@ -21,8 +21,8 @@ import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdCom
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
-import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
-import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/types/WorkflowServerlessFunctionTabId';
+import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
+import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { useRecoilCallback } from 'recoil';
 
 export const useCommandMenuCloseAnimationCompleteCleanup = () => {

@@ -1,4 +1,4 @@
-import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/utils/setNestedValue';
+import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
 describe('setNestedValue', () => {
   it('should set nested value properly', () => {

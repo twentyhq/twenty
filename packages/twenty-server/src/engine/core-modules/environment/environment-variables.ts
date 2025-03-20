@@ -726,7 +726,7 @@ export class EnvironmentVariables {
   })
   @IsOptional()
   @IsUrl({
-    protocols: ['redis','rediss'],
+    protocols: ['redis', 'rediss'],
     require_tld: false,
     allow_underscores: true,
   })
