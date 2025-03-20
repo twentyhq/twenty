@@ -11,7 +11,6 @@ import {
   IconCalendarEvent,
   IconCheckbox,
   IconColorSwatch,
-  IconDoorEnter,
   IconMail,
   IconSearch,
   IconSettings,
@@ -184,7 +183,6 @@ export const Settings: Story = {
 
         <NavigationDrawerSection>
           <NavigationDrawerSectionTitle label="Other" />
-          <NavigationDrawerItem label="Logout" Icon={IconDoorEnter} />
         </NavigationDrawerSection>
       </>
     ),
