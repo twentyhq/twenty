@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { IconComponent } from '@ui/display';
 
 const StyledLabelContainer = styled.span<{ isHighlighted?: boolean }>`
-  align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border-color: ${({ theme }) => theme.border.color.medium};
   color: ${({ theme, isHighlighted }) =>
@@ -14,12 +13,12 @@ const StyledLabelContainer = styled.span<{ isHighlighted?: boolean }>`
   height: 24px;
   box-sizing: border-box;
   column-gap: ${({ theme }) => theme.spacing(2)};
-  display: flex;
-  font-variant-numeric: tabular-nums;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  white-space: nowrap;
   padding-block: ${({ theme }) => theme.spacing(1)};
   padding-inline: ${({ theme }) => theme.spacing(2)};
-  width: fit-content;
 `;
 
 export const JsonNodeLabel = ({
