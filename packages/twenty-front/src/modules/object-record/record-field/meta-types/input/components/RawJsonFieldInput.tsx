@@ -9,6 +9,7 @@ import { Key } from 'ts-key-enum';
 import {
   CodeEditor,
   FloatingIconButton,
+  IconEye,
   IconPencil,
   isTwoFirstDepths,
   JsonTree,
@@ -29,6 +30,7 @@ type RawJsonFieldInputProps = {
 const StyledJsonTreeContainer = styled.div`
   height: 300px;
   width: 400px;
+  max-width: 100vw;
   padding: ${({ theme }) => theme.spacing(2)};
   overflow: auto;
   position: relative;
@@ -47,13 +49,8 @@ export const RawJsonFieldInput = ({
   onTab,
   onShiftTab,
 }: RawJsonFieldInputProps) => {
-  const {
-    fieldDefinition,
-    draftValue,
-    hotkeyScope,
-    setDraftValue,
-    persistJsonField,
-  } = useJsonField();
+  const { draftValue, hotkeyScope, setDraftValue, persistJsonField } =
+    useJsonField();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -144,6 +141,7 @@ export const RawJsonFieldInput = ({
           options={{
             lineNumbers: 'off',
           }}
+          onChange={handleChange}
         />
       ) : (
         <JsonTree
@@ -158,7 +156,10 @@ export const RawJsonFieldInput = ({
       )}
 
       <StyledSwitchModeButtonContainer>
-        <FloatingIconButton Icon={IconPencil} onClick={handleSwitchMode} />
+        <FloatingIconButton
+          Icon={isEditing ? IconEye : IconPencil}
+          onClick={handleSwitchMode}
+        />
       </StyledSwitchModeButtonContainer>
     </StyledJsonTreeContainer>
   );
