@@ -17,20 +17,20 @@ export const getServerlessFolder = ({
   serverlessFunction: ServerlessFunctionEntity;
   version?: 'draft' | 'latest' | (string & NonNullable<unknown>);
 }) => {
-  const computedVersion =
-    version === 'latest' ? serverlessFunction.latestVersion : version;
-
-  if (!isDefined(computedVersion)) {
+  if (version === 'latest' && !isDefined(serverlessFunction.latestVersion)) {
     throw new ServerlessFunctionException(
-      'Cannot compute serverless folder for undefined version',
+      "Can't get 'latest' version when serverlessFunction 'latestVersion' is undefined",
       ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_VERSION_NOT_FOUND,
     );
   }
+
+  const computedVersion =
+    version === 'latest' ? serverlessFunction.latestVersion : version;
 
   return join(
     'workspace-' + serverlessFunction.workspaceId,
     FileFolder.ServerlessFunction,
     serverlessFunction.id,
-    computedVersion,
+    computedVersion || '',
   );
 };
