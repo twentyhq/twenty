@@ -12,13 +12,13 @@ export const useCheckCustomDomainValidRecords = () => {
   const checkCustomDomainRecords = () => {
     setCustomDomainRecords((currentState) => ({
       ...currentState,
-      loading: true,
+      isLoading: true,
     }));
     checkCustomDomainValidRecords({
       onCompleted: (data) => {
         if (isDefined(data.checkCustomDomainValidRecords)) {
           setCustomDomainRecords({
-            loading: false,
+            isLoading: false,
             customDomainRecords: data.checkCustomDomainValidRecords,
           });
         }
