@@ -50,6 +50,26 @@ export class WorkspaceMigrationService {
   }
 
   /**
+   * Find workspaces with pending migrations
+   *
+   * @returns Promise<{ workspaceId: string; pendingMigrations: number }[]>
+   */
+  public async findWorkspacesWithPendingMigrations() {
+    const results = await this.workspaceMigrationRepository
+      .createQueryBuilder('migration')
+      .select('migration.workspaceId', 'workspaceId')
+      .addSelect('COUNT(*)', 'pendingCount')
+      .where('migration.appliedAt IS NULL')
+      .groupBy('migration.workspaceId')
+      .getRawMany();
+
+    return results.map((result) => ({
+      workspaceId: result.workspaceId,
+      pendingMigrations: parseInt(result.pendingCount),
+    }));
+  }
+
+  /**
    * Set appliedAt as current date for a given migration.
    * Should be called once the migration has been applied
    *

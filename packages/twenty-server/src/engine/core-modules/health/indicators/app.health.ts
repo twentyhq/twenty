@@ -3,9 +3,12 @@ import {
   HealthIndicatorResult,
   HealthIndicatorService,
 } from '@nestjs/terminus';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { HealthStateManager } from 'src/engine/core-modules/health/utils/health-state-manager.util';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 
 @Injectable()
@@ -14,36 +17,19 @@ export class AppHealthIndicator {
 
   constructor(
     private readonly healthIndicatorService: HealthIndicatorService,
-    private readonly objectMetadataService: ObjectMetadataService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
 
   async isHealthy(): Promise<HealthIndicatorResult> {
     const indicator = this.healthIndicatorService.check('app');
-    const SAMPLE_SIZE = 100;
 
     try {
-      const workspaces = await this.objectMetadataService.findMany();
-      const allWorkspaceIds = [
-        ...new Set(workspaces.map((w) => w.workspaceId)),
-      ];
+      const criticalWorkspaces =
+        await this.workspaceMigrationService.findWorkspacesWithPendingMigrations();
 
-      const workspaceIds = allWorkspaceIds.slice(0, SAMPLE_SIZE);
-
-      const workspaceStats = await Promise.all(
-        workspaceIds.map(async (workspaceId) => {
-          const pendingMigrations =
-            await this.workspaceMigrationService.getPendingMigrations(
-              workspaceId,
-            );
-
-          return {
-            workspaceId,
-            pendingMigrations: pendingMigrations.length,
-            isCritical: pendingMigrations.length > 0,
-          };
-        }),
-      );
+      const totalWorkspaceCount = await this.workspaceRepository.count();
 
       const details = {
         system: {
@@ -51,26 +37,19 @@ export class AppHealthIndicator {
           timestamp: new Date().toISOString(),
         },
         overview: {
-          totalWorkspacesCount: allWorkspaceIds.length,
-          checkedWorkspacesCount: workspaceIds.length,
-          criticalWorkspacesCount: workspaceStats.filter(
-            (stat) => stat.isCritical,
-          ).length,
+          totalWorkspacesCount: totalWorkspaceCount,
+          criticalWorkspacesCount: criticalWorkspaces.length,
         },
         criticalWorkspaces:
-          workspaceStats.filter((stat) => stat.isCritical).length > 0
-            ? workspaceStats
-                .filter((stat) => stat.isCritical)
-                .map((stat) => ({
-                  workspaceId: stat.workspaceId,
-                  pendingMigrations: stat.pendingMigrations,
-                }))
+          criticalWorkspaces.length > 0
+            ? criticalWorkspaces.map((workspace) => ({
+                workspaceId: workspace.workspaceId,
+                pendingMigrations: workspace.pendingMigrations,
+              }))
             : null,
       };
 
-      const isHealthy = workspaceStats.every((stat) => !stat.isCritical);
-
-      if (isHealthy) {
+      if (criticalWorkspaces.length === 0) {
         this.stateManager.updateState(details);
 
         return indicator.up({ details });
@@ -79,7 +58,7 @@ export class AppHealthIndicator {
       this.stateManager.updateState(details);
 
       return indicator.down({
-        message: `Found ${details.criticalWorkspaces?.length} workspaces with pending migrations`,
+        message: `Found ${criticalWorkspaces.length} workspaces with pending migrations`,
         details,
       });
     } catch (error) {
