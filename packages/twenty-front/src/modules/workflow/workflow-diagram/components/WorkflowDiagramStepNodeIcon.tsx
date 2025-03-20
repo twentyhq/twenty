@@ -27,27 +27,10 @@ export const WorkflowDiagramStepNodeIcon = ({
   switch (data.nodeType) {
     case 'trigger': {
       switch (data.triggerType) {
-        case 'DATABASE_EVENT': {
-          return (
-            <StyledStepNodeLabelIconContainer>
-              <Icon
-                size={theme.icon.size.md}
-                color={theme.font.color.tertiary}
-              />
-            </StyledStepNodeLabelIconContainer>
-          );
-        }
-        case 'MANUAL': {
-          return (
-            <StyledStepNodeLabelIconContainer>
-              <Icon
-                size={theme.icon.size.md}
-                color={theme.font.color.tertiary}
-              />
-            </StyledStepNodeLabelIconContainer>
-          );
-        }
-        case 'CRON': {
+        case 'DATABASE_EVENT':
+        case 'MANUAL':
+        case 'CRON':
+        case 'WEBHOOK': {
           return (
             <StyledStepNodeLabelIconContainer>
               <Icon

@@ -69,6 +69,7 @@ function assertTriggerSettingsAreValid(
       assertDatabaseEventTriggerSettingsAreValid(settings);
       break;
     case WorkflowTriggerType.MANUAL:
+    case WorkflowTriggerType.WEBHOOK:
       break;
     case WorkflowTriggerType.CRON:
       assertCronTriggerSettingsAreValid(settings);

@@ -4,6 +4,7 @@ export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
   MANUAL = 'MANUAL',
   CRON = 'CRON',
+  WEBHOOK = 'WEBHOOK',
 }
 
 type BaseWorkflowTriggerSettings = {
@@ -58,9 +59,14 @@ export type WorkflowCronTrigger = BaseTrigger & {
   ) & { outputSchema: object };
 };
 
+export type WorkflowWebhookTrigger = BaseTrigger & {
+  type: WorkflowTriggerType.WEBHOOK;
+};
+
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 
 export type WorkflowTrigger =
   | WorkflowDatabaseEventTrigger
   | WorkflowManualTrigger
-  | WorkflowCronTrigger;
+  | WorkflowCronTrigger
+  | WorkflowWebhookTrigger;

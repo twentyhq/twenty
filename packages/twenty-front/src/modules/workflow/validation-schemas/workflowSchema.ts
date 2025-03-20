@@ -203,11 +203,19 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
   ]),
 });
 
+export const workflowWebhookTriggerSchema = baseTriggerSchema.extend({
+  type: z.literal('WEBHOOK'),
+  settings: z.object({
+    outputSchema: z.object({}).passthrough(),
+  }),
+});
+
 // Combined trigger schema
 export const workflowTriggerSchema = z.discriminatedUnion('type', [
   workflowDatabaseEventTriggerSchema,
   workflowManualTriggerSchema,
   workflowCronTriggerSchema,
+  workflowWebhookTriggerSchema,
 ]);
 
 // Step output schemas
