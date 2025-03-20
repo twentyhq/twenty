@@ -34,7 +34,10 @@ export const SettingsRoleEdit = () => {
 
   const role = rolesData?.getRoles.find((r) => r.id === roleId);
 
-  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+  );
 
   useEffect(() => {
     if (!rolesLoading && !role) {
