@@ -1,24 +1,37 @@
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
+import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared';
 
+type UseRecordChipDataArgs = {
+  objectNameSingular: string;
+  record: ObjectRecord;
+};
+type UseRecordChipDataReturnType = {
+  recordChipData: RecordChipData;
+};
 export const useRecordChipData = ({
   objectNameSingular,
   record,
-}: {
-  objectNameSingular: string;
-  record: ObjectRecord;
-}) => {
+}: UseRecordChipDataArgs): UseRecordChipDataReturnType => {
   const { identifierChipGeneratorPerObject } = useContext(
     PreComputedChipGeneratorsContext,
   );
 
-  const generateRecordChipData =
-    identifierChipGeneratorPerObject[objectNameSingular] ??
-    generateDefaultRecordChipData;
+  const identifierChipGenerator =
+    identifierChipGeneratorPerObject[objectNameSingular];
+  if (isDefined(identifierChipGenerator)) {
+    return {
+      recordChipData: identifierChipGenerator(record),
+    };
+  }
 
-  const recordChipData = generateRecordChipData(record);
-
-  return { recordChipData };
+  return {
+    recordChipData: generateDefaultRecordChipData({
+      objectNameSingular,
+      record,
+    }),
+  };
 };
