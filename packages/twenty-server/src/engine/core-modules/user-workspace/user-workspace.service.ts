@@ -135,21 +135,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
       await this.createWorkspaceMember(workspace.id, user);
 
-      let defaultRoleId = workspace.defaultRoleId;
-
-      if (!isDefined(defaultRoleId)) {
-        await this.workspaceRepository
-          .findOne({
-            where: {
-              id: workspace.id,
-            },
-          })
-          .then((workspace) => {
-            if (isDefined(workspace)) {
-              defaultRoleId = workspace.defaultRoleId;
-            }
-          });
-      }
+      const defaultRoleId = workspace.defaultRoleId;
 
       if (!isDefined(defaultRoleId)) {
         throw new PermissionsException(

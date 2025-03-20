@@ -228,15 +228,13 @@ export class SignInUpService {
 
     const isNewUser = params.userData.type === 'newUserWithPicture';
 
-    let user: User;
-
     if (isNewUser) {
       const userData = params.userData as {
         type: 'newUserWithPicture';
         newUserWithPicture: PartialUserWithPicture;
       };
 
-      user = await this.saveNewUser(
+      const user = await this.saveNewUser(
         userData.newUserWithPicture,
         params.workspace.id,
         {
@@ -246,14 +244,21 @@ export class SignInUpService {
       );
 
       await this.activateOnboardingForUser(user, params.workspace);
-    } else {
-      const userData = params.userData as {
-        type: 'existingUser';
-        existingUser: User;
-      };
 
-      user = userData.existingUser;
+      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+        user,
+        params.workspace,
+      );
+
+      return user;
     }
+
+    const userData = params.userData as {
+      type: 'existingUser';
+      existingUser: User;
+    };
+
+    const user = userData.existingUser;
 
     await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
       user,
