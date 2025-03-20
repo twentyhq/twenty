@@ -35,14 +35,11 @@ export const PaneSideTabs = ({
   loading,
   className,
 }: PaneSideTabsProps) => {
-  const initialActiveTabId =
-    tabs.find((tab) => tab.id === 'mine')?.id || tabs[0]?.id || null;
-
   const { activeTabId, setActiveTabId } = useTabList(tabListId);
 
-  React.useEffect(() => {
-    setActiveTabId(initialActiveTabId || null);
-  }, [initialActiveTabId, setActiveTabId]);
+  const handleTabChange = (tabId: string) => {
+    setActiveTabId(tabId);
+  };
 
   return (
     <TabListScope tabListScopeId={tabListId}>
@@ -53,7 +50,7 @@ export const PaneSideTabs = ({
             key={tab.id}
             title={tab.name}
             active={tab.id.toString() === activeTabId}
-            onClick={() => setActiveTabId(tab.id.toString())}
+            onClick={() => handleTabChange(tab.id)}
             disabled={loading}
             incomingMessages={tab.incomingMessages}
           />

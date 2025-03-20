@@ -55,7 +55,7 @@ export const CallCenterProvider = ({
   //   useGetAllMessengerIntegrations();
 
   const TAB_LIST_COMPONENT_ID = 'show-whats-page-side-tab-list';
-  const { activeTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabId, setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
@@ -207,7 +207,13 @@ export const CallCenterProvider = ({
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.STARTED} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
     });
 
-    setSelectedChat(undefined);
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (selectedChat) {
+      const chatId = `${selectedChat.integrationId}_${selectedChat.client.phone}`;
+      setSelectedChatId(chatId);
+    }
+
+    setActiveTabId('mine');
   };
 
   const finalizeService = () => {
