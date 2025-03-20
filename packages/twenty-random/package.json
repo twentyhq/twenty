@@ -1,62 +1,22 @@
 {
-  "name": "twenty-shared",
+  "name": "twenty-random",
   "type": "module",
   "version": "0.44.0-canary",
+  "main": "dist/twenty-random.cjs.js",
+  "module": "dist/twenty-random.esm.js",
   "license": "AGPL-3.0",
-  "main": "./dist/index.js",
-  "scripts": {
-    "build": "npx vite build"
-  },
+  "scripts": {},
   "engines": {
     "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   },
   "devDependencies": {
+    "@preconstruct/cli": "^2.8.11",
     "@prettier/sync": "^0.5.2",
     "type-fest": "^4.37.0"
   },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/root.cjs",
-      "default": "./dist/root.cjs"
-    },
-    "./constants": {
-      "types": "./dist/constants/index.d.ts",
-      "import": "./dist/constants.mjs",
-      "require": "./dist/constants.cjs",
-      "default": "./dist/constants.cjs"
-    },
-    "./testing": {
-      "types": "./dist/testing/index.d.ts",
-      "import": "./dist/testing.mjs",
-      "require": "./dist/testing.cjs",
-      "default": "./dist/testing.cjs"
-    },
-    "./translations": {
-      "types": "./dist/translations/index.d.ts",
-      "import": "./dist/translations.mjs",
-      "require": "./dist/translations.cjs",
-      "default": "./dist/translations.cjs"
-    },
-    "./types": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/types.mjs",
-      "require": "./dist/types.cjs",
-      "default": "./dist/types.cjs"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils.mjs",
-      "require": "./dist/utils.cjs",
-      "default": "./dist/utils.cjs"
-    },
-    "./workspace": {
-      "types": "./dist/workspace/index.d.ts",
-      "import": "./dist/workspace.mjs",
-      "require": "./dist/workspace.cjs",
-      "default": "./dist/workspace.cjs"
-    }
-  }
+  "files": [
+    "dist"
+  ]
 }
