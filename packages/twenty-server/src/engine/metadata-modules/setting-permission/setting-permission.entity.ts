@@ -13,9 +13,9 @@ import {
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-@Entity('settingsPermissions')
-@Unique('IndexOnSettingsPermissionsUnique', ['setting', 'roleId'])
-export class SettingsPermissionsEntity {
+@Entity('settingPermission')
+@Unique('IndexOnSettingPermissionUnique', ['setting', 'roleId'])
+export class SettingsPermissionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
