@@ -1,16 +1,22 @@
 import { useTheme } from '@emotion/react';
 import { useIcons } from 'twenty-ui';
 
-const DTMFButton = () => {
+const DTMFButton = ({
+  setIsSendingDTMF,
+}: {
+  setIsSendingDTMF: (value: boolean) => void;
+}) => {
   const { getIcon } = useIcons();
-
-  const IconDialpad = getIcon('IconDialpad');
 
   const theme = useTheme();
 
+  const IconDialpad = getIcon('IconDialpad');
+
   return (
     <IconDialpad
-      onClick={() => console.log('DTMF button clicked')}
+      onClick={() => {
+        setIsSendingDTMF(true);
+      }}
       size={theme.icon.size.lg}
       stroke={theme.icon.stroke.sm}
       color={theme.font.color.secondary}
