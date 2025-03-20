@@ -8,7 +8,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconPencil } from 'twenty-ui/display';
+import { IconEye, IconPencil } from 'twenty-ui/display';
 import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
 import { isTwoFirstDepths, JsonTree } from 'twenty-ui/json-visualizer';
 import { useJsonField } from '../../hooks/useJsonField';
@@ -24,6 +24,7 @@ type RawJsonFieldInputProps = {
 const StyledJsonTreeContainer = styled.div`
   height: 300px;
   width: 400px;
+  max-width: 100vw;
   padding: ${({ theme }) => theme.spacing(2)};
   overflow: auto;
   position: relative;
@@ -42,13 +43,8 @@ export const RawJsonFieldInput = ({
   onTab,
   onShiftTab,
 }: RawJsonFieldInputProps) => {
-  const {
-    fieldDefinition,
-    draftValue,
-    hotkeyScope,
-    setDraftValue,
-    persistJsonField,
-  } = useJsonField();
+  const { draftValue, hotkeyScope, setDraftValue, persistJsonField } =
+    useJsonField();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -139,6 +135,7 @@ export const RawJsonFieldInput = ({
           options={{
             lineNumbers: 'off',
           }}
+          onChange={handleChange}
         />
       ) : (
         <JsonTree
@@ -153,7 +150,10 @@ export const RawJsonFieldInput = ({
       )}
 
       <StyledSwitchModeButtonContainer>
-        <FloatingIconButton Icon={IconPencil} onClick={handleSwitchMode} />
+        <FloatingIconButton
+          Icon={isEditing ? IconEye : IconPencil}
+          onClick={handleSwitchMode}
+        />
       </StyledSwitchModeButtonContainer>
     </StyledJsonTreeContainer>
   );
