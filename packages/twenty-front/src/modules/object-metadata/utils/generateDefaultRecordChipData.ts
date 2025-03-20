@@ -3,11 +3,14 @@ import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type GenerateDefaultRecordChipDataArgs = {
-  record: ObjectRecord,
-  objectNameSingular: string
-}
-export const generateDefaultRecordChipData = ({objectNameSingular, record}: GenerateDefaultRecordChipDataArgs): RecordChipData => {
-  console.log("OUI", { record });
+  record: ObjectRecord;
+  objectNameSingular: string;
+};
+export const generateDefaultRecordChipData = ({
+  objectNameSingular,
+  record,
+}: GenerateDefaultRecordChipDataArgs): RecordChipData => {
+  console.log('OUI', { record });
   const name = isFieldFullNameValue(record.name)
     ? `${record.name.firstName} ${record.name.lastName}`
     : (record.name ?? '');
@@ -18,6 +21,6 @@ export const generateDefaultRecordChipData = ({objectNameSingular, record}: Gene
     isLabelIdentifier: false, // idk
     name,
     objectNameSingular,
-    recordId: record.id
-  }
+    recordId: record.id,
+  };
 };
