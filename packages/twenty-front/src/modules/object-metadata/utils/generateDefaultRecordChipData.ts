@@ -17,7 +17,7 @@ export const generateDefaultRecordChipData = ({
   return {
     avatarType: 'rounded',
     avatarUrl: name,
-    isLabelIdentifier: false, // idk
+    isLabelIdentifier: false,
     name,
     objectNameSingular,
     recordId: record.id,
