@@ -1,11 +1,10 @@
 import { useJsonFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useJsonFieldDisplay';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { JsonDisplay } from '@/ui/field/display/components/JsonDisplay';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import styled from '@emotion/styled';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { isTwoFirstDepths, JsonTree } from 'twenty-ui';
+import { isTwoFirstDepths, JsonTree, Tag } from 'twenty-ui';
 
 const StyledJsonTreeContainer = styled.div`
   height: 300px;
@@ -26,7 +25,7 @@ export const JsonFieldDisplay = () => {
 
   return (
     <Dropdown
-      clickableComponent={<JsonDisplay text={value} maxWidth={maxWidth} />}
+      clickableComponent={<Tag color="gray" text={value} />}
       dropdownMenuWidth={400}
       dropdownComponents={
         <StyledJsonTreeContainer>
