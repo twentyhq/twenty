@@ -1,16 +1,17 @@
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { v4 } from 'uuid';
 
 export const generateDefaultRecordChipData = (
-  record: ObjectRecord,
+  {__typename, ...record}: ObjectRecord,
 ) => {
   const name = isFieldFullNameValue(record.name)
     ? `${record.name.firstName} ${record.name.lastName}`
     : (record.name ?? '');
 
   return {
-    __typename: '',
-    id: '',
+    __typename,
+    id: v4(),
     name,
     avatarUrl: name,
     avatarType: 'rounded',
