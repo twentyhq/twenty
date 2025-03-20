@@ -63,7 +63,7 @@ export const WithVariables: Story = {
 
 export const Disabled: Story = {
   args: {
-    label: 'Number field...',
+    label: 'Domain Name',
     readonly: true,
     onChange: fn(),
     VariablePicker: () => <div>VariablePicker</div>,
