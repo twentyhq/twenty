@@ -188,14 +188,15 @@ const writeInPackageJson = (override: Record<string, any>) => {
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
   const moduleIndexFiles = generateModuleIndexFiles(moduleDirectories);
-  const entrypoints = moduleDirectories.map(getLastPathFolder);
+  const entrypoints = [...moduleDirectories.map(getLastPathFolder)];
   writeInPackageJson({
     preconstruct: {
-      entrypoints: entrypoints.map((module) => `./${module}/index.ts`)
+      entrypoints: [
+        './index.ts',
+        ...entrypoints.map((module) => `./${module}/index.ts`),
+      ],
     },
-    files: [
-      ...entrypoints
-    ]
+    files: ['dist', ...entrypoints],
   });
 
   moduleIndexFiles.forEach(createTypeScriptFile);
