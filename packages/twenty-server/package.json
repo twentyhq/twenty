@@ -5,15 +5,19 @@
   "author": "",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./*"
+  },
   "license": "AGPL-3.0",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",
-    "start:prod": "node dist/esm/src/main",
-    "command:prod": "node dist/esm/src/command/command",
-    "worker:prod": "node dist/esm/src/queue-worker/queue-worker",
-    "database:init:prod": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate:prod",
+    "start:prod": "node --experimental-specifier-resolution=node dist/esm/src/main.js",
+    "command:prod": "node --experimental-specifier-resolution=node dist/esm/src/command/command.js",
+    "worker:prod": "node --experimental-specifier-resolution=node dist/esm/src/queue-worker/queue-worker.js",
+    "database:init:prod": "npx tsx ./scripts/setup-db.ts && yarn database:migrate:prod",
     "database:migrate:prod": "npx -y typeorm migration:run -d dist/cjs/src/database/typeorm/metadata/metadata.datasource.cjs && npx -y typeorm migration:run -d dist/cjs/src/database/typeorm/core/core.datasource.cjs",
-    "typeorm": "../../node_modules/typeorm/.bin/typeorm"
+    "typeorm": "node ../../node_modules/typeorm/.bin/typeorm",
+    "build": "nest build --builder swc"
   },
   "dependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",

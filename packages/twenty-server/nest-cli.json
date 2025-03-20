@@ -3,6 +3,7 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
+    "tsConfigPath": "tsconfig.build.json",
     "builder": "swc",
     "typeCheck": false,
     "assets": [
@@ -28,5 +29,11 @@
       }
     ],
     "watchAssets": true
+  },
+  "build": {
+    "builder": "@nestjs/cli:build",
+    "options": {
+      "type": "module"
+    }
   }
 }

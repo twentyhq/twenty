@@ -4,7 +4,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OPTIONS_TYPE } from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
-import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
+import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler.interface';
 
 /**
  * ExceptionHandler Module factory

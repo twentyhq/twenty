@@ -11,7 +11,7 @@
         "cwd": "packages/twenty-server",
         "commands": [
           "rimraf dist/esm dist/assets",
-          "nest build --path ./tsconfig.build.json",
+          "nest build",
           "nx build:typeormcjs"
         ]
       },
@@ -24,7 +24,7 @@
         "cwd": "packages/twenty-server",
         "commands": [
           "rimraf dist/cjs",
-          "npx tsc --build tsconfig.typeorm.json && nx ts-node-no-deps-transpile-only -- ./scripts/rename-to-cjs.ts ./dist/cjs"
+          "tsc --build tsconfig.typeorm.json && tsx ./scripts/rename-js-to-ext.ts ./dist/cjs cjs"
         ]
       }
     },
@@ -49,7 +49,7 @@
     "build:packageJson": {
       "executor": "@nx/js:tsc",
       "options": {
-        "main": "packages/twenty-server/dist/esm/src/main.js",
+        "main": "packages/twenty-server/dist/esm/src/main.mjs",
         "tsConfig": "packages/twenty-server/tsconfig.json",
         "outputPath": "packages/twenty-server/dist",
         "updateBuildableProjectDepsInPackageJson": true
@@ -87,14 +87,14 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/esm/src/command/command.js"
+        "command": "node dist/esm/src/command/command.mjs"
       }
     },
     "command-no-deps": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/esm/src/command/command.js"
+        "command": "node dist/esm/src/command/command.mjs"
       }
     },
     "worker": {
@@ -102,36 +102,14 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/esm/src/queue-worker/queue-worker.js"
+        "command": "node dist/esm/src/queue-worker/queue-worker.mjs"
       }
     },
     "typeorm": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "ts-node --transpile-only -P tsconfig.json ../../node_modules/typeorm/cli.js"
-      }
-    },
-    "ts-node": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "options": {
-        "cwd": "packages/twenty-server",
-        "command": "ts-node"
-      }
-    },
-    "ts-node-no-deps": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "packages/twenty-server",
-        "command": "ts-node"
-      }
-    },
-    "ts-node-no-deps-transpile-only": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "packages/twenty-server",
-        "command": "ts-node --transpile-only"
+        "command": "node ../../node_modules/typeorm/cli.js"
       }
     },
     "lint": {
@@ -185,9 +163,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "commands": [
-          "nx ts-node-no-deps -- ./test/integration/graphql/codegen/index.ts"
-        ],
+        "commands": ["tsx ./test/integration/graphql/codegen/index.ts"],
         "parallel": false
       }
     },
@@ -198,8 +174,8 @@
         "no-seed": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "nx ts-node-no-deps-transpile-only -- ./scripts/truncate-db.ts",
-            "nx ts-node-no-deps-transpile-only -- ./scripts/setup-db.ts",
+            "tsx ./scripts/truncate-db.ts",
+            "tsx ./scripts/setup-db.ts",
             "nx database:migrate",
             "nx command-no-deps -- cache:flush"
           ],
@@ -208,8 +184,8 @@
         "seed": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "nx ts-node-no-deps-transpile-only -- ./scripts/truncate-db.ts",
-            "nx ts-node-no-deps-transpile-only -- ./scripts/setup-db.ts",
+            "tsx ./scripts/truncate-db.ts",
+            "tsx ./scripts/setup-db.ts",
             "nx database:migrate",
             "nx command-no-deps -- cache:flush",
             "nx command-no-deps -- workspace:seed:dev"

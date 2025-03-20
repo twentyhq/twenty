@@ -8,6 +8,13 @@
       "dynamicImport": true
     },
     "baseUrl": "./../../",
+    "transform": {
+      "legacyDecorator": true,
+      "decoratorMetadata": true
+    },
+    "target": "es2022",
+    "keepClassNames": true,
+    "loose": true,
     "experimental": {
       "plugins": [
         ["@lingui/swc-plugin", {
@@ -15,6 +22,12 @@
         }]
       ]
     }
+  },
+  "module": {
+    "type": "es6",
+    "strict": true,
+    "strictMode": true,
+    "noInterop": false
   },
   "minify": false
 }

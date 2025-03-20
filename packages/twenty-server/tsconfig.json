@@ -11,11 +11,11 @@
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "target": "es2017",
+    "target": "es2022",
     "sourceMap": true,
     "inlineSources": true,
     "outDir": "./dist/esm",
-    "incremental": true,
+    "incremental": true, 
     "skipLibCheck": true,
     "strictNullChecks": true,
     "alwaysStrict": true,
@@ -28,12 +28,9 @@
     "paths": {
       "src/*": ["./src/*"],
       "test/*": ["./test/*"]
-    }
-  },
-  "ts-node": {
-    "files": true,
-    "esm": true,
-    "require": ["tsconfig-paths/register"]
+    },
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": false
   },
   "exclude": ["dist"]
 }
