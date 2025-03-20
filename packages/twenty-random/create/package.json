@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-random-create.cjs.js",
+  "module": "dist/twenty-random-create.esm.js"
+}
