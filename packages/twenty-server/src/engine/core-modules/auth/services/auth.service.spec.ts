@@ -9,8 +9,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
@@ -101,7 +101,8 @@ describe('AuthService', () => {
           useValue: {
             checkUserWorkspaceExists:
               userWorkspaceServiceCheckUserWorkspaceExistsMock,
-            addUserToWorkspace: userWorkspaceAddUserToWorkspaceMock,
+            addUserToWorkspaceIfUserNotInWorkspace:
+              userWorkspaceAddUserToWorkspaceMock,
           },
         },
         {
