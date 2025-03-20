@@ -44,8 +44,6 @@ describe('SignInUpService', () => {
   let userWorkspaceService: UserWorkspaceService;
   let environmentService: EnvironmentService;
   let domainManagerService: DomainManagerService;
-  let userRoleService: UserRoleService;
-  let featureFlagService: FeatureFlagService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -148,8 +146,6 @@ describe('SignInUpService', () => {
     environmentService = module.get<EnvironmentService>(EnvironmentService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
-    userRoleService = module.get<UserRoleService>(UserRoleService);
-    featureFlagService = module.get<FeatureFlagService>(FeatureFlagService);
   });
 
   it('should handle signInUp with valid personal invitation', async () => {
