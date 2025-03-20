@@ -180,6 +180,16 @@ export const TRACEABLE_STANDARD_FIELD_IDS = {
   searchVector: '20202020-8c9d-7e6f-5a4b-3c2d1e0f9a8b',
 };
 
+export const TRACEABLE_ACCESS_LOGS_STANDARD_FIELD_IDS = {
+  name: '20202020-6c5b-4a3a-2b1c-0d9e8f7a6b5c',
+  linkId: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
+  utmSource: '20202020-1234-5678-9abc-def123456789',
+  utmMedium: '20202020-9876-5432-1abc-def654321fed',
+  utmCampaign: '20202020-abcd-ef12-3456-7890abcdef12',
+  userIp: '20202020-5678-90ab-cdef-1234567890ab',
+  userAgent: '20202020-4321-8765-cba9-fed123456789',
+};
+
 export const INTEGRATION_STANDARD_FIELD_IDS = {
   name: '20202020-9f5a-4f9b-8b7e-6e2d9e8e0a5d',
   activityTargets: '20202020-4b3b-4b3b-8b3b-7f8d6a1d7d5b',
