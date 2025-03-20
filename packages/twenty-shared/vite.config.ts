@@ -14,7 +14,6 @@ const entriesRecord = exports
     {},
   );
 
-
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/twenty-shared',
@@ -43,13 +42,9 @@ export default defineConfig({
       },
       formats: ['cjs', 'es'],
       fileName: (format, entryName) => {
-        console.log(format, entryName);
-        if (format === 'cjs' || format === 'commonjs') {
-          return `${entryName}.cjs`
-        }
-
-        return `${entryName}.mjs`
-      }
+        const isCommonJs = format === 'cjs' || format === 'commonjs';
+        return `${entryName}.${isCommonJs ? 'cjs' : 'mjs'}`;
+      },
     },
   },
 });
