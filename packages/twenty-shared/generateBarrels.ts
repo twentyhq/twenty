@@ -23,7 +23,6 @@ const EXCLUDED_DIRECTORIES = [
 ];
 const INDEX_FILENAME = 'index';
 const PACKAGE_JSON = 'package.json';
-// TODO refactor to be config ?
 const PACKAGE_PATH = path.resolve('packages/twenty-shared');
 const SRC_PATH = path.resolve(`${PACKAGE_PATH}/src`);
 
@@ -134,81 +133,37 @@ const computeExportLineForGivenFile = ({
 };
 
 const generateModuleIndexFiles = (moduleDirectories: string[]) => {
-  const dynamicBarrels = moduleDirectories.map<createTypeScriptFileArgs>(
-    (moduleDirectory) => {
-      const directoryPaths = getDirectoryPathsRecursive(moduleDirectory);
-      const content = directoryPaths
-        .flatMap((directoryPath) => {
-          const directFilesPaths = getFilesPaths(directoryPath);
+  return moduleDirectories.map<createTypeScriptFileArgs>((moduleDirectory) => {
+    const directoryPaths = getDirectoryPathsRecursive(moduleDirectory);
+    const content = directoryPaths
+      .flatMap((directoryPath) => {
+        const directFilesPaths = getFilesPaths(directoryPath);
 
-          return directFilesPaths.map((filePath) =>
-            computeExportLineForGivenFile({
-              directoryPath,
-              filePath,
-              moduleDirectory: moduleDirectory,
-            }),
-          );
-        })
-        .sort((a, b) => a.localeCompare(b)) // Could be removed as using prettier afterwards anw ?
-        .join('\n');
-
-      return {
-        content,
-        path: moduleDirectory,
-        filename: INDEX_FILENAME,
-      };
-    },
-  );
-
-  const rootBarrel: createTypeScriptFileArgs = {
-    content: moduleDirectories
-      .map((el) => `export * from "./${el.split('/').pop()}"`)
-      .join('\n'),
-    path: SRC_PATH,
-    filename: 'index',
-  };
-
-  return [...dynamicBarrels, rootBarrel];
-};
-///
-
-type ExportOccurence = {
-  types: string;
-  require: string;
-  default: string;
-} | {
-  types: string;
-  require: string;
-  import: string;
-  default: string;
-};
-type ExportsConfig = Record<string, ExportOccurence>;
-const generateModulePackageExports = (moduleDirectories: string[]) => {
-  const initialExports = {
-    ".": {
-      types: `./dist/index.d.ts`,
-      require: `./dist/root.cjs`,
-      default: `./dist/root.cjs`
-    }
-  }
-  return moduleDirectories.reduce<ExportsConfig>((acc, moduleDirectory) => {
-    const moduleName = getLastPathFolder(moduleDirectory);
-    if (moduleName === undefined) {
-      throw new Error(
-        `Should never occur, moduleName is undefined ${moduleDirectory}`,
-      );
-    }
+        return directFilesPaths.map((filePath) =>
+          computeExportLineForGivenFile({
+            directoryPath,
+            filePath,
+            moduleDirectory: moduleDirectory,
+          }),
+        );
+      })
+      .sort((a, b) => a.localeCompare(b)) // Could be removed as using prettier afterwards anw ?
+      .join('\n');
 
     return {
-      ...acc,
-      [`./${moduleName}`]: {
-        types: `./dist/${moduleName}/index.d.ts`,
-        import: `./dist/${moduleName}.mjs`,
-        require: `./dist/${moduleName}.cjs`,
-        default: `./dist/${moduleName}.cjs`
-      },
+      content,
+      path: moduleDirectory,
+      filename: INDEX_FILENAME,
     };
-  }, initialExports);
+  });
+};
+
+const generatePreconstructConfiguration = (moduleDirectories: string[]) => {
+  return {
+    preconstruct: {
+      entrypoints: moduleDirectories.map(getLastPathFolder),
+    },
+  };
 };
 
 const readPackageJson = (): Record<string, unknown> => {
@@ -229,11 +184,11 @@ const writePackageJson = (packageJson: unknown) => {
   );
 };
 
-const writeExportsInPackageJson = (exports: ExportsConfig) => {
+const writeInPackageJson = (override: Record<string, any>) => {
   const initialPackage = readPackageJson();
   const updatedPackage = {
     ...initialPackage,
-    exports
+    ...override,
   };
   writePackageJson(updatedPackage);
 };
@@ -241,9 +196,16 @@ const writeExportsInPackageJson = (exports: ExportsConfig) => {
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
   const moduleIndexFiles = generateModuleIndexFiles(moduleDirectories);
-  const modulePackageExports = generateModulePackageExports(moduleDirectories);
+  const entrypoints = moduleDirectories.map(getLastPathFolder);
+  writeInPackageJson({
+    preconstruct: {
+      entrypoints: entrypoints.map((module) => `./${module}/index.ts`)
+    },
+    files: [
+      ...entrypoints
+    ]
+  });
 
-  writeExportsInPackageJson(modulePackageExports);
   moduleIndexFiles.forEach(createTypeScriptFile);
 };
 main();
