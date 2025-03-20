@@ -7,6 +7,7 @@ import {
   IconRobot,
   IconSettingsAutomation,
   IconUserCircle,
+  IconWebhook,
 } from 'twenty-ui';
 
 export const getActorSourceMultiSelectOptions = (
@@ -51,6 +52,13 @@ export const getActorSourceMultiSelectOptions = (
       name: 'Workflow',
       isSelected: selectedSourceNames.includes('WORKFLOW'),
       AvatarIcon: IconSettingsAutomation,
+      isIconInverted: true,
+    },
+    {
+      id: 'WEBHOOK',
+      name: 'Webhook',
+      isSelected: selectedSourceNames.includes('WEBHOOK'),
+      AvatarIcon: IconWebhook,
       isIconInverted: true,
     },
     {
