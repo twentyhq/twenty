@@ -6,10 +6,23 @@
   "tags": ["scope:shared"],
   "targets": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["generateBarrels", "^build"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist"
+      }
+    },
+    "generateBarrels": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.ts"],
+      "outputs": [
+        "{projectRoot}/src/index.ts",
+        "{projectRoot}/src/*/index.ts",
+        "{projectRoot}/package.json"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
       }
     },
     "typecheck": {},

@@ -6,7 +6,7 @@
   "module": "dist/twenty-shared.esm.js",
   "license": "AGPL-3.0",
   "scripts": {
-    "build": "tsx ./generateBarrel.ts && preconstruct build"
+    "build": "preconstruct build"
   },
   "engines": {
     "node": "^18.17.1",
