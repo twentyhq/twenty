@@ -75,15 +75,22 @@ export class WorkflowTriggerController {
       );
     }
 
-    return await this.workflowTriggerWorkspaceService.runWorkflowVersion({
-      workflowVersionId: workflow.lastPublishedVersionId,
-      payload: {},
-      createdBy: {
-        source: FieldActorSource.WEBHOOK,
-        workspaceMemberId: null,
-        name: 'Webhook',
-        context: {},
-      },
-    });
+    const { workflowRunId } =
+      await this.workflowTriggerWorkspaceService.runWorkflowVersion({
+        workflowVersionId: workflow.lastPublishedVersionId,
+        payload: {},
+        createdBy: {
+          source: FieldActorSource.WEBHOOK,
+          workspaceMemberId: null,
+          name: 'Webhook',
+          context: {},
+        },
+      });
+
+    return {
+      workflowName: workflow.name,
+      success: true,
+      workflowRunId,
+    };
   }
 }
