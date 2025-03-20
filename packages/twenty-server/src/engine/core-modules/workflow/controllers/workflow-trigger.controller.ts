@@ -81,7 +81,7 @@ export class WorkflowTriggerController {
       createdBy: {
         source: FieldActorSource.WEBHOOK,
         workspaceMemberId: null,
-        name: '',
+        name: 'Webhook',
         context: {},
       },
     });
