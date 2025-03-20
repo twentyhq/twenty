@@ -4,22 +4,27 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noEmit": true,
-    "types": ["vite/client"],
-    "baseUrl": ".",
+    "isolatedModules": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
-  },
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
     },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": false,
+    "baseUrl": ".",
+    "outDir": "../../.cache/tsc",
+    "types": ["node", "vite/client"]
+  },
+
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
+    "**/*.spec.js",
+    "**/*.test.js",
+    "**/*.spec.jsx",
+    "**/*.test.jsx"
   ],
-  "extends": "../../tsconfig.base.json"
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
 }
