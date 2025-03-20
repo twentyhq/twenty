@@ -45,6 +45,7 @@ export const WorkflowVariablesDropdownFieldItems = ({
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
+    'workflow-serverless-function-tab-list-component-id',
   );
   const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
     workflowDiagramTriggerNodeSelectionState,
