@@ -1,6 +1,8 @@
 import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/useEmailsField';
 import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/EmailsFieldMenuItem';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -9,13 +11,11 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 type EmailsFieldInputProps = {
   onCancel?: () => void;
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
-  onError?: (hasError: boolean, value: any) => void;
 };
 
 export const EmailsFieldInput = ({
   onCancel,
   onClickOutside,
-  onError,
 }: EmailsFieldInputProps) => {
   const { persistEmailsField, hotkeyScope, fieldValue } = useEmailsField();
 
@@ -46,6 +46,14 @@ export const EmailsFieldInput = ({
 
   const isPrimaryEmail = (index: number) => index === 0 && emails?.length > 1;
 
+  const setIsFieldInError = useSetRecoilComponentStateV2(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
+  const handleError = (hasError: boolean, value: any[]) => {
+    setIsFieldInError(hasError && value.length === 0);
+  };
+
   return (
     <MultiItemFieldInput
       items={emails}
@@ -55,7 +63,6 @@ export const EmailsFieldInput = ({
       placeholder="Email"
       fieldMetadataType={FieldMetadataType.EMAILS}
       validateInput={validateInput}
-      onError={onError}
       renderItem={({
         value: email,
         index,
@@ -73,6 +80,7 @@ export const EmailsFieldInput = ({
           onDelete={handleDelete}
         />
       )}
+      onError={handleError}
       hotkeyScope={hotkeyScope}
     />
   );

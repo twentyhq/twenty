@@ -28,9 +28,9 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { RecordInlineCellComponentInstanceContext } from '@/object-record/record-inline-cell/contexts/RecordInlineCellComponentInstanceContext';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
@@ -281,13 +281,13 @@ export const RecordDetailRelationRecordsListItem = ({
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
                 }}
               >
-                <RecordInlineCellComponentInstanceContext.Provider
+                <RecordFieldComponentInstanceContext.Provider
                   value={{
                     instanceId: `${relationRecord.id}-${fieldMetadataItem.id}`,
                   }}
                 >
                   <RecordInlineCell />
-                </RecordInlineCellComponentInstanceContext.Provider>
+                </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ),
           )}

@@ -1,7 +1,7 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
-import { hasRecordTableCellDangerBorderComponentState } from '@/object-record/record-table/record-table-cell/states/hasRecordTableCellDangerBorderComponentState';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -37,8 +37,8 @@ export const RecordTableCellEditMode = ({
 }: RecordTableCellEditModeProps) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const hasRecordTableCellDangerBorder = useRecoilComponentValueV2(
-    hasRecordTableCellDangerBorderComponentState,
+  const isFieldInError = useRecoilComponentValueV2(
+    recordFieldInputIsFieldInErrorComponentState,
   );
 
   const instanceId = getRecordFieldInputId(
@@ -90,7 +90,7 @@ export const RecordTableCellEditMode = ({
         ref={refs.setFloating}
         style={floatingStyles}
         borderRadius="sm"
-        hasDangerBorder={hasRecordTableCellDangerBorder}
+        hasDangerBorder={isFieldInError}
       >
         {children}
       </OverlayContainer>

@@ -8,10 +8,10 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { RecordInlineCellComponentInstanceContext } from '@/object-record/record-inline-cell/contexts/RecordInlineCellComponentInstanceContext';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useContext } from 'react';
 
@@ -62,13 +62,13 @@ export const RecordBoardCardBody = ({
               hotkeyScope: InlineCellHotkeyScope.InlineCell,
             }}
           >
-            <RecordInlineCellComponentInstanceContext.Provider
+            <RecordFieldComponentInstanceContext.Provider
               value={{
                 instanceId: `board-card-${recordId}-${fieldDefinition.fieldMetadataId}`,
               }}
             >
               <RecordInlineCell />
-            </RecordInlineCellComponentInstanceContext.Provider>
+            </RecordFieldComponentInstanceContext.Provider>
           </FieldContext.Provider>
         </StopPropagationContainer>
       ))}

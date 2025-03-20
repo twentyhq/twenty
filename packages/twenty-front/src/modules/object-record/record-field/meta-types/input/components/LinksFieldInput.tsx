@@ -1,5 +1,7 @@
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useMemo } from 'react';
 import { absoluteUrlSchema, isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -8,13 +10,11 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 type LinksFieldInputProps = {
   onCancel?: () => void;
   onClickOutside?: (event: MouseEvent | TouchEvent) => void;
-  onError?: (hasError: boolean, value: any) => void;
 };
 
 export const LinksFieldInput = ({
   onCancel,
   onClickOutside,
-  onError,
 }: LinksFieldInputProps) => {
   const { persistLinksField, hotkeyScope, fieldValue } = useLinksField();
 
@@ -49,6 +49,14 @@ export const LinksFieldInput = ({
 
   const isPrimaryLink = (index: number) => index === 0 && links?.length > 1;
 
+  const setIsFieldInError = useSetRecoilComponentStateV2(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
+  const handleError = (hasError: boolean, value: any[]) => {
+    setIsFieldInError(hasError && value.length === 0);
+  };
+
   return (
     <MultiItemFieldInput
       items={links}
@@ -61,7 +69,7 @@ export const LinksFieldInput = ({
         isValid: absoluteUrlSchema.safeParse(input).success,
         errorMessage: '',
       })}
-      onError={onError}
+      onError={handleError}
       formatInput={(input) => ({ url: input, label: '' })}
       renderItem={({
         value: link,

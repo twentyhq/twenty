@@ -17,12 +17,10 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { hasRecordInlineCellDangerBorderComponentState } from '@/object-record/record-inline-cell/states/hasRecordInlineCellDangerBorderComponentState';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
@@ -43,10 +41,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     onOpenEditMode,
     onCloseEditMode,
   } = useContext(FieldContext);
-
-  const setHasRecordInlineCellDangerBorder = useSetRecoilComponentStateV2(
-    hasRecordInlineCellDangerBorderComponentState,
-  );
 
   const buttonIcon = useGetButtonIcon();
 
@@ -92,10 +86,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
 
     persistField();
     closeInlineCell();
-  };
-
-  const handleError = (hasError: boolean, value: any[]) => {
-    setHasRecordInlineCellDangerBorder(hasError && value.length === 0);
   };
 
   const { getIcon } = useIcons();
@@ -153,7 +143,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         onTab={handleTab}
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
-        onError={handleError}
         isReadOnly={isFieldReadOnly}
       />
     ),
