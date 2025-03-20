@@ -7,8 +7,8 @@ import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThro
 import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hooks/useWorkflowSelectedNodeOrThrow';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
+import { WorkflowRunStepNodeDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepNodeDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
-import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import {
   WorkflowRunTabId,
@@ -82,8 +82,7 @@ export const CommandMenuWorkflowRunViewStep = () => {
       />
 
       {activeTabId === WorkflowRunTabId.NODE ? (
-        <WorkflowStepDetail
-          readonly
+        <WorkflowRunStepNodeDetail
           stepId={workflowSelectedNode}
           trigger={flow.trigger}
           steps={flow.steps}

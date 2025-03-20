@@ -2,7 +2,7 @@ import { FormNestedFieldInputContainer } from '@/object-record/record-field/form
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { FunctionInput } from '@/workflow/workflow-steps/workflow-actions/types/FunctionInput';
+import { FunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/types/FunctionInput';
 import styled from '@emotion/styled';
 import { isObject } from '@sniptt/guards';
 
