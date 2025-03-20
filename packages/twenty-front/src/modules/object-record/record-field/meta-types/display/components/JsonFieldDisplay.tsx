@@ -4,7 +4,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import styled from '@emotion/styled';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { isTwoFirstDepths, JsonTree, Tag } from 'twenty-ui';
+import { Chip, isTwoFirstDepths, JsonTree } from 'twenty-ui';
 
 const StyledJsonTreeContainer = styled.div`
   height: 300px;
@@ -25,7 +25,7 @@ export const JsonFieldDisplay = () => {
 
   return (
     <Dropdown
-      clickableComponent={<Tag color="gray" text={value} />}
+      clickableComponent={<Chip label={value} maxWidth={Infinity} />}
       dropdownMenuWidth={400}
       dropdownComponents={
         <StyledJsonTreeContainer>
