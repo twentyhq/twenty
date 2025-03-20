@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
 
-const StyledEllipsis = styled.div<{ loading?: boolean }>`
+const StyledEllipsis = styled.div<{ isLoading?: boolean }>`
   right: 0;
-  clip-path: ${({ theme, loading }) =>
-    loading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(6)})`};
+  clip-path: ${({ theme, isLoading }) =>
+    isLoading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(6)})`};
   overflow: hidden;
   position: absolute;
 
@@ -19,16 +19,16 @@ const StyledTextWrapper = styled.div`
   position: relative;
 `;
 
-const StyledText = styled.div<{ loading?: boolean; hasIcon: boolean }>`
-  clip-path: ${({ loading, theme, hasIcon }) =>
-    loading
+const StyledText = styled.div<{ isLoading?: boolean; hasIcon: boolean }>`
+  clip-path: ${({ isLoading, theme, hasIcon }) =>
+    isLoading
       ? ` inset(0 ${!hasIcon ? theme.spacing(12) : theme.spacing(6)} 0 0)`
       : ' inset(0 0 0 0)'};
 
   overflow: hidden;
 
-  transform: ${({ theme, loading, hasIcon }) =>
-    loading
+  transform: ${({ theme, isLoading, hasIcon }) =>
+    isLoading
       ? `translateX(${!hasIcon ? theme.spacing(7) : theme.spacing(3)})`
       : 'none'};
 
@@ -36,24 +36,24 @@ const StyledText = styled.div<{ loading?: boolean; hasIcon: boolean }>`
     transform ${baseTransitionTiming}ms ease,
     clip-path ${baseTransitionTiming}ms ease;
 
-  transition-delay: ${({ loading }) =>
-    loading ? '0ms' : `${baseTransitionTiming / 4}ms`};
+  transition-delay: ${({ isLoading }) =>
+    isLoading ? '0ms' : `${baseTransitionTiming / 4}ms`};
   white-space: nowrap;
 `;
 
 export const ButtonText = ({
   hasIcon = false,
-  loading,
+  isLoading,
   title,
 }: {
-  loading?: boolean;
+  isLoading?: boolean;
   hasIcon: boolean;
   title?: string;
 }) => (
   <StyledTextWrapper>
-    <StyledText loading={loading} hasIcon={hasIcon}>
+    <StyledText isLoading={isLoading} hasIcon={hasIcon}>
       {title}
     </StyledText>
-    <StyledEllipsis loading={loading}>...</StyledEllipsis>
+    <StyledEllipsis isLoading={isLoading}>...</StyledEllipsis>
   </StyledTextWrapper>
 );

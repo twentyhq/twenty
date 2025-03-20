@@ -19,11 +19,13 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionServerlessFunctionFields';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
+import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/types/WorkflowServerlessFunctionTabId';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/utils/getWrongExportedFunctionMarkers';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -77,8 +79,10 @@ export const WorkflowEditActionServerlessFunction = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
-  const tabListId = `${WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}_${serverlessFunctionId}`;
-  const { activeTabId } = useTabList(tabListId);
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
+    WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+  );
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
@@ -267,8 +271,12 @@ export const WorkflowEditActionServerlessFunction = ({
   };
 
   const tabs = [
-    { id: 'code', title: 'Code', Icon: IconCode },
-    { id: 'test', title: 'Test', Icon: IconPlayerPlay },
+    { id: WorkflowServerlessFunctionTabId.CODE, title: 'Code', Icon: IconCode },
+    {
+      id: WorkflowServerlessFunctionTabId.TEST,
+      title: 'Test',
+      Icon: IconPlayerPlay,
+    },
   ];
 
   useEffect(() => {
@@ -284,9 +292,11 @@ export const WorkflowEditActionServerlessFunction = ({
     !loading && (
       <StyledContainer>
         <StyledTabList
-          tabListInstanceId={tabListId}
           tabs={tabs}
           behaveAsLinks={false}
+          componentInstanceId={
+            WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID
+          }
         />
         <WorkflowStepHeader
           onTitleChange={(newName: string) => {
@@ -299,7 +309,7 @@ export const WorkflowEditActionServerlessFunction = ({
           disabled={actionOptions.readonly}
         />
         <WorkflowStepBody>
-          {activeTabId === 'code' && (
+          {activeTabId === WorkflowServerlessFunctionTabId.CODE && (
             <>
               <WorkflowEditActionServerlessFunctionFields
                 functionInput={functionInput}
@@ -323,7 +333,7 @@ export const WorkflowEditActionServerlessFunction = ({
               </StyledCodeEditorContainer>
             </>
           )}
-          {activeTabId === 'test' && (
+          {activeTabId === WorkflowServerlessFunctionTabId.TEST && (
             <>
               <WorkflowEditActionServerlessFunctionFields
                 functionInput={serverlessFunctionTestData.input}
@@ -352,7 +362,7 @@ export const WorkflowEditActionServerlessFunction = ({
             </>
           )}
         </WorkflowStepBody>
-        {activeTabId === 'test' && (
+        {activeTabId === WorkflowServerlessFunctionTabId.TEST && (
           <RightDrawerFooter
             actions={[
               <CmdEnterActionButton

@@ -51,7 +51,10 @@ export class CreateContactService {
 
       return {
         id,
-        emails: { primaryEmail: handle, additionalEmails: null },
+        emails: {
+          primaryEmail: handle.toLowerCase(),
+          additionalEmails: null,
+        },
         name: {
           firstName,
           lastName,

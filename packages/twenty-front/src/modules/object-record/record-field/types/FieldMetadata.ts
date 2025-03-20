@@ -286,15 +286,18 @@ const FieldActorSourceSchema = z.union([
   z.literal('MANUAL'),
   z.literal('SYSTEM'),
   z.literal('WORKFLOW'),
+  z.literal('WEBHOOK'),
 ]);
 
 export const FieldActorValueSchema = z.object({
   source: FieldActorSourceSchema,
   workspaceMemberId: z.string().nullable(),
   name: z.string(),
-  context: z.object({
-    provider: z.nativeEnum(ConnectedAccountProvider).optional(),
-  }),
+  context: z
+    .object({
+      provider: z.nativeEnum(ConnectedAccountProvider).optional(),
+    })
+    .nullable(),
 });
 export type FieldActorValue = z.infer<typeof FieldActorValueSchema>;
 

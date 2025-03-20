@@ -9,7 +9,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 type FormLinksFieldInputProps = {
   label?: string;
   defaultValue?: FieldLinksValue;
-  onPersist: (value: FieldLinksValue) => void;
+  onChange: (value: FieldLinksValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -17,7 +17,7 @@ type FormLinksFieldInputProps = {
 export const FormLinksFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
 }: FormLinksFieldInputProps) => {
@@ -29,7 +29,7 @@ export const FormLinksFieldInput = ({
         [field]: updatedLinksPart,
       };
       // We need to validate the links and display an error message if the links are not valid
-      onPersist(updatedLinks);
+      onChange(updatedLinks);
     };
 
   return (
@@ -39,7 +39,7 @@ export const FormLinksFieldInput = ({
         <FormTextFieldInput
           label="Primary Link Label"
           defaultValue={defaultValue?.primaryLinkLabel}
-          onPersist={handleChange('primaryLinkLabel')}
+          onChange={handleChange('primaryLinkLabel')}
           placeholder={'Primary Link Label'}
           readonly={readonly}
           VariablePicker={VariablePicker}
@@ -47,7 +47,7 @@ export const FormLinksFieldInput = ({
         <FormTextFieldInput
           label="Primary Link URL"
           defaultValue={defaultValue?.primaryLinkUrl}
-          onPersist={handleChange('primaryLinkUrl')}
+          onChange={handleChange('primaryLinkUrl')}
           placeholder={'Primary Link URL'}
           readonly={readonly}
           VariablePicker={VariablePicker}

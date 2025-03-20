@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -10,7 +10,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const CaptchaProviderScriptLoaderEffect = () => {
   const captcha = useRecoilValue(captchaState);
-  const setIsCaptchaScriptLoaded = useSetRecoilState(
+  const [isCaptchaScriptLoaded, setIsCaptchaScriptLoaded] = useRecoilState(
     isCaptchaScriptLoadedState,
   );
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -46,8 +46,9 @@ export const CaptchaProviderScriptLoaderEffect = () => {
       document.body.appendChild(scriptElement);
     }
   }, [captcha?.provider, captcha?.siteKey, setIsCaptchaScriptLoaded]);
+
   useEffect(() => {
-    if (isUndefinedOrNull(captcha?.provider)) {
+    if (isUndefinedOrNull(captcha?.provider) || !isCaptchaScriptLoaded) {
       return;
     }
 
@@ -68,7 +69,7 @@ export const CaptchaProviderScriptLoaderEffect = () => {
     }
 
     return () => clearInterval(refreshInterval);
-  }, [captcha?.provider, requestFreshCaptchaToken]);
+  }, [captcha?.provider, requestFreshCaptchaToken, isCaptchaScriptLoaded]);
 
   return <></>;
 };

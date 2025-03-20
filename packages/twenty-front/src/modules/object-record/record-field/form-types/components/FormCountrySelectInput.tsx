@@ -8,12 +8,12 @@ import { useCountries } from '@/ui/input/components/internal/hooks/useCountries'
 
 export const FormCountrySelectInput = ({
   selectedCountryName,
-  onPersist,
+  onChange,
   readonly = false,
   VariablePicker,
 }: {
   selectedCountryName: string;
-  onPersist: (country: string) => void;
+  onChange: (country: string) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 }) => {
@@ -39,22 +39,22 @@ export const FormCountrySelectInput = ({
     ];
   }, [countries]);
 
-  const onChange = (country: string | null) => {
+  const onCountryChange = (country: string | null) => {
     if (readonly) {
       return;
     }
 
     if (country === null) {
-      onPersist('');
+      onChange('');
     } else {
-      onPersist(country);
+      onChange(country);
     }
   };
 
   return (
     <FormSelectFieldInput
       label="Country"
-      onPersist={onChange}
+      onChange={onCountryChange}
       options={options}
       defaultValue={selectedCountryName}
       readonly={readonly}

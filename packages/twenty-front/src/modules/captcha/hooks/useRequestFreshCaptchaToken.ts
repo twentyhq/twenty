@@ -6,6 +6,7 @@ import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPa
 import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { useLocation } from 'react-router-dom';
 
 declare global {
   interface Window {
@@ -20,10 +21,12 @@ export const useRequestFreshCaptchaToken = () => {
     isRequestingCaptchaTokenState,
   );
 
+  const location = useLocation();
+
   const requestFreshCaptchaToken = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        if (!isCaptchaRequiredForPath(window.location.pathname)) {
+        if (!isCaptchaRequiredForPath(location.pathname)) {
           return;
         }
 
@@ -62,7 +65,7 @@ export const useRequestFreshCaptchaToken = () => {
             });
         }
       },
-    [setCaptchaToken, setIsRequestingCaptchaToken],
+    [location.pathname, setCaptchaToken, setIsRequestingCaptchaToken],
   );
 
   return { requestFreshCaptchaToken };

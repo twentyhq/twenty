@@ -237,7 +237,7 @@ msgid "Add Approved Access Domain"
 msgstr "إضافة نطاق وصول معتمد"
 
 #. js-lingui-id: DpV70M
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "إضافة حقل"
@@ -910,6 +910,7 @@ msgstr "الاستمرار باستخدام مايكروسوفت"
 
 #. js-lingui-id: u+VWhB
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "تم النسخ إلى الحافظة!"
@@ -2166,6 +2167,11 @@ msgstr "الفهرسات"
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "يجب أن تكون الإدخالات بصيغة الحروف الصغيرة والكبيرة ولا يمكن أن تبدأ برقم"
 
+#. js-lingui-id: /6i28D
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
+msgid "Input settings"
+msgstr "إعدادات الإدخال"
+
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Instances"
@@ -2468,8 +2474,8 @@ msgstr "تسجيل الخروج"
 
 #. js-lingui-id: nOhz3x
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Logout"
-msgstr "تسجيل الخروج"
+#~ msgid "Logout"
+#~ msgstr "Logout"
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2867,6 +2873,7 @@ msgid "Not synced"
 msgstr "غير متزامن"
 
 #. js-lingui-id: HptUxX
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
 msgstr "رقم"
@@ -3822,6 +3829,11 @@ msgstr "تجربة"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test Workflow"
 msgstr "تجربة سير العمل"
+
+#. js-lingui-id: xeiujy
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
+msgid "Text"
+msgstr "نص"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx

@@ -65,6 +65,7 @@ const StyledInput = styled.input<
   Pick<
     TextInputV2ComponentProps,
     | 'LeftIcon'
+    | 'RightIcon'
     | 'error'
     | 'sizeVariant'
     | 'width'
@@ -112,9 +113,16 @@ const StyledInput = styled.input<
       : LeftIcon
         ? `calc(${theme.spacing(3)} + 16px)`
         : theme.spacing(2)};
+  padding-right: ${({ theme, RightIcon, autoGrow }) =>
+    autoGrow
+      ? theme.spacing(1)
+      : RightIcon
+        ? `calc(${theme.spacing(3)} + 16px)`
+        : theme.spacing(2)};
   width: ${({ theme, width }) =>
     width ? `calc(${width}px + ${theme.spacing(0.5)})` : '100%'};
   max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
+  text-overflow: ellipsis;
   &::placeholder,
   &::-webkit-input-placeholder {
     color: ${({ theme }) => theme.font.color.light};
@@ -124,6 +132,10 @@ const StyledInput = styled.input<
 
   &:disabled {
     color: ${({ theme }) => theme.font.color.tertiary};
+  }
+
+  &[readonly] {
+    pointer-events: none;
   }
 
   &:focus {
@@ -165,7 +177,10 @@ const StyledTrailingIconContainer = styled.div<
   margin: auto 0;
 `;
 
-const StyledTrailingIcon = styled.div<{ isFocused?: boolean }>`
+const StyledTrailingIcon = styled.div<{
+  isFocused?: boolean;
+  onClick?: () => void;
+}>`
   align-items: center;
   color: ${({ theme, isFocused }) =>
     isFocused ? theme.font.color.secondary : theme.font.color.light};
@@ -189,6 +204,7 @@ export type TextInputV2ComponentProps = Omit<
   error?: string;
   noErrorHelper?: boolean;
   RightIcon?: IconComponent;
+  onRightIconClick?: () => void;
   LeftIcon?: IconComponent;
   autoGrow?: boolean;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -224,8 +240,10 @@ const TextInputV2Component = forwardRef<
       autoFocus,
       placeholder,
       disabled,
+      readOnly,
       tabIndex,
       RightIcon,
+      onRightIconClick,
       LeftIcon,
       autoComplete,
       maxLength,
@@ -302,10 +320,12 @@ const TextInputV2Component = forwardRef<
             {...{
               autoFocus,
               disabled,
+              readOnly,
               placeholder,
               required,
               value,
               LeftIcon,
+              RightIcon,
               maxLength,
               error,
               sizeVariant,
@@ -337,7 +357,9 @@ const TextInputV2Component = forwardRef<
               </StyledTrailingIcon>
             )}
             {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
-              <StyledTrailingIcon>
+              <StyledTrailingIcon
+                onClick={onRightIconClick ? onRightIconClick : undefined}
+              >
                 <RightIcon size={theme.icon.size.md} />
               </StyledTrailingIcon>
             )}

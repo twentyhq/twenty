@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { ComponentProps, MouseEvent } from 'react';
-import { IconComponent } from 'twenty-ui';
 
 const StyledHeader = styled.li`
   align-items: center;
@@ -44,13 +43,13 @@ const StyledEndComponent = styled.div`
 `;
 
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
-  EndIcon?: IconComponent;
   onClick?: (event: MouseEvent<HTMLLIElement>) => void;
   testId?: string;
   className?: string;
   StartComponent?: React.ReactNode;
   EndComponent?: React.ReactNode;
 };
+
 export const DropdownMenuHeader = ({
   children,
   StartComponent,

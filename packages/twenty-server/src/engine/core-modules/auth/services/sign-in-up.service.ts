@@ -226,36 +226,44 @@ export class SignInUpService {
   ) {
     await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
 
-    const currentUser =
-      params.userData.type === 'newUserWithPicture'
-        ? await this.saveNewUser(
-            params.userData.newUserWithPicture,
-            params.workspace.id,
-            { canAccessFullAdminPanel: false, canImpersonate: false },
-          )
-        : params.userData.existingUser;
+    const isNewUser = params.userData.type === 'newUserWithPicture';
 
-    const { user: updatedUser, userWorkspace } =
-      await this.userWorkspaceService.addUserToWorkspace(
-        currentUser,
+    if (isNewUser) {
+      const userData = params.userData as {
+        type: 'newUserWithPicture';
+        newUserWithPicture: PartialUserWithPicture;
+      };
+
+      const user = await this.saveNewUser(
+        userData.newUserWithPicture,
+        params.workspace.id,
+        {
+          canAccessFullAdminPanel: false,
+          canImpersonate: false,
+        },
+      );
+
+      await this.activateOnboardingForUser(user, params.workspace);
+
+      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+        user,
         params.workspace,
       );
 
-    const user = Object.assign(currentUser, updatedUser);
-
-    const isSignUp = params.userData.type === 'newUserWithPicture';
-
-    if (isSignUp) {
-      await this.activateOnboardingForUser(user, params.workspace);
-
-      if (params.workspace.defaultRoleId) {
-        await this.userRoleService.assignRoleToUserWorkspace({
-          workspaceId: params.workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          roleId: params.workspace.defaultRoleId,
-        });
-      }
+      return user;
     }
+
+    const userData = params.userData as {
+      type: 'existingUser';
+      existingUser: User;
+    };
+
+    const user = userData.existingUser;
+
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      user,
+      params.workspace,
+    );
 
     return user;
   }

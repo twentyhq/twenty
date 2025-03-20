@@ -59,6 +59,7 @@ export class WorkflowSchemaWorkspaceService {
           objectMetadataRepository: this.objectMetadataRepository,
         });
       }
+      case WorkflowTriggerType.WEBHOOK:
       case WorkflowTriggerType.CRON: {
         return {};
       }

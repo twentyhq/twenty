@@ -23,6 +23,7 @@ import {
   workflowTriggerSchema,
   workflowUpdateRecordActionSchema,
   workflowUpdateRecordActionSettingsSchema,
+  workflowWebhookTriggerSchema,
 } from '@/workflow/validation-schemas/workflowSchema';
 import { z } from 'zod';
 
@@ -76,6 +77,9 @@ export type WorkflowDatabaseEventTrigger = z.infer<
 >;
 export type WorkflowManualTrigger = z.infer<typeof workflowManualTriggerSchema>;
 export type WorkflowCronTrigger = z.infer<typeof workflowCronTriggerSchema>;
+export type WorkflowWebhookTrigger = z.infer<
+  typeof workflowWebhookTriggerSchema
+>;
 
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 export type WorkflowManualTriggerAvailability =

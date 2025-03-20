@@ -29,13 +29,13 @@ const StyledRecordsWrapper = styled.div`
 `;
 
 export const SettingsCustomDomain = () => {
-  const { customDomainRecords, loading } = useRecoilValue(
+  const { customDomainRecords, isLoading } = useRecoilValue(
     customDomainRecordsState,
   );
 
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
 
-  if (!customDomainRecords && !loading) {
+  if (!customDomainRecords && !isLoading) {
     checkCustomDomainRecords();
   }
 
@@ -69,7 +69,7 @@ export const SettingsCustomDomain = () => {
           )}
         />
         <StyledButton
-          loading={loading}
+          isLoading={isLoading}
           Icon={IconReload}
           title={t`Reload`}
           variant="primary"
