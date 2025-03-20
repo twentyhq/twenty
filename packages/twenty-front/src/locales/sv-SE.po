@@ -2451,8 +2451,8 @@ msgstr "Logga ut"
 
 #. js-lingui-id: nOhz3x
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Logout"
-msgstr "Logga ut"
+#~ msgid "Logout"
+#~ msgstr "Logga ut"
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx

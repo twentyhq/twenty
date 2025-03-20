@@ -2451,8 +2451,8 @@ msgstr "Kijelentkezés"
 
 #. js-lingui-id: nOhz3x
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Logout"
-msgstr "Kijelentkezés"
+#~ msgid "Logout"
+#~ msgstr "Kijelentkezés"
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
