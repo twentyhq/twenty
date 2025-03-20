@@ -26,8 +26,13 @@ export class AppHealthIndicator {
     const indicator = this.healthIndicatorService.check('app');
 
     try {
-      const criticalWorkspaces =
-        await this.workspaceMigrationService.findWorkspacesWithPendingMigrations();
+      const totalErroredWorkspacesCount =
+        await this.workspaceMigrationService.countWorkspacesWithPendingMigrations();
+
+      const sampledErroredWorkspaces =
+        await this.workspaceMigrationService.getWorkspacesWithPendingMigrations(
+          500,
+        );
 
       const totalWorkspaceCount = await this.workspaceRepository.count();
 
@@ -38,18 +43,18 @@ export class AppHealthIndicator {
         },
         overview: {
           totalWorkspacesCount: totalWorkspaceCount,
-          criticalWorkspacesCount: criticalWorkspaces.length,
+          erroredWorkspaceCount: totalErroredWorkspacesCount,
         },
-        criticalWorkspaces:
-          criticalWorkspaces.length > 0
-            ? criticalWorkspaces.map((workspace) => ({
+        erroredWorkspace:
+          totalErroredWorkspacesCount > 0
+            ? sampledErroredWorkspaces.map((workspace) => ({
                 workspaceId: workspace.workspaceId,
                 pendingMigrations: workspace.pendingMigrations,
               }))
             : null,
       };
 
-      if (criticalWorkspaces.length === 0) {
+      if (totalErroredWorkspacesCount === 0) {
         this.stateManager.updateState(details);
 
         return indicator.up({ details });
@@ -58,7 +63,7 @@ export class AppHealthIndicator {
       this.stateManager.updateState(details);
 
       return indicator.down({
-        message: `Found ${criticalWorkspaces.length} workspaces with pending migrations`,
+        message: `Found ${totalErroredWorkspacesCount} workspaces with pending migrations`,
         details,
       });
     } catch (error) {

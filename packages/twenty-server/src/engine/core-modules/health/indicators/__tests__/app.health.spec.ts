@@ -20,7 +20,8 @@ describe('AppHealthIndicator', () => {
     } as any;
 
     workspaceMigrationService = {
-      findWorkspacesWithPendingMigrations: jest.fn(),
+      getWorkspacesWithPendingMigrations: jest.fn(),
+      countWorkspacesWithPendingMigrations: jest.fn(),
     } as any;
 
     healthIndicatorService = {
@@ -67,7 +68,10 @@ describe('AppHealthIndicator', () => {
   it('should return up status when no issues and no pending migrations', async () => {
     workspaceRepository.count.mockResolvedValue(2);
 
-    workspaceMigrationService.findWorkspacesWithPendingMigrations.mockResolvedValue(
+    workspaceMigrationService.countWorkspacesWithPendingMigrations.mockResolvedValue(
+      0,
+    );
+    workspaceMigrationService.getWorkspacesWithPendingMigrations.mockResolvedValue(
       [],
     );
 
@@ -75,8 +79,8 @@ describe('AppHealthIndicator', () => {
 
     expect(result.app.status).toBe('up');
     expect(result.app.details.overview.totalWorkspacesCount).toBe(2);
-    expect(result.app.details.overview.criticalWorkspacesCount).toBe(0);
-    expect(result.app.details.criticalWorkspaces).toBe(null);
+    expect(result.app.details.overview.erroredWorkspaceCount).toBe(0);
+    expect(result.app.details.erroredWorkspace).toBe(null);
     expect(result.app.details.system.nodeVersion).toBeDefined();
     expect(result.app.details.system.timestamp).toBeDefined();
   });
@@ -84,7 +88,12 @@ describe('AppHealthIndicator', () => {
   it('should return down status when there are pending migrations', async () => {
     workspaceRepository.count.mockResolvedValue(5);
 
-    workspaceMigrationService.findWorkspacesWithPendingMigrations.mockResolvedValue(
+    // Mock a total count that's higher than the sample
+    workspaceMigrationService.countWorkspacesWithPendingMigrations.mockResolvedValue(
+      10,
+    );
+
+    workspaceMigrationService.getWorkspacesWithPendingMigrations.mockResolvedValue(
       [
         {
           workspaceId: 'workspace1',
@@ -105,7 +114,7 @@ describe('AppHealthIndicator', () => {
 
     expect(result.app.status).toBe('down');
     expect(result.app.message).toBe(
-      'Found 3 workspaces with pending migrations',
+      'Found 10 workspaces with pending migrations',
     );
 
     expect(result.app.details).toEqual({
@@ -115,9 +124,9 @@ describe('AppHealthIndicator', () => {
       },
       overview: {
         totalWorkspacesCount: 5,
-        criticalWorkspacesCount: 3,
+        erroredWorkspaceCount: 10,
       },
-      criticalWorkspaces: [
+      erroredWorkspace: [
         {
           workspaceId: 'workspace1',
           pendingMigrations: 1,
@@ -136,7 +145,7 @@ describe('AppHealthIndicator', () => {
 
   it('should handle errors gracefully and maintain state history', async () => {
     workspaceRepository.count.mockRejectedValue(
-      new Error('Database connection failed'), //random error
+      new Error('Database connection failed'),
     );
 
     const result = await service.isHealthy();
@@ -149,13 +158,18 @@ describe('AppHealthIndicator', () => {
   });
 
   it('should maintain state history across health checks', async () => {
+    // First check - healthy state
     workspaceRepository.count.mockResolvedValue(2);
-    workspaceMigrationService.findWorkspacesWithPendingMigrations.mockResolvedValue(
+    workspaceMigrationService.countWorkspacesWithPendingMigrations.mockResolvedValue(
+      0,
+    );
+    workspaceMigrationService.getWorkspacesWithPendingMigrations.mockResolvedValue(
       [],
     );
 
     await service.isHealthy();
 
+    // Second check - error state
     workspaceRepository.count.mockRejectedValue(
       new Error('Database connection failed'),
     );
@@ -166,5 +180,35 @@ describe('AppHealthIndicator', () => {
     expect(result.app.details.stateHistory.age).toBeDefined();
     expect(result.app.details.stateHistory.timestamp).toBeDefined();
     expect(result.app.details.stateHistory.details).toBeDefined();
+  });
+
+  it('should sample workspaces with pending migrations up to limit', async () => {
+    workspaceRepository.count.mockResolvedValue(1000);
+
+    // Mock a total count higher than the sample
+    workspaceMigrationService.countWorkspacesWithPendingMigrations.mockResolvedValue(
+      500,
+    );
+
+    const sampleWorkspaces = Array(300)
+      .fill(0)
+      .map((_, i) => ({
+        workspaceId: `workspace${i}`,
+        pendingMigrations: (i % 3) + 1,
+      }));
+
+    workspaceMigrationService.getWorkspacesWithPendingMigrations.mockResolvedValue(
+      sampleWorkspaces,
+    );
+
+    const result = await service.isHealthy();
+
+    expect(result.app.status).toBe('down');
+    expect(result.app.message).toBe(
+      'Found 500 workspaces with pending migrations',
+    );
+    expect(result.app.details.overview.totalWorkspacesCount).toBe(1000);
+    expect(result.app.details.overview.erroredWorkspaceCount).toBe(500);
+    expect(result.app.details.erroredWorkspace.length).toBe(300);
   });
 });
