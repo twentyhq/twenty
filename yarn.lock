@@ -25613,6 +25613,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"babel-plugin-module-resolver@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "babel-plugin-module-resolver@npm:5.0.2"
+  dependencies:
+    find-babel-config: "npm:^2.1.1"
+    glob: "npm:^9.3.3"
+    pkg-up: "npm:^3.1.0"
+    reselect: "npm:^4.1.7"
+    resolve: "npm:^1.22.8"
+  checksum: 10c0/ccbb9e673c4219f68937349267521becb72be292cf30bf70b861c3e709d24fbfa589da0bf6c100a0def799d38199299171cb6eac3fb00b1ea740373e2c1fe54c
+  languageName: node
+  linkType: hard
+
 "babel-plugin-polyfill-corejs2@npm:^0.4.10":
   version: 0.4.11
   resolution: "babel-plugin-polyfill-corejs2@npm:0.4.11"
@@ -33235,6 +33248,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"find-babel-config@npm:^2.1.1":
+  version: 2.1.2
+  resolution: "find-babel-config@npm:2.1.2"
+  dependencies:
+    json5: "npm:^2.2.3"
+  checksum: 10c0/c9151b23d636378eae11aa761b0af41d5f67d5479e3ebfca7b0ec7feef91723f14242d243342783b89e6c51fc5b4120086eacf5d8a1a335cf7bae4b0ac89f493
+  languageName: node
+  linkType: hard
+
 "find-cache-dir@npm:^2.0.0":
   version: 2.1.0
   resolution: "find-cache-dir@npm:2.1.0"
@@ -34302,7 +34324,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^9.2.0":
+"glob@npm:^9.2.0, glob@npm:^9.3.3":
   version: 9.3.5
   resolution: "glob@npm:9.3.5"
   dependencies:
@@ -48926,6 +48948,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"reselect@npm:^4.1.7":
+  version: 4.1.8
+  resolution: "reselect@npm:4.1.8"
+  checksum: 10c0/06a305a504affcbb67dd0561ddc8306b35796199c7e15b38934c80606938a021eadcf68cfd58e7bb5e17786601c37602a3362a4665c7bf0a96c1041ceee9d0b7
+  languageName: node
+  linkType: hard
+
 "resize-observer-polyfill@npm:^1.5.1":
   version: 1.5.1
   resolution: "resize-observer-polyfill@npm:1.5.1"
@@ -52698,18 +52727,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-random@workspace:packages/twenty-random":
-  version: 0.0.0-use.local
-  resolution: "twenty-random@workspace:packages/twenty-random"
-  dependencies:
-    "@babel/preset-env": "npm:^7.26.9"
-    "@preconstruct/cli": "npm:^2.8.11"
-    "@prettier/sync": "npm:^0.5.2"
-    "@types/babel__preset-env": "npm:^7"
-    type-fest: "npm:^4.37.0"
-  languageName: unknown
-  linkType: soft
-
 "twenty-server@workspace:packages/twenty-server":
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
@@ -52785,8 +52802,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   dependencies:
+    "@babel/preset-env": "npm:^7.26.9"
+    "@preconstruct/cli": "npm:^2.8.11"
     "@prettier/sync": "npm:^0.5.2"
+    "@sniptt/guards": "npm:^0.2.0"
+    "@types/babel__preset-env": "npm:^7"
+    babel-plugin-module-resolver: "npm:^5.0.2"
     type-fest: "npm:^4.37.0"
+    zod: "npm:3.23.8"
   languageName: unknown
   linkType: soft
 
