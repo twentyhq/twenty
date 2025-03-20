@@ -39,7 +39,7 @@ export const Default: Story = {
     position: 'standalone',
     Icon: IconSearch,
     className: '',
-    loading: false,
+    isLoading: false,
   },
   decorators: [ComponentDecorator],
 };
@@ -56,7 +56,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
     soon: { control: false },
     position: { control: false },
     className: { control: false },
-    loading: { control: false },
+    isLoading: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -329,7 +329,7 @@ export const LoadingButton: Story = {
   args: {
     title: 'Reload',
     Icon: IconReload,
-    loading: true,
+    isLoading: true,
   },
   argTypes: {
     size: { control: false },
@@ -341,15 +341,15 @@ export const LoadingButton: Story = {
     soon: { control: false },
     position: { control: false },
     className: { control: false },
-    loading: { control: 'boolean' },
+    isLoading: { control: 'boolean' },
   },
   parameters: {
     catalog: {
-      loading: [
+      isLoading: [
         {
-          name: 'loading',
+          name: 'isLoading',
           values: [true, false] satisfies boolean[],
-          props: (value: boolean) => ({ loading: value }),
+          props: (value: boolean) => ({ isLoading: value }),
         },
       ],
     },
