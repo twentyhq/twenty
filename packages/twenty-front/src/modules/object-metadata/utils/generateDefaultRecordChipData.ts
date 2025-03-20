@@ -1,20 +1,23 @@
+import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { v4 } from 'uuid';
 
-export const generateDefaultRecordChipData = (
-  {__typename, ...record}: ObjectRecord,
-) => {
+type GenerateDefaultRecordChipDataArgs = {
+  record: ObjectRecord,
+  objectNameSingular: string
+}
+export const generateDefaultRecordChipData = ({objectNameSingular, record}: GenerateDefaultRecordChipDataArgs): RecordChipData => {
+  console.log("OUI", { record });
   const name = isFieldFullNameValue(record.name)
     ? `${record.name.firstName} ${record.name.lastName}`
     : (record.name ?? '');
 
   return {
-    __typename,
-    id: v4(),
-    name,
-    avatarUrl: name,
     avatarType: 'rounded',
-    linkToShowPage: false,
-  } satisfies ObjectRecord;
+    avatarUrl: name,
+    isLabelIdentifier: false, // idk
+    name,
+    objectNameSingular,
+    recordId: record.id
+  }
 };
