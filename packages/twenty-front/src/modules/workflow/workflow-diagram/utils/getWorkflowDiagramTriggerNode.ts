@@ -33,6 +33,14 @@ export const getWorkflowDiagramTriggerNode = ({
 
       break;
     }
+    case 'WEBHOOK': {
+      triggerDefaultLabel = 'Webhook';
+      triggerIcon = getTriggerIcon({
+        type: 'WEBHOOK',
+      });
+
+      break;
+    }
     case 'DATABASE_EVENT': {
       const triggerEvent = splitWorkflowTriggerEventName(
         trigger.settings.eventName,

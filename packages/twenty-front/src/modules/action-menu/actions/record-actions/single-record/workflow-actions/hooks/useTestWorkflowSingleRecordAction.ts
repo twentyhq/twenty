@@ -14,10 +14,11 @@ export const useTestWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataI
 
     const shouldBeRegistered =
       isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
-      workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
-      !isDefined(
-        workflowWithCurrentVersion.currentVersion.trigger.settings.objectType,
-      );
+      ((workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
+        !isDefined(
+          workflowWithCurrentVersion.currentVersion.trigger.settings.objectType,
+        )) ||
+        workflowWithCurrentVersion.currentVersion.trigger.type === 'WEBHOOK');
 
     const onClick = () => {
       if (!shouldBeRegistered) {

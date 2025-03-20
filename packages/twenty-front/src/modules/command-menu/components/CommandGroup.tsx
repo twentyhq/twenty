@@ -1,11 +1,9 @@
 import styled from '@emotion/styled';
 import React from 'react';
+import { Label } from 'twenty-ui';
 
-const StyledGroupHeading = styled.div`
+const StyledGroupHeading = styled(Label)`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(1)};

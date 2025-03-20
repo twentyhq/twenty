@@ -6,7 +6,6 @@ import {
   IconColorSwatch,
   IconComponent,
   IconCurrencyDollar,
-  IconDoorEnter,
   IconFlask,
   IconFunction,
   IconHierarchy2,
@@ -26,7 +25,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsPermissions } from '~/generated/graphql';
 
-import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
@@ -71,7 +69,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
 
   const featureFlags = useFeatureFlagsMap();
   const permissionMap = useSettingsPermissionMap();
-  const { signOut } = useAuth();
   return [
     {
       label: t`User`,
@@ -245,11 +242,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Releases`,
           path: SettingsPath.Releases,
           Icon: IconRocket,
-        },
-        {
-          label: t`Logout`,
-          onClick: signOut,
-          Icon: IconDoorEnter,
         },
       ],
     },

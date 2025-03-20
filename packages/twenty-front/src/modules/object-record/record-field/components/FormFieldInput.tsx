@@ -45,7 +45,7 @@ import { JsonValue } from 'type-fest';
 type FormFieldInputProps = {
   field: FieldDefinition<FieldMetadata>;
   defaultValue: JsonValue;
-  onPersist: (value: JsonValue) => void;
+  onChange: (value: JsonValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -53,7 +53,7 @@ type FormFieldInputProps = {
 export const FormFieldInput = ({
   field,
   defaultValue,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
 }: FormFieldInputProps) => {
@@ -61,7 +61,7 @@ export const FormFieldInput = ({
     <FormNumberFieldInput
       label={field.label}
       defaultValue={defaultValue as string | number | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
@@ -70,7 +70,7 @@ export const FormFieldInput = ({
     <FormBooleanFieldInput
       label={field.label}
       defaultValue={defaultValue as string | boolean | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -78,7 +78,7 @@ export const FormFieldInput = ({
     <FormTextFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
@@ -87,7 +87,7 @@ export const FormFieldInput = ({
     <FormSelectFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       options={field.metadata.options}
       clearLabel={field.label}
@@ -98,7 +98,7 @@ export const FormFieldInput = ({
     <FormFullNameFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldFullNameValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -106,7 +106,7 @@ export const FormFieldInput = ({
     <FormAddressFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldAddressValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -114,7 +114,7 @@ export const FormFieldInput = ({
     <FormLinksFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldLinksValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -122,7 +122,7 @@ export const FormFieldInput = ({
     <FormEmailsFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldEmailsValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -130,7 +130,7 @@ export const FormFieldInput = ({
     <FormPhoneFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldPhonesValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -138,7 +138,7 @@ export const FormFieldInput = ({
     <FormDateFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -146,7 +146,7 @@ export const FormFieldInput = ({
     <FormDateTimeFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -154,7 +154,7 @@ export const FormFieldInput = ({
     <FormMultiSelectFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldMultiSelectValue | string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       options={field.metadata.options}
       readonly={readonly}
@@ -164,7 +164,7 @@ export const FormFieldInput = ({
     <FormRawJsonFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
@@ -173,7 +173,7 @@ export const FormFieldInput = ({
     <FormUuidFieldInput
       label={field.label}
       defaultValue={defaultValue as string | null | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
@@ -182,7 +182,7 @@ export const FormFieldInput = ({
     <FormCurrencyFieldInput
       label={field.label}
       defaultValue={defaultValue as FormFieldCurrencyValue | null}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />

@@ -10,10 +10,11 @@ import {
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
-import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
@@ -26,7 +27,6 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 type WorkflowVariablesDropdownFieldItemsProps = {
   step: StepOutputSchema;
@@ -43,8 +43,8 @@ export const WorkflowVariablesDropdownFieldItems = ({
   const [searchInputValue, setSearchInputValue] = useState('');
   const { getIcon } = useIcons();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
-  const { setActiveTabId } = useTabList(
-    WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+  const setActiveTabId = useSetRecoilComponentStateV2(
+    activeTabIdComponentState,
   );
   const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
     workflowDiagramTriggerNodeSelectionState,

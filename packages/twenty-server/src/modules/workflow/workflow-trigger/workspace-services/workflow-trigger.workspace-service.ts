@@ -4,11 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -37,6 +35,7 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { assertNever } from 'src/utils/assert';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -66,12 +65,15 @@ export class WorkflowTriggerWorkspaceService {
     return workspaceId;
   }
 
-  async runWorkflowVersion(
-    workflowVersionId: string,
-    payload: object,
-    workspaceMemberId: string,
-    { firstName, lastName }: User,
-  ) {
+  async runWorkflowVersion({
+    workflowVersionId,
+    payload,
+    createdBy,
+  }: {
+    workflowVersionId: string;
+    payload: object;
+    createdBy: ActorMetadata;
+  }) {
     await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
       workflowVersionId,
     );
@@ -80,10 +82,7 @@ export class WorkflowTriggerWorkspaceService {
       this.getWorkspaceId(),
       workflowVersionId,
       payload,
-      buildCreatedByFromFullNameMetadata({
-        fullNameMetadata: { firstName, lastName },
-        workspaceMemberId,
-      }),
+      createdBy,
     );
   }
 
@@ -342,6 +341,7 @@ export class WorkflowTriggerWorkspaceService {
 
         return;
       case WorkflowTriggerType.MANUAL:
+      case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.CRON: {
         const pattern = computeCronPatternFromSchedule(workflowVersion.trigger);
@@ -384,6 +384,7 @@ export class WorkflowTriggerWorkspaceService {
 
         return;
       case WorkflowTriggerType.MANUAL:
+      case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.CRON:
         await this.messageQueueService.removeCron({

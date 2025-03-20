@@ -18,7 +18,6 @@ export class SettingsPage {
   private readonly adminPanelLink: Locator;
   private readonly labLink: Locator;
   private readonly releasesLink: Locator;
-  private readonly logoutLink: Locator;
   private readonly advancedToggle: Locator;
 
   constructor(public readonly page: Page) {
@@ -40,7 +39,6 @@ export class SettingsPage {
     this.adminPanelLink = page.getByRole('link', { name: 'Admin Panel' });
     this.labLink = page.getByRole('link', { name: 'Lab' });
     this.releasesLink = page.getByRole('link', { name: 'Releases' });
-    this.logoutLink = page.getByText('Logout');
     this.advancedToggle = page.locator('input[type="checkbox"]').first();
   }
 
@@ -110,10 +108,6 @@ export class SettingsPage {
 
   async goToReleasesIntegration() {
     await this.releasesLink.click();
-  }
-
-  async logout() {
-    await this.logoutLink.click();
   }
 
   async toggleAdvancedSettings() {

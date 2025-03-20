@@ -56,7 +56,7 @@ export const WorkflowEditActionServerlessFunctionFields = ({
             placeholder="Enter value"
             defaultValue={inputValue ? `${inputValue}` : ''}
             readonly={readonly}
-            onPersist={(value) => onInputChange?.(value, currentPath)}
+            onChange={(value) => onInputChange?.(value, currentPath)}
             VariablePicker={VariablePicker}
           />
         );
