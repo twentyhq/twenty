@@ -226,8 +226,9 @@ export class SignInUpService {
   ) {
     await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
 
-    let currentUser: User;
     const isNewUser = params.userData.type === 'newUserWithPicture';
+
+    let user: User;
 
     if (isNewUser) {
       const userData = params.userData as {
@@ -235,7 +236,7 @@ export class SignInUpService {
         newUserWithPicture: PartialUserWithPicture;
       };
 
-      currentUser = await this.saveNewUser(
+      user = await this.saveNewUser(
         userData.newUserWithPicture,
         params.workspace.id,
         {
@@ -244,23 +245,20 @@ export class SignInUpService {
         },
       );
 
-      await this.activateOnboardingForUser(currentUser, params.workspace);
+      await this.activateOnboardingForUser(user, params.workspace);
     } else {
       const userData = params.userData as {
         type: 'existingUser';
         existingUser: User;
       };
 
-      currentUser = userData.existingUser;
+      user = userData.existingUser;
     }
 
-    const { user: updatedUser } =
-      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
-        currentUser,
-        params.workspace,
-      );
-
-    const user = Object.assign(currentUser, updatedUser);
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      user,
+      params.workspace,
+    );
 
     return user;
   }
