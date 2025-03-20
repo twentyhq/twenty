@@ -2,13 +2,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
-import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
@@ -44,14 +44,26 @@ export const useRelationToOneFieldDisplay = () => {
       ? maxWidth - FIELD_EDIT_BUTTON_WIDTH
       : maxWidth;
 
-  if (!isNonEmptyString(fieldDefinition.metadata.objectMetadataNameSingular)) {
+  if (
+    !isDefined(fieldDefinition.metadata.objectMetadataNameSingular) ||
+    !isNonEmptyString(fieldDefinition.metadata.objectMetadataNameSingular)
+  ) {
     throw new Error('Object metadata name singular is not a non-empty string');
   }
 
-  const generateRecordChipData =
+  const fieldChipGenerator =
     chipGeneratorPerObjectPerField[
       fieldDefinition.metadata.objectMetadataNameSingular
-    ]?.[fieldDefinition.metadata.fieldName] ?? generateDefaultRecordChipData;
+    ]?.[fieldDefinition.metadata.fieldName];
+  const generateRecordChipData = isDefined(fieldChipGenerator)
+    ? fieldChipGenerator
+    : (record: ObjectRecord) =>
+        generateDefaultRecordChipData({
+          record,
+          // @ts-expect-error Above assertions does not infer that fieldDefinition.metadata.objectMetadataNameSingular always defined
+          objectNameSingular:
+            fieldDefinition.metadata.objectMetadataNameSingular,
+        });
 
   return {
     fieldDefinition,

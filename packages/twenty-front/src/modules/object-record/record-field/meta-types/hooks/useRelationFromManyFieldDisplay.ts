@@ -44,14 +44,26 @@ export const useRelationFromManyFieldDisplay = () => {
       ? maxWidth - FIELD_EDIT_BUTTON_WIDTH
       : maxWidth;
 
-  if (!isNonEmptyString(fieldDefinition.metadata.objectMetadataNameSingular)) {
+  if (
+    !isDefined(fieldDefinition.metadata.objectMetadataNameSingular) ||
+    !isNonEmptyString(fieldDefinition.metadata.objectMetadataNameSingular)
+  ) {
     throw new Error('Object metadata name singular is not a non-empty string');
   }
 
-  const generateRecordChipData =
+  const fieldChipGenerator =
     chipGeneratorPerObjectPerField[
       fieldDefinition.metadata.objectMetadataNameSingular
-    ]?.[fieldDefinition.metadata.fieldName] ?? generateDefaultRecordChipData;
+    ]?.[fieldDefinition.metadata.fieldName];
+  const generateRecordChipData = isDefined(fieldChipGenerator)
+    ? fieldChipGenerator
+    : (record: ObjectRecord) =>
+        generateDefaultRecordChipData({
+          record,
+          // @ts-expect-error Above assertions does not infer that fieldDefinition.metadata.objectMetadataNameSingular always defined
+          objectNameSingular:
+            fieldDefinition.metadata.objectMetadataNameSingular,
+        });
 
   return {
     fieldDefinition,
