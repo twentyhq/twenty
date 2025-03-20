@@ -50,8 +50,8 @@ export const EmailsFieldInput = ({
     recordFieldInputIsFieldInErrorComponentState,
   );
 
-  const handleError = (hasError: boolean, value: any[]) => {
-    setIsFieldInError(hasError && value.length === 0);
+  const handleError = (hasError: boolean, values: any[]) => {
+    setIsFieldInError(hasError && values.length === 0);
   };
 
   return (
