@@ -18,7 +18,12 @@
     "@preconstruct/cli": "^2.8.11",
     "@prettier/sync": "^0.5.2",
     "@types/babel__preset-env": "^7",
+    "babel-plugin-module-resolver": "^5.0.2",
     "type-fest": "^4.37.0"
+  },
+  "dependencies": {
+    "@sniptt/guards": "^0.2.0",
+    "zod": "3.23.8"
   },
   "preconstruct": {
     "entrypoints": [

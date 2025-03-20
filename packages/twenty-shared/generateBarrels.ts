@@ -158,14 +158,6 @@ const generateModuleIndexFiles = (moduleDirectories: string[]) => {
   });
 };
 
-const generatePreconstructConfiguration = (moduleDirectories: string[]) => {
-  return {
-    preconstruct: {
-      entrypoints: moduleDirectories.map(getLastPathFolder),
-    },
-  };
-};
-
 const readPackageJson = (): Record<string, unknown> => {
   const rawPackageJson = fs.readFileSync(
     path.join(PACKAGE_PATH, PACKAGE_JSON),
