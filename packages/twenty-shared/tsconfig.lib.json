@@ -3,11 +3,10 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
+    "noEmit": false,
+    "baseUrl": ".",
     "outDir": "../../.cache/tsc",
-    "types": [
-      "node",
-      "vite/client"
-    ]
+    "types": ["node", "vite/client"]
   },
   "exclude": [
     "**/*.spec.ts",
@@ -19,6 +18,5 @@
     "**/*.spec.jsx",
     "**/*.test.jsx"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
-  
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
 }

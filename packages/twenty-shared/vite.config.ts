@@ -2,6 +2,31 @@ import * as path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import packageJson from './package.json';
+
+const exports = Object.keys(packageJson.exports);
+const entries = exports.map((module) => `src/${module}/index.ts`);
+
+const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
+  if (!chunk.isEntry) {
+    throw new Error(
+      `Should never occurs, encountered a non entry chunk ${chunk.facadeModuleId}`,
+    );
+  }
+
+  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
+  if (splitFaceModuleId === undefined) {
+    throw new Error(
+      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
+    );
+  }
+
+  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
+  if (moduleDirectory === 'src') {
+    return `${chunk.name}.${extension}`;
+  }
+  return `${moduleDirectory}.${extension}`;
+};
 
 export default defineConfig({
   root: __dirname,
@@ -24,10 +49,20 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     lib: {
-      entry: 'src/index.ts',
+      entry: ['src/index.ts', ...entries],
       name: 'twenty-shared',
-      fileName: 'index',
-      formats: ['es', 'cjs'],
+    },
+    rollupOptions: {
+      output: [
+        {
+          format: 'es',
+          entryFileNames: (chunk) => entryFileNames(chunk, 'mjs'),
+        },
+        {
+          format: 'cjs',
+          entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),
+        },
+      ],
     },
   },
 });
