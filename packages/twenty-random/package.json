@@ -21,6 +21,13 @@
     "type-fest": "^4.37.0"
   },
   "files": [
-    "dist"
-  ]
+    "dist",
+    "create"
+  ],
+  "preconstruct": {
+    "entrypoints": [
+      "index.ts",
+      "create.ts"
+    ]
+  }
 }
