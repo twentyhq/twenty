@@ -989,7 +989,7 @@ const WebSoftphone: React.FC = () => {
                         cursor: 'pointer',
                         padding: theme.spacing(1),
                         borderRadius: '50%',
-                        backgroundColor: theme.color.green60,
+                        backgroundColor: theme.color.red60,
                       }}
                     />
                   )}
