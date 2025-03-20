@@ -382,6 +382,17 @@ export type CreateRemoteServerInput = {
   userMappingOptions?: InputMaybe<UserMappingOptions>;
 };
 
+export type CreateRoleInput = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  icon?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+};
+
 export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
@@ -566,6 +577,7 @@ export enum FeatureFlagKey {
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsEnabled = 'IsPermissionsEnabled',
+  IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
@@ -888,6 +900,7 @@ export type Mutation = {
   createOneObject: Object;
   createOneRelationMetadata: RelationMetadata;
   createOneRemoteServer: RemoteServer;
+  createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
@@ -934,6 +947,7 @@ export type Mutation = {
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
+  updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWorkflowVersionStep: WorkflowAction;
@@ -1016,6 +1030,11 @@ export type MutationCreateOneRelationMetadataArgs = {
 
 export type MutationCreateOneRemoteServerArgs = {
   input: CreateRemoteServerInput;
+};
+
+
+export type MutationCreateOneRoleArgs = {
+  createRoleInput: CreateRoleInput;
 };
 
 
@@ -1219,6 +1238,11 @@ export type MutationUpdateOneObjectArgs = {
 
 export type MutationUpdateOneRemoteServerArgs = {
   input: UpdateRemoteServerInput;
+};
+
+
+export type MutationUpdateOneRoleArgs = {
+  updateRoleInput: UpdateRoleInput;
 };
 
 
@@ -2115,6 +2139,23 @@ export type UpdateRemoteServerInput = {
   label?: InputMaybe<Scalars['String']['input']>;
   schema?: InputMaybe<Scalars['String']['input']>;
   userMappingOptions?: InputMaybe<UserMappingOptionsUpdateInput>;
+};
+
+export type UpdateRoleInput = {
+  /** The id of the role to update */
+  id: Scalars['UUID']['input'];
+  update: UpdateRolePayload;
+};
+
+export type UpdateRolePayload = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  icon?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateServerlessFunctionInput = {
