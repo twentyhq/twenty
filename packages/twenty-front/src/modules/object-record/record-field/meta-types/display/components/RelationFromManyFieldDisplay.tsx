@@ -48,43 +48,37 @@ export const RelationFromManyFieldDisplay = () => {
 
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {fieldValue
-          .filter(isDefined)
-          .map((record) => (
-            <RecordChip
-              key={record.id}
-              objectNameSingular={objectNameSingular}
-              record={record[relationFieldName]}
-            />
-          ))}
+        {fieldValue.filter(isDefined).map((record) => (
+          <RecordChip
+            key={record.id}
+            objectNameSingular={objectNameSingular}
+            record={record[relationFieldName]}
+          />
+        ))}
       </ExpandableList>
     );
   } else if (isRelationFromActivityTargets) {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {activityTargetObjectRecords
-          .filter(isDefined)
-          .map((record) => (
-            <RecordChip
-              key={record.targetObject.id}
-              objectNameSingular={record.targetObjectMetadataItem.nameSingular}
-              record={record.targetObject}
-            />
-          ))}
+        {activityTargetObjectRecords.filter(isDefined).map((record) => (
+          <RecordChip
+            key={record.targetObject.id}
+            objectNameSingular={record.targetObjectMetadataItem.nameSingular}
+            record={record.targetObject}
+          />
+        ))}
       </ExpandableList>
     );
   } else {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {fieldValue
-          .filter(isDefined)
-          .map((record) => (
-            <RecordChip
-              key={record.id}
-              objectNameSingular={objectNameSingular}
-              record={record}
-            />
-          ))}
+        {fieldValue.filter(isDefined).map((record) => (
+          <RecordChip
+            key={record.id}
+            objectNameSingular={objectNameSingular}
+            record={record}
+          />
+        ))}
       </ExpandableList>
     );
   }
