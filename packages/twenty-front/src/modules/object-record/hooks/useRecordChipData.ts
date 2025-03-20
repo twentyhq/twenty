@@ -20,11 +20,11 @@ export const useRecordChipData = ({
     PreComputedChipGeneratorsContext,
   );
 
-  const generateRecordChipDataFromContext =
+  const identifierChipGenerator =
     identifierChipGeneratorPerObject[objectNameSingular];
-  if (isDefined(generateRecordChipDataFromContext)) {
+  if (isDefined(identifierChipGenerator)) {
     return {
-      recordChipData: generateRecordChipDataFromContext(record),
+      recordChipData: identifierChipGenerator(record),
     };
   }
 

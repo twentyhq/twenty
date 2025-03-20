@@ -10,7 +10,6 @@ export const generateDefaultRecordChipData = ({
   objectNameSingular,
   record,
 }: GenerateDefaultRecordChipDataArgs): RecordChipData => {
-  console.log('OUI', { record });
   const name = isFieldFullNameValue(record.name)
     ? `${record.name.firstName} ${record.name.lastName}`
     : (record.name ?? '');
