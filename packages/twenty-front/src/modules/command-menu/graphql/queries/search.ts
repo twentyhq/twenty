@@ -1,14 +1,14 @@
 import gql from 'graphql-tag';
 
-export const globalSearch = gql`
-  query GlobalSearch(
+export const search = gql`
+  query Search(
     $searchInput: String!
     $limit: Int!
     $excludedObjectNameSingulars: [String!]
     $includedObjectNameSingulars: [String!]
     $filter: ObjectRecordFilterInput
   ) {
-    globalSearch(
+    search(
       searchInput: $searchInput
       limit: $limit
       excludedObjectNameSingulars: $excludedObjectNameSingulars
@@ -16,7 +16,7 @@ export const globalSearch = gql`
       filter: $filter
     ) {
       recordId
-      objectSingularName
+      objectNameSingular
       label
       imageUrl
       tsRankCD

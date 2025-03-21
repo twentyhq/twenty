@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-@ObjectType('GlobalSearchRecord')
-export class GlobalSearchRecordDTO {
+@ObjectType('SearchRecord')
+export class SearchRecordDTO {
   @Field(() => String)
   @IsString()
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class GlobalSearchRecordDTO {
   @Field(() => String)
   @IsString()
   @IsNotEmpty()
-  objectSingularName: string;
+  objectNameSingular: string;
 
   @Field(() => String)
   @IsString()

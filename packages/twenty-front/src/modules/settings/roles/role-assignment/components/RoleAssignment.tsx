@@ -22,8 +22,8 @@ import {
   TooltipDelay,
 } from 'twenty-ui';
 import {
-  GlobalSearchRecord,
   Role,
+  SearchRecord,
   WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import {
@@ -134,7 +134,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
   };
 
   const handleSelectWorkspaceMember = (
-    workspaceMemberSearchRecord: GlobalSearchRecord,
+    workspaceMemberSearchRecord: SearchRecord,
   ) => {
     const existingRole = workspaceMemberRoleMap.get(
       workspaceMemberSearchRecord.recordId,

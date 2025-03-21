@@ -8,10 +8,7 @@ import { WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
-import {
-  ObjectRecordFilterInput,
-  useGlobalSearchQuery,
-} from '~/generated/graphql';
+import { ObjectRecordFilterInput, useSearchQuery } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 export type UseSearchRecordsParams = ObjectMetadataItemIdentifier & {
@@ -38,7 +35,7 @@ export const useObjectRecordSearchRecords = ({
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const { data, loading, error, previousData } = useGlobalSearchQuery({
+  const { data, loading, error, previousData } = useSearchQuery({
     skip:
       skip ||
       !objectMetadataItem ||
@@ -53,11 +50,11 @@ export const useObjectRecordSearchRecords = ({
     fetchPolicy: fetchPolicy,
     onError: (error) => {
       logError(
-        `useGlobalSearchRecords for "${objectMetadataItem.namePlural}" error : ` +
+        `useSearchRecords for "${objectMetadataItem.namePlural}" error : ` +
           error,
       );
       enqueueSnackBar(
-        `Error during useGlobalSearchRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
+        `Error during useSearchRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
         {
           variant: SnackBarVariant.Error,
         },
@@ -68,7 +65,7 @@ export const useObjectRecordSearchRecords = ({
   const effectiveData = loading ? previousData : data;
 
   const searchRecords = useMemo(
-    () => effectiveData?.globalSearch || [],
+    () => effectiveData?.search || [],
     [effectiveData],
   );
 

@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui';
-import { GlobalSearchRecord } from '~/generated-metadata/graphql';
+import { SearchRecord } from '~/generated-metadata/graphql';
 
 type RoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
   searchFilter: string;
-  filteredWorkspaceMembers: GlobalSearchRecord[];
-  onSelect: (workspaceMemberSearchRecord: GlobalSearchRecord) => void;
+  filteredWorkspaceMembers: SearchRecord[];
+  onSelect: (workspaceMemberSearchRecord: SearchRecord) => void;
 };
 
 export const RoleAssignmentWorkspaceMemberPickerDropdownContent = ({

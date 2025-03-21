@@ -37,7 +37,7 @@ import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module'
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { GlobalSearchModule } from 'src/engine/core-modules/search/global-search.module';
+import { SearchModule } from 'src/engine/core-modules/search/search.module';
 import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serverless-module.factory';
 import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
@@ -121,7 +121,7 @@ import { FileModule } from './file/file.module';
       useFactory: serverlessModuleFactory,
       inject: [EnvironmentService, FileStorageService],
     }),
-    GlobalSearchModule,
+    SearchModule,
   ],
   exports: [
     AnalyticsModule,
