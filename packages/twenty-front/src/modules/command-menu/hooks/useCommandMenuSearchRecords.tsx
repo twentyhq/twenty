@@ -10,7 +10,7 @@ import { Avatar } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { useGlobalSearchQuery } from '~/generated/graphql';
 
-export const useSearchRecords = () => {
+export const useCommandMenuSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);

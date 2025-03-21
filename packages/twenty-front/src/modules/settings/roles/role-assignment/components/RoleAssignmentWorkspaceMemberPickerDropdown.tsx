@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
+import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { RoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -19,10 +19,11 @@ export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
 }: RoleAssignmentWorkspaceMemberPickerDropdownProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
-  const { loading, searchRecords: workspaceMembers } = useSearchRecords({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    searchInput: searchFilter,
-  });
+  const { loading, searchRecords: workspaceMembers } =
+    useObjectRecordSearchRecords({
+      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      searchInput: searchFilter,
+    });
 
   const filteredWorkspaceMembers =
     workspaceMembers?.filter(

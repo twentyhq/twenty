@@ -1,6 +1,6 @@
 import { formatGlobalSearchRecordAsSingleRecordPickerRecord } from '@/object-metadata/utils/formatGlobalSearchRecordAsSingleRecordPickerRecord';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
-import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
+import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { isDefined } from 'twenty-shared';
 
@@ -25,7 +25,7 @@ export const useFilteredSearchRecordQuery = ({
   const selectedIdsFilter = { id: { in: selectedIds } };
 
   const { loading: selectedRecordsLoading, searchRecords: selectedRecords } =
-    useSearchRecords({
+    useObjectRecordSearchRecords({
       objectNameSingular,
       filter: selectedIdsFilter,
       skip: !selectedIds.length,
@@ -35,7 +35,7 @@ export const useFilteredSearchRecordQuery = ({
   const {
     loading: filteredSelectedRecordsLoading,
     searchRecords: filteredSelectedRecords,
-  } = useSearchRecords({
+  } = useObjectRecordSearchRecords({
     objectNameSingular,
     filter: selectedIdsFilter,
     skip: !selectedIds.length,
@@ -47,7 +47,7 @@ export const useFilteredSearchRecordQuery = ({
     ? { not: { id: { in: notFilterIds } } }
     : undefined;
   const { loading: recordsToSelectLoading, searchRecords: recordsToSelect } =
-    useSearchRecords({
+    useObjectRecordSearchRecords({
       objectNameSingular,
       filter: notFilter,
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,

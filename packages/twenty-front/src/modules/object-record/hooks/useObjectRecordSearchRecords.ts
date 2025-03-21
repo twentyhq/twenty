@@ -23,7 +23,7 @@ export type UseSearchRecordsParams = ObjectMetadataItemIdentifier & {
   filter?: ObjectRecordFilterInput;
 };
 
-export const useSearchRecords = ({
+export const useObjectRecordSearchRecords = ({
   objectNameSingular,
   searchInput,
   limit,
