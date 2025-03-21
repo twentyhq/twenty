@@ -6,7 +6,7 @@
     "noEmit": false,
     "baseUrl": ".",
     "outDir": "../../.cache/tsc",
-    "types": ["node", "vite/client"]
+    "types": ["node"]
   },
   "exclude": [
     "**/*.spec.ts",
