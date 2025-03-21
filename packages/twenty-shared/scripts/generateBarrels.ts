@@ -50,8 +50,8 @@ const createTypeScriptFile = ({
 /*
  * _____                    _
  *|_   _|_      _____ _ __ | |_ _   _
- *  | | \\ \\ /\\ / / _ \\ '_ \\| __| | | | Auto-genreated file
- *  | |  \\ V  V /  __/ | | | |_| |_| | Any edition to this will be override
+ *  | | \\ \\ /\\ / / _ \\ '_ \\| __| | | | Auto-generated file
+ *  | |  \\ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
  *  |_|   \\_/\\_/ \\___|_| |_|\\__|\\__, |
  *                              |___/
  */
@@ -67,7 +67,7 @@ const createTypeScriptFile = ({
   );
 };
 
-const getLastPathFolder = (path) => path.split('/').pop();
+const getLastPathFolder = (path: string) => path.split('/').pop();
 
 const getSubDirectoryPaths = (directoryPath: string): string[] =>
   fs
