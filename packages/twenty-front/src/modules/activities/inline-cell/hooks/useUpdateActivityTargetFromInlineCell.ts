@@ -6,6 +6,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isNull } from '@sniptt/guards';
@@ -47,6 +48,7 @@ export const useUpdateActivityTargetFromInlineCell = ({
       async ({
         morphItem,
         activityTargetWithTargetRecords,
+        recordPickerInstanceId,
       }: UpdateActivityTargetFromInlineCellProps) => {
         const targetObjectName =
           activityObjectNameSingular === CoreObjectNameSingular.Task
@@ -92,17 +94,24 @@ export const useUpdateActivityTargetFromInlineCell = ({
             );
           }
         } else {
-          const targetRecord = snapshot
-            .getLoadable(recordStoreFamilyState(morphItem.recordId))
+          const searchRecord = snapshot
+            .getLoadable(
+              searchRecordStoreComponentFamilyState.atomFamily({
+                instanceId: recordPickerInstanceId,
+                familyKey: morphItem.recordId,
+              }),
+            )
             .getValue();
 
-          if (!isDefined(targetRecord)) {
+          if (!isDefined(searchRecord) || !isDefined(searchRecord?.record)) {
             return;
           }
 
           if (!morphItem.isSelected) {
             return;
           }
+
+          const targetRecord = searchRecord.record;
 
           const activityTarget =
             activityObjectNameSingular === CoreObjectNameSingular.Task

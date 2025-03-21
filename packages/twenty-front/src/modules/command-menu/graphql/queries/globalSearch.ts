@@ -4,12 +4,16 @@ export const globalSearch = gql`
   query GlobalSearch(
     $searchInput: String!
     $limit: Int!
-    $excludedObjectNameSingulars: [String!]!
+    $excludedObjectNameSingulars: [String!]
+    $includedObjectNameSingulars: [String!]
+    $filter: ObjectRecordFilterInput
   ) {
     globalSearch(
       searchInput: $searchInput
       limit: $limit
       excludedObjectNameSingulars: $excludedObjectNameSingulars
+      includedObjectNameSingulars: $includedObjectNameSingulars
+      filter: $filter
     ) {
       recordId
       objectSingularName

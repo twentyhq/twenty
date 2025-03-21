@@ -21,7 +21,11 @@ import {
   Section,
   TooltipDelay,
 } from 'twenty-ui';
-import { Role, WorkspaceMember } from '~/generated-metadata/graphql';
+import {
+  GlobalSearchRecord,
+  Role,
+  WorkspaceMember,
+} from '~/generated-metadata/graphql';
 import {
   GetRolesDocument,
   useGetRolesQuery,
@@ -129,14 +133,18 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     setSelectedWorkspaceMember(null);
   };
 
-  const handleSelectWorkspaceMember = (workspaceMember: WorkspaceMember) => {
-    const existingRole = workspaceMemberRoleMap.get(workspaceMember.id);
+  const handleSelectWorkspaceMember = (
+    workspaceMemberSearchRecord: GlobalSearchRecord,
+  ) => {
+    const existingRole = workspaceMemberRoleMap.get(
+      workspaceMemberSearchRecord.recordId,
+    );
 
     setSelectedWorkspaceMember({
-      id: workspaceMember.id,
-      name: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
+      id: workspaceMemberSearchRecord.recordId,
+      name: `${workspaceMemberSearchRecord.label}`,
       role: existingRole,
-      avatarUrl: workspaceMember.avatarUrl,
+      avatarUrl: workspaceMemberSearchRecord.imageUrl,
     });
     setConfirmationModalIsOpen(true);
     closeDropdown();

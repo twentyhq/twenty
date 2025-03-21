@@ -2418,7 +2418,9 @@ export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typ
 export type GlobalSearchQueryVariables = Exact<{
   searchInput: Scalars['String'];
   limit: Scalars['Int'];
-  excludedObjectNameSingulars: Array<Scalars['String']> | Scalars['String'];
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  filter?: InputMaybe<ObjectRecordFilterInput>;
 }>;
 
 
@@ -4095,11 +4097,13 @@ export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfi
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
 export const GlobalSearchDocument = gql`
-    query GlobalSearch($searchInput: String!, $limit: Int!, $excludedObjectNameSingulars: [String!]!) {
+    query GlobalSearch($searchInput: String!, $limit: Int!, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
   globalSearch(
     searchInput: $searchInput
     limit: $limit
     excludedObjectNameSingulars: $excludedObjectNameSingulars
+    includedObjectNameSingulars: $includedObjectNameSingulars
+    filter: $filter
   ) {
     recordId
     objectSingularName
@@ -4126,6 +4130,8 @@ export const GlobalSearchDocument = gql`
  *      searchInput: // value for 'searchInput'
  *      limit: // value for 'limit'
  *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
+ *      includedObjectNameSingulars: // value for 'includedObjectNameSingulars'
+ *      filter: // value for 'filter'
  *   },
  * });
  */
