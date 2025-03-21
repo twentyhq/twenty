@@ -1,6 +1,7 @@
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { getWorkflowPreviousStepId } from '@/workflow/workflow-steps/utils/getWorkflowPreviousStep';
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
@@ -9,7 +10,6 @@ import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-a
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconBrackets,
@@ -19,13 +19,6 @@ import {
   useIcons,
 } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledContainer = styled.div`
-  display: grid;
-  overflow-x: auto;
-  padding-block: ${({ theme }) => theme.spacing(4)};
-  padding-inline: ${({ theme }) => theme.spacing(3)};
-`;
 
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
@@ -103,7 +96,8 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
         initialTitle={headerTitle}
         headerType={i18n._(headerType)}
       />
-      <StyledContainer>
+
+      <WorkflowRunStepJsonContainer>
         <JsonTreeContextProvider
           value={{
             emptyArrayLabel: t`Empty Array`,
@@ -127,7 +121,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
             emptyElementsText=""
           />
         </JsonTreeContextProvider>
-      </StyledContainer>
+      </WorkflowRunStepJsonContainer>
     </>
   );
 };

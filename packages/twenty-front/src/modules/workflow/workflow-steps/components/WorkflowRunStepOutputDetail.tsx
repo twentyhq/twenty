@@ -1,22 +1,15 @@
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { isTwoFirstDepths, JsonTree, useIcons } from 'twenty-ui';
-
-const StyledContainer = styled.div`
-  display: grid;
-  overflow-x: auto;
-  padding-block: ${({ theme }) => theme.spacing(4)};
-  padding-inline: ${({ theme }) => theme.spacing(3)};
-`;
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
@@ -58,7 +51,8 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
         initialTitle={headerTitle}
         headerType={i18n._(headerType)}
       />
-      <StyledContainer>
+
+      <WorkflowRunStepJsonContainer>
         <JsonTree
           value={stepOutput}
           shouldExpandNodeInitially={isTwoFirstDepths}
@@ -68,7 +62,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
           arrowButtonCollapsedLabel={t`Expand`}
           arrowButtonExpandedLabel={t`Collapse`}
         />
-      </StyledContainer>
+      </WorkflowRunStepJsonContainer>
     </>
   );
 };
