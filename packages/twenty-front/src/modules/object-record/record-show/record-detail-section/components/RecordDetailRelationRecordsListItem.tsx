@@ -28,6 +28,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
@@ -280,7 +281,13 @@ export const RecordDetailRelationRecordsListItem = ({
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
                 }}
               >
-                <RecordInlineCell />
+                <RecordFieldComponentInstanceContext.Provider
+                  value={{
+                    instanceId: `${relationRecord.id}-${fieldMetadataItem.id}`,
+                  }}
+                >
+                  <RecordInlineCell />
+                </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ),
           )}

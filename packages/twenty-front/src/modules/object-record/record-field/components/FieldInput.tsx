@@ -17,7 +17,6 @@ import { isFieldRelationToOneObject } from '@/object-record/record-field/types/g
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
@@ -72,114 +71,108 @@ export const FieldInput = ({
   const { fieldDefinition } = useContext(FieldContext);
 
   return (
-    <RecordFieldComponentInstanceContext.Provider
-      value={{
-        instanceId: recordFieldInputdId,
-      }}
+    <RecordFieldInputScope
+      recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputdId)}
     >
-      <RecordFieldInputScope
-        recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputdId)}
-      >
-        {isFieldRelationToOneObject(fieldDefinition) ? (
-          <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-        ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
-          <RelationFromManyFieldInput onSubmit={onSubmit} />
-        ) : isFieldPhones(fieldDefinition) ? (
-          <PhonesFieldInput
-            onCancel={onCancel}
-            onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-          />
-        ) : isFieldText(fieldDefinition) ? (
-          <TextFieldInput
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClickOutside={onClickOutside}
-            onTab={onTab}
-            onShiftTab={onShiftTab}
-          />
-        ) : isFieldEmails(fieldDefinition) ? (
-          <EmailsFieldInput
-            onCancel={onCancel}
-            onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-          />
-        ) : isFieldFullName(fieldDefinition) ? (
-          <FullNameFieldInput
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClickOutside={onClickOutside}
-            onTab={onTab}
-            onShiftTab={onShiftTab}
-          />
-        ) : isFieldDateTime(fieldDefinition) ? (
-          <DateTimeFieldInput
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClickOutside={onClickOutside}
-            onClear={onSubmit}
-            onSubmit={onSubmit}
-          />
-        ) : isFieldDate(fieldDefinition) ? (
-          <DateFieldInput
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClickOutside={onClickOutside}
-            onClear={onSubmit}
-            onSubmit={onSubmit}
-          />
-        ) : isFieldNumber(fieldDefinition) ? (
-          <NumberFieldInput
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClickOutside={onClickOutside}
-            onTab={onTab}
-            onShiftTab={onShiftTab}
-          />
-        ) : isFieldLinks(fieldDefinition) ? (
-          <LinksFieldInput
-            onCancel={onCancel}
-            onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-          />
-        ) : isFieldCurrency(fieldDefinition) ? (
-          <CurrencyFieldInput
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClickOutside={onClickOutside}
-            onTab={onTab}
-            onShiftTab={onShiftTab}
-          />
-        ) : isFieldBoolean(fieldDefinition) ? (
-          <BooleanFieldInput onSubmit={onSubmit} readonly={isReadOnly} />
-        ) : isFieldRating(fieldDefinition) ? (
-          <RatingFieldInput onSubmit={onSubmit} />
-        ) : isFieldSelect(fieldDefinition) ? (
-          <SelectFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-        ) : isFieldMultiSelect(fieldDefinition) ? (
-          <MultiSelectFieldInput onCancel={onCancel} />
-        ) : isFieldAddress(fieldDefinition) ? (
-          <AddressFieldInput
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClickOutside={onClickOutside}
-            onTab={onTab}
-            onShiftTab={onShiftTab}
-          />
-        ) : isFieldRawJson(fieldDefinition) ? (
-          <RawJsonFieldInput
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClickOutside={onClickOutside}
-            onTab={onTab}
-            onShiftTab={onShiftTab}
-          />
-        ) : isFieldArray(fieldDefinition) ? (
-          <ArrayFieldInput
-            onCancel={onCancel}
-            onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-          />
-        ) : (
-          <></>
-        )}
-      </RecordFieldInputScope>
-    </RecordFieldComponentInstanceContext.Provider>
+      {isFieldRelationToOneObject(fieldDefinition) ? (
+        <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+      ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
+        <RelationFromManyFieldInput onSubmit={onSubmit} />
+      ) : isFieldPhones(fieldDefinition) ? (
+        <PhonesFieldInput
+          onCancel={onCancel}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+        />
+      ) : isFieldText(fieldDefinition) ? (
+        <TextFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldEmails(fieldDefinition) ? (
+        <EmailsFieldInput
+          onCancel={onCancel}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+        />
+      ) : isFieldFullName(fieldDefinition) ? (
+        <FullNameFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldDateTime(fieldDefinition) ? (
+        <DateTimeFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onClear={onSubmit}
+          onSubmit={onSubmit}
+        />
+      ) : isFieldDate(fieldDefinition) ? (
+        <DateFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onClear={onSubmit}
+          onSubmit={onSubmit}
+        />
+      ) : isFieldNumber(fieldDefinition) ? (
+        <NumberFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldLinks(fieldDefinition) ? (
+        <LinksFieldInput
+          onCancel={onCancel}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+        />
+      ) : isFieldCurrency(fieldDefinition) ? (
+        <CurrencyFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldBoolean(fieldDefinition) ? (
+        <BooleanFieldInput onSubmit={onSubmit} readonly={isReadOnly} />
+      ) : isFieldRating(fieldDefinition) ? (
+        <RatingFieldInput onSubmit={onSubmit} />
+      ) : isFieldSelect(fieldDefinition) ? (
+        <SelectFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+      ) : isFieldMultiSelect(fieldDefinition) ? (
+        <MultiSelectFieldInput onCancel={onCancel} />
+      ) : isFieldAddress(fieldDefinition) ? (
+        <AddressFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldRawJson(fieldDefinition) ? (
+        <RawJsonFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldArray(fieldDefinition) ? (
+        <ArrayFieldInput
+          onCancel={onCancel}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
+        />
+      ) : (
+        <></>
+      )}
+    </RecordFieldInputScope>
   );
 };
