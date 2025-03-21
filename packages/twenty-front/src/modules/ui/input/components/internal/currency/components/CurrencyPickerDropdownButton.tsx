@@ -8,6 +8,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { CurrencyPickerHotkeyScope } from '../types/CurrencyPickerHotkeyScope';
 
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 
 const StyledDropdownButtonContainer = styled.div`
@@ -67,6 +69,10 @@ export const CurrencyPickerDropdownButton = ({
     closeDropdown();
   };
 
+  const { toggleClickOutsideListener } = useClickOutsideListener(
+    TableHotkeyScope.CellEditMode,
+  );
+
   const currency = currencies.find(({ value }) => value === valueCode);
 
   const currencyCode = currency?.value ?? CurrencyCode.USD;
@@ -92,6 +98,8 @@ export const CurrencyPickerDropdownButton = ({
       }
       dropdownPlacement="bottom-start"
       dropdownOffset={{ x: 0, y: 4 }}
+      onOpen={() => toggleClickOutsideListener(false)}
+      onClose={() => toggleClickOutsideListener(true)}
     />
   );
 };
