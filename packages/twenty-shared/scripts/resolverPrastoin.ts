@@ -69,7 +69,7 @@ function findAllImports(directoryPath: string): ExtractedImports {
       }
     } catch (e) {
       console.log(e);
-      console.log('Becasue of file: ', file);
+      console.log('Because of file: ', file);
       throw e;
     }
   }
@@ -489,6 +489,6 @@ const main = () => {
     migrateImports(mappedResolutions);
     console.log(`${currPackage} migrated`);
   }
-  console.log('SUCCESSFULY COMPLETED');
+  console.log('SUCCESSFULLY COMPLETED');
 };
 main();
