@@ -6,6 +6,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -141,7 +142,13 @@ export const FieldsCard = ({
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
                 }}
               >
-                <RecordInlineCell loading={recordLoading} />
+                <RecordFieldComponentInstanceContext.Provider
+                  value={{
+                    instanceId: `${objectRecordId}-${fieldMetadataItem.id}`,
+                  }}
+                >
+                  <RecordInlineCell loading={recordLoading} />
+                </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ))}
           </>

@@ -2,6 +2,7 @@ import { ReactNode, useContext } from 'react';
 
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
@@ -87,7 +88,11 @@ export const RecordTableCellFieldContextWrapper = ({
         displayedMaxRows: 1,
       }}
     >
-      {children}
+      <RecordFieldComponentInstanceContext.Provider
+        value={{ instanceId: recordId + columnDefinition.label }}
+      >
+        {children}
+      </RecordFieldComponentInstanceContext.Provider>
     </FieldContext.Provider>
   );
 };

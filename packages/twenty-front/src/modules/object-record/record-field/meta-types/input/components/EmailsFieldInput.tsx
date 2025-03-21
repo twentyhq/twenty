@@ -1,6 +1,8 @@
 import { useEmailsField } from '@/object-record/record-field/meta-types/hooks/useEmailsField';
 import { EmailsFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/EmailsFieldMenuItem';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -44,6 +46,14 @@ export const EmailsFieldInput = ({
 
   const isPrimaryEmail = (index: number) => index === 0 && emails?.length > 1;
 
+  const setIsFieldInError = useSetRecoilComponentStateV2(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
+  const handleError = (hasError: boolean, values: any[]) => {
+    setIsFieldInError(hasError && values.length === 0);
+  };
+
   return (
     <MultiItemFieldInput
       items={emails}
@@ -70,6 +80,7 @@ export const EmailsFieldInput = ({
           onDelete={handleDelete}
         />
       )}
+      onError={handleError}
       hotkeyScope={hotkeyScope}
     />
   );

@@ -1,9 +1,11 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
@@ -63,6 +65,10 @@ export const RecordInlineCellEditMode = ({
     },
   };
 
+  const isFieldInError = useRecoilComponentValueV2(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
   const { refs, floatingStyles } = useFloating({
     placement: isCentered ? 'bottom' : 'bottom-start',
     middleware: [
@@ -93,6 +99,7 @@ export const RecordInlineCellEditMode = ({
           ref={refs.setFloating}
           style={floatingStyles}
           borderRadius="sm"
+          hasDangerBorder={isFieldInError}
         >
           {children}
         </OverlayContainer>,
