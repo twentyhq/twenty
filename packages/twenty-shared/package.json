@@ -1,6 +1,5 @@
 {
   "name": "twenty-shared",
-  "type": "module",
   "version": "0.44.0-canary",
   "main": "dist/twenty-shared.cjs.js",
   "module": "dist/twenty-shared.esm.js",
