@@ -1,12 +1,12 @@
 SCHEMA >
-    `timestamp` DateTime64(3),
-    `workspaceId` String,
-    `webhookId` String,
-    `url` String,
-    `success` Bool,
-    `status` Int64,
-    `eventName` LowCardinality(String),
-    `version` LowCardinality(String)
+    `timestamp` DateTime64(3) `json:$.timestamp`,
+    `workspaceId` String `json:$.workspaceId`,
+    `webhookId` String `json:$.webhookId`,
+    `url` String `json:$.url`,
+    `success` Bool `json:$.success`,
+    `status` Int64 `json:$.status`,
+    `eventName` LowCardinality(String) `json:$.eventName`,
+    `version` LowCardinality(String) `json:$.version`
 
 ENGINE MergeTree
 ENGINE_PARTITION_KEY toYYYYMM(timestamp)

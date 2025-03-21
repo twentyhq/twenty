@@ -9,7 +9,7 @@ SQL >
         JSONExtractInt(payload, 'status') as status,
         JSONExtractString(payload, 'eventName') as eventName,
         version
-    FROM event
+    FROM 'event'
     WHERE action = 'webhook.response'
 
 TYPE MATERIALIZED

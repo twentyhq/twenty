@@ -67,3 +67,4 @@ SQL >
     SELECT formatDateTime(interval, '%FT%T.000%z') as start, error_count
     FROM selectIntervalByGranularity
     LEFT JOIN timeSeriesServerlessFunctionErrorCountData USING interval
+TYPE ENDPOINT
