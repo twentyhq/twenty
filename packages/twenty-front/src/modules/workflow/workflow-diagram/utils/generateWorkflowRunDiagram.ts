@@ -83,7 +83,7 @@ export const generateWorkflowRunDiagram = ({
     let runStatus: WorkflowDiagramRunStatus;
     if (skippedExecution) {
       runStatus = 'not-executed';
-    } else if (!isDefined(runResult)) {
+    } else if (!isDefined(runResult) || isDefined(runResult.pendingEvent)) {
       runStatus = 'running';
     } else {
       if (isDefined(runResult.error)) {

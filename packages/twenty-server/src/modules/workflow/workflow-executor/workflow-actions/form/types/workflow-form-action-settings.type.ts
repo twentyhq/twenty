@@ -4,8 +4,10 @@ import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-execut
 
 export type FormFieldMetadata = {
   id: string;
+  name: string;
   label: string;
   type: FieldMetadataType;
+  value?: any;
   placeholder?: string;
   settings?: Record<string, any>;
 };
