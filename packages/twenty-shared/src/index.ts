@@ -7,4 +7,4 @@
  *                              |___/
  */
 
-export default {}
+export default {};
