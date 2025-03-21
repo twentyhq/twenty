@@ -41,12 +41,6 @@ import { CodeEditor, IconCode, IconPlayerPlay, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
 const StyledCodeEditorContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -292,7 +286,7 @@ export const WorkflowEditActionServerlessFunction = ({
 
   return (
     !loading && (
-      <StyledContainer>
+      <>
         <StyledTabList
           tabs={tabs}
           behaveAsLinks={false}
@@ -375,7 +369,7 @@ export const WorkflowEditActionServerlessFunction = ({
             ]}
           />
         )}
-      </StyledContainer>
+      </>
     )
   );
 };

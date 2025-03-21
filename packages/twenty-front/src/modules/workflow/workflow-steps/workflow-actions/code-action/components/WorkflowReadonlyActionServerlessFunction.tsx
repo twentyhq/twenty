@@ -17,12 +17,6 @@ import { AutoTypings } from 'monaco-editor-auto-typings';
 import { CodeEditor, useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
 const StyledCodeEditorContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -74,7 +68,7 @@ export const WorkflowReadonlyActionServerlessFunction = ({
   }
 
   return (
-    <StyledContainer>
+    <>
       <WorkflowStepHeader
         Icon={getIcon(headerIcon)}
         iconColor={headerIconColor}
@@ -101,6 +95,6 @@ export const WorkflowReadonlyActionServerlessFunction = ({
           />
         </StyledCodeEditorContainer>
       </WorkflowStepBody>
-    </StyledContainer>
+    </>
   );
 };
