@@ -18,6 +18,9 @@ const StyledContainer = styled.div`
 const ApiReferenceReact = lazy(() =>
   import('@scalar/api-reference-react').then((module) => {
     import('@scalar/api-reference-react/style.css');
+    import('@scalar/use-hooks/useColorMode').then((colorMode) =>
+      colorMode.useColorMode(),
+    );
     return {
       default: module.ApiReferenceReact,
     };
@@ -64,7 +67,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
               },
             },
             baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
-            forceDarkModeState: theme.name === 'dark' ? 'dark' : 'light',
+            darkMode: theme.name === 'dark',
             hideClientButton: true,
             hideDarkModeToggle: true,
             pathRouting: {
