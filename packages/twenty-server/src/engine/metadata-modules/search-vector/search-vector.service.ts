@@ -31,7 +31,7 @@ import {
 import { SearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 
 @Injectable()
-export class SearchService {
+export class SearchVectorService {
   constructor(
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
