@@ -66,8 +66,9 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
                   : undefined,
               },
             },
-            baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
             darkMode: theme.name === 'dark',
+            baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
+            forceDarkModeState: theme.name === 'dark' ? 'dark' : 'light',
             hideClientButton: true,
             hideDarkModeToggle: true,
             pathRouting: {
