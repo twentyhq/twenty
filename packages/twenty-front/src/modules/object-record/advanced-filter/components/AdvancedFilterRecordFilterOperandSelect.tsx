@@ -20,21 +20,21 @@ const StyledContainer = styled.div`
   flex: 1;
 `;
 
-type AdvancedFilterViewFilterOperandSelectProps = {
-  viewFilterId: string;
+type AdvancedFilterRecordFilterOperandSelectProps = {
+  recordFilterId: string;
 };
 
-export const AdvancedFilterViewFilterOperandSelect = ({
-  viewFilterId,
-}: AdvancedFilterViewFilterOperandSelectProps) => {
-  const dropdownId = `advanced-filter-view-filter-operand-${viewFilterId}`;
+export const AdvancedFilterRecordFilterOperandSelect = ({
+  recordFilterId,
+}: AdvancedFilterRecordFilterOperandSelectProps) => {
+  const dropdownId = `advanced-filter-view-filter-operand-${recordFilterId}`;
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
   const filter = currentRecordFilters.find(
-    (recordFilter) => recordFilter.id === viewFilterId,
+    (recordFilter) => recordFilter.id === recordFilterId,
   );
 
   const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
