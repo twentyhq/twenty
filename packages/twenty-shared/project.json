@@ -7,10 +7,21 @@
   "targets": {
     "build": {
       "dependsOn": ["generateBarrels", "^build"],
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "{projectRoot}/dist"
-      }
+      "outputs": [
+        "{projectRoot}/dist",
+        "{projectRoot}/constants/package.json",
+        "{projectRoot}/constants/dist",
+        "{projectRoot}/testing/package.json",
+        "{projectRoot}/testing/dist",
+        "{projectRoot}/translations/package.json",
+        "{projectRoot}/translations/dist",
+        "{projectRoot}/types/package.json",
+        "{projectRoot}/types/dist",
+        "{projectRoot}/utils/package.json",
+        "{projectRoot}/utils/dist",
+        "{projectRoot}/workspace/package.json",
+        "{projectRoot}/workspace/dist"
+      ]
     },
     "generateBarrels": {
       "executor": "nx:run-commands",
