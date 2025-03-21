@@ -10,7 +10,7 @@ export const formatGlobalSearchRecordAsSingleRecordPickerRecord = (
   return {
     id: searchRecord.recordId,
     name: searchRecord.label,
-    avatarUrl: searchRecord.imageUrl || undefined,
+    avatarUrl: searchRecord.imageUrl ?? undefined,
     avatarType: getAvatarType(searchRecord.objectSingularName),
     linkToShowPage:
       getBasePathToShowPage({

@@ -35,7 +35,7 @@ export const RoleAssignmentWorkspaceMemberPickerDropdownContent = ({
             placeholder: workspaceMember.label ?? '',
             placeholderColorSeed: workspaceMember.recordId,
           }}
-          text={`${workspaceMember.label}`}
+          text={workspaceMember.label}
         />
       ))}
     </>

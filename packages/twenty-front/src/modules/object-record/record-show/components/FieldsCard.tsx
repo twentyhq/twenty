@@ -110,16 +110,22 @@ export const FieldsCard = ({
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  <ActivityTargetsInlineCell
-                    activityObjectNameSingular={
-                      objectNameSingular as
-                        | CoreObjectNameSingular.Note
-                        | CoreObjectNameSingular.Task
-                    }
-                    activityRecordId={objectRecordId}
-                    showLabel={true}
-                    maxWidth={200}
-                  />
+                  <RecordFieldComponentInstanceContext.Provider
+                    value={{
+                      instanceId: objectRecordId + fieldMetadataItem.id,
+                    }}
+                  >
+                    <ActivityTargetsInlineCell
+                      activityObjectNameSingular={
+                        objectNameSingular as
+                          | CoreObjectNameSingular.Note
+                          | CoreObjectNameSingular.Task
+                      }
+                      activityRecordId={objectRecordId}
+                      showLabel={true}
+                      maxWidth={200}
+                    />
+                  </RecordFieldComponentInstanceContext.Provider>
                 </FieldContext.Provider>
               ),
             )}

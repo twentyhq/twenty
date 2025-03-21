@@ -24,7 +24,7 @@ export const useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId =
       recordId,
     );
 
-    if (!isDefined(pickableMorphItem)) {
+    if (!isDefined(pickableMorphItem) || !isDefined(searchRecord)) {
       return { searchRecord: null, objectMetadataItem: null };
     }
 
