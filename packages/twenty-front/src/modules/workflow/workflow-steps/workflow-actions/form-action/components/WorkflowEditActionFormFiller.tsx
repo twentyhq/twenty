@@ -1,4 +1,5 @@
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
@@ -38,6 +39,7 @@ export const WorkflowEditActionFormFiller = ({
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const { workflowRunId } = useWorkflowStepContextOrThrow();
+  const { closeCommandMenu } = useCommandMenu();
 
   if (!isDefined(workflowRunId)) {
     throw new Error('Form filler action must be used in a workflow run');
@@ -89,11 +91,13 @@ export const WorkflowEditActionFormFiller = ({
       {} as Record<string, any>,
     );
 
-    submitFormStep({
+    await submitFormStep({
       stepId: action.id,
       workflowRunId,
       response,
     });
+
+    closeCommandMenu();
   };
 
   useEffect(() => {
