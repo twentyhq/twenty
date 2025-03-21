@@ -1,3 +1,4 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -23,10 +24,8 @@ const StyledShowPageActivityContainer = styled.div`
 const StyledSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;
-
-  gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(0, 4)};
 `;
 
 const LoadingSkeleton = () => {
@@ -39,9 +38,7 @@ const LoadingSkeleton = () => {
         highlightColor={theme.background.transparent.lighter}
         borderRadius={theme.border.radius.sm}
       >
-        <Skeleton height={24} />
-        <Skeleton height={24} />
-        <Skeleton height={24} />
+        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
       </SkeletonTheme>
     </StyledSkeletonContainer>
   );
