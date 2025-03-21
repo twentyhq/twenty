@@ -109,18 +109,7 @@ export class RoleResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('createRoleInput') createRoleInput: CreateRoleInput,
   ): Promise<RoleDTO> {
-    const isPermissionsV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
-        workspace.id,
-      );
-
-    if (!isPermissionsV2Enabled) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSIONS_V2_NOT_ENABLED,
-        PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED,
-      );
-    }
+    await this.validatePermissionsV2EnabledOrThrow(workspace);
 
     return this.roleService.createRole({
       workspaceId: workspace.id,
@@ -134,6 +123,8 @@ export class RoleResolver {
     @Args('upsertObjectPermissionInput')
     upsertObjectPermissionInput: UpsertObjectPermissionInput,
   ) {
+    await this.validatePermissionsV2EnabledOrThrow(workspace);
+
     return this.objectPermissionService.upsertObjectPermission({
       workspaceId: workspace.id,
       input: upsertObjectPermissionInput,
@@ -146,6 +137,8 @@ export class RoleResolver {
     @Args('upsertSettingPermissionInput')
     upsertSettingPermissionInput: UpsertSettingPermissionInput,
   ) {
+    await this.validatePermissionsV2EnabledOrThrow(workspace);
+
     return this.settingPermissionService.upsertSettingPermission({
       workspaceId: workspace.id,
       input: upsertSettingPermissionInput,
@@ -157,18 +150,7 @@ export class RoleResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
   ): Promise<RoleDTO> {
-    const isPermissionsV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
-        workspace.id,
-      );
-
-    if (!isPermissionsV2Enabled) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSIONS_V2_NOT_ENABLED,
-        PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED,
-      );
-    }
+    await this.validatePermissionsV2EnabledOrThrow(workspace);
 
     return this.roleService.updateRole({
       input: updateRoleInput,
@@ -185,5 +167,20 @@ export class RoleResolver {
       role.id,
       workspace.id,
     );
+  }
+
+  private async validatePermissionsV2EnabledOrThrow(workspace: Workspace) {
+    const isPermissionsV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsPermissionsV2Enabled,
+        workspace.id,
+      );
+
+    if (!isPermissionsV2Enabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSIONS_V2_NOT_ENABLED,
+        PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED,
+      );
+    }
   }
 }
