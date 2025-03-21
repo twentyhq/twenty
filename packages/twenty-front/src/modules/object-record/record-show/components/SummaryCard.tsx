@@ -8,7 +8,6 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
-import { ShowPageSummaryCardSkeletonLoader } from '@/ui/layout/show-page/components/ShowPageSummaryCardSkeletonLoader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared';
@@ -55,10 +54,6 @@ export const SummaryCard = ({
     }),
   );
 
-  if (!isDefined(recordCreatedAt)) {
-    return <ShowPageSummaryCardSkeletonLoader />;
-  }
-
   return (
     <ShowPageSummaryCard
       isMobile={isMobile}
@@ -68,7 +63,9 @@ export const SummaryCard = ({
       iconColor={IconColor}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
       date={recordCreatedAt ?? ''}
-      loading={isPrefetchLoading || recordLoading}
+      loading={
+        isPrefetchLoading || recordLoading || !isDefined(recordCreatedAt)
+      }
       title={
         <FieldContext.Provider
           value={{
