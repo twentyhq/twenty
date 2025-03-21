@@ -69,6 +69,11 @@ const StyledSelectedSortDirectionContainer = styled.div`
   z-index: 1000;
 `;
 
+const StyledDropdownMenuItemsContainer = styled.div`
+  padding: 4px;
+  margin-bottom: 0;
+`;
+
 export type ObjectSortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
 };
@@ -240,7 +245,7 @@ export const ObjectSortDropdownButton = ({
               setObjectSortDropdownSearchInput(event.target.value)
             }
           />
-          <DropdownMenuItemsContainer>
+          <StyledDropdownMenuItemsContainer>
             {visibleFieldMetadataItems.map(
               (visibleFieldMetadataItem, index) => (
                 <MenuItem
@@ -262,7 +267,7 @@ export const ObjectSortDropdownButton = ({
                 text={hiddenFieldMetadataItem.label}
               />
             ))}
-          </DropdownMenuItemsContainer>
+          </StyledDropdownMenuItemsContainer>
         </>
       }
       onClose={handleDropdownButtonClose}
