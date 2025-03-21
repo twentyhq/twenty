@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { ObjectRecordFilterInput } from 'src/engine/core-modules/global-search/dtos/object-record-filter-input';
+import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
 
 export type GlobalSearchFactoryParams = {
   searchInput: string;

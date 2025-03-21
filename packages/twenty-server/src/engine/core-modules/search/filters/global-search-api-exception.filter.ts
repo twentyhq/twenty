@@ -1,7 +1,7 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
-import { GlobalSearchException } from 'src/engine/core-modules/global-search/exceptions/global-search.exception';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { GlobalSearchException } from 'src/engine/core-modules/search/exceptions/global-search.exception';
 
 @Catch(GlobalSearchException)
 export class GlobalSearchApiExceptionFilter implements ExceptionFilter {
