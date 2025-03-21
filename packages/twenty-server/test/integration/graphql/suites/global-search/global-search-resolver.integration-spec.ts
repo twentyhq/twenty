@@ -19,7 +19,7 @@ import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/ob
 import { findManyObjectsMetadataItems } from 'test/integration/metadata/suites/object-metadata/utils/find-many-objects-metadata-items.util';
 import { EachTestingContext } from 'twenty-shared/testing';
 
-import { GlobalSearchRecordDTO } from 'src/engine/core-modules/global-search/dtos/global-search-record-dto';
+import { GlobalSearchRecordDTO } from 'src/engine/core-modules/search/dtos/global-search-record-dto';
 
 describe('GlobalSearchResolver', () => {
   let listingObjectMetadataId: { objectMetadataId: string };

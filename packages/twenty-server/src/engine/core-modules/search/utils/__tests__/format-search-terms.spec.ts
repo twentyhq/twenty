@@ -1,4 +1,4 @@
-import { formatSearchTerms } from 'src/engine/core-modules/global-search/utils/format-search-terms';
+import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 
 describe('formatSearchTerms', () => {
   it('should format the search terms', () => {

@@ -2,7 +2,7 @@ import { ArgsType, Field, Int } from '@nestjs/graphql';
 
 import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
 
-import { ObjectRecordFilterInput } from 'src/engine/core-modules/global-search/dtos/object-record-filter-input';
+import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
 
 @ArgsType()
 export class GlobalSearchArgs {

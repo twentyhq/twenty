@@ -6,16 +6,16 @@ import chunk from 'lodash.chunk';
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { GlobalSearchArgs } from 'src/engine/core-modules/global-search/dtos/global-search-args';
-import { GlobalSearchRecordDTO } from 'src/engine/core-modules/global-search/dtos/global-search-record-dto';
+import { GlobalSearchArgs } from 'src/engine/core-modules/search/dtos/global-search-args';
+import { GlobalSearchRecordDTO } from 'src/engine/core-modules/search/dtos/global-search-record-dto';
 import {
   GlobalSearchException,
   GlobalSearchExceptionCode,
-} from 'src/engine/core-modules/global-search/exceptions/global-search.exception';
-import { GlobalSearchApiExceptionFilter } from 'src/engine/core-modules/global-search/filters/global-search-api-exception.filter';
-import { GlobalSearchService } from 'src/engine/core-modules/global-search/services/global-search.service';
-import { RecordsWithObjectMetadataItem } from 'src/engine/core-modules/global-search/types/records-with-object-metadata-item';
-import { formatSearchTerms } from 'src/engine/core-modules/global-search/utils/format-search-terms';
+} from 'src/engine/core-modules/search/exceptions/global-search.exception';
+import { GlobalSearchApiExceptionFilter } from 'src/engine/core-modules/search/filters/global-search-api-exception.filter';
+import { GlobalSearchService } from 'src/engine/core-modules/search/services/search.service';
+import { RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
+import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';

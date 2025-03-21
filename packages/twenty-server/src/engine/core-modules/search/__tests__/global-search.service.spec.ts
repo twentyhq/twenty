@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/global-search/__mocks__/mockObjectMetadataItemsWithFieldMaps';
-import { GlobalSearchService } from 'src/engine/core-modules/global-search/services/global-search.service';
+import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/search/__mocks__/mockObjectMetadataItemsWithFieldMaps';
+import { GlobalSearchService } from 'src/engine/core-modules/search/services/search.service';
 
-describe('GlobalSearchService', () => {
+describe('SearchService', () => {
   let service: GlobalSearchService;
 
   beforeEach(async () => {
