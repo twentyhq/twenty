@@ -3,7 +3,7 @@ import { DocumentNode } from 'graphql';
 import getApolloClient from '~/utils/apolloClient';
 import { isDefined } from 'twenty-shared/utils';
 
-export const callQuery = async <T,>(
+export const callQuery = async <T>(
   query: DocumentNode,
   variables?: OperationVariables,
 ): Promise<T | null> => {
@@ -18,7 +18,7 @@ export const callQuery = async <T,>(
   }
 };
 
-export const callMutation = async <T,>(
+export const callMutation = async <T>(
   mutation: DocumentNode,
   variables?: OperationVariables,
 ): Promise<T | null> => {
