@@ -226,45 +226,6 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query('CombinedSearchRecords', () => {
-      return HttpResponse.json({
-        data: {
-          searchOpportunities: {
-            edges: [],
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-          searchCompanies: {
-            edges: companiesMock.slice(0, 3).map((company) => ({
-              node: company,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-          searchPeople: {
-            edges: peopleMock.slice(0, 3).map((person) => ({
-              node: person,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-        },
-      });
-    }),
     graphql.query('FindManyViews', ({ variables }) => {
       const objectMetadataId = variables.filter?.objectMetadataId?.eq;
       const viewType = variables.filter?.type?.eq;

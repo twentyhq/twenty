@@ -41,8 +41,6 @@ export const getResolverName = (
     case 'restoreMany':
       return `restore${pascalCase(objectMetadata.namePlural)}`;
 
-    case 'search':
-      return `search${pascalCase(objectMetadata.namePlural)}`;
     default:
       throw new Error(`Unknown resolver type: ${type}`);
   }

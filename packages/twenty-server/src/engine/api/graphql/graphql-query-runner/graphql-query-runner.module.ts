@@ -14,7 +14,6 @@ import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/grap
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
 import { GraphqlQueryRestoreManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-restore-many-resolver.service';
 import { GraphqlQueryRestoreOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-restore-one-resolver.service';
-import { GraphqlQuerySearchResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-search-resolver.service';
 import { GraphqlQueryUpdateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-many-resolver.service';
 import { GraphqlQueryUpdateOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-one-resolver.service';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
@@ -35,7 +34,6 @@ const graphqlQueryResolvers = [
   GraphqlQueryFindOneResolverService,
   GraphqlQueryRestoreManyResolverService,
   GraphqlQueryRestoreOneResolverService,
-  GraphqlQuerySearchResolverService,
   GraphqlQueryUpdateManyResolverService,
   GraphqlQueryUpdateOneResolverService,
 ];

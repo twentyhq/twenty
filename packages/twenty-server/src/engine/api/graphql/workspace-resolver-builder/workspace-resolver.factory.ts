@@ -7,7 +7,6 @@ import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-res
 import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
 import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
 import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
-import { SearchResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/search-resolver-factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -45,7 +44,6 @@ export class WorkspaceResolverFactory {
     private readonly restoreOneResolverFactory: RestoreOneResolverFactory,
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
     private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
-    private readonly searchResolverFactory: SearchResolverFactory,
     private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
   ) {}
 
@@ -69,7 +67,6 @@ export class WorkspaceResolverFactory {
       ['findOne', this.findOneResolverFactory],
       ['restoreMany', this.restoreManyResolverFactory],
       ['restoreOne', this.restoreOneResolverFactory],
-      ['search', this.searchResolverFactory],
       ['updateMany', this.updateManyResolverFactory],
       ['updateOne', this.updateOneResolverFactory],
     ]);
