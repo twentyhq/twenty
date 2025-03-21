@@ -52854,7 +52854,6 @@ __metadata:
     "@sniptt/guards": "npm:^0.2.0"
     "@types/babel__preset-env": "npm:^7"
     babel-plugin-module-resolver: "npm:^5.0.2"
-    type-fest: "npm:^4.37.0"
     zod: "npm:3.23.8"
   languageName: unknown
   linkType: soft
