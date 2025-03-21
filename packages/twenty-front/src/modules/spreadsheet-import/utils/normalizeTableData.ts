@@ -7,10 +7,9 @@ import {
   ImportedRow,
   ImportedStructuredRow,
 } from '@/spreadsheet-import/types';
-
-import { isDefined } from 'twenty-shared';
 import { z } from 'zod';
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
+import { isDefined } from 'twenty-shared/utils';
 
 export const normalizeTableData = <T extends string>(
   columns: Columns<T>,

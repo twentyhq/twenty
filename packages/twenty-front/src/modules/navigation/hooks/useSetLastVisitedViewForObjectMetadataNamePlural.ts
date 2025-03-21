@@ -3,7 +3,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { View } from '@/views/types/View';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
   const setLastVisitedViewForObjectMetadataNamePlural = useRecoilCallback(

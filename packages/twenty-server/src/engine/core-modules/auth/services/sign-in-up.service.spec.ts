@@ -2,8 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {

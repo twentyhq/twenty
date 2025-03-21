@@ -1,5 +1,5 @@
 import { ViewSort } from '@/views/types/ViewSort';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getViewSortsToCreate = (
   currentViewSorts: ViewSort[],

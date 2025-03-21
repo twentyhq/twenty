@@ -18,7 +18,6 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   AvatarChipVariant,
   Checkbox,
@@ -27,6 +26,7 @@ import {
   IconEyeOff,
   LightIconButton,
 } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;

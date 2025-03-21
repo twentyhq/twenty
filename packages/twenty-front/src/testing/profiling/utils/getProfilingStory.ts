@@ -1,9 +1,8 @@
 import { StoryObj } from '@storybook/react';
 import { expect, findByTestId } from '@storybook/test';
-
-import { isDefined } from 'twenty-shared';
 import { ProfilerDecorator } from '~/testing/decorators/ProfilerDecorator';
 import { getProfilingReportFromDocument } from '~/testing/profiling/utils/getProfilingReportFromDocument';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getProfilingStory = ({
   componentName,

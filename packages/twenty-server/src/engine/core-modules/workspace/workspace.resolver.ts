@@ -12,8 +12,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 

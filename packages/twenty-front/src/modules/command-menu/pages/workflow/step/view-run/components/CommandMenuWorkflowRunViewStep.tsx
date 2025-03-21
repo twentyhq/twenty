@@ -17,8 +17,8 @@ import {
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledTabList = styled(TabList)`
   background-color: ${({ theme }) => theme.background.secondary};

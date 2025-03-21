@@ -22,9 +22,9 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
-import { isDefined } from 'twenty-shared';
 import { IconUserCircle } from 'twenty-ui';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,

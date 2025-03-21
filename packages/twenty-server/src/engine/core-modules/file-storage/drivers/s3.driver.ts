@@ -18,7 +18,7 @@ import {
   S3,
   S3ClientConfig,
 } from '@aws-sdk/client-s3';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {

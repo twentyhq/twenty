@@ -1,7 +1,7 @@
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 import { useCheckCustomDomainValidRecordsMutation } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCheckCustomDomainValidRecords = () => {
   const [checkCustomDomainValidRecords] =

@@ -7,7 +7,7 @@ import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,

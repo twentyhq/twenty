@@ -16,7 +16,7 @@ import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFind
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const filterQueryParamsSchema = z.object({
   viewId: z.string().optional(),

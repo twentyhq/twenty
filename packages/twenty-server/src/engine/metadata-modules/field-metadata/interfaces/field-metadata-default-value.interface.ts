@@ -1,4 +1,4 @@
-import { FieldMetadataType, IsExactly } from 'twenty-shared';
+import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
 
 import {
   FieldMetadataDefaultActor,

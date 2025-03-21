@@ -9,7 +9,7 @@ import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/st
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordSortEffect = () => {
   const currentViewId = useRecoilComponentValueV2(

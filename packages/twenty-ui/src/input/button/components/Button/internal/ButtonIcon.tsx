@@ -3,7 +3,7 @@ import { baseTransitionTiming } from '@ui/input/button/components/Button/constan
 import { IconComponent } from '@ui/display';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledIcon = styled.div<{
   isLoading: boolean;

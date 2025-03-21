@@ -4,7 +4,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateStep = ({
   workflow,

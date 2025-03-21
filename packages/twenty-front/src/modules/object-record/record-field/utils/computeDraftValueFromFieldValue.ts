@@ -12,9 +12,9 @@ import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/i
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { computeEmptyDraftValue } from '@/object-record/record-field/utils/computeEmptyDraftValue';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
-import { isDefined } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { isDefined } from 'twenty-shared/utils';
 
 type computeDraftValueFromFieldValueParams<FieldValue> = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>;

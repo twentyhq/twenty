@@ -4,8 +4,8 @@ import { useRecoilCallback } from 'recoil';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 
 import { ClickOutsideListenerCallback } from '@/ui/utilities/pointer-event/types/ClickOutsideListenerCallback';
-import { isDefined } from 'twenty-shared';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useClickOutsideListener = (componentId: string) => {
   const {

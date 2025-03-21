@@ -16,10 +16,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();

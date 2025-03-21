@@ -7,7 +7,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type EditableFilterDropdownButtonEffectProps = {
   viewFilterDropdownId: string;

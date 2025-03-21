@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useInputFocusWithoutScrollOnMount = () => {
   const inputRef = useRef<HTMLInputElement>(null);

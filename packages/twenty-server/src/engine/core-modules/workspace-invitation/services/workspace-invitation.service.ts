@@ -9,8 +9,8 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared';
 import { IsNull, Repository } from 'typeorm';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import {
   AppToken,

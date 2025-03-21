@@ -1,8 +1,8 @@
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { performObjectMetadataCreation } from 'test/integration/utils/object-metadata/perform-object-metadata-creation';
-import { isDefined } from 'twenty-shared';
 
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { isDefined } from 'twenty-shared/utils';
 
 export const performFailingObjectMetadataCreation = async (
   objectInput: Omit<CreateObjectInput, 'workspaceId' | 'dataSourceId'>,

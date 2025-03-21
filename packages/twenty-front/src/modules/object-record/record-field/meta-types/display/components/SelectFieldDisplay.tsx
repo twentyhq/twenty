@@ -1,6 +1,6 @@
 import { useSelectFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useSelectFieldDisplay';
 import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SelectFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useSelectFieldDisplay();

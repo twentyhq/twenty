@@ -1,8 +1,9 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { isDefined, PermissionsOnAllObjectRecords } from 'twenty-shared';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 export const useHasObjectReadOnlyPermission = () => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);

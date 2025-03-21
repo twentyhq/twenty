@@ -15,8 +15,8 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
+import { isDefined } from 'twenty-shared/utils';
 
 type useDeleteManyRecordProps = {
   objectNameSingular: string;

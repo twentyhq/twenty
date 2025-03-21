@@ -2,7 +2,7 @@ import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 

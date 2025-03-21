@@ -11,9 +11,9 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { isDefined } from 'twenty-shared';
 import { IconLibraryPlus, IconPlus, LightButton, MenuItem } from 'twenty-ui';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
   recordFilterGroup: RecordFilterGroup;

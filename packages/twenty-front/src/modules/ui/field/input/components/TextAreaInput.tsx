@@ -5,8 +5,8 @@ import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { isDefined } from 'twenty-shared';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { isDefined } from 'twenty-shared/utils';
 
 export type TextAreaInputProps = {
   disabled?: boolean;

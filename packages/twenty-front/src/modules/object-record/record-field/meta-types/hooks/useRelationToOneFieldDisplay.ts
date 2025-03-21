@@ -5,13 +5,13 @@ import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/Pre
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRelationToOneFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);

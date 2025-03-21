@@ -7,9 +7,9 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldValueReadOnly } from '../utils/isFieldValueReadOnly';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useIsFieldValueReadOnly = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);

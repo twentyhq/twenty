@@ -1,5 +1,4 @@
-import { isDefined } from 'twenty-shared';
-
+import { isDefined } from 'twenty-shared/utils';
 export const useBuildWorkspaceUrl = () => {
   const buildWorkspaceUrl = (
     endpoint: string,

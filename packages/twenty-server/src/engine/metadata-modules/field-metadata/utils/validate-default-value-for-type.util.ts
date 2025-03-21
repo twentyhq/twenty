@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { ValidationError, validateSync } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   FieldMetadataClassValidation,

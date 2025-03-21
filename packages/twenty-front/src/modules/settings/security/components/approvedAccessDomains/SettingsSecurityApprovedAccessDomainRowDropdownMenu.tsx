@@ -11,9 +11,9 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { UnwrapRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { useDeleteApprovedAccessDomainMutation } from '~/generated/graphql';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsSecurityApprovedAccessDomainRowDropdownMenuProps = {
   approvedAccessDomain: UnwrapRecoilValue<typeof approvedAccessDomainsState>[0];

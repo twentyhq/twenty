@@ -1,6 +1,6 @@
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { isDefined } from 'twenty-shared';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
+import { isDefined } from 'twenty-shared/utils';
 
 export const shouldReplaceFilter = (
   oldFilter: Pick<

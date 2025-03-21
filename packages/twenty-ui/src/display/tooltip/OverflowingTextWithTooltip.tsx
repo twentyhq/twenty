@@ -3,9 +3,8 @@ import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { THEME_COMMON } from '@ui/theme';
-
-import { isDefined } from 'twenty-shared';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
+import { isDefined } from 'twenty-shared/utils';
 
 const spacing4 = THEME_COMMON.spacing(4);
 

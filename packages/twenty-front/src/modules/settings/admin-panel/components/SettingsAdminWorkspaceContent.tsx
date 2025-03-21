@@ -32,13 +32,13 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   FeatureFlagKey,
   useImpersonateMutation,
   useUpdateWorkspaceFeatureFlagMutation,
 } from '~/generated/graphql';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;

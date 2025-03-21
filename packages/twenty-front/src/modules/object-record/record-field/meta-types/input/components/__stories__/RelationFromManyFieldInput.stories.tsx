@@ -20,8 +20,8 @@ import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/us
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { FieldMetadataType } from 'twenty-shared';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);

@@ -4,8 +4,8 @@ import {
   Fields,
   SpreadsheetImportDialogOptions,
 } from '@/spreadsheet-import/types';
-import { FieldMetadataType } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const fields = [
   {

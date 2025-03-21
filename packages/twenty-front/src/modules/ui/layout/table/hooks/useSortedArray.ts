@@ -2,7 +2,7 @@ import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFi
 import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSortedArray = <T>(
   arrayToSort: T[],

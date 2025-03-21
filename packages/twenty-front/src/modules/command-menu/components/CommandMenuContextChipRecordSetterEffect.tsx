@@ -6,7 +6,7 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { useApolloClient } from '@apollo/client';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuContextChipRecordSetterEffect = () => {
   const commandMenuNavigationMorphItemByPage = useRecoilValue(

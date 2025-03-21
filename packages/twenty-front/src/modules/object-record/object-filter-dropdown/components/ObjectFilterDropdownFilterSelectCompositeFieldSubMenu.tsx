@@ -28,8 +28,8 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText] = useState('');

@@ -36,8 +36,8 @@ import { isFieldSelectValue } from '@/object-record/record-field/types/guards/is
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldTsVector } from '@/object-record/record-field/types/guards/isFieldTsVectorValue';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
-import { isDefined } from 'twenty-shared';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { isDefined } from 'twenty-shared/utils';
 
 const isValueEmpty = (value: unknown) =>
   !isDefined(value) ||

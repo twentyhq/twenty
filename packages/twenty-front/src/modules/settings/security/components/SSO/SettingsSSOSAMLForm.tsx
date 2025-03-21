@@ -9,7 +9,6 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { isDefined } from 'twenty-shared';
 import {
   Button,
   H2Title,
@@ -21,6 +20,7 @@ import {
   Section,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;

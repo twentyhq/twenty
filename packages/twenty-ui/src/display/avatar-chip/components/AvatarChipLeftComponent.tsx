@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
-import { isDefined } from 'twenty-shared';
 import { Nullable } from 'vitest';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
   display: flex;

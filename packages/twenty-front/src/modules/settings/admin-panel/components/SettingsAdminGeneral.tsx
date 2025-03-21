@@ -11,7 +11,6 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { getImageAbsoluteURI, isDefined } from 'twenty-shared';
 import {
   Button,
   H2Title,
@@ -30,6 +29,7 @@ import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components
 import { SETTINGS_ADMIN_GENERAL_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminGeneralTabsId';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   align-items: center;

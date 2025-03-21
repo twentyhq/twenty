@@ -3,10 +3,10 @@ import { useMemo, useState } from 'react';
 
 import { findUpcomingCalendarEvent } from '@/activities/calendar/utils/findUpcomingCalendarEvent';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
-import { isDefined } from 'twenty-shared';
 import { TimelineCalendarEvent } from '~/generated/graphql';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { sortDesc } from '~/utils/sort';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCalendarEvents = (calendarEvents: TimelineCalendarEvent[]) => {
   const calendarEventsByDayTime = groupArrayItemsBy(

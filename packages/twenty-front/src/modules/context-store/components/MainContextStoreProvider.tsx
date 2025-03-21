@@ -5,8 +5,8 @@ import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefe
 import { AppPath } from '@/types/AppPath';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isDefined } from 'twenty-shared/utils';
 
 const getViewId = (
   viewIdFromQueryParams: string | null,

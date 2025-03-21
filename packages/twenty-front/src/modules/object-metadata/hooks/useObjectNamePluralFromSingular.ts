@@ -2,8 +2,9 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { isDefined, isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { isDefined } from 'twenty-shared/utils';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 export const useObjectNamePluralFromSingular = ({
   objectNameSingular,

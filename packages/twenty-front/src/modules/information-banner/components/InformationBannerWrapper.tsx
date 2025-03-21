@@ -6,8 +6,9 @@ import { InformationBannerReconnectAccountInsufficientPermissions } from '@/info
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
-import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledInformationBannerWrapper = styled.div`
   height: 40px;

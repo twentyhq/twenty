@@ -7,7 +7,7 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({

@@ -1,12 +1,11 @@
 import { Profiler, ProfilerOnRenderCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
-
-import { isDefined } from 'twenty-shared';
 import { profilingQueueState } from '~/testing/profiling/states/profilingQueueState';
 import { profilingSessionDataPointsState } from '~/testing/profiling/states/profilingSessionDataPointsState';
 import { profilingSessionState } from '~/testing/profiling/states/profilingSessionState';
 import { ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
 import { getProfilingQueueIdentifier } from '~/testing/profiling/utils/getProfilingQueueIdentifier';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ProfilerWrapper = ({
   profilingId,

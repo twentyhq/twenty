@@ -8,10 +8,10 @@ import { useEffect, useState } from 'react';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { isDefined } from 'twenty-shared';
 import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionDeleteRecordProps = {
   action: WorkflowDeleteRecordAction;

@@ -3,13 +3,13 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { useRatingField } from '../../../hooks/useRatingField';
 import { RatingFieldInput, RatingFieldInputProps } from '../RatingFieldInput';
+import { isDefined } from 'twenty-shared/utils';
 
 const RatingFieldValueSetterEffect = ({
   value,

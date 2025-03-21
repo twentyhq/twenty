@@ -1,6 +1,6 @@
 import { Field } from '@/spreadsheet-import/types';
 import { generateExampleRow } from '@/spreadsheet-import/utils/generateExampleRow';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('generateExampleRow', () => {
   const defaultField: Field<'defaultField'> = {

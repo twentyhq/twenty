@@ -13,8 +13,8 @@ import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { isDefined } from 'twenty-shared';
 import { CodeEditor, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;

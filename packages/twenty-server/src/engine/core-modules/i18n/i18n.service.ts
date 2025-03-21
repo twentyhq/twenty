@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { messages as afMessages } from 'src/engine/core-modules/i18n/locales/generated/af-ZA';
 import { messages as arMessages } from 'src/engine/core-modules/i18n/locales/generated/ar-SA';

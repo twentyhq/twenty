@@ -11,8 +11,8 @@ import { t } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { getOsControlSymbol } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,

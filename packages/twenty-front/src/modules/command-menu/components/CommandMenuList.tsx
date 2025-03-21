@@ -14,8 +14,8 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 

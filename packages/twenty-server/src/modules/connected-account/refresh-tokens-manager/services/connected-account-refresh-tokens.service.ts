@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { assertUnreachable, ConnectedAccountProvider } from 'twenty-shared';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {

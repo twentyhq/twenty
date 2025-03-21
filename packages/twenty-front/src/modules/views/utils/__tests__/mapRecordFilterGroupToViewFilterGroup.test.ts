@@ -7,8 +7,8 @@ import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLog
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
-import { isDefined } from 'twenty-shared';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { isDefined } from 'twenty-shared/utils';
 
 const mockObjectMetadataItemNameSingular = 'company';
 

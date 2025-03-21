@@ -6,8 +6,8 @@ import { H2Title, Section } from 'twenty-ui';
 
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;

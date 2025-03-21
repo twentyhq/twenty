@@ -38,9 +38,9 @@ import { isMatchingRichTextV2Filter } from '@/object-record/record-filter/utils/
 import { isMatchingSelectFilter } from '@/object-record/record-filter/utils/isMatchingSelectFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isEmptyObject } from '~/utils/isEmptyObject';
+import { isDefined } from 'twenty-shared/utils';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,

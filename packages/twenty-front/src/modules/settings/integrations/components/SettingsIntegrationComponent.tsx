@@ -11,8 +11,7 @@ import {
 
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { Link } from 'react-router-dom';
-
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;
