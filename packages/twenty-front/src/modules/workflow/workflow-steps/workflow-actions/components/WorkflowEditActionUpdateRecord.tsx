@@ -12,11 +12,11 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { isDefined } from 'twenty-shared';
 import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionUpdateRecordProps = {
   action: WorkflowUpdateRecordAction;

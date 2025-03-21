@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   RecordPositionQueryFactory,

@@ -4,8 +4,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';

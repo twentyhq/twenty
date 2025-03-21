@@ -2,8 +2,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined, SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';

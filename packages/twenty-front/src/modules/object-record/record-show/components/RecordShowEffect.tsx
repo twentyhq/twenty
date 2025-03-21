@@ -5,8 +5,8 @@ import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordShowEffectProps = {
   objectNameSingular: string;

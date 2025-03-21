@@ -1,5 +1,5 @@
-import { isDefined } from 'twenty-shared';
 import { QueryFailedError } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
