@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
@@ -229,7 +231,10 @@ function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
 
   // Check all fields have defined labels and types
   settings.input.forEach((fieldMetadata) => {
-    if (!fieldMetadata.label || !fieldMetadata.type) {
+    if (
+      !isNonEmptyString(fieldMetadata.label) ||
+      !isNonEmptyString(fieldMetadata.type)
+    ) {
       throw new WorkflowTriggerException(
         'Form action fields must have a defined label and type',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
