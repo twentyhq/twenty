@@ -162,76 +162,78 @@ export const useMultipleRecordPickerPerformSearch = () => {
           );
         });
 
-        const filterPerMetadataItemFilteredOnRecordId = Object.fromEntries(
-          searchableObjectMetadataItems
-            .map(({ nameSingular }) => {
-              const recordIdsForMetadataItem = searchRecords
-                .filter(
-                  ({ objectSingularName }) =>
-                    objectSingularName === nameSingular,
-                )
-                .map(({ recordId }) => recordId);
+        if (searchRecords.length > 0) {
+          const filterPerMetadataItemFilteredOnRecordId = Object.fromEntries(
+            searchableObjectMetadataItems
+              .map(({ nameSingular }) => {
+                const recordIdsForMetadataItem = searchRecords
+                  .filter(
+                    ({ objectSingularName }) =>
+                      objectSingularName === nameSingular,
+                  )
+                  .map(({ recordId }) => recordId);
 
-              if (!isNonEmptyArray(recordIdsForMetadataItem)) {
-                return null;
-              }
-
-              return [
-                `filter${capitalize(nameSingular)}`,
-                {
-                  id: {
-                    in: recordIdsForMetadataItem,
-                  },
-                },
-              ];
-            })
-            .filter(isDefined),
-        );
-
-        const operationSignatures = searchableObjectMetadataItems
-          .filter(({ nameSingular }) =>
-            isDefined(
-              filterPerMetadataItemFilteredOnRecordId[
-                `filter${capitalize(nameSingular)}`
-              ],
-            ),
-          )
-          .map((objectMetadataItem) => ({
-            objectNameSingular: objectMetadataItem.nameSingular,
-            variables: {
-              filter:
-                filterPerMetadataItemFilteredOnRecordId[
-                  `filter${capitalize(objectMetadataItem.nameSingular)}`
-                ],
-            },
-          }));
-
-        performCombinedFindManyRecords({ operationSignatures }).then(
-          ({ result }) => {
-            Object.values(result)
-              .flat()
-              .forEach((objectRecord) => {
-                const searchRecord = searchRecords.find(
-                  ({ recordId }) => recordId === objectRecord.id,
-                );
-
-                if (!searchRecord) {
-                  return;
+                if (!isNonEmptyArray(recordIdsForMetadataItem)) {
+                  return null;
                 }
 
-                set(
-                  searchRecordStoreComponentFamilyState.atomFamily({
-                    instanceId: multipleRecordPickerInstanceId,
-                    familyKey: objectRecord.id,
-                  }),
+                return [
+                  `filter${capitalize(nameSingular)}`,
                   {
-                    ...searchRecord,
-                    record: objectRecord,
+                    id: {
+                      in: recordIdsForMetadataItem,
+                    },
                   },
-                );
-              });
-          },
-        );
+                ];
+              })
+              .filter(isDefined),
+          );
+
+          const operationSignatures = searchableObjectMetadataItems
+            .filter(({ nameSingular }) =>
+              isDefined(
+                filterPerMetadataItemFilteredOnRecordId[
+                  `filter${capitalize(nameSingular)}`
+                ],
+              ),
+            )
+            .map((objectMetadataItem) => ({
+              objectNameSingular: objectMetadataItem.nameSingular,
+              variables: {
+                filter:
+                  filterPerMetadataItemFilteredOnRecordId[
+                    `filter${capitalize(objectMetadataItem.nameSingular)}`
+                  ],
+              },
+            }));
+
+          performCombinedFindManyRecords({ operationSignatures }).then(
+            ({ result }) => {
+              Object.values(result)
+                .flat()
+                .forEach((objectRecord) => {
+                  const searchRecord = searchRecords.find(
+                    ({ recordId }) => recordId === objectRecord.id,
+                  );
+
+                  if (!searchRecord) {
+                    return;
+                  }
+
+                  set(
+                    searchRecordStoreComponentFamilyState.atomFamily({
+                      instanceId: multipleRecordPickerInstanceId,
+                      familyKey: objectRecord.id,
+                    }),
+                    {
+                      ...searchRecord,
+                      record: objectRecord,
+                    },
+                  );
+                });
+            },
+          );
+        }
       },
     [client, performCombinedFindManyRecords],
   );
