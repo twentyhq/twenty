@@ -11,7 +11,7 @@ import {
 
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
-import { SettingsPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
+import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
 
 @Entity('role')
 @Unique('IndexOnRoleUnique', ['label', 'workspaceId'])
@@ -68,8 +68,8 @@ export class RoleEntity {
   objectPermissions: Relation<ObjectPermissionEntity[]>;
 
   @OneToMany(
-    () => SettingsPermissionEntity,
-    (settingsPermission: SettingsPermissionEntity) => settingsPermission.role,
+    () => SettingPermissionEntity,
+    (settingsPermission: SettingPermissionEntity) => settingsPermission.role,
   )
-  settingsPermissions: Relation<SettingsPermissionEntity[]>;
+  settingsPermissions: Relation<SettingPermissionEntity[]>;
 }

@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -42,6 +43,10 @@ export class ObjectPermissionService {
 
       const objectPermissionId = result.generatedMaps[0].id;
 
+      if (!isDefined(objectPermissionId)) {
+        throw new Error('Failed to upsert object permission');
+      }
+
       return this.objectPermissionRepository.findOne({
         where: {
           id: objectPermissionId,
@@ -55,7 +60,7 @@ export class ObjectPermissionService {
           },
         });
 
-        if (!role) {
+        if (!isDefined(role)) {
           throw new PermissionsException(
             PermissionsExceptionMessage.ROLE_NOT_FOUND,
             PermissionsExceptionCode.ROLE_NOT_FOUND,
@@ -68,7 +73,7 @@ export class ObjectPermissionService {
           },
         });
 
-        if (!objectMetadata) {
+        if (!isDefined(objectMetadata)) {
           throw new PermissionsException(
             PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
             PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
