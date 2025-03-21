@@ -186,11 +186,12 @@ const writeInPackageJson = (override: Record<string, any>) => {
   writePackageJson(updatedPackage);
 };
 
-const main = () => {
-  const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
-  const moduleIndexFiles = generateModuleIndexFiles(moduleDirectories);
+const computePackageJsonFilesAndPreconstructConfig = (
+  moduleDirectories: string[],
+) => {
   const entrypoints = [...moduleDirectories.map(getLastPathFolder)];
-  writeInPackageJson({
+
+  return {
     preconstruct: {
       entrypoints: [
         './index.ts',
@@ -198,8 +199,16 @@ const main = () => {
       ],
     },
     files: ['dist', ...entrypoints],
-  });
+  };
+};
 
+const main = () => {
+  const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
+  const moduleIndexFiles = generateModuleIndexFiles(moduleDirectories);
+  const packageJsonPreconstructConfigAndFiles =
+    computePackageJsonFilesAndPreconstructConfig(moduleDirectories);
+  
+  writeInPackageJson(packageJsonPreconstructConfigAndFiles); 
   moduleIndexFiles.forEach(createTypeScriptFile);
 };
 main();
