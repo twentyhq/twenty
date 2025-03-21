@@ -1,11 +1,11 @@
 SCHEMA >
-    `timestamp` DateTime64(3),
-    `workspaceId` String,
-    `functionId` String,
-    `durationInMs` Int64,
-    `success` Bool,
-    `errorType` LowCardinality(String),
-    `version` LowCardinality(String)
+    `timestamp` DateTime64(3) `json:$.timestamp`,
+    `workspaceId` String `json:$.workspaceId`,
+    `functionId` String `json:$.functionId`,
+    `durationInMs` Int64 `json:$.durationInMs`,
+    `success` Bool `json:$.success`,
+    `errorType` LowCardinality(String) `json:$.errorType`,
+    `version` LowCardinality(String) `json:$.version`
 
 ENGINE MergeTree
 ENGINE_PARTITION_KEY toYYYYMM(timestamp)
