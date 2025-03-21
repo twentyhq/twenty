@@ -1,9 +1,15 @@
-import { ObjectFilterDropdownFilterSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
-import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectCompositeFieldSubMenu';
+import { AdvancedFilterFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu';
+import { AdvancedFilterSubFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterSubFieldSelectMenu';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
-export const AdvancedFilterFieldSelectDrodownContent = () => {
+type AdvancedFilterFieldSelectDrodownContentProps = {
+  recordFilterId: string;
+};
+
+export const AdvancedFilterFieldSelectDrodownContent = ({
+  recordFilterId,
+}: AdvancedFilterFieldSelectDrodownContentProps) => {
   const [objectFilterDropdownIsSelectingCompositeField] =
     useRecoilComponentStateV2(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
@@ -13,8 +19,8 @@ export const AdvancedFilterFieldSelectDrodownContent = () => {
     objectFilterDropdownIsSelectingCompositeField;
 
   return shouldShowCompositeSelectionSubMenu ? (
-    <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu />
+    <AdvancedFilterSubFieldSelectMenu recordFilterId={recordFilterId} />
   ) : (
-    <ObjectFilterDropdownFilterSelect />
+    <AdvancedFilterFieldSelectMenu recordFilterId={recordFilterId} />
   );
 };
