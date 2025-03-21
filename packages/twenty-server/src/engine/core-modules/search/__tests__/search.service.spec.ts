@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/search/__mocks__/mockObjectMetadataItemsWithFieldMaps';
-import { GlobalSearchService } from 'src/engine/core-modules/search/services/search.service';
+import { SearchService } from 'src/engine/core-modules/search/services/search.service';
 
 describe('SearchService', () => {
-  let service: GlobalSearchService;
+  let service: SearchService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GlobalSearchService],
+      providers: [SearchService],
     }).compile();
 
-    service = module.get<GlobalSearchService>(GlobalSearchService);
+    service = module.get<SearchService>(SearchService);
   });
 
   it('should be defined', () => {
@@ -103,7 +103,7 @@ describe('SearchService', () => {
     it('should sort the search object results by tsRankCD', () => {
       const objectResults = [
         {
-          objectSingularName: 'person',
+          objectNameSingular: 'person',
           tsRankCD: 2,
           tsRank: 1,
           recordId: '',
@@ -111,7 +111,7 @@ describe('SearchService', () => {
           imageUrl: '',
         },
         {
-          objectSingularName: 'company',
+          objectNameSingular: 'company',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',
@@ -119,7 +119,7 @@ describe('SearchService', () => {
           imageUrl: '',
         },
         {
-          objectSingularName: 'regular-custom-object',
+          objectNameSingular: 'regular-custom-object',
           tsRankCD: 3,
           tsRank: 1,
           recordId: '',
@@ -138,7 +138,7 @@ describe('SearchService', () => {
     it('should sort the search object results by tsRank, if tsRankCD is the same', () => {
       const objectResults = [
         {
-          objectSingularName: 'person',
+          objectNameSingular: 'person',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',
@@ -146,7 +146,7 @@ describe('SearchService', () => {
           imageUrl: '',
         },
         {
-          objectSingularName: 'company',
+          objectNameSingular: 'company',
           tsRankCD: 1,
           tsRank: 2,
           recordId: '',
@@ -154,7 +154,7 @@ describe('SearchService', () => {
           imageUrl: '',
         },
         {
-          objectSingularName: 'regular-custom-object',
+          objectNameSingular: 'regular-custom-object',
           tsRankCD: 1,
           tsRank: 3,
           recordId: '',
@@ -173,7 +173,7 @@ describe('SearchService', () => {
     it('should sort the search object results by priority rank, if tsRankCD and tsRank are the same', () => {
       const objectResults = [
         {
-          objectSingularName: 'company',
+          objectNameSingular: 'company',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',
@@ -181,7 +181,7 @@ describe('SearchService', () => {
           imageUrl: '',
         },
         {
-          objectSingularName: 'person',
+          objectNameSingular: 'person',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',
@@ -189,7 +189,7 @@ describe('SearchService', () => {
           imageUrl: '',
         },
         {
-          objectSingularName: 'regular-custom-object',
+          objectNameSingular: 'regular-custom-object',
           tsRankCD: 1,
           tsRank: 1,
           recordId: '',

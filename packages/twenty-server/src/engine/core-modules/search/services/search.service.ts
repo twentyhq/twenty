@@ -10,12 +10,12 @@ import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { RESULTS_LIMIT_BY_OBJECT_WITHOUT_SEARCH_TERMS } from 'src/engine/core-modules/search/constants/results-limit-by-object-without-search-terms';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/search/constants/standard-objects-by-priority-rank';
-import { GlobalSearchRecordDTO } from 'src/engine/core-modules/search/dtos/global-search-record-dto';
 import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
+import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record-dto';
 import {
-  GlobalSearchException,
-  GlobalSearchExceptionCode,
-} from 'src/engine/core-modules/search/exceptions/global-search.exception';
+  SearchException,
+  SearchExceptionCode,
+} from 'src/engine/core-modules/search/exceptions/search.exception';
 import { RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -23,7 +23,7 @@ import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/ge
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 @Injectable()
-export class GlobalSearchService {
+export class SearchService {
   filterObjectMetadataItems({
     objectMetadataItemWithFieldMaps,
     includedObjectNameSingulars,
@@ -143,9 +143,9 @@ export class GlobalSearchService {
     objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   ) {
     if (!objectMetadataItem.labelIdentifierFieldMetadataId) {
-      throw new GlobalSearchException(
+      throw new SearchException(
         'Label identifier field not found',
-        GlobalSearchExceptionCode.LABEL_IDENTIFIER_FIELD_NOT_FOUND,
+        SearchExceptionCode.LABEL_IDENTIFIER_FIELD_NOT_FOUND,
       );
     }
 
@@ -217,7 +217,7 @@ export class GlobalSearchService {
         return records.map((record) => {
           return {
             recordId: record.id,
-            objectSingularName: objectMetadataItem.nameSingular,
+            objectNameSingular: objectMetadataItem.nameSingular,
             label: this.getLabelIdentifierValue(record, objectMetadataItem),
             imageUrl: this.getImageIdentifierValue(record, objectMetadataItem),
             tsRankCD: record.tsRankCD,
@@ -230,9 +230,7 @@ export class GlobalSearchService {
     return this.sortSearchObjectResults(searchRecords).slice(0, limit);
   }
 
-  sortSearchObjectResults(
-    searchObjectResultsWithRank: GlobalSearchRecordDTO[],
-  ) {
+  sortSearchObjectResults(searchObjectResultsWithRank: SearchRecordDTO[]) {
     return searchObjectResultsWithRank.sort((a, b) => {
       if (a.tsRankCD !== b.tsRankCD) {
         return b.tsRankCD - a.tsRankCD;
@@ -243,8 +241,8 @@ export class GlobalSearchService {
       }
 
       return (
-        (STANDARD_OBJECTS_BY_PRIORITY_RANK[b.objectSingularName] || 0) -
-        (STANDARD_OBJECTS_BY_PRIORITY_RANK[a.objectSingularName] || 0)
+        (STANDARD_OBJECTS_BY_PRIORITY_RANK[b.objectNameSingular] || 0) -
+        (STANDARD_OBJECTS_BY_PRIORITY_RANK[a.objectNameSingular] || 0)
       );
     });
   }

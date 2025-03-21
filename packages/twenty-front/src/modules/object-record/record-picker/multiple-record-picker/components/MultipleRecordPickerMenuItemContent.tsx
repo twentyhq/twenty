@@ -12,7 +12,7 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { GlobalSearchRecord } from '~/generated-metadata/graphql';
+import { SearchRecord } from '~/generated-metadata/graphql';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -20,7 +20,7 @@ export const StyledSelectableItem = styled(SelectableItem)`
 `;
 
 type MultipleRecordPickerMenuItemContentProps = {
-  searchRecord: GlobalSearchRecord;
+  searchRecord: SearchRecord;
   objectMetadataItem: ObjectMetadataItem;
   onChange: (morphItem: RecordPickerPickableMorphItem) => void;
 };

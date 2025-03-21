@@ -1,5 +1,5 @@
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { globalSearch } from '@/command-menu/graphql/queries/globalSearch';
+import { search } from '@/command-menu/graphql/queries/search';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -10,8 +10,8 @@ import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/typ
 import { ApolloClient, useApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
-import { GlobalSearchRecord } from '~/generated-metadata/graphql';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared';
+import { SearchRecord } from '~/generated-metadata/graphql';
 
 export const useMultipleRecordPickerPerformSearch = () => {
   const client = useApolloClient();
@@ -117,23 +117,23 @@ export const useMultipleRecordPickerPerformSearch = () => {
         const morphItems = [
           ...updatedPickedMorphItems,
           ...searchRecordsFilteredOnPickedRecordsWithoutDuplicates.map(
-            ({ recordId, objectSingularName }) => ({
+            ({ recordId, objectNameSingular }) => ({
               isMatchingSearchFilter: true,
               isSelected: true,
               objectMetadataId: searchableObjectMetadataItems.find(
                 (objectMetadata) =>
-                  objectMetadata.nameSingular === objectSingularName,
+                  objectMetadata.nameSingular === objectNameSingular,
               )?.id,
               recordId,
             }),
           ),
           ...searchRecordsExcludingPickedRecordsWithoutDuplicates.map(
-            ({ recordId, objectSingularName }) => ({
+            ({ recordId, objectNameSingular }) => ({
               isMatchingSearchFilter: true,
               isSelected: false,
               objectMetadataId: searchableObjectMetadataItems.find(
                 (objectMetadata) =>
-                  objectMetadata.nameSingular === objectSingularName,
+                  objectMetadata.nameSingular === objectNameSingular,
               )?.id,
               recordId,
             }),
@@ -168,8 +168,8 @@ export const useMultipleRecordPickerPerformSearch = () => {
               .map(({ nameSingular }) => {
                 const recordIdsForMetadataItem = searchRecords
                   .filter(
-                    ({ objectSingularName }) =>
-                      objectSingularName === nameSingular,
+                    ({ objectNameSingular }) =>
+                      objectNameSingular === nameSingular,
                   )
                   .map(({ recordId }) => recordId);
 
@@ -251,14 +251,14 @@ const performSearchQueries = async ({
   searchFilter: string;
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickedRecordIds: string[];
-}): Promise<[GlobalSearchRecord[], GlobalSearchRecord[]]> => {
+}): Promise<[SearchRecord[], SearchRecord[]]> => {
   if (searchableObjectMetadataItems.length === 0) {
     return [[], []];
   }
 
   const searchRecords = async (filter: any) => {
     const { data } = await client.query({
-      query: globalSearch,
+      query: search,
       variables: {
         searchInput: searchFilter,
         includedObjectNameSingulars: searchableObjectMetadataItems.map(
@@ -268,7 +268,7 @@ const performSearchQueries = async ({
         limit: MAX_SEARCH_RESULTS,
       },
     });
-    return data.globalSearch;
+    return data.search;
   };
 
   const searchRecordsExcludingPickedRecords = await searchRecords(
