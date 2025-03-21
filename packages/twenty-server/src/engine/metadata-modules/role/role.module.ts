@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleResolver } from 'src/engine/metadata-modules/role/role.resolver';
@@ -19,6 +20,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     PermissionsModule,
     UserWorkspaceModule,
     FeatureFlagModule,
+    ObjectPermissionModule,
   ],
   providers: [RoleService, RoleResolver],
   exports: [RoleService],
