@@ -2,20 +2,29 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, within } from '@storybook/test';
 import { FieldMetadataType } from 'twenty-shared';
-import { ComponentDecorator } from 'twenty-ui';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowEditActionFormFiller } from '../WorkflowEditActionFormFiller';
 
 const meta: Meta<typeof WorkflowEditActionFormFiller> = {
   title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormFiller',
   component: WorkflowEditActionFormFiller,
+  parameters: {
+    msw: graphqlMocks,
+  },
   decorators: [
     WorkflowStepActionDrawerDecorator,
     ComponentDecorator,
     I18nFrontDecorator,
     WorkflowStepDecorator,
+    RouterDecorator,
+    ObjectMetadataItemsDecorator,
+    WorkspaceDecorator,
   ],
 };
 
