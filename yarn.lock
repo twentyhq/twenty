@@ -12368,7 +12368,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@preconstruct/cli@npm:^2.8.11":
+"@preconstruct/cli@npm:2.8.11":
   version: 2.8.11
   resolution: "@preconstruct/cli@npm:2.8.11"
   dependencies:
@@ -12411,6 +12411,52 @@ __metadata:
   bin:
     preconstruct: bin.js
   checksum: 10c0/8f79bc789e0eae239c1a622c93928bed86bad6f994a9eeeacd9e8c7da4e06865fb465b1c57cf1f64cbc84b2a8e5c957e2fcd4feea0f1d37d1c0dd156852fd7a8
+  languageName: node
+  linkType: hard
+
+"@preconstruct/cli@patch:@preconstruct/cli@npm%3A2.8.11#~/.yarn/patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch":
+  version: 2.8.11
+  resolution: "@preconstruct/cli@patch:@preconstruct/cli@npm%3A2.8.11#~/.yarn/patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch::version=2.8.11&hash=976544"
+  dependencies:
+    "@babel/code-frame": "npm:^7.5.5"
+    "@babel/core": "npm:^7.7.7"
+    "@babel/helper-module-imports": "npm:^7.10.4"
+    "@babel/runtime": "npm:^7.7.7"
+    "@preconstruct/hook": "npm:^0.4.0"
+    "@rollup/plugin-alias": "npm:^3.1.1"
+    "@rollup/plugin-commonjs": "npm:^15.0.0"
+    "@rollup/plugin-json": "npm:^4.1.0"
+    "@rollup/plugin-node-resolve": "npm:^11.2.1"
+    "@rollup/plugin-replace": "npm:^2.4.1"
+    builtin-modules: "npm:^3.1.0"
+    chalk: "npm:^4.1.0"
+    ci-info: "npm:^3.8.0"
+    dataloader: "npm:^2.0.0"
+    detect-indent: "npm:^6.0.0"
+    enquirer: "npm:^2.3.6"
+    estree-walker: "npm:^2.0.1"
+    fast-deep-equal: "npm:^2.0.1"
+    fast-glob: "npm:^3.2.4"
+    fs-extra: "npm:^9.0.1"
+    is-reference: "npm:^1.2.1"
+    jest-worker: "npm:^26.3.0"
+    magic-string: "npm:^0.30.0"
+    ms: "npm:^2.1.2"
+    normalize-path: "npm:^3.0.0"
+    npm-packlist: "npm:^2.1.2"
+    p-limit: "npm:^3.0.2"
+    parse-glob: "npm:^3.0.4"
+    parse-json: "npm:^5.1.0"
+    quick-lru: "npm:^5.1.1"
+    resolve-from: "npm:^5.0.0"
+    rollup: "npm:^2.79.1"
+    semver: "npm:^7.3.4"
+    terser: "npm:^5.16.8"
+    v8-compile-cache: "npm:^2.1.1"
+    zod: "npm:^3.21.4"
+  bin:
+    preconstruct: bin.js
+  checksum: 10c0/7b8c885057f2ec0a6fce5f91f3a8c13ec5d685707d52238199dabe538cd1c405df8333bca2d30899e57e1e3d8cfe451aa4067bb61d6a8c1069afbb544540cb6d
   languageName: node
   linkType: hard
 
@@ -52803,7 +52849,7 @@ __metadata:
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   dependencies:
     "@babel/preset-env": "npm:^7.26.9"
-    "@preconstruct/cli": "npm:^2.8.11"
+    "@preconstruct/cli": "patch:@preconstruct/cli@npm%3A2.8.11#~/.yarn/patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/babel__preset-env": "npm:^7"
