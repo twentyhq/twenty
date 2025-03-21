@@ -59,8 +59,8 @@ export const CommandMenu = () => {
     {
       heading: t`Global`,
       items: matchingStandardActionGlobalCommands
-        .concat(matchingNavigateCommands)
-        .concat(matchingWorkflowRunGlobalCommands),
+        .concat(matchingWorkflowRunGlobalCommands)
+        .concat(matchingNavigateCommands),
     },
     {
       heading: t`Search ''${commandMenuSearch}'' with...`,
