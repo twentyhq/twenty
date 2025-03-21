@@ -1,9 +1,9 @@
 import { RecoilState, useRecoilState } from 'recoil';
 
-import { useTabListStates } from '@/ui/layout/tab/hooks/internal/useTabListStates';
+import { useTabListStatesV1 } from '@/ui/layout/tab/hooks/internal/useTabListStates';
 
 export const useTabList = <T extends string>(tabListId?: string) => {
-  const { activeTabIdState } = useTabListStates({
+  const { activeTabIdState } = useTabListStatesV1({
     tabListScopeId: tabListId,
   });
 
