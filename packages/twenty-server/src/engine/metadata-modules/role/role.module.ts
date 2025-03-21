@@ -10,6 +10,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleResolver } from 'src/engine/metadata-modules/role/role.resolver';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
+import { SettingPermissionModule } from 'src/engine/metadata-modules/setting-permission/setting-permission.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     UserWorkspaceModule,
     FeatureFlagModule,
     ObjectPermissionModule,
+    SettingPermissionModule,
   ],
   providers: [RoleService, RoleResolver],
   exports: [RoleService],

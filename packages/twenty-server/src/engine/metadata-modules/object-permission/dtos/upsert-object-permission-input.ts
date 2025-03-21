@@ -1,15 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 @InputType()
 export class UpsertObjectPermissionInput {
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   @Field()
   roleId: string;
 
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   @Field()
   objectMetadataId: string;
