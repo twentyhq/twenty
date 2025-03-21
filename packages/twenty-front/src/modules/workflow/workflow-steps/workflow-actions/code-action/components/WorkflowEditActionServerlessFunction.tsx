@@ -27,9 +27,10 @@ import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
 import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
+import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
+import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
@@ -76,7 +77,6 @@ export const WorkflowEditActionServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionServerlessFunctionProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const activeTabId = useRecoilComponentValueV2(
@@ -287,6 +287,8 @@ export const WorkflowEditActionServerlessFunction = ({
     ? action.name
     : 'Code - Serverless Function';
   const headerIcon = getActionIcon(action.type);
+  const headerIconColor = useActionIconColorOrThrow(action.type);
+  const headerType = useActionHeaderTypeOrThrow(action.type);
 
   return (
     !loading && (
@@ -303,9 +305,9 @@ export const WorkflowEditActionServerlessFunction = ({
             updateAction({ name: newName });
           }}
           Icon={getIcon(headerIcon)}
-          iconColor={theme.color.orange}
+          iconColor={headerIconColor}
           initialTitle={headerTitle}
-          headerType="Code"
+          headerType={headerType}
           disabled={actionOptions.readonly}
         />
         <WorkflowStepBody>
