@@ -1,8 +1,10 @@
 import prettier from '@prettier/sync';
 import * as fs from 'fs';
+import glob from 'glob';
 import path from 'path';
 import { Options } from 'prettier';
 import slash from 'slash';
+import ts from 'typescript';
 
 // TODO prastoin refactor this file in several one into its dedicated package and make it a TypeScript CLI
 
@@ -201,7 +203,7 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
         ...initialJsonFile.targets,
         build: {
           ...initialJsonFile.targets.build,
-           outputs,
+          outputs,
         },
       },
     },
@@ -235,18 +237,172 @@ const computeProjectNxBuildOutputsPath = (moduleDirectories: string[]) => {
 
   return ['{projectRoot}/dist', ...dynamicOutputsPath];
 };
+function getTypeScriptFiles(
+  directoryPath: string,
+  includeIndex: boolean = false,
+): string[] {
+  const pattern = path.join(directoryPath, '**/*.{ts,tsx}');
+  const files = glob.sync(pattern);
+
+  return files.filter(
+    (file) =>
+      !file.endsWith('.d.ts') &&
+      (includeIndex ? true : !file.endsWith('index.ts')),
+  );
+}
+
+const getKind = (node: ts.VariableStatement) => {
+  const isConst = (node.declarationList.flags & ts.NodeFlags.Const) !== 0;
+  if (isConst) {
+    return 'const';
+  }
+
+  const isLet = (node.declarationList.flags & ts.NodeFlags.Let) !== 0;
+  if (isLet) {
+    return 'let';
+  }
+
+  return 'var';
+};
+
+function extractExports(sourceFile: ts.SourceFile) {
+  const exports: DeclarationOccurence[] = [];
+
+  function visit(node: ts.Node) {
+    if (!ts.canHaveModifiers(node)) {
+      return ts.forEachChild(node, visit);
+    }
+    const modifiers = ts.getModifiers(node);
+    const isExport = modifiers?.some(
+      (mod) => mod.kind === ts.SyntaxKind.ExportKeyword,
+    );
+
+    if (!isExport) {
+      return ts.forEachChild(node, visit);
+    }
+
+    switch (true) {
+      case ts.isTypeAliasDeclaration(node):
+        exports.push({
+          kind: 'type',
+          name: node.name.text,
+        });
+        break;
+
+      case ts.isInterfaceDeclaration(node):
+        exports.push({
+          kind: 'interface',
+          name: node.name.text,
+        });
+        break;
+
+      case ts.isEnumDeclaration(node):
+        exports.push({
+          kind: 'enum',
+          name: node.name.text,
+        });
+        break;
+
+      case ts.isFunctionDeclaration(node) && node.name !== undefined:
+        exports.push({
+          kind: 'function',
+          name: node.name.text,
+        });
+        break;
+
+      case ts.isVariableStatement(node):
+        node.declarationList.declarations.forEach((decl) => {
+          if (ts.isIdentifier(decl.name)) {
+            const kind = getKind(node);
+            exports.push({
+              kind,
+              name: decl.name.text,
+            });
+          }
+        });
+        break;
+
+      case ts.isClassDeclaration(node) && node.name !== undefined:
+        exports.push({
+          kind: 'class',
+          name: node.name.text,
+        });
+        break;
+    }
+    return ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return exports;
+}
+
+type DeclarationOccurence = { kind: string; name: string };
+type ExtractedExports = Array<{
+  file: string;
+  exports: DeclarationOccurence[];
+}>;
+
+function findAllExports(directoryPath: string): ExtractedExports {
+  const results: ExtractedExports = [];
+
+  const files = getTypeScriptFiles(directoryPath);
+
+  for (const file of files) {
+    const sourceFile = ts.createSourceFile(
+      file,
+      fs.readFileSync(file, 'utf8'),
+      ts.ScriptTarget.Latest,
+      true,
+    );
+
+    const exports = extractExports(sourceFile);
+    if (exports.length > 0) {
+      results.push({
+        file,
+        exports,
+      });
+    }
+  }
+
+  return results;
+}
+
+type ExportPerBarrel = Array<{
+  barrel: string;
+  exports: ExtractedExports;
+}>;
+const retrieveExportsPerBarrel = (barrelDirectories: string[]) => {
+  return barrelDirectories.map<ExportPerBarrel[number]>((moduleDirectory) => {
+    const moduleExportsPerFile = findAllExports(moduleDirectory);
+    const moduleName = moduleDirectory.split('/').pop();
+    if (!moduleName) {
+      throw new Error(
+        `Should never occurs moduleName not found ${moduleDirectory}`,
+      );
+    }
+
+    return {
+      barrel: moduleName,
+      exports: moduleExportsPerFile,
+    };
+  });
+};
 
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
+  const tmp = retrieveExportsPerBarrel(moduleDirectories);
+  fs.writeFileSync(
+    'tmp.json',
+    prettier.format(JSON.stringify(tmp), { parser: 'json-stringify' }),
+  );
+  console.log(tmp);
   const moduleIndexFiles = generateModuleIndexFiles(moduleDirectories);
   const packageJsonPreconstructConfigAndFiles =
     computePackageJsonFilesAndPreconstructConfig(moduleDirectories);
   const nxBuildOutputsPath =
     computeProjectNxBuildOutputsPath(moduleDirectories);
 
-  updateNxProjectConfigurationBuildOutputs(
-     nxBuildOutputsPath
-  );
+  updateNxProjectConfigurationBuildOutputs(nxBuildOutputsPath);
   writeInPackageJson(packageJsonPreconstructConfigAndFiles);
   moduleIndexFiles.forEach(createTypeScriptFile);
 };
