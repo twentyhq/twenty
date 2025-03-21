@@ -72,6 +72,7 @@ export const SettingsServiceCenterNewAgent = () => {
   });
 
   const { isValid, isSubmitting } = formConfig.formState;
+
   const canSave = isValid && !isSubmitting;
 
   const settingsServiceCenterAgentsPagePath = getSettingsPath(
