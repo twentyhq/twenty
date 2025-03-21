@@ -6,6 +6,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useGetViewGroupsFilters } from '@/views/hooks/useGetViewGroupsFilters';
 
 export const useGetRecordIndexTotalCount = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
@@ -20,9 +21,11 @@ export const useGetRecordIndexTotalCount = () => {
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
+  const recordGroupsVisibilityFilter = useGetViewGroupsFilters();
+
   const filter = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordFilters: currentRecordFilters,
+    recordFilters: [...currentRecordFilters, ...recordGroupsVisibilityFilter],
     recordFilterGroups: currentRecordFilterGroups,
     fields: objectMetadataItem.fields,
   });
