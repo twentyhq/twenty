@@ -7,7 +7,7 @@ import * as camelToTitleCaseModule from 'src/utils/camel-to-title-case';
 jest.mock('src/engine/utils/generate-fake-value');
 jest.mock('src/utils/camel-to-title-case');
 jest.mock('src/engine/metadata-modules/field-metadata/composite-types', () => {
-  const actualTypes = jest.requireActual('twenty-shared');
+  const actualTypes = jest.requireActual('twenty-shared/types');
   const { FieldMetadataType } = actualTypes;
 
   const compositeTypeDefinitions = new Map();
