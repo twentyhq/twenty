@@ -49,13 +49,25 @@ const StyledAdornmentContainer = styled.div<{
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
   justify-content: center;
   min-width: fit-content;
   padding: ${({ theme }) => theme.spacing(2)};
   width: auto;
   line-height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
 
   ${({ position }) =>
     position === 'left' ? 'border-right: none;' : 'border-left: none;'}
@@ -97,14 +109,26 @@ const StyledInput = styled.input<
   font-weight: ${({ theme, inheritFontStyles }) =>
     inheritFontStyles ? 'inherit' : theme.font.weight.regular};
   height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
   line-height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
   outline: none;
   padding: ${({ theme, sizeVariant, autoGrow }) =>
     autoGrow
       ? theme.spacing(1)
-      : sizeVariant === 'sm'
+      : sizeVariant === 'xs'
         ? `${theme.spacing(2)} 0`
         : theme.spacing(2)};
   padding-left: ${({ theme, LeftIcon, autoGrow }) =>
@@ -152,9 +176,9 @@ const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputV2Size }>`
   display: flex;
   justify-content: center;
   padding-left: ${({ theme, sizeVariant }) =>
-    sizeVariant === 'sm'
+    sizeVariant === 'xs'
       ? theme.spacing(0.5)
-      : sizeVariant === 'md'
+      : sizeVariant === 'md' || sizeVariant === 'sm'
         ? theme.spacing(1)
         : theme.spacing(2)};
   position: absolute;
@@ -191,7 +215,7 @@ const StyledTrailingIcon = styled.div<{
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-export type TextInputV2Size = 'sm' | 'md' | 'lg';
+export type TextInputV2Size = 'xs' | 'sm' | 'md' | 'lg';
 
 export type TextInputV2ComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -378,7 +402,13 @@ const StyledAutogrowWrapper = styled(AutogrowWrapper)<{
 }>`
   border: 1px solid transparent;
   height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
   padding: 0 ${({ theme }) => theme.spacing(1.25)};
   box-sizing: border-box;
 `;

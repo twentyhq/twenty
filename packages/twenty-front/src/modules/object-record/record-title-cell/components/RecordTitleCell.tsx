@@ -19,7 +19,7 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 
 type RecordTitleCellProps = {
   loading?: boolean;
-  sizeVariant?: 'sm' | 'md';
+  sizeVariant?: 'xs' | 'md';
 };
 
 export const RecordTitleCell = ({

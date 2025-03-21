@@ -5,21 +5,19 @@ import {
   IconCopy,
   IconLayoutKanban,
   IconLayoutList,
-  IconList,
   IconListDetails,
   IconTable,
   IconTrash,
   MenuItem,
-  useIcons,
 } from 'twenty-ui';
 
+import { ObjectOptionsDropdownMenuName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuName';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -31,17 +29,13 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
   const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
     useOptionsDropdown();
 
-  const { getIcon } = useIcons();
   const { currentView } = useGetCurrentViewOnly();
-
-  const CurrentViewIcon = currentView?.icon ? getIcon(currentView.icon) : null;
 
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
@@ -83,14 +77,8 @@ export const ObjectOptionsDropdownMenuContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent Icon={CurrentViewIcon ?? IconList} />
-        }
-      >
-        {currentView?.name}
-      </DropdownMenuHeader>
-
+      <ObjectOptionsDropdownMenuName />
+      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
           onClick={() => onContentChange('layout')}

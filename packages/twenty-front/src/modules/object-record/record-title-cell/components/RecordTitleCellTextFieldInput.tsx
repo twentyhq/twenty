@@ -14,7 +14,7 @@ type RecordTitleCellTextFieldInputProps = {
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
-  sizeVariant?: 'sm' | 'md';
+  sizeVariant?: 'xs' | 'md';
 };
 
 export const RecordTitleCellTextFieldInput = ({
