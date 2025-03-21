@@ -207,7 +207,11 @@ export class MicrosoftGetMessageListService {
       return true;
     };
 
-    const pageIterator = new PageIterator(microsoftClient, response, callback);
+    const pageIterator = new PageIterator(microsoftClient, response, callback, {
+      headers: {
+        Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
+      },
+    });
 
     await pageIterator.iterate().catch((error) => {
       this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
