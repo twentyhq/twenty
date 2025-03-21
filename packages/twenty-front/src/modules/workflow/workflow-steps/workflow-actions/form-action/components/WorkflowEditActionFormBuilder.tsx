@@ -6,6 +6,7 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
+import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useTheme } from '@emotion/react';
@@ -13,13 +14,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { FieldMetadataType, isDefined } from 'twenty-shared';
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconPlus,
-  IconTrash,
-  useIcons,
-} from 'twenty-ui';
+import { IconChevronDown, IconPlus, IconTrash, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { v4 } from 'uuid';
@@ -34,14 +29,6 @@ export type WorkflowEditActionFormBuilderProps = {
         readonly?: false;
         onActionUpdate: (action: WorkflowFormAction) => void;
       };
-};
-
-export type WorkflowFormActionField = {
-  id: string;
-  label: string;
-  type: FieldMetadataType.TEXT | FieldMetadataType.NUMBER;
-  placeholder?: string;
-  settings?: Record<string, unknown>;
 };
 
 type FormData = WorkflowFormActionField[];
@@ -193,12 +180,7 @@ export const WorkflowEditActionFormBuilder = ({
                 >
                   <StyledFieldContainer>
                     <StyledPlaceholder>{field.placeholder}</StyledPlaceholder>
-                    {isFieldSelected(field.id) ? (
-                      <IconChevronUp
-                        size={theme.icon.size.md}
-                        color={theme.font.color.tertiary}
-                      />
-                    ) : (
+                    {!isFieldSelected(field.id) && (
                       <IconChevronDown
                         size={theme.icon.size.md}
                         color={theme.font.color.tertiary}
@@ -207,16 +189,12 @@ export const WorkflowEditActionFormBuilder = ({
                   </StyledFieldContainer>
                 </FormFieldInputInputContainer>
               </FormFieldInputRowContainer>
-              {isFieldSelected(field.id) && (
+              {!actionOptions.readonly && isFieldSelected(field.id) && (
                 <StyledIconButtonContainer>
                   <IconTrash
                     size={theme.icon.size.md}
                     color={theme.font.color.secondary}
                     onClick={() => {
-                      if (actionOptions.readonly === true) {
-                        return;
-                      }
-
                       const updatedFormData = formData.filter(
                         (currentField) => currentField.id !== field.id,
                       );
@@ -253,12 +231,12 @@ export const WorkflowEditActionFormBuilder = ({
                 <FormFieldInputInputContainer
                   hasRightElement={false}
                   onClick={() => {
-                    const { label, placeholder } = getDefaultFormFieldSettings(
-                      FieldMetadataType.TEXT,
-                    );
+                    const { label, placeholder, name } =
+                      getDefaultFormFieldSettings(FieldMetadataType.TEXT);
 
                     const newField: WorkflowFormActionField = {
                       id: v4(),
+                      name,
                       type: FieldMetadataType.TEXT,
                       label,
                       placeholder,

@@ -20,6 +20,10 @@ export const getWorkflowRunStepExecutionStatus = ({
     return 'failure';
   }
 
+  if (isDefined(stepOutput?.pendingEvent)) {
+    return 'running';
+  }
+
   if (isDefined(stepOutput?.result)) {
     return 'success';
   }
