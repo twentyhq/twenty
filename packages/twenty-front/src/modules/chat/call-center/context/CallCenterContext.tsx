@@ -62,8 +62,6 @@ export const CallCenterProvider = ({
     TAB_LIST_COMPONENT_ID,
   );
 
-  console.log('ActivetabId: ', activeTabId);
-
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
