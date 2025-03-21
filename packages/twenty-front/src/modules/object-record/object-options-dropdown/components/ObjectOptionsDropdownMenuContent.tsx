@@ -77,7 +77,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
 
   return (
     <>
-      <ObjectOptionsDropdownMenuName />
+      <ObjectOptionsDropdownMenuName currentView={currentView} />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
