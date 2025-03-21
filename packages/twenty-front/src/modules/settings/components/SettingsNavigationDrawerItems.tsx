@@ -1,3 +1,4 @@
+import { useAuth } from '@/auth/hooks/useAuth';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import {
@@ -5,14 +6,20 @@ import {
   SettingsNavigationSection,
   useSettingsNavigationItems,
 } from '@/settings/hooks/useSettingsNavigationItems';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
+import { IconDoorEnter } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsNavigationDrawerItems = () => {
+  const { signOut } = useAuth();
+  const { t } = useLingui();
+
   const settingsNavigationItems: SettingsNavigationSection[] =
     useSettingsNavigationItems();
 
@@ -109,6 +116,13 @@ export const SettingsNavigationDrawerItems = () => {
           </NavigationDrawerSection>
         );
       })}
+      <NavigationDrawerSection>
+        <NavigationDrawerItem
+          label={t`Logout`}
+          onClick={signOut}
+          Icon={IconDoorEnter}
+        />
+      </NavigationDrawerSection>
     </>
   );
 };
