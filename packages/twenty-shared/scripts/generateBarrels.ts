@@ -22,9 +22,15 @@ const EXCLUDED_DIRECTORIES = [
   'internal',
 ];
 const INDEX_FILENAME = 'index';
-const PACKAGE_JSON = 'package.json';
+const PACKAGE_JSON_FILENAME = 'package.json';
+const NX_PROJECT_CONFIGURATION_FILENAME = 'project.json';
 const PACKAGE_PATH = path.resolve('packages/twenty-shared');
 const SRC_PATH = path.resolve(`${PACKAGE_PATH}/src`);
+const PACKAGE_JSON_PATH = path.join(PACKAGE_PATH, PACKAGE_JSON_FILENAME);
+const NX_PROJECT_CONFIGURATION_PATH = path.join(
+  PACKAGE_PATH,
+  NX_PROJECT_CONFIGURATION_FILENAME,
+);
 
 const prettierConfigFile = prettier.resolveConfigFile();
 if (prettierConfigFile == null) {
@@ -159,31 +165,47 @@ const generateModuleIndexFiles = (moduleDirectories: string[]) => {
   });
 };
 
-const readPackageJson = (): Record<string, unknown> => {
-  const rawPackageJson = fs.readFileSync(
-    path.join(PACKAGE_PATH, PACKAGE_JSON),
-    'utf-8',
-  );
-  return JSON.parse(rawPackageJson);
+type JsonUpdate = Record<string, any>;
+type WriteInJsonFileArgs = {
+  content: JsonUpdate;
+  file: string;
+};
+const updateJsonFile = ({ content, file }: WriteInJsonFileArgs) => {
+  const updatedJsonFile = JSON.stringify(content);
+  const formattedContent = prettierFormat(updatedJsonFile, 'json-stringify');
+  fs.writeFileSync(file, formattedContent, 'utf-8');
 };
 
-const writePackageJson = (packageJson: unknown) => {
-  const stringified = JSON.stringify(packageJson);
-  const formattedContent = prettierFormat(stringified, 'json-stringify');
-  fs.writeFileSync(
-    path.join(PACKAGE_PATH, PACKAGE_JSON),
-    formattedContent,
-    'utf-8',
-  );
+const writeInPackageJson = (update: JsonUpdate) => {
+  const rawJsonFile = fs.readFileSync(PACKAGE_JSON_PATH, 'utf-8');
+  const initialJsonFile = JSON.parse(rawJsonFile);
+
+  updateJsonFile({
+    file: PACKAGE_JSON_PATH,
+    content: {
+      ...initialJsonFile,
+      ...update,
+    },
+  });
 };
 
-const writeInPackageJson = (override: Record<string, any>) => {
-  const initialPackage = readPackageJson();
-  const updatedPackage = {
-    ...initialPackage,
-    ...override,
-  };
-  writePackageJson(updatedPackage);
+const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
+  const rawJsonFile = fs.readFileSync(NX_PROJECT_CONFIGURATION_PATH, 'utf-8');
+  const initialJsonFile = JSON.parse(rawJsonFile);
+
+  updateJsonFile({
+    file: NX_PROJECT_CONFIGURATION_PATH,
+    content: {
+      ...initialJsonFile,
+      targets: {
+        ...initialJsonFile.targets,
+        build: {
+          ...initialJsonFile.targets.build,
+           outputs,
+        },
+      },
+    },
+  });
 };
 
 const computePackageJsonFilesAndPreconstructConfig = (
@@ -202,13 +224,30 @@ const computePackageJsonFilesAndPreconstructConfig = (
   };
 };
 
+const computeProjectNxBuildOutputsPath = (moduleDirectories: string[]) => {
+  const dynamicOutputsPath = moduleDirectories
+    .map(getLastPathFolder)
+    .flatMap((barrelName) =>
+      ['package.json', 'dist'].map(
+        (subPath) => `{projectRoot}/${barrelName}/${subPath}`,
+      ),
+    );
+
+  return ['{projectRoot}/dist', ...dynamicOutputsPath];
+};
+
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
   const moduleIndexFiles = generateModuleIndexFiles(moduleDirectories);
   const packageJsonPreconstructConfigAndFiles =
     computePackageJsonFilesAndPreconstructConfig(moduleDirectories);
-  
-  writeInPackageJson(packageJsonPreconstructConfigAndFiles); 
+  const nxBuildOutputsPath =
+    computeProjectNxBuildOutputsPath(moduleDirectories);
+
+  updateNxProjectConfigurationBuildOutputs(
+     nxBuildOutputsPath
+  );
+  writeInPackageJson(packageJsonPreconstructConfigAndFiles);
   moduleIndexFiles.forEach(createTypeScriptFile);
 };
 main();

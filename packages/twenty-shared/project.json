@@ -3,10 +3,15 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-shared/src",
   "projectType": "library",
-  "tags": ["scope:shared"],
+  "tags": [
+    "scope:shared"
+  ],
   "targets": {
     "build": {
-      "dependsOn": ["generateBarrels", "^build"],
+      "dependsOn": [
+        "generateBarrels",
+        "^build"
+      ],
       "outputs": [
         "{projectRoot}/dist",
         "{projectRoot}/constants/package.json",
@@ -26,7 +31,10 @@
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.ts"],
+      "inputs": [
+        "production",
+        "{projectRoot}/scripts/generateBarrels.ts"
+      ],
       "outputs": [
         "{projectRoot}/src/index.ts",
         "{projectRoot}/src/*/index.ts",
