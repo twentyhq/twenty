@@ -4,6 +4,13 @@ import { useWorkflowSelectedNodeOrThrow } from '@/workflow/workflow-diagram/hook
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import styled from '@emotion/styled';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
 
 export const CommandMenuWorkflowEditStepContent = ({
   workflow,
@@ -19,12 +26,14 @@ export const CommandMenuWorkflowEditStepContent = ({
   });
 
   return (
-    <WorkflowStepDetail
-      stepId={workflowSelectedNode}
-      trigger={flow.trigger}
-      steps={flow.steps}
-      onActionUpdate={updateStep}
-      onTriggerUpdate={updateTrigger}
-    />
+    <StyledContainer>
+      <WorkflowStepDetail
+        stepId={workflowSelectedNode}
+        trigger={flow.trigger}
+        steps={flow.steps}
+        onActionUpdate={updateStep}
+        onTriggerUpdate={updateTrigger}
+      />
+    </StyledContainer>
   );
 };
