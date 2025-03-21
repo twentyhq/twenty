@@ -20,9 +20,8 @@ export const useSubmitFormStep = () => {
       variables: { input },
     });
     const isSuccess = result?.data?.submitFormStep;
-    if (!isSuccess) {
-      return;
-    }
+
+    return isSuccess;
   };
 
   return { submitFormStep };

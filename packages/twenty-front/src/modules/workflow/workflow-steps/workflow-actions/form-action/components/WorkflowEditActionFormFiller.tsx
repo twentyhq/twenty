@@ -81,16 +81,18 @@ export const WorkflowEditActionFormFiller = ({
   }, 1_000);
 
   const onSubmit = async () => {
+    const response = formData.reduce(
+      (acc, field) => {
+        acc[field.name] = field.value;
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+
     submitFormStep({
       stepId: action.id,
       workflowRunId,
-      response: formData.reduce(
-        (acc, field) => {
-          acc[field.name] = field.value;
-          return acc;
-        },
-        {} as Record<string, any>,
-      ),
+      response,
     });
   };
 
@@ -139,15 +141,17 @@ export const WorkflowEditActionFormFiller = ({
           />
         ))}
       </WorkflowStepBody>
-      <RightDrawerFooter
-        actions={[
-          <CmdEnterActionButton
-            title="Submit"
-            onClick={onSubmit}
-            disabled={actionOptions.readonly}
-          />,
-        ]}
-      />
+      {!actionOptions.readonly && (
+        <RightDrawerFooter
+          actions={[
+            <CmdEnterActionButton
+              title="Submit"
+              onClick={onSubmit}
+              disabled={actionOptions.readonly}
+            />,
+          ]}
+        />
+      )}
     </>
   );
 };
