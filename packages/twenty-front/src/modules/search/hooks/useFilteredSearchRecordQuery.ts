@@ -1,9 +1,7 @@
-import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
+import { formatGlobalSearchRecordAsSingleRecordPickerRecord } from '@/object-metadata/utils/formatGlobalSearchRecordAsSingleRecordPickerRecord';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
-import { MultipleRecordPickerRecords } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerRecords';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared';
 
 export const useFilteredSearchRecordQuery = ({
@@ -18,18 +16,15 @@ export const useFilteredSearchRecordQuery = ({
   excludedRecordIds?: string[];
   objectNameSingular: string;
   searchFilter?: string;
-}): MultipleRecordPickerRecords<SingleRecordPickerRecord> => {
-  const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
-    objectNameSingular,
-  });
-
-  const mappingFunction = (record: ObjectRecord) => ({
-    ...mapToObjectRecordIdentifier(record),
-    record,
-  });
+}): {
+  selectedRecords: SingleRecordPickerRecord[];
+  filteredSelectedRecords: SingleRecordPickerRecord[];
+  recordsToSelect: SingleRecordPickerRecord[];
+  loading: boolean;
+} => {
   const selectedIdsFilter = { id: { in: selectedIds } };
 
-  const { loading: selectedRecordsLoading, records: selectedRecords } =
+  const { loading: selectedRecordsLoading, searchRecords: selectedRecords } =
     useSearchRecords({
       objectNameSingular,
       filter: selectedIdsFilter,
@@ -39,7 +34,7 @@ export const useFilteredSearchRecordQuery = ({
 
   const {
     loading: filteredSelectedRecordsLoading,
-    records: filteredSelectedRecords,
+    searchRecords: filteredSelectedRecords,
   } = useSearchRecords({
     objectNameSingular,
     filter: selectedIdsFilter,
@@ -51,7 +46,7 @@ export const useFilteredSearchRecordQuery = ({
   const notFilter = notFilterIds.length
     ? { not: { id: { in: notFilterIds } } }
     : undefined;
-  const { loading: recordsToSelectLoading, records: recordsToSelect } =
+  const { loading: recordsToSelectLoading, searchRecords: recordsToSelect } =
     useSearchRecords({
       objectNameSingular,
       filter: notFilter,
@@ -61,11 +56,15 @@ export const useFilteredSearchRecordQuery = ({
     });
 
   return {
-    selectedRecords: selectedRecords.map(mappingFunction).filter(isDefined),
-    filteredSelectedRecords: filteredSelectedRecords
-      .map(mappingFunction)
+    selectedRecords: selectedRecords
+      .map(formatGlobalSearchRecordAsSingleRecordPickerRecord)
       .filter(isDefined),
-    recordsToSelect: recordsToSelect.map(mappingFunction).filter(isDefined),
+    filteredSelectedRecords: filteredSelectedRecords
+      .map(formatGlobalSearchRecordAsSingleRecordPickerRecord)
+      .filter(isDefined),
+    recordsToSelect: recordsToSelect
+      .map(formatGlobalSearchRecordAsSingleRecordPickerRecord)
+      .filter(isDefined),
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||

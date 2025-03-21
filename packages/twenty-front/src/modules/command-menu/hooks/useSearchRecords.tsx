@@ -1,3 +1,4 @@
+import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -8,8 +9,6 @@ import { capitalize } from 'twenty-shared';
 import { Avatar } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { useGlobalSearchQuery } from '~/generated/graphql';
-
-const MAX_SEARCH_RESULTS = 30;
 
 export const useSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);

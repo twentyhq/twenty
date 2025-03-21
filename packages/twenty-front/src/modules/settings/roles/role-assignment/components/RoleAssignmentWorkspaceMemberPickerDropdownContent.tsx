@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
+import { GlobalSearchRecord } from '~/generated-metadata/graphql';
 
 type RoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
   searchFilter: string;
-  filteredWorkspaceMembers: WorkspaceMember[];
-  onSelect: (workspaceMember: WorkspaceMember) => void;
+  filteredWorkspaceMembers: GlobalSearchRecord[];
+  onSelect: (workspaceMemberSearchRecord: GlobalSearchRecord) => void;
 };
 
 export const RoleAssignmentWorkspaceMemberPickerDropdownContent = ({
@@ -27,15 +27,15 @@ export const RoleAssignmentWorkspaceMemberPickerDropdownContent = ({
     <>
       {filteredWorkspaceMembers.map((workspaceMember) => (
         <MenuItemAvatar
-          key={workspaceMember.id}
+          key={workspaceMember.recordId}
           onClick={() => onSelect(workspaceMember)}
           avatar={{
             type: 'rounded',
             size: 'md',
-            placeholder: workspaceMember.name.firstName ?? '',
-            placeholderColorSeed: workspaceMember.id,
+            placeholder: workspaceMember.label ?? '',
+            placeholderColorSeed: workspaceMember.recordId,
           }}
-          text={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+          text={`${workspaceMember.label}`}
         />
       ))}
     </>
