@@ -24,6 +24,7 @@ export const permissionGraphqlApiExceptionHandler = (
       throw new UserInputError(error.message);
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:
+    case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:
       throw new NotFoundError(error.message);
     case PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND:
     default:

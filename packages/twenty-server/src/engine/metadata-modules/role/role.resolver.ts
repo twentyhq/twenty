@@ -16,6 +16,9 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { UpsertObjectPermissionInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permission-input';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import {
   PermissionsException,
@@ -39,6 +42,7 @@ export class RoleResolver {
     private readonly roleService: RoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly objectPermissionService: ObjectPermissionService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -117,6 +121,18 @@ export class RoleResolver {
     return this.roleService.createRole({
       workspaceId: workspace.id,
       input: createRoleInput,
+    });
+  }
+
+  @Mutation(() => ObjectPermissionDTO)
+  async upsertOneObjectPermission(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('upsertObjectPermissionInput')
+    upsertObjectPermissionInput: UpsertObjectPermissionInput,
+  ) {
+    return this.objectPermissionService.upsertObjectPermission({
+      workspaceId: workspace.id,
+      input: upsertObjectPermissionInput,
     });
   }
 
