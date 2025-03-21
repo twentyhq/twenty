@@ -129,6 +129,7 @@ const computeExportLineForGivenFile = ({
       path.join(directoryPath, fileNameWithoutExtension),
     ),
   );
+  // TODO refactor should extract all exports atomically please refer to https://github.com/twentyhq/core-team-issues/issues/644
   return `export * from './${pathToImport}';`;
 };
 
