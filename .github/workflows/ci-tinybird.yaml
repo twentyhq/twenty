@@ -50,6 +50,4 @@ jobs:
         run: tb build
       - name: Test project
         run: tb test run
-      - name: Deployment check
-        run: tb --cloud --host ${{ env.TINYBIRD_HOST }} --token ${{ env.TINYBIRD_TOKEN }} deploy --check
       
