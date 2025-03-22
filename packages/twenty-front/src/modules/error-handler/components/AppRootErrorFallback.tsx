@@ -2,7 +2,7 @@ import { AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps
 import styled from '@emotion/styled';
 import LightNoise from '@ui/theme/assets/light-noise.png';
 import { motion } from 'framer-motion';
-import { GRAY_SCALE } from 'twenty-ui';
+import { GRAY_SCALE, IconReload } from 'twenty-ui';
 
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
 
@@ -81,10 +81,20 @@ const StyledEmptySubTitle = styled.div`
 `;
 
 const StyledButton = styled.button`
+  align-items: center;
   background: ${GRAY_SCALE.gray0};
   border: 1px solid ${GRAY_SCALE.gray20};
+  color: ${GRAY_SCALE.gray60};
   border-radius: 8px;
+  cursor: pointer;
+  display: flex;
   padding: 8px 16px;
+  padding: 8px;
+`;
+
+const StyledIcon = styled(IconReload)`
+  color: ${GRAY_SCALE.gray60};
+  margin-right: 8px;
 `;
 
 export const AppRootErrorFallback = ({
@@ -110,7 +120,10 @@ export const AppRootErrorFallback = ({
             <StyledEmptyTitle>{title}</StyledEmptyTitle>
             <StyledEmptySubTitle>{error.message}</StyledEmptySubTitle>
           </StyledEmptyTextContainer>
-          <StyledButton onClick={resetErrorBoundary}>Reload</StyledButton>
+          <StyledButton onClick={resetErrorBoundary}>
+            <StyledIcon size={16} />
+            Reload
+          </StyledButton>
         </StyledEmptyContainer>
       </StyledPanel>
     </StyledContainer>
