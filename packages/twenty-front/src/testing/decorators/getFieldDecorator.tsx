@@ -5,6 +5,7 @@ import { useRecoilCallback } from 'recoil';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
   RecordFieldValueSelectorContextProvider,
   useSetRecordValue,
@@ -124,26 +125,32 @@ export const getFieldDecorator =
     });
 
     return (
-      <RecordFieldValueSelectorContextProvider>
-        <FieldContext.Provider
-          value={{
-            recordId: record.id,
-            isLabelIdentifier,
-            fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-              field: fieldMetadataItem,
-              position: 0,
-              objectMetadataItem,
-            }),
-            hotkeyScope: 'hotkey-scope',
-          }}
-        >
-          <RecordMockSetterEffect
-            companies={companies}
-            people={people}
-            tasks={tasks}
-          />
-          <Story />
-        </FieldContext.Provider>
-      </RecordFieldValueSelectorContextProvider>
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: 'record-field-component-instance-id',
+        }}
+      >
+        <RecordFieldValueSelectorContextProvider>
+          <FieldContext.Provider
+            value={{
+              recordId: record.id,
+              isLabelIdentifier,
+              fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                field: fieldMetadataItem,
+                position: 0,
+                objectMetadataItem,
+              }),
+              hotkeyScope: 'hotkey-scope',
+            }}
+          >
+            <RecordMockSetterEffect
+              companies={companies}
+              people={people}
+              tasks={tasks}
+            />
+            <Story />
+          </FieldContext.Provider>
+        </RecordFieldValueSelectorContextProvider>
+      </RecordFieldComponentInstanceContext.Provider>
     );
   };
