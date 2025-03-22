@@ -13,13 +13,13 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   // TODO: Implement a better loading strategy
   if (!isLoaded) return null;
 
-  return !isErrored && error instanceof Error ? (
+  return isErrored && error instanceof Error ? (
     <AppErrorFallback
       error={error}
       resetErrorBoundary={() => {
         window.location.reload();
       }}
-      title="Could not reach backend"
+      title="Unable to Reach Back-end"
     />
   ) : (
     children

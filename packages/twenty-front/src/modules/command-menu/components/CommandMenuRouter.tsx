@@ -27,8 +27,6 @@ export const CommandMenuRouter = () => {
     <></>
   );
 
-  throw Error('yo');
-
   const theme = useTheme();
 
   return (

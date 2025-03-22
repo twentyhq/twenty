@@ -1,13 +1,18 @@
 import { AppErrorDisplay } from '@/error-handler/components/AppErrorDisplay';
 import { AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
+import { PageBody } from '@/ui/layout/page/components/PageBody';
 import styled from '@emotion/styled';
 
 type AppErrorFallbackProps = AppErrorDisplayProps;
 
 const StyledContainer = styled.div`
-  align-items: center;
+  background: ${({ theme }) => theme.background.noisy};
+  box-sizing: border-box;
   display: flex;
-  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  padding-top: ${({ theme }) => theme.spacing(3)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const AppErrorFallback = ({
@@ -17,11 +22,13 @@ export const AppErrorFallback = ({
 }: AppErrorFallbackProps) => {
   return (
     <StyledContainer>
-      <AppErrorDisplay
-        error={error}
-        resetErrorBoundary={resetErrorBoundary}
-        title={title}
-      />
+      <PageBody>
+        <AppErrorDisplay
+          error={error}
+          resetErrorBoundary={resetErrorBoundary}
+          title={title}
+        />
+      </PageBody>
     </StyledContainer>
   );
 };
