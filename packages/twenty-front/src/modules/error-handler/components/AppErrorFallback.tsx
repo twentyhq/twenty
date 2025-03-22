@@ -1,4 +1,4 @@
-import { AppErrorDisplay } from '@/error-handler/components/AppErrorDisplay';
+import { AppErrorDisplay } from '@/error-handler/components/internal/AppErrorDisplay';
 import { AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import styled from '@emotion/styled';

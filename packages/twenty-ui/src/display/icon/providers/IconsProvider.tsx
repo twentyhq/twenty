@@ -10,6 +10,8 @@ type IconsProviderProps = {
 export const IconsProvider = ({ children }: IconsProviderProps) => {
   const setIcons = useSetRecoilState(iconsState);
 
+  throw Error('yo');
+
   useEffect(() => {
     import('./internal/AllIcons').then((lazyLoadedIcons) => {
       setIcons(lazyLoadedIcons.ALL_ICONS);
