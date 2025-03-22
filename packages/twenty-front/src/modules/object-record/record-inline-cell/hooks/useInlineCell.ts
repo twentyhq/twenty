@@ -9,7 +9,6 @@ import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitD
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -59,11 +58,7 @@ export const useInlineCell = (
     initFieldInputDraftValue({
       recordId,
       fieldDefinition,
-      fieldComponentInstanceId: getRecordFieldInputId(
-        recordId,
-        fieldDefinition.metadata.fieldName,
-        'inline-cell',
-      ),
+      fieldComponentInstanceId: recordFieldComponentInstanceId,
     });
 
     if (isDefined(customEditHotkeyScopeForField)) {
