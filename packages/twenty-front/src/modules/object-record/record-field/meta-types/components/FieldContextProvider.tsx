@@ -19,7 +19,6 @@ export const FieldContextProvider = ({
       value={{
         recordId: recordId ?? '1',
         isLabelIdentifier: false,
-        recoilScopeId: '1',
         hotkeyScope: 'hotkey-scope',
         fieldDefinition,
         useUpdateRecord: () => [() => undefined, {}],

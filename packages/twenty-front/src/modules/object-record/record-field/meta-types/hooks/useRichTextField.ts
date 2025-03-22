@@ -35,7 +35,7 @@ export const useRichTextField = () => {
   const fieldRichTextValue = isFieldRichTextValue(fieldValue) ? fieldValue : '';
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldRichTextValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldRichTextValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

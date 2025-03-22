@@ -96,6 +96,7 @@ export const NoteCard = ({
         {NoteTargetsContextProvider && (
           <NoteTargetsContextProvider>
             <ActivityTargetsInlineCell
+              componentInstanceId={`note-card-${note.id}-targets`}
               activityRecordId={note.id}
               activityObjectNameSingular={CoreObjectNameSingular.Note}
             />
