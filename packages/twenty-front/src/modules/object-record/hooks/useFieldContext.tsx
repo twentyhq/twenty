@@ -19,6 +19,7 @@ export const useFieldContext = ({
   objectRecordId,
   customUseUpdateOneObjectHook,
   overridenIsFieldEmpty,
+  recoilScopeId,
 }: {
   clearable?: boolean;
   fieldMetadataName: string;
@@ -28,6 +29,7 @@ export const useFieldContext = ({
   objectRecordId: string;
   customUseUpdateOneObjectHook?: RecordUpdateHook;
   overridenIsFieldEmpty?: boolean;
+  recoilScopeId?: string;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -59,7 +61,8 @@ export const useFieldContext = ({
             key={objectRecordId + fieldMetadataItem.id}
             value={{
               recordId: objectRecordId,
-              recoilScopeId: objectRecordId + fieldMetadataItem.id,
+              recoilScopeId:
+                recoilScopeId ?? objectRecordId + fieldMetadataItem.id,
               isLabelIdentifier,
               fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                 field: fieldMetadataItem,

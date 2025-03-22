@@ -94,6 +94,7 @@ export const RecordTableCellFieldContextWrapper = ({
           instanceId: getRecordFieldInputId(
             recordId,
             columnDefinition.metadata.fieldName,
+            'record-table-cell',
           ),
         }}
       >

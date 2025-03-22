@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared';
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
@@ -50,7 +51,15 @@ export const useInlineCell = () => {
   const openInlineCell = (customEditHotkeyScopeForField?: string) => {
     onOpenEditMode?.();
     setIsInlineCellInEditMode(true);
-    initFieldInputDraftValue({ recordId, fieldDefinition });
+    initFieldInputDraftValue({
+      recordId,
+      fieldDefinition,
+      fieldComponentInstanceId: getRecordFieldInputId(
+        recordId,
+        fieldDefinition.fieldMetadataId,
+        'inline-cell',
+      ),
+    });
 
     if (isDefined(customEditHotkeyScopeForField)) {
       setHotkeyScopeAndMemorizePreviousScope(customEditHotkeyScopeForField);

@@ -287,6 +287,7 @@ export const RecordDetailRelationRecordsListItem = ({
                     instanceId: getRecordFieldInputId(
                       relationRecord.id,
                       fieldMetadataItem.name,
+                      'record-detail',
                     ),
                   }}
                 >

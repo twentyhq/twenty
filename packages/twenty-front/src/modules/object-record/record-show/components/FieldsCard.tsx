@@ -111,25 +111,21 @@ export const FieldsCard = ({
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  <RecordFieldComponentInstanceContext.Provider
-                    value={{
-                      instanceId: getRecordFieldInputId(
-                        objectRecordId,
-                        fieldMetadataItem.name,
-                      ),
-                    }}
-                  >
-                    <ActivityTargetsInlineCell
-                      activityObjectNameSingular={
-                        objectNameSingular as
-                          | CoreObjectNameSingular.Note
-                          | CoreObjectNameSingular.Task
-                      }
-                      activityRecordId={objectRecordId}
-                      showLabel={true}
-                      maxWidth={200}
-                    />
-                  </RecordFieldComponentInstanceContext.Provider>
+                  <ActivityTargetsInlineCell
+                    componentInstanceId={getRecordFieldInputId(
+                      objectRecordId,
+                      fieldMetadataItem.name,
+                      'fields-card',
+                    )}
+                    activityObjectNameSingular={
+                      objectNameSingular as
+                        | CoreObjectNameSingular.Note
+                        | CoreObjectNameSingular.Task
+                    }
+                    activityRecordId={objectRecordId}
+                    showLabel={true}
+                    maxWidth={200}
+                  />
                 </FieldContext.Provider>
               ),
             )}
@@ -157,6 +153,7 @@ export const FieldsCard = ({
                     instanceId: getRecordFieldInputId(
                       objectRecordId,
                       fieldMetadataItem.name,
+                      'fields-card',
                     ),
                   }}
                 >

@@ -135,6 +135,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
               activityRecordId={task.id}
               showLabel={false}
               maxWidth={200}
+              componentInstanceId={`task-row-targets-${task.id}`}
             />
           </TaskTargetsContextProvider>
         )}

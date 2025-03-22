@@ -1,8 +1,5 @@
 import { useContext } from 'react';
 
-import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
@@ -39,9 +36,7 @@ export const RecordTitleCellFieldInput = ({
   }
 
   return (
-    <RecordFieldInputScope
-      recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputId)}
-    >
+    <>
       {isFieldText(fieldDefinition) ? (
         <RecordTitleCellTextFieldInput
           onEnter={onEnter}
@@ -61,6 +56,6 @@ export const RecordTitleCellFieldInput = ({
           sizeVariant={sizeVariant}
         />
       ) : null}
-    </RecordFieldInputScope>
+    </>
   );
 };

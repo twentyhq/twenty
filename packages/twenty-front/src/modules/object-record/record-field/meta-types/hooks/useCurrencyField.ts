@@ -56,7 +56,7 @@ export const useCurrencyField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldCurrencyValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldCurrencyValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

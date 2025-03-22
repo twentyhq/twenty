@@ -68,6 +68,7 @@ export const RecordBoardCardBody = ({
                 instanceId: getRecordFieldInputId(
                   recordId,
                   fieldDefinition.metadata.fieldName,
+                  'record-board-card',
                 ),
               }}
             >
