@@ -140,7 +140,9 @@ export const SettingsDataModelObjectAboutForm = ({
             defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
             render={({ field: { onChange, value } }) => (
               <IconPicker
-                disabled={disableEdition}
+                disabled={
+                  !objectMetadataItem?.isCustom && isLabelSyncedWithName
+                }
                 selectedIconKey={value}
                 onChange={({ iconKey }) => {
                   onChange(iconKey);
@@ -213,7 +215,7 @@ export const SettingsDataModelObjectAboutForm = ({
             minRows={4}
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
-            disabled={disableEdition}
+            disabled={!objectMetadataItem?.isCustom && isLabelSyncedWithName}
             onBlur={() => onNewDirtyField?.()}
           />
         )}

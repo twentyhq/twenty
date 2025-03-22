@@ -560,7 +560,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     if (
       objectMetadata.isCustom ||
       (objectMetadata.isLabelSyncedWithName === false &&
-        ['labelPlural', 'labelSingular'].includes(labelKey))
+        ['labelPlural', 'labelSingular', 'description'].includes(labelKey))
     ) {
       return objectMetadata[labelKey];
     }

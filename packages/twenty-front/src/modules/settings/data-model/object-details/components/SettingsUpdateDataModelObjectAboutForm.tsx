@@ -102,6 +102,8 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
           isLabelSyncedWithName: formValues.isLabelSyncedWithName,
           labelPlural: formValues.labelPlural,
           labelSingular: formValues.labelSingular,
+          icon: formValues.icon,
+          description: formValues.description,
         },
       });
 

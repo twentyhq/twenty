@@ -64,9 +64,13 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
 
       if (
         Object.keys(instance.update).every((key) =>
-          ['labelSingular', 'labelPlural', 'isLabelSyncedWithName'].includes(
-            key,
-          ),
+          [
+            'labelSingular',
+            'labelPlural',
+            'icon',
+            'description',
+            'isLabelSyncedWithName',
+          ].includes(key),
         )
       ) {
         if (isDefined(instance.update.isLabelSyncedWithName)) {
@@ -83,6 +87,8 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
               instance.update.labelSingular =
                 standardObjectMetadata.labelSingular;
               instance.update.labelPlural = standardObjectMetadata.labelPlural;
+              instance.update.icon = standardObjectMetadata.icon;
+              instance.update.description = standardObjectMetadata.description;
             } else {
               throw new InternalServerErrorException(
                 'Standard object not found',
