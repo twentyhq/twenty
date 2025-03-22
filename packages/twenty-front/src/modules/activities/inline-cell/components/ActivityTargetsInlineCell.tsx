@@ -50,7 +50,6 @@ export const ActivityTargetsInlineCell = ({
       fieldMetadataName: fieldDefinition.metadata.fieldName,
       fieldPosition: 3,
       overridenIsFieldEmpty: activityTargetObjectRecords.length === 0,
-      recoilScopeId: componentInstanceId,
     });
 
   const { openActivityTargetInlineCellEditMode } =

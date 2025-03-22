@@ -19,7 +19,6 @@ export const useFieldContext = ({
   objectRecordId,
   customUseUpdateOneObjectHook,
   overridenIsFieldEmpty,
-  recoilScopeId,
 }: {
   clearable?: boolean;
   fieldMetadataName: string;
@@ -29,7 +28,6 @@ export const useFieldContext = ({
   objectRecordId: string;
   customUseUpdateOneObjectHook?: RecordUpdateHook;
   overridenIsFieldEmpty?: boolean;
-  recoilScopeId?: string;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,

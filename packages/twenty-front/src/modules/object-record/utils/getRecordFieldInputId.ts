@@ -1,4 +1,4 @@
-import { isDefined } from "twenty-shared";
+import { isDefined } from 'twenty-shared';
 
 export const getRecordFieldInputId = (
   recordId: string,

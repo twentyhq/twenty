@@ -8,7 +8,6 @@ import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell
 import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldInput';
 
 type RecordTitleCellFieldInputProps = {
-  recordFieldInputId: string;
   onClickOutside?: (
     persist: () => void,
     event: MouseEvent | TouchEvent,
@@ -22,7 +21,6 @@ type RecordTitleCellFieldInputProps = {
 
 export const RecordTitleCellFieldInput = ({
   sizeVariant,
-  recordFieldInputId,
   onEnter,
   onEscape,
   onShiftTab,
