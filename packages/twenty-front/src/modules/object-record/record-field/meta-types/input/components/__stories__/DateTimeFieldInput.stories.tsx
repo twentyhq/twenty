@@ -6,6 +6,8 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
 import {
@@ -66,7 +68,15 @@ const DateFieldInputWithContext = ({
   }, [setHotkeyScope]);
 
   return (
-    <div>
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: getRecordFieldInputId(
+          recordId ?? '',
+          'Date',
+          'record-table-cell',
+        ),
+      }}
+    >
       <FieldContextProvider
         fieldDefinition={{
           fieldMetadataId: 'date',
@@ -90,7 +100,7 @@ const DateFieldInputWithContext = ({
         />
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div"></div>
-    </div>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
 
