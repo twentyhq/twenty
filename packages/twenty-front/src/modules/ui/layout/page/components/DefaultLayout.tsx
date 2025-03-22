@@ -1,7 +1,7 @@
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
-import { AppErrorFallback } from '@/error-handler/components/AppErrorFallback';
+import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
@@ -84,7 +84,7 @@ export const DefaultLayout = () => {
         `}
       />
       <StyledLayout>
-        <AppErrorBoundary FallbackComponent={AppErrorFallback}>
+        <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
           <StyledPageContainer
             animate={{
               marginLeft:

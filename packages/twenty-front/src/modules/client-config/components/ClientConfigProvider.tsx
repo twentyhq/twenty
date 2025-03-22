@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { AppErrorFallback } from '@/error-handler/components/AppErrorFallback';
+import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -14,7 +14,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   if (!isLoaded) return null;
 
   return isErrored && error instanceof Error ? (
-    <AppErrorFallback
+    <AppFullScreenErrorFallback
       error={error}
       resetErrorBoundary={() => {
         window.location.reload();
