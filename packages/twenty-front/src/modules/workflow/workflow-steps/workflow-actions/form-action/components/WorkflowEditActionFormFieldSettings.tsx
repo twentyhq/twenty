@@ -1,12 +1,13 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
+import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import camelCase from 'lodash.camelcase';
 import { FieldMetadataType } from 'twenty-shared';
 import {
   IconSettingsAutomation,
@@ -66,10 +67,18 @@ export const WorkflowEditActionFormFieldSettings = ({
 }: WorkflowEditActionFormFieldSettingsProps) => {
   const theme = useTheme();
   const onSubFieldUpdate = (fieldName: string, value: any) => {
-    onChange({
-      ...field,
-      [fieldName]: value,
-    });
+    if (fieldName === 'label') {
+      onChange({
+        ...field,
+        name: camelCase(value),
+        label: value,
+      });
+    } else {
+      onChange({
+        ...field,
+        [fieldName]: value,
+      });
+    }
   };
 
   return (

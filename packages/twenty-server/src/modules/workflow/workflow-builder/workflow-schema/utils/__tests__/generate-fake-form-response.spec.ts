@@ -7,16 +7,19 @@ describe('generateFakeFormResponse', () => {
     const schema = [
       {
         id: '96939213-49ac-4dee-949d-56e6c7be98e6',
+        name: 'name',
         type: FieldMetadataType.TEXT,
         label: 'Name',
       },
       {
         id: '96939213-49ac-4dee-949d-56e6c7be98e7',
+        name: 'age',
         type: FieldMetadataType.NUMBER,
         label: 'Age',
       },
       {
         id: '96939213-49ac-4dee-949d-56e6c7be98e8',
+        name: 'email',
         type: FieldMetadataType.EMAILS,
         label: 'Email',
       },
@@ -25,7 +28,7 @@ describe('generateFakeFormResponse', () => {
     const result = generateFakeFormResponse(schema);
 
     expect(result).toEqual({
-      '96939213-49ac-4dee-949d-56e6c7be98e8': {
+      email: {
         isLeaf: false,
         label: 'Email',
         value: {
@@ -44,14 +47,14 @@ describe('generateFakeFormResponse', () => {
         },
         icon: undefined,
       },
-      '96939213-49ac-4dee-949d-56e6c7be98e6': {
+      name: {
         isLeaf: true,
         label: 'Name',
         type: FieldMetadataType.TEXT,
         value: 'My text',
         icon: undefined,
       },
-      '96939213-49ac-4dee-949d-56e6c7be98e7': {
+      age: {
         isLeaf: true,
         label: 'Age',
         type: FieldMetadataType.NUMBER,

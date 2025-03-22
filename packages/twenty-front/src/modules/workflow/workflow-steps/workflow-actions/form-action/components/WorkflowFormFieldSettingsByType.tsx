@@ -1,4 +1,4 @@
-import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
+import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { assertUnreachable, FieldMetadataType } from 'twenty-shared';
 import { WorkflowFormFieldSettingsNumber } from './WorkflowFormFieldSettingsNumber';
 import { WorkflowFormFieldSettingsText } from './WorkflowFormFieldSettingsText';

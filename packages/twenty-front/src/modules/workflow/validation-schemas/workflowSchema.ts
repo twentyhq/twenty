@@ -86,7 +86,8 @@ export const workflowFormActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.array(
       z.object({
-        id: z.string().uuid(),
+        id: z.string(),
+        name: z.string(),
         label: z.string(),
         type: z.union([
           z.literal(FieldMetadataType.TEXT),
@@ -222,6 +223,7 @@ export const workflowTriggerSchema = z.discriminatedUnion('type', [
 const workflowExecutorOutputSchema = z.object({
   result: z.any().optional(),
   error: z.string().optional(),
+  pendingEvent: z.boolean().optional(),
 });
 
 export const workflowRunOutputStepsOutputSchema = z.record(

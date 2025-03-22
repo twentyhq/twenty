@@ -18,6 +18,7 @@ const DEFAULT_ACTION = {
     input: [
       {
         id: 'ed00b897-519f-44cd-8201-a6502a3a9dc8',
+        name: 'company',
         type: FieldMetadataType.TEXT,
         label: 'Company',
         placeholder: 'Select a company',
@@ -25,6 +26,7 @@ const DEFAULT_ACTION = {
       },
       {
         id: 'ed00b897-519f-44cd-8201-a6502a3a9dc9',
+        name: 'number',
         type: FieldMetadataType.NUMBER,
         label: 'Number',
         placeholder: '1000',

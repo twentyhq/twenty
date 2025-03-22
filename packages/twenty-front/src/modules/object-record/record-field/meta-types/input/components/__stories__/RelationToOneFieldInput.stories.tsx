@@ -77,9 +77,8 @@ const RelationToOneFieldInputWithContext = ({
           iconName: 'IconLink',
           metadata: {
             fieldName: 'Relation',
-            relationObjectMetadataNamePlural: 'workspaceMembers',
-            relationObjectMetadataNameSingular:
-              CoreObjectNameSingular.WorkspaceMember,
+            relationObjectMetadataNamePlural: 'companies',
+            relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
             objectMetadataNameSingular: 'person',
             relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
           },
@@ -149,7 +148,7 @@ export const Submit: Story = {
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
-    const item = await canvas.findByText('John Wick', undefined, {
+    const item = await canvas.findByText('Linkedin', undefined, {
       timeout: 3000,
     });
 
@@ -167,7 +166,7 @@ export const Cancel: Story = {
     const canvas = within(getCanvasElementForDropdownTesting());
 
     expect(cancelJestFn).toHaveBeenCalledTimes(0);
-    await canvas.findByText('John Wick', undefined, { timeout: 3000 });
+    await canvas.findByText('Linkedin', undefined, { timeout: 3000 });
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 

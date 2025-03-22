@@ -506,12 +506,14 @@ export class WorkflowVersionStepWorkspaceService {
             input: [
               {
                 id: v4(),
+                name: 'company',
                 label: 'Company',
                 placeholder: 'Select a company',
                 type: FieldMetadataType.TEXT,
               },
               {
                 id: v4(),
+                name: 'number',
                 label: 'Number',
                 placeholder: '1000',
                 type: FieldMetadataType.NUMBER,
