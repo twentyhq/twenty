@@ -12,9 +12,9 @@ import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-acti
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { isDefined } from 'twenty-shared/utils';
 
 export type WorkflowEditActionFormFillerProps = {
   action: WorkflowFormAction;

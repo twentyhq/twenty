@@ -6,7 +6,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledComboInputContainer = styled.div`
   display: flex;

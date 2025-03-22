@@ -1,5 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
 import { JsonValue } from 'type-fest';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export type WorkflowFormActionField = {
   id: string;

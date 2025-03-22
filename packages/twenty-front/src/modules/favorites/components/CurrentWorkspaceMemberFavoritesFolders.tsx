@@ -13,8 +13,8 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { IconFolderPlus, LightIconButton } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);

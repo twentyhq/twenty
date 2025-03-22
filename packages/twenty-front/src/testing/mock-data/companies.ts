@@ -1,6 +1,6 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { isDefined } from 'twenty-shared/utils';
 
 export const companiesQueryResult = {
   companies: {

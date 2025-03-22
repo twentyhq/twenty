@@ -5,13 +5,13 @@ import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWo
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
 import {
   IconBrackets,
   JsonNestedNode,
   JsonTreeContextProvider,
   ShouldExpandNodeInitiallyProps,
 } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: grid;

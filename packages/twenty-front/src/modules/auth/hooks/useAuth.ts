@@ -20,7 +20,6 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { APP_LOCALES, isDefined } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useCheckUserExistsLazyQuery,
@@ -65,6 +64,8 @@ import { i18n } from '@lingui/core';
 import { useSearchParams } from 'react-router-dom';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);

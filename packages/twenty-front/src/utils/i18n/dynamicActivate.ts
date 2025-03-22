@@ -1,5 +1,5 @@
 import { i18n } from '@lingui/core';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 export const dynamicActivate = async (locale: keyof typeof APP_LOCALES) => {
   if (!Object.values(APP_LOCALES).includes(locale)) {

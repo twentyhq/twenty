@@ -3,7 +3,7 @@ import { CommandMenuWorkflowEditStepContent } from '@/command-menu/pages/workflo
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuWorkflowEditStep = () => {
   const workflowId = useRecoilComponentValueV2(workflowIdComponentState);

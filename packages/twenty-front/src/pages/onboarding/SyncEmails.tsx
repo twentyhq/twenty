@@ -19,13 +19,13 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { AppPath } from '@/types/AppPath';
-import { ConnectedAccountProvider } from 'twenty-shared';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
   OnboardingStatus,
   useSkipSyncEmailOnboardingStepMutation,
 } from '~/generated/graphql';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;

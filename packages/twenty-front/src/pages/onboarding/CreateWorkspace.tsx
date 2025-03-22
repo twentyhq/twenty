@@ -16,11 +16,11 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
 import {
   OnboardingStatus,
   useActivateWorkspaceMutation,
 } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContentContainer = styled.div`
   width: 100%;

@@ -9,8 +9,8 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { isDefined } from 'twenty-shared';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
+import { isDefined } from 'twenty-shared/utils';
 
 export type SelectOption<Value extends string | number | boolean | null> = {
   value: Value;

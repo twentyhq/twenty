@@ -1,6 +1,6 @@
 import { workflowRunIdState } from '@/workflow/states/workflowRunIdState';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowRunIdOrThrow = () => {
   const workflowRunId = useRecoilValue(workflowRunIdState);

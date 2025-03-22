@@ -1,11 +1,11 @@
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { FieldMetadataType } from 'twenty-shared';
 import { ComponentDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowEditActionFormFieldSettings } from '../WorkflowEditActionFormFieldSettings';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const meta: Meta<typeof WorkflowEditActionFormFieldSettings> = {
   title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormFieldSettings',
