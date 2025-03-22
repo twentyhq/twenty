@@ -37,7 +37,7 @@ export const ActivityTargetsInlineCell = ({
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activityRecordId);
 
-  const { closeInlineCell } = useInlineCell();
+  const { closeInlineCell } = useInlineCell(componentInstanceId);
 
   const { fieldDefinition } = useContext(FieldContext);
 

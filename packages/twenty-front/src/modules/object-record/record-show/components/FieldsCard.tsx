@@ -98,7 +98,6 @@ export const FieldsCard = ({
                   value={{
                     recordId: objectRecordId,
                     maxWidth: 200,
-                    recoilScopeId: objectRecordId + fieldMetadataItem.id,
                     isLabelIdentifier: false,
                     fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                       field: fieldMetadataItem,
@@ -135,7 +134,6 @@ export const FieldsCard = ({
                 value={{
                   recordId: objectRecordId,
                   maxWidth: 200,
-                  recoilScopeId: objectRecordId + fieldMetadataItem.id,
                   isLabelIdentifier: false,
                   fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                     field: fieldMetadataItem,
@@ -173,7 +171,6 @@ export const FieldsCard = ({
           key={objectRecordId + fieldMetadataItem.id}
           value={{
             recordId: objectRecordId,
-            recoilScopeId: objectRecordId + fieldMetadataItem.id,
             isLabelIdentifier: false,
             fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
               field: fieldMetadataItem,

@@ -103,7 +103,6 @@ export const CalendarEventDetails = ({
         value={{
           recordId: calendarEvent.id,
           hotkeyScope: 'calendar-event-details',
-          recoilScopeId: `${calendarEvent.id}-${fieldName}`,
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
             field: fieldsByName[fieldName],

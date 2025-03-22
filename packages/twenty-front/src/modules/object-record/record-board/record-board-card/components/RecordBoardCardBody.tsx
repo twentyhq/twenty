@@ -44,7 +44,6 @@ export const RecordBoardCardBody = ({
             value={{
               recordId,
               maxWidth: 156,
-              recoilScopeId: `board-card-${recordId}-${fieldDefinition.fieldMetadataId}`,
               isLabelIdentifier: false,
               fieldDefinition: {
                 disableTooltip: false,

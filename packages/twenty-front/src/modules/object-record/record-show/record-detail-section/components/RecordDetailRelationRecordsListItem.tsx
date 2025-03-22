@@ -269,7 +269,6 @@ export const RecordDetailRelationRecordsListItem = ({
                 value={{
                   recordId: relationRecord.id,
                   maxWidth: 200,
-                  recoilScopeId: `${relationRecord.id}-${fieldMetadataItem.id}`,
                   isLabelIdentifier: false,
                   fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                     field: fieldMetadataItem,

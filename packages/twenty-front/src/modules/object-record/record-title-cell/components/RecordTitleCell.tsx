@@ -8,6 +8,7 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { useInlineCell } from '../../record-inline-cell/hooks/useInlineCell';
 
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordTitleCellContainer } from '@/object-record/record-title-cell/components/RecordTitleCellContainer';
 import {
   RecordTitleCellContext,
@@ -30,7 +31,13 @@ export const RecordTitleCell = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const { closeInlineCell } = useInlineCell();
+  const { closeInlineCell } = useInlineCell(
+    getRecordFieldInputId(
+      recordId,
+      fieldDefinition?.metadata?.fieldName,
+      'title',
+    ),
+  );
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -82,10 +89,20 @@ export const RecordTitleCell = ({
   };
 
   return (
-    <FieldFocusContextProvider>
-      <RecordTitleCellContext.Provider value={recordTitleCellContextValue}>
-        <RecordTitleCellContainer />
-      </RecordTitleCellContext.Provider>
-    </FieldFocusContextProvider>
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: getRecordFieldInputId(
+          recordId,
+          fieldDefinition?.metadata?.fieldName,
+          'title',
+        ),
+      }}
+    >
+      <FieldFocusContextProvider>
+        <RecordTitleCellContext.Provider value={recordTitleCellContextValue}>
+          <RecordTitleCellContainer />
+        </RecordTitleCellContext.Provider>
+      </FieldFocusContextProvider>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
