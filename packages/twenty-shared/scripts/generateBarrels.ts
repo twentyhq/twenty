@@ -272,7 +272,9 @@ function getTypeScriptFiles(
   );
 }
 
-const getKind = (node: ts.VariableStatement): Extract<ExportKind, 'const' | 'let' | 'var'>=> {
+const getKind = (
+  node: ts.VariableStatement,
+): Extract<ExportKind, 'const' | 'let' | 'var'> => {
   const isConst = (node.declarationList.flags & ts.NodeFlags.Const) !== 0;
   if (isConst) {
     return 'const';
@@ -410,7 +412,7 @@ const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
     const moduleName = moduleDirectory.split('/').pop();
     if (!moduleName) {
       throw new Error(
-        `Should never occurs moduleName not found ${moduleDirectory}`,
+        `Should never occur moduleName not found ${moduleDirectory}`,
       );
     }
 
