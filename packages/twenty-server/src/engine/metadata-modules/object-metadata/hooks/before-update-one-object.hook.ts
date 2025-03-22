@@ -11,6 +11,7 @@ import {
   UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
 import { Equal, In, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -51,8 +52,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     if (!objectMetadata.isCustom) {
       if (
         Object.keys(instance.update).length === 1 &&
-        Object.prototype.hasOwnProperty.call(instance.update, 'isActive') &&
-        instance.update.isActive !== undefined
+        isDefined(instance.update.isActive)
       ) {
         return {
           id: instance.id,
@@ -69,13 +69,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
           ),
         )
       ) {
-        if (
-          Object.prototype.hasOwnProperty.call(
-            instance.update,
-            'isLabelSyncedWithName',
-          ) &&
-          instance.update.isLabelSyncedWithName !== undefined
-        ) {
+        if (isDefined(instance.update.isLabelSyncedWithName)) {
           if (
             instance.update.isLabelSyncedWithName === true &&
             objectMetadata.standardId
