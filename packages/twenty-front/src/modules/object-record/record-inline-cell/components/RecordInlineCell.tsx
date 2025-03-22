@@ -17,10 +17,13 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { useRecoilCallback } from 'recoil';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
@@ -78,15 +81,22 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     closeInlineCell();
   };
 
-  const handleClickOutside: FieldInputClickOutsideEvent = (
-    persistField,
-    event,
-  ) => {
-    event.stopImmediatePropagation();
+  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
+    ({ snapshot }) =>
+      (persistField, event) => {
+        const hotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
+          .getValue();
+        if (hotkeyScope.scope !== InlineCellHotkeyScope.InlineCell) {
+          return;
+        }
+        event.stopImmediatePropagation();
 
-    persistField();
-    closeInlineCell();
-  };
+        persistField();
+        closeInlineCell();
+      },
+    [closeInlineCell],
+  );
 
   const { getIcon } = useIcons();
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();

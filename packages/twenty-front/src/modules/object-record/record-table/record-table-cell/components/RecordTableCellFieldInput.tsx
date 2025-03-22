@@ -3,9 +3,13 @@ import { useContext } from 'react';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
@@ -31,16 +35,22 @@ export const RecordTableCellFieldInput = () => {
     onCloseTableCell();
   };
 
-  const handleClickOutside = (
-    persistField: () => void,
-    event: MouseEvent | TouchEvent,
-  ) => {
-    event.stopImmediatePropagation();
+  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
+    ({ snapshot }) =>
+      (persistField, event) => {
+        const hotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
+          .getValue();
+        if (hotkeyScope.scope !== TableHotkeyScope.CellEditMode) {
+          return;
+        }
+        event.stopImmediatePropagation();
 
-    persistField();
-
-    onCloseTableCell();
-  };
+        persistField();
+        onCloseTableCell();
+      },
+    [onCloseTableCell],
+  );
 
   const handleEscape: FieldInputEvent = (persistField) => {
     persistField();
