@@ -24,6 +24,7 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -158,6 +159,11 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           value: initialValue,
           recordId,
           fieldDefinition,
+          fieldComponentInstanceId: getRecordFieldInputId(
+            recordId,
+            fieldDefinition.metadata.fieldName,
+            'record-table-cell',
+          ),
         });
 
         toggleClickOutsideListener(false);

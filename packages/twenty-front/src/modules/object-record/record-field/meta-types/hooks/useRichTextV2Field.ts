@@ -40,7 +40,7 @@ export const useRichTextV2Field = () => {
     : ({ blocknote: null, markdown: null } as FieldRichTextV2Value);
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldRichTextValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldRichTextValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

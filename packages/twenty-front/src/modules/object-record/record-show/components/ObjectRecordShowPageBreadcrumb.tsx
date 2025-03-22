@@ -68,8 +68,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
         <FieldContext.Provider
           value={{
             recordId: objectRecordId,
-            recoilScopeId:
-              objectRecordId + labelIdentifierFieldMetadataItem?.id,
             isLabelIdentifier: false,
             fieldDefinition: {
               type:

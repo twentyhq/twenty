@@ -13,6 +13,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useContext } from 'react';
 
 export const RecordBoardCardBody = ({
@@ -43,7 +44,6 @@ export const RecordBoardCardBody = ({
             value={{
               recordId,
               maxWidth: 156,
-              recoilScopeId: `board-card-${recordId}-${fieldDefinition.fieldMetadataId}`,
               isLabelIdentifier: false,
               fieldDefinition: {
                 disableTooltip: false,
@@ -64,7 +64,11 @@ export const RecordBoardCardBody = ({
           >
             <RecordFieldComponentInstanceContext.Provider
               value={{
-                instanceId: `board-card-${recordId}-${fieldDefinition.fieldMetadataId}`,
+                instanceId: getRecordFieldInputId(
+                  recordId,
+                  fieldDefinition.metadata.fieldName,
+                  'record-board-card',
+                ),
               }}
             >
               <RecordInlineCell />

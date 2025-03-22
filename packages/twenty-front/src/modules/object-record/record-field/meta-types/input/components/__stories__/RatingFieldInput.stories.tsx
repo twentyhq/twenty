@@ -7,6 +7,8 @@ import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { useRatingField } from '../../../hooks/useRatingField';
 import { RatingFieldInput, RatingFieldInputProps } from '../RatingFieldInput';
@@ -42,22 +44,32 @@ const RatingFieldInputWithContext = ({
   }, [setHotKeyScope]);
 
   return (
-    <FieldContextProvider
-      fieldDefinition={{
-        fieldMetadataId: 'rating',
-        label: 'Rating',
-        type: FieldMetadataType.RATING,
-        iconName: 'Icon123',
-        metadata: {
-          fieldName: 'Rating',
-          objectMetadataNameSingular: 'person',
-        },
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: getRecordFieldInputId(
+          recordId ?? '',
+          'Rating',
+          'record-table-cell',
+        ),
       }}
-      recordId={recordId}
     >
-      <RatingFieldValueSetterEffect value={value} />
-      <RatingFieldInput onSubmit={onSubmit} />
-    </FieldContextProvider>
+      <FieldContextProvider
+        fieldDefinition={{
+          fieldMetadataId: 'rating',
+          label: 'Rating',
+          type: FieldMetadataType.RATING,
+          iconName: 'Icon123',
+          metadata: {
+            fieldName: 'Rating',
+            objectMetadataNameSingular: 'person',
+          },
+        }}
+        recordId={recordId}
+      >
+        <RatingFieldValueSetterEffect value={value} />
+        <RatingFieldInput onSubmit={onSubmit} />
+      </FieldContextProvider>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
 

@@ -62,7 +62,10 @@ export const useSetRecordTableData = ({
             .getValue();
 
           if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
-            set(recordStoreFamilyState(record.id), record);
+            set(recordStoreFamilyState(record.id), {
+              ...currentRecord,
+              ...record,
+            });
           }
         }
 

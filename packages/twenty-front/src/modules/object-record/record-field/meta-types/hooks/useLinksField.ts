@@ -27,7 +27,7 @@ export const useLinksField = () => {
   );
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldLinksValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldLinksValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
