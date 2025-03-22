@@ -8,21 +8,6 @@ import ts from 'typescript';
 
 // TODO prastoin refactor this file in several one into its dedicated package and make it a TypeScript CLI
 
-const INCLUDED_EXTENSIONS = ['.ts', '.tsx'];
-const EXCLUDED_EXTENSIONS = [
-  '.test.ts',
-  '.test.tsx',
-  '.spec.ts',
-  '.spec.tsx',
-  '.stories.ts',
-  '.stories.tsx',
-];
-const EXCLUDED_DIRECTORIES = [
-  '__tests__',
-  '__mocks__',
-  '__stories__',
-  'internal',
-];
 const INDEX_FILENAME = 'index';
 const PACKAGE_JSON_FILENAME = 'package.json';
 const NX_PROJECT_CONFIGURATION_FILENAME = 'project.json';
@@ -80,45 +65,10 @@ const getLastPathFolder = (path: string) => path.split('/').pop();
 const getSubDirectoryPaths = (directoryPath: string): string[] =>
   fs
     .readdirSync(directoryPath)
-    .filter((fileOrDirectoryName) => {
-      const isDirectory = fs
-        .statSync(path.join(directoryPath, fileOrDirectoryName))
-        .isDirectory();
-      if (!isDirectory) {
-        return false;
-      }
-
-      const isExcludedDirectory =
-        EXCLUDED_DIRECTORIES.includes(fileOrDirectoryName);
-      return !isExcludedDirectory;
-    })
+    .filter((fileOrDirectoryName) =>
+      fs.statSync(path.join(directoryPath, fileOrDirectoryName)).isDirectory(),
+    )
     .map((subDirectoryName) => path.join(directoryPath, subDirectoryName));
-
-const getDirectoryPathsRecursive = (directoryPath: string): string[] => [
-  directoryPath,
-  ...getSubDirectoryPaths(directoryPath).flatMap(getDirectoryPathsRecursive),
-];
-
-const getFilesPaths = (directoryPath: string): string[] =>
-  fs.readdirSync(directoryPath).filter((filePath) => {
-    const isFile = fs.statSync(path.join(directoryPath, filePath)).isFile();
-    if (!isFile) {
-      return false;
-    }
-
-    const isIndexFile = filePath.startsWith(INDEX_FILENAME);
-    if (isIndexFile) {
-      return false;
-    }
-
-    const isWhiteListedExtension = INCLUDED_EXTENSIONS.some((extension) =>
-      filePath.endsWith(extension),
-    );
-    const isExcludedExtension = EXCLUDED_EXTENSIONS.every(
-      (excludedExtension) => !filePath.endsWith(excludedExtension),
-    );
-    return isWhiteListedExtension && isExcludedExtension;
-  });
 
 const partitionFileExportsByType = (declarations: DeclarationOccurence[]) => {
   return declarations.reduce<{
@@ -258,12 +208,29 @@ const computeProjectNxBuildOutputsPath = (moduleDirectories: string[]) => {
 
   return ['{projectRoot}/dist', ...dynamicOutputsPath];
 };
+
+const EXCLUDED_EXTENSIONS = [
+  '**/*.test.ts',
+  '**/*.test.tsx',
+  '**/*.spec.ts',
+  '**/*.spec.tsx',
+  '**/*.stories.ts',
+  '**/*.stories.tsx',
+];
+const EXCLUDED_DIRECTORIES = [
+  '**/__tests__/**',
+  '**/__mocks__/**',
+  '**/__stories__/**',
+  '**/internal/**',
+];
 function getTypeScriptFiles(
   directoryPath: string,
   includeIndex: boolean = false,
 ): string[] {
   const pattern = path.join(directoryPath, '**/*.{ts,tsx}');
-  const files = glob.sync(pattern);
+  const files = glob.sync(pattern, {
+    ignore: [...EXCLUDED_EXTENSIONS, ...EXCLUDED_DIRECTORIES],
+  });
 
   return files.filter(
     (file) =>
