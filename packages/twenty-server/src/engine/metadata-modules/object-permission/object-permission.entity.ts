@@ -13,9 +13,9 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-@Entity('objectPermissions')
-@Unique('IndexOnObjectPermissionsUnique', ['objectMetadataId', 'roleId'])
-export class ObjectPermissionsEntity {
+@Entity('objectPermission')
+@Unique('IndexOnObjectPermissionUnique', ['objectMetadataId', 'roleId'])
+export class ObjectPermissionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

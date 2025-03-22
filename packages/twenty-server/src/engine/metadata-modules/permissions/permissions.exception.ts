@@ -25,6 +25,8 @@ export enum PermissionsExceptionCode {
   PERMISSIONS_V2_NOT_ENABLED = 'PERMISSIONS_V2_NOT_ENABLED',
   ROLE_LABEL_ALREADY_EXISTS = 'ROLE_LABEL_ALREADY_EXISTS',
   DEFAULT_ROLE_NOT_FOUND = 'DEFAULT_ROLE_NOT_FOUND',
+  OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND',
+  INVALID_SETTING = 'INVALID_SETTING',
 }
 
 export enum PermissionsExceptionMessage {
@@ -45,4 +47,6 @@ export enum PermissionsExceptionMessage {
   PERMISSIONS_V2_NOT_ENABLED = 'Permissions V2 is not enabled',
   ROLE_LABEL_ALREADY_EXISTS = 'A role with this label already exists',
   DEFAULT_ROLE_NOT_FOUND = 'Default role not found',
+  OBJECT_METADATA_NOT_FOUND = 'Object metadata not found',
+  INVALID_SETTING = 'Invalid permission setting',
 }
