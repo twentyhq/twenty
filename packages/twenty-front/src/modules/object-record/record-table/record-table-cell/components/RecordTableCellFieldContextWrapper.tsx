@@ -16,6 +16,7 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -89,7 +90,12 @@ export const RecordTableCellFieldContextWrapper = ({
       }}
     >
       <RecordFieldComponentInstanceContext.Provider
-        value={{ instanceId: recordId + columnDefinition.label }}
+        value={{
+          instanceId: getRecordFieldInputId(
+            recordId,
+            columnDefinition.metadata.fieldName,
+          ),
+        }}
       >
         {children}
       </RecordFieldComponentInstanceContext.Provider>

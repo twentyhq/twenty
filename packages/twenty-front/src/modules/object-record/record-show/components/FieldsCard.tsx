@@ -15,6 +15,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -112,7 +113,10 @@ export const FieldsCard = ({
                 >
                   <RecordFieldComponentInstanceContext.Provider
                     value={{
-                      instanceId: objectRecordId + fieldMetadataItem.id,
+                      instanceId: getRecordFieldInputId(
+                        objectRecordId,
+                        fieldMetadataItem.name,
+                      ),
                     }}
                   >
                     <ActivityTargetsInlineCell
@@ -150,7 +154,10 @@ export const FieldsCard = ({
               >
                 <RecordFieldComponentInstanceContext.Provider
                   value={{
-                    instanceId: `${objectRecordId}-${fieldMetadataItem.id}`,
+                    instanceId: getRecordFieldInputId(
+                      objectRecordId,
+                      fieldMetadataItem.name,
+                    ),
                   }}
                 >
                   <RecordInlineCell loading={recordLoading} />
