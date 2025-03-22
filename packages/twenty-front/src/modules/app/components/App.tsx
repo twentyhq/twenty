@@ -2,6 +2,7 @@ import { AppRouter } from '@/app/components/AppRouter';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
+import { AppErrorFallback } from '@/error-handler/components/AppErrorFallback';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { i18n } from '@lingui/core';
@@ -18,7 +19,7 @@ export const App = () => {
   return (
     <RecoilRoot>
       <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
-        <AppErrorBoundary>
+        <AppErrorBoundary FallbackComponent={AppErrorFallback}>
           <I18nProvider i18n={i18n}>
             <RecoilDebugObserverEffect />
             <ApolloDevLogEffect />

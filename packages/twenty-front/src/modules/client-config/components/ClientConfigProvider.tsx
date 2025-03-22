@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { ClientConfigError } from '@/error-handler/components/ClientConfigError';
+import { AppErrorFallback } from '@/error-handler/components/AppErrorFallback';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -13,8 +13,14 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   // TODO: Implement a better loading strategy
   if (!isLoaded) return null;
 
-  return isErrored && error instanceof Error ? (
-    <ClientConfigError error={error} />
+  return !isErrored && error instanceof Error ? (
+    <AppErrorFallback
+      error={error}
+      resetErrorBoundary={() => {
+        window.location.reload();
+      }}
+      title="Could not reach backend"
+    />
   ) : (
     children
   );
