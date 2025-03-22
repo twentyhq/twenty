@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -55,7 +55,7 @@ const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  overflow: ${({ isSettings }) => (isSettings ? 'visible' : 'hidden')};
+  overflow: ${({ isSettings }) => (isSettings ? 'scroll' : 'hidden')};
   flex: 1;
 `;
 
@@ -102,22 +102,27 @@ export const NavigationDrawer = ({
       transition={{ duration: theme.animation.duration.normal }}
       isSettings={isSettingsDrawer}
     >
-      <StyledContainer
-        isSettings={isSettingsDrawer}
-        isMobile={isMobile}
-        onMouseEnter={handleHover}
-        onMouseLeave={handleMouseLeave}
+      <ScrollWrapper
+        componentInstanceId="scroll-wrapper-navigation-drawer"
+        contextProviderName="navigationDrawer"
       >
-        {isSettingsDrawer && title ? (
-          !isMobile && <NavigationDrawerBackButton title={title} />
-        ) : (
-          <NavigationDrawerHeader showCollapseButton={isHovered} />
-        )}
-        <StyledItemsContainer isSettings={isSettingsDrawer}>
-          {children}
-        </StyledItemsContainer>
-        <NavigationDrawerSection>{footer}</NavigationDrawerSection>
-      </StyledContainer>
+        <StyledContainer
+          isSettings={isSettingsDrawer}
+          isMobile={isMobile}
+          onMouseEnter={handleHover}
+          onMouseLeave={handleMouseLeave}
+        >
+          {isSettingsDrawer && title ? (
+            !isMobile && <NavigationDrawerBackButton title={title} />
+          ) : (
+            <NavigationDrawerHeader showCollapseButton={isHovered} />
+          )}
+          <StyledItemsContainer isSettings={isSettingsDrawer}>
+            {children}
+          </StyledItemsContainer>
+          <NavigationDrawerSection>{footer}</NavigationDrawerSection>
+        </StyledContainer>
+      </ScrollWrapper>
     </StyledAnimatedContainer>
   );
 };
