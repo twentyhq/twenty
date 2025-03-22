@@ -272,7 +272,7 @@ function getTypeScriptFiles(
   );
 }
 
-const getKind = (node: ts.VariableStatement) => {
+const getKind = (node: ts.VariableStatement): Extract<ExportKind, 'const' | 'let' | 'var'>=> {
   const isConst = (node.declarationList.flags & ts.NodeFlags.Const) !== 0;
   if (isConst) {
     return 'const';
@@ -286,7 +286,7 @@ const getKind = (node: ts.VariableStatement) => {
   return 'var';
 };
 
-function extractExports(sourceFile: ts.SourceFile) {
+function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
   const exports: DeclarationOccurence[] = [];
 
   function visit(node: ts.Node) {
@@ -367,13 +367,13 @@ type ExportKind =
   | 'var'
   | 'class';
 type DeclarationOccurence = { kind: ExportKind; name: string };
-type ExtractedExports = Array<{
+type FileExports = Array<{
   file: string;
   exports: DeclarationOccurence[];
 }>;
 
-function findAllExports(directoryPath: string): ExtractedExports {
-  const results: ExtractedExports = [];
+function findAllExports(directoryPath: string): FileExports {
+  const results: FileExports = [];
 
   const files = getTypeScriptFiles(directoryPath);
 
@@ -385,7 +385,7 @@ function findAllExports(directoryPath: string): ExtractedExports {
       true,
     );
 
-    const exports = extractExports(sourceFile);
+    const exports = extractExportsFromSourceFile(sourceFile);
     if (exports.length > 0) {
       results.push({
         file,
@@ -402,7 +402,7 @@ type ExportByBarrel = {
     moduleName: string;
     moduleDirectory: string;
   };
-  allFileExports: ExtractedExports;
+  allFileExports: FileExports;
 };
 const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
   return barrelDirectories.map<ExportByBarrel>((moduleDirectory) => {
