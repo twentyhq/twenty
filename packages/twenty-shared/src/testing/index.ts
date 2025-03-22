@@ -7,4 +7,4 @@
  *                              |___/
  */
 
-export { EachTestingContext } from './types/EachTestingContext.type';
+export type { EachTestingContext } from './types/EachTestingContext.type';

@@ -9,4 +9,4 @@
 
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { FieldMetadataType } from './FieldMetadataType';
-export { IsExactly } from './IsExactly';
+export type { IsExactly } from './IsExactly';

@@ -120,16 +120,62 @@ const getFilesPaths = (directoryPath: string): string[] =>
     return isWhiteListedExtension && isExcludedExtension;
   });
 
+const partitionFileExportsByType = (declarations: DeclarationOccurence[]) => {
+  return declarations.reduce<{
+    typeAndInterfaceDeclarations: DeclarationOccurence[];
+    otherDeclarations: DeclarationOccurence[];
+  }>(
+    (acc, { kind, name }) => {
+      if (kind === 'type' || kind === 'interface') {
+        return {
+          ...acc,
+          typeAndInterfaceDeclarations: [
+            ...acc.typeAndInterfaceDeclarations,
+            { kind, name },
+          ],
+        };
+      }
+
+      return {
+        ...acc,
+        otherDeclarations: [...acc.otherDeclarations, { kind, name }],
+      };
+    },
+    {
+      typeAndInterfaceDeclarations: [],
+      otherDeclarations: [],
+    },
+  );
+};
+
 const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
   return exportByBarrel.map<createTypeScriptFileArgs>(
     ({ barrel: { moduleDirectory }, allFileExports }) => {
       const content = allFileExports
         .map(({ exports, file }) => {
+          const { otherDeclarations, typeAndInterfaceDeclarations } =
+            partitionFileExportsByType(exports);
+
           const fileWithoutExtension = file.split('.').slice(0, -1).join('.');
           const pathToImport = slash(
             path.relative(moduleDirectory, fileWithoutExtension),
           );
-          return `export { ${exports.map(({ name }) => name).join(', ')} } from "./${pathToImport}"`;
+          const mapDeclarationNameAndJoin = (
+            declarations: DeclarationOccurence[],
+          ) => declarations.map(({ name }) => name).join(', ');
+
+          const typeExport =
+            typeAndInterfaceDeclarations.length > 0
+              ? `export type { ${mapDeclarationNameAndJoin(typeAndInterfaceDeclarations)} } from "./${pathToImport}"`
+              : '';
+          const othersExport =
+            otherDeclarations.length > 0
+              ? `export { ${mapDeclarationNameAndJoin(otherDeclarations)} } from "./${pathToImport}"`
+              : '';
+
+          return [typeExport, othersExport]
+            .filter((el) => el !== '')
+            .join('\n');
         })
         .join('\n');
 
@@ -311,7 +357,16 @@ function extractExports(sourceFile: ts.SourceFile) {
   return exports;
 }
 
-type DeclarationOccurence = { kind: string; name: string };
+type ExportKind =
+  | 'type'
+  | 'interface'
+  | 'enum'
+  | 'function'
+  | 'const'
+  | 'let'
+  | 'var'
+  | 'class';
+type DeclarationOccurence = { kind: ExportKind; name: string };
 type ExtractedExports = Array<{
   file: string;
   exports: DeclarationOccurence[];
@@ -372,13 +427,6 @@ const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
   const exportsByBarrel = retrieveExportsByBarrel(moduleDirectories);
-  fs.writeFileSync(
-    'tmp.json',
-    prettier.format(JSON.stringify(exportsByBarrel), {
-      parser: 'json-stringify',
-    }),
-  );
-
   const moduleIndexFiles = generateModuleIndexFiles(exportsByBarrel);
   const packageJsonPreconstructConfigAndFiles =
     computePackageJsonFilesAndPreconstructConfig(moduleDirectories);
