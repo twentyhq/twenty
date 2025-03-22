@@ -68,16 +68,46 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     try {
       setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
+      if (objectMetadataItem.isCustom) {
+        await updateOneObjectMetadataItem({
+          idToUpdate: objectMetadataItem.id,
+          updatePayload: formValues,
+        });
+
+        formConfig.reset(undefined, { keepValues: true });
+        navigate(SettingsPath.ObjectDetail, {
+          objectNamePlural: objectNamePluralForRedirection,
+        });
+        return;
+      }
+
+      if (
+        formValues.isLabelSyncedWithName === false &&
+        isLabelSyncedWithName === true
+      ) {
+        await updateOneObjectMetadataItem({
+          idToUpdate: objectMetadataItem.id,
+          updatePayload: {
+            isLabelSyncedWithName: formValues.isLabelSyncedWithName,
+          },
+        });
+
+        formConfig.reset(undefined, { keepValues: true });
+        return;
+      }
+
       await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
-        updatePayload: formValues,
+        updatePayload: {
+          isLabelSyncedWithName: formValues.isLabelSyncedWithName,
+          labelPlural: formValues.labelPlural,
+          labelSingular: formValues.labelSingular,
+          icon: formValues.icon,
+          description: formValues.description,
+        },
       });
 
       formConfig.reset(undefined, { keepValues: true });
-
-      navigate(SettingsPath.ObjectDetail, {
-        objectNamePlural: objectNamePluralForRedirection,
-      });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);

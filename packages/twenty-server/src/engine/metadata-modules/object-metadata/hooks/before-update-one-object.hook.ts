@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,10 +11,12 @@ import {
   UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
 import { Equal, In, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { getStandardObjectMetadataFromDefinition } from 'src/engine/metadata-modules/utils/get-standard-object-metadata-from-definition';
 
 @Injectable()
 export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
@@ -49,9 +52,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     if (!objectMetadata.isCustom) {
       if (
         Object.keys(instance.update).length === 1 &&
-        // eslint-disable-next-line no-prototype-builtins
-        instance.update.hasOwnProperty('isActive') &&
-        instance.update.isActive !== undefined
+        isDefined(instance.update.isActive)
       ) {
         return {
           id: instance.id,
@@ -61,9 +62,51 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
         };
       }
 
-      throw new BadRequestException(
-        'Only isActive field can be updated for standard objects',
-      );
+      if (
+        Object.keys(instance.update).every((key) =>
+          [
+            'labelSingular',
+            'labelPlural',
+            'icon',
+            'description',
+            'isLabelSyncedWithName',
+          ].includes(key),
+        )
+      ) {
+        if (isDefined(instance.update.isLabelSyncedWithName)) {
+          if (
+            instance.update.isLabelSyncedWithName === true &&
+            objectMetadata.standardId
+          ) {
+            const standardObjectMetadata =
+              getStandardObjectMetadataFromDefinition(
+                objectMetadata.standardId,
+              );
+
+            if (standardObjectMetadata) {
+              instance.update.labelSingular =
+                standardObjectMetadata.labelSingular;
+              instance.update.labelPlural = standardObjectMetadata.labelPlural;
+              instance.update.icon = standardObjectMetadata.icon;
+              instance.update.description = standardObjectMetadata.description;
+            } else {
+              throw new InternalServerErrorException(
+                'Standard object not found',
+              );
+            }
+          }
+        } else {
+          if (objectMetadata.isLabelSyncedWithName === true) {
+            throw new BadRequestException(
+              'labelSingular and labelPlural are not allowed to be updated unless isLabelSyncedWithName is true for standard objects',
+            );
+          }
+        }
+      } else {
+        throw new BadRequestException(
+          'Only isActive, isLabelSyncedWithName, labelSingular and labelPlural fields can be updated for standard objects',
+        );
+      }
     }
 
     if (
