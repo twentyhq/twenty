@@ -161,7 +161,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           fieldDefinition,
           fieldComponentInstanceId: getRecordFieldInputId(
             recordId,
-            fieldDefinition.fieldMetadataId,
+            fieldDefinition.metadata.fieldName,
             'record-table-cell',
           ),
         });

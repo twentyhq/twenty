@@ -61,7 +61,7 @@ export const useInlineCell = (
       fieldDefinition,
       fieldComponentInstanceId: getRecordFieldInputId(
         recordId,
-        fieldDefinition.fieldMetadataId,
+        fieldDefinition.metadata.fieldName,
         'inline-cell',
       ),
     });
