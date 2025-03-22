@@ -12,8 +12,8 @@ import {
   RowHook,
   TableHook,
 } from '@/spreadsheet-import/types';
-import { isDefined } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const addErrorsAndRunHooks = <T extends string>(
   data: (ImportedStructuredRow<T> & Partial<ImportedStructuredRowMetadata>)[],

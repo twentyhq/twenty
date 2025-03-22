@@ -6,9 +6,9 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { capitalize } from 'twenty-shared';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { capitalize } from 'twenty-shared/utils';
 
 export type GetRecordFromCacheArgs = {
   cache: ApolloCache<object>;

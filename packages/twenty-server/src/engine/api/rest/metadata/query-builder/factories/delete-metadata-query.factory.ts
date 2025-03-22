@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 @Injectable()
 export class DeleteMetadataQueryFactory {

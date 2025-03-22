@@ -8,7 +8,7 @@ import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/wo
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateStep = ({
   workflow,

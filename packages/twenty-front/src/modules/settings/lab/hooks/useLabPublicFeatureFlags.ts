@@ -2,11 +2,11 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   FeatureFlagKey,
   useUpdateLabPublicFeatureFlagMutation,
 } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useLabPublicFeatureFlags = () => {
   const [error, setError] = useState<string | null>(null);

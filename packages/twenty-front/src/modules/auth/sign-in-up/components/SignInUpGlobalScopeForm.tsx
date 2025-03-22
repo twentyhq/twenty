@@ -26,8 +26,8 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isDefined } from 'twenty-shared';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};

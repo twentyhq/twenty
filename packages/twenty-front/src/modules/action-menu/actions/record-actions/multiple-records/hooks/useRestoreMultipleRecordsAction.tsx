@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -19,6 +18,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRestoreMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {

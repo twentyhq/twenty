@@ -8,8 +8,8 @@ import { AppPath } from '@/types/AppPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,

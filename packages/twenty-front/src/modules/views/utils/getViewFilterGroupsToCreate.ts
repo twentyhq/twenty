@@ -1,6 +1,6 @@
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { isDefined } from 'twenty-shared';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getViewFilterGroupsToCreate = (
   currentViewFilterGroups: ViewFilterGroup[],

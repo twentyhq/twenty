@@ -11,8 +11,8 @@ import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/typ
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isNull } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 type UpdateActivityTargetFromInlineCellProps = {
   recordPickerInstanceId: string;

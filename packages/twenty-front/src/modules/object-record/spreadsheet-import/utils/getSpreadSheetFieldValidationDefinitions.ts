@@ -1,6 +1,6 @@
 import { FieldValidationDefinition } from '@/spreadsheet-import/types';
-import { absoluteUrlSchema, isDefined, isValidUuid } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { absoluteUrlSchema, isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const getSpreadSheetFieldValidationDefinitions = (
   type: FieldMetadataType,

@@ -3,7 +3,6 @@ import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { isDefined } from 'twenty-shared';
 
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
@@ -14,6 +13,7 @@ import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/drop
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
 import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useInlineCell = (
   recordFieldComponentInstanceIdFromProps?: string,

@@ -15,7 +15,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendar,
   OverflowingTextWithTooltip,

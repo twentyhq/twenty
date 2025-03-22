@@ -6,13 +6,13 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { Card, H2Title, IconUserPin, Section } from 'twenty-ui';
 import {
   Role,
   UpdateWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RolesDefaultRole = ({ roles }: { roles: Role[] }) => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();

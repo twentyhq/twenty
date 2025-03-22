@@ -3,8 +3,8 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { capitalize } from 'twenty-shared';
 import { useIcons } from 'twenty-ui';
+import { capitalize } from 'twenty-shared/utils';
 
 export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =

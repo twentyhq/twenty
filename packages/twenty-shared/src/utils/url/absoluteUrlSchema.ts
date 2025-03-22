@@ -1,4 +1,4 @@
-import { isValidHostname } from 'src/utils/url/isValidHostname';
+import { isValidHostname } from '@/utils/url/isValidHostname';
 import { z } from 'zod';
 
 const getAbsoluteUrl = (value: string): string => {

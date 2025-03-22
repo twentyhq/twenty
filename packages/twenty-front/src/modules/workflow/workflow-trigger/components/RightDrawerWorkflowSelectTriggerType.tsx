@@ -2,7 +2,7 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { RightDrawerWorkflowSelectTriggerTypeContent } from '@/workflow/workflow-trigger/components/RightDrawerWorkflowSelectTriggerTypeContent';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RightDrawerWorkflowSelectTriggerType = () => {
   const workflowId = useRecoilValue(workflowIdState);
