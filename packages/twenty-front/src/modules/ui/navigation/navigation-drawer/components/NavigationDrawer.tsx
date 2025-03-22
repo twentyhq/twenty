@@ -55,7 +55,7 @@ const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  overflow: ${({ isSettings }) => (isSettings ? 'scroll' : 'hidden')};
+  overflow: ${({ isSettings }) => (isSettings ? 'auto' : 'hidden')};
   flex: 1;
 `;
 
