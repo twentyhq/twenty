@@ -260,7 +260,7 @@ export const CreateProfile = () => {
                 <FormSelectFieldInput
                   label="Person type"
                   defaultValue={value}
-                  onPersist={onChange}
+                  onChange={onChange}
                   options={PERSON_TYPE_OPTIONS}
                 />
               )}
@@ -306,7 +306,7 @@ export const CreateProfile = () => {
                 <FormPhoneFieldInput
                   label="Phone"
                   defaultValue={value}
-                  onPersist={onChange}
+                  onChange={onChange}
                 />
               )}
             />
