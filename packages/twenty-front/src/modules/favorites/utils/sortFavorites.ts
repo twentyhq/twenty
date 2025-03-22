@@ -5,9 +5,9 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { AppPath } from '@/types/AppPath';
 import { View } from '@/views/types/View';
-import { isDefined } from 'twenty-shared';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getObjectMetadataLabelPluralFromViewId } from './getObjectMetadataLabelPluralFromViewId';
+import { isDefined } from 'twenty-shared/utils';
 
 export type ProcessedFavorite = Favorite & {
   Icon?: string;

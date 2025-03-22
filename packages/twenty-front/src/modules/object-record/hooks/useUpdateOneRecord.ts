@@ -18,8 +18,8 @@ import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/g
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isNull } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
+import { isDefined } from 'twenty-shared/utils';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;

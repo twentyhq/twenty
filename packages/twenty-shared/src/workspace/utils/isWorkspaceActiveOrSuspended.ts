@@ -1,4 +1,4 @@
-import { WorkspaceActivationStatus } from '../types/WorkspaceActivationStatus';
+import { WorkspaceActivationStatus } from '@/workspace/types/WorkspaceActivationStatus';
 
 export const isWorkspaceActiveOrSuspended = (
   workspace?: {

@@ -6,7 +6,7 @@ import {
   TableHook,
 } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('addErrorsAndRunHooks', () => {
   type FullData = ImportedStructuredRow<'name' | 'age' | 'country'>;

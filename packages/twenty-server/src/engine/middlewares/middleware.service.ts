@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request, Response } from 'express';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';

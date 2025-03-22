@@ -4,10 +4,9 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "types": ["vite/client"],
-    "baseUrl": ".",
+    "noEmit": true,
     "paths": {
-      "twenty-shared": ["packages/twenty-shared/dist"]
+      "@/*": ["./src/*"]
     }
   },
   "files": [],

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, getLogoUrlFromDomainName } from 'twenty-shared';
 import { Brackets, ObjectLiteral } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';

@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { SemVer } from 'semver';
-import { EachTestingContext } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';

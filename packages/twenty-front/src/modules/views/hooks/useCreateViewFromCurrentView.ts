@@ -26,9 +26,9 @@ import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFi
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(

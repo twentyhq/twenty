@@ -4,8 +4,8 @@ import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowS
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type isFieldValueReadOnlyParams = {
   objectNameSingular?: string;

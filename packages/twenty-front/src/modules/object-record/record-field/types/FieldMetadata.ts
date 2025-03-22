@@ -3,10 +3,11 @@ import { ThemeColor } from 'twenty-ui';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ConnectedAccountProvider } from 'twenty-shared';
 import * as z from 'zod';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 export type FieldUuidMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;

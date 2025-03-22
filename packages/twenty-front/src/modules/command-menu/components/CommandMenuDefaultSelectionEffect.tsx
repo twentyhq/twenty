@@ -2,7 +2,7 @@ import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelect
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuDefaultSelectionEffect = ({
   selectableItemIds,

@@ -6,7 +6,7 @@ import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflo
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowVersionVisualizerEffect = ({
   workflowVersionId,

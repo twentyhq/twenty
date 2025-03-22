@@ -17,8 +17,8 @@ import { useSetRecoilState } from 'recoil';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
-import { isDefined } from 'twenty-shared';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateOneFieldMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();

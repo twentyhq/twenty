@@ -1,4 +1,4 @@
-import { getUrlHostnameOrThrow } from 'src/utils/url/getUrlHostnameOrThrow';
+import { getUrlHostnameOrThrow } from '@/utils/url/getUrlHostnameOrThrow';
 
 describe('getUrlHostnameOrThrow', () => {
   it("returns the URL's hostname", () => {

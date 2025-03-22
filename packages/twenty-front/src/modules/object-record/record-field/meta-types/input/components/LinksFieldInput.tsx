@@ -3,9 +3,9 @@ import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/inpu
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useMemo } from 'react';
-import { absoluteUrlSchema, isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
+import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
 
 type LinksFieldInputProps = {
   onCancel?: () => void;

@@ -1,5 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
 import { z } from 'zod';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());

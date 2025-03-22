@@ -6,10 +6,9 @@ import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/use
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { msg } from '@lingui/core/macro';
-
-import { capitalize, isDefined } from 'twenty-shared';
 import { IconSettingsAutomation } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useRunWorkflowActions = () => {
   const isWorkflowEnabled = useIsFeatureEnabled(

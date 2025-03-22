@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 type DestroyOneOperationFactoryParams = {
   objectMetadataSingularName: string;

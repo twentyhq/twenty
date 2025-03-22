@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { HttpResponse, graphql, http } from 'msw';
-import { getImageAbsoluteURI } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SettingsServerlessFunctionDetail } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail';
 import {
@@ -10,6 +9,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
+import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
 const SOURCE_CODE_FULL_PATH =
   'serverless-function/20202020-1c25-4d02-bf25-6aeccf7ea419/adb4bd21-7670-4c81-9f74-1fc196fe87ea/source.ts';

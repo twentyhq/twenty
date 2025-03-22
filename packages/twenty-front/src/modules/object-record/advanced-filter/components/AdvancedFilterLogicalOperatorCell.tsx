@@ -2,7 +2,7 @@ import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 
 import styled from '@emotion/styled';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 const StyledText = styled.div`
   height: ${({ theme }) => theme.spacing(8)};

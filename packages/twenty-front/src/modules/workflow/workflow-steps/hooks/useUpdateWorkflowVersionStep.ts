@@ -6,13 +6,13 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { UPDATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/updateWorkflowVersionStep';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useApolloClient, useMutation } from '@apollo/client';
-import { isDefined } from 'twenty-shared';
 import {
   UpdateWorkflowVersionStepInput,
   UpdateWorkflowVersionStepMutation,
   UpdateWorkflowVersionStepMutationVariables,
   WorkflowAction,
 } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();

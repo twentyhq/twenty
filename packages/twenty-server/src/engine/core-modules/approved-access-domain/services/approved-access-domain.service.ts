@@ -5,8 +5,8 @@ import crypto from 'crypto';
 
 import { render } from '@react-email/render';
 import { Repository } from 'typeorm';
-import { APP_LOCALES } from 'twenty-shared';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';

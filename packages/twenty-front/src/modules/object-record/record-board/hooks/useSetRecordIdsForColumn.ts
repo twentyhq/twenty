@@ -6,8 +6,8 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
   const recordGroupFieldMetadataState = useRecoilComponentCallbackStateV2(

@@ -1,5 +1,4 @@
-import { isDefined } from 'twenty-shared';
-
+import { isDefined } from 'twenty-shared/utils';
 export const getCanvasElementForDropdownTesting = () => {
   const canvasElement = document.getElementsByClassName(
     'sb-show-main',

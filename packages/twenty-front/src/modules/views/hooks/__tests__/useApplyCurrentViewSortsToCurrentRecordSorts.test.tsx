@@ -6,7 +6,6 @@ import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 import { ViewSort } from '@/views/types/ViewSort';
-import { isDefined } from 'twenty-shared';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
@@ -16,6 +15,7 @@ import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jes
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '../useApplyCurrentViewSortsToCurrentRecordSorts';
+import { isDefined } from 'twenty-shared/utils';
 
 const mockObjectMetadataItemNameSingular = 'company';
 

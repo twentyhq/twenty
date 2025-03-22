@@ -1,6 +1,10 @@
-export * from './constants';
-export * from './i18n';
-export * from './testing';
-export * from './types';
-export * from './utils';
-export * from './workspace';
+/*
+ * _____                    _
+ *|_   _|_      _____ _ __ | |_ _   _
+ *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-genreated file
+ *  | |  \ V  V /  __/ | | | |_| |_| | Any edition to this will be override
+ *  |_|   \_/\_/ \___|_| |_|\__|\__, |
+ *                              |___/
+ */
+
+export default {};

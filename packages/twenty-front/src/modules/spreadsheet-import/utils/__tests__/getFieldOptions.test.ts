@@ -1,6 +1,6 @@
 import { Field } from '@/spreadsheet-import/types';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('getFieldOptions', () => {
   const optionsArray = [

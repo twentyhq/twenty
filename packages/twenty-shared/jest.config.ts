@@ -1,7 +1,4 @@
-import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const tsConfig = require('./tsconfig.json');
+import { JestConfigWithTsJest } from 'ts-jest';
 
 const jestConfig: JestConfigWithTsJest = {
   silent: true,
@@ -21,9 +18,18 @@ const jestConfig: JestConfigWithTsJest = {
     ],
   },
   moduleNameMapper: {
+    // TODO prastoin investigate not working with pathsToModuleNameMapper
+    /*
+      {
+        '^@/(.*)\\.js$': './src/$1',
+        '^@/(.*)$': './src/$1',
+        '^(\\.{1,2}/.*)\\.js$': '$1'
+      } // use esm true
+      { '^@/(.*)$': './src/$1' } // useEsm false
+    */
+    '/^@/(.*)$/': './src/$1',
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMock.js',
-    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths),
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],

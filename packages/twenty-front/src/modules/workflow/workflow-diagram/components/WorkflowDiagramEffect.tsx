@@ -13,7 +13,7 @@ import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/get
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
 import { useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramEffect = ({
   workflowWithCurrentVersion,

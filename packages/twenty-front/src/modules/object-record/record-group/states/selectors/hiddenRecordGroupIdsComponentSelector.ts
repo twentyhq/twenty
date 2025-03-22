@@ -4,7 +4,7 @@ import { RecordGroupDefinition } from '@/object-record/record-group/types/Record
 
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const hiddenRecordGroupIdsComponentSelector = createComponentSelectorV2<
   RecordGroupDefinition['id'][]

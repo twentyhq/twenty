@@ -1,5 +1,4 @@
-import { isDefined } from 'twenty-shared';
-
+import { isDefined } from 'twenty-shared/utils';
 const changeSidePanelUrl = async (url: string) => {
   if (isDefined(url)) {
     chrome.storage.local.set({ navigateSidepanel: 'sidepanel' });

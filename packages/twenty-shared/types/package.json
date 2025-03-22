@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-shared-types.cjs.js",
+  "module": "dist/twenty-shared-types.esm.js"
+}

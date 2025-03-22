@@ -1,4 +1,4 @@
-import { EachTestingContext } from 'twenty-shared';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 import {
   CompareVersionMajorAndMinorReturnType,

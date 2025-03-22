@@ -11,8 +11,8 @@ import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutput
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { IconVariablePlus } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,

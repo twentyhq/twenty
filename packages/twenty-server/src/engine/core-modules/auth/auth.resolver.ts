@@ -3,8 +3,8 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import omit from 'lodash.omit';
-import { SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';

@@ -7,8 +7,8 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import {
   AppToken,

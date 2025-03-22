@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordShowPage = (
   propsObjectNameSingular: string,

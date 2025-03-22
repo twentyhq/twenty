@@ -1,5 +1,5 @@
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { DataSource } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 const tableName = 'workspace';
 

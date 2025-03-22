@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from '@ui/display';
 import { Fragment } from 'react/jsx-runtime';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledChip = styled.button<{
   withText: boolean;

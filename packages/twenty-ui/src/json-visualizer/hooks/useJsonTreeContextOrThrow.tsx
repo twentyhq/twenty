@@ -1,6 +1,6 @@
 import { JsonTreeContext } from '@ui/json-visualizer/contexts/JsonTreeContext';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useJsonTreeContextOrThrow = () => {
   const value = useContext(JsonTreeContext);

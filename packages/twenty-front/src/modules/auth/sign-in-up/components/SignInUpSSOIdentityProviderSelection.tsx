@@ -7,8 +7,8 @@ import { useRecoilValue } from 'recoil';
 import { HorizontalSeparator, MainButton } from 'twenty-ui';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { isDefined } from 'twenty-shared';
 import React from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};

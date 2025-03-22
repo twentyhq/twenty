@@ -13,7 +13,6 @@ import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { isDefined } from 'twenty-shared';
 import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
@@ -21,6 +20,7 @@ import { i18n } from '@lingui/core';
 import { GraphQLFormattedError } from 'graphql';
 import { ApolloManager } from '../types/apolloManager.interface';
 import { loggerLink } from '../utils/loggerLink';
+import { isDefined } from 'twenty-shared/utils';
 
 const logger = loggerLink(() => 'Twenty');
 

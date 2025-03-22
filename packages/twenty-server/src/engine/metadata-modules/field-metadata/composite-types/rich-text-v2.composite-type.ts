@@ -1,5 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
 import { z } from 'zod';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 

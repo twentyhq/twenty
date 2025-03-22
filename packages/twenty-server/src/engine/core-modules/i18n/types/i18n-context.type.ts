@@ -1,5 +1,4 @@
-import { APP_LOCALES } from 'twenty-shared';
-
+import { APP_LOCALES } from 'twenty-shared/translations';
 export type I18nContext = {
   req: {
     headers: {

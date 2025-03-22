@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
 import { Brackets } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   GraphqlQueryBaseResolverService,

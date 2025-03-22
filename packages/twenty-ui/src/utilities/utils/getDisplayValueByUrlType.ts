@@ -1,5 +1,5 @@
 import { LinkType } from '@ui/navigation/link';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type getUrlDisplayValueByUrlTypeProps = {
   type: LinkType;
