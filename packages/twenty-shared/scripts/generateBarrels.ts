@@ -120,51 +120,26 @@ const getFilesPaths = (directoryPath: string): string[] =>
     return isWhiteListedExtension && isExcludedExtension;
   });
 
-type ComputeExportLineForGivenFileArgs = {
-  filePath: string;
-  moduleDirectory: string; // Rename
-  directoryPath: string; // Rename
-};
-const computeExportLineForGivenFile = ({
-  filePath,
-  moduleDirectory,
-  directoryPath,
-}: ComputeExportLineForGivenFileArgs) => {
-  const fileNameWithoutExtension = filePath.split('.').slice(0, -1).join('.');
-  const pathToImport = slash(
-    path.relative(
-      moduleDirectory,
-      path.join(directoryPath, fileNameWithoutExtension),
-    ),
+const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
+  return exportByBarrel.map<createTypeScriptFileArgs>(
+    ({ barrel: { moduleDirectory }, allFileExports }) => {
+      const content = allFileExports
+        .map(({ exports, file }) => {
+          const fileWithoutExtension = file.split('.').slice(0, -1).join('.');
+          const pathToImport = slash(
+            path.relative(moduleDirectory, fileWithoutExtension),
+          );
+          return `export { ${exports.map(({ name }) => name).join(', ')} } from "./${pathToImport}"`;
+        })
+        .join('\n');
+
+      return {
+        content,
+        path: moduleDirectory,
+        filename: INDEX_FILENAME,
+      };
+    },
   );
-  // TODO refactor should extract all exports atomically please refer to https://github.com/twentyhq/core-team-issues/issues/644
-  return `export * from './${pathToImport}';`;
-};
-
-const generateModuleIndexFiles = (moduleDirectories: string[]) => {
-  return moduleDirectories.map<createTypeScriptFileArgs>((moduleDirectory) => {
-    const directoryPaths = getDirectoryPathsRecursive(moduleDirectory);
-    const content = directoryPaths
-      .flatMap((directoryPath) => {
-        const directFilesPaths = getFilesPaths(directoryPath);
-
-        return directFilesPaths.map((filePath) =>
-          computeExportLineForGivenFile({
-            directoryPath,
-            filePath,
-            moduleDirectory: moduleDirectory,
-          }),
-        );
-      })
-      .sort((a, b) => a.localeCompare(b)) // Could be removed as using prettier afterwards anw ?
-      .join('\n');
-
-    return {
-      content,
-      path: moduleDirectory,
-      filename: INDEX_FILENAME,
-    };
-  });
 };
 
 type JsonUpdate = Record<string, any>;
@@ -367,12 +342,15 @@ function findAllExports(directoryPath: string): ExtractedExports {
   return results;
 }
 
-type ExportPerBarrel = Array<{
-  barrel: string;
-  exports: ExtractedExports;
-}>;
-const retrieveExportsPerBarrel = (barrelDirectories: string[]) => {
-  return barrelDirectories.map<ExportPerBarrel[number]>((moduleDirectory) => {
+type ExportByBarrel = {
+  barrel: {
+    moduleName: string;
+    moduleDirectory: string;
+  };
+  allFileExports: ExtractedExports;
+};
+const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
+  return barrelDirectories.map<ExportByBarrel>((moduleDirectory) => {
     const moduleExportsPerFile = findAllExports(moduleDirectory);
     const moduleName = moduleDirectory.split('/').pop();
     if (!moduleName) {
@@ -382,21 +360,26 @@ const retrieveExportsPerBarrel = (barrelDirectories: string[]) => {
     }
 
     return {
-      barrel: moduleName,
-      exports: moduleExportsPerFile,
+      barrel: {
+        moduleName,
+        moduleDirectory,
+      },
+      allFileExports: moduleExportsPerFile,
     };
   });
 };
 
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
-  const tmp = retrieveExportsPerBarrel(moduleDirectories);
+  const exportsByBarrel = retrieveExportsByBarrel(moduleDirectories);
   fs.writeFileSync(
     'tmp.json',
-    prettier.format(JSON.stringify(tmp), { parser: 'json-stringify' }),
+    prettier.format(JSON.stringify(exportsByBarrel), {
+      parser: 'json-stringify',
+    }),
   );
-  console.log(tmp);
-  const moduleIndexFiles = generateModuleIndexFiles(moduleDirectories);
+
+  const moduleIndexFiles = generateModuleIndexFiles(exportsByBarrel);
   const packageJsonPreconstructConfigAndFiles =
     computePackageJsonFilesAndPreconstructConfig(moduleDirectories);
   const nxBuildOutputsPath =
