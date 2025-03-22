@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconLink, IconRobot, IconSearch, IconSettings } from 'twenty-ui';
@@ -73,7 +74,8 @@ export const MainNavigationDrawerItems = () => {
 
   const traceableObject = useMemo(() => {
     return workspaceFavoritesObjectMetadataItems?.find(
-      (item) => item.nameSingular === 'traceable',
+      (item) =>
+        item.nameSingular === 'traceable' || item.nameSingular === 'linklogs',
     );
   }, [workspaceFavoritesObjectMetadataItems]);
 

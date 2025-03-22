@@ -21,6 +21,7 @@ export enum AppPath {
 
   ChargesPage = '/objects/charges',
   TraceablePage = '/objects/traceable',
+  LinkLogsPage = '/objects/linklogs',
   IntegrationsPage = '/objects/integrations',
 
   RecordIndexPage = '/objects/:objectNamePlural',

@@ -1,6 +1,6 @@
-/* eslint-disable no-restricted-imports */
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 /* eslint-disable @nx/workspace-styled-components-prefixed-with-styled */
+/* eslint-disable no-restricted-imports */
 import styled from '@emotion/styled';
 import {
   IconBrandFacebook,
@@ -57,34 +57,40 @@ const CardValue = styled.div`
   text-align: right;
 `;
 
-const mockCardData: CardData[] = [
-  {
-    icon: <IconBrandGoogle />,
-    name: 'Google Ads',
-    value: 56,
-  },
-  {
-    icon: <IconBrandFacebook />,
-    name: 'Facebook Ads',
-    value: 34,
-  },
-  {
-    icon: <IconBrandTwitter />,
-    name: 'Twitter Ads',
-    value: 22,
-  },
-];
+interface DashboardLinksCardsProps {
+  chartData: {
+    linkName: string;
+    uv: number;
+  }[];
+}
 
-export const DashboardLinksCards = () => {
+export const DashboardLinksCards = ({
+  chartData,
+}: DashboardLinksCardsProps) => {
+  console.log('opaa', chartData);
+  // Função para escolher o ícone com base no linkName
+  const getIcon = (chartData: string) => {
+    switch (chartData.toLowerCase()) {
+      case 'google':
+        return <IconBrandGoogle />;
+      case 'facebook':
+        return <IconBrandFacebook />;
+      case 'twitter':
+        return <IconBrandTwitter />;
+      default:
+        return <IconBrandGoogle />; // Ícone padrão
+    }
+  };
+
   return (
     <CardsContainer>
-      {mockCardData.map((card, index) => (
+      {chartData.map((log, index) => (
         <Card key={index}>
           <CardHeader>
-            <CardIcon>{card.icon}</CardIcon>
-            <CardName>{card.name}</CardName>
+            <CardIcon>{getIcon(log.linkName)}</CardIcon>
+            <CardName>{log.linkName}</CardName>
           </CardHeader>
-          <CardValue>{card.value}</CardValue>
+          <CardValue>{log.uv}</CardValue>
         </Card>
       ))}
     </CardsContainer>

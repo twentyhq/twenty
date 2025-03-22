@@ -6,6 +6,7 @@ import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/t
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { LinkLogsWorkspaceEntity } from 'src/modules/linklogs/standard-objects/linklog.workspace-entity';
 import { TraceableWorkspaceEntity } from 'src/modules/traceable/standard-objects/traceable.workspace-entity';
 
 @Injectable()
@@ -38,6 +39,12 @@ export class TraceableEventListener {
         'traceable',
       );
 
+    const traceableAccessLogsRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<LinkLogsWorkspaceEntity>(
+        workspaceId,
+        'linklogs',
+      );
+
     const traceableEntities = await Promise.all(
       events.map((event) =>
         traceableRepository.findOneByOrFail({
@@ -47,14 +54,41 @@ export class TraceableEventListener {
     );
 
     const updateBatches = await Promise.all(
-      traceableEntities.map((traceable) => {
+      traceableEntities.map(async (traceable) => {
         const generatedUrl = this.generateTraceableUrl(traceable);
-
-        console.log('GENERATED URL:', generatedUrl);
 
         traceable.generatedUrl = generatedUrl;
 
-        return traceableRepository.save(traceable);
+        await traceableRepository.save(traceable);
+
+        const existingLog = await traceableAccessLogsRepository.findOneBy({
+          linkId: traceable.id,
+        });
+
+        if (existingLog) {
+          existingLog.userAgent = `${traceable.id}`;
+          existingLog.utmSource = traceable.campaignSource || '';
+          existingLog.utmMedium = 'cpc';
+          existingLog.utmCampaign = traceable.campaignName || '';
+          existingLog.linkName = traceable.product || '';
+          existingLog.uv = 10;
+          await traceableAccessLogsRepository.save(existingLog);
+        } else {
+          const traceableAccessLog = traceableAccessLogsRepository.create({
+            userAgent: `${traceable.id}`,
+            linkId: traceable.id,
+            utmSource: traceable.campaignSource || '',
+            utmMedium: 'cpc',
+            utmCampaign: traceable.campaignName || '',
+            userIp: null,
+            linkName: traceable.product || '',
+            uv: 10,
+          });
+
+          await traceableAccessLogsRepository.save(traceableAccessLog);
+        }
+
+        return traceable;
       }),
     );
 

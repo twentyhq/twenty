@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -11,8 +10,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
-import { TRACEABLE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { LINKLOGS_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
@@ -21,83 +19,83 @@ import {
 
 const NAME_FIELD_NAME = 'product';
 
-export const SEARCH_FIELDS_FOR_TRACEABLE: FieldTypeAndNameMetadata[] = [
+export const SEARCH_FIELDS_FOR_LINKLOGS: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.traceable,
-  namePlural: 'traceables',
-  labelSingular: msg`Traceable`,
-  labelPlural: msg`Traceables`,
-  description: msg`A traceable link`,
+  standardId: STANDARD_OBJECT_IDS.linklogs,
+  namePlural: 'linklogs',
+  labelSingular: msg`Linklog`,
+  labelPlural: msg`Linklogs`,
+  description: msg`Logs of access to traceable links`,
   icon: 'IconLink',
-  labelIdentifierStandardId: TRACEABLE_STANDARD_FIELD_IDS.name,
+  labelIdentifierStandardId: LINKLOGS_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
-export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
+export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.name,
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
-    description: msg`Traceable name`,
+    description: msg`Name of the traceable access log`,
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
   product: string;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.linkName,
-    type: FieldMetadataType.LINKS,
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.linkName,
+    type: FieldMetadataType.TEXT,
     label: msg`Link Name`,
-    description: msg`The name of the traceable link`,
+    description: msg`Link Name`,
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
-  linkName: LinksMetadata | null;
+  linkName: string;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.websiteUrl,
-    type: FieldMetadataType.LINKS,
-    label: msg`Website URL`,
-    description: msg`The URL of the website to redirect to`,
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.uv,
+    type: FieldMetadataType.NUMBER,
+    label: msg`UV`,
+    description: msg`UV`,
     icon: 'IconLink',
   })
-  @WorkspaceIsUnique()
-  websiteUrl: LinksMetadata | null;
+  @WorkspaceIsNullable()
+  uv: number;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.campaignName,
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.linkId,
     type: FieldMetadataType.TEXT,
-    label: msg`Campaign Name`,
-    description: msg`The name of the traceable link associated with the link`,
+    label: msg`Link ID`,
+    description: msg`ID of the traceable link associated with this log`,
+    icon: 'IconLink',
+  })
+  linkId: string;
+
+  @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.utmSource,
+    type: FieldMetadataType.TEXT,
+    label: msg`UTM Source`,
+    description: msg`Source of the traffic (e.g., Google, Facebook)`,
     icon: 'IconMessage',
   })
-  campaignName: string;
+  utmSource: string;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.campaignSource,
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.utmMedium,
     type: FieldMetadataType.TEXT,
-    label: msg`Campaign Source`,
-    description: msg`The source of the traceable link (e.g., Google, Facebook)`,
+    label: msg`UTM Medium`,
+    description: msg`Medium of the traffic (e.g., cpc, email)`,
     icon: 'IconMessage',
   })
-  campaignSource: string;
+  utmMedium: string;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.meansOfCommunication,
-    type: FieldMetadataType.TEXT,
-    label: msg`Means of Communication`,
-    description: msg`The means of communication used (e.g., email, social media)`,
-    icon: 'IconMessage',
-  })
-  meansOfCommunication: string;
-
-  @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.position,
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
-    description: msg`Traceable record position`,
+    description: msg`Charge record position`,
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -105,32 +103,43 @@ export class TraceableWorkspaceEntity extends BaseWorkspaceEntity {
   position: number | null;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.keyword,
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.utmCampaign,
     type: FieldMetadataType.TEXT,
-    label: msg`Keyword`,
-    description: msg`The keyword associated with the traceable link`,
-    icon: 'IconKey',
+    label: msg`UTM Campaign`,
+    description: msg`Campaign associated with the traffic`,
+    icon: 'IconMessage',
   })
-  keyword: string;
+  utmCampaign: string;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.generatedUrl,
-    type: FieldMetadataType.LINKS,
-    label: msg`Generated URL`,
-    description: msg`The final URL with UTM parameters`,
-    icon: 'IconLink',
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.userIp,
+    type: FieldMetadataType.TEXT,
+    label: msg`User IP`,
+    description: msg`IP address of the user who accessed the link`,
+    icon: 'IconUser',
   })
-  generatedUrl: LinksMetadata | null;
+  @WorkspaceIsNullable()
+  userIp: string | null;
 
   @WorkspaceField({
-    standardId: TRACEABLE_STANDARD_FIELD_IDS.searchVector,
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.userAgent,
+    type: FieldMetadataType.TEXT,
+    label: msg`User Agent`,
+    description: msg`User agent of the browser/device used to access the link`,
+    icon: 'IconDeviceMobile',
+  })
+  @WorkspaceIsNullable()
+  userAgent: string | null;
+
+  @WorkspaceField({
+    standardId: LINKLOGS_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconUser',
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields(
-      SEARCH_FIELDS_FOR_TRACEABLE,
+      SEARCH_FIELDS_FOR_LINKLOGS,
     ),
   })
   @WorkspaceIsNullable()

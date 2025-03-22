@@ -111,6 +111,13 @@ export const PageChangeEffect = () => {
         });
         break;
       }
+      case isMatchingLocation(AppPath.LinkLogsPage): {
+        setHotkeyScope(PageHotkeyScope.LinkLogsPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
+        break;
+      }
       case isMatchingLocation(AppPath.IntegrationsPage): {
         setHotkeyScope(PageHotkeyScope.IntegrationsPage, {
           goto: true,
