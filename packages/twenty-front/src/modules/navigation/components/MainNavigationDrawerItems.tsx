@@ -55,7 +55,8 @@ export const MainNavigationDrawerItems = () => {
 
   const traceableObject = useMemo(() => {
     return workspaceFavoritesObjectMetadataItems?.find(
-      (item) => item.nameSingular === 'traceable',
+      (item) =>
+        item.nameSingular === 'traceable' || item.nameSingular === 'linklogs',
     );
   }, [workspaceFavoritesObjectMetadataItems]);
 

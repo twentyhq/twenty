@@ -180,14 +180,19 @@ export const TRACEABLE_STANDARD_FIELD_IDS = {
   searchVector: '20202020-8c9d-7e6f-5a4b-3c2d1e0f9a8b',
 };
 
-export const TRACEABLE_ACCESS_LOGS_STANDARD_FIELD_IDS = {
-  name: '20202020-6c5b-4a3a-2b1c-0d9e8f7a6b5c',
-  linkId: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
-  utmSource: '20202020-1234-5678-9abc-def123456789',
-  utmMedium: '20202020-9876-5432-1abc-def654321fed',
-  utmCampaign: '20202020-abcd-ef12-3456-7890abcdef12',
-  userIp: '20202020-5678-90ab-cdef-1234567890ab',
-  userAgent: '20202020-4321-8765-cba9-fed123456789',
+export const LINKLOGS_STANDARD_FIELD_IDS = {
+  name: '20202020-8e7f-6a5b-4c3d-2e1f0a9b8c7d',
+  linkId: '20202020-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
+  position: '20202020-0b7b-4d0d-8b5d-4b7c3d2b9a4c',
+  product: '20202020-0b7b-4d0d-8b5d-4b7c3d2b2d8a',
+  utmSource: '20202020-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
+  utmMedium: '20202020-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
+  utmCampaign: '20202020-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
+  userIp: '20202020-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
+  userAgent: '20202020-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
+  linkName: '20202020-0b7b-4d0d-8b5d-4b7c3d2b3e7a',
+  uv: '20202020-0b7b-4d0d-8b5d-4b7c3d2b5f8b',
+  searchVector: '20202020-0b7b-4d0d-8b5d-4b7c3d2b7e3f',
 };
 
 export const INTEGRATION_STANDARD_FIELD_IDS = {
