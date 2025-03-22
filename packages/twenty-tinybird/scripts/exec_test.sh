@@ -56,3 +56,6 @@ find ./tests -name "*.test" -print0 | xargs -0 -I {} -P 4 bash -c 'run_test "$@"
 if [ $fail == 1 ]; then
   exit -1;
 fi
+
+
+echo "DELETE ME - I'M HERE TO TRIGGER THE CI - 1"

@@ -25,6 +25,12 @@ const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
 type TabId = WorkflowRunTabIdType;
 
 export const CommandMenuWorkflowRunViewStep = () => {
@@ -73,35 +79,43 @@ export const CommandMenuWorkflowRunViewStep = () => {
 
   return (
     <WorkflowStepContextProvider
-      value={{ workflowVersionId: workflowRun.workflowVersionId }}
+      value={{
+        workflowVersionId: workflowRun.workflowVersionId,
+        workflowRunId: workflowRun.id,
+      }}
     >
-      <StyledTabList
-        tabs={tabs}
-        behaveAsLinks={false}
-        componentInstanceId={WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID}
-      />
-
-      {activeTabId === WorkflowRunTabId.NODE ? (
-        <WorkflowRunStepNodeDetail
-          stepId={workflowSelectedNode}
-          trigger={flow.trigger}
-          steps={flow.steps}
+      <StyledContainer>
+        <StyledTabList
+          tabs={tabs}
+          behaveAsLinks={false}
+          componentInstanceId={
+            WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID
+          }
         />
-      ) : null}
 
-      {activeTabId === WorkflowRunTabId.INPUT ? (
-        <WorkflowRunStepInputDetail
-          key={workflowSelectedNode}
-          stepId={workflowSelectedNode}
-        />
-      ) : null}
+        {activeTabId === WorkflowRunTabId.NODE ? (
+          <WorkflowRunStepNodeDetail
+            stepId={workflowSelectedNode}
+            trigger={flow.trigger}
+            steps={flow.steps}
+            stepExecutionStatus={stepExecutionStatus}
+          />
+        ) : null}
 
-      {activeTabId === WorkflowRunTabId.OUTPUT ? (
-        <WorkflowRunStepOutputDetail
-          key={workflowSelectedNode}
-          stepId={workflowSelectedNode}
-        />
-      ) : null}
+        {activeTabId === WorkflowRunTabId.INPUT ? (
+          <WorkflowRunStepInputDetail
+            key={workflowSelectedNode}
+            stepId={workflowSelectedNode}
+          />
+        ) : null}
+
+        {activeTabId === WorkflowRunTabId.OUTPUT ? (
+          <WorkflowRunStepOutputDetail
+            key={workflowSelectedNode}
+            stepId={workflowSelectedNode}
+          />
+        ) : null}
+      </StyledContainer>
     </WorkflowStepContextProvider>
   );
 };
