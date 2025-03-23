@@ -94,13 +94,20 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
         !allowedFields.includes(key) && !allowedStandardOverrides.includes(key),
     );
 
-    // Check if trying to update labels when they're synced with name
     const isUpdatingLabelsWhenSynced =
       (instance.update.labelSingular || instance.update.labelPlural) &&
       objectMetadata.isLabelSyncedWithName &&
-      instance.update.isLabelSyncedWithName !== false;
+      instance.update.isLabelSyncedWithName !== false &&
+      (instance.update.labelSingular !== objectMetadata.labelSingular ||
+        instance.update.labelPlural !== objectMetadata.labelPlural);
 
-    if (hasDisallowedFields || isUpdatingLabelsWhenSynced) {
+    if (isUpdatingLabelsWhenSynced) {
+      throw new BadRequestException(
+        'Cannot update labels when they are synced with name',
+      );
+    }
+
+    if (hasDisallowedFields) {
       throw new BadRequestException(
         'Only isActive, isLabelSyncedWithName, labelSingular, labelPlural, icon and description fields can be updated for standard objects',
       );
@@ -269,34 +276,6 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     }
 
     update.standardOverrides.labelPlural = instance.update.labelPlural;
-  }
-
-  private isOnlyActiveFieldUpdate(instance: UpdateOneInputType<T>): boolean {
-    return (
-      Object.keys(instance.update).length === 1 &&
-      isDefined(instance.update.isActive)
-    );
-  }
-
-  private isOnlyLabelSyncedWithNameUpdate(
-    instance: UpdateOneInputType<T>,
-  ): boolean {
-    return (
-      Object.keys(instance.update).length === 1 &&
-      isDefined(instance.update.isLabelSyncedWithName)
-    );
-  }
-
-  private isAllowedStandardObjectUpdate(
-    instance: UpdateOneInputType<T>,
-    objectMetadata: ObjectMetadataEntity,
-  ): boolean {
-    return Object.keys(instance.update).every(
-      (key) =>
-        (['labelSingular', 'labelPlural'].includes(key) &&
-          !objectMetadata.isLabelSyncedWithName) ||
-        ['icon', 'description', 'isLabelSyncedWithName'].includes(key),
-    );
   }
 
   private async validateIdentifierFields(
