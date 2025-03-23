@@ -46,7 +46,6 @@ export const useMockFieldContext = ({
             key={objectRecordId + fieldMetadataItem.id}
             value={{
               recordId: objectRecordId,
-              recoilScopeId: objectRecordId + fieldMetadataItem.id,
               isLabelIdentifier,
               fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                 field: fieldMetadataItem,

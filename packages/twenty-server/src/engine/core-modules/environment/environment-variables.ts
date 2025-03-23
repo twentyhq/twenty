@@ -13,7 +13,7 @@ import {
   ValidationError,
   validateSync,
 } from 'class-validator';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { EmailDriver } from 'src/engine/core-modules/email/interfaces/email.interface';
 import { AwsRegion } from 'src/engine/core-modules/environment/interfaces/aws-region.interface';
@@ -695,7 +695,7 @@ export class EnvironmentVariables {
   })
   @IsDefined()
   @IsUrl({
-    protocols: ['postgres'],
+    protocols: ['postgres', 'postgresql'],
     require_tld: false,
     allow_underscores: true,
     require_host: false,

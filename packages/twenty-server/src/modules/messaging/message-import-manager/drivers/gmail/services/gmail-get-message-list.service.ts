@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { gmail_v1 as gmailV1 } from 'googleapis';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {

@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { Request } from 'express';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 

@@ -10,8 +10,8 @@ import { ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSetRecordGroups = () => {
   const setRecordGroups = useRecoilCallback(

@@ -3,7 +3,7 @@ import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/c
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   align-items: start;

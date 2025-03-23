@@ -3,8 +3,8 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { EachTestingContext } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { EachTestingContext } from 'twenty-shared/testing';
 
 const objectMetadataItemWithPositionField: ObjectMetadataItem = {
   id: 'object1',

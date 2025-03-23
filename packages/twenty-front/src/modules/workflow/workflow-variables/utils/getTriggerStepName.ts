@@ -4,7 +4,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
-import { capitalize, isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
   switch (trigger.type) {

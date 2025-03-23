@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -15,6 +15,7 @@ import {
   MessagingOngoingStaleJob,
   MessagingOngoingStaleJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
+
 export const MESSAGING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)

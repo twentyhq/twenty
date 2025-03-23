@@ -37,6 +37,7 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -268,7 +269,6 @@ export const RecordDetailRelationRecordsListItem = ({
                 value={{
                   recordId: relationRecord.id,
                   maxWidth: 200,
-                  recoilScopeId: `${relationRecord.id}-${fieldMetadataItem.id}`,
                   isLabelIdentifier: false,
                   fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                     field: fieldMetadataItem,
@@ -283,7 +283,11 @@ export const RecordDetailRelationRecordsListItem = ({
               >
                 <RecordFieldComponentInstanceContext.Provider
                   value={{
-                    instanceId: `${relationRecord.id}-${fieldMetadataItem.id}`,
+                    instanceId: getRecordFieldInputId(
+                      relationRecord.id,
+                      fieldMetadataItem.name,
+                      'record-detail',
+                    ),
                   }}
                 >
                   <RecordInlineCell />

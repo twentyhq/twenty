@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';

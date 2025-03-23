@@ -12,6 +12,8 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 
 const AddressValueSetterEffect = ({
   value,
@@ -49,32 +51,42 @@ const AddressInputWithContext = ({
 
   return (
     <div>
-      <FieldContextProvider
-        fieldDefinition={{
-          fieldMetadataId: 'text',
-          label: 'Address',
-          type: FieldMetadataType.ADDRESS,
-          iconName: 'IconTag',
-          metadata: {
-            fieldName: 'Address',
-            placeHolder: 'Enter text',
-            objectMetadataNameSingular: 'person',
-          },
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: getRecordFieldInputId(
+            recordId ?? '',
+            'Address',
+            'record-table-cell',
+          ),
         }}
-        recordId={recordId}
       >
-        <AddressValueSetterEffect value={value} />
-        <AddressInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          value={value}
-          hotkeyScope="hotkey-scope"
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      </FieldContextProvider>
-      <div data-testid="data-field-input-click-outside-div" />
+        <FieldContextProvider
+          fieldDefinition={{
+            fieldMetadataId: 'text',
+            label: 'Address',
+            type: FieldMetadataType.ADDRESS,
+            iconName: 'IconTag',
+            metadata: {
+              fieldName: 'Address',
+              placeHolder: 'Enter text',
+              objectMetadataNameSingular: 'person',
+            },
+          }}
+          recordId={recordId}
+        >
+          <AddressValueSetterEffect value={value} />
+          <AddressInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            value={value}
+            hotkeyScope="hotkey-scope"
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </FieldContextProvider>
+        <div data-testid="data-field-input-click-outside-div" />
+      </RecordFieldComponentInstanceContext.Provider>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphq
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { expect } from '@storybook/jest';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type ObjectMetadataItemAndRecordId = {
   recordId: string;
