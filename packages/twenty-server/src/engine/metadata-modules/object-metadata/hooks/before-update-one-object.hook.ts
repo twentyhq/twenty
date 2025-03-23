@@ -21,8 +21,8 @@ interface StandardObjectUpdate extends Partial<UpdateObjectPayload> {
   standardOverrides?: {
     labelSingular?: string | null;
     labelPlural?: string | null;
-    description?: string;
-    icon?: string;
+    description?: string | null;
+    icon?: string | null;
   };
 }
 
@@ -79,75 +79,196 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     instance: UpdateOneInputType<T>,
     objectMetadata: ObjectMetadataEntity,
   ): UpdateOneInputType<T> {
-    if (this.isOnlyActiveFieldUpdate(instance)) {
-      const update = {
-        isActive: instance.update.isActive,
-      };
+    const update: StandardObjectUpdate = {};
+    const allowedFields = ['isActive', 'isLabelSyncedWithName'];
+    const allowedStandardOverrides = [
+      'labelSingular',
+      'labelPlural',
+      'icon',
+      'description',
+    ];
 
-      return {
-        id: instance.id,
-        update: update as T,
-      };
-    }
-
-    if (
-      this.isOnlyLabelSyncedWithNameUpdate(instance) &&
-      instance.update.isLabelSyncedWithName === true
-    ) {
-      const update: StandardObjectUpdate = {
-        isLabelSyncedWithName: instance.update.isLabelSyncedWithName,
-        standardOverrides: {
-          labelSingular: '',
-          labelPlural: '',
-        },
-      };
-
-      return {
-        id: instance.id,
-        update: update as T,
-      };
-    }
-
-    if (instance.update.isLabelSyncedWithName === true) {
-      const update: StandardObjectUpdate = {
-        isLabelSyncedWithName: true,
-        standardOverrides: {
-          labelSingular: null,
-          labelPlural: null,
-        },
-      };
-
-      return {
-        id: instance.id,
-        update: update as T,
-      };
-    }
-
-    if (this.isAllowedStandardObjectUpdate(instance, objectMetadata)) {
-      const updateObject: StandardObjectUpdate = {
-        standardOverrides: {
-          ...(instance.update.description && {
-            description: instance.update.description,
-          }),
-          ...(instance.update.icon && { icon: instance.update.icon }),
-          ...(instance.update.labelSingular && {
-            labelSingular: instance.update.labelSingular,
-          }),
-          ...(instance.update.labelPlural && {
-            labelPlural: instance.update.labelPlural,
-          }),
-        },
-      };
-
-      return {
-        id: instance.id,
-        update: updateObject as T,
-      };
-    }
-
-    throw new BadRequestException(
-      'Only isActive, isLabelSyncedWithName, labelSingular, labelPlural, icon and description fields can be updated for standard objects',
+    // Check if any field is not allowed
+    const hasDisallowedFields = Object.keys(instance.update).some(
+      (key) =>
+        !allowedFields.includes(key) && !allowedStandardOverrides.includes(key),
     );
+
+    // Check if trying to update labels when they're synced with name
+    const isUpdatingLabelsWhenSynced =
+      (instance.update.labelSingular || instance.update.labelPlural) &&
+      objectMetadata.isLabelSyncedWithName &&
+      instance.update.isLabelSyncedWithName !== false;
+
+    if (hasDisallowedFields || isUpdatingLabelsWhenSynced) {
+      throw new BadRequestException(
+        'Only isActive, isLabelSyncedWithName, labelSingular, labelPlural, icon and description fields can be updated for standard objects',
+      );
+    }
+
+    //  preserve existing overrides
+    update.standardOverrides = objectMetadata.standardOverrides
+      ? { ...objectMetadata.standardOverrides }
+      : {};
+
+    this.handleActiveField(instance, update);
+    this.handleLabelSyncedWithNameField(instance, update);
+    this.handleStandardOverrides(instance, objectMetadata, update);
+
+    return {
+      id: instance.id,
+      update: update as T,
+    };
+  }
+
+  private handleActiveField(
+    instance: UpdateOneInputType<T>,
+    update: StandardObjectUpdate,
+  ): void {
+    if (!isDefined(instance.update.isActive)) {
+      return;
+    }
+
+    update.isActive = instance.update.isActive;
+  }
+
+  private handleLabelSyncedWithNameField(
+    instance: UpdateOneInputType<T>,
+    update: StandardObjectUpdate,
+  ): void {
+    if (!isDefined(instance.update.isLabelSyncedWithName)) {
+      return;
+    }
+
+    update.isLabelSyncedWithName = instance.update.isLabelSyncedWithName;
+
+    if (instance.update.isLabelSyncedWithName === false) {
+      return;
+    }
+
+    // If setting isLabelSyncedWithName to true, clear label overrides
+    update.standardOverrides = update.standardOverrides || {};
+    update.standardOverrides.labelSingular = null;
+    update.standardOverrides.labelPlural = null;
+  }
+
+  private handleStandardOverrides(
+    instance: UpdateOneInputType<T>,
+    objectMetadata: ObjectMetadataEntity,
+    update: StandardObjectUpdate,
+  ): void {
+    const hasStandardOverrides =
+      isDefined(instance.update.description) ||
+      isDefined(instance.update.icon) ||
+      isDefined(instance.update.labelSingular) ||
+      isDefined(instance.update.labelPlural);
+
+    if (!hasStandardOverrides) {
+      return;
+    }
+
+    update.standardOverrides = update.standardOverrides || {};
+
+    this.handleDescriptionOverride(instance, objectMetadata, update);
+    this.handleIconOverride(instance, objectMetadata, update);
+    this.handleLabelOverrides(instance, objectMetadata, update);
+  }
+
+  private handleDescriptionOverride(
+    instance: UpdateOneInputType<T>,
+    objectMetadata: ObjectMetadataEntity,
+    update: StandardObjectUpdate,
+  ): void {
+    if (!isDefined(instance.update.description)) {
+      return;
+    }
+
+    update.standardOverrides = update.standardOverrides || {};
+
+    if (instance.update.description === objectMetadata.description) {
+      update.standardOverrides.description = null;
+
+      return;
+    }
+
+    update.standardOverrides.description = instance.update.description;
+  }
+
+  private handleIconOverride(
+    instance: UpdateOneInputType<T>,
+    objectMetadata: ObjectMetadataEntity,
+    update: StandardObjectUpdate,
+  ): void {
+    if (!isDefined(instance.update.icon)) {
+      return;
+    }
+
+    update.standardOverrides = update.standardOverrides || {};
+
+    if (instance.update.icon === objectMetadata.icon) {
+      update.standardOverrides.icon = null;
+
+      return;
+    }
+
+    update.standardOverrides.icon = instance.update.icon;
+  }
+
+  private handleLabelOverrides(
+    instance: UpdateOneInputType<T>,
+    objectMetadata: ObjectMetadataEntity,
+    update: StandardObjectUpdate,
+  ): void {
+    // Skip label updates if labels are synced with name or will be synced
+    if (
+      objectMetadata.isLabelSyncedWithName ||
+      update.isLabelSyncedWithName === true
+    ) {
+      return;
+    }
+
+    this.handleLabelSingularOverride(instance, objectMetadata, update);
+    this.handleLabelPluralOverride(instance, objectMetadata, update);
+  }
+
+  private handleLabelSingularOverride(
+    instance: UpdateOneInputType<T>,
+    objectMetadata: ObjectMetadataEntity,
+    update: StandardObjectUpdate,
+  ): void {
+    if (!isDefined(instance.update.labelSingular)) {
+      return;
+    }
+
+    update.standardOverrides = update.standardOverrides || {};
+
+    if (instance.update.labelSingular === objectMetadata.labelSingular) {
+      update.standardOverrides.labelSingular = null;
+
+      return;
+    }
+
+    update.standardOverrides.labelSingular = instance.update.labelSingular;
+  }
+
+  private handleLabelPluralOverride(
+    instance: UpdateOneInputType<T>,
+    objectMetadata: ObjectMetadataEntity,
+    update: StandardObjectUpdate,
+  ): void {
+    if (!isDefined(instance.update.labelPlural)) {
+      return;
+    }
+
+    update.standardOverrides = update.standardOverrides || {};
+
+    if (instance.update.labelPlural === objectMetadata.labelPlural) {
+      update.standardOverrides.labelPlural = null;
+
+      return;
+    }
+
+    update.standardOverrides.labelPlural = instance.update.labelPlural;
   }
 
   private isOnlyActiveFieldUpdate(instance: UpdateOneInputType<T>): boolean {
