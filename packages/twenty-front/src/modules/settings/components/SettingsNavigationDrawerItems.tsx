@@ -12,10 +12,16 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { IconDoorEnter } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
+const StyledInnerContainer = styled.div`
+  height: 100%;
+`;
+
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
   const { t } = useLingui();
@@ -48,7 +54,7 @@ export const SettingsNavigationDrawerItems = () => {
       heightMode="fit-content"
       defaultEnableXScroll={false}
     >
-      <>
+      <StyledInnerContainer>
         {settingsNavigationItems.map((section) => {
           const allItemsHidden = section.items.every((item) => item.isHidden);
           if (allItemsHidden) {
@@ -130,7 +136,7 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconDoorEnter}
           />
         </NavigationDrawerSection>
-      </>
+      </StyledInnerContainer>
     </ScrollWrapper>
   );
 };
