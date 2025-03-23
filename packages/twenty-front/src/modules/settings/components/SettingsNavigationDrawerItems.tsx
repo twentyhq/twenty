@@ -11,11 +11,11 @@ import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/com
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { IconDoorEnter } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
   const { t } = useLingui();
@@ -45,6 +45,8 @@ export const SettingsNavigationDrawerItems = () => {
       contextProviderName="navigationDrawer"
       componentInstanceId={`scroll-wrapper-settings-navigation-drawer`}
       scrollbarVariant="no-padding"
+      heightMode="fit-content"
+      defaultEnableXScroll={false}
     >
       <>
         {settingsNavigationItems.map((section) => {

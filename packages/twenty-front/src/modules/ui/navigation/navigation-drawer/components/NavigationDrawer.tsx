@@ -101,22 +101,22 @@ export const NavigationDrawer = ({
       transition={{ duration: theme.animation.duration.normal }}
       isSettings={isSettingsDrawer}
     >
-        <StyledContainer
-          isSettings={isSettingsDrawer}
-          isMobile={isMobile}
-          onMouseEnter={handleHover}
-          onMouseLeave={handleMouseLeave}
-        >
-          {isSettingsDrawer && title ? (
-            !isMobile && <NavigationDrawerBackButton title={title} />
-          ) : (
-            <NavigationDrawerHeader showCollapseButton={isHovered} />
-          )}
-          <StyledItemsContainer isSettings={isSettingsDrawer}>
-            {children}
-          </StyledItemsContainer>
-          <NavigationDrawerSection>{footer}</NavigationDrawerSection>
-        </StyledContainer>
+      <StyledContainer
+        isSettings={isSettingsDrawer}
+        isMobile={isMobile}
+        onMouseEnter={handleHover}
+        onMouseLeave={handleMouseLeave}
+      >
+        {isSettingsDrawer && title ? (
+          !isMobile && <NavigationDrawerBackButton title={title} />
+        ) : (
+          <NavigationDrawerHeader showCollapseButton={isHovered} />
+        )}
+        <StyledItemsContainer isSettings={isSettingsDrawer}>
+          {children}
+        </StyledItemsContainer>
+        <NavigationDrawerSection>{footer}</NavigationDrawerSection>
+      </StyledContainer>
     </StyledAnimatedContainer>
   );
 };
