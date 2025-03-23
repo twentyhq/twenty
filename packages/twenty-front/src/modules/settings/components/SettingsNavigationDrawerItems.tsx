@@ -15,7 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { IconDoorEnter } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
   const { t } = useLingui();
@@ -41,88 +41,94 @@ export const SettingsNavigationDrawerItems = () => {
   };
 
   return (
-    <>
-      {settingsNavigationItems.map((section) => {
-        const allItemsHidden = section.items.every((item) => item.isHidden);
-        if (allItemsHidden) {
-          return null;
-        }
+    <ScrollWrapper
+      contextProviderName="navigationDrawer"
+      componentInstanceId={`scroll-wrapper-settings-navigation-drawer`}
+      scrollbarVariant="no-padding"
+    >
+      <>
+        {settingsNavigationItems.map((section) => {
+          const allItemsHidden = section.items.every((item) => item.isHidden);
+          if (allItemsHidden) {
+            return null;
+          }
 
-        return (
-          <NavigationDrawerSection key={section.label}>
-            {section.isAdvanced ? (
-              <AdvancedSettingsWrapper hideDot>
+          return (
+            <NavigationDrawerSection key={section.label}>
+              {section.isAdvanced ? (
+                <AdvancedSettingsWrapper hideDot>
+                  <NavigationDrawerSectionTitle label={section.label} />
+                </AdvancedSettingsWrapper>
+              ) : (
                 <NavigationDrawerSectionTitle label={section.label} />
-              </AdvancedSettingsWrapper>
-            ) : (
-              <NavigationDrawerSectionTitle label={section.label} />
-            )}
-            {section.items.map((item, index) => {
-              const subItems = item.subItems;
-              if (Array.isArray(subItems) && subItems.length > 0) {
-                const selectedSubItemIndex =
-                  getSelectedIndexForSubItems(subItems);
+              )}
+              {section.items.map((item, index) => {
+                const subItems = item.subItems;
+                if (Array.isArray(subItems) && subItems.length > 0) {
+                  const selectedSubItemIndex =
+                    getSelectedIndexForSubItems(subItems);
 
-                return (
-                  <NavigationDrawerItemGroup
-                    key={item.path || `group-${index}`}
-                  >
-                    <SettingsNavigationDrawerItem
-                      item={item}
-                      subItemState={
-                        item.indentationLevel
-                          ? getNavigationSubItemLeftAdornment({
-                              arrayLength: section.items.length,
-                              index,
-                              selectedIndex: selectedSubItemIndex,
-                            })
-                          : undefined
-                      }
-                    />
-                    {subItems.map((subItem, subIndex) => (
+                  return (
+                    <NavigationDrawerItemGroup
+                      key={item.path || `group-${index}`}
+                    >
                       <SettingsNavigationDrawerItem
-                        key={subItem.path || `subitem-${subIndex}`}
-                        item={subItem}
+                        item={item}
                         subItemState={
-                          subItem.indentationLevel
+                          item.indentationLevel
                             ? getNavigationSubItemLeftAdornment({
-                                arrayLength: subItems.length,
-                                index: subIndex,
+                                arrayLength: section.items.length,
+                                index,
                                 selectedIndex: selectedSubItemIndex,
                               })
                             : undefined
                         }
                       />
-                    ))}
-                  </NavigationDrawerItemGroup>
+                      {subItems.map((subItem, subIndex) => (
+                        <SettingsNavigationDrawerItem
+                          key={subItem.path || `subitem-${subIndex}`}
+                          item={subItem}
+                          subItemState={
+                            subItem.indentationLevel
+                              ? getNavigationSubItemLeftAdornment({
+                                  arrayLength: subItems.length,
+                                  index: subIndex,
+                                  selectedIndex: selectedSubItemIndex,
+                                })
+                              : undefined
+                          }
+                        />
+                      ))}
+                    </NavigationDrawerItemGroup>
+                  );
+                }
+                return (
+                  <SettingsNavigationDrawerItem
+                    key={item.path || `item-${index}`}
+                    item={item}
+                    subItemState={
+                      item.indentationLevel
+                        ? getNavigationSubItemLeftAdornment({
+                            arrayLength: section.items.length,
+                            index,
+                            selectedIndex: index,
+                          })
+                        : undefined
+                    }
+                  />
                 );
-              }
-              return (
-                <SettingsNavigationDrawerItem
-                  key={item.path || `item-${index}`}
-                  item={item}
-                  subItemState={
-                    item.indentationLevel
-                      ? getNavigationSubItemLeftAdornment({
-                          arrayLength: section.items.length,
-                          index,
-                          selectedIndex: index,
-                        })
-                      : undefined
-                  }
-                />
-              );
-            })}
-          </NavigationDrawerSection>
-        );
-      })}
-      <NavigationDrawerSection>
-        <NavigationDrawerItem
-          label={t`Logout`}
-          onClick={signOut}
-          Icon={IconDoorEnter}
-        />
-      </NavigationDrawerSection>
-    </>
+              })}
+            </NavigationDrawerSection>
+          );
+        })}
+        <NavigationDrawerSection>
+          <NavigationDrawerItem
+            label={t`Logout`}
+            onClick={signOut}
+            Icon={IconDoorEnter}
+          />
+        </NavigationDrawerSection>
+      </>
+    </ScrollWrapper>
   );
 };
