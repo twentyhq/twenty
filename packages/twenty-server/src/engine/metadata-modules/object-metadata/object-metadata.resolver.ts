@@ -95,10 +95,13 @@ export class ObjectMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.beforeUpdateOneObject.run(input, workspaceId);
+      const updatedInput = (await this.beforeUpdateOneObject.run(
+        input,
+        workspaceId,
+      )) as UpdateOneObjectInput;
 
       return await this.objectMetadataService.updateOneObject(
-        input,
+        updatedInput,
         workspaceId,
       );
     } catch (error) {
