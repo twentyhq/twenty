@@ -1,13 +1,22 @@
 import { useSetRecoilState } from 'recoil';
 
-import { useRecordFieldInputStates } from '@/object-record/record-field/hooks/internal/useRecordFieldInputStates';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { recordFieldInputDraftValueComponentSelector } from '@/object-record/record-field/states/selectors/recordFieldInputDraftValueComponentSelector';
 import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { extractComponentSelector } from '@/ui/utilities/state/component-state/utils/extractComponentSelector';
 
-export const useRecordFieldInput = <FieldValue>(
-  recordFieldInputId?: string,
-) => {
-  const { scopeId, getDraftValueSelector } =
-    useRecordFieldInputStates<FieldValue>(recordFieldInputId);
+export const useRecordFieldInput = <FieldValue>() => {
+  const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+
+  const getDraftValueSelector = extractComponentSelector<
+    FieldInputDraftValue<FieldValue> | undefined
+  >(
+    recordFieldInputDraftValueComponentSelector,
+    recordFieldComponentInstanceId,
+  );
 
   const setDraftValue = useSetRecoilState(getDraftValueSelector());
 
@@ -26,7 +35,6 @@ export const useRecordFieldInput = <FieldValue>(
   };
 
   return {
-    scopeId,
     setDraftValue,
     getDraftValueSelector,
     isDraftValueEmpty,

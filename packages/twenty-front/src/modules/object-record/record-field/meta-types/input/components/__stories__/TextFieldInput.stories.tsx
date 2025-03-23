@@ -1,13 +1,14 @@
-import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { FieldContextProvider } from '../../../components/FieldContextProvider';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
@@ -43,7 +44,11 @@ const TextFieldInputWithContext = ({
   }, [setHotKeyScope]);
 
   return (
-    <div>
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: 'record-field-component-instance-id',
+      }}
+    >
       <FieldContextProvider
         fieldDefinition={{
           fieldMetadataId: 'text',
@@ -69,7 +74,7 @@ const TextFieldInputWithContext = ({
         />
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
-    </div>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
 

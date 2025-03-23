@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';

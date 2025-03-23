@@ -18,7 +18,7 @@ import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObj
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDestroyMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {

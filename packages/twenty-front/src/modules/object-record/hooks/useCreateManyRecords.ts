@@ -21,7 +21,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type PartialObjectRecordWithId = Partial<ObjectRecord> & {
   id: string;

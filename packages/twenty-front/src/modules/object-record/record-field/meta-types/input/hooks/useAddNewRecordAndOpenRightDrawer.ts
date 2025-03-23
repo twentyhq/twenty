@@ -9,11 +9,11 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import { isDefined } from 'twenty-shared';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;

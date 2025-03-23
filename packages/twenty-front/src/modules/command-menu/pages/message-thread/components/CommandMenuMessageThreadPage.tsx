@@ -11,8 +11,8 @@ import { messageThreadComponentState } from '@/command-menu/pages/message-thread
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { ConnectedAccountProvider } from 'twenty-shared';
 import { Button, IconArrowBackUp } from 'twenty-ui';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 const StyledWrapper = styled.div`
   display: flex;

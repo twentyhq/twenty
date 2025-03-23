@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 
 import { MainButton } from '@/ui/input/button/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isDefined } from 'twenty-shared';
 import { clearStore } from '~/utils/apolloClient';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledWrapper = styled.div`
   align-items: center;

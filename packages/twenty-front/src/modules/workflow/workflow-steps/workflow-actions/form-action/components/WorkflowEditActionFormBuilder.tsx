@@ -13,11 +13,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
-import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { IconChevronDown, IconPlus, IconTrash, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { v4 } from 'uuid';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export type WorkflowEditActionFormBuilderProps = {
   action: WorkflowFormAction;

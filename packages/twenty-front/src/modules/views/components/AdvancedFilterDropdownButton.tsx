@@ -5,7 +5,7 @@ import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/adv
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const AdvancedFilterDropdownButton = () => {
   const rootLevelRecordFilterGroup = useRecoilComponentValueV2(

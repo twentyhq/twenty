@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
