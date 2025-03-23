@@ -53,6 +53,20 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ nullable: true })
   icon: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  standardOverrides?: {
+    labelSingular?: string;
+    labelPlural?: string;
+    description?: string;
+    icon?: string;
+    /* translations?: {
+      labelSingular?: Record<string, string>;
+      labelPlural?: Record<string, string>;
+      description?: Record<string, string>;
+      icon?: Record<string, string>;
+    }; */
+  };
+
   @Column({ nullable: false })
   targetTableName: string;
 

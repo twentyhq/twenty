@@ -215,7 +215,6 @@ export const SettingsDataModelObjectAboutForm = ({
             minRows={4}
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
-            disabled={!objectMetadataItem?.isCustom && isLabelSyncedWithName}
             onBlur={() => onNewDirtyField?.()}
           />
         )}

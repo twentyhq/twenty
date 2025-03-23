@@ -8,6 +8,7 @@ import {
   IDField,
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -53,6 +54,14 @@ export class ObjectMetadataDTO {
 
   @Field({ nullable: true })
   icon: string;
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  standardOverrides?: {
+    labelSingular?: string;
+    labelPlural?: string;
+    description?: string;
+    icon?: string;
+  };
 
   @Field({ nullable: true })
   shortcut: string;

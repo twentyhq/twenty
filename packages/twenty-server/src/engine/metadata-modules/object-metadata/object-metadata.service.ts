@@ -557,12 +557,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     labelKey: 'labelPlural' | 'labelSingular' | 'description',
     locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
-    if (
-      objectMetadata.isCustom ||
-      (objectMetadata.isLabelSyncedWithName === false &&
-        ['labelPlural', 'labelSingular', 'description'].includes(labelKey))
-    ) {
+    if (objectMetadata.isCustom) {
       return objectMetadata[labelKey];
+    }
+
+    if (
+      objectMetadata.standardOverrides &&
+      isDefined(objectMetadata.standardOverrides[labelKey])
+    ) {
+      return objectMetadata.standardOverrides[labelKey] as string;
     }
 
     if (!locale) {
