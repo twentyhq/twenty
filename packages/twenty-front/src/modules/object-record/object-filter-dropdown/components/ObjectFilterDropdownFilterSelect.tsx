@@ -128,7 +128,7 @@ export const ObjectFilterDropdownFilterSelect = ({
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
   };
 
-  const shoudShowSeparator =
+  const shouldShowSeparator =
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
 
@@ -174,7 +174,7 @@ export const ObjectFilterDropdownFilterSelect = ({
               </SelectableItem>
             ),
           )}
-          {shoudShowSeparator && <DropdownMenuSeparator />}
+          {shouldShowSeparator && <DropdownMenuSeparator />}
           {hiddenColumnsFieldMetadataItems.map(
             (hiddenFieldMetadataItem, index) => (
               <SelectableItem

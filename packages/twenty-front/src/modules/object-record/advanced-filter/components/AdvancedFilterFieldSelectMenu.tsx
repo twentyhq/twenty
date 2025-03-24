@@ -134,7 +134,7 @@ export const AdvancedFilterFieldSelectMenu = ({
     }
   };
 
-  const shoudShowSeparator =
+  const shouldShowSeparator =
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
 
@@ -161,7 +161,7 @@ export const AdvancedFilterFieldSelectMenu = ({
               </SelectableItem>
             ),
           )}
-          {shoudShowSeparator && <DropdownMenuSeparator />}
+          {shouldShowSeparator && <DropdownMenuSeparator />}
           {hiddenColumnsFieldMetadataItems.map(
             (hiddenFieldMetadataItem, index) => (
               <SelectableItem

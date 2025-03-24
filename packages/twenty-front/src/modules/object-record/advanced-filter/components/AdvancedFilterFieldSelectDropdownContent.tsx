@@ -3,13 +3,13 @@ import { AdvancedFilterSubFieldSelectMenu } from '@/object-record/advanced-filte
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
-type AdvancedFilterFieldSelectDrodownContentProps = {
+type AdvancedFilterFieldSelectDropdownContentProps = {
   recordFilterId: string;
 };
 
-export const AdvancedFilterFieldSelectDrodownContent = ({
+export const AdvancedFilterFieldSelectDropdownContent = ({
   recordFilterId,
-}: AdvancedFilterFieldSelectDrodownContentProps) => {
+}: AdvancedFilterFieldSelectDropdownContentProps) => {
   const [objectFilterDropdownIsSelectingCompositeField] =
     useRecoilComponentStateV2(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,

@@ -1,4 +1,4 @@
-import { AdvancedFilterFieldSelectDrodownContent } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDrodownContent';
+import { AdvancedFilterFieldSelectDropdownContent } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownContent';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -11,13 +11,13 @@ const StyledContainer = styled.div`
   flex: 2;
 `;
 
-type AdvancedFilterFieldSelectDrodownButtonProps = {
+type AdvancedFilterFieldSelectDropdownButtonProps = {
   recordFilterId: string;
 };
 
-export const AdvancedFilterFieldSelectDrodownButton = ({
+export const AdvancedFilterFieldSelectDropdownButton = ({
   recordFilterId,
-}: AdvancedFilterFieldSelectDrodownButtonProps) => {
+}: AdvancedFilterFieldSelectDropdownButtonProps) => {
   const { advancedFilterFieldSelectDropdownId } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
@@ -44,7 +44,7 @@ export const AdvancedFilterFieldSelectDrodownButton = ({
           />
         }
         dropdownComponents={
-          <AdvancedFilterFieldSelectDrodownContent
+          <AdvancedFilterFieldSelectDropdownContent
             recordFilterId={recordFilterId}
           />
         }
