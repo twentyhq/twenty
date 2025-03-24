@@ -4,12 +4,12 @@ import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-mo
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import {
-  globalSearchFactory,
-  GlobalSearchFactoryParams,
-} from 'test/integration/graphql/utils/global-search-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
+import {
+  SearchFactoryParams,
+  searchFactory,
+} from 'test/integration/graphql/utils/search-factory.util';
 import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
@@ -19,9 +19,9 @@ import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/ob
 import { findManyObjectsMetadataItems } from 'test/integration/metadata/suites/object-metadata/utils/find-many-objects-metadata-items.util';
 import { EachTestingContext } from 'twenty-shared/testing';
 
-import { GlobalSearchRecordDTO } from 'src/engine/core-modules/global-search/dtos/global-search-record-dto';
+import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record-dto';
 
-describe('GlobalSearchResolver', () => {
+describe('SearchResolver', () => {
   let listingObjectMetadataId: { objectMetadataId: string };
   const [firstPerson, secondPerson, thirdPerson] = [
     { id: randomUUID(), name: { firstName: 'searchInput1' } },
@@ -40,13 +40,8 @@ describe('GlobalSearchResolver', () => {
     { id: randomUUID(), name: 'searchInput2' },
   ];
 
-  const hasSearchRecord = (
-    globalSearch: GlobalSearchRecordDTO[],
-    recordId: string,
-  ) => {
-    return globalSearch.some(
-      (item: GlobalSearchRecordDTO) => item.recordId === recordId,
-    );
+  const hasSearchRecord = (search: SearchRecordDTO[], recordId: string) => {
+    return search.some((item: SearchRecordDTO) => item.recordId === recordId);
   };
 
   beforeAll(async () => {
@@ -127,7 +122,7 @@ describe('GlobalSearchResolver', () => {
   });
 
   const testsUseCases: EachTestingContext<{
-    input: GlobalSearchFactoryParams;
+    input: SearchFactoryParams;
     eval: {
       definedRecordIds: string[];
       undefinedRecordIds: string[];
@@ -202,24 +197,24 @@ describe('GlobalSearchResolver', () => {
   ];
 
   it.each(testsUseCases)('$title', async ({ context }) => {
-    const graphqlOperation = globalSearchFactory(context.input);
+    const graphqlOperation = searchFactory(context.input);
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
-    expect(response.body.data.globalSearch).toBeDefined();
+    expect(response.body.data.search).toBeDefined();
 
-    const globalSearch = response.body.data.globalSearch;
+    const search = response.body.data.search;
 
     context.eval.definedRecordIds.length > 0
-      ? expect(globalSearch).not.toHaveLength(0)
-      : expect(globalSearch).toHaveLength(0);
+      ? expect(search).not.toHaveLength(0)
+      : expect(search).toHaveLength(0);
 
     context.eval.definedRecordIds.forEach((recordId) => {
-      expect(hasSearchRecord(globalSearch, recordId)).toBeTruthy();
+      expect(hasSearchRecord(search, recordId)).toBeTruthy();
     });
 
     context.eval.undefinedRecordIds.forEach((recordId) => {
-      expect(hasSearchRecord(globalSearch, recordId)).toBeFalsy();
+      expect(hasSearchRecord(search, recordId)).toBeFalsy();
     });
   });
 });

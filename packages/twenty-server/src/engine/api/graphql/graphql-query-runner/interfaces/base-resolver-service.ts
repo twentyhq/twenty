@@ -245,7 +245,6 @@ export abstract class GraphqlQueryBaseResolverService<
       case RESOLVER_METHOD_NAMES.FIND_MANY:
       case RESOLVER_METHOD_NAMES.FIND_ONE:
       case RESOLVER_METHOD_NAMES.FIND_DUPLICATES:
-      case RESOLVER_METHOD_NAMES.SEARCH:
         return PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS;
       case RESOLVER_METHOD_NAMES.CREATE_MANY:
       case RESOLVER_METHOD_NAMES.CREATE_ONE:
