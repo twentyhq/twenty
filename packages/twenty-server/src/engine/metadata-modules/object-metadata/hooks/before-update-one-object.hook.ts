@@ -13,17 +13,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { Equal, In, Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 
 interface StandardObjectUpdate extends Partial<UpdateObjectPayload> {
-  standardOverrides?: {
-    labelSingular?: string | null;
-    labelPlural?: string | null;
-    description?: string | null;
-    icon?: string | null;
-  };
+  standardOverrides?: ObjectStandardOverridesDTO;
 }
 
 @Injectable()

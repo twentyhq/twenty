@@ -16,6 +16,7 @@ import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspa
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { ObjectPermissionsEntity } from 'src/engine/metadata-modules/object-permissions/object-permissions.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
@@ -54,18 +55,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   icon: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides?: {
-    labelSingular?: string;
-    labelPlural?: string;
-    description?: string;
-    icon?: string;
-    /* translations?: {
-      labelSingular?: Record<string, string>;
-      labelPlural?: Record<string, string>;
-      description?: Record<string, string>;
-      icon?: Record<string, string>;
-    }; */
-  };
+  standardOverrides?: ObjectStandardOverridesDTO;
 
   @Column({ nullable: false })
   targetTableName: string;
