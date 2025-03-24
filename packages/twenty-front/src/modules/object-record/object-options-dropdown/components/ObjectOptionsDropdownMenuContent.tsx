@@ -1,5 +1,4 @@
 import { Key } from 'ts-key-enum';
-import { capitalize, isDefined } from 'twenty-shared';
 import {
   AppTooltip,
   IconCopy,
@@ -29,6 +28,7 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
@@ -42,7 +42,9 @@ export const ObjectOptionsDropdownMenuContent = () => {
   );
 
   const isGroupByEnabled =
-    (isDefined(currentView?.viewGroups) && currentView.viewGroups.length > 0) ||
+    (isDefined(currentView?.viewGroups) &&
+      currentView?.viewGroups?.length &&
+      currentView.viewGroups.length > 0) ||
     currentView?.key !== 'INDEX';
 
   useScopedHotkeys(

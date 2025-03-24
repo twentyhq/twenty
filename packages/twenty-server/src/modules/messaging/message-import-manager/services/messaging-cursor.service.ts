@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConnectedAccountProvider } from 'twenty-shared';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';

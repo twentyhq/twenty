@@ -3,9 +3,8 @@ import { IconForbid } from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-
-import { FieldMetadataType } from 'twenty-shared';
 import { Columns, ColumnType } from '../MatchColumnsStep';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const StyledContainer = styled.div`
   display: flex;

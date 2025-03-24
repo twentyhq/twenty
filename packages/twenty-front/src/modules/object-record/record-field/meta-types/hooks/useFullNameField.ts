@@ -41,7 +41,7 @@ export const useFullNameField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldFullNameValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldFullNameValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

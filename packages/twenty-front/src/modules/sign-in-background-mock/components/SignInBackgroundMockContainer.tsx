@@ -15,7 +15,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;

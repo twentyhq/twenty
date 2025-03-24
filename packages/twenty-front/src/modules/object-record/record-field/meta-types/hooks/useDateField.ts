@@ -25,9 +25,7 @@ export const useDateField = () => {
     }),
   );
 
-  const { setDraftValue } = useRecordFieldInput<FieldDateValue>(
-    `${recordId}-${fieldName}`,
-  );
+  const { setDraftValue } = useRecordFieldInput<FieldDateValue>();
 
   return {
     fieldDefinition,

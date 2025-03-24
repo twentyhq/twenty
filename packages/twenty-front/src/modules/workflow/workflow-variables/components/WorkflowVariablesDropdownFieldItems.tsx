@@ -20,13 +20,13 @@ import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepH
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   IconChevronLeft,
   MenuItemSelect,
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowVariablesDropdownFieldItemsProps = {
   step: StepOutputSchema;
@@ -45,6 +45,7 @@ export const WorkflowVariablesDropdownFieldItems = ({
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
+    'workflow-serverless-function-tab-list-component-id',
   );
   const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
     workflowDiagramTriggerNodeSelectionState,

@@ -41,7 +41,10 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
 
   return (
     <WorkflowStepContextProvider
-      value={{ workflowVersionId: workflowVersion.id }}
+      value={{
+        workflowVersionId: workflowVersion.id,
+        workflowRunId: '123',
+      }}
     >
       {ready && <Story />}
     </WorkflowStepContextProvider>

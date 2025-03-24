@@ -361,7 +361,7 @@ const StyledButton = styled('button', {
 const StyledButtonWrapper = styled.div<
   Pick<
     ButtonProps,
-    'isLoading' | 'variant' | 'accent' | 'inverted' | 'disabled'
+    'isLoading' | 'variant' | 'accent' | 'inverted' | 'disabled' | 'fullWidth'
   >
 >`
   ${({ theme, variant, accent, inverted, disabled }) => css`
@@ -409,7 +409,9 @@ const StyledButtonWrapper = styled.div<
 
   max-width: ${({ isLoading, theme }) =>
     isLoading ? `calc(100% - ${theme.spacing(8)})` : 'none'};
+
   position: relative;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
 export const Button = ({
@@ -445,6 +447,7 @@ export const Button = ({
       accent={accent}
       inverted={inverted}
       disabled={soon || disabled}
+      fullWidth={fullWidth}
     >
       {(isLoading || Icon) && (
         <ButtonIcon Icon={Icon} isLoading={!!isLoading} />

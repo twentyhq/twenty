@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { addMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 import {
   AuthException,

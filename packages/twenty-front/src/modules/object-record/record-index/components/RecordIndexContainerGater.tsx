@@ -21,7 +21,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 const StyledIndexContainer = styled.div`
   display: flex;

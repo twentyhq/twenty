@@ -9,7 +9,6 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { computeDraftValueFromFieldValue } from '@/object-record/record-field/utils/computeDraftValueFromFieldValue';
 import { computeDraftValueFromString } from '@/object-record/record-field/utils/computeDraftValueFromString';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { extractComponentSelector } from '@/ui/utilities/state/component-state/utils/extractComponentSelector';
 
 export const useInitDraftValueV2 = <FieldValue>() => {
@@ -19,19 +18,19 @@ export const useInitDraftValueV2 = <FieldValue>() => {
         value,
         recordId,
         fieldDefinition,
+        fieldComponentInstanceId,
       }: {
         value?: string;
         recordId: string;
         fieldDefinition: FieldDefinition<FieldMetadata>;
+        fieldComponentInstanceId: string;
       }) => {
-        const recordFieldInputScopeId = `${getRecordFieldInputId(
-          recordId,
-          fieldDefinition?.metadata?.fieldName,
-        )}`;
-
         const getDraftValueSelector = extractComponentSelector<
           FieldInputDraftValue<FieldValue> | undefined
-        >(recordFieldInputDraftValueComponentSelector, recordFieldInputScopeId);
+        >(
+          recordFieldInputDraftValueComponentSelector,
+          fieldComponentInstanceId,
+        );
 
         const recordFieldValue = snapshot
           .getLoadable(

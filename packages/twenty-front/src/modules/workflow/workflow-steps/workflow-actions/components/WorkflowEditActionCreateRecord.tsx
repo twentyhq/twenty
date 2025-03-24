@@ -11,11 +11,11 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;

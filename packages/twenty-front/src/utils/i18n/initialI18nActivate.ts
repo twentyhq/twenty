@@ -1,11 +1,7 @@
 import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
-import {
-  APP_LOCALES,
-  isDefined,
-  isValidLocale,
-  SOURCE_LOCALE,
-} from 'twenty-shared';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined, isValidLocale } from 'twenty-shared/utils';
 
 export const initialI18nActivate = () => {
   const urlLocale = fromUrl('locale');

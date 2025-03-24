@@ -77,7 +77,12 @@ export const RecordChip = ({
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       className={className}
-      variant={variant}
+      variant={
+        variant ??
+        (!forceDisableClick
+          ? AvatarChipVariant.Regular
+          : AvatarChipVariant.Transparent)
+      }
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={(clickEvent) => {
         // TODO refactor wrapper event listener to avoid colliding events

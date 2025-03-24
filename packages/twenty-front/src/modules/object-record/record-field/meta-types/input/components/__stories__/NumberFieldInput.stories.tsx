@@ -7,6 +7,8 @@ import { FieldMetadataType } from '~/generated/graphql';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { useNumberField } from '../../../hooks/useNumberField';
@@ -43,7 +45,15 @@ const NumberFieldInputWithContext = ({
   }, [setHotKeyScope]);
 
   return (
-    <div>
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: getRecordFieldInputId(
+          recordId ?? '',
+          'Number',
+          'record-table-cell',
+        ),
+      }}
+    >
       <FieldContextProvider
         fieldDefinition={{
           fieldMetadataId: 'number',
@@ -69,7 +79,7 @@ const NumberFieldInputWithContext = ({
         />
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
-    </div>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
 

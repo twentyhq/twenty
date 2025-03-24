@@ -4,7 +4,7 @@ import {
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Field } from '@/spreadsheet-import/types';
 import { getMatchedColumns } from '@/spreadsheet-import/utils/getMatchedColumns';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('getMatchedColumns', () => {
   const columns: Column<string>[] = [

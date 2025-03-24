@@ -3,12 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import FileType from 'file-type';
-import {
-  TWENTY_ICONS_BASE_URL,
-  WorkspaceActivationStatus,
-} from 'twenty-shared';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 

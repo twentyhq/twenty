@@ -1,8 +1,8 @@
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FieldMetadataType } from 'twenty-shared';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const peopleQueryResult = {
   people: {
