@@ -124,6 +124,10 @@ export class RoleResolver {
     upsertObjectPermissionInput: UpsertObjectPermissionInput,
   ) {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
+    await this.validateRoleIsEditableOrThrow({
+      roleId: upsertObjectPermissionInput.roleId,
+      workspaceId: workspace.id,
+    });
 
     return this.objectPermissionService.upsertObjectPermission({
       workspaceId: workspace.id,
@@ -138,6 +142,10 @@ export class RoleResolver {
     upsertSettingPermissionInput: UpsertSettingPermissionInput,
   ) {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
+    await this.validateRoleIsEditableOrThrow({
+      roleId: upsertSettingPermissionInput.roleId,
+      workspaceId: workspace.id,
+    });
 
     return this.settingPermissionService.upsertSettingPermission({
       workspaceId: workspace.id,
@@ -151,6 +159,10 @@ export class RoleResolver {
     @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
   ): Promise<RoleDTO> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
+    await this.validateRoleIsEditableOrThrow({
+      roleId: updateRoleInput.id,
+      workspaceId: workspace.id,
+    });
 
     return this.roleService.updateRole({
       input: updateRoleInput,
@@ -180,6 +192,23 @@ export class RoleResolver {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSIONS_V2_NOT_ENABLED,
         PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED,
+      );
+    }
+  }
+
+  private async validateRoleIsEditableOrThrow({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }) {
+    const role = await this.roleService.getRoleById(roleId, workspaceId);
+
+    if (!role?.isEditable) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
+        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
       );
     }
   }

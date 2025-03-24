@@ -141,6 +141,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
     () => ObjectPermissionEntity,
     (objectPermission: ObjectPermissionEntity) =>
       objectPermission.objectMetadata,
+    {
+      cascade: true,
+    },
   )
   objectPermissions: Relation<ObjectPermissionEntity[]>;
 }

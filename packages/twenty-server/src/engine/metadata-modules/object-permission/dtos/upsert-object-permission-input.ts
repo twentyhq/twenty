@@ -17,20 +17,20 @@ export class UpsertObjectPermissionInput {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  canReadRecords?: boolean;
+  canReadObjectRecords?: boolean;
 
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  canUpdateRecords?: boolean;
+  canUpdateObjectRecords?: boolean;
 
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  canSoftDeleteRecords?: boolean;
+  canSoftDeleteObjectRecords?: boolean;
 
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  canDestroyRecords?: boolean;
+  canDestroyObjectRecords?: boolean;
 }

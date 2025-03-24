@@ -27,6 +27,7 @@ export enum PermissionsExceptionCode {
   DEFAULT_ROLE_NOT_FOUND = 'DEFAULT_ROLE_NOT_FOUND',
   OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND',
   INVALID_SETTING = 'INVALID_SETTING',
+  ROLE_NOT_EDITABLE = 'ROLE_NOT_EDITABLE',
 }
 
 export enum PermissionsExceptionMessage {
@@ -49,4 +50,5 @@ export enum PermissionsExceptionMessage {
   DEFAULT_ROLE_NOT_FOUND = 'Default role not found',
   OBJECT_METADATA_NOT_FOUND = 'Object metadata not found',
   INVALID_SETTING = 'Invalid permission setting',
+  ROLE_NOT_EDITABLE = 'Role is not editable',
 }

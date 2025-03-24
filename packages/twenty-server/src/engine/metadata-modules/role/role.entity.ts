@@ -69,7 +69,7 @@ export class RoleEntity {
 
   @OneToMany(
     () => SettingPermissionEntity,
-    (settingsPermission: SettingPermissionEntity) => settingsPermission.role,
+    (settingPermission: SettingPermissionEntity) => settingPermission.role,
   )
-  settingsPermissions: Relation<SettingPermissionEntity[]>;
+  settingPermissions: Relation<SettingPermissionEntity[]>;
 }

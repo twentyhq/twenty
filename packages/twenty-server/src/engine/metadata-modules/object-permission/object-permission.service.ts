@@ -29,7 +29,7 @@ export class ObjectPermissionService {
   }: {
     workspaceId: string;
     input: UpsertObjectPermissionInput;
-  }): Promise<ObjectPermissionEntity | null | undefined> {
+  }): Promise<ObjectPermissionEntity | null> {
     try {
       const result = await this.objectPermissionRepository.upsert(
         {
@@ -41,7 +41,7 @@ export class ObjectPermissionService {
         },
       );
 
-      const objectPermissionId = result.generatedMaps[0].id;
+      const objectPermissionId = result.generatedMaps?.[0]?.id;
 
       if (!isDefined(objectPermissionId)) {
         throw new Error('Failed to upsert object permission');
