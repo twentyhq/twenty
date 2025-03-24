@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -65,7 +65,7 @@ export class WorkspaceMemberPreQueryHookService {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        _setting: SettingsPermissions.WORKSPACE_MEMBERS,
+        _setting: SettingPermission.WORKSPACE_MEMBERS,
         isExecutedByApiKey: isDefined(apiKey),
       })
     ) {

@@ -13,7 +13,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RelationMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/relation-metadata/interceptors/relation-metadata-graphql-api-exception.interceptor';
@@ -57,7 +57,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           pagingStrategy: PagingStrategies.CURSOR,
           create: {
             many: { disabled: true },
-            guards: [SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL)],
+            guards: [SettingsPermissionsGuard(SettingPermission.DATA_MODEL)],
           },
           update: { disabled: true },
           delete: { disabled: true },

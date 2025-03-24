@@ -69,6 +69,7 @@ export class ObjectPermissionService {
 
         const objectMetadata = await this.objectMetadataRepository.findOne({
           where: {
+            workspaceId,
             id: input.objectMetadataId,
           },
         });
