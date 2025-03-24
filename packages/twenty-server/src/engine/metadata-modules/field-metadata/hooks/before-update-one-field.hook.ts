@@ -12,16 +12,13 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 
 interface StandardFieldUpdate extends Partial<UpdateFieldInput> {
-  standardOverrides?: {
-    label?: string | null;
-    description?: string | null;
-    icon?: string | null;
-  };
+  standardOverrides?: FieldStandardOverridesDTO;
 }
 
 @Injectable()

@@ -19,6 +19,7 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -77,17 +78,7 @@ export class FieldMetadataEntity<
   icon: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides?: {
-    label?: string | null;
-    description?: string | null;
-    icon?: string | null;
-    /* translations?: {
-      labelSingular?: Record<string, string>;
-      labelPlural?: Record<string, string>;
-      description?: Record<string, string>;
-      icon?: Record<string, string>;
-    }; */
-  };
+  standardOverrides?: FieldStandardOverridesDTO;
 
   @Column('jsonb', { nullable: true })
   options: FieldMetadataOptions<T>;

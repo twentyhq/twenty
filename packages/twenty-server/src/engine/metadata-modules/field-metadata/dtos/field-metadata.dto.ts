@@ -32,6 +32,7 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
@@ -43,24 +44,6 @@ registerEnumType(FieldMetadataType, {
   name: 'FieldMetadataType',
   description: 'Type of the field',
 });
-
-@ObjectType('StandardOverrides')
-export class FieldStandardOverridesDTO {
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  label?: string | null;
-
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  description?: string | null;
-
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  icon?: string | null;
-}
 
 @ObjectType('Field')
 @Authorize({
