@@ -65,7 +65,7 @@ const RatingFieldInputWithContext = ({
               objectMetadataNameSingular: 'person',
             },
           },
-          recordId: '123',
+          recordId: recordId ?? '123',
           hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
         }}
