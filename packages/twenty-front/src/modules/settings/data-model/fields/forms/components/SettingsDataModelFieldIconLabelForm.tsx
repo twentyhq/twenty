@@ -12,6 +12,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   Card,
@@ -20,7 +21,6 @@ import {
   TooltipDelay,
 } from 'twenty-ui';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-import { isDefined } from 'twenty-shared/utils';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
   existingOtherLabels: string[] = [],
@@ -143,7 +143,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                 }
               }}
               error={getErrorMessageFromError(errors.label?.message)}
-              disabled={disabled}
+              disabled={isLabelSyncedWithName === true}
               maxLength={maxLength}
               fullWidth
             />
@@ -211,10 +211,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
                         title={t`Synchronize Field Label and API Name`}
                         description={t`Should changing a field's label also change the API name?`}
                         checked={value ?? true}
-                        disabled={
-                          isDefined(fieldMetadataItem) &&
-                          !fieldMetadataItem.isCustom
-                        }
                         advancedMode
                         onChange={(value) => {
                           onChange(value);

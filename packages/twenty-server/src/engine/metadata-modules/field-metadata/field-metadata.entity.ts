@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -12,7 +13,6 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
@@ -78,10 +78,9 @@ export class FieldMetadataEntity<
 
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides?: {
-    labelSingular?: string;
-    labelPlural?: string;
-    description?: string;
-    icon?: string;
+    label?: string | null;
+    description?: string | null;
+    icon?: string | null;
     /* translations?: {
       labelSingular?: Record<string, string>;
       labelPlural?: Record<string, string>;

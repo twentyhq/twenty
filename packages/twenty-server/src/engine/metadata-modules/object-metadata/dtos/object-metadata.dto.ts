@@ -8,13 +8,36 @@ import {
   IDField,
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
-import { GraphQLJSONObject } from 'graphql-type-json';
+import { IsOptional, IsString } from 'class-validator';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-delete-one-object.hook';
+
+@ObjectType('ObjectStandardOverrides')
+export class ObjectStandardOverridesDTO {
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  labelSingular?: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  labelPlural?: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  description?: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  icon?: string | null;
+}
 
 @ObjectType('Object')
 @Authorize({
@@ -55,13 +78,8 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   icon: string;
 
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  standardOverrides?: {
-    labelSingular?: string;
-    labelPlural?: string;
-    description?: string;
-    icon?: string;
-  };
+  @Field(() => ObjectStandardOverridesDTO, { nullable: true })
+  standardOverrides?: ObjectStandardOverridesDTO;
 
   @Field({ nullable: true })
   shortcut: string;

@@ -44,6 +44,24 @@ registerEnumType(FieldMetadataType, {
   description: 'Type of the field',
 });
 
+@ObjectType('StandardOverrides')
+export class FieldStandardOverridesDTO {
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  label?: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  description?: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  icon?: string | null;
+}
+
 @ObjectType('Field')
 @Authorize({
   authorize: (context: any) => ({
@@ -95,6 +113,11 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => FieldStandardOverridesDTO, { nullable: true })
+  standardOverrides?: FieldStandardOverridesDTO;
 
   @IsBoolean()
   @IsOptional()
