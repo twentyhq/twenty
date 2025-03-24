@@ -21,8 +21,8 @@ jobs:
     if: needs.changed-files-check.outputs.any_changed == 'true'
     strategy:
       matrix:
-        os: ['ubuntu-latest', windows-latest]
-        task: [lint, typecheck, test]
+        os: [ubuntu-latest, windows-latest]
+        task: [lint, typecheck, test, 'build']
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     env:
