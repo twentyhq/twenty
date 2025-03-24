@@ -39,10 +39,10 @@ export class TraceableEventListener {
         'traceable',
       );
 
-    const traceableAccessLogsRepository =
+    const linklogsRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<LinkLogsWorkspaceEntity>(
         workspaceId,
-        'linklogs',
+        'linkLogs',
       );
 
     const traceableEntities = await Promise.all(
@@ -61,7 +61,7 @@ export class TraceableEventListener {
 
         await traceableRepository.save(traceable);
 
-        const existingLog = await traceableAccessLogsRepository.findOneBy({
+        const existingLog = await linklogsRepository.findOneBy({
           linkId: traceable.id,
         });
 
@@ -72,9 +72,9 @@ export class TraceableEventListener {
           existingLog.utmCampaign = traceable.campaignName || '';
           existingLog.linkName = traceable.product || '';
           existingLog.uv = 10;
-          await traceableAccessLogsRepository.save(existingLog);
+          await linklogsRepository.save(existingLog);
         } else {
-          const traceableAccessLog = traceableAccessLogsRepository.create({
+          const traceableAccessLog = linklogsRepository.create({
             userAgent: `${traceable.id}`,
             linkId: traceable.id,
             utmSource: traceable.campaignSource || '',
@@ -85,7 +85,7 @@ export class TraceableEventListener {
             uv: 10,
           });
 
-          await traceableAccessLogsRepository.save(traceableAccessLog);
+          await linklogsRepository.save(traceableAccessLog);
         }
 
         return traceable;
