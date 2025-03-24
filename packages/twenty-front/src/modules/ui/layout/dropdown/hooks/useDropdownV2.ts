@@ -62,7 +62,7 @@ export const useDropdownV2 = () => {
 
   const toggleDropdown = useRecoilCallback(
     ({ snapshot }) =>
-      (specificComponentId: string) => {
+      (specificComponentId: string, customHotkeyScope?: HotkeyScope) => {
         const scopeId = getScopeIdFromComponentId(specificComponentId);
         const isDropdownOpen = snapshot
           .getLoadable(isDropdownOpenComponentState({ scopeId }))
@@ -71,7 +71,7 @@ export const useDropdownV2 = () => {
         if (isDropdownOpen) {
           closeDropdown(specificComponentId);
         } else {
-          openDropdown(specificComponentId);
+          openDropdown(specificComponentId, customHotkeyScope);
         }
       },
     [closeDropdown, openDropdown],
