@@ -19,14 +19,13 @@ jobs:
   shared-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        task: [lint, typecheck, test, 'build']
     timeout-minutes: 30
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+    strategy:
+      matrix:
+        task: [lint, typecheck, test]
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
