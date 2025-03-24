@@ -14,6 +14,7 @@ import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKey
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
+import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -73,7 +74,7 @@ export const CommandMenuContainer = ({
           .getLoadable(currentHotkeyScopeState)
           .getValue();
 
-        if (hotkeyScope?.customScopes?.commandMenuOpen === true) {
+        if (hotkeyScope?.scope === CommandMenuHotkeyScope.CommandMenuFocused) {
           closeCommandMenu();
         }
       },
