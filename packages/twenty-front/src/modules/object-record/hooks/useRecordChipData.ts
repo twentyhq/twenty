@@ -22,6 +22,7 @@ export const useRecordChipData = ({
 
   const identifierChipGenerator =
     identifierChipGeneratorPerObject[objectNameSingular];
+
   if (isDefined(identifierChipGenerator)) {
     return {
       recordChipData: identifierChipGenerator(record),
