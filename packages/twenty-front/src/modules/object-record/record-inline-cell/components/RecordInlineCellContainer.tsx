@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
@@ -108,14 +108,6 @@ export const RecordInlineCellContainer = () => {
     recordId,
     fieldDefinition?.metadata?.fieldName,
   )}`;
-
-  useEffect(() => {
-    console.log('render container');
-
-    return () => {
-      console.log('unmount container');
-    };
-  }, []);
 
   return (
     <StyledInlineCellBaseContainer
