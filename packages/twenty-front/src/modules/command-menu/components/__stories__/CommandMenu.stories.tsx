@@ -164,10 +164,10 @@ export const NoResultsSearchFallback: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('GlobalSearch', () => {
+        graphql.query('Search', () => {
           return HttpResponse.json({
             data: {
-              globalSearch: [],
+              search: [],
             },
           });
         }),
