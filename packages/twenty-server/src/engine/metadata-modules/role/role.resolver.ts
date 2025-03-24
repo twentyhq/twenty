@@ -26,9 +26,9 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/createRoleInput.dto';
+import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/updateRoleInput.dto';
+import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { SettingPermissionDTO } from 'src/engine/metadata-modules/setting-permission/dtos/setting-permission.dto';
 import { UpsertSettingPermissionInput } from 'src/engine/metadata-modules/setting-permission/dtos/upsert-setting-permission-input';
