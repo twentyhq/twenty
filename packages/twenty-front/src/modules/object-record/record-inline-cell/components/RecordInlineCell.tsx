@@ -12,7 +12,6 @@ import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFie
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
@@ -23,7 +22,6 @@ import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/m
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilCallback } from 'recoil';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
@@ -45,10 +43,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     onOpenEditMode,
     onCloseEditMode,
   } = useContext(FieldContext);
-
-  const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
-  );
 
   const buttonIcon = useGetButtonIcon();
 
@@ -147,7 +141,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isCentered,
     editModeContent: (
       <FieldInput
-        recordFieldInputdId={recordFieldComponentInstanceId}
         onEnter={handleEnter}
         onCancel={handleCancel}
         onEscape={handleEscape}

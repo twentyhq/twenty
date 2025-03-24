@@ -4,7 +4,7 @@ import { useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId } from 
 import { MultipleRecordPickerMenuItemContent } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItemContent';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;

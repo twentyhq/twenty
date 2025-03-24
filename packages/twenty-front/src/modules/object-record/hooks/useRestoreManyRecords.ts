@@ -13,8 +13,8 @@ import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreM
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
 import { sleep } from '~/utils/sleep';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 type useRestoreManyRecordProps = {
   objectNameSingular: string;

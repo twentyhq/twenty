@@ -8,7 +8,7 @@ import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflo
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowRunVisualizerEffect = ({
   workflowRunId,

@@ -41,7 +41,6 @@ import { FieldInputEvent } from '../types/FieldInputEvent';
 import { isFieldText } from '../types/guards/isFieldText';
 
 type FieldInputProps = {
-  recordFieldInputdId: string;
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
   onClickOutside?: (

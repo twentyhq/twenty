@@ -9,8 +9,8 @@ import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTree
 import { ANIMATION } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { JsonValue } from 'type-fest';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.li`
   display: grid;

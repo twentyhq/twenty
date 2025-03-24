@@ -1,5 +1,5 @@
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const makeAndFilterVariables = (
   filters: (RecordGqlOperationFilter | undefined)[],

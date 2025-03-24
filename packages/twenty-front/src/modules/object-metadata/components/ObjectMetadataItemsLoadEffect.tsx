@@ -5,8 +5,8 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 export const ObjectMetadataItemsLoadEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
