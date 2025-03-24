@@ -5,8 +5,9 @@ import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { useOpenActivityTargetInlineCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetInlineCellEditMode';
 import { useUpdateActivityTargetFromInlineCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromInlineCell';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
@@ -14,6 +15,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 
@@ -43,14 +45,13 @@ export const ActivityTargetsInlineCell = ({
 
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
-  const { FieldContextProvider: ActivityTargetsContextProvider } =
-    useFieldContext({
-      objectNameSingular: activityObjectNameSingular,
-      objectRecordId: activityRecordId,
-      fieldMetadataName: fieldDefinition.metadata.fieldName,
-      fieldPosition: 3,
-      overridenIsFieldEmpty: activityTargetObjectRecords.length === 0,
-    });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: activityObjectNameSingular,
+  });
+
+  const fieldMetadataItem = objectMetadataItem?.fields.find(
+    (field) => field.name === fieldDefinition.metadata.fieldName,
+  );
 
   const { openActivityTargetInlineCellEditMode } =
     useOpenActivityTargetInlineCellEditMode();
@@ -61,6 +62,10 @@ export const ActivityTargetsInlineCell = ({
       activityId: activityRecordId,
     });
 
+  if (!fieldMetadataItem) {
+    return null;
+  }
+
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
@@ -68,55 +73,69 @@ export const ActivityTargetsInlineCell = ({
       }}
     >
       <FieldFocusContextProvider>
-        {ActivityTargetsContextProvider && (
-          <ActivityTargetsContextProvider>
-            <RecordInlineCellContext.Provider
-              value={{
-                buttonIcon: IconPencil,
-                customEditHotkeyScope:
-                  MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
-                IconLabel: showLabel ? IconArrowUpRight : undefined,
-                showLabel: showLabel,
-                readonly: isFieldReadOnly,
-                labelWidth: fieldDefinition?.labelWidth,
-                editModeContent: (
-                  <MultipleRecordPicker
-                    componentInstanceId={componentInstanceId}
-                    onClickOutside={() => {
-                      closeInlineCell();
-                    }}
-                    onChange={(morphItem) => {
-                      updateActivityTargetFromInlineCell({
-                        recordPickerInstanceId: componentInstanceId,
-                        morphItem,
-                        activityTargetWithTargetRecords:
-                          activityTargetObjectRecords,
-                      });
-                    }}
-                    onSubmit={() => {
-                      closeInlineCell();
-                    }}
-                  />
-                ),
-                label: 'Relations',
-                displayModeContent: (
-                  <ActivityTargetChips
-                    activityTargetObjectRecords={activityTargetObjectRecords}
-                    maxWidth={maxWidth}
-                  />
-                ),
-                onOpenEditMode: () => {
-                  openActivityTargetInlineCellEditMode({
-                    recordPickerInstanceId: componentInstanceId,
-                    activityTargetObjectRecords,
-                  });
-                },
-              }}
-            >
-              <RecordInlineCellContainer />
-            </RecordInlineCellContext.Provider>
-          </ActivityTargetsContextProvider>
-        )}
+        <FieldContext.Provider
+          key={activityRecordId + fieldDefinition.metadata.fieldName}
+          value={{
+            recordId: activityRecordId,
+            isLabelIdentifier: false,
+            fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+              field: fieldMetadataItem,
+              showLabel: true,
+              position: 3,
+              objectMetadataItem,
+              labelWidth: 90,
+            }),
+            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+            clearable: false,
+            overridenIsFieldEmpty: activityTargetObjectRecords.length === 0,
+          }}
+        >
+          <RecordInlineCellContext.Provider
+            value={{
+              buttonIcon: IconPencil,
+              customEditHotkeyScope:
+                MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
+              IconLabel: showLabel ? IconArrowUpRight : undefined,
+              showLabel: showLabel,
+              readonly: isFieldReadOnly,
+              labelWidth: fieldDefinition?.labelWidth,
+              editModeContent: (
+                <MultipleRecordPicker
+                  componentInstanceId={componentInstanceId}
+                  onClickOutside={() => {
+                    closeInlineCell();
+                  }}
+                  onChange={(morphItem) => {
+                    updateActivityTargetFromInlineCell({
+                      recordPickerInstanceId: componentInstanceId,
+                      morphItem,
+                      activityTargetWithTargetRecords:
+                        activityTargetObjectRecords,
+                    });
+                  }}
+                  onSubmit={() => {
+                    closeInlineCell();
+                  }}
+                />
+              ),
+              label: 'Relations',
+              displayModeContent: (
+                <ActivityTargetChips
+                  activityTargetObjectRecords={activityTargetObjectRecords}
+                  maxWidth={maxWidth}
+                />
+              ),
+              onOpenEditMode: () => {
+                openActivityTargetInlineCellEditMode({
+                  recordPickerInstanceId: componentInstanceId,
+                  activityTargetObjectRecords,
+                });
+              },
+            }}
+          >
+            <RecordInlineCellContainer />
+          </RecordInlineCellContext.Provider>
+        </FieldContext.Provider>
       </FieldFocusContextProvider>
     </RecordFieldComponentInstanceContext.Provider>
   );
