@@ -23,7 +23,6 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -74,7 +73,7 @@ export const CommandMenuContainer = ({
           .getLoadable(currentHotkeyScopeState)
           .getValue();
 
-        if (hotkeyScope.scope === AppHotkeyScope.CommandMenuOpen) {
+        if (hotkeyScope?.customScopes?.commandMenuOpen === true) {
           closeCommandMenu();
         }
       },

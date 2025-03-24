@@ -1,10 +1,12 @@
-import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -15,6 +17,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { Button, IconBrowserMaximize, getOsControlSymbol } from 'twenty-ui';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 const StyledLink = styled(Link)`
@@ -59,6 +62,12 @@ export const RecordShowRightDrawerOpenRecordButton = ({
 
   const navigate = useNavigateApp();
 
+  const actionMenuId = useComponentInstanceStateContext(
+    ActionMenuComponentInstanceContext,
+  )?.instanceId;
+
+  const { closeDropdown } = useDropdownV2();
+
   const handleOpenRecord = useCallback(() => {
     const tabIdToOpen =
       activeTabIdInRightDrawer === 'home'
@@ -75,10 +84,18 @@ export const RecordShowRightDrawerOpenRecordButton = ({
       objectRecordId: record.id,
     });
 
+    if (isDefined(actionMenuId)) {
+      closeDropdown(
+        getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
+      );
+    }
+
     closeCommandMenu();
   }, [
+    actionMenuId,
     activeTabIdInRightDrawer,
     closeCommandMenu,
+    closeDropdown,
     navigate,
     objectNameSingular,
     record.id,
@@ -89,13 +106,6 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     ['ctrl+Enter,meta+Enter'],
     handleOpenRecord,
     AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu, navigate, objectNameSingular, record.id],
-  );
-
-  useScopedHotkeys(
-    ['ctrl+Enter,meta+Enter'],
-    handleOpenRecord,
-    CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
     [closeCommandMenu, navigate, objectNameSingular, record.id],
   );
 
