@@ -36,8 +36,9 @@ export const useCommandMenuCommands = () => {
   const navigateCommandsFromConstants = Object.values(
     COMMAND_MENU_NAVIGATE_COMMANDS,
   );
-  const allNavigateCommands =
-    navigateCommands?.concat(navigateCommandsFromConstants) || [];
+  const allNavigateCommands = navigateCommands.concat(
+    navigateCommandsFromConstants,
+  );
 
   const actionRecordSelectionCommands: Command[] = actionMenuEntries
     ?.filter(
