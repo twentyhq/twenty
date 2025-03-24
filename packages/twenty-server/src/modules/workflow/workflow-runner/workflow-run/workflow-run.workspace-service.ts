@@ -188,6 +188,16 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
+    if (
+      workflowRunToUpdate.status === WorkflowRunStatus.COMPLETED ||
+      workflowRunToUpdate.status === WorkflowRunStatus.FAILED
+    ) {
+      throw new WorkflowRunException(
+        'Cannot update steps of a completed or failed workflow run',
+        WorkflowRunExceptionCode.INVALID_OPERATION,
+      );
+    }
+
     const updatedSteps = workflowRunToUpdate.output?.flow?.steps?.map(
       (existingStep) => (step.id === existingStep.id ? step : existingStep),
     );
