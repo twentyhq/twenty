@@ -552,9 +552,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
   };
 
-  async resolveTranslatableString(
+  async resolveOverridableString(
     objectMetadata: ObjectMetadataDTO,
-    labelKey: 'labelPlural' | 'labelSingular' | 'description',
+    labelKey: 'labelPlural' | 'labelSingular' | 'description' | 'icon',
     locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
     if (objectMetadata.isCustom) {
