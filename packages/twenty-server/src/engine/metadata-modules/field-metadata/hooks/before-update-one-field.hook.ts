@@ -65,12 +65,12 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     fieldMetadata: FieldMetadataEntity,
   ): UpdateOneInputType<T> {
     const update: StandardFieldUpdate = {};
-    const allowedFields = ['isActive', 'isLabelSyncedWithName'];
-    const allowedStandardOverrides = ['label', 'icon', 'description'];
+    const updatableFields = ['isActive', 'isLabelSyncedWithName'];
+    const overridableFields = ['label', 'icon', 'description'];
 
-    const hasDisallowedFields = Object.keys(instance.update).some(
+    const hasNonUpdatableFields = Object.keys(instance.update).some(
       (key) =>
-        !allowedFields.includes(key) && !allowedStandardOverrides.includes(key),
+        !updatableFields.includes(key) && !overridableFields.includes(key),
     );
 
     const isUpdatingLabelWhenSynced =
@@ -85,7 +85,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       );
     }
 
-    if (hasDisallowedFields) {
+    if (hasNonUpdatableFields) {
       throw new BadRequestException(
         'Only isActive, isLabelSyncedWithName, label, icon and description fields can be updated for standard fields',
       );

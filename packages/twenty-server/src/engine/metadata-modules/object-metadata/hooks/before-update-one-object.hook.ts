@@ -76,8 +76,8 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     objectMetadata: ObjectMetadataEntity,
   ): UpdateOneInputType<T> {
     const update: StandardObjectUpdate = {};
-    const allowedFields = ['isActive', 'isLabelSyncedWithName'];
-    const allowedStandardOverrides = [
+    const updatableFields = ['isActive', 'isLabelSyncedWithName'];
+    const overridableFields = [
       'labelSingular',
       'labelPlural',
       'icon',
@@ -85,12 +85,12 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     ];
 
     // Check if any field is not allowed
-    const disallowedFields = Object.keys(instance.update).filter(
+    const nonUpdatableFields = Object.keys(instance.update).filter(
       (key) =>
-        !allowedFields.includes(key) && !allowedStandardOverrides.includes(key),
+        !updatableFields.includes(key) && !overridableFields.includes(key),
     );
 
-    const hasDisallowedFields = disallowedFields.length > 0;
+    const hasNonUpdatableFields = nonUpdatableFields.length > 0;
 
     const isUpdatingLabelsWhenSynced =
       (instance.update.labelSingular || instance.update.labelPlural) &&
@@ -105,9 +105,9 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       );
     }
 
-    if (hasDisallowedFields) {
+    if (hasNonUpdatableFields) {
       throw new BadRequestException(
-        `Only isActive, isLabelSyncedWithName, labelSingular, labelPlural, icon and description fields can be updated for standard objects. Disallowed fields: ${disallowedFields.join(', ')}`,
+        `Only isActive, isLabelSyncedWithName, labelSingular, labelPlural, icon and description fields can be updated for standard objects. Disallowed fields: ${nonUpdatableFields.join(', ')}`,
       );
     }
 
