@@ -3,6 +3,7 @@ import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflo
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -50,6 +51,7 @@ const meta: Meta<typeof WorkflowEditActionFindRecords> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
+    I18nFrontDecorator,
   ],
 };
 

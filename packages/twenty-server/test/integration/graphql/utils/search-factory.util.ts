@@ -1,29 +1,29 @@
 import gql from 'graphql-tag';
 
-import { ObjectRecordFilterInput } from 'src/engine/core-modules/global-search/dtos/object-record-filter-input';
+import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
 
-export type GlobalSearchFactoryParams = {
+export type SearchFactoryParams = {
   searchInput: string;
   excludedObjectNameSingulars?: string[];
   includedObjectNameSingulars?: string[];
   filter?: ObjectRecordFilterInput;
 };
 
-export const globalSearchFactory = ({
+export const searchFactory = ({
   searchInput,
   excludedObjectNameSingulars,
   includedObjectNameSingulars,
   filter,
-}: GlobalSearchFactoryParams) => ({
+}: SearchFactoryParams) => ({
   query: gql`
-    query GlobalSearch(
+    query Search(
       $searchInput: String!
       $limit: Int!
       $excludedObjectNameSingulars: [String!]
       $includedObjectNameSingulars: [String!]
       $filter: ObjectRecordFilterInput
     ) {
-      globalSearch(
+      search(
         searchInput: $searchInput
         limit: $limit
         excludedObjectNameSingulars: $excludedObjectNameSingulars
@@ -31,7 +31,7 @@ export const globalSearchFactory = ({
         filter: $filter
       ) {
         recordId
-        objectSingularName
+        objectNameSingular
         label
         imageUrl
         tsRankCD
@@ -41,7 +41,7 @@ export const globalSearchFactory = ({
   `,
   variables: {
     searchInput,
-    limit: 30,
+    limit: 50,
     excludedObjectNameSingulars,
     includedObjectNameSingulars,
     filter,

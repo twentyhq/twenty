@@ -6,11 +6,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ChangeEvent, useState } from 'react';
-import { GlobalSearchRecord } from '~/generated-metadata/graphql';
+import { SearchRecord } from '~/generated-metadata/graphql';
 
 type RoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
-  onSelect: (workspaceMemberSearchRecord: GlobalSearchRecord) => void;
+  onSelect: (workspaceMemberSearchRecord: SearchRecord) => void;
 };
 
 export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
