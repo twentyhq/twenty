@@ -1,12 +1,10 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilValue } from 'recoil';
-import { SettingsPermissions } from '~/generated/graphql';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Setting } from '~/generated/graphql';
 
-export const useHasSettingsPermission = (
-  settingsPermission?: SettingsPermissions,
-) => {
+export const useHasSettingsPermission = (settingsPermission?: Setting) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 
@@ -15,19 +13,18 @@ export const useHasSettingsPermission = (
   }
 
   if (
-    settingsPermission === SettingsPermissions.WORKSPACE &&
+    settingsPermission === Setting.WORKSPACE &&
     currentWorkspace?.activationStatus ===
       WorkspaceActivationStatus.PENDING_CREATION
   ) {
     return true;
   }
 
-  const currentUserWorkspaceSettingsPermissions =
-    currentUserWorkspace?.settingsPermissions;
+  const currentUserWorkspaceSetting = currentUserWorkspace?.settingsPermissions;
 
-  if (!currentUserWorkspaceSettingsPermissions) {
+  if (!currentUserWorkspaceSetting) {
     return false;
   }
 
-  return currentUserWorkspaceSettingsPermissions.includes(settingsPermission);
+  return currentUserWorkspaceSetting.includes(settingsPermission);
 };

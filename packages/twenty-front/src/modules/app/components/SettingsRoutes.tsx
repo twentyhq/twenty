@@ -5,7 +5,7 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { SettingsPermissions } from '~/generated/graphql';
+import { Setting } from '~/generated/graphql';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -334,7 +334,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.WORKSPACE}
+            settingsPermission={Setting.WORKSPACE}
           />
         }
       >
@@ -345,7 +345,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.WORKSPACE_MEMBERS}
+            settingsPermission={Setting.WORKSPACE_MEMBERS}
           />
         }
       >
@@ -357,7 +357,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.DATA_MODEL}
+            settingsPermission={Setting.DATA_MODEL}
           />
         }
       >
@@ -387,7 +387,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.ROLES}
+            settingsPermission={Setting.ROLES}
             requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
           />
         }
@@ -398,7 +398,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.API_KEYS_AND_WEBHOOKS}
+            settingsPermission={Setting.API_KEYS_AND_WEBHOOKS}
           />
         }
       >
@@ -465,7 +465,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.SECURITY}
+            settingsPermission={Setting.SECURITY}
           />
         }
       >
@@ -496,7 +496,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.WORKSPACE}
+            settingsPermission={Setting.WORKSPACE}
           />
         }
       >
