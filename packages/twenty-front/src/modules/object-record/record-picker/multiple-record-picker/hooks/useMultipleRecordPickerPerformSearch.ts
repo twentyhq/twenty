@@ -10,7 +10,7 @@ import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/typ
 import { ApolloClient, useApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { SearchRecord } from '~/generated-metadata/graphql';
 
 export const useMultipleRecordPickerPerformSearch = () => {
