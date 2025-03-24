@@ -824,8 +824,26 @@ const WebSoftphone: React.FC = () => {
   };
 
   return (
-    <Draggable>
-      <StyledContainer>
+    <Draggable
+      enableUserSelectHack={true}
+      onStart={(e) => {
+        // Prevent the dragSelect from triggering
+        e.stopPropagation();
+      }}
+    >
+      <StyledContainer
+        data-select-disable="true"
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+        onMouseMove={(e) => {
+          e.stopPropagation();
+        }}
+        onMouseUp={(e) => {
+          e.stopPropagation();
+        }}
+        style={{ zIndex: 9999 }}
+      >
         <audio ref={remoteAudioRef} autoPlay />
 
         {callState.incomingCall && !callState.isInCall ? (
