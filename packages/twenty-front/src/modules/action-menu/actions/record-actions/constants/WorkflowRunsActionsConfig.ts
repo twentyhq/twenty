@@ -140,7 +140,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
   seeAllWorkflows: {
-    type: ActionMenuEntryType.Standard,
+    type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
     key: NoSelectionRecordActionKeys.SEE_WORKFLOWS,
     label: msg`Go to workflows`,

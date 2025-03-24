@@ -349,7 +349,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     useAction: useImportRecordsNoSelectionRecordAction,
   },
   seeAllRuns: {
-    type: ActionMenuEntryType.Standard,
+    type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
     key: NoSelectionRecordActionKeys.SEE_RUNS,
     label: msg`Go to runs`,
