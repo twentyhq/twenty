@@ -7,20 +7,15 @@ import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath'
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunctionFields';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
+import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
+import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { CodeEditor, useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -34,7 +29,6 @@ type WorkflowReadonlyActionServerlessFunctionProps = {
 export const WorkflowReadonlyActionServerlessFunction = ({
   action,
 }: WorkflowReadonlyActionServerlessFunctionProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const serverlessFunctionVersion =
@@ -66,18 +60,20 @@ export const WorkflowReadonlyActionServerlessFunction = ({
     ? action.name
     : 'Code - Serverless Function';
   const headerIcon = getActionIcon(action.type);
+  const headerIconColor = useActionIconColorOrThrow(action.type);
+  const headerType = useActionHeaderTypeOrThrow(action.type);
 
   if (loading) {
     return null;
   }
 
   return (
-    <StyledContainer>
+    <>
       <WorkflowStepHeader
         Icon={getIcon(headerIcon)}
-        iconColor={theme.color.orange}
+        iconColor={headerIconColor}
         initialTitle={headerTitle}
-        headerType="Code"
+        headerType={headerType}
         disabled
       />
       <WorkflowStepBody>
@@ -99,6 +95,6 @@ export const WorkflowReadonlyActionServerlessFunction = ({
           />
         </StyledCodeEditorContainer>
       </WorkflowStepBody>
-    </StyledContainer>
+    </>
   );
 };

@@ -7,16 +7,19 @@
  *                              |___/
  */
 
-export * from './assertUnreachable';
-export * from './fieldMetadata/isFieldMetadataDateKind';
-export * from './image/getImageAbsoluteURI';
-export * from './image/getLogoUrlFromDomainName';
-export * from './strings/capitalize';
-export * from './url/absoluteUrlSchema';
-export * from './url/getAbsoluteUrlOrThrow';
-export * from './url/getUrlHostnameOrThrow';
-export * from './url/isValidHostname';
-export * from './url/isValidUrl';
-export * from './validation/isDefined';
-export * from './validation/isValidLocale';
-export * from './validation/isValidUuid';
+export { assertUnreachable } from './assertUnreachable';
+export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
+export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
+export {
+  sanitizeURL,
+  getLogoUrlFromDomainName,
+} from './image/getLogoUrlFromDomainName';
+export { capitalize } from './strings/capitalize';
+export { absoluteUrlSchema } from './url/absoluteUrlSchema';
+export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';
+export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
+export { isValidHostname } from './url/isValidHostname';
+export { isValidUrl } from './url/isValidUrl';
+export { isDefined } from './validation/isDefined';
+export { isValidLocale } from './validation/isValidLocale';
+export { isValidUuid } from './validation/isValidUuid';

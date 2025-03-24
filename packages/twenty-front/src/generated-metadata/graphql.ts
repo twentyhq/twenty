@@ -707,16 +707,6 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String']['input'];
 };
 
-export type GlobalSearchRecord = {
-  __typename?: 'GlobalSearchRecord';
-  imageUrl?: Maybe<Scalars['String']['output']>;
-  label: Scalars['String']['output'];
-  objectSingularName: Scalars['String']['output'];
-  recordId: Scalars['String']['output'];
-  tsRank: Scalars['Float']['output'];
-  tsRankCD: Scalars['Float']['output'];
-};
-
 export enum HealthIndicatorId {
   app = 'app',
   connectedAccount = 'connectedAccount',
@@ -934,6 +924,7 @@ export type Mutation = {
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
+  updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWorkflowVersionStep: WorkflowAction;
@@ -1481,13 +1472,13 @@ export type Query = {
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
-  globalSearch: Array<GlobalSearchRecord>;
   index: Index;
   indexMetadatas: IndexConnection;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
   relationMetadata: RelationMetadataConnection;
+  search: Array<SearchRecord>;
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
@@ -1593,15 +1584,6 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 };
 
 
-export type QueryGlobalSearchArgs = {
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
-  filter?: InputMaybe<ObjectRecordFilterInput>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
-  limit: Scalars['Int']['input'];
-  searchInput: Scalars['String']['input'];
-};
-
-
 export type QueryIndexArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -1626,6 +1608,15 @@ export type QueryObjectsArgs = {
 
 export type QueryRelationMetadataArgs = {
   paging?: CursorPaging;
+};
+
+
+export type QuerySearchArgs = {
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
+  filter?: InputMaybe<ObjectRecordFilterInput>;
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
+  limit: Scalars['Int']['input'];
+  searchInput: Scalars['String']['input'];
 };
 
 
@@ -1826,6 +1817,16 @@ export enum SsoIdentityProviderStatus {
   Error = 'Error',
   Inactive = 'Inactive'
 }
+
+export type SearchRecord = {
+  __typename?: 'SearchRecord';
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  label: Scalars['String']['output'];
+  objectNameSingular: Scalars['String']['output'];
+  recordId: Scalars['String']['output'];
+  tsRank: Scalars['Float']['output'];
+  tsRankCD: Scalars['Float']['output'];
+};
 
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';

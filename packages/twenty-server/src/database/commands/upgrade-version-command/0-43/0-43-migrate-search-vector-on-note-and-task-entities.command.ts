@@ -10,7 +10,7 @@ import {
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SearchService } from 'src/engine/metadata-modules/search/search.service';
+import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -30,7 +30,7 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveOrSus
     protected readonly featureFlagRepository: Repository<FeatureFlag>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly searchService: SearchService,
+    private readonly searchVectorService: SearchVectorService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
@@ -57,7 +57,7 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveOrSus
       });
 
     if (!options.dryRun) {
-      await this.searchService.updateSearchVector(
+      await this.searchVectorService.updateSearchVector(
         noteObjectMetadata.id,
         SEARCH_FIELDS_FOR_NOTES,
         workspaceId,
@@ -74,7 +74,7 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveOrSus
       });
 
     if (!options.dryRun) {
-      await this.searchService.updateSearchVector(
+      await this.searchVectorService.updateSearchVector(
         taskObjectMetadata.id,
         SEARCH_FIELDS_FOR_TASKS,
         workspaceId,

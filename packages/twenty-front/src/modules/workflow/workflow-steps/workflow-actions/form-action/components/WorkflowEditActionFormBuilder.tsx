@@ -8,6 +8,8 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
 import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
+import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -99,6 +101,9 @@ export const WorkflowEditActionFormBuilder = ({
 
   const headerTitle = isDefined(action.name) ? action.name : `Form`;
   const headerIcon = getActionIcon(action.type);
+  const headerIconColor = useActionIconColorOrThrow(action.type);
+  const headerType = useActionHeaderTypeOrThrow(action.type);
+
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const isFieldSelected = (fieldName: string) => selectedField === fieldName;
   const handleFieldClick = (fieldName: string) => {
@@ -161,9 +166,9 @@ export const WorkflowEditActionFormBuilder = ({
           });
         }}
         Icon={getIcon(headerIcon)}
-        iconColor={theme.font.color.tertiary}
+        iconColor={headerIconColor}
         initialTitle={headerTitle}
-        headerType="Action"
+        headerType={headerType}
         disabled={actionOptions.readonly}
       />
       <WorkflowStepBody>
