@@ -11,13 +11,13 @@ import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getSh
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 import { Button, IconBrowserMaximize, getOsControlSymbol } from 'twenty-ui';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 const StyledLink = styled(Link)`
@@ -62,9 +62,9 @@ export const RecordShowRightDrawerOpenRecordButton = ({
 
   const navigate = useNavigateApp();
 
-  const actionMenuId = useComponentInstanceStateContext(
+  const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
-  )?.instanceId;
+  );
 
   const { closeDropdown } = useDropdownV2();
 
@@ -84,11 +84,9 @@ export const RecordShowRightDrawerOpenRecordButton = ({
       objectRecordId: record.id,
     });
 
-    if (isDefined(actionMenuId)) {
-      closeDropdown(
-        getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
-      );
-    }
+    closeDropdown(
+      getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
+    );
 
     closeCommandMenu();
   }, [
