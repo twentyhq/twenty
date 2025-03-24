@@ -67,7 +67,6 @@ interface DashboardLinksCardsProps {
 export const DashboardLinksCards = ({
   chartData,
 }: DashboardLinksCardsProps) => {
-  console.log('opaa', chartData);
   // Função para escolher o ícone com base no linkName
   const getIcon = (chartData: string) => {
     switch (chartData.toLowerCase()) {
