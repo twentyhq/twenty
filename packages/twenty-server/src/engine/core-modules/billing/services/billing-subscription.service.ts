@@ -17,7 +17,6 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -63,8 +62,10 @@ export class BillingSubscriptionService {
       { workspaceId },
     );
 
+    const planKey = getPlanKeyFromSubscription(billingSubscription);
+
     const getStripeProductId = (
-      await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO)
+      await this.billingPlanService.getPlanBaseProduct(planKey)
     )?.stripeProductId;
 
     if (!getStripeProductId) {
