@@ -104,6 +104,7 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       updatedAt
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
+      isLabelSyncedWithName
     }
   }
 `;

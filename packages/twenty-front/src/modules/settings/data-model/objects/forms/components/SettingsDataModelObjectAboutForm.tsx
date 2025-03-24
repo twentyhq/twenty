@@ -76,7 +76,7 @@ export const SettingsDataModelObjectAboutForm = ({
   onNewDirtyField,
   objectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
-  const { control, watch, setValue } =
+  const { control, watch, setValue, reset } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
   const theme = useTheme();
@@ -140,9 +140,6 @@ export const SettingsDataModelObjectAboutForm = ({
             defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
             render={({ field: { onChange, value } }) => (
               <IconPicker
-                disabled={
-                  !objectMetadataItem?.isCustom && isLabelSyncedWithName
-                }
                 selectedIconKey={value}
                 onChange={({ iconKey }) => {
                   onChange(iconKey);
@@ -331,6 +328,24 @@ export const SettingsDataModelObjectAboutForm = ({
                           fillNameSingularFromLabelSingular(labelSingular);
                         }
                         onNewDirtyField?.();
+
+                        // Server-side side effect when isLabelSyncedWithName is changed
+                        if (
+                          value === true &&
+                          isDefined(objectMetadataItem) &&
+                          !objectMetadataItem?.isCustom
+                        ) {
+                          reset({
+                            isLabelSyncedWithName: value,
+                            labelSingular:
+                              objectMetadataItem.labelSingular || '',
+                            labelPlural: objectMetadataItem.labelPlural || '',
+                            nameSingular: objectMetadataItem.nameSingular || '',
+                            namePlural: objectMetadataItem.namePlural || '',
+                            description: objectMetadataItem.description,
+                            icon: objectMetadataItem.icon || undefined,
+                          });
+                        }
                       }}
                     />
                   </Card>
