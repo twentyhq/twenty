@@ -7,11 +7,13 @@ import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandM
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback } from 'react';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set }) =>
@@ -19,8 +21,9 @@ export const useCommandMenu = () => {
         set(isCommandMenuOpenedState, false);
         set(isCommandMenuClosingState, true);
         set(isDragSelectionStartEnabledState, true);
+        goBackToPreviousHotkeyScope();
       },
-    [],
+    [goBackToPreviousHotkeyScope],
   );
 
   const openCommandMenu = useCallback(() => {
