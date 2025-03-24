@@ -4,8 +4,12 @@ import { t } from '@lingui/core/macro';
 
 import { RolesTableHeader } from '@/settings/roles/components/RolesTableHeader';
 import { RolesTableRow } from '@/settings/roles/components/RolesTableRow';
+import { SettingsPath } from '@/types/SettingsPath';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledCreateRoleSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
@@ -20,7 +24,12 @@ const StyledTableRows = styled.div`
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const Roles = ({ roles }: { roles: Role[] }) => {
+export const AllRoles = ({ roles }: { roles: Role[] }) => {
+  const navigateSettings = useNavigateSettings();
+  const isPermissionsV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPermissionsV2Enabled,
+  );
+
   return (
     <Section>
       <H2Title
@@ -41,7 +50,8 @@ export const Roles = ({ roles }: { roles: Role[] }) => {
           title={t`Create Role`}
           variant="secondary"
           size="small"
-          soon
+          disabled={!isPermissionsV2Enabled}
+          onClick={() => navigateSettings(SettingsPath.RoleCreate)}
         />
       </StyledCreateRoleSection>
     </Section>

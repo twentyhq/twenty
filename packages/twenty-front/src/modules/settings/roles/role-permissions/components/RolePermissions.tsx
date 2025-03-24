@@ -1,10 +1,12 @@
 import { RolePermissionsObjectsTableHeader } from '@/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader';
 import { RolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader';
 import { RolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableRow';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePermissionsObjectPermission';
 import { RolePermissionsSettingPermission } from '@/settings/roles/types/RolePermissionsSettingPermission';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useRecoilState } from 'recoil';
 import {
   H2Title,
   IconCode,
@@ -20,8 +22,7 @@ import {
   IconUsers,
   Section,
 } from 'twenty-ui';
-import { Role } from '~/generated-metadata/graphql';
-import { SettingPermissionType } from '~/generated/graphql';
+import { SettingPermissionType } from '~/generated-metadata/graphql';
 import { RolePermissionsObjectsTableRow } from './RolePermissionsObjectsTableRow';
 
 const StyledRolePermissionsContainer = styled.div`
@@ -40,42 +41,66 @@ const StyledTableRows = styled.div`
 `;
 
 type RolePermissionsProps = {
-  role: Pick<
-    Role,
-    | 'id'
-    | 'canUpdateAllSettings'
-    | 'canReadAllObjectRecords'
-    | 'canUpdateAllObjectRecords'
-    | 'canSoftDeleteAllObjectRecords'
-    | 'canDestroyAllObjectRecords'
-  >;
+  roleId: string;
+  isEditable: boolean;
 };
 
-export const RolePermissions = ({ role }: RolePermissionsProps) => {
+export const RolePermissions = ({
+  roleId,
+  isEditable,
+}: RolePermissionsProps) => {
+  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
+    settingsDraftRoleFamilyState(roleId),
+  );
+
   const objectPermissionsConfig: RolePermissionsObjectPermission[] = [
     {
       key: 'seeRecords',
       label: 'See Records on All Objects',
       Icon: IconEye,
-      value: role.canReadAllObjectRecords,
+      value: settingsDraftRole.canReadAllObjectRecords,
+      setValue: (value: boolean) => {
+        setSettingsDraftRole({
+          ...settingsDraftRole,
+          canReadAllObjectRecords: value,
+        });
+      },
     },
     {
       key: 'editRecords',
       label: 'Edit Records on All Objects',
       Icon: IconPencil,
-      value: role.canUpdateAllObjectRecords,
+      value: settingsDraftRole.canUpdateAllObjectRecords,
+      setValue: (value: boolean) => {
+        setSettingsDraftRole({
+          ...settingsDraftRole,
+          canUpdateAllObjectRecords: value,
+        });
+      },
     },
     {
       key: 'deleteRecords',
       label: 'Delete Records on All Objects',
       Icon: IconTrash,
-      value: role.canSoftDeleteAllObjectRecords,
+      value: settingsDraftRole.canSoftDeleteAllObjectRecords,
+      setValue: (value: boolean) => {
+        setSettingsDraftRole({
+          ...settingsDraftRole,
+          canSoftDeleteAllObjectRecords: value,
+        });
+      },
     },
     {
       key: 'destroyRecords',
       label: 'Destroy Records on All Objects',
       Icon: IconTrashX,
-      value: role.canDestroyAllObjectRecords,
+      value: settingsDraftRole.canDestroyAllObjectRecords,
+      setValue: (value: boolean) => {
+        setSettingsDraftRole({
+          ...settingsDraftRole,
+          canDestroyAllObjectRecords: value,
+        });
+      },
     },
   ];
 
@@ -84,49 +109,49 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
       key: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
       name: 'API Keys & Webhooks',
       description: 'Manage API keys and webhooks',
-      value: role.canUpdateAllSettings,
+      value: settingsDraftRole.canUpdateAllSettings,
       Icon: IconCode,
     },
     {
       key: SettingPermissionType.WORKSPACE,
       name: 'Workspace',
       description: 'Set global workspace preferences',
-      value: role.canUpdateAllSettings,
+      value: settingsDraftRole.canUpdateAllSettings,
       Icon: IconSettings,
     },
     {
       key: SettingPermissionType.WORKSPACE_MEMBERS,
       name: 'Users',
       description: 'Add or remove users',
-      value: role.canUpdateAllSettings,
+      value: settingsDraftRole.canUpdateAllSettings,
       Icon: IconUsers,
     },
     {
       key: SettingPermissionType.ROLES,
       name: 'Roles',
       description: 'Define user roles and access levels',
-      value: role.canUpdateAllSettings,
+      value: settingsDraftRole.canUpdateAllSettings,
       Icon: IconLockOpen,
     },
     {
       key: SettingPermissionType.DATA_MODEL,
       name: 'Data Model',
       description: 'Edit CRM data structure and fields',
-      value: role.canUpdateAllSettings,
+      value: settingsDraftRole.canUpdateAllSettings,
       Icon: IconHierarchy,
     },
     {
       key: SettingPermissionType.ADMIN_PANEL,
       name: 'Admin Panel',
       description: 'Admin settings and system tools',
-      value: role.canUpdateAllSettings,
+      value: settingsDraftRole.canUpdateAllSettings,
       Icon: IconServer,
     },
     {
       key: SettingPermissionType.SECURITY,
       name: 'Security',
       description: 'Manage security policies',
-      value: role.canUpdateAllSettings,
+      value: settingsDraftRole.canUpdateAllSettings,
       Icon: IconKey,
     },
   ];
@@ -140,15 +165,16 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
         />
         <StyledTable>
           <RolePermissionsObjectsTableHeader
-            allPermissions={objectPermissionsConfig.every(
-              (permission) => permission.value,
-            )}
+            roleId={roleId}
+            objectPermissionsConfig={objectPermissionsConfig}
+            isEditable={isEditable}
           />
           <StyledTableRows>
             {objectPermissionsConfig.map((permission) => (
               <RolePermissionsObjectsTableRow
                 key={permission.key}
                 permission={permission}
+                isEditable={isEditable}
               />
             ))}
           </StyledTableRows>
@@ -158,7 +184,7 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
         <H2Title title={t`Settings`} description={t`Settings permissions`} />
         <StyledTable>
           <RolePermissionsSettingsTableHeader
-            allPermissions={role.canUpdateAllSettings}
+            allPermissions={settingsDraftRole.canUpdateAllSettings}
           />
           <StyledTableRows>
             {settingsPermissionsConfig.map((permission) => (

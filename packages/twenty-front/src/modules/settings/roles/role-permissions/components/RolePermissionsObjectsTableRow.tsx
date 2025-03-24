@@ -48,10 +48,12 @@ const StyledTableRow = styled(TableRow)`
 
 type RolePermissionsObjectsTableRowProps = {
   permission: RolePermissionsObjectPermission;
+  isEditable: boolean;
 };
 
 export const RolePermissionsObjectsTableRow = ({
   permission,
+  isEditable,
 }: RolePermissionsObjectsTableRowProps) => {
   return (
     <StyledTableRow key={permission.key}>
@@ -64,7 +66,11 @@ export const RolePermissionsObjectsTableRow = ({
         <StyledLabel>{permission.label}</StyledLabel>
       </StyledPermissionCell>
       <StyledCheckboxCell>
-        <Checkbox checked={permission.value} disabled />
+        <Checkbox
+          checked={permission.value}
+          onChange={() => permission.setValue(!permission.value)}
+          disabled={!isEditable}
+        />
       </StyledCheckboxCell>
     </StyledTableRow>
   );

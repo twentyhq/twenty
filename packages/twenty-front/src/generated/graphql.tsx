@@ -316,6 +316,7 @@ export type CreateRoleInput = {
   canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
   label: Scalars['String'];
 };
 
@@ -2594,6 +2595,20 @@ export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', upda
 
 export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean };
 
+export type CreateOneRoleMutationVariables = Exact<{
+  createRoleInput: CreateRoleInput;
+}>;
+
+
+export type CreateOneRoleMutation = { __typename?: 'Mutation', createOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } };
+
+export type UpdateOneRoleMutationVariables = Exact<{
+  updateRoleInput: UpdateRoleInput;
+}>;
+
+
+export type UpdateOneRoleMutation = { __typename?: 'Mutation', updateOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } };
+
 export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
   workspaceMemberId: Scalars['String'];
   roleId: Scalars['String'];
@@ -4605,6 +4620,72 @@ export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.Mutat
 export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
+export const CreateOneRoleDocument = gql`
+    mutation CreateOneRole($createRoleInput: CreateRoleInput!) {
+  createOneRole(createRoleInput: $createRoleInput) {
+    ...RoleFragment
+  }
+}
+    ${RoleFragmentFragmentDoc}`;
+export type CreateOneRoleMutationFn = Apollo.MutationFunction<CreateOneRoleMutation, CreateOneRoleMutationVariables>;
+
+/**
+ * __useCreateOneRoleMutation__
+ *
+ * To run a mutation, you first call `useCreateOneRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOneRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOneRoleMutation, { data, loading, error }] = useCreateOneRoleMutation({
+ *   variables: {
+ *      createRoleInput: // value for 'createRoleInput'
+ *   },
+ * });
+ */
+export function useCreateOneRoleMutation(baseOptions?: Apollo.MutationHookOptions<CreateOneRoleMutation, CreateOneRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOneRoleMutation, CreateOneRoleMutationVariables>(CreateOneRoleDocument, options);
+      }
+export type CreateOneRoleMutationHookResult = ReturnType<typeof useCreateOneRoleMutation>;
+export type CreateOneRoleMutationResult = Apollo.MutationResult<CreateOneRoleMutation>;
+export type CreateOneRoleMutationOptions = Apollo.BaseMutationOptions<CreateOneRoleMutation, CreateOneRoleMutationVariables>;
+export const UpdateOneRoleDocument = gql`
+    mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
+  updateOneRole(updateRoleInput: $updateRoleInput) {
+    ...RoleFragment
+  }
+}
+    ${RoleFragmentFragmentDoc}`;
+export type UpdateOneRoleMutationFn = Apollo.MutationFunction<UpdateOneRoleMutation, UpdateOneRoleMutationVariables>;
+
+/**
+ * __useUpdateOneRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateOneRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOneRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOneRoleMutation, { data, loading, error }] = useUpdateOneRoleMutation({
+ *   variables: {
+ *      updateRoleInput: // value for 'updateRoleInput'
+ *   },
+ * });
+ */
+export function useUpdateOneRoleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneRoleMutation, UpdateOneRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOneRoleMutation, UpdateOneRoleMutationVariables>(UpdateOneRoleDocument, options);
+      }
+export type UpdateOneRoleMutationHookResult = ReturnType<typeof useUpdateOneRoleMutation>;
+export type UpdateOneRoleMutationResult = Apollo.MutationResult<UpdateOneRoleMutation>;
+export type UpdateOneRoleMutationOptions = Apollo.BaseMutationOptions<UpdateOneRoleMutation, UpdateOneRoleMutationVariables>;
 export const UpdateWorkspaceMemberRoleDocument = gql`
     mutation UpdateWorkspaceMemberRole($workspaceMemberId: String!, $roleId: String!) {
   updateWorkspaceMemberRole(

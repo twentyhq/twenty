@@ -5,4 +5,5 @@ export type RolePermissionsObjectPermission = {
   label: string;
   value: boolean;
   Icon: IconComponent;
+  setValue: (value: boolean) => void;
 };

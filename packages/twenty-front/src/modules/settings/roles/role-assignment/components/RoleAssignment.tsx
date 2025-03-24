@@ -1,8 +1,11 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { RoleAssignmentTableHeader } from '@/settings/roles/role-assignment/components/RoleAssignmentTableHeader';
 import { RoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown';
 import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
+import { settingsAllRolesState } from '@/settings/roles/states/settingsAllRolesState';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -21,16 +24,7 @@ import {
   Section,
   TooltipDelay,
 } from 'twenty-ui';
-import {
-  Role,
-  SearchRecord,
-  WorkspaceMember,
-} from '~/generated-metadata/graphql';
-import {
-  GetRolesDocument,
-  useGetRolesQuery,
-  useUpdateWorkspaceMemberRoleMutation,
-} from '~/generated/graphql';
+import { SearchRecord } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { RoleAssignmentConfirmationModal } from './RoleAssignmentConfirmationModal';
 import { RoleAssignmentTableRow } from './RoleAssignmentTableRow';
@@ -68,16 +62,16 @@ const StyledNoMembers = styled(TableCell)`
 `;
 
 type RoleAssignmentProps = {
-  role: Pick<Role, 'id' | 'label' | 'canUpdateAllSettings'> & {
-    workspaceMembers: Array<WorkspaceMember>;
-  };
+  roleId: string;
 };
 
-export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
+export const RoleAssignment = ({ roleId }: RoleAssignmentProps) => {
+  const settingsDraftRole = useRecoilValue(
+    settingsDraftRoleFamilyState(roleId),
+  );
+
   const navigateSettings = useNavigateSettings();
-  const [updateWorkspaceMemberRole] = useUpdateWorkspaceMemberRoleMutation({
-    refetchQueries: [GetRolesDocument],
-  });
+  const { updateWorkspaceMemberRole } = useUpdateWorkspaceMemberRole(roleId);
 
   const [confirmationModalIsOpen, setConfirmationModalIsOpen] =
     useState<boolean>(false);
@@ -85,25 +79,26 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     useState<RoleAssignmentConfirmationModalSelectedWorkspaceMember | null>(
       null,
     );
-  const { data: rolesData } = useGetRolesQuery();
   const { closeDropdown } = useDropdown('role-member-select');
   const [searchFilter, setSearchFilter] = useState('');
   const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
+  const settingsAllRoles = useRecoilValue(settingsAllRolesState);
+
   const workspaceMemberRoleMap = new Map<
     string,
     { id: string; label: string }
   >();
-  rolesData?.getRoles?.forEach((role) => {
+  settingsAllRoles.forEach((role) => {
     role.workspaceMembers.forEach((member) => {
       workspaceMemberRoleMap.set(member.id, { id: role.id, label: role.label });
     });
   });
 
   const filteredWorkspaceMembers = !searchFilter
-    ? role.workspaceMembers
-    : role.workspaceMembers.filter((member) => {
+    ? settingsDraftRole.workspaceMembers
+    : settingsDraftRole.workspaceMembers.filter((member) => {
         const searchTerm = searchFilter.toLowerCase();
         const firstName = member.name.firstName?.toLowerCase() || '';
         const lastName = member.name.lastName?.toLowerCase() || '';
@@ -116,7 +111,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
         );
       });
 
-  const assignedWorkspaceMemberIds = role.workspaceMembers.map(
+  const assignedWorkspaceMemberIds = settingsDraftRole.workspaceMembers.map(
     (workspaceMember) => workspaceMember.id,
   );
 
@@ -154,10 +149,7 @@ export const RoleAssignment = ({ role }: RoleAssignmentProps) => {
     if (!selectedWorkspaceMember || !confirmationModalIsOpen) return;
 
     await updateWorkspaceMemberRole({
-      variables: {
-        workspaceMemberId: selectedWorkspaceMember.id,
-        roleId: role.id,
-      },
+      workspaceMemberId: selectedWorkspaceMember.id,
     });
 
     handleModalClose();

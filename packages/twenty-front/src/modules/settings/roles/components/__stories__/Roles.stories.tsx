@@ -1,13 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 
-import { Roles } from '@/settings/roles/components/Roles';
+import { AllRoles } from '@/settings/roles/components/AllRoles';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getRolesMock } from '~/testing/mock-data/roles';
 
-const meta: Meta<typeof Roles> = {
-  title: 'Modules/Settings/Roles/Roles',
-  component: Roles,
+const meta: Meta<typeof AllRoles> = {
+  title: 'Modules/Settings/Roles/AllRoles',
+  component: AllRoles,
   decorators: [ComponentDecorator, I18nFrontDecorator, RouterDecorator],
   parameters: {
     maxWidth: 800,
@@ -15,7 +15,7 @@ const meta: Meta<typeof Roles> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Roles>;
+type Story = StoryObj<typeof AllRoles>;
 
 export const Default: Story = {
   args: {

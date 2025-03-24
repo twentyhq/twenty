@@ -380,6 +380,7 @@ export type CreateRoleInput = {
   canUpdateAllSettings?: InputMaybe<Scalars['Boolean']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
   label: Scalars['String']['input'];
 };
 
@@ -515,6 +516,7 @@ export enum EnvironmentVariablesGroup {
   GoogleAuth = 'GoogleAuth',
   LLM = 'LLM',
   Logging = 'Logging',
+  Metering = 'Metering',
   MicrosoftAuth = 'MicrosoftAuth',
   Other = 'Other',
   RateLimiting = 'RateLimiting',
@@ -557,7 +559,6 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
-  IsAdvancedFiltersEnabled = 'IsAdvancedFiltersEnabled',
   IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
   IsAnalyticsV2Enabled = 'IsAnalyticsV2Enabled',
   IsApprovedAccessDomainsEnabled = 'IsApprovedAccessDomainsEnabled',
@@ -2476,6 +2477,7 @@ export type WorkspaceMember = {
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']['output']>;
   userEmail: Scalars['String']['output'];
+  userId: Scalars['UUID']['output'];
   userWorkspaceId?: Maybe<Scalars['String']['output']>;
 };
 

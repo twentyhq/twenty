@@ -6,7 +6,10 @@ import { Checkbox } from 'twenty-ui';
 
 const StyledNameHeader = styled(TableHeader)`
   flex: 1;
-  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTypeHeader = styled(TableHeader)`
+  flex: 1;
 `;
 
 const StyledActionsHeader = styled(TableHeader)`
@@ -16,22 +19,24 @@ const StyledActionsHeader = styled(TableHeader)`
   padding-right: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledTypeHeader = styled(TableHeader)`
-  flex: 1;
-`;
-
 type RolePermissionsSettingsTableHeaderProps = {
   allPermissions: boolean;
+  onToggleAll?: () => void;
 };
 
 export const RolePermissionsSettingsTableHeader = ({
   allPermissions,
+  onToggleAll,
 }: RolePermissionsSettingsTableHeaderProps) => (
   <TableRow gridAutoColumns="3fr 4fr 24px">
     <StyledNameHeader>{t`Name`}</StyledNameHeader>
     <StyledTypeHeader>{t`Description`}</StyledTypeHeader>
     <StyledActionsHeader aria-label={t`Actions`}>
-      <Checkbox checked={allPermissions} disabled />
+      <Checkbox
+        checked={allPermissions}
+        disabled={!onToggleAll}
+        onChange={onToggleAll}
+      />
     </StyledActionsHeader>
   </TableRow>
 );

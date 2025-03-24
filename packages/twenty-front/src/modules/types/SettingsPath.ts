@@ -43,4 +43,5 @@ export enum SettingsPath {
   Lab = 'lab',
   Roles = 'roles',
   RoleDetail = 'roles/:roleId',
+  RoleCreate = 'roles/new',
 }

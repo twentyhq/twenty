@@ -307,6 +307,12 @@ const SettingsRoleEdit = lazy(() =>
   })),
 );
 
+const SettingsRoleCreate = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleCreate').then((module) => ({
+    default: module.SettingsRoleCreate,
+  })),
+);
+
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
@@ -392,6 +398,10 @@ export const SettingsRoutes = ({
       >
         <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
+        <Route
+          path={SettingsPath.RoleCreate}
+          element={<SettingsRoleCreate />}
+        />
       </Route>
       <Route
         element={

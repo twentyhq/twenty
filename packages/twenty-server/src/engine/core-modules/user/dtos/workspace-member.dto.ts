@@ -52,4 +52,7 @@ export class WorkspaceMember {
 
   @Field(() => String, { nullable: true })
   userWorkspaceId?: string;
+
+  @Field(() => UUIDScalarType, { nullable: false })
+  userId: string;
 }
