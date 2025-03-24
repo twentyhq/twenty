@@ -1,7 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE } from '@/settings/constants/SettingsObjectModel';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -298,10 +297,7 @@ export const SettingsDataModelObjectAboutForm = ({
               <Controller
                 name="isLabelSyncedWithName"
                 control={control}
-                defaultValue={
-                  objectMetadataItem?.isLabelSyncedWithName ??
-                  SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE
-                }
+                defaultValue={objectMetadataItem?.isLabelSyncedWithName}
                 render={({ field: { onChange, value } }) => (
                   <Card rounded>
                     <SettingsOptionCardContentToggle
@@ -312,14 +308,16 @@ export const SettingsDataModelObjectAboutForm = ({
                       advancedMode
                       onChange={(value) => {
                         onChange(value);
+                        onNewDirtyField?.();
+
                         if (
                           value === true &&
-                          (!objectMetadataItem || objectMetadataItem.isCustom)
+                          isDefined(objectMetadataItem) &&
+                          objectMetadataItem.isCustom
                         ) {
                           fillNamePluralFromLabelPlural(labelPlural);
                           fillNameSingularFromLabelSingular(labelSingular);
                         }
-                        onNewDirtyField?.();
 
                         // Server-side side effect when isLabelSyncedWithName is changed
                         if (
