@@ -18,7 +18,7 @@ export const DashboardLinks = () => {
     variables: {
       filter: {},
       orderBy: [{ position: 'AscNullsFirst' }],
-      limit: 50,
+      limit: 100,
       lastCursor: null,
     },
   });
