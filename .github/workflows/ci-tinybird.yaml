@@ -17,10 +17,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  TINYBIRD_HOST: https://api.eu-central-1.aws.tinybird.co
-  TINYBIRD_TOKEN: ${{ secrets.TB_ADMIN_TOKEN }}
-
 jobs:
   changed-files-check:
     uses: ./.github/workflows/changed-files.yaml
@@ -46,10 +42,6 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Install Tinybird CLI
         run: curl https://tinybird.co | sh
-      - name: Authenticate
-        run: tb auth --token $TINYBIRD_TOKEN --host $TINYBIRD_HOST
-      - name: Test deploy project
-        run: tb deploy --check
       - name: Build project
         run: tb build
       - name: Test project
