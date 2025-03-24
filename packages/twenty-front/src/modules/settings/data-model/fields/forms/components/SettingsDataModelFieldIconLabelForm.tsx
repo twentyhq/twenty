@@ -168,7 +168,9 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           value={value}
                           onChange={onChange}
                           disabled={
-                            disabled || (isLabelSyncedWithName ?? false)
+                            disabled ||
+                            (isLabelSyncedWithName ?? false) ||
+                            !fieldMetadataItem?.isCustom
                           }
                           fullWidth
                           maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
