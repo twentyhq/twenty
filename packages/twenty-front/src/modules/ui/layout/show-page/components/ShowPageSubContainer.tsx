@@ -6,8 +6,6 @@ import { CardComponents } from '@/object-record/record-show/components/CardCompo
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
@@ -18,7 +16,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -110,10 +107,6 @@ export const ShowPageSubContainer = ({
     });
   };
 
-  const [recordFromStore] = useRecoilState<ObjectRecord | null>(
-    recordStoreFamilyState(targetableObject.id),
-  );
-
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
   const displaySummaryAndFields =
@@ -143,13 +136,13 @@ export const ShowPageSubContainer = ({
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}
         </StyledContentContainer>
-        {isInRightDrawer && recordFromStore && (
+        {isInRightDrawer && (
           <RightDrawerFooter
             actions={[
               <RecordShowRightDrawerActionMenu />,
               <RecordShowRightDrawerOpenRecordButton
                 objectNameSingular={targetableObject.targetObjectNameSingular}
-                record={recordFromStore}
+                recordId={targetableObject.id}
               />,
             ]}
           />
