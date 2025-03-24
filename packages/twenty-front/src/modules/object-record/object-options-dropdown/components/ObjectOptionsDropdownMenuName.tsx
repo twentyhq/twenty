@@ -1,7 +1,6 @@
 import { Key } from 'ts-key-enum';
 
 import { useObjectOptions } from '@/object-record/object-options-dropdown/hooks/useObjectOptions';
-import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -12,13 +11,13 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { View } from '@/views/types/View';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
-import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from '@ui/display';
+import { useState } from 'react';
 import { useIcons } from 'twenty-ui';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`
@@ -56,10 +55,6 @@ export const ObjectOptionsDropdownMenuName = ({
 }: {
   currentView: View | undefined;
 }) => {
-  const [viewPickerInputName, setViewPickerInputName] =
-    useRecoilComponentStateV2(viewPickerInputNameComponentState);
-  const { objectMetadataItem, viewType, currentContentId, recordIndexId } =
-    useOptionsDropdown();
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
 
@@ -73,6 +68,8 @@ export const ObjectOptionsDropdownMenuName = ({
   const { setAndPersistViewName, setAndPersistViewIcon } = useObjectOptions();
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
+  const [viewNameNotReactivelyUpdated, setViewNameNotReactivelyUpdated] =
+    useState(currentView?.name);
 
   useScopedHotkeys(
     Key.Enter,
@@ -119,10 +116,9 @@ export const ObjectOptionsDropdownMenuName = ({
               selectedIconKey={viewPickerSelectedIcon}
             />
             <TextInputV2
-              value={currentView?.name}
+              value={viewNameNotReactivelyUpdated}
               onChange={(value) => {
-                setViewPickerIsDirty(true);
-                setViewPickerInputName(value);
+                setViewNameNotReactivelyUpdated(value);
                 setAndPersistViewName(value, currentView);
               }}
               autoGrow={false}
