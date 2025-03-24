@@ -12,14 +12,18 @@ const StyledContainer = styled.div`
   display: flex;
   height: ${({ theme }) => theme.spacing(8)};
   user-select: none;
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledNavigationDrawerCollapseButton = styled(
   NavigationDrawerCollapseButton,
 )<{ show?: boolean }>`
+  height: ${({ theme }) => theme.spacing(4)};
   margin-left: auto;
   opacity: ${({ show }) => (show ? 1 : 0)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
   transition: opacity ${({ theme }) => theme.animation.duration.normal}s;
+  width: ${({ theme }) => theme.spacing(4)};
 `;
 
 type NavigationDrawerHeaderProps = {

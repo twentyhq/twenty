@@ -22,6 +22,7 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -30,7 +31,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -66,11 +67,24 @@ export const CommandMenuContainer = ({
 
   useCommandMenuHotKeys();
 
+  const handleClickOutside = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const hotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
+          .getValue();
+
+        if (hotkeyScope.scope === AppHotkeyScope.CommandMenuOpen) {
+          closeCommandMenu();
+        }
+      },
+    [closeCommandMenu],
+  );
+
   useListenClickOutside({
     refs: [commandMenuRef],
-    callback: closeCommandMenu,
+    callback: handleClickOutside,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
-    hotkeyScope: AppHotkeyScope.CommandMenuOpen,
     excludeClassNames: ['page-header-command-menu-button'],
   });
 

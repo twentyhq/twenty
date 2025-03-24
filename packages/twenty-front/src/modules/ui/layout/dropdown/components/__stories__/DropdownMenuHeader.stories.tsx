@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
-  Avatar,
   AVATAR_URL_MOCK,
+  Avatar,
   ComponentDecorator,
   IconChevronLeft,
   IconChevronRight,
@@ -9,11 +9,11 @@ import {
   MenuItem,
 } from 'twenty-ui';
 
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
 const meta: Meta<typeof DropdownMenuHeader> = {
   title: 'UI/Layout/Dropdown/DropdownMenuHeader',
@@ -40,7 +40,7 @@ export const StartIcon: Story = {
 export const StartAndEndIcon: Story = {
   args: {
     StartComponent: <DropdownMenuHeaderLeftComponent Icon={IconChevronLeft} />,
-    EndIcon: IconChevronRight,
+    EndComponent: <IconChevronRight />,
     children: 'Start and End Icon',
   },
 };

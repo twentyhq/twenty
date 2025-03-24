@@ -9,8 +9,8 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import React from 'react';
-import { capitalize, isDefined } from 'twenty-shared';
 import { Label, Loader, OverflowingTextWithTooltip } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;

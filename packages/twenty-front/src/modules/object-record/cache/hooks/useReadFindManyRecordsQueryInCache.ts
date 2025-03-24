@@ -7,7 +7,7 @@ import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/
 import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useReadFindManyRecordsQueryInCache = ({
   objectMetadataItem,

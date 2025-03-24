@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { formatFieldValue } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/format-field-values.utils';
 

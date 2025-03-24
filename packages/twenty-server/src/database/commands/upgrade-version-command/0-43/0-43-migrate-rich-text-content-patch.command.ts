@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { FieldMetadataType } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandOptions,

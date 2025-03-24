@@ -64,6 +64,13 @@ msgstr "crwdns4995:0crwdne4995:0"
 msgid ": Today"
 msgstr "crwdns4997:0crwdne4997:0"
 
+#. js-lingui-id: ZBGbuw
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+msgid "[empty string]"
+msgstr "crwdns5584:0crwdne5584:0"
+
 #. js-lingui-id: J/hVSQ
 #. placeholder {0}: theme.id
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
@@ -225,7 +232,7 @@ msgid "Add Approved Access Domain"
 msgstr "crwdns4879:0crwdne4879:0"
 
 #. js-lingui-id: DpV70M
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "crwdns81:0crwdne81:0"
@@ -2137,6 +2144,11 @@ msgstr "crwdns425:0crwdne425:0"
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "crwdns427:0crwdne427:0"
 
+#. js-lingui-id: /6i28D
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
+msgid "Input settings"
+msgstr "crwdns5586:0crwdne5586:0"
+
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Instances"
@@ -2439,8 +2451,8 @@ msgstr "crwdns469:0crwdne469:0"
 
 #. js-lingui-id: nOhz3x
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Logout"
-msgstr "crwdns471:0crwdne471:0"
+#~ msgid "Logout"
+#~ msgstr "Logout"
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2838,6 +2850,7 @@ msgid "Not synced"
 msgstr "crwdns5211:0crwdne5211:0"
 
 #. js-lingui-id: HptUxX
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
 msgstr "crwdns5213:0crwdne5213:0"
@@ -3788,6 +3801,11 @@ msgstr "crwdns709:0crwdne709:0"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test Workflow"
 msgstr "crwdns711:0crwdne711:0"
+
+#. js-lingui-id: xeiujy
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
+msgid "Text"
+msgstr "crwdns5588:0crwdne5588:0"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx

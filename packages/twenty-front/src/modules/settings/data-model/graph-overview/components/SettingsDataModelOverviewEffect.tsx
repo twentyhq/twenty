@@ -4,8 +4,8 @@ import { Edge, Node } from '@xyflow/react';
 import { useEffect } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { isDefined } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsDataModelOverviewEffectProps = {
   setEdges: (edges: Edge[]) => void;

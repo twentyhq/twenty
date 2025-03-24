@@ -8,9 +8,9 @@ import { useEffect, useState } from 'react';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { isDefined } from 'twenty-shared';
 import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionFindRecordsProps = {
   action: WorkflowFindRecordsAction;
@@ -138,7 +138,7 @@ export const WorkflowEditActionFindRecords = ({
           label="Limit"
           defaultValue={formData.limit}
           placeholder="Enter limit"
-          onPersist={() => {}}
+          onChange={() => {}}
           readonly
         />
       </WorkflowStepBody>

@@ -58,6 +58,15 @@ export const getTriggerDefaultDefinition = ({
         },
       };
     }
+    case 'WEBHOOK': {
+      return {
+        type,
+        name: defaultLabel,
+        settings: {
+          outputSchema: {},
+        },
+      };
+    }
     default: {
       return assertUnreachable(type, `Unknown type: ${type}`);
     }

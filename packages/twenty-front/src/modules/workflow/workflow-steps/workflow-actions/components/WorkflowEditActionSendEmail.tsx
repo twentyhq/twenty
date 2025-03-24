@@ -17,15 +17,12 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  assertUnreachable,
-  ConnectedAccountProvider,
-  isDefined,
-} from 'twenty-shared';
 import { IconPlus, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;
@@ -240,7 +237,7 @@ export const WorkflowEditActionSendEmail = ({
             placeholder="Enter receiver email"
             readonly={actionOptions.readonly}
             defaultValue={formData.email}
-            onPersist={(email) => {
+            onChange={(email) => {
               handleFieldChange('email', email);
             }}
             VariablePicker={WorkflowVariablePicker}
@@ -250,7 +247,7 @@ export const WorkflowEditActionSendEmail = ({
             placeholder="Enter email subject"
             readonly={actionOptions.readonly}
             defaultValue={formData.subject}
-            onPersist={(subject) => {
+            onChange={(subject) => {
               handleFieldChange('subject', subject);
             }}
             VariablePicker={WorkflowVariablePicker}
@@ -260,7 +257,7 @@ export const WorkflowEditActionSendEmail = ({
             placeholder="Enter email body"
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
-            onPersist={(body) => {
+            onChange={(body) => {
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}

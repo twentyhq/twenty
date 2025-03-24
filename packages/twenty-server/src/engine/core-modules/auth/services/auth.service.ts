@@ -9,8 +9,9 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
-import { APP_LOCALES, isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
@@ -37,8 +38,8 @@ import {
   UserNotExists,
 } from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
-import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import {
@@ -106,7 +107,10 @@ export class AuthService {
         workspacePersonalInviteToken: invitation.value,
         email: user.email,
       });
-      await this.userWorkspaceService.addUserToWorkspace(user, workspace);
+      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+        user,
+        workspace,
+      );
 
       return;
     }

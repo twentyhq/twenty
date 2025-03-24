@@ -2,8 +2,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined, SOURCE_LOCALE } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -21,6 +22,12 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -30,6 +37,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -40,6 +49,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly userRoleService: UserRoleService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -112,7 +122,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     });
   }
 
-  async addUserToWorkspace(user: User, workspace: Workspace) {
+  async addUserToWorkspaceIfUserNotInWorkspace(
+    user: User,
+    workspace: Workspace,
+  ) {
     let userWorkspace = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,
@@ -122,17 +135,27 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       userWorkspace = await this.create(user.id, workspace.id);
 
       await this.createWorkspaceMember(workspace.id, user);
+
+      const defaultRoleId = workspace.defaultRoleId;
+
+      if (!isDefined(defaultRoleId)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
+          PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+        );
+      }
+
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceId: userWorkspace.id,
+        roleId: defaultRoleId,
+      });
+
+      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+        workspace.id,
+        user.email,
+      );
     }
-
-    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-      workspace.id,
-      user.email,
-    );
-
-    return {
-      user,
-      userWorkspace,
-    };
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {

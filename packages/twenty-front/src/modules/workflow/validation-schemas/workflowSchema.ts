@@ -1,5 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared';
 import { z } from 'zod';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
@@ -86,11 +86,15 @@ export const workflowFormActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.array(
       z.object({
-        id: z.string().uuid(),
+        id: z.string(),
+        name: z.string(),
         label: z.string(),
-        type: z.nativeEnum(FieldMetadataType),
+        type: z.union([
+          z.literal(FieldMetadataType.TEXT),
+          z.literal(FieldMetadataType.NUMBER),
+        ]),
         placeholder: z.string().optional(),
-        settings: z.record(z.any()),
+        settings: z.record(z.any()).optional(),
       }),
     ),
   });
@@ -200,17 +204,26 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
   ]),
 });
 
+export const workflowWebhookTriggerSchema = baseTriggerSchema.extend({
+  type: z.literal('WEBHOOK'),
+  settings: z.object({
+    outputSchema: z.object({}).passthrough(),
+  }),
+});
+
 // Combined trigger schema
 export const workflowTriggerSchema = z.discriminatedUnion('type', [
   workflowDatabaseEventTriggerSchema,
   workflowManualTriggerSchema,
   workflowCronTriggerSchema,
+  workflowWebhookTriggerSchema,
 ]);
 
 // Step output schemas
 const workflowExecutorOutputSchema = z.object({
   result: z.any().optional(),
   error: z.string().optional(),
+  pendingEvent: z.boolean().optional(),
 });
 
 export const workflowRunOutputStepsOutputSchema = z.record(

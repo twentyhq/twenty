@@ -23,7 +23,6 @@ export type GenericFieldContextType = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   useUpdateRecord?: RecordUpdateHook;
   recordId: string;
-  recoilScopeId?: string;
   hotkeyScope: string;
   isLabelIdentifier: boolean;
   labelIdentifierLink?: string;

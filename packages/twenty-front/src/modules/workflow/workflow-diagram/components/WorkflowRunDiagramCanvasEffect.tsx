@@ -1,5 +1,5 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useTabListStates } from '@/ui/layout/tab/hooks/internal/useTabListStates';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
@@ -14,8 +14,8 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowRunDiagramCanvasEffect = () => {
   const { getIcon } = useIcons();
@@ -24,27 +24,29 @@ export const WorkflowRunDiagramCanvasEffect = () => {
 
   const workflowId = useRecoilValue(workflowIdState);
 
-  const { activeTabIdState: workflowRunRightDrawerListActiveTabIdState } =
-    useTabListStates({
-      tabListScopeId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
-    });
-
   const goBackToFirstWorkflowRunRightDrawerTabIfNeeded = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
         const activeWorkflowRunRightDrawerTab = getSnapshotValue(
           snapshot,
-          workflowRunRightDrawerListActiveTabIdState,
+          activeTabIdComponentState.atomFamily({
+            instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+          }),
         ) as WorkflowRunTabId | null;
 
         if (
           activeWorkflowRunRightDrawerTab === 'input' ||
           activeWorkflowRunRightDrawerTab === 'output'
         ) {
-          set(workflowRunRightDrawerListActiveTabIdState, 'node');
+          set(
+            activeTabIdComponentState.atomFamily({
+              instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+            }),
+            'node',
+          );
         }
       },
-    [workflowRunRightDrawerListActiveTabIdState],
+    [],
   );
 
   const handleSelectionChange = useCallback(

@@ -2,13 +2,11 @@ import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states
 import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { useCallback, useEffect } from 'react';
+import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { useApolloClient } from '@apollo/client';
+import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuContextChipRecordSetterEffect = () => {
   const commandMenuNavigationMorphItemByPage = useRecoilValue(
@@ -21,97 +19,56 @@ export const CommandMenuContextChipRecordSetterEffect = () => {
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const { performCombinedFindManyRecords } =
-    usePerformCombinedFindManyRecords();
-
-  const objectMetadataIdsUsedInCommandMenuNavigation = Array.from(
-    commandMenuNavigationMorphItemByPage.values(),
-  ).map(({ objectMetadataId }) => objectMetadataId);
-
-  const searchableObjectMetadataItems = objectMetadataItems.filter(({ id }) =>
-    objectMetadataIdsUsedInCommandMenuNavigation.includes(id),
-  );
-
   const commandMenuNavigationStack = useRecoilValue(
     commandMenuNavigationStackState,
   );
 
-  const fetchRecords = useCallback(async () => {
-    const filterPerMetadataItemFilteredOnRecordId = Object.fromEntries(
-      searchableObjectMetadataItems
-        .map(({ id, nameSingular }) => {
-          const recordIdsForMetadataItem = Array.from(
-            commandMenuNavigationMorphItemByPage.values(),
-          )
-            .filter(({ objectMetadataId }) => objectMetadataId === id)
-            .map(({ recordId }) => recordId);
-
-          if (!isNonEmptyArray(recordIdsForMetadataItem)) {
-            return null;
-          }
-
-          return [
-            `filter${capitalize(nameSingular)}`,
-            {
-              id: {
-                in: recordIdsForMetadataItem,
-              },
-            },
-          ];
-        })
-        .filter(isDefined),
-    );
-
-    const operationSignatures = searchableObjectMetadataItems
-      .filter(({ nameSingular }) =>
-        isDefined(
-          filterPerMetadataItemFilteredOnRecordId[
-            `filter${capitalize(nameSingular)}`
-          ],
-        ),
-      )
-      .map((objectMetadataItem) => ({
-        objectNameSingular: objectMetadataItem.nameSingular,
-        variables: {
-          filter:
-            filterPerMetadataItemFilteredOnRecordId[
-              `filter${capitalize(objectMetadataItem.nameSingular)}`
-            ],
-        },
-      }));
-
-    if (operationSignatures.length === 0) {
-      setCommandMenuNavigationRecords([]);
-      return;
-    }
-
-    const { result } = await performCombinedFindManyRecords({
-      operationSignatures,
-    });
-
-    const formattedRecords = Object.entries(result).flatMap(
-      ([objectNamePlural, records]) =>
-        records.map((record) => ({
-          objectMetadataItem: searchableObjectMetadataItems.find(
-            ({ namePlural }) => namePlural === objectNamePlural,
-          ) as ObjectMetadataItem,
-          record: record as RecordGqlNode,
-        })),
-    );
-
-    setCommandMenuNavigationRecords(formattedRecords);
-  }, [
-    commandMenuNavigationMorphItemByPage,
-    performCombinedFindManyRecords,
-    searchableObjectMetadataItems,
-    setCommandMenuNavigationRecords,
-  ]);
+  const apolloClient = useApolloClient();
 
   useEffect(() => {
     if (commandMenuNavigationStack.length > 1) {
-      fetchRecords();
+      const morphItems = Array.from(
+        commandMenuNavigationMorphItemByPage.values(),
+      );
+
+      const records = morphItems
+        .map((morphItem) => {
+          const objectMetadataItem = objectMetadataItems.find(
+            ({ id }) => id === morphItem.objectMetadataId,
+          );
+
+          if (!objectMetadataItem) {
+            return null;
+          }
+
+          const record = getRecordFromCache({
+            recordId: morphItem.recordId,
+            cache: apolloClient.cache,
+            objectMetadataItems,
+            objectMetadataItem,
+          });
+
+          if (!record) {
+            return null;
+          }
+
+          return {
+            objectMetadataItem,
+            record,
+          };
+        })
+        .filter(isDefined);
+
+      setCommandMenuNavigationRecords(records);
     }
-  }, [commandMenuNavigationStack.length, fetchRecords]);
+  }, [
+    apolloClient.cache,
+    commandMenuNavigationMorphItemByPage,
+    commandMenuNavigationStack,
+    commandMenuNavigationStack.length,
+    objectMetadataItems,
+    setCommandMenuNavigationRecords,
+  ]);
 
   return null;
 };

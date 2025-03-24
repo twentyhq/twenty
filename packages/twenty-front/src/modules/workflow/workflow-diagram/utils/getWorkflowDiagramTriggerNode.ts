@@ -6,7 +6,7 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { Node } from '@xyflow/react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getWorkflowDiagramTriggerNode = ({
   trigger,
@@ -29,6 +29,14 @@ export const getWorkflowDiagramTriggerNode = ({
       triggerDefaultLabel = 'On a Schedule';
       triggerIcon = getTriggerIcon({
         type: 'CRON',
+      });
+
+      break;
+    }
+    case 'WEBHOOK': {
+      triggerDefaultLabel = 'Webhook';
+      triggerIcon = getTriggerIcon({
+        type: 'WEBHOOK',
       });
 
       break;

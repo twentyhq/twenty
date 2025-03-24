@@ -18,13 +18,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared';
 import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 type FormSelectFieldInputProps = {
   label?: string;
   defaultValue: string | undefined;
-  onPersist: (value: string | null) => void;
+  onChange: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
   options: SelectOption[];
   clearLabel?: string;
@@ -72,7 +72,7 @@ const StyledSelectDisplayContainer = styled.div`
 export const FormSelectFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   VariablePicker,
   options,
   clearLabel,
@@ -122,7 +122,7 @@ export const FormSelectFieldInput = ({
 
     goBackToPreviousHotkeyScope();
 
-    onPersist(option);
+    onChange(option);
   };
 
   const onCancel = () => {
@@ -151,7 +151,7 @@ export const FormSelectFieldInput = ({
       value: '',
     });
 
-    onPersist(null);
+    onChange(null);
   };
 
   const selectedOption = options.find(
@@ -177,7 +177,7 @@ export const FormSelectFieldInput = ({
       editingMode: 'view',
     });
 
-    onPersist(null);
+    onChange(null);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -186,7 +186,7 @@ export const FormSelectFieldInput = ({
       value: variableName,
     });
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   const handleDisplayModeClick = () => {

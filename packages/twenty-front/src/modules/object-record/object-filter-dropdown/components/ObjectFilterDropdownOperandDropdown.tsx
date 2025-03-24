@@ -35,7 +35,7 @@ export const ObjectFilterDropdownOperandDropdown = ({
       clickableComponent={
         <StyledDropdownMenuHeader
           key={'selected-filter-operand'}
-          EndIcon={IconChevronDown}
+          EndComponent={<IconChevronDown />}
         >
           {getOperandLabel(selectedOperandInDropdown)}
         </StyledDropdownMenuHeader>

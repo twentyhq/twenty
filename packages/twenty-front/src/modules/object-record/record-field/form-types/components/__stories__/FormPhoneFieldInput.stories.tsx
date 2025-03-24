@@ -40,7 +40,7 @@ export const Default: Story = {
 export const SelectCountryCode: Story = {
   args: {
     label: 'Phone',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -60,21 +60,21 @@ export const SelectCountryCode: Story = {
     await userEvent.click(franceOption);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith({
+      expect(args.onChange).toHaveBeenCalledWith({
         primaryPhoneNumber: '',
         primaryPhoneCountryCode: 'FR',
         primaryPhoneCallingCode: '33',
       });
     });
 
-    expect(args.onPersist).toHaveBeenCalledTimes(1);
+    expect(args.onChange).toHaveBeenCalledTimes(1);
   },
 };
 
 export const SelectEmptyCountryCode: Story = {
   args: {
     label: 'Phone',
-    onPersist: fn(),
+    onChange: fn(),
     defaultValue: {
       primaryPhoneNumber: '',
       primaryPhoneCountryCode: 'FR',
@@ -97,14 +97,14 @@ export const SelectEmptyCountryCode: Story = {
     await userEvent.click(emptyOption);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith({
+      expect(args.onChange).toHaveBeenCalledWith({
         primaryPhoneNumber: '',
         primaryPhoneCountryCode: '',
         primaryPhoneCallingCode: '',
       });
     });
 
-    expect(args.onPersist).toHaveBeenCalledTimes(1);
+    expect(args.onChange).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -147,7 +147,7 @@ export const SelectingVariables: Story = {
         </button>
       );
     },
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -167,7 +167,7 @@ export const SelectingVariables: Story = {
     expect(phoneNumberVariable).toBeVisible();
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith({
+      expect(args.onChange).toHaveBeenCalledWith({
         primaryPhoneNumber: `{{${MOCKED_STEP_ID}.phone.number}}`,
         primaryPhoneCountryCode: '',
         primaryPhoneCallingCode: '',
