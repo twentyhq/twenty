@@ -1,9 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
-
 import { capitalize } from 'twenty-shared/utils';
-
 import { ObjectLiteral, OrderByCondition, SelectQueryBuilder } from 'typeorm';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
