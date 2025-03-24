@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const useSeeWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+export const useSeeWorkflowWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
     const recordId = useSelectedRecordIdOrThrow();
 

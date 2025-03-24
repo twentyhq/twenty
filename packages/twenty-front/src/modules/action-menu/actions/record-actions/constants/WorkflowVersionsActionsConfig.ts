@@ -11,7 +11,7 @@ import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { useSeeRunsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeRunsWorkflowVersionSingleRecordAction';
 import { useSeeVersionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeVersionsWorkflowVersionSingleRecordAction';
-import { useSeeWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowWorkflowVersionSingleRecordAction';
+import { useSeeWorkflowWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowWorkflowVersionSingleRecordAction';
 import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
 import { WorkflowVersionSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/types/WorkflowVersionSingleRecordActionsKeys';
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
@@ -69,7 +69,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    useAction: useSeeWorkflowVersionSingleRecordAction,
+    useAction: useSeeWorkflowWorkflowVersionSingleRecordAction,
   },
   seeWorkflowRunsSingleRecord: {
     key: WorkflowVersionSingleRecordActionKeys.SEE_RUNS,
