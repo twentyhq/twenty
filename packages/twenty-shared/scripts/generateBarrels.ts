@@ -63,7 +63,8 @@ const createTypeScriptFile = ({
 const getLastPathFolder = (pathStr: string) => path.basename(pathStr);
 
 const getSubDirectoryPaths = (directoryPath: string): string[] => {
-  return globSync(path.join(directoryPath, '*/'), {
+  const pattern = path.join(directoryPath, '*', path.sep);
+  return globSync(pattern, {
     ignore: [...EXCLUDED_DIRECTORIES],
     cwd: SRC_PATH,
     nodir: false,
