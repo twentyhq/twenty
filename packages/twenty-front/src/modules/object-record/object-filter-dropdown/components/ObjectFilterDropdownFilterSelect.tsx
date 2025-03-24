@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/components/AdvancedFilterButton';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
@@ -21,7 +20,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 import { useSelectFilterUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterUsedInDropdown';
-import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
@@ -65,16 +63,8 @@ export const ObjectFilterDropdownFilterSelect = ({
 }: ObjectFilterDropdownFilterSelectProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const advancedFilterViewFilterId = useRecoilComponentValueV2(
-    advancedFilterViewFilterIdComponentState,
-  );
-
   const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
     useRecoilComponentStateV2(objectFilterDropdownSearchInputComponentState);
-
-  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
-    advancedFilterViewFilterId,
-  );
 
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
@@ -136,11 +126,9 @@ export const ObjectFilterDropdownFilterSelect = ({
     });
 
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
-
-    closeAdvancedFilterDropdown();
   };
 
-  const shoudShowSeparator =
+  const shouldShowSeparator =
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
 
@@ -186,7 +174,7 @@ export const ObjectFilterDropdownFilterSelect = ({
               </SelectableItem>
             ),
           )}
-          {shoudShowSeparator && <DropdownMenuSeparator />}
+          {shouldShowSeparator && <DropdownMenuSeparator />}
           {hiddenColumnsFieldMetadataItems.map(
             (hiddenFieldMetadataItem, index) => (
               <SelectableItem

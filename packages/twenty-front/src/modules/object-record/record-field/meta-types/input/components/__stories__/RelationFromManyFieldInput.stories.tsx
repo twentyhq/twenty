@@ -16,12 +16,12 @@ import {
 } from '~/testing/mock-data/users';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
-import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -89,13 +89,17 @@ const RelationManyFieldInputWithContext = () => {
           instanceId: 'relation-from-many-field-record-id-people',
         }}
       >
-        <FieldContextProvider
-          fieldDefinition={fieldDefinition}
-          recordId={'recordId'}
+        <FieldContext.Provider
+          value={{
+            fieldDefinition,
+            recordId: 'recordId',
+            hotkeyScope: 'hotkey-scope',
+            isLabelIdentifier: false,
+          }}
         >
           <RelationWorkspaceSetterEffect />
           <RelationFromManyFieldInput />
-        </FieldContextProvider>
+        </FieldContext.Provider>
       </RecordFieldComponentInstanceContext.Provider>
       <div data-testid="data-field-input-click-outside-div" />
     </div>
