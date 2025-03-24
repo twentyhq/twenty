@@ -120,7 +120,7 @@ export class MessagingMessagesImportService {
       if (connectedAccount.id === '74998005-0180-4d6a-9fa4-fe733c4707f8') {
         this.logger.log(
           '[TMP] Debugging messages import for account:',
-          messageChannel.connectedAccount,
+          messageChannel.connectedAccount.id,
         );
         this.logger.log('[TMP] messageIdsToFetch:', messageIdsToFetch);
       }
