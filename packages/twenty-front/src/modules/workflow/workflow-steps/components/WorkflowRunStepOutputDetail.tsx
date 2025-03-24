@@ -31,7 +31,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
     steps: workflowRun.output.flow.steps,
   });
   if (stepDefinition?.type !== 'action') {
-    throw new Error('The input tab must be rendered with an action step.');
+    throw new Error('The output tab must be rendered with an action step.');
   }
 
   const headerTitle = stepDefinition.definition.name;
