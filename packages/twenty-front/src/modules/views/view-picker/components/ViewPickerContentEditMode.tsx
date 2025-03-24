@@ -28,7 +28,6 @@ export const ViewPickerContentEditMode = () => {
 
   const [viewPickerInputName, setViewPickerInputName] =
     useRecoilComponentStateV2(viewPickerInputNameComponentState);
-  // debugger;
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
 
