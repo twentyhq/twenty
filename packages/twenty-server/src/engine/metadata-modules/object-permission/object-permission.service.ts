@@ -53,36 +53,55 @@ export class ObjectPermissionService {
         },
       });
     } catch (error) {
-      if (error.message.includes('violates foreign key constraint')) {
-        const role = await this.roleRepository.findOne({
-          where: {
-            id: input.roleId,
-          },
-        });
-
-        if (!isDefined(role)) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.ROLE_NOT_FOUND,
-            PermissionsExceptionCode.ROLE_NOT_FOUND,
-          );
-        }
-
-        const objectMetadata = await this.objectMetadataRepository.findOne({
-          where: {
-            workspaceId,
-            id: input.objectMetadataId,
-          },
-        });
-
-        if (!isDefined(objectMetadata)) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
-            PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
-          );
-        }
-      }
+      await this.handleForeignKeyError({
+        error,
+        roleId: input.roleId,
+        workspaceId,
+        objectMetadataId: input.objectMetadataId,
+      });
 
       throw error;
+    }
+  }
+
+  private async handleForeignKeyError({
+    error,
+    roleId,
+    workspaceId,
+    objectMetadataId,
+  }: {
+    error: Error;
+    roleId: string;
+    workspaceId: string;
+    objectMetadataId: string;
+  }) {
+    if (error.message.includes('violates foreign key constraint')) {
+      const role = await this.roleRepository.findOne({
+        where: {
+          id: roleId,
+        },
+      });
+
+      if (!isDefined(role)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.ROLE_NOT_FOUND,
+          PermissionsExceptionCode.ROLE_NOT_FOUND,
+        );
+      }
+
+      const objectMetadata = await this.objectMetadataRepository.findOne({
+        where: {
+          workspaceId,
+          id: objectMetadataId,
+        },
+      });
+
+      if (!isDefined(objectMetadata)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
+          PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
+      }
     }
   }
 }
