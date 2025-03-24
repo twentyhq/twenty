@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -856,6 +856,7 @@ export type Mutation = {
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
@@ -1110,6 +1111,11 @@ export type MutationUpdateOneServerlessFunctionArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
+};
+
+
+export type MutationUpdateWorkflowRunStepArgs = {
+  input: UpdateWorkflowRunStepInput;
 };
 
 
@@ -1954,6 +1960,13 @@ export type UpdateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
+export type UpdateWorkflowRunStepInput = {
+  /** Step to update in JSON format */
+  step: Scalars['JSON'];
+  /** Workflow run ID */
+  workflowRunId: Scalars['String'];
+};
+
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
@@ -2661,6 +2674,13 @@ export type RunWorkflowVersionMutationVariables = Exact<{
 
 
 export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'WorkflowRun', workflowRunId: any } };
+
+export type UpdateWorkflowRunStepMutationVariables = Exact<{
+  input: UpdateWorkflowRunStepInput;
+}>;
+
+
+export type UpdateWorkflowRunStepMutation = { __typename?: 'Mutation', updateWorkflowRunStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean } };
 
 export type UpdateWorkflowVersionStepMutationVariables = Exact<{
   input: UpdateWorkflowVersionStepInput;
@@ -5265,6 +5285,43 @@ export function useRunWorkflowVersionMutation(baseOptions?: Apollo.MutationHookO
 export type RunWorkflowVersionMutationHookResult = ReturnType<typeof useRunWorkflowVersionMutation>;
 export type RunWorkflowVersionMutationResult = Apollo.MutationResult<RunWorkflowVersionMutation>;
 export type RunWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
+export const UpdateWorkflowRunStepDocument = gql`
+    mutation UpdateWorkflowRunStep($input: UpdateWorkflowRunStepInput!) {
+  updateWorkflowRunStep(input: $input) {
+    id
+    name
+    type
+    settings
+    valid
+  }
+}
+    `;
+export type UpdateWorkflowRunStepMutationFn = Apollo.MutationFunction<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
+
+/**
+ * __useUpdateWorkflowRunStepMutation__
+ *
+ * To run a mutation, you first call `useUpdateWorkflowRunStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateWorkflowRunStepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateWorkflowRunStepMutation, { data, loading, error }] = useUpdateWorkflowRunStepMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateWorkflowRunStepMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>(UpdateWorkflowRunStepDocument, options);
+      }
+export type UpdateWorkflowRunStepMutationHookResult = ReturnType<typeof useUpdateWorkflowRunStepMutation>;
+export type UpdateWorkflowRunStepMutationResult = Apollo.MutationResult<UpdateWorkflowRunStepMutation>;
+export type UpdateWorkflowRunStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
 export const UpdateWorkflowVersionStepDocument = gql`
     mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
   updateWorkflowVersionStep(input: $input) {

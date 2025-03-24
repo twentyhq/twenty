@@ -9,6 +9,7 @@ import {
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -161,6 +162,44 @@ export class WorkflowRunWorkspaceService {
         },
       },
       context,
+    });
+  }
+
+  async updateWorkflowRunStep({
+    workflowRunId,
+    step,
+  }: {
+    workflowRunId: string;
+    step: WorkflowAction;
+  }) {
+    const workflowRunRepository =
+      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+        'workflowRun',
+      );
+
+    const workflowRunToUpdate = await workflowRunRepository.findOneBy({
+      id: workflowRunId,
+    });
+
+    if (!workflowRunToUpdate) {
+      throw new WorkflowRunException(
+        'No workflow run to update',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+      );
+    }
+
+    const updatedSteps = workflowRunToUpdate.output?.flow?.steps?.map(
+      (existingStep) => (step.id === existingStep.id ? step : existingStep),
+    );
+
+    return workflowRunRepository.update(workflowRunToUpdate.id, {
+      output: {
+        ...(workflowRunToUpdate.output ?? {}),
+        flow: {
+          ...(workflowRunToUpdate.output?.flow ?? {}),
+          steps: updatedSteps,
+        },
+      },
     });
   }
 
