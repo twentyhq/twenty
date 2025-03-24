@@ -12,6 +12,7 @@ import {
 } from 'twenty-ui';
 
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
+import { useObjectOptionsForLayout } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForLayout';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -23,6 +24,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
+import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -52,6 +54,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     recordGroupFieldMetadataComponentState,
   );
 
+  const { setAndPersistViewType } = useObjectOptionsForLayout();
+  const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
+
   return (
     <>
       <DropdownMenuHeader
@@ -64,32 +69,33 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       >
         {t`Layout`}
       </DropdownMenuHeader>
-      <DropdownMenuSeparator />
-      <MenuItemSelect
-        LeftIcon={IconTable}
-        text={t`Table`}
-        selected={viewType === ViewType.Table}
-        onClick={() =>
-          setAndPersistOpenRecordIn(
-            ViewOpenRecordInType.SIDE_PANEL,
-            currentView,
-          )
-        }
-      />
-      <MenuItemSelect
-        LeftIcon={IconLayoutKanban}
-        text={t`Kanban`}
-        // contextualText={`${visibleBoardFields.length} shown`}
-        selected={viewType === ViewType.Kanban}
-        onClick={() =>
-          setAndPersistOpenRecordIn(
-            ViewOpenRecordInType.RECORD_PAGE,
-            currentView,
-          )
-        }
-      />
-      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
+        <MenuItemSelect
+          LeftIcon={IconTable}
+          text={t`Table`}
+          selected={viewType === ViewType.Table}
+          onClick={() => setAndPersistViewType(ViewType.Table)}
+        />
+        <MenuItemSelect
+          LeftIcon={IconLayoutKanban}
+          text={t`Kanban`}
+          contextualText={
+            availableFieldsForKanban.length === 0
+              ? t`Create Select...`
+              : undefined
+          }
+          selected={viewType === ViewType.Kanban}
+          onClick={() => {
+            setAndPersistViewType(ViewType.Kanban);
+            console.log(
+              'todo: redirect to settings if no seelct, and assign random select otherwise',
+            );
+            console.log(
+              'todo: update the UI so that the selected view in dropdown',
+            );
+          }}
+        />
+        <DropdownMenuSeparator />
         <MenuItem
           onClick={() => onContentChange('layoutOpenIn')}
           LeftIcon={
