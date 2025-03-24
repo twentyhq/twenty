@@ -53,10 +53,11 @@ export const MainNavigationDrawerItems = () => {
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
 
+  console.log('LINKS', workspaceFavoritesObjectMetadataItems);
+
   const traceableObject = useMemo(() => {
     return workspaceFavoritesObjectMetadataItems?.find(
-      (item) =>
-        item.nameSingular === 'traceable' || item.nameSingular === 'linklogs',
+      (item) => item.nameSingular === 'traceable',
     );
   }, [workspaceFavoritesObjectMetadataItems]);
 
