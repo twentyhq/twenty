@@ -18,6 +18,7 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import {
   RelationDefinitionDTO,
   RelationDefinitionType,
@@ -457,7 +458,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: UpdateFieldInput,
     existingFieldMetadata: FieldMetadataEntity,
   ) {
-    const updatableStandardFieldInput: any = {
+    const updatableStandardFieldInput: UpdateFieldInput & {
+      standardOverrides?: FieldStandardOverridesDTO;
+    } = {
       id: fieldMetadataInput.id,
       isActive: fieldMetadataInput.isActive,
       workspaceId: fieldMetadataInput.workspaceId,
