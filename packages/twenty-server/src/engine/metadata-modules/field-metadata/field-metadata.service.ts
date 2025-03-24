@@ -457,13 +457,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: UpdateFieldInput,
     existingFieldMetadata: FieldMetadataEntity,
   ) {
-    const updatableStandardFieldInput: UpdateFieldInput = {
+    const updatableStandardFieldInput: any = {
       id: fieldMetadataInput.id,
       isActive: fieldMetadataInput.isActive,
       workspaceId: fieldMetadataInput.workspaceId,
       defaultValue: fieldMetadataInput.defaultValue,
       settings: fieldMetadataInput.settings,
+      isLabelSyncedWithName: fieldMetadataInput.isLabelSyncedWithName,
     };
+
+    if ('standardOverrides' in fieldMetadataInput) {
+      updatableStandardFieldInput.standardOverrides = (
+        fieldMetadataInput as any
+      ).standardOverrides;
+    }
 
     if (
       existingFieldMetadata.type === FieldMetadataType.SELECT ||
