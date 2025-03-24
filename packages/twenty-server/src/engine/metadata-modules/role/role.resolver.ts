@@ -117,6 +117,23 @@ export class RoleResolver {
     });
   }
 
+  @Mutation(() => RoleDTO)
+  async updateOneRole(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
+  ): Promise<RoleDTO> {
+    await this.validatePermissionsV2EnabledOrThrow(workspace);
+    await this.validateRoleIsEditableOrThrow({
+      roleId: updateRoleInput.id,
+      workspaceId: workspace.id,
+    });
+
+    return this.roleService.updateRole({
+      input: updateRoleInput,
+      workspaceId: workspace.id,
+    });
+  }
+
   @Mutation(() => ObjectPermissionDTO)
   async upsertOneObjectPermission(
     @AuthWorkspace() workspace: Workspace,
@@ -150,23 +167,6 @@ export class RoleResolver {
     return this.settingPermissionService.upsertSettingPermission({
       workspaceId: workspace.id,
       input: upsertSettingPermissionInput,
-    });
-  }
-
-  @Mutation(() => RoleDTO)
-  async updateOneRole(
-    @AuthWorkspace() workspace: Workspace,
-    @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
-  ): Promise<RoleDTO> {
-    await this.validatePermissionsV2EnabledOrThrow(workspace);
-    await this.validateRoleIsEditableOrThrow({
-      roleId: updateRoleInput.id,
-      workspaceId: workspace.id,
-    });
-
-    return this.roleService.updateRole({
-      input: updateRoleInput,
-      workspaceId: workspace.id,
     });
   }
 
