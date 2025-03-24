@@ -12414,9 +12414,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@preconstruct/cli@patch:@preconstruct/cli@npm%3A2.8.11#~/.yarn/patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch":
+"@preconstruct/cli@patch:@preconstruct/cli@npm%3A2.8.11#./patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch::locator=twenty-shared%40workspace%3Apackages%2Ftwenty-shared":
   version: 2.8.11
-  resolution: "@preconstruct/cli@patch:@preconstruct/cli@npm%3A2.8.11#~/.yarn/patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch::version=2.8.11&hash=976544"
+  resolution: "@preconstruct/cli@patch:@preconstruct/cli@npm%3A2.8.11#./patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch::version=2.8.11&hash=976544&locator=twenty-shared%40workspace%3Apackages%2Ftwenty-shared"
   dependencies:
     "@babel/code-frame": "npm:^7.5.5"
     "@babel/core": "npm:^7.7.7"
@@ -52849,7 +52849,7 @@ __metadata:
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   dependencies:
     "@babel/preset-env": "npm:^7.26.9"
-    "@preconstruct/cli": "patch:@preconstruct/cli@npm%3A2.8.11#~/.yarn/patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch"
+    "@preconstruct/cli": "patch:@preconstruct/cli@npm%3A2.8.11#./patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/babel__preset-env": "npm:^7"
