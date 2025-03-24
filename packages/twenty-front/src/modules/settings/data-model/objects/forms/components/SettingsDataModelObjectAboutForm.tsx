@@ -318,30 +318,6 @@ export const SettingsDataModelObjectAboutForm = ({
                           fillNamePluralFromLabelPlural(labelPlural);
                           fillNameSingularFromLabelSingular(labelSingular);
                         }
-
-                        // Server-side side effect when isLabelSyncedWithName is changed
-                        if (
-                          value === true &&
-                          isDefined(objectMetadataItem) &&
-                          !objectMetadataItem?.isCustom
-                        ) {
-                          reset(
-                            {
-                              isLabelSyncedWithName: value,
-                              labelSingular:
-                                objectMetadataItem.labelSingular || '',
-                              labelPlural: objectMetadataItem.labelPlural || '',
-                              nameSingular:
-                                objectMetadataItem.nameSingular || '',
-                              namePlural: objectMetadataItem.namePlural || '',
-                              description: objectMetadataItem.description,
-                              icon: objectMetadataItem.icon || undefined,
-                            },
-                            {
-                              keepDirty: true,
-                            },
-                          );
-                        }
                       }}
                     />
                   </Card>

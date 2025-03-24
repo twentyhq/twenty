@@ -64,9 +64,22 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     try {
       setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
-      await updateObjectMetadata(formValues);
+      const updatedObject = await updateObjectMetadata(formValues);
 
-      formConfig.reset(undefined, { keepValues: true });
+      if (formValues.isLabelSyncedWithName !== isLabelSyncedWithName) {
+        formConfig.reset({
+          description,
+          icon: icon ?? undefined,
+          isLabelSyncedWithName: formValues.isLabelSyncedWithName,
+          labelPlural: updatedObject.data?.updateOneObject.labelPlural,
+          labelSingular: updatedObject.data?.updateOneObject.labelSingular,
+          namePlural: updatedObject.data?.updateOneObject.namePlural,
+          nameSingular: updatedObject.data?.updateOneObject.nameSingular,
+        });
+      } else {
+        formConfig.reset(undefined, { keepValues: true });
+      }
+
       navigate(SettingsPath.ObjectDetail, {
         objectNamePlural: objectNamePluralForRedirection,
       });
@@ -87,13 +100,13 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         ...payloadWithoutNames
       } = updatePayload;
 
-      return updateOneObjectMetadataItem({
+      return await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
         updatePayload: payloadWithoutNames,
       });
     }
 
-    return updateOneObjectMetadataItem({
+    return await updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
       updatePayload,
     });
