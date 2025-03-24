@@ -9,6 +9,7 @@ import {
   BeforeUpdateOneHook,
   UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Equal, In, Repository } from 'typeorm';
 
@@ -37,6 +38,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   async run(
     instance: UpdateOneInputType<T>,
     workspaceId: string,
+    locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<UpdateOneInputType<T>> {
     if (!workspaceId) {
       throw new UnauthorizedException();
@@ -90,8 +92,6 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
         !updatableFields.includes(key) && !overridableFields.includes(key),
     );
 
-    const hasNonUpdatableFields = nonUpdatableFields.length > 0;
-
     const isUpdatingLabelsWhenSynced =
       (instance.update.labelSingular || instance.update.labelPlural) &&
       objectMetadata.isLabelSyncedWithName &&
@@ -105,7 +105,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       );
     }
 
-    if (hasNonUpdatableFields) {
+    if (nonUpdatableFields.length > 0) {
       throw new BadRequestException(
         `Only isActive, isLabelSyncedWithName, labelSingular, labelPlural, icon and description fields can be updated for standard objects. Disallowed fields: ${nonUpdatableFields.join(', ')}`,
       );
@@ -179,6 +179,33 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     this.handleLabelOverrides(instance, objectMetadata, update);
   }
 
+  private resetOverrideIfMatchesOriginal<
+    K extends keyof ObjectStandardOverridesDTO,
+  >(
+    update: StandardObjectUpdate,
+    overrideKey: K,
+    newValue: any,
+    originalValue: any,
+  ): boolean {
+    if (newValue === originalValue) {
+      update.standardOverrides = update.standardOverrides || {};
+      update.standardOverrides[overrideKey] = null;
+
+      return true;
+    }
+
+    return false;
+  }
+
+  private setOverrideValue<K extends keyof ObjectStandardOverridesDTO>(
+    update: StandardObjectUpdate,
+    overrideKey: K,
+    value: any,
+  ): void {
+    update.standardOverrides = update.standardOverrides || {};
+    update.standardOverrides[overrideKey] = value;
+  }
+
   private handleDescriptionOverride(
     instance: UpdateOneInputType<T>,
     objectMetadata: ObjectMetadataEntity,
@@ -188,15 +215,18 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.description === objectMetadata.description) {
-      update.standardOverrides.description = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal(
+        update,
+        'description',
+        instance.update.description,
+        objectMetadata.description,
+      )
+    ) {
       return;
     }
 
-    update.standardOverrides.description = instance.update.description;
+    this.setOverrideValue(update, 'description', instance.update.description);
   }
 
   private handleIconOverride(
@@ -208,15 +238,18 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.icon === objectMetadata.icon) {
-      update.standardOverrides.icon = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal(
+        update,
+        'icon',
+        instance.update.icon,
+        objectMetadata.icon,
+      )
+    ) {
       return;
     }
 
-    update.standardOverrides.icon = instance.update.icon;
+    this.setOverrideValue(update, 'icon', instance.update.icon);
   }
 
   private handleLabelOverrides(
@@ -245,15 +278,22 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.labelSingular === objectMetadata.labelSingular) {
-      update.standardOverrides.labelSingular = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal(
+        update,
+        'labelSingular',
+        instance.update.labelSingular,
+        objectMetadata.labelSingular,
+      )
+    ) {
       return;
     }
 
-    update.standardOverrides.labelSingular = instance.update.labelSingular;
+    this.setOverrideValue(
+      update,
+      'labelSingular',
+      instance.update.labelSingular,
+    );
   }
 
   private handleLabelPluralOverride(
@@ -265,15 +305,18 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.labelPlural === objectMetadata.labelPlural) {
-      update.standardOverrides.labelPlural = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal(
+        update,
+        'labelPlural',
+        instance.update.labelPlural,
+        objectMetadata.labelPlural,
+      )
+    ) {
       return;
     }
 
-    update.standardOverrides.labelPlural = instance.update.labelPlural;
+    this.setOverrideValue(update, 'labelPlural', instance.update.labelPlural);
   }
 
   private async validateIdentifierFields(

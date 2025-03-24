@@ -105,11 +105,13 @@ export class ObjectMetadataResolver {
   async updateOneObject(
     @Args('input') input: UpdateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     try {
       const updatedInput = (await this.beforeUpdateOneObject.run(
         input,
         workspaceId,
+        context.req.headers['x-locale'],
       )) as UpdateOneObjectInput;
 
       return await this.objectMetadataService.updateOneObject(
