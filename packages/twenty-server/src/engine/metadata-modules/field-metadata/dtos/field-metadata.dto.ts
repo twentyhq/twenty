@@ -97,7 +97,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   icon?: string;
 
-  @IsString()
   @IsOptional()
   @Field(() => FieldStandardOverridesDTO, { nullable: true })
   standardOverrides?: FieldStandardOverridesDTO;
