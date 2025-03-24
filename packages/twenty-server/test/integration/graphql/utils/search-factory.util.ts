@@ -31,7 +31,7 @@ export const searchFactory = ({
         filter: $filter
       ) {
         recordId
-        objectSingularName
+        objectNameSingular
         label
         imageUrl
         tsRankCD
@@ -41,7 +41,7 @@ export const searchFactory = ({
   `,
   variables: {
     searchInput,
-    limit: 30,
+    limit: 50,
     excludedObjectNameSingulars,
     includedObjectNameSingulars,
     filter,

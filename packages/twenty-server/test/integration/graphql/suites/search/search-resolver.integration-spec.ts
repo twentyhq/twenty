@@ -4,12 +4,12 @@ import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-mo
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
 import {
   SearchFactoryParams,
   searchFactory,
-} from 'test/integration/graphql/utils/global-search-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
+} from 'test/integration/graphql/utils/search-factory.util';
 import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
