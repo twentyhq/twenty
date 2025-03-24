@@ -50,7 +50,7 @@ import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/cons
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
-const CREDENTIALS_DURATION_IN_SECONDS = 10 * 60 * 60; // 10h
+const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
 const LAMBDA_EXECUTOR_DESCRIPTION = 'User script executor';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
