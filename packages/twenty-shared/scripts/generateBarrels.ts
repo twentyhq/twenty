@@ -236,6 +236,7 @@ function getTypeScriptFiles(
   const pattern = path.join(directoryPath, '**', '*.{ts,tsx}');
   const files = globSync(pattern, {
     cwd: SRC_PATH,
+    nodir: true,
     ignore: [...EXCLUDED_EXTENSIONS, ...EXCLUDED_DIRECTORIES],
   });
 
