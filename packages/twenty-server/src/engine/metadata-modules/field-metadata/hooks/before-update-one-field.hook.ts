@@ -4,12 +4,15 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import { i18n } from '@lingui/core';
 import {
   BeforeUpdateOneHook,
   UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -27,7 +30,13 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
 
   async run(
     instance: UpdateOneInputType<T>,
-    workspaceId: string,
+    {
+      workspaceId,
+      locale,
+    }: {
+      workspaceId: string;
+      locale: keyof typeof APP_LOCALES | undefined;
+    },
   ): Promise<UpdateOneInputType<T>> {
     if (!workspaceId) {
       throw new UnauthorizedException();
@@ -36,7 +45,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     const fieldMetadata = await this.getFieldMetadata(instance, workspaceId);
 
     if (!fieldMetadata.isCustom) {
-      return this.handleStandardFieldUpdate(instance, fieldMetadata);
+      return this.handleStandardFieldUpdate(instance, fieldMetadata, locale);
     }
 
     return instance;
@@ -63,6 +72,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
   private handleStandardFieldUpdate(
     instance: UpdateOneInputType<T>,
     fieldMetadata: FieldMetadataEntity,
+    locale?: keyof typeof APP_LOCALES,
   ): UpdateOneInputType<T> {
     const update: StandardFieldUpdate = {};
     const updatableFields = ['isActive', 'isLabelSyncedWithName'];
@@ -98,7 +108,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
 
     this.handleActiveField(instance, update);
     this.handleLabelSyncedWithNameField(instance, update);
-    this.handleStandardOverrides(instance, fieldMetadata, update);
+    this.handleStandardOverrides(instance, fieldMetadata, update, locale);
 
     return {
       id: instance.id,
@@ -139,6 +149,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     instance: UpdateOneInputType<T>,
     fieldMetadata: FieldMetadataEntity,
     update: StandardFieldUpdate,
+    locale?: keyof typeof APP_LOCALES,
   ): void {
     const hasStandardOverrides =
       isDefined(instance.update.description) ||
@@ -151,29 +162,94 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
 
     update.standardOverrides = update.standardOverrides || {};
 
-    this.handleDescriptionOverride(instance, fieldMetadata, update);
+    this.handleDescriptionOverride(instance, fieldMetadata, update, locale);
     this.handleIconOverride(instance, fieldMetadata, update);
-    this.handleLabelOverride(instance, fieldMetadata, update);
+    this.handleLabelOverride(instance, fieldMetadata, update, locale);
+  }
+
+  private resetOverrideIfMatchesOriginal<
+    K extends keyof FieldStandardOverridesDTO,
+  >(
+    update: StandardFieldUpdate,
+    overrideKey: K,
+    newValue: string,
+    originalValue: string,
+    locale?: keyof typeof APP_LOCALES | undefined,
+  ): boolean {
+    if (locale && locale !== SOURCE_LOCALE) {
+      const messageId = generateMessageId(originalValue ?? '');
+      const translatedMessage = i18n._(messageId);
+
+      if (newValue === translatedMessage) {
+        update.standardOverrides = update.standardOverrides || {};
+        update.standardOverrides[overrideKey] = null;
+
+        return true;
+      }
+
+      return false;
+    } else {
+      if (newValue === originalValue) {
+        update.standardOverrides = update.standardOverrides || {};
+        update.standardOverrides[overrideKey] = null;
+
+        return true;
+      }
+
+      return false;
+    }
+  }
+
+  private setOverrideValue<K extends keyof FieldStandardOverridesDTO>(
+    update: StandardFieldUpdate,
+    overrideKey: 'label' | 'description' | 'icon',
+    value: any,
+    locale?: keyof typeof APP_LOCALES,
+  ): void {
+    update.standardOverrides = update.standardOverrides || {};
+
+    if (locale && locale !== SOURCE_LOCALE && overrideKey !== 'icon') {
+      update.standardOverrides.translations =
+        update.standardOverrides.translations || {};
+      update.standardOverrides.translations[locale] =
+        update.standardOverrides.translations[locale] || {};
+
+      const localeTranslations = update.standardOverrides.translations[locale];
+
+      (localeTranslations as Record<string, any>)[overrideKey] = value;
+    } else {
+      update.standardOverrides[overrideKey] = value;
+    }
   }
 
   private handleDescriptionOverride(
     instance: UpdateOneInputType<T>,
     fieldMetadata: FieldMetadataEntity,
     update: StandardFieldUpdate,
+    locale?: keyof typeof APP_LOCALES,
   ): void {
     if (!isDefined(instance.update.description)) {
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.description === fieldMetadata.description) {
-      update.standardOverrides.description = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal(
+        update,
+        'description',
+        instance.update.description,
+        fieldMetadata.description,
+        locale,
+      )
+    ) {
       return;
     }
 
-    update.standardOverrides.description = instance.update.description;
+    this.setOverrideValue(
+      update,
+      'description',
+      instance.update.description,
+      locale,
+    );
   }
 
   private handleIconOverride(
@@ -185,21 +261,25 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.icon === fieldMetadata.icon) {
-      update.standardOverrides.icon = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal(
+        update,
+        'icon',
+        instance.update.icon,
+        fieldMetadata.icon,
+      )
+    ) {
       return;
     }
 
-    update.standardOverrides.icon = instance.update.icon;
+    this.setOverrideValue(update, 'icon', instance.update.icon);
   }
 
   private handleLabelOverride(
     instance: UpdateOneInputType<T>,
     fieldMetadata: FieldMetadataEntity,
     update: StandardFieldUpdate,
+    locale?: keyof typeof APP_LOCALES,
   ): void {
     if (
       fieldMetadata.isLabelSyncedWithName ||
@@ -212,14 +292,18 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.label === fieldMetadata.label) {
-      update.standardOverrides.label = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal(
+        update,
+        'label',
+        instance.update.label,
+        fieldMetadata.label,
+        locale,
+      )
+    ) {
       return;
     }
 
-    update.standardOverrides.label = instance.update.label;
+    this.setOverrideValue(update, 'label', instance.update.label, locale);
   }
 }

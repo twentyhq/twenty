@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
@@ -618,15 +618,19 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return fieldMetadata[labelKey] ?? '';
     }
 
-    if (!locale) {
+    if (!locale || locale === SOURCE_LOCALE) {
+      if (
+        fieldMetadata.standardOverrides &&
+        isDefined(fieldMetadata.standardOverrides[labelKey])
+      ) {
+        return fieldMetadata.standardOverrides[labelKey] as string;
+      }
+
       return fieldMetadata[labelKey] ?? '';
     }
 
-    if (
-      fieldMetadata.standardOverrides &&
-      isDefined(fieldMetadata.standardOverrides[labelKey])
-    ) {
-      return fieldMetadata.standardOverrides[labelKey] as string;
+    if (fieldMetadata.standardOverrides?.translations?.[locale]?.[labelKey]) {
+      return fieldMetadata.standardOverrides.translations[locale][labelKey];
     }
 
     const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');

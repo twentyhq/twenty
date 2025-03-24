@@ -107,12 +107,13 @@ export class FieldMetadataResolver {
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     try {
-      const updatedInput = (await this.beforeUpdateOneField.run(
-        input,
+      const updatedInput = (await this.beforeUpdateOneField.run(input, {
         workspaceId,
-      )) as UpdateOneFieldMetadataInput;
+        locale: context.req.headers['x-locale'],
+      })) as UpdateOneFieldMetadataInput;
 
       return await this.fieldMetadataService.updateOne(updatedInput.id, {
         ...updatedInput.update,
