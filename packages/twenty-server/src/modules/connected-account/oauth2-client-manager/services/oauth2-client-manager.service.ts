@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { OAuth2Client } from 'google-auth-library';
-import { ConnectedAccountProvider } from 'twenty-shared';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';

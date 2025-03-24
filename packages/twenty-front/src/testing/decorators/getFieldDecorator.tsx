@@ -5,17 +5,18 @@ import { useRecoilCallback } from 'recoil';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import {
   RecordFieldValueSelectorContextProvider,
   useSetRecordValue,
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedTasks } from '~/testing/mock-data/tasks';
+import { isDefined } from 'twenty-shared/utils';
 
 const RecordMockSetterEffect = ({
   companies,
@@ -124,26 +125,32 @@ export const getFieldDecorator =
     });
 
     return (
-      <RecordFieldValueSelectorContextProvider>
-        <FieldContext.Provider
-          value={{
-            recordId: record.id,
-            isLabelIdentifier,
-            fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-              field: fieldMetadataItem,
-              position: 0,
-              objectMetadataItem,
-            }),
-            hotkeyScope: 'hotkey-scope',
-          }}
-        >
-          <RecordMockSetterEffect
-            companies={companies}
-            people={people}
-            tasks={tasks}
-          />
-          <Story />
-        </FieldContext.Provider>
-      </RecordFieldValueSelectorContextProvider>
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: 'record-field-component-instance-id',
+        }}
+      >
+        <RecordFieldValueSelectorContextProvider>
+          <FieldContext.Provider
+            value={{
+              recordId: record.id,
+              isLabelIdentifier,
+              fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                field: fieldMetadataItem,
+                position: 0,
+                objectMetadataItem,
+              }),
+              hotkeyScope: 'hotkey-scope',
+            }}
+          >
+            <RecordMockSetterEffect
+              companies={companies}
+              people={people}
+              tasks={tasks}
+            />
+            <Story />
+          </FieldContext.Provider>
+        </RecordFieldValueSelectorContextProvider>
+      </RecordFieldComponentInstanceContext.Provider>
     );
   };

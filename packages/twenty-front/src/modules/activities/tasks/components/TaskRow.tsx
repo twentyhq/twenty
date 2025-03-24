@@ -15,7 +15,7 @@ import { ActivityRow } from '@/activities/components/ActivityRow';
 import { Task } from '@/activities/types/Task';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
@@ -84,13 +84,6 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   const { completeTask } = useCompleteTask(task);
 
-  const { FieldContextProvider: TaskTargetsContextProvider } = useFieldContext({
-    objectNameSingular: CoreObjectNameSingular.Task,
-    objectRecordId: task.id,
-    fieldMetadataName: 'taskTargets',
-    fieldPosition: 0,
-  });
-
   return (
     <ActivityRow
       onClick={() => {
@@ -128,16 +121,22 @@ export const TaskRow = ({ task }: { task: Task }) => {
             {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
         )}
-        {TaskTargetsContextProvider && (
-          <TaskTargetsContextProvider>
+        {
+          <FieldContextProvider
+            objectNameSingular={CoreObjectNameSingular.Task}
+            objectRecordId={task.id}
+            fieldMetadataName={'taskTargets'}
+            fieldPosition={0}
+          >
             <ActivityTargetsInlineCell
               activityObjectNameSingular={CoreObjectNameSingular.Task}
               activityRecordId={task.id}
               showLabel={false}
               maxWidth={200}
+              componentInstanceId={`task-row-targets-${task.id}`}
             />
-          </TaskTargetsContextProvider>
-        )}
+          </FieldContextProvider>
+        }
       </StyledRightSideContainer>
     </ActivityRow>
   );

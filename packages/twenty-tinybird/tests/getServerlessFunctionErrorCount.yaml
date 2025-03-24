@@ -1,0 +1,40 @@
+- name: daily_error_count_default
+  description: Test error count with daily granularity using default dates
+  parameters: workspaceId=20202020-1c25-4d02-bf25-6aeccf7ea419&functionId=ad018fc5-eace-4f7e-942f-929560a16459&granularity=day
+  expected_result: |
+    {"start":"2024-11-02T00:00:00.000+0000","error_count":0}
+
+- name: hourly_error_count_custom_range
+  description: Test error count with hourly granularity for a custom date range
+  parameters: workspaceId=20202020-1c25-4d02-bf25-6aeccf7ea419&functionId=a9fd87c0-af86-4e17-be3a-a6d3d961678a&granularity=hour&start=2024-10-22T00:00:00.000Z&end=2024-10-23T00:00:00.000Z
+  expected_result: |
+    {"start":"2024-10-22T01:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T02:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T03:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T04:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T05:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T06:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T07:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T08:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T09:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T10:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T11:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T12:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T13:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T14:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T15:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T16:00:00.000+0000","error_count":1}
+    {"start":"2024-10-22T17:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T18:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T19:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T20:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T21:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T22:00:00.000+0000","error_count":0}
+    {"start":"2024-10-22T23:00:00.000+0000","error_count":0}
+    {"start":"2024-10-23T00:00:00.000+0000","error_count":0}
+
+- name: different_workspace_function
+  description: Test error count with different workspace and function IDs
+  parameters: workspaceId=30303030-1c25-4d02-bf25-6aeccf7ea419&functionId=bd018fc5-eace-4f7e-942f-929560a16459&granularity=day
+  expected_result: |
+    {"start":"2024-11-02T00:00:00.000+0000","error_count":0}

@@ -1,5 +1,4 @@
 import { useRecoilValue } from 'recoil';
-import { Nullable } from 'twenty-ui';
 
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { Note } from '@/activities/types/Note';
@@ -9,7 +8,8 @@ import { TaskTarget } from '@/activities/types/TaskTarget';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isDefined } from 'twenty-shared';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useActivityTargetObjectRecords = (
   activityRecordId?: string,
@@ -34,7 +34,7 @@ export const useActivityTargetObjectRecords = (
         : [];
 
   const activityTargetObjectRecords = targets
-    .map<Nullable<ActivityTargetWithTargetRecord>>((activityTarget) => {
+    .map<ActivityTargetWithTargetRecord | undefined>((activityTarget) => {
       if (!isDefined(activityTarget)) {
         throw new Error(`Cannot find activity target`);
       }
@@ -51,10 +51,11 @@ export const useActivityTargetObjectRecords = (
         return undefined;
       }
 
-      const targetObjectRecord =
-        activityTarget[correspondingObjectMetadataItem.nameSingular];
+      const targetObjectRecord = activityTarget[
+        correspondingObjectMetadataItem.nameSingular
+      ] as ObjectRecord | undefined;
 
-      if (!targetObjectRecord) {
+      if (!isDefined(targetObjectRecord)) {
         throw new Error(
           `Cannot find target object record of type ${correspondingObjectMetadataItem.nameSingular}, make sure the request for activities eagerly loads for the target objects on activity target relation.`,
         );
@@ -62,7 +63,7 @@ export const useActivityTargetObjectRecords = (
 
       return {
         activityTarget,
-        targetObject: targetObjectRecord ?? undefined,
+        targetObject: targetObjectRecord,
         targetObjectMetadataItem: correspondingObjectMetadataItem,
       };
     })

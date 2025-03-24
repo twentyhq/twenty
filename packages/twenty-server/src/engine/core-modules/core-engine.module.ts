@@ -23,7 +23,6 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { fileStorageModuleFactory } from 'src/engine/core-modules/file-storage/file-storage.module-factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { GlobalSearchModule } from 'src/engine/core-modules/global-search/global-search.module';
 import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
@@ -42,6 +41,7 @@ import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module'
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { SearchModule } from 'src/engine/core-modules/search/search.module';
 import { SectorModule } from 'src/engine/core-modules/sector/sector.module';
 import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serverless-module.factory';
 import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
@@ -135,7 +135,7 @@ import { StripeModule } from './stripe/stripe.module';
       useFactory: serverlessModuleFactory,
       inject: [EnvironmentService, FileStorageService],
     }),
-    GlobalSearchModule,
+    SearchModule,
   ],
   exports: [
     AnalyticsModule,

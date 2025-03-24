@@ -11,8 +11,9 @@ import {
 
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { Link } from 'react-router-dom';
-import { isDefined } from 'twenty-shared';
 import { useStripeLogin } from '~/pages/settings/integrations/stripe/hooks/useStripeLoing';
+
+import { isDefined } from 'twenty-shared/utils';
 
 interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;

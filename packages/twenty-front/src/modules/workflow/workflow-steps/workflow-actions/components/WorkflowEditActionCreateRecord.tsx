@@ -7,15 +7,16 @@ import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOr
 import { WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
+import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;
@@ -57,7 +58,6 @@ export const WorkflowEditActionCreateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionCreateRecordProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
@@ -159,6 +159,8 @@ export const WorkflowEditActionCreateRecord = ({
 
   const headerTitle = isDefined(action.name) ? action.name : `Create Record`;
   const headerIcon = getActionIcon(action.type);
+  const headerIconColor = useActionIconColorOrThrow(action.type);
+  const headerType = useActionHeaderTypeOrThrow(action.type);
 
   return (
     <>
@@ -174,9 +176,9 @@ export const WorkflowEditActionCreateRecord = ({
           });
         }}
         Icon={getIcon(headerIcon)}
-        iconColor={theme.font.color.tertiary}
+        iconColor={headerIconColor}
         initialTitle={headerTitle}
-        headerType="Action"
+        headerType={headerType}
         disabled={isFormDisabled}
       />
       <WorkflowStepBody>

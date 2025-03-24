@@ -1,6 +1,4 @@
-import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
-import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 
@@ -22,8 +20,8 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { MenuItemSelect, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   fieldMetadataItemToSelect: FieldMetadataItem;
@@ -61,15 +59,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     selectedOperandInDropdownComponentState,
   );
 
-  const advancedFilterViewFilterId = useRecoilComponentValueV2(
-    advancedFilterViewFilterIdComponentState,
-  );
-
   const setHotkeyScope = useSetHotkeyScope();
-
-  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
-    advancedFilterViewFilterId,
-  );
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
@@ -80,8 +70,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   );
 
   const handleSelectFilter = (fieldMetadataItem: FieldMetadataItem) => {
-    closeAdvancedFilterDropdown();
-
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
 
     const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
@@ -106,9 +94,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
       duplicateFilterInCurrentRecordFilters,
     );
 
-    const isSimpleFilter = !isDefined(advancedFilterViewFilterId);
-
-    if (isSimpleFilter && filterIsAlreadyInCurrentRecordFilters) {
+    if (filterIsAlreadyInCurrentRecordFilters) {
       setSelectedFilter({
         ...duplicateFilterInCurrentRecordFilters,
       });

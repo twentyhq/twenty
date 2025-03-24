@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 
-import { useRecordPickerGetRecordAndObjectMetadataItemFromRecordId } from '@/object-record/record-picker/hooks/useRecordPickerGetRecordAndObjectMetadataItemFromRecordId';
+import { useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId } from '@/object-record/record-picker/hooks/useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId';
 import { MultipleRecordPickerMenuItemContent } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItemContent';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -20,18 +20,18 @@ export const MultipleRecordPickerMenuItem = ({
   recordId,
   onChange,
 }: MultipleRecordPickerMenuItemProps) => {
-  const { record, objectMetadataItem } =
-    useRecordPickerGetRecordAndObjectMetadataItemFromRecordId({
+  const { searchRecord, objectMetadataItem } =
+    useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId({
       recordId,
     });
 
-  if (!isDefined(record) || !isDefined(objectMetadataItem)) {
+  if (!isDefined(searchRecord) || !isDefined(objectMetadataItem)) {
     return null;
   }
 
   return (
     <MultipleRecordPickerMenuItemContent
-      record={record}
+      searchRecord={searchRecord}
       objectMetadataItem={objectMetadataItem}
       onChange={onChange}
     />

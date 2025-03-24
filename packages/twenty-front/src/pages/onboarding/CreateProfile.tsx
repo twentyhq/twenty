@@ -25,7 +25,7 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { OnboardingStatus } from '~/generated/graphql';
 import { formatCnpj } from '~/utils/formatCnpj';
 import { formatCpf } from '~/utils/formatCpf';

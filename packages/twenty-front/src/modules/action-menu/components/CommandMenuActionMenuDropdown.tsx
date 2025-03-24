@@ -12,7 +12,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import { i18n } from '@lingui/core';
-import { Key } from 'ts-key-enum';
 import { Button, getOsControlSymbol, MenuItem } from 'twenty-ui';
 
 export const CommandMenuActionMenuDropdown = () => {
@@ -24,25 +23,14 @@ export const CommandMenuActionMenuDropdown = () => {
     ActionMenuComponentInstanceContext,
   );
 
-  const { closeDropdown, openDropdown } = useDropdownV2();
+  const { toggleDropdown } = useDropdownV2();
 
   const theme = useTheme();
 
   useScopedHotkeys(
-    [Key.Escape, 'ctrl+o,meta+o'],
-    () => {
-      closeDropdown(
-        getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
-      );
-    },
-    CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
-    [closeDropdown],
-  );
-
-  useScopedHotkeys(
     ['ctrl+o,meta+o'],
     () => {
-      openDropdown(
+      toggleDropdown(
         getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
         {
           scope:
@@ -51,7 +39,7 @@ export const CommandMenuActionMenuDropdown = () => {
       );
     },
     AppHotkeyScope.CommandMenuOpen,
-    [openDropdown],
+    [toggleDropdown],
   );
 
   return (
@@ -81,7 +69,7 @@ export const CommandMenuActionMenuDropdown = () => {
                 key={index}
                 LeftIcon={actionMenuEntry.Icon}
                 onClick={() => {
-                  closeDropdown(
+                  toggleDropdown(
                     getRightDrawerActionMenuDropdownIdFromActionMenuId(
                       actionMenuId,
                     ),

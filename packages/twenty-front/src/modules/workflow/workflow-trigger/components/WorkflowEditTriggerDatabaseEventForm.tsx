@@ -7,8 +7,8 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
-import { isDefined } from 'twenty-shared';
 import { useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;

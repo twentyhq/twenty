@@ -1,5 +1,5 @@
-import { WorkspaceActivationStatus } from 'twenty-shared';
 import { DataSource } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';

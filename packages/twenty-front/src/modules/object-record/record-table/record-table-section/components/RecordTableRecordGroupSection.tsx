@@ -15,8 +15,8 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { AnimatedLightIconButton, IconChevronDown, Tag } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledTrContainer = styled.tr`
   cursor: pointer;

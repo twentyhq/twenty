@@ -1,7 +1,8 @@
 /* eslint-disable */
+import { SendEventMessageInput } from '@/chat/call-center/types/SendMessage';
 import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
-import { WhatsappTemplatesResponse } from '@/chat/call-center/types/WhatsappTemplate';
 import { UpdateAgentInput } from '@/settings/service-center/agents/types/UpdateAgentInput';
+import { Sector } from '@/settings/service-center/sectors/types/Sector';
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 import { Agent } from 'http';
 export type Maybe<T> = T | null;
@@ -763,16 +764,6 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String']['input'];
 };
 
-export type GlobalSearchRecord = {
-  __typename?: 'GlobalSearchRecord';
-  imageUrl?: Maybe<Scalars['String']['output']>;
-  label: Scalars['String']['output'];
-  objectSingularName: Scalars['String']['output'];
-  recordId: Scalars['String']['output'];
-  tsRank: Scalars['Float']['output'];
-  tsRankCD: Scalars['Float']['output'];
-};
-
 export enum HealthIndicatorId {
   app = 'app',
   connectedAccount = 'connectedAccount',
@@ -1021,6 +1012,7 @@ export type Mutation = {
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
+  updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSector: Sector;
@@ -1567,14 +1559,13 @@ export type Query = {
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
-  getWhatsappTemplates: WhatsappTemplatesResponse;
-  inboxesByWorkspace: Array<Inbox>;
   index: Index;
   indexMetadatas: IndexConnection;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
   relationMetadata: RelationMetadataConnection;
+  search: Array<SearchRecord>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   whatsappIntegrationById: WhatsappIntegration;
   whatsappIntegrationsByWorkspace: Array<WhatsappIntegration>;
@@ -1682,14 +1673,6 @@ export type QueryInboxesByWorkspaceArgs = {
   workspaceId: Scalars['String']['input'];
 };
 
-export type QueryGlobalSearchArgs = {
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
-  filter?: InputMaybe<ObjectRecordFilterInput>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
-  limit: Scalars['Int']['input'];
-  searchInput: Scalars['String']['input'];
-};
-
 export type QueryIndexArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -1718,6 +1701,14 @@ export type QuerySectorByIdArgs = {
 
 export type QuerySectorsByWorkspaceArgs = {
   workspaceId: Scalars['String']['input'];
+};
+
+export type QuerySearchArgs = {
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
+  filter?: InputMaybe<ObjectRecordFilterInput>;
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
+  limit: Scalars['Int']['input'];
+  searchInput: Scalars['String']['input'];
 };
 
 export type QueryValidatePasswordResetTokenArgs = {
@@ -1918,28 +1909,14 @@ export enum SsoIdentityProviderStatus {
   Inactive = 'Inactive',
 }
 
-export type Sector = {
-  __typename?: 'Sector';
-  agents: Array<Agent>;
-  createdAt: Scalars['DateTime']['output'];
-  icon: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  topics?: Maybe<Array<Scalars['JSON']['output']>>;
-  updatedAt: Scalars['DateTime']['output'];
-  workspace: Workspace;
-};
-
-export type SendEventMessageInput = {
-  agent?: InputMaybe<MessageAgent>;
-  eventStatus: Scalars['String']['input'];
-  from: Scalars['String']['input'];
-  integrationId: Scalars['String']['input'];
-  message?: InputMaybe<Scalars['String']['input']>;
-  sector?: InputMaybe<MessageSector>;
-  status: Scalars['String']['input'];
-  to: Scalars['String']['input'];
-  type: Scalars['String']['input'];
+export type SearchRecord = {
+  __typename?: 'SearchRecord';
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  label: Scalars['String']['output'];
+  objectNameSingular: Scalars['String']['output'];
+  recordId: Scalars['String']['output'];
+  tsRank: Scalars['Float']['output'];
+  tsRankCD: Scalars['Float']['output'];
 };
 
 export type SendInvitationsOutput = {

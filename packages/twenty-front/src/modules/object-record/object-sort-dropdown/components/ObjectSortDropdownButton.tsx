@@ -240,7 +240,7 @@ export const ObjectSortDropdownButton = ({
               setObjectSortDropdownSearchInput(event.target.value)
             }
           />
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer scrollable={false}>
             {visibleFieldMetadataItems.map(
               (visibleFieldMetadataItem, index) => (
                 <MenuItem

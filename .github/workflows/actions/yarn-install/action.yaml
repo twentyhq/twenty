@@ -25,8 +25,8 @@ runs:
       id: cache-node-modules
       uses: actions/cache/restore@v4
       with:
-        key: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-${{github.sha}}
-        restore-keys: ${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-
+        key: v2-${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-${{github.sha}}
+        restore-keys: v2-${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-
         path: ${{ steps.globals.outputs.PATH_TO_CACHE }}
     - name: Install Dependencies
       if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key == '' }}

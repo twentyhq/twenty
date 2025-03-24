@@ -6,6 +6,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -14,6 +15,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -96,7 +98,6 @@ export const FieldsCard = ({
                   value={{
                     recordId: objectRecordId,
                     maxWidth: 200,
-                    recoilScopeId: objectRecordId + fieldMetadataItem.id,
                     isLabelIdentifier: false,
                     fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                       field: fieldMetadataItem,
@@ -110,6 +111,11 @@ export const FieldsCard = ({
                   }}
                 >
                   <ActivityTargetsInlineCell
+                    componentInstanceId={getRecordFieldInputId(
+                      objectRecordId,
+                      fieldMetadataItem.name,
+                      'fields-card',
+                    )}
                     activityObjectNameSingular={
                       objectNameSingular as
                         | CoreObjectNameSingular.Note
@@ -128,7 +134,6 @@ export const FieldsCard = ({
                 value={{
                   recordId: objectRecordId,
                   maxWidth: 200,
-                  recoilScopeId: objectRecordId + fieldMetadataItem.id,
                   isLabelIdentifier: false,
                   fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                     field: fieldMetadataItem,
@@ -141,7 +146,17 @@ export const FieldsCard = ({
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
                 }}
               >
-                <RecordInlineCell loading={recordLoading} />
+                <RecordFieldComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getRecordFieldInputId(
+                      objectRecordId,
+                      fieldMetadataItem.name,
+                      'fields-card',
+                    ),
+                  }}
+                >
+                  <RecordInlineCell loading={recordLoading} />
+                </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ))}
           </>
@@ -156,7 +171,6 @@ export const FieldsCard = ({
           key={objectRecordId + fieldMetadataItem.id}
           value={{
             recordId: objectRecordId,
-            recoilScopeId: objectRecordId + fieldMetadataItem.id,
             isLabelIdentifier: false,
             fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
               field: fieldMetadataItem,

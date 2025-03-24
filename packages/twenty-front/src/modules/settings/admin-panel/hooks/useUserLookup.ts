@@ -2,7 +2,7 @@ import { adminPanelErrorState } from '@/settings/admin-panel/states/adminPanelEr
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 
 export const useUserLookup = () => {

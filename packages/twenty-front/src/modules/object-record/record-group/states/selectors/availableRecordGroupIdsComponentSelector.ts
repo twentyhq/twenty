@@ -8,7 +8,7 @@ import { recordGroupSortedInsert } from '@/object-record/record-group/utils/reco
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const availableRecordGroupIdsComponentSelector =
   createComponentSelectorV2<RecordGroupDefinition['id'][]>({

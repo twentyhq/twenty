@@ -1,6 +1,6 @@
 import { Controller, Get, Param, UseFilters } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';

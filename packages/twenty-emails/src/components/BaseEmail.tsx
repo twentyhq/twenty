@@ -5,7 +5,6 @@ import { PropsWithChildren } from 'react';
 
 import { BaseHead } from 'src/components/BaseHead';
 import { Logo } from 'src/components/Logo';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared';
 import { messages as afMessages } from '../locales/generated/af-ZA';
 import { messages as arMessages } from '../locales/generated/ar-SA';
 import { messages as caMessages } from '../locales/generated/ca-ES';
@@ -37,6 +36,7 @@ import { messages as ukMessages } from '../locales/generated/uk-UA';
 import { messages as viMessages } from '../locales/generated/vi-VN';
 import { messages as zhHansMessages } from '../locales/generated/zh-CN';
 import { messages as zhHantMessages } from '../locales/generated/zh-TW';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 type BaseEmailProps = PropsWithChildren<{
   width?: number;

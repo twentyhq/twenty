@@ -1,9 +1,11 @@
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useMemo } from 'react';
-import { absoluteUrlSchema, isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
+import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
 
 type LinksFieldInputProps = {
   onCancel?: () => void;
@@ -47,6 +49,14 @@ export const LinksFieldInput = ({
 
   const isPrimaryLink = (index: number) => index === 0 && links?.length > 1;
 
+  const setIsFieldInError = useSetRecoilComponentStateV2(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
+  const handleError = (hasError: boolean, values: any[]) => {
+    setIsFieldInError(hasError && values.length === 0);
+  };
+
   return (
     <MultiItemFieldInput
       items={links}
@@ -59,6 +69,7 @@ export const LinksFieldInput = ({
         isValid: absoluteUrlSchema.safeParse(input).success,
         errorMessage: '',
       })}
+      onError={handleError}
       formatInput={(input) => ({ url: input, label: '' })}
       renderItem={({
         value: link,

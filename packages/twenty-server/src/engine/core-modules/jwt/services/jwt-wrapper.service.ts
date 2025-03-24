@@ -6,7 +6,7 @@ import { createHash } from 'crypto';
 import { Request as ExpressRequest } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AuthException,

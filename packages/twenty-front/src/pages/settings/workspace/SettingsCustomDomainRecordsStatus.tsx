@@ -4,7 +4,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 import { Status, ThemeColor } from 'twenty-ui';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 

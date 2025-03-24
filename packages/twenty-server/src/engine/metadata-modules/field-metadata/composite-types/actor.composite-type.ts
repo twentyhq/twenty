@@ -1,5 +1,8 @@
-import { ConnectedAccountProvider, FieldMetadataType } from 'twenty-shared';
 import { v4 } from 'uuid';
+import {
+  ConnectedAccountProvider,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 

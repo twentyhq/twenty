@@ -25,7 +25,7 @@ import styled from '@emotion/styled';
 import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui';
 
 export const StyledSelectableItem = styled(SelectableItem)`

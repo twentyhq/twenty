@@ -1,7 +1,7 @@
 import { adminPanelErrorState } from '@/settings/admin-panel/states/adminPanelErrorState';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
   useUpdateWorkspaceFeatureFlagMutation,

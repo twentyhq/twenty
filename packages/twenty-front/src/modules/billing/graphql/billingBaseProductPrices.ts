@@ -5,6 +5,7 @@ export const BILLING_BASE_PRODUCT_PRICES = gql`
     plans {
       planKey
       baseProduct {
+        name
         prices {
           ... on BillingPriceLicensedDTO {
             unitAmount
