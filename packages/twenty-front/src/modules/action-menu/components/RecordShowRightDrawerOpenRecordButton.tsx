@@ -1,4 +1,5 @@
-import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -6,10 +7,12 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -63,6 +66,12 @@ export const RecordShowRightDrawerOpenRecordButton = ({
 
   const navigate = useNavigateApp();
 
+  const actionMenuId = useAvailableComponentInstanceIdOrThrow(
+    ActionMenuComponentInstanceContext,
+  );
+
+  const { closeDropdown } = useDropdownV2();
+
   const handleOpenRecord = useCallback(() => {
     const tabIdToOpen =
       activeTabIdInRightDrawer === 'home'
@@ -79,10 +88,16 @@ export const RecordShowRightDrawerOpenRecordButton = ({
       objectRecordId: recordId,
     });
 
+    closeDropdown(
+      getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
+    );
+
     closeCommandMenu();
   }, [
+    actionMenuId,
     activeTabIdInRightDrawer,
     closeCommandMenu,
+    closeDropdown,
     navigate,
     objectNameSingular,
     recordId,
@@ -93,13 +108,6 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     ['ctrl+Enter,meta+Enter'],
     handleOpenRecord,
     AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu, navigate, objectNameSingular, recordId],
-  );
-
-  useScopedHotkeys(
-    ['ctrl+Enter,meta+Enter'],
-    handleOpenRecord,
-    CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
     [closeCommandMenu, navigate, objectNameSingular, recordId],
   );
 
