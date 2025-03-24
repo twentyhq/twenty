@@ -1,6 +1,3 @@
-DESCRIPTION >
-    Inspired by DUB implementation
-
 NODE dayIntervals
 SQL >
     %
@@ -67,3 +64,4 @@ SQL >
     SELECT formatDateTime(interval, '%FT%T.000%z') as start, success_count, failure_count
     FROM selectIntervalByGranularity
     LEFT JOIN timeSeriesWebhookData USING interval
+TYPE ENDPOINT

@@ -1,6 +1,3 @@
-DESCRIPTION >
-    Inspired by DUB implementation
-
 NODE dayIntervals
 SQL >
     %
@@ -73,3 +70,4 @@ SQL >
     SELECT formatDateTime(interval, '%FT%T.000%z') as start, success_rate
     FROM selectIntervalByGranularity
     LEFT JOIN timeSeriesServerlessFunctionSuccessRateData USING interval
+TYPE ENDPOINT

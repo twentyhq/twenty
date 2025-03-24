@@ -1,6 +1,3 @@
-DESCRIPTION >
-    Inspired by DUB implementation
-
 NODE dayIntervals
 SQL >
     %
@@ -40,8 +37,6 @@ SQL >
     %
     SELECT * FROM {% if granularity == "hour" %} hourIntervals {% else %} dayIntervals {% end %}
 
--- I decided to separate the error count and the success rate because I think we should maintain the bijection
--- between an endpoint and a graph in the front-end.
 NODE timeSeriesServerlessFunctionErrorCountData
 SQL >
     %

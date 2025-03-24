@@ -1,48 +1,52 @@
+# Twenty Analytics
 
-## How to use
-Create a virtual enviroment and install tinybird
-```sh
-python3 -m venv .venv
-source .venv/bin/activate
-pip install tinybird-cli
+This project utilizes Tinybird Forward to efficiently manage real-time data streams and analytics.
+
+## Getting Started
+
+### Install Tinybird Forward
+
+1. Install the Tinybird Forward CLI using:
+```bash
+curl https://tinybird.co | sh
 ```
-Authenticate using your admin token from your workspace (twenty_analytics_cli_playground)
-```sh
-tb auth -i
-
-** List of available regions:
-[1] us-east4 (gcp) (https://app.us-east.tinybird.co)
-[2] europe-west3 (gcp) (https://app.tinybird.co/gcp/europe-west3)
-[3] us-east-1 (aws) (https://app.tinybird.co/aws/us-east-1)
-[4] us-west-2 (aws) (https://app.tinybird.co/aws/us-west-2)
-[5] eu-central-1 (aws) (https://app.tinybird.co/aws/eu-central-1) <- this
-[0] Cancel
-
-Use region [5]:
-Copy the "admin your@email" token from from https://app.tinybird.co/tokens and paste it here: <pasted Token>
-** Auth successful!
-** Configuration written to .tinyb file, consider adding it to .gitignore
+   
+2. Authenticate with the Tinybird platform:
+```bash
+tb auth --token "<your-token>" --host https://api.eu-central-1.aws.tinybird.co
 ```
-You can also log in using your twenty_analytics_token without passing into the interactive mode:
-```sh
-tb auth --token <your twenty_analytics_token >
-** Auth successful!
-** Configuration written to .tinyb file, consider adding it to .gitignore
-```
-To sync your changes to Tinybird use:
-```sh
-tb push --force --push-deps
-```
-To pull data from Tinybird use:
-```sh
-tb pull
-```
-Things I learned:
 
-* When creating Materialied Views think about populating it first using the files from the fixtures
-* When pushing your pipes prefer to push one by one so you can have more coherent error messages
-* The Include files will be nodes that will be added at the start of your node in Tinybird UI
-* It's best to stick only with only the CLI or the UI when developping in Tinybird
-* If you want to format the data us the tb fmt command, perhaps we can add it to the linter in a next pull request.
+3. Start the local container
 
+```bash
+    tb local start
+```
 
+4. Build and watch changes
+```
+tb dev
+```
+   
+## Contribute
+
+### Create a Datasource
+
+1. Create a new datasource by uploading your data file:
+   ```bash
+   tiny datasource create your-datasource-name your-data-file.csv
+   ```
+2. You can also update an existing datasource using:
+   ```bash
+   tiny datasource update your-datasource-name your-updated-data-file.csv
+   ```
+
+### Add a New Pipe
+
+1. Create a new pipe:
+   ```bash
+   tiny pipe create your-pipe-name
+   ```
+2. Edit the pipe file with your desired SQL transformations and then publish the pipe:
+   ```bash
+   tiny pipe publish your-pipe-name
+   ```

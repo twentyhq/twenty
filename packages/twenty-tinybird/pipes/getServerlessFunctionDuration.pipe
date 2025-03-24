@@ -1,6 +1,3 @@
-DESCRIPTION >
-    Inspired by DUB implementation
-
 NODE dayIntervals
 SQL >
     %
@@ -68,3 +65,4 @@ SQL >
     SELECT formatDateTime(interval, '%FT%T.000%z') as start, minimum, maximum, average
     FROM selectIntervalByGranularity
     LEFT JOIN timeSeriesServerlessFunctionDurationData USING interval
+TYPE ENDPOINT
