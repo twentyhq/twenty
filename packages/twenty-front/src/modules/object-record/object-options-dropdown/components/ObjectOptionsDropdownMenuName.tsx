@@ -110,9 +110,6 @@ export const ObjectOptionsDropdownMenuName = ({
             <IconPicker
               size="small"
               onChange={onIconChange}
-              onClickOutside={() =>
-                onIconChange({ iconKey: viewPickerSelectedIcon })
-              }
               selectedIconKey={viewPickerSelectedIcon}
             />
             <TextInputV2

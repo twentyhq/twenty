@@ -29,7 +29,6 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
   const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
