@@ -48,6 +48,7 @@ export const STANDARD_OBJECT_IDS = {
   workflowEventListener: '20202020-92aa-462f-965c-a785b00e9989',
   workflowRun: '20202020-4e28-4e95-a9d7-6c00874f843c',
   workflowVersion: '20202020-d65d-4ab9-9344-d77bfb376a3d',
+  chatbot: 'dd73286e-2c9f-4e29-bcec-c755b3de3df2',
   workspaceMember: '20202020-3319-4234-a34c-82d5c0e881a6',
   charge: '20202020-e674-48e5-a542-72570eee7216',
   integration: '20202020-4b4b-4b4b-4b4b-4b4b4b4b4b4b',

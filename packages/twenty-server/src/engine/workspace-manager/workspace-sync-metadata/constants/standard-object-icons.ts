@@ -38,5 +38,6 @@ export const STANDARD_OBJECT_ICONS = {
   workflowEventListener: 'IconSettingsAutomation',
   workflowRun: 'IconSettingsAutomation',
   workflowVersion: 'IconSettingsAutomation',
+  chatbot: 'IconSettingsAutomation',
   workspaceMember: 'IconUserCircle',
 };

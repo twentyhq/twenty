@@ -14,6 +14,7 @@ import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { chatbotsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/chatbot-all-views';
 
 import { chargesAllView } from './views/charges-all-views';
 import { integrationsAllView } from './views/integrations-all-views';
@@ -37,6 +38,7 @@ export const seedViewWithDemoData = async (
     workflowsAllView(objectMetadataStandardIdToIdMap),
     workflowVersionsAllView(objectMetadataStandardIdToIdMap),
     workflowRunsAllView(objectMetadataStandardIdToIdMap),
+    chatbotsAllView(objectMetadataStandardIdToIdMap),
   ];
 
   return createWorkspaceViews(entityManager, schemaName, viewDefinitions);
