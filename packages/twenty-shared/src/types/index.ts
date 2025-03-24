@@ -7,6 +7,6 @@
  *                              |___/
  */
 
-export * from './ConnectedAccountProvider';
-export * from './FieldMetadataType';
-export * from './IsExactly';
+export { ConnectedAccountProvider } from './ConnectedAccountProvider';
+export { FieldMetadataType } from './FieldMetadataType';
+export type { IsExactly } from './IsExactly';
