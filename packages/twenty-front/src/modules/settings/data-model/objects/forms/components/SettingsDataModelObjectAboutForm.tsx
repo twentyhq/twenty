@@ -12,6 +12,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   Card,
@@ -21,7 +22,6 @@ import {
 } from 'twenty-ui';
 import { StringKeyOf } from 'type-fest';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-import { isDefined } from 'twenty-shared/utils';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
@@ -69,8 +69,6 @@ const StyledLabel = styled.span`
 
 const infoCircleElementId = 'info-circle-id';
 
-export const IS_LABEL_SYNCED_WITH_NAME_LABEL = 'isLabelSyncedWithName';
-
 export const SettingsDataModelObjectAboutForm = ({
   disableEdition = false,
   onNewDirtyField,
@@ -81,17 +79,14 @@ export const SettingsDataModelObjectAboutForm = ({
   const { t } = useLingui();
   const theme = useTheme();
 
-  const isLabelSyncedWithName =
-    watch(IS_LABEL_SYNCED_WITH_NAME_LABEL) ??
-    (isDefined(objectMetadataItem)
-      ? objectMetadataItem.isLabelSyncedWithName
-      : SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE);
+  const isLabelSyncedWithName = watch('isLabelSyncedWithName');
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
   watch('nameSingular');
   watch('namePlural');
   watch('description');
   watch('icon');
+
   const apiNameTooltipText =
     !isDefined(objectMetadataItem) || objectMetadataItem.isCustom
       ? isLabelSyncedWithName
@@ -106,9 +101,6 @@ export const SettingsDataModelObjectAboutForm = ({
     setValue('labelPlural', labelPluralFromSingularLabel, {
       shouldDirty: true,
     });
-    if (isLabelSyncedWithName === true) {
-      fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
-    }
   };
 
   const fillNameSingularFromLabelSingular = (
@@ -304,7 +296,7 @@ export const SettingsDataModelObjectAboutForm = ({
             )}
             <AdvancedSettingsWrapper>
               <Controller
-                name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
+                name="isLabelSyncedWithName"
                 control={control}
                 defaultValue={
                   objectMetadataItem?.isLabelSyncedWithName ??
@@ -335,16 +327,22 @@ export const SettingsDataModelObjectAboutForm = ({
                           isDefined(objectMetadataItem) &&
                           !objectMetadataItem?.isCustom
                         ) {
-                          reset({
-                            isLabelSyncedWithName: value,
-                            labelSingular:
-                              objectMetadataItem.labelSingular || '',
-                            labelPlural: objectMetadataItem.labelPlural || '',
-                            nameSingular: objectMetadataItem.nameSingular || '',
-                            namePlural: objectMetadataItem.namePlural || '',
-                            description: objectMetadataItem.description,
-                            icon: objectMetadataItem.icon || undefined,
-                          });
+                          reset(
+                            {
+                              isLabelSyncedWithName: value,
+                              labelSingular:
+                                objectMetadataItem.labelSingular || '',
+                              labelPlural: objectMetadataItem.labelPlural || '',
+                              nameSingular:
+                                objectMetadataItem.nameSingular || '',
+                              namePlural: objectMetadataItem.namePlural || '',
+                              description: objectMetadataItem.description,
+                              icon: objectMetadataItem.icon || undefined,
+                            },
+                            {
+                              keepDirty: true,
+                            },
+                          );
                         }
                       }}
                     />

@@ -105,6 +105,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
 
   const fillNameFromLabel = (label: string) => {
     isDefined(label) &&
+      fieldMetadataItem?.isCustom &&
       setValue('name', computeMetadataNameFromLabel(label), {
         shouldDirty: true,
       });
