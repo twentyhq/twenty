@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -9,8 +7,9 @@ import {
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { ReactNode } from 'react';
 
-export const useFieldContext = ({
+export const FieldContextProvider = ({
   clearable,
   fieldMetadataName,
   fieldPosition,
@@ -19,6 +18,7 @@ export const useFieldContext = ({
   objectRecordId,
   customUseUpdateOneObjectHook,
   overridenIsFieldEmpty,
+  children,
 }: {
   clearable?: boolean;
   fieldMetadataName: string;
@@ -28,6 +28,7 @@ export const useFieldContext = ({
   objectRecordId: string;
   customUseUpdateOneObjectHook?: RecordUpdateHook;
   overridenIsFieldEmpty?: boolean;
+  children: ReactNode;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -52,34 +53,31 @@ export const useFieldContext = ({
     return [updateEntity, { loading: false }];
   };
 
-  const FieldContextProvider =
-    fieldMetadataItem && objectMetadataItem
-      ? ({ children }: { children: ReactNode }) => (
-          <FieldContext.Provider
-            key={objectRecordId + fieldMetadataItem.id}
-            value={{
-              recordId: objectRecordId,
-              isLabelIdentifier,
-              fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                field: fieldMetadataItem,
-                showLabel: true,
-                position: fieldPosition,
-                objectMetadataItem,
-                labelWidth: 90,
-              }),
-              useUpdateRecord:
-                customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,
-              hotkeyScope: InlineCellHotkeyScope.InlineCell,
-              clearable,
-              overridenIsFieldEmpty,
-            }}
-          >
-            {children}
-          </FieldContext.Provider>
-        )
-      : undefined;
+  if (!fieldMetadataItem) {
+    return null;
+  }
 
-  return {
-    FieldContextProvider,
-  };
+  return (
+    <FieldContext.Provider
+      key={objectRecordId + fieldMetadataItem.id}
+      value={{
+        recordId: objectRecordId,
+        isLabelIdentifier,
+        fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+          field: fieldMetadataItem,
+          showLabel: true,
+          position: fieldPosition,
+          objectMetadataItem,
+          labelWidth: 90,
+        }),
+        useUpdateRecord:
+          customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,
+        hotkeyScope: InlineCellHotkeyScope.InlineCell,
+        clearable,
+        overridenIsFieldEmpty,
+      }}
+    >
+      {children}
+    </FieldContext.Provider>
+  );
 };

@@ -5,9 +5,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -17,10 +15,11 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
-import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui';
 import {
   RelationToOneFieldInput,
@@ -69,21 +68,22 @@ const RelationToOneFieldInputWithContext = ({
 
   return (
     <div>
-      <FieldContextProvider
-        fieldDefinition={{
-          fieldMetadataId: 'relation',
-          label: 'Relation',
-          type: FieldMetadataType.RELATION,
-          iconName: 'IconLink',
-          metadata: {
-            fieldName: 'Relation',
-            relationObjectMetadataNamePlural: 'companies',
-            relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
-            objectMetadataNameSingular: 'person',
-            relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
+      <FieldContext.Provider
+        value={{
+          fieldDefinition: {
+            fieldMetadataId: 'relation',
+            label: 'Relation',
+            type: FieldMetadataType.RELATION,
+            iconName: 'IconLink',
+            metadata: {
+              fieldName: 'relation',
+              objectMetadataNameSingular: 'person',
+            },
           },
+          recordId: recordId ?? '123',
+          hotkeyScope: 'hotkey-scope',
+          isLabelIdentifier: false,
         }}
-        recordId={recordId}
       >
         <RecordFieldComponentInstanceContext.Provider
           value={{
@@ -93,7 +93,7 @@ const RelationToOneFieldInputWithContext = ({
           <RelationWorkspaceSetterEffect />
           <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
         </RecordFieldComponentInstanceContext.Provider>
-      </FieldContextProvider>
+      </FieldContext.Provider>
       <div data-testid="data-field-input-click-outside-div" />
     </div>
   );

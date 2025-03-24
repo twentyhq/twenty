@@ -2,14 +2,13 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { FieldMetadataType } from '~/generated/graphql';
 
+import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { FieldContextProvider } from '../../../components/FieldContextProvider';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
 
@@ -50,18 +49,10 @@ const TextFieldInputWithContext = ({
       }}
     >
       <FieldContextProvider
-        fieldDefinition={{
-          fieldMetadataId: 'text',
-          label: 'Text',
-          type: FieldMetadataType.TEXT,
-          iconName: 'IconTag',
-          metadata: {
-            fieldName: 'Text',
-            placeHolder: 'Enter text',
-            objectMetadataNameSingular: 'person',
-          },
-        }}
-        recordId={recordId}
+        objectNameSingular="person"
+        objectRecordId="123"
+        fieldMetadataName="Text"
+        fieldPosition={0}
       >
         <StorybookFieldInputDropdownFocusIdSetterEffect />
         <TextFieldValueSetterEffect value={value} />

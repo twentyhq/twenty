@@ -8,7 +8,12 @@ import { useUpdateActivityTargetFromInlineCell } from '@/activities/inline-cell/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import {
+  FieldContext,
+  RecordUpdateHook,
+  RecordUpdateHookParams,
+} from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
@@ -66,6 +71,21 @@ export const ActivityTargetsInlineCell = ({
     return null;
   }
 
+  const useUpdateOneObjectMutation: RecordUpdateHook = () => {
+    const { updateOneRecord } = useUpdateOneRecord({
+      objectNameSingular: activityObjectNameSingular,
+    });
+
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+      updateOneRecord?.({
+        idToUpdate: variables.where.id as string,
+        updateOneRecordInput: variables.updateOneRecordInput,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
+
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
@@ -85,6 +105,7 @@ export const ActivityTargetsInlineCell = ({
               objectMetadataItem,
               labelWidth: 90,
             }),
+            useUpdateRecord: useUpdateOneObjectMutation,
             hotkeyScope: InlineCellHotkeyScope.InlineCell,
             clearable: false,
             overridenIsFieldEmpty: activityTargetObjectRecords.length === 0,
