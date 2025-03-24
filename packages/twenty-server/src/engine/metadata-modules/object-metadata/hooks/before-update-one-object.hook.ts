@@ -89,10 +89,12 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     ];
 
     // Check if any field is not allowed
-    const hasDisallowedFields = Object.keys(instance.update).some(
+    const disallowedFields = Object.keys(instance.update).filter(
       (key) =>
         !allowedFields.includes(key) && !allowedStandardOverrides.includes(key),
     );
+
+    const hasDisallowedFields = disallowedFields.length > 0;
 
     const isUpdatingLabelsWhenSynced =
       (instance.update.labelSingular || instance.update.labelPlural) &&
@@ -109,7 +111,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
 
     if (hasDisallowedFields) {
       throw new BadRequestException(
-        'Only isActive, isLabelSyncedWithName, labelSingular, labelPlural, icon and description fields can be updated for standard objects',
+        `Only isActive, isLabelSyncedWithName, labelSingular, labelPlural, icon and description fields can be updated for standard objects. Disallowed fields: ${disallowedFields.join(', ')}`,
       );
     }
 
