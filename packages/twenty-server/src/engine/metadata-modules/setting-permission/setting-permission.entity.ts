@@ -22,7 +22,7 @@ export class SettingPermissionEntity {
   @Column({ nullable: false, type: 'uuid' })
   roleId: string;
 
-  @ManyToOne(() => RoleEntity, (role) => role.settingsPermissions, {
+  @ManyToOne(() => RoleEntity, (role) => role.settingPermissions, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'roleId' })

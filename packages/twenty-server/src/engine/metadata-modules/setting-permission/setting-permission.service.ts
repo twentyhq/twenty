@@ -46,7 +46,7 @@ export class SettingPermissionService {
         },
       );
 
-      const settingPermissionId = result.generatedMaps[0].id;
+      const settingPermissionId = result.generatedMaps?.[0]?.id;
 
       if (!isDefined(settingPermissionId)) {
         throw new Error('Failed to upsert setting permission');
