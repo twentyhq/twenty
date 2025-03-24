@@ -144,21 +144,6 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
-    case 'search':
-      return {
-        searchInput: {
-          type: GraphQLString,
-          isNullable: true,
-        },
-        limit: {
-          type: GraphQLInt,
-          isNullable: true,
-        },
-        filter: {
-          kind: InputTypeDefinitionKind.Filter,
-          isNullable: true,
-        },
-      };
     default:
       throw new Error(`Unknown resolver type: ${type}`);
   }

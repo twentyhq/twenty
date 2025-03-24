@@ -138,7 +138,6 @@ export class RootTypeFactory {
     switch (methodName) {
       case 'findMany':
       case 'findDuplicates':
-      case 'search':
         return ObjectTypeDefinitionKind.Connection;
       default:
         return ObjectTypeDefinitionKind.Plain;
