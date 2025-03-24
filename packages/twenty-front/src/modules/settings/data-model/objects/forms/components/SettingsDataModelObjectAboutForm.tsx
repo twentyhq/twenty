@@ -73,7 +73,7 @@ export const SettingsDataModelObjectAboutForm = ({
   onNewDirtyField,
   objectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
-  const { control, watch, setValue, reset } =
+  const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
   const theme = useTheme();
