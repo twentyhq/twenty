@@ -27,7 +27,7 @@ import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-quer
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
+import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -190,7 +190,7 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.nameSingular,
       )
     ) {
-      const permissionRequired: SettingPermission =
+      const permissionRequired: Setting =
         SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
           objectMetadataItemWithFieldMaps.nameSingular
         ];

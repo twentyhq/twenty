@@ -20,10 +20,10 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
+import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
 
-registerEnumType(SettingPermission, {
-  name: 'SettingsPermissions',
+registerEnumType(Setting, {
+  name: 'Setting',
 });
 
 registerEnumType(PermissionsOnAllObjectRecords, {
@@ -78,8 +78,8 @@ export class UserWorkspace {
   )
   twoFactorMethods: Relation<TwoFactorMethod[]>;
 
-  @Field(() => [SettingPermission], { nullable: true })
-  settingsPermissions?: SettingPermission[];
+  @Field(() => [Setting], { nullable: true })
+  settingsPermissions?: Setting[];
 
   @Field(() => [PermissionsOnAllObjectRecords], { nullable: true })
   objectRecordsPermissions?: PermissionsOnAllObjectRecords[];

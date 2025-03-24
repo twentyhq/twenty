@@ -20,12 +20,12 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
+import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @Resolver()
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
-@UseGuards(SettingsPermissionsGuard(SettingPermission.SECURITY))
+@UseGuards(SettingsPermissionsGuard(Setting.SECURITY))
 export class SSOResolver {
   constructor(private readonly sSOService: SSOService) {}
 

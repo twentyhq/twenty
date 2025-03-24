@@ -48,7 +48,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
+import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -122,8 +122,8 @@ export class UserResolver {
           workspaceId: workspace.id,
         });
 
-      const grantedSettingsPermissions: SettingPermission[] = (
-        Object.keys(settingsPermissions) as SettingPermission[]
+      const grantedSettingsPermissions: Setting[] = (
+        Object.keys(settingsPermissions) as Setting[]
       ).filter((feature) => settingsPermissions[feature] === true);
 
       const grantedObjectRecordsPermissions = (

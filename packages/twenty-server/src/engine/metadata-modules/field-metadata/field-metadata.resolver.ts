@@ -32,7 +32,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
-import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
+import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
@@ -69,7 +69,7 @@ export class FieldMetadataResolver {
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingPermission.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(Setting.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
@@ -85,7 +85,7 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingPermission.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(Setting.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
@@ -101,7 +101,7 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingPermission.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(Setting.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async deleteOneField(
     @Args('input') input: DeleteOneFieldInput,

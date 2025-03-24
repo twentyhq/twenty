@@ -12,14 +12,14 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
+import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
 
 @UseGuards(
   WorkspaceAuthGuard,
-  SettingsPermissionsGuard(SettingPermission.WORKSPACE_MEMBERS),
+  SettingsPermissionsGuard(Setting.WORKSPACE_MEMBERS),
 )
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 @Resolver()

@@ -8,7 +8,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
+import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -31,7 +31,7 @@ export class PermissionsService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<{
-    settingsPermissions: Record<SettingPermission, boolean>;
+    settingsPermissions: Record<Setting, boolean>;
     objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
   }> {
     const [roleOfUserWorkspace] = await this.userRoleService
@@ -47,12 +47,12 @@ export class PermissionsService {
       hasPermissionOnSettingFeature = true;
     }
 
-    const settingsPermissionsMap = Object.keys(SettingPermission).reduce(
+    const settingsPermissionsMap = Object.keys(Setting).reduce(
       (acc, feature) => ({
         ...acc,
         [feature]: hasPermissionOnSettingFeature,
       }),
-      {} as Record<SettingPermission, boolean>,
+      {} as Record<Setting, boolean>,
     );
 
     const objectRecordsPermissionsMap: Record<
@@ -83,7 +83,7 @@ export class PermissionsService {
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
-    _setting: SettingPermission;
+    _setting: Setting;
     isExecutedByApiKey: boolean;
   }): Promise<boolean> {
     if (isExecutedByApiKey) {

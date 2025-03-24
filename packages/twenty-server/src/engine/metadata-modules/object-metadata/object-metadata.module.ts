@@ -22,7 +22,7 @@ import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metad
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { ObjectMetadataRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-relation.service';
-import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
+import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -78,7 +78,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
           },
           create: {
             many: { disabled: true },
-            guards: [SettingsPermissionsGuard(SettingPermission.DATA_MODEL)],
+            guards: [SettingsPermissionsGuard(Setting.DATA_MODEL)],
           },
           update: { disabled: true },
           delete: { disabled: true },

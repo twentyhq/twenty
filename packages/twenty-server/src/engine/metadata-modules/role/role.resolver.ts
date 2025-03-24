@@ -19,7 +19,7 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertObjectPermissionInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permission-input';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
-import { SettingPermission } from 'src/engine/metadata-modules/permissions/constants/setting-permission.constants';
+import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -37,7 +37,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
-@UseGuards(SettingsPermissionsGuard(SettingPermission.ROLES))
+@UseGuards(SettingsPermissionsGuard(Setting.ROLES))
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class RoleResolver {
   constructor(
