@@ -71,7 +71,6 @@ const StyledAdvancedSettingsContainer = styled.div`
 `;
 
 type SettingsDataModelFieldIconLabelFormProps = {
-  disabled?: boolean;
   fieldMetadataItem?: FieldMetadataItem;
   maxLength?: number;
   canToggleSyncLabelWithName?: boolean;
@@ -79,7 +78,6 @@ type SettingsDataModelFieldIconLabelFormProps = {
 
 export const SettingsDataModelFieldIconLabelForm = ({
   canToggleSyncLabelWithName = true,
-  disabled,
   fieldMetadataItem,
   maxLength,
 }: SettingsDataModelFieldIconLabelFormProps) => {
@@ -121,7 +119,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.icon ?? 'IconUsers'}
           render={({ field: { onChange, value } }) => (
             <IconPicker
-              disabled={disabled}
               selectedIconKey={value ?? ''}
               onChange={({ iconKey }) => onChange(iconKey)}
               variant="primary"
@@ -168,7 +165,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           value={value}
                           onChange={onChange}
                           disabled={
-                            disabled ||
                             (isLabelSyncedWithName ?? false) ||
                             !fieldMetadataItem?.isCustom
                           }
