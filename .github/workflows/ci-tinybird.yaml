@@ -46,6 +46,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Install Tinybird CLI
         run: curl https://tinybird.co | sh
+      - name: Authenticate
+        run: tb auth --token $TINYBIRD_TOKEN --host $TINYBIRD_HOST
       - name: Test deploy project
         run: tb deploy --check
       - name: Build project
