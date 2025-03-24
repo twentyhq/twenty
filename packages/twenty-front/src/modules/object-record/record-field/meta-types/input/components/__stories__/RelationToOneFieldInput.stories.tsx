@@ -15,6 +15,7 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
@@ -52,7 +53,7 @@ const RelationWorkspaceSetterEffect = () => {
 
 type RelationToOneFieldInputWithContextProps = RelationToOneFieldInputProps & {
   value: number;
-  recordId?: string;
+  recordId: string;
 };
 
 const RelationToOneFieldInputWithContext = ({
@@ -76,11 +77,15 @@ const RelationToOneFieldInputWithContext = ({
             type: FieldMetadataType.RELATION,
             iconName: 'IconLink',
             metadata: {
-              fieldName: 'relation',
+              fieldName: 'Relation',
+              relationObjectMetadataNamePlural: 'companies',
+              relationObjectMetadataNameSingular:
+                CoreObjectNameSingular.Company,
               objectMetadataNameSingular: 'person',
+              relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
             },
           },
-          recordId: recordId ?? '123',
+          recordId: recordId,
           hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
         }}
