@@ -43,7 +43,7 @@ import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUu
 import { JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
-  field: FieldDefinition<FieldMetadata>;
+  field: Pick<FieldDefinition<FieldMetadata>, 'label' | 'metadata' | 'type'>;
   defaultValue: JsonValue;
   onChange: (value: JsonValue) => void;
   VariablePicker?: VariablePickerComponent;

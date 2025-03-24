@@ -7,6 +7,8 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   BooleanFieldInput,
   BooleanFieldInputProps,
@@ -39,23 +41,36 @@ const BooleanFieldInputWithContext = ({
   onSubmit,
 }: BooleanFieldInputWithContextProps) => {
   return (
-    <FieldContextProvider
-      fieldDefinition={{
-        defaultValue: false,
-        fieldMetadataId: 'boolean',
-        label: 'Boolean',
-        iconName: 'Icon123',
-        type: FieldMetadataType.BOOLEAN,
-        metadata: {
-          fieldName: 'Boolean',
-          objectMetadataNameSingular: 'person',
-        },
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: getRecordFieldInputId(
+          recordId ?? '',
+          'Boolean',
+          'record-table-cell',
+        ),
       }}
-      recordId={recordId}
     >
-      <BooleanFieldValueSetterEffect value={value} recordId={recordId ?? ''} />
-      <BooleanFieldInput onSubmit={onSubmit} testId="boolean-field-input" />
-    </FieldContextProvider>
+      <FieldContextProvider
+        fieldDefinition={{
+          defaultValue: false,
+          fieldMetadataId: 'boolean',
+          label: 'Boolean',
+          iconName: 'Icon123',
+          type: FieldMetadataType.BOOLEAN,
+          metadata: {
+            fieldName: 'Boolean',
+            objectMetadataNameSingular: 'person',
+          },
+        }}
+        recordId={recordId}
+      >
+        <BooleanFieldValueSetterEffect
+          value={value}
+          recordId={recordId ?? ''}
+        />
+        <BooleanFieldInput onSubmit={onSubmit} testId="boolean-field-input" />
+      </FieldContextProvider>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
 

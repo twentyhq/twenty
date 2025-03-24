@@ -4,12 +4,12 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewSort } from '@/views/types/ViewSort';
-import { isDefined } from 'twenty-shared';
 
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { useApplyViewSortsToCurrentRecordSorts } from '../useApplyViewSortsToCurrentRecordSorts';
+import { isDefined } from 'twenty-shared/utils';
 
 const mockObjectMetadataItemNameSingular = 'company';
 

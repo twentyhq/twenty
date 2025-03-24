@@ -20,8 +20,8 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { MenuItemSelect, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   fieldMetadataItemToSelect: FieldMetadataItem;

@@ -8,8 +8,8 @@ import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
-import { capitalize } from 'twenty-shared';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { capitalize } from 'twenty-shared/utils';
 
 export const useUpdateOneRecordMutation = ({
   objectNameSingular,

@@ -6,8 +6,8 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 

@@ -11,7 +11,7 @@ import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewField } from '@/views/types/ViewField';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordIndexTableContainerEffect = () => {
   const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();

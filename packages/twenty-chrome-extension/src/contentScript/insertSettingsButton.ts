@@ -1,5 +1,4 @@
-import { isDefined } from 'twenty-shared';
-
+import { isDefined } from 'twenty-shared/utils';
 const btn = document.getElementById('twenty-settings-btn');
 if (!isDefined(btn)) {
   const div = document.createElement('div');

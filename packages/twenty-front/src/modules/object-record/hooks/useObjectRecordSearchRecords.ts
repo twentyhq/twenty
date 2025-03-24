@@ -7,12 +7,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   ObjectRecordFilterInput,
   useGlobalSearchQuery,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
+import { isDefined } from 'twenty-shared/utils';
 
 export type UseSearchRecordsParams = ObjectMetadataItemIdentifier & {
   limit?: number;

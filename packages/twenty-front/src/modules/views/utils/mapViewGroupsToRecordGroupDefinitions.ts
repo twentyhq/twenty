@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared';
-
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   RecordGroupDefinition,
@@ -7,6 +5,7 @@ import {
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const mapViewGroupsToRecordGroupDefinitions = ({
   objectMetadataItem,

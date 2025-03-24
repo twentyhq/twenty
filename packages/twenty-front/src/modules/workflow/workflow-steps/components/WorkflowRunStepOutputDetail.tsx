@@ -2,8 +2,8 @@ import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
 import { isTwoFirstDepths, JsonTree } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: grid;

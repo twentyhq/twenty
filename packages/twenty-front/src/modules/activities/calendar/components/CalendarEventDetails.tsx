@@ -17,6 +17,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -102,7 +103,6 @@ export const CalendarEventDetails = ({
         value={{
           recordId: calendarEvent.id,
           hotkeyScope: 'calendar-event-details',
-          recoilScopeId: `${calendarEvent.id}-${fieldName}`,
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
             field: fieldsByName[fieldName],
@@ -116,7 +116,7 @@ export const CalendarEventDetails = ({
       >
         <RecordFieldComponentInstanceContext.Provider
           value={{
-            instanceId: `${calendarEvent.id}-${fieldName}`,
+            instanceId: getRecordFieldInputId(calendarEvent.id, fieldName),
           }}
         >
           <RecordInlineCell readonly />

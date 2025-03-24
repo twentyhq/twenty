@@ -11,7 +11,6 @@ import { billingState } from '@/client-config/states/billingState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   ActionLink,
   CAL_LINK,
@@ -25,6 +24,7 @@ import {
   SubscriptionInterval,
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
