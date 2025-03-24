@@ -19,6 +19,7 @@ import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/Tabl
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -30,7 +31,6 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const ObjectOptionsDropdownMenuContent = () => {
@@ -121,7 +121,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
                 : onContentChange('recordGroupFields')
             }
             LeftIcon={IconLayoutList}
-            text={t`Group by`}
+            text={t`Group`}
             contextualText={
               !isGroupByEnabled
                 ? t`Not available on Default View`
