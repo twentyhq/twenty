@@ -4,4 +4,5 @@ export enum NoSelectionRecordActionKeys {
   SEE_DELETED_RECORDS = 'see-deleted-records',
   IMPORT_RECORDS = 'import-records',
   SEE_RUNS = 'see-runs',
+  SEE_WORKFLOWS = 'see-workflows',
 }
