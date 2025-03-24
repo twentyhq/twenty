@@ -1,7 +1,7 @@
 
 - name: success_rate_non_zero
   description: Test success rate data for specific workspace
-  parameters: workspaceId=20202020-1c25-4d02-bf25-6aeccf7ea419&functionId=a9fd87c0-af86-4e17-be3a-a6d3d961678a&start=2024-10-1T00:00:00.000Z&end=2024-10-31T00:00:00.000Z&granularity=day
+  parameters: workspaceId=20202020-1c25-4d02-bf25-6aeccf7ea419&functionId=a9fd87c0-af86-4e17-be3a-a6d3d961678a&start=2024-10-01T00:00:00.000Z&end=2024-10-31T00:00:00.000Z&granularity=day
   expected_result: |
     {"start":"2024-10-02T00:00:00.000+0000","success_rate":0}
     {"start":"2024-10-03T00:00:00.000+0000","success_rate":0}

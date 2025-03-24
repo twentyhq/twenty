@@ -1,7 +1,7 @@
 
 - name: default_daily_granularity
   description: Test with default workspace and webhook IDs using daily granularity
-  parameters: workspaceId=20202020-1c25-4d02-bf25-6aeccf7ea419&webhookId=90f12aed-0276-4bea-bcaa-c21ea2763d7d&start=2024-10-1T00:00:00.000Z&end=2024-10-31T00:00:00.000Z&granularity=day
+  parameters: workspaceId=20202020-1c25-4d02-bf25-6aeccf7ea419&webhookId=90f12aed-0276-4bea-bcaa-c21ea2763d7d&start=2024-10-01T00:00:00.000Z&end=2024-10-31T00:00:00.000Z&granularity=day
   expected_result: |
     {"start":"2024-10-02T00:00:00.000+0000","success_count":0,"failure_count":0}
     {"start":"2024-10-03T00:00:00.000+0000","success_count":0,"failure_count":0}
