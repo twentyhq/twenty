@@ -3,14 +3,12 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   BeforeUpdateOneHook,
   UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -25,11 +23,7 @@ interface StandardFieldUpdate extends Partial<UpdateFieldInput> {
 export class BeforeUpdateOneField<T extends UpdateFieldInput>
   implements BeforeUpdateOneHook<T>
 {
-  constructor(
-    readonly fieldMetadataService: FieldMetadataService,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-  ) {}
+  constructor(readonly fieldMetadataService: FieldMetadataService) {}
 
   async run(
     instance: UpdateOneInputType<T>,

@@ -314,7 +314,7 @@ export const SettingsDataModelObjectAboutForm = ({
                         onChange(value);
                         if (
                           value === true &&
-                          (!objectMetadataItem || objectMetadataItem?.isCustom)
+                          (!objectMetadataItem || objectMetadataItem.isCustom)
                         ) {
                           fillNamePluralFromLabelPlural(labelPlural);
                           fillNameSingularFromLabelSingular(labelSingular);
