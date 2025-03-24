@@ -8,7 +8,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 
 @InputType()
 export class UpsertSettingPermissionInput {
@@ -20,7 +20,7 @@ export class UpsertSettingPermissionInput {
   @IsString()
   @IsNotEmpty()
   @Field({ nullable: false })
-  setting: Setting;
+  setting: SettingPermissionType;
 
   @IsBoolean()
   @IsOptional()

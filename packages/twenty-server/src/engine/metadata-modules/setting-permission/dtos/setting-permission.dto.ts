@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+
 @ObjectType('SettingPermission')
 export class SettingPermissionDTO {
   @Field({ nullable: false })
@@ -10,7 +11,7 @@ export class SettingPermissionDTO {
   roleId: string;
 
   @Field({ nullable: false })
-  setting: Setting;
+  setting: SettingPermissionType;
 
   @Field({ nullable: true })
   canUpdateSetting?: boolean;

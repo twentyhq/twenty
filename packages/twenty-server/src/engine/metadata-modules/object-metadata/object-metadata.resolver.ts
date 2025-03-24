@@ -24,7 +24,7 @@ import {
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -72,7 +72,7 @@ export class ObjectMetadataResolver {
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(Setting.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
@@ -88,7 +88,7 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(Setting.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') input: UpdateOneObjectInput,

@@ -7,7 +7,7 @@ import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/ob
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -499,7 +499,7 @@ describe('roles permissions', () => {
         roleId: string;
       }) => `
       mutation UpsertSettingPermissions {
-          upsertOneSettingPermission(upsertSettingPermissionInput: {roleId: "${roleId}", setting: ${Setting.DATA_MODEL}}) {
+          upsertOneSettingPermission(upsertSettingPermissionInput: {roleId: "${roleId}", setting: ${SettingPermissionType.DATA_MODEL}}) {
               id
           }
       }

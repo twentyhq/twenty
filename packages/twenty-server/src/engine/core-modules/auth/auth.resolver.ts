@@ -50,7 +50,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
@@ -367,7 +367,7 @@ export class AuthResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(Setting.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionsGuard(SettingPermissionType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(

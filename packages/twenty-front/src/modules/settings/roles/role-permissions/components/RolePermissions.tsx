@@ -21,7 +21,7 @@ import {
   Section,
 } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
-import { Setting } from '~/generated/graphql';
+import { SettingPermissionType } from '~/generated/graphql';
 import { RolePermissionsObjectsTableRow } from './RolePermissionsObjectsTableRow';
 
 const StyledRolePermissionsContainer = styled.div`
@@ -81,49 +81,49 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
 
   const settingsPermissionsConfig: RolePermissionsSettingPermission[] = [
     {
-      key: Setting.API_KEYS_AND_WEBHOOKS,
+      key: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
       name: 'API Keys & Webhooks',
       description: 'Manage API keys and webhooks',
       value: role.canUpdateAllSettings,
       Icon: IconCode,
     },
     {
-      key: Setting.WORKSPACE,
+      key: SettingPermissionType.WORKSPACE,
       name: 'Workspace',
       description: 'Set global workspace preferences',
       value: role.canUpdateAllSettings,
       Icon: IconSettings,
     },
     {
-      key: Setting.WORKSPACE_MEMBERS,
+      key: SettingPermissionType.WORKSPACE_MEMBERS,
       name: 'Users',
       description: 'Add or remove users',
       value: role.canUpdateAllSettings,
       Icon: IconUsers,
     },
     {
-      key: Setting.ROLES,
+      key: SettingPermissionType.ROLES,
       name: 'Roles',
       description: 'Define user roles and access levels',
       value: role.canUpdateAllSettings,
       Icon: IconLockOpen,
     },
     {
-      key: Setting.DATA_MODEL,
+      key: SettingPermissionType.DATA_MODEL,
       name: 'Data Model',
       description: 'Edit CRM data structure and fields',
       value: role.canUpdateAllSettings,
       Icon: IconHierarchy,
     },
     {
-      key: Setting.ADMIN_PANEL,
+      key: SettingPermissionType.ADMIN_PANEL,
       name: 'Admin Panel',
       description: 'Admin settings and system tools',
       value: role.canUpdateAllSettings,
       Icon: IconServer,
     },
     {
-      key: Setting.SECURITY,
+      key: SettingPermissionType.SECURITY,
       name: 'Security',
       description: 'Manage security policies',
       value: role.canUpdateAllSettings,

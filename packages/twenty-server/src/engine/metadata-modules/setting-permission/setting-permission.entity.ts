@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('settingPermission')
@@ -29,7 +29,7 @@ export class SettingPermissionEntity {
   role: Relation<RoleEntity>;
 
   @Column({ nullable: false, type: 'varchar' })
-  setting: Setting;
+  setting: SettingPermissionType;
 
   @Column({ nullable: true, type: 'boolean' })
   canUpdateSetting?: boolean;

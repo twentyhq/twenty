@@ -34,7 +34,7 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -442,7 +442,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          _setting: Setting.SECURITY,
+          _setting: SettingPermissionType.SECURITY,
           workspaceId: workspaceId,
           isExecutedByApiKey: isDefined(apiKey),
         });
@@ -481,7 +481,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
-          _setting: Setting.WORKSPACE,
+          _setting: SettingPermissionType.WORKSPACE,
           isExecutedByApiKey: isDefined(apiKey),
         });
 

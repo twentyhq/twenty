@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -28,7 +28,7 @@ export class SettingPermissionService {
     workspaceId: string;
     input: UpsertSettingPermissionInput;
   }): Promise<SettingPermissionEntity | null | undefined> {
-    if (!Object.values(Setting).includes(input.setting)) {
+    if (!Object.values(SettingPermissionType).includes(input.setting)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.INVALID_SETTING,
         PermissionsExceptionCode.INVALID_SETTING,

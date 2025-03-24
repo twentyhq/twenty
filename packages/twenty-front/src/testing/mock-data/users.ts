@@ -3,14 +3,14 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,
   OnboardingStatus,
-  Setting,
+  SettingPermissionType,
   SubscriptionInterval,
   SubscriptionStatus,
   User,
   Workspace,
   WorkspaceActivationStatus,
   WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberTimeFormatEnum
 } from '~/generated/graphql';
 
 type MockedUser = Pick<
@@ -131,7 +131,7 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    settingsPermissions: [Setting.WORKSPACE_MEMBERS],
+    settingsPermissions: [SettingPermissionType.WORKSPACE_MEMBERS],
   },
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],

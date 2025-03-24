@@ -28,7 +28,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -50,7 +50,10 @@ export class BillingResolver {
   ) {}
 
   @Query(() => BillingSessionOutput)
-  @UseGuards(WorkspaceAuthGuard, SettingsPermissionsGuard(Setting.WORKSPACE))
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
   async billingPortalSession(
     @AuthWorkspace() workspace: Workspace,
     @Args() { returnUrlPath }: BillingSessionInput,
@@ -110,7 +113,10 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingUpdateOutput)
-  @UseGuards(WorkspaceAuthGuard, SettingsPermissionsGuard(Setting.WORKSPACE))
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
   async updateBillingSubscription(@AuthWorkspace() workspace: Workspace) {
     await this.billingSubscriptionService.applyBillingSubscription(workspace);
 
@@ -155,7 +161,7 @@ export class BillingResolver {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        _setting: Setting.WORKSPACE,
+        _setting: SettingPermissionType.WORKSPACE,
         isExecutedByApiKey,
       });
 

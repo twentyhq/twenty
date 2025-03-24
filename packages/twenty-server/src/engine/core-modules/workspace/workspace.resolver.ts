@@ -47,7 +47,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { Setting } from 'src/engine/metadata-modules/permissions/constants/setting.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -128,7 +128,10 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => String)
-  @UseGuards(WorkspaceAuthGuard, SettingsPermissionsGuard(Setting.WORKSPACE))
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -169,7 +172,10 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
-  @UseGuards(WorkspaceAuthGuard, SettingsPermissionsGuard(Setting.WORKSPACE))
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
   }

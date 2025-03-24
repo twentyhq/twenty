@@ -2,10 +2,13 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { Setting } from '~/generated/graphql';
+import { SettingPermissionType } from '~/generated/graphql';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
-export const useSettingsPermissionMap = (): Record<Setting, boolean> => {
+export const useSettingsPermissionMap = (): Record<
+  SettingPermissionType,
+  boolean
+> => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 
   const isPermissionEnabled = useIsFeatureEnabled(
@@ -16,7 +19,7 @@ export const useSettingsPermissionMap = (): Record<Setting, boolean> => {
     currentUserWorkspace?.settingsPermissions;
 
   const initialPermissions = buildRecordFromKeysWithSameValue(
-    Object.values(Setting),
+    Object.values(SettingPermissionType),
     !isPermissionEnabled,
   );
 
