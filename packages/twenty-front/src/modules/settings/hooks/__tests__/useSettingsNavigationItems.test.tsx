@@ -8,7 +8,7 @@ import {
   Billing,
   FeatureFlagKey,
   OnboardingStatus,
-  SettingsPermissions,
+  SettingPermissionType,
 } from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -61,12 +61,12 @@ jest.mock('@/workspace/hooks/useFeatureFlagsMap', () => ({
 describe('useSettingsNavigationItems', () => {
   it('should hide workspace settings when no permissions', () => {
     (useSettingsPermissionMap as jest.Mock).mockImplementation(() => ({
-      [SettingsPermissions.WORKSPACE]: false,
-      [SettingsPermissions.WORKSPACE_MEMBERS]: false,
-      [SettingsPermissions.DATA_MODEL]: false,
-      [SettingsPermissions.API_KEYS_AND_WEBHOOKS]: false,
-      [SettingsPermissions.ROLES]: false,
-      [SettingsPermissions.SECURITY]: false,
+      [SettingPermissionType.WORKSPACE]: false,
+      [SettingPermissionType.WORKSPACE_MEMBERS]: false,
+      [SettingPermissionType.DATA_MODEL]: false,
+      [SettingPermissionType.API_KEYS_AND_WEBHOOKS]: false,
+      [SettingPermissionType.ROLES]: false,
+      [SettingPermissionType.SECURITY]: false,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
@@ -82,12 +82,12 @@ describe('useSettingsNavigationItems', () => {
 
   it('should show workspace settings when has permissions', () => {
     (useSettingsPermissionMap as jest.Mock).mockImplementation(() => ({
-      [SettingsPermissions.WORKSPACE]: true,
-      [SettingsPermissions.WORKSPACE_MEMBERS]: true,
-      [SettingsPermissions.DATA_MODEL]: true,
-      [SettingsPermissions.API_KEYS_AND_WEBHOOKS]: true,
-      [SettingsPermissions.ROLES]: true,
-      [SettingsPermissions.SECURITY]: true,
+      [SettingPermissionType.WORKSPACE]: true,
+      [SettingPermissionType.WORKSPACE_MEMBERS]: true,
+      [SettingPermissionType.DATA_MODEL]: true,
+      [SettingPermissionType.API_KEYS_AND_WEBHOOKS]: true,
+      [SettingPermissionType.ROLES]: true,
+      [SettingPermissionType.SECURITY]: true,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {

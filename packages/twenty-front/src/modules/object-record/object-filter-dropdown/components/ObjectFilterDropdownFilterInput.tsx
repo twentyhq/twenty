@@ -90,7 +90,7 @@ export const ObjectFilterDropdownFilterInput = ({
               <ObjectFilterDropdownRecordSelect />
             </>
           )}
-          {isActorSourceCompositeFilter && (
+          {filterType === 'ACTOR' && isActorSourceCompositeFilter && (
             <>
               <DropdownMenuSeparator />
               <ObjectFilterDropdownSourceSelect />
