@@ -33,13 +33,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();
   const { currentView } = useGetCurrentViewOnly();
 
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    viewType,
-    resetContent,
-    onContentChange,
-  } = useOptionsDropdown();
+  const { recordIndexId, objectMetadataItem, resetContent, onContentChange } =
+    useOptionsDropdown();
 
   const { isCompactModeActive, setAndPersistIsCompactModeActive } =
     useObjectOptionsForBoard({
@@ -73,8 +68,11 @@ export const ObjectOptionsDropdownLayoutContent = () => {
         <MenuItemSelect
           LeftIcon={IconTable}
           text={t`Table`}
-          selected={viewType === ViewType.Table}
-          onClick={() => setAndPersistViewType(ViewType.Table)}
+          selected={currentView?.type === ViewType.Table}
+          onClick={() => {
+            currentView?.type !== ViewType.Table &&
+              setAndPersistViewType(ViewType.Table);
+          }}
         />
         <MenuItemSelect
           LeftIcon={IconLayoutKanban}
@@ -84,15 +82,10 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               ? t`Create Select...`
               : undefined
           }
-          selected={viewType === ViewType.Kanban}
+          selected={currentView?.type === ViewType.Kanban}
           onClick={() => {
-            setAndPersistViewType(ViewType.Kanban);
-            console.log(
-              'todo: redirect to settings if no seelct, and assign random select otherwise',
-            );
-            console.log(
-              'todo: update the UI so that the selected view in dropdown',
-            );
+            currentView?.type !== ViewType.Kanban &&
+              setAndPersistViewType(ViewType.Kanban);
           }}
         />
         <DropdownMenuSeparator />
@@ -111,7 +104,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
           }
           hasSubMenu
         />
-        {viewType === ViewType.Kanban && (
+        {currentView?.type === ViewType.Kanban && (
           <>
             <MenuItem
               onClick={() =>
