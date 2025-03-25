@@ -21,7 +21,6 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
@@ -120,9 +119,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Roles`,
           path: SettingsPath.Roles,
           Icon: IconLock,
-          isHidden:
-            !featureFlags[FeatureFlagKey.IsPermissionsEnabled] ||
-            !permissionMap[SettingPermissionType.ROLES],
+          isHidden: !permissionMap[SettingPermissionType.ROLES],
         },
         {
           label: t`Billing`,

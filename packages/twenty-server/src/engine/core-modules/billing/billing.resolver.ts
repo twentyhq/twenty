@@ -17,7 +17,6 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -140,15 +139,6 @@ export class BillingResolver {
     userWorkspaceId: string;
     isExecutedByApiKey: boolean;
   }) {
-    const isPermissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspaceId,
-    );
-
-    if (!isPermissionsEnabled) {
-      return;
-    }
-
     if (
       await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspaceId,

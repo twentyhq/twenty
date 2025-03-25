@@ -34,13 +34,7 @@ describe('workspace permissions', () => {
 
     originalWorkspaceState = response.body.data.currentWorkspace;
 
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
 
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
   });
 
   afterAll(async () => {
