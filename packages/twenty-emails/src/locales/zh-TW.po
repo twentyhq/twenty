@@ -193,4 +193,3 @@ msgstr "由於您的訂閱已於 {daysSinceInactive} 天前過期，您的工作
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
 #~ msgstr "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
-
