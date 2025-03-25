@@ -184,7 +184,11 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
           update.standardOverrides.translations || {};
         update.standardOverrides.translations[locale] =
           update.standardOverrides.translations[locale] || {};
-        update.standardOverrides.translations[locale][overrideKey] = null;
+
+        const localeTranslations =
+          update.standardOverrides.translations[locale];
+
+        (localeTranslations as Record<string, any>)[overrideKey] = null;
 
         return true;
       }

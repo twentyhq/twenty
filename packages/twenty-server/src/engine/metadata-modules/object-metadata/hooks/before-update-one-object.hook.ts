@@ -204,7 +204,10 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
           update.standardOverrides.translations || {};
         update.standardOverrides.translations[locale] =
           update.standardOverrides.translations[locale] || {};
-        update.standardOverrides.translations[locale][overrideKey] = null;
+        const localeTranslations =
+          update.standardOverrides.translations[locale];
+
+        (localeTranslations as Record<string, any>)[overrideKey] = null;
 
         return true;
       }
@@ -236,7 +239,6 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       update.standardOverrides.translations[locale] =
         update.standardOverrides.translations[locale] || {};
 
-      // Strange we have to do this but Typescript seems to be lost
       const localeTranslations = update.standardOverrides.translations[locale];
 
       (localeTranslations as Record<string, any>)[overrideKey] = value;
