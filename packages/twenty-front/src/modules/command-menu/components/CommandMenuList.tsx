@@ -14,8 +14,8 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
@@ -26,13 +26,6 @@ export type CommandMenuListProps = {
   loading?: boolean;
   noResults?: boolean;
 };
-
-const StyledList = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  overscroll-behavior: contain;
-  transition: 100ms ease;
-  transition-property: height;
-`;
 
 const StyledInnerList = styled.div`
   max-height: calc(
@@ -86,72 +79,70 @@ export const CommandMenuList = ({
       <CommandMenuDefaultSelectionEffect
         selectableItemIds={selectableItemIds}
       />
-      <StyledList>
-        <ScrollWrapper
-          contextProviderName="commandMenu"
-          componentInstanceId={`scroll-wrapper-command-menu`}
-        >
-          <StyledInnerList>
-            <SelectableList
-              selectableListId="command-menu-list"
-              hotkeyScope={AppHotkeyScope.CommandMenuOpen}
-              selectableItemIdArray={selectableItemIds}
-              onEnter={(itemId) => {
-                if (itemId === RESET_CONTEXT_TO_SELECTION) {
-                  resetPreviousCommandMenuContext();
-                  return;
-                }
+      <ScrollWrapper
+        contextProviderName="commandMenu"
+        componentInstanceId={`scroll-wrapper-command-menu`}
+      >
+        <StyledInnerList>
+          <SelectableList
+            selectableListId="command-menu-list"
+            hotkeyScope={AppHotkeyScope.CommandMenuOpen}
+            selectableItemIdArray={selectableItemIds}
+            onEnter={(itemId) => {
+              if (itemId === RESET_CONTEXT_TO_SELECTION) {
+                resetPreviousCommandMenuContext();
+                return;
+              }
 
-                const command = commands.find((item) => item.id === itemId);
+              const command = commands.find((item) => item.id === itemId);
 
-                if (isDefined(command)) {
-                  const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
-                    command;
+              if (isDefined(command)) {
+                const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
+                  command;
 
-                  onItemClick({
-                    shouldCloseCommandMenuOnClick,
-                    onClick: onCommandClick,
-                    to,
-                  });
-                }
-              }}
-              onSelect={() => {
-                setHasUserSelectedCommand(true);
-              }}
-            >
-              {children}
-              {commandGroups.map(({ heading, items }) =>
-                items?.length ? (
-                  <CommandGroup heading={heading} key={heading}>
-                    {items.map((item) => {
-                      return (
-                        <SelectableItem itemId={item.id} key={item.id}>
-                          <CommandMenuItem
-                            key={item.id}
-                            id={item.id}
-                            Icon={item.Icon}
-                            label={item.label}
-                            description={item.description}
-                            to={item.to}
-                            onClick={item.onCommandClick}
-                            hotKeys={item.hotKeys}
-                            shouldCloseCommandMenuOnClick={
-                              item.shouldCloseCommandMenuOnClick
-                            }
-                          />
-                        </SelectableItem>
-                      );
-                    })}
-                  </CommandGroup>
-                ) : null,
-              )}
-              {noResults && !loading && (
-                <StyledEmpty>No results found</StyledEmpty>
-              )}
-            </SelectableList>
-          </StyledInnerList>
-        </ScrollWrapper>
-      </StyledList>
+                onItemClick({
+                  shouldCloseCommandMenuOnClick,
+                  onClick: onCommandClick,
+                  to,
+                });
+              }
+            }}
+            onSelect={() => {
+              setHasUserSelectedCommand(true);
+            }}
+          >
+            {children}
+            {commandGroups.map(({ heading, items }) =>
+              items?.length ? (
+                <CommandGroup heading={heading} key={heading}>
+                  {items.map((item) => {
+                    return (
+                      <SelectableItem itemId={item.id} key={item.id}>
+                        <CommandMenuItem
+                          key={item.id}
+                          id={item.id}
+                          Icon={item.Icon}
+                          label={item.label}
+                          description={item.description}
+                          to={item.to}
+                          onClick={item.onCommandClick}
+                          hotKeys={item.hotKeys}
+                          shouldCloseCommandMenuOnClick={
+                            item.shouldCloseCommandMenuOnClick
+                          }
+                        />
+                      </SelectableItem>
+                    );
+                  })}
+                </CommandGroup>
+              ) : null,
+            )}
+            {noResults && !loading && (
+              <StyledEmpty>No results found</StyledEmpty>
+            )}
+          </SelectableList>
+        </StyledInnerList>
+      </ScrollWrapper>
     </>
   );
 };
