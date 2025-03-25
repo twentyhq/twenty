@@ -57,14 +57,6 @@ export class MessageImportExceptionHandlerService {
           workspaceId,
         );
         break;
-      case MessageImportDriverExceptionCode.UNKNOWN:
-      case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
-        await this.handleUnknownException(
-          exception,
-          messageChannel,
-          workspaceId,
-        );
-        break;
       case MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR:
         await this.handlePermanentException(
           exception,
@@ -72,8 +64,15 @@ export class MessageImportExceptionHandlerService {
           workspaceId,
         );
         break;
+      case MessageImportDriverExceptionCode.UNKNOWN:
+      case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
       default:
-        throw exception;
+        await this.handleUnknownException(
+          exception,
+          messageChannel,
+          workspaceId,
+        );
+        break;
     }
   }
 

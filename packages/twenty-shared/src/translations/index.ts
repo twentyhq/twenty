@@ -7,5 +7,5 @@
  *                              |___/
  */
 
-export * from './constants/AppLocales';
-export * from './constants/SourceLocale';
+export { APP_LOCALES } from './constants/AppLocales';
+export { SOURCE_LOCALE } from './constants/SourceLocale';

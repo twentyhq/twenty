@@ -17,7 +17,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { Key } from 'ts-key-enum';
@@ -26,6 +25,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
+import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { PartialBlock } from '@blocknote/core';
 import '@blocknote/core/fonts/inter.css';
@@ -298,7 +298,7 @@ export const ActivityRichTextEditor = ({
       editor.setTextCursorPosition(newBlockId, 'end');
       editor.focus();
     },
-    AppHotkeyScope.CommandMenuOpen,
+    CommandMenuHotkeyScope.CommandMenuFocused,
     [],
     {
       preventDefault: false,

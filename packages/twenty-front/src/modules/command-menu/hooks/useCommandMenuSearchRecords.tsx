@@ -5,17 +5,17 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
-import { useGlobalSearchQuery } from '~/generated/graphql';
-import { capitalize } from 'twenty-shared/utils';
+import { useSearchQuery } from '~/generated/graphql';
 
 export const useCommandMenuSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);
 
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);
 
-  const { data: globalSearchData, loading } = useGlobalSearchQuery({
+  const { data: searchData, loading } = useSearchQuery({
     variables: {
       searchInput: deferredCommandMenuSearch ?? '',
       limit: MAX_SEARCH_RESULTS,
@@ -26,17 +26,17 @@ export const useCommandMenuSearchRecords = () => {
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const commands = useMemo(() => {
-    return (globalSearchData?.globalSearch ?? []).map((searchRecord) => {
+    return (searchData?.search ?? []).map((searchRecord) => {
       const command = {
         id: searchRecord.recordId,
         label: searchRecord.label,
-        description: capitalize(searchRecord.objectSingularName),
-        to: `object/${searchRecord.objectSingularName}/${searchRecord.recordId}`,
+        description: capitalize(searchRecord.objectNameSingular),
+        to: `object/${searchRecord.objectNameSingular}/${searchRecord.recordId}`,
         shouldCloseCommandMenuOnClick: true,
         Icon: () => (
           <Avatar
             type={
-              searchRecord.objectSingularName === 'company'
+              searchRecord.objectNameSingular === 'company'
                 ? 'squared'
                 : 'rounded'
             }
@@ -48,14 +48,14 @@ export const useCommandMenuSearchRecords = () => {
       };
       if (
         [CoreObjectNameSingular.Task, CoreObjectNameSingular.Note].includes(
-          searchRecord.objectSingularName as CoreObjectNameSingular,
+          searchRecord.objectNameSingular as CoreObjectNameSingular,
         )
       ) {
         return {
           ...command,
           to: '',
           onCommandClick: () => {
-            searchRecord.objectSingularName === 'task'
+            searchRecord.objectNameSingular === 'task'
               ? openRecordInCommandMenu({
                   recordId: searchRecord.recordId,
                   objectNameSingular: CoreObjectNameSingular.Task,
@@ -69,7 +69,7 @@ export const useCommandMenuSearchRecords = () => {
       }
       return command;
     });
-  }, [globalSearchData, openRecordInCommandMenu]);
+  }, [searchData, openRecordInCommandMenu]);
 
   return {
     loading,

@@ -9,11 +9,11 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilCallback } from 'recoil';
 import { IconComponent } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -49,7 +49,12 @@ export const useNavigateCommandMenu = () => {
           commandMenuCloseAnimationCompleteCleanup();
         }
 
-        setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
+        setHotkeyScopeAndMemorizePreviousScope(
+          CommandMenuHotkeyScope.CommandMenuFocused,
+          {
+            commandMenuOpen: true,
+          },
+        );
 
         if (isCommandMenuOpened) {
           return;

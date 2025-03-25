@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import {
   Column,
   CreateDateColumn,
@@ -14,16 +15,15 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 
-registerEnumType(SettingsPermissions, {
-  name: 'SettingsPermissions',
+registerEnumType(SettingPermissionType, {
+  name: 'SettingPermissionType',
 });
 
 registerEnumType(PermissionsOnAllObjectRecords, {
@@ -78,8 +78,8 @@ export class UserWorkspace {
   )
   twoFactorMethods: Relation<TwoFactorMethod[]>;
 
-  @Field(() => [SettingsPermissions], { nullable: true })
-  settingsPermissions?: SettingsPermissions[];
+  @Field(() => [SettingPermissionType], { nullable: true })
+  settingsPermissions?: SettingPermissionType[];
 
   @Field(() => [PermissionsOnAllObjectRecords], { nullable: true })
   objectRecordsPermissions?: PermissionsOnAllObjectRecords[];
