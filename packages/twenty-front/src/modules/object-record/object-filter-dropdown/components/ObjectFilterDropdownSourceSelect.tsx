@@ -121,24 +121,24 @@ export const ObjectFilterDropdownSourceSelect = ({
         ? `${selectedItemNames.length} source types`
         : selectedItemNames.join(', ');
 
-      if (!isDefined(selectedOperandInDropdown)) {
-        throw new Error('Selected operand in dropdown should be defined');
-      }
+    if (!isDefined(selectedOperandInDropdown)) {
+      throw new Error('Selected operand in dropdown should be defined');
+    }
 
     const newFilterValue = JSON.stringify(newSelectedItemIds);
 
-      applyRecordFilter({
-        id: recordFilterId,
-        type: getFilterTypeFromFieldType(
-          fieldMetadataItemUsedInFilterDropdown.type,
-        ),
-        label: fieldMetadataItemUsedInFilterDropdown.label,
-        operand: selectedOperandInDropdown || ViewFilterOperand.Is,
-        displayValue: filterDisplayValue,
-        fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
-        value: newFilterValue,
-        recordFilterGroupId: selectedFilter?.recordFilterGroupId,
-      });
+    applyRecordFilter({
+      id: recordFilterId,
+      type: getFilterTypeFromFieldType(
+        fieldMetadataItemUsedInFilterDropdown.type,
+      ),
+      label: fieldMetadataItemUsedInFilterDropdown.label,
+      operand: selectedOperandInDropdown || ViewFilterOperand.Is,
+      displayValue: filterDisplayValue,
+      fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
+      value: newFilterValue,
+      recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+    });
   };
 
   return (
