@@ -209,7 +209,6 @@ export const SettingsObjectFieldEdit = () => {
                 description={t`The name and icon of this field`}
               />
               <SettingsDataModelFieldIconLabelForm
-                disabled={!fieldMetadataItem.isCustom}
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 canToggleSyncLabelWithName={
