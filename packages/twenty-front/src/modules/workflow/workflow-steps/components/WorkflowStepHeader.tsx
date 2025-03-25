@@ -1,9 +1,9 @@
+import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconComponent } from 'twenty-ui';
-
 const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -74,28 +74,18 @@ export const WorkflowStepHeader = ({
 
   const [title, setTitle] = useState(initialTitle);
 
+  const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
+
   const handleChange = (newTitle: string) => {
     setTitle(newTitle);
   };
 
-  const handleEnter = () => {
+  const submitTitle = () => {
     onTitleChange?.(title);
-  };
-
-  const handleEscape = () => {
-    onTitleChange?.(title);
-  };
-
-  const handleClickOutside = () => {
-    onTitleChange?.(title);
-  };
-
-  const handleTab = () => {
-    onTitleChange?.(title);
-  };
-
-  const handleShiftTab = () => {
-    onTitleChange?.(title);
+    updateCommandMenuPageInfo({
+      pageTitle: title,
+      pageIcon: Icon,
+    });
   };
 
   return (
@@ -116,11 +106,11 @@ export const WorkflowStepHeader = ({
             onChange={handleChange}
             placeholder={headerType}
             hotkeyScope="workflow-step-title"
-            onEnter={handleEnter}
-            onEscape={handleEscape}
-            onClickOutside={handleClickOutside}
-            onTab={handleTab}
-            onShiftTab={handleShiftTab}
+            onEnter={submitTitle}
+            onEscape={submitTitle}
+            onClickOutside={submitTitle}
+            onTab={submitTitle}
+            onShiftTab={submitTitle}
           />
         </StyledHeaderTitle>
         <StyledHeaderType>{headerType}</StyledHeaderType>
