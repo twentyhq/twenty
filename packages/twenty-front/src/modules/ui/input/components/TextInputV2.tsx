@@ -32,10 +32,12 @@ const StyledInputContainer = styled.div`
   position: relative;
 `;
 
-const StyledAdornmentContainer = styled.div<{
+type StyledAdornmentContainerProps = {
   sizeVariant: TextInputV2Size;
   position: 'left' | 'right';
-}>`
+};
+
+const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.light};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -116,18 +118,10 @@ const StyledInput = styled.input<
         : sizeVariant === 'md'
           ? '28px'
           : '32px'};
-  line-height: ${({ sizeVariant }) =>
-    sizeVariant === 'xs'
-      ? '20px'
-      : sizeVariant === 'sm'
-        ? '24px'
-        : sizeVariant === 'md'
-          ? '28px'
-          : '32px'};
   outline: none;
   padding: ${({ theme, sizeVariant, autoGrow }) =>
     autoGrow
-      ? theme.spacing(1)
+      ? 0
       : sizeVariant === 'xs'
         ? `${theme.spacing(2)} 0`
         : theme.spacing(2)};
@@ -400,7 +394,7 @@ const TextInputV2Component = forwardRef<
 const StyledAutogrowWrapper = styled(AutogrowWrapper)<{
   sizeVariant?: TextInputV2Size;
 }>`
-  border: 1px solid transparent;
+  box-sizing: border-box;
   height: ${({ sizeVariant }) =>
     sizeVariant === 'xs'
       ? '20px'
@@ -410,7 +404,6 @@ const StyledAutogrowWrapper = styled(AutogrowWrapper)<{
           ? '28px'
           : '32px'};
   padding: 0 ${({ theme }) => theme.spacing(1.25)};
-  box-sizing: border-box;
 `;
 
 const TextInputV2WithAutoGrowWrapper = forwardRef<

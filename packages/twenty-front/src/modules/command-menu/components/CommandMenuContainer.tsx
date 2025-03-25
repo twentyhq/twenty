@@ -36,7 +36,7 @@ import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCommandMenu = styled(motion.div)`
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${({ theme }) => theme.background.primary};
   border-left: 1px solid ${({ theme }) => theme.border.color.medium};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   font-family: ${({ theme }) => theme.font.family};
