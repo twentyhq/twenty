@@ -187,13 +187,19 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     this.handleLabelOverrides(instance, objectMetadata, update, locale);
   }
 
-  private resetOverrideIfMatchesOriginal(
-    update: StandardObjectUpdate,
-    overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
-    newValue: string,
-    originalValue: string,
-    locale?: keyof typeof APP_LOCALES | undefined,
-  ): boolean {
+  private resetOverrideIfMatchesOriginal({
+    update,
+    overrideKey,
+    newValue,
+    originalValue,
+    locale,
+  }: {
+    update: StandardObjectUpdate;
+    overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon';
+    newValue: string;
+    originalValue: string;
+    locale?: keyof typeof APP_LOCALES | undefined;
+  }): boolean {
     if (locale && locale !== SOURCE_LOCALE) {
       const wasOverrideReset = this.resetLocalizedOverride(
         update,
@@ -264,23 +270,38 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   private setOverrideValue(
     update: StandardObjectUpdate,
     overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
-    value: any,
+    value: string,
     locale?: keyof typeof APP_LOCALES,
   ): void {
     update.standardOverrides = update.standardOverrides || {};
 
-    if (locale && locale !== SOURCE_LOCALE && overrideKey !== 'icon') {
-      update.standardOverrides.translations =
-        update.standardOverrides.translations || {};
-      update.standardOverrides.translations[locale] =
-        update.standardOverrides.translations[locale] || {};
+    const shouldSetLocalizedOverride =
+      locale && locale !== SOURCE_LOCALE && overrideKey !== 'icon';
 
-      const localeTranslations = update.standardOverrides.translations[locale];
-
-      (localeTranslations as Record<string, any>)[overrideKey] = value;
-    } else {
+    if (!shouldSetLocalizedOverride) {
       update.standardOverrides[overrideKey] = value;
+
+      return;
     }
+
+    this.setLocalizedOverrideValue(update, overrideKey, value, locale);
+  }
+
+  private setLocalizedOverrideValue(
+    update: StandardObjectUpdate,
+    overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
+    value: string,
+    locale: keyof typeof APP_LOCALES,
+  ): void {
+    update.standardOverrides = update.standardOverrides || {};
+    update.standardOverrides.translations =
+      update.standardOverrides.translations || {};
+    update.standardOverrides.translations[locale] =
+      update.standardOverrides.translations[locale] || {};
+
+    const localeTranslations = update.standardOverrides.translations[locale];
+
+    (localeTranslations as Record<string, any>)[overrideKey] = value;
   }
 
   private handleDescriptionOverride(
@@ -294,13 +315,13 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     }
 
     if (
-      this.resetOverrideIfMatchesOriginal(
+      this.resetOverrideIfMatchesOriginal({
         update,
-        'description',
-        instance.update.description,
-        objectMetadata.description,
+        overrideKey: 'description',
+        newValue: instance.update.description,
+        originalValue: objectMetadata.description,
         locale,
-      )
+      })
     ) {
       return;
     }
@@ -323,12 +344,13 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     }
 
     if (
-      this.resetOverrideIfMatchesOriginal(
+      this.resetOverrideIfMatchesOriginal({
         update,
-        'icon',
-        instance.update.icon,
-        objectMetadata.icon,
-      )
+        overrideKey: 'icon',
+        newValue: instance.update.icon,
+        originalValue: objectMetadata.icon,
+        locale: undefined,
+      })
     ) {
       return;
     }
@@ -365,13 +387,13 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     }
 
     if (
-      this.resetOverrideIfMatchesOriginal(
+      this.resetOverrideIfMatchesOriginal({
         update,
-        'labelSingular',
-        instance.update.labelSingular,
-        objectMetadata.labelSingular,
+        overrideKey: 'labelSingular',
+        newValue: instance.update.labelSingular,
+        originalValue: objectMetadata.labelSingular,
         locale,
-      )
+      })
     ) {
       return;
     }
@@ -395,13 +417,13 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     }
 
     if (
-      this.resetOverrideIfMatchesOriginal(
+      this.resetOverrideIfMatchesOriginal({
         update,
-        'labelPlural',
-        instance.update.labelPlural,
-        objectMetadata.labelPlural,
+        overrideKey: 'labelPlural',
+        newValue: instance.update.labelPlural,
+        originalValue: objectMetadata.labelPlural,
         locale,
-      )
+      })
     ) {
       return;
     }

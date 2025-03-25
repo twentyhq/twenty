@@ -167,13 +167,19 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     this.handleLabelOverride(instance, fieldMetadata, update, locale);
   }
 
-  private resetOverrideIfMatchesOriginal(
-    update: StandardFieldUpdate,
-    overrideKey: 'label' | 'description' | 'icon',
-    newValue: string,
-    originalValue: string,
-    locale?: keyof typeof APP_LOCALES | undefined,
-  ): boolean {
+  private resetOverrideIfMatchesOriginal({
+    update,
+    overrideKey,
+    newValue,
+    originalValue,
+    locale,
+  }: {
+    update: StandardFieldUpdate;
+    overrideKey: 'label' | 'description' | 'icon';
+    newValue: string;
+    originalValue: string;
+    locale?: keyof typeof APP_LOCALES | undefined;
+  }): boolean {
     // Handle localized overrides
     if (locale && locale !== SOURCE_LOCALE) {
       const wasOverrideReset = this.resetLocalizedOverride(
@@ -251,18 +257,33 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
   ): void {
     update.standardOverrides = update.standardOverrides || {};
 
-    if (locale && locale !== SOURCE_LOCALE && overrideKey !== 'icon') {
-      update.standardOverrides.translations =
-        update.standardOverrides.translations || {};
-      update.standardOverrides.translations[locale] =
-        update.standardOverrides.translations[locale] || {};
+    const shouldSetLocalizedOverride =
+      locale && locale !== SOURCE_LOCALE && overrideKey !== 'icon';
 
-      const localeTranslations = update.standardOverrides.translations[locale];
-
-      (localeTranslations as Record<string, any>)[overrideKey] = value;
-    } else {
+    if (!shouldSetLocalizedOverride) {
       update.standardOverrides[overrideKey] = value;
+
+      return;
     }
+
+    this.setLocalizedOverrideValue(update, overrideKey, value, locale);
+  }
+
+  private setLocalizedOverrideValue(
+    update: StandardFieldUpdate,
+    overrideKey: 'label' | 'description' | 'icon',
+    value: string,
+    locale: keyof typeof APP_LOCALES,
+  ): void {
+    update.standardOverrides = update.standardOverrides || {};
+    update.standardOverrides.translations =
+      update.standardOverrides.translations || {};
+    update.standardOverrides.translations[locale] =
+      update.standardOverrides.translations[locale] || {};
+
+    const localeTranslations = update.standardOverrides.translations[locale];
+
+    (localeTranslations as Record<string, any>)[overrideKey] = value;
   }
 
   private handleDescriptionOverride(
@@ -276,13 +297,13 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     }
 
     if (
-      this.resetOverrideIfMatchesOriginal(
+      this.resetOverrideIfMatchesOriginal({
         update,
-        'description',
-        instance.update.description,
-        fieldMetadata.description,
+        overrideKey: 'description',
+        newValue: instance.update.description,
+        originalValue: fieldMetadata.description,
         locale,
-      )
+      })
     ) {
       return;
     }
@@ -305,12 +326,13 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     }
 
     if (
-      this.resetOverrideIfMatchesOriginal(
+      this.resetOverrideIfMatchesOriginal({
         update,
-        'icon',
-        instance.update.icon,
-        fieldMetadata.icon,
-      )
+        overrideKey: 'icon',
+        newValue: instance.update.icon,
+        originalValue: fieldMetadata.icon,
+        locale: undefined,
+      })
     ) {
       return;
     }
@@ -336,13 +358,13 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     }
 
     if (
-      this.resetOverrideIfMatchesOriginal(
+      this.resetOverrideIfMatchesOriginal({
         update,
-        'label',
-        instance.update.label,
-        fieldMetadata.label,
+        overrideKey: 'label',
+        newValue: instance.update.label,
+        originalValue: fieldMetadata.label,
         locale,
-      )
+      })
     ) {
       return;
     }
