@@ -174,36 +174,73 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     originalValue: string,
     locale?: keyof typeof APP_LOCALES | undefined,
   ): boolean {
+    // Handle localized overrides
     if (locale && locale !== SOURCE_LOCALE) {
-      const messageId = generateMessageId(originalValue ?? '');
-      const translatedMessage = i18n._(messageId);
+      const wasOverrideReset = this.resetLocalizedOverride(
+        update,
+        overrideKey,
+        newValue,
+        originalValue,
+        locale,
+      );
 
-      if (newValue === translatedMessage) {
-        update.standardOverrides = update.standardOverrides || {};
-        update.standardOverrides.translations =
-          update.standardOverrides.translations || {};
-        update.standardOverrides.translations[locale] =
-          update.standardOverrides.translations[locale] || {};
+      return wasOverrideReset;
+    }
 
-        const localeTranslations =
-          update.standardOverrides.translations[locale];
+    // Handle default language overrides
+    const wasOverrideReset = this.resetDefaultOverride(
+      update,
+      overrideKey,
+      newValue,
+      originalValue,
+    );
 
-        (localeTranslations as Record<string, any>)[overrideKey] = null;
+    return wasOverrideReset;
+  }
 
-        return true;
-      }
+  private resetLocalizedOverride(
+    update: StandardFieldUpdate,
+    overrideKey: 'label' | 'description' | 'icon',
+    newValue: string,
+    originalValue: string,
+    locale: keyof typeof APP_LOCALES,
+  ): boolean {
+    const messageId = generateMessageId(originalValue ?? '');
+    const translatedMessage = i18n._(messageId);
 
-      return false;
-    } else {
-      if (newValue === originalValue) {
-        update.standardOverrides = update.standardOverrides || {};
-        update.standardOverrides[overrideKey] = null;
-
-        return true;
-      }
-
+    if (newValue !== translatedMessage) {
       return false;
     }
+
+    // Initialize the translations structure if needed
+    update.standardOverrides = update.standardOverrides || {};
+    update.standardOverrides.translations =
+      update.standardOverrides.translations || {};
+    update.standardOverrides.translations[locale] =
+      update.standardOverrides.translations[locale] || {};
+
+    // Reset the override by setting it to null
+    const localeTranslations = update.standardOverrides.translations[locale];
+
+    (localeTranslations as Record<string, any>)[overrideKey] = null;
+
+    return true;
+  }
+
+  private resetDefaultOverride(
+    update: StandardFieldUpdate,
+    overrideKey: 'label' | 'description' | 'icon',
+    newValue: string,
+    originalValue: string,
+  ): boolean {
+    if (newValue !== originalValue) {
+      return false;
+    }
+
+    update.standardOverrides = update.standardOverrides || {};
+    update.standardOverrides[overrideKey] = null;
+
+    return true;
   }
 
   private setOverrideValue(
