@@ -55,7 +55,7 @@ export const chatbotsAllView = (
             CHATBOT_STANDARD_FIELD_IDS.createdBy
           ],
         position: 3,
-        isVisible: true,
+        isVisible: false,
         size: 150,
       },
     ],
