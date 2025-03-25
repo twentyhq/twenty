@@ -105,7 +105,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
 
   const fillNameFromLabel = (label: string) => {
     isDefined(label) &&
-      fieldMetadataItem?.isCustom &&
       setValue('name', computeMetadataNameFromLabel(label), {
         shouldDirty: true,
       });
@@ -136,12 +135,17 @@ export const SettingsDataModelFieldIconLabelForm = ({
               value={value}
               onChange={(value) => {
                 onChange(value);
+                console.log('isLabelSyncedWithName', isLabelSyncedWithName);
                 if (isLabelSyncedWithName === true) {
                   fillNameFromLabel(value);
                 }
               }}
               error={getErrorMessageFromError(errors.label?.message)}
-              disabled={isLabelSyncedWithName === true}
+              disabled={
+                isLabelSyncedWithName === true &&
+                fieldMetadataItem &&
+                !fieldMetadataItem?.isCustom
+              }
               maxLength={maxLength}
               fullWidth
             />
