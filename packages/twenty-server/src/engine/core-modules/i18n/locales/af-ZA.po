@@ -2777,4 +2777,3 @@ msgstr "Jou Wagwoord is Suksesvol Verander"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Jou spanlid verantwoordelik vir die bestuur van die maatskappy rekening"
-
