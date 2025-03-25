@@ -9,6 +9,7 @@ import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-re
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
+import { getSelectedRecordFilters } from '@/object-record/object-filter-dropdown/utils/getSelectedRecordFilters';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -26,7 +27,6 @@ export const MAX_ITEMS_TO_DISPLAY = 3;
 type ObjectFilterDropdownSourceSelectProps = {
   viewComponentId?: string;
 };
-
 export const ObjectFilterDropdownSourceSelect = ({
   viewComponentId,
 }: ObjectFilterDropdownSourceSelectProps) => {
@@ -62,14 +62,7 @@ export const ObjectFilterDropdownSourceSelect = ({
   const sourceTypes = getActorSourceMultiSelectOptions(
     objectFilterDropdownSelectedRecordIds,
   );
-  const selectedFilterValues = Array.isArray(selectedFilter?.value)
-    ? selectedFilter.value
-    : isDefined(selectedFilter?.value) &&
-        typeof selectedFilter.value === 'string' &&
-        selectedFilter.value.trim() !== ''
-      ? JSON.parse(selectedFilter.value)
-      : [];
-
+  const selectedFilterValues = getSelectedRecordFilters(selectedFilter);
   const filteredSelectedItems = sourceTypes
     .filter((option) => selectedFilterValues.includes(option.id))
     .map((option) => ({
