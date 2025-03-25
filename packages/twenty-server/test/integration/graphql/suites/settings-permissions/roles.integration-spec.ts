@@ -341,7 +341,7 @@ describe('roles permissions', () => {
   });
 
   describe('updateRole', () => {
-    let createdEditableRoleId: string;
+    // let createdEditableRoleId: string;
 
     beforeAll(async () => {
       // TODO - to uncomment after deleteOneRole has been implemented

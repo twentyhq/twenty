@@ -76,11 +76,7 @@ export class ObjectPermissionService {
     objectMetadataId: string;
   }) {
     if (error.message.includes('violates foreign key constraint')) {
-      const role = await this.roleRepository.findOne({
-        where: {
-          id: roleId,
-        },
-      });
+      const role = await this.getRole(roleId, workspaceId);
 
       if (!isDefined(role)) {
         throw new PermissionsException(
@@ -103,5 +99,17 @@ export class ObjectPermissionService {
         );
       }
     }
+  }
+
+  private async getRole(
+    roleId: string,
+    workspaceId: string,
+  ): Promise<RoleEntity | null> {
+    return this.roleRepository.findOne({
+      where: {
+        id: roleId,
+        workspaceId,
+      },
+    });
   }
 }

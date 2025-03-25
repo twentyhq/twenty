@@ -8,7 +8,7 @@ import {
   Billing,
   FeatureFlagKey,
   OnboardingStatus,
-  SettingPermissionType
+  SettingPermissionType,
 } from '~/generated/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';

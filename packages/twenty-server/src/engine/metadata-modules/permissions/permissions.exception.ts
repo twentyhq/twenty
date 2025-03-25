@@ -49,6 +49,6 @@ export enum PermissionsExceptionMessage {
   ROLE_LABEL_ALREADY_EXISTS = 'A role with this label already exists',
   DEFAULT_ROLE_NOT_FOUND = 'Default role not found',
   OBJECT_METADATA_NOT_FOUND = 'Object metadata not found',
-  INVALID_SETTING = 'Invalid permission setting',
+  INVALID_SETTING = 'Invalid permission setting (unknown value)',
   ROLE_NOT_EDITABLE = 'Role is not editable',
 }

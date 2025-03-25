@@ -10,7 +10,7 @@ import {
   Workspace,
   WorkspaceActivationStatus,
   WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
 type MockedUser = Pick<
