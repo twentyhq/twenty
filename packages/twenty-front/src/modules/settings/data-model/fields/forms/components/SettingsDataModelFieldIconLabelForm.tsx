@@ -135,7 +135,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
               value={value}
               onChange={(value) => {
                 onChange(value);
-                console.log('isLabelSyncedWithName', isLabelSyncedWithName);
                 if (isLabelSyncedWithName === true) {
                   fillNameFromLabel(value);
                 }
