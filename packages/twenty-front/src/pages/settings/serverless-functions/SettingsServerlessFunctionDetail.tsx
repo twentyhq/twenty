@@ -2,7 +2,6 @@ import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabl
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
-import { SettingsServerlessFunctionMonitoringTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionMonitoringTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
@@ -20,7 +19,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { IconCode, IconGauge, IconSettings, IconTestPipe } from 'twenty-ui';
+import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -136,9 +135,6 @@ export const SettingsServerlessFunctionDetail = () => {
     { id: 'editor', title: 'Editor', Icon: IconCode },
     { id: 'test', title: 'Test', Icon: IconTestPipe },
     { id: 'settings', title: 'Settings', Icon: IconSettings },
-    ...(isAnalyticsEnabled && isAnalyticsV2Enabled
-      ? [{ id: 'monitoring', title: 'Monitoring', Icon: IconGauge }]
-      : []),
   ];
 
   const files = formValues.code
@@ -182,12 +178,6 @@ export const SettingsServerlessFunctionDetail = () => {
             serverlessFunctionId={serverlessFunctionId}
             onChange={onChange}
             onCodeChange={onCodeChange}
-          />
-        );
-      case 'monitoring':
-        return (
-          <SettingsServerlessFunctionMonitoringTab
-            serverlessFunctionId={serverlessFunctionId}
           />
         );
       default:

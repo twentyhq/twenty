@@ -15,9 +15,6 @@ import {
   useIcons,
 } from 'twenty-ui';
 
-import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
-import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
-import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/AnalyticsGraphDataInstanceContext';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -223,20 +220,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
             fullWidth
           />
         </Section>
-        {!isCreationMode && isAnalyticsEnabled && isAnalyticsV2Enabled && (
-          <AnalyticsGraphDataInstanceContext.Provider
-            value={{ instanceId: `webhook-${webhookId}-analytics` }}
-          >
-            <AnalyticsGraphEffect
-              recordId={webhookId}
-              endpointName="getWebhookAnalytics"
-            />
-            <AnalyticsActivityGraph
-              recordId={webhookId}
-              endpointName="getWebhookAnalytics"
-            />
-          </AnalyticsGraphDataInstanceContext.Provider>
-        )}
         <Section>
           <H2Title
             title={t`Danger zone`}
