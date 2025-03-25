@@ -2,7 +2,6 @@ import {
   TextInputV2,
   TextInputV2Size,
 } from '@/ui/input/components/TextInputV2';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -60,21 +59,13 @@ export const TitleInput = ({
 
   const [isOpened, setIsOpened] = useState(false);
 
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
-
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
-
     if (isDefined(draftValue)) {
       event.target.select();
     }
   };
 
   const handleLeaveFocus = () => {
-    goBackToPreviousHotkeyScope();
     setIsOpened(false);
   };
 
