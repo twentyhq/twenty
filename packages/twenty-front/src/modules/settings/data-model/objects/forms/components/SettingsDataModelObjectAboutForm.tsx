@@ -100,6 +100,7 @@ export const SettingsDataModelObjectAboutForm = ({
     setValue('labelPlural', labelPluralFromSingularLabel, {
       shouldDirty: true,
     });
+    fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
   };
 
   const fillNameSingularFromLabelSingular = (
@@ -161,7 +162,11 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={!objectMetadataItem?.isCustom && isLabelSyncedWithName}
+              disabled={
+                objectMetadataItem &&
+                !objectMetadataItem?.isCustom &&
+                isLabelSyncedWithName
+              }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -187,7 +192,11 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={!objectMetadataItem?.isCustom && isLabelSyncedWithName}
+              disabled={
+                objectMetadataItem &&
+                !objectMetadataItem?.isCustom &&
+                isLabelSyncedWithName
+              }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -293,7 +302,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 </AdvancedSettingsWrapper>
               ),
             )}
-            {objectMetadataItem?.isCustom && (
+            {(!objectMetadataItem || objectMetadataItem?.isCustom) && (
               <AdvancedSettingsWrapper>
                 <Controller
                   name="isLabelSyncedWithName"
@@ -313,8 +322,9 @@ export const SettingsDataModelObjectAboutForm = ({
 
                           if (
                             value === true &&
-                            isDefined(objectMetadataItem) &&
-                            objectMetadataItem.isCustom
+                            ((isDefined(objectMetadataItem) &&
+                              objectMetadataItem.isCustom) ||
+                              !isDefined(objectMetadataItem))
                           ) {
                             fillNamePluralFromLabelPlural(labelPlural);
                             fillNameSingularFromLabelSingular(labelSingular);
