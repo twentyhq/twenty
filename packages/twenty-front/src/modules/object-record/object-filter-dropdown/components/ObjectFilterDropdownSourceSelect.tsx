@@ -94,9 +94,18 @@ export const ObjectFilterDropdownSourceSelect = ({
       );
     }
 
+    const recordFilter = currentRecordFilters.find(
+      (recordFilter) =>
+        recordFilter.fieldMetadataId ===
+        fieldMetadataItemUsedInFilterDropdown.id,
+    );
+
+    const filterId = recordFilter?.id ?? fieldId;
+    const recordFilterId = selectedFilter?.id ? selectedFilter.id : filterId;
+
     if (newSelectedItemIds.length === 0) {
       emptyRecordFilter();
-      removeRecordFilter(fieldMetadataItemUsedInFilterDropdown.id);
+      removeRecordFilter({ recordFilterId });
 
       return;
     }
@@ -112,25 +121,17 @@ export const ObjectFilterDropdownSourceSelect = ({
         ? `${selectedItemNames.length} source types`
         : selectedItemNames.join(', ');
 
-    if (
-      isDefined(fieldMetadataItemUsedInFilterDropdown) &&
-      isDefined(selectedOperandInDropdown)
-    ) {
+      if (!isDefined(selectedOperandInDropdown)) {
+        throw new Error('Selected operand in dropdown should be defined');
+      }
+
       const newFilterValue =
         newSelectedItemIds.length > 0
           ? JSON.stringify(newSelectedItemIds)
           : EMPTY_FILTER_VALUE;
 
-      const recordFilter = currentRecordFilters.find(
-        (recordFilter) =>
-          recordFilter.fieldMetadataId ===
-          fieldMetadataItemUsedInFilterDropdown.id,
-      );
-
-      const filterId = recordFilter?.id ?? fieldId;
-
       applyRecordFilter({
-        id: selectedFilter?.id ? selectedFilter.id : filterId,
+        id: recordFilterId,
         type: getFilterTypeFromFieldType(
           fieldMetadataItemUsedInFilterDropdown.type,
         ),
@@ -141,7 +142,6 @@ export const ObjectFilterDropdownSourceSelect = ({
         value: newFilterValue,
         recordFilterGroupId: selectedFilter?.recordFilterGroupId,
       });
-    }
   };
 
   return (
