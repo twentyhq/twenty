@@ -27,7 +27,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 
 type ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps = {
-  handelAddFilterForActor: (id: string, operand?: ViewFilterOperand) => void;
+  handelAddFilterForActor?: (id: string, operand?: ViewFilterOperand) => void;
 };
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
   handelAddFilterForActor,
