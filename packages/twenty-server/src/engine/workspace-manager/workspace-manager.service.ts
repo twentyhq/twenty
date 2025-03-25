@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { DEV_SEED_USER_WORKSPACE_IDS } from 'src/database/typeorm-seeds/core/user-workspaces';
@@ -363,6 +364,7 @@ export class WorkspaceManagerService {
 
     await this.workspaceRepository.update(workspaceId, {
       defaultRoleId: memberRole.id,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
     if (memberUserWorkspaceId) {
