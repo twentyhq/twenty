@@ -26,7 +26,7 @@ import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
-import { SETTINGS_ADMIN_GENERAL_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminGeneralTabsId';
+import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
@@ -38,21 +38,13 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTabListContainer = styled.div`
-  align-items: center;
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
 export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueSnackBar } = useSnackBar();
 
   const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
     activeTabIdComponentState,
-    'settings-admin-general',
+    SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
   const [userLookupResult, setUserLookupResult] = useRecoilState(
     userLookupResultState,
@@ -199,14 +191,11 @@ export const SettingsAdminGeneral = () => {
               title={t`Workspaces`}
               description={t`All workspaces this user is a member of`}
             />
-            <StyledTabListContainer>
-              <TabList
-                tabs={tabs}
-                behaveAsLinks={false}
-                componentInstanceId={SETTINGS_ADMIN_GENERAL_TABS_ID}
-              />
-            </StyledTabListContainer>
-
+            <TabList
+              tabs={tabs}
+              behaveAsLinks={false}
+              componentInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
+            />
             <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
           </Section>
         </>
