@@ -13,8 +13,8 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';

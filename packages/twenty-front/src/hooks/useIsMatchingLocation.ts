@@ -2,7 +2,7 @@ import { matchPath, useLocation } from 'react-router-dom';
 
 import { AppBasePath } from '@/types/AppBasePath';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useIsMatchingLocation = () => {
   const location = useLocation();

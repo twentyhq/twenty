@@ -1,4 +1,4 @@
-import { APP_LOCALES } from 'src/i18n/constants/AppLocales';
+import { APP_LOCALES } from '@/translations';
 
 export const isValidLocale = (
   value: string | null,

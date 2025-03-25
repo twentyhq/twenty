@@ -1,9 +1,9 @@
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
-import { useSearchRecords } from '@/command-menu/hooks/useSearchRecords';
+import { useCommandMenuSearchRecords } from '@/command-menu/hooks/useCommandMenuSearchRecords';
 import { useMemo } from 'react';
 
 export const CommandMenuSearchRecordsPage = () => {
-  const { commandGroups, loading, noResults } = useSearchRecords();
+  const { commandGroups, loading, noResults } = useCommandMenuSearchRecords();
 
   const selectableItemIds = useMemo(() => {
     return commandGroups.flatMap((group) => group.items).map((item) => item.id);

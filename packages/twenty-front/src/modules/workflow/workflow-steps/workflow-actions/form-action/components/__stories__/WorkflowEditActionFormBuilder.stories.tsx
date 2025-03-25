@@ -2,12 +2,12 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, within } from '@storybook/test';
-import { FieldMetadataType } from 'twenty-shared';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -18,6 +18,7 @@ const DEFAULT_ACTION = {
     input: [
       {
         id: 'ed00b897-519f-44cd-8201-a6502a3a9dc8',
+        name: 'company',
         type: FieldMetadataType.TEXT,
         label: 'Company',
         placeholder: 'Select a company',
@@ -25,6 +26,7 @@ const DEFAULT_ACTION = {
       },
       {
         id: 'ed00b897-519f-44cd-8201-a6502a3a9dc9',
+        name: 'number',
         type: FieldMetadataType.NUMBER,
         label: 'Number',
         placeholder: '1000',

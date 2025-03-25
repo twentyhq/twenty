@@ -43,7 +43,7 @@ export const useJsonField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldJsonValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldJsonValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

@@ -22,7 +22,6 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { fileStorageModuleFactory } from 'src/engine/core-modules/file-storage/file-storage.module-factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { GlobalSearchModule } from 'src/engine/core-modules/global-search/global-search.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LLMChatModelModule } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module';
@@ -38,6 +37,7 @@ import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module'
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { SearchModule } from 'src/engine/core-modules/search/search.module';
 import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serverless-module.factory';
 import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
@@ -121,7 +121,7 @@ import { FileModule } from './file/file.module';
       useFactory: serverlessModuleFactory,
       inject: [EnvironmentService, FileStorageService],
     }),
-    GlobalSearchModule,
+    SearchModule,
   ],
   exports: [
     AnalyticsModule,

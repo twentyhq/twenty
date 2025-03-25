@@ -6,7 +6,6 @@ import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -55,7 +54,7 @@ const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  overflow: ${({ isSettings }) => (isSettings ? 'visible' : 'hidden')};
+  overflow: hidden;
   flex: 1;
 `;
 

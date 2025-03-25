@@ -1,9 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
-
-import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterGroupIdComponentState';
-import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
@@ -15,8 +11,6 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
-import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
-import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
@@ -28,8 +22,8 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText] = useState('');
@@ -72,20 +66,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const advancedFilterViewFilterId = useRecoilComponentValueV2(
-    advancedFilterViewFilterIdComponentState,
-  );
-
-  const advancedFilterViewFilterGroupId = useRecoilComponentValueV2(
-    advancedFilterViewFilterGroupIdComponentState,
-  );
-
-  const { applyRecordFilter } = useApplyRecordFilter();
-
-  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
-    advancedFilterViewFilterId,
-  );
-
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
@@ -109,30 +89,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
       subFieldName: subFieldName,
     })[0];
 
-    if (
-      isDefined(advancedFilterViewFilterId) &&
-      isDefined(advancedFilterViewFilterGroupId)
-    ) {
-      closeAdvancedFilterDropdown();
-
-      const { value, displayValue } = getInitialFilterValue(
-        type,
-        defaultOperand,
-      );
-
-      applyRecordFilter({
-        id: advancedFilterViewFilterId,
-        fieldMetadataId: fieldMetadataItem.id,
-        value,
-        operand: defaultOperand,
-        displayValue,
-        type,
-        label: fieldMetadataItem.label,
-        recordFilterGroupId: advancedFilterViewFilterGroupId,
-        subFieldName: subFieldName,
-      });
-    }
-
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
 
     setSubFieldNameUsedInDropdown(subFieldName);
@@ -152,9 +108,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
       duplicateFilterInCurrentRecordFilters,
     );
 
-    const isSimpleFilter = !isDefined(advancedFilterViewFilterId);
-
-    if (isSimpleFilter && filterIsAlreadyInCurrentRecordFilters) {
+    if (filterIsAlreadyInCurrentRecordFilters) {
       setSelectedFilter({
         ...duplicateFilterInCurrentRecordFilters,
       });

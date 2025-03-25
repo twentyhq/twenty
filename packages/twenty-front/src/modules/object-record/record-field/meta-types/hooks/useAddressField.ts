@@ -41,7 +41,7 @@ export const useAddressField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldAddressValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldAddressValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

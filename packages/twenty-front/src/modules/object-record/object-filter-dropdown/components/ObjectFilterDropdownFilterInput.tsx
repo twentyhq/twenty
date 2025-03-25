@@ -7,7 +7,6 @@ import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isDefined } from 'twenty-shared';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
@@ -20,6 +19,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId?: string;
@@ -90,7 +90,7 @@ export const ObjectFilterDropdownFilterInput = ({
               <ObjectFilterDropdownRecordSelect />
             </>
           )}
-          {isActorSourceCompositeFilter && (
+          {filterType === 'ACTOR' && isActorSourceCompositeFilter && (
             <>
               <DropdownMenuSeparator />
               <ObjectFilterDropdownSourceSelect />

@@ -3,7 +3,7 @@ import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateD
 import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordChipDataArgs = {
   objectNameSingular: string;
@@ -22,6 +22,7 @@ export const useRecordChipData = ({
 
   const identifierChipGenerator =
     identifierChipGeneratorPerObject[objectNameSingular];
+
   if (isDefined(identifierChipGenerator)) {
     return {
       recordChipData: identifierChipGenerator(record),

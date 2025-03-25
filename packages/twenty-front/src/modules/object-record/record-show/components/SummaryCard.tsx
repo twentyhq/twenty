@@ -10,8 +10,8 @@ import { RecordTitleCell } from '@/object-record/record-title-cell/components/Re
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { FieldMetadataType } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type SummaryCardProps = {
   objectNameSingular: string;
@@ -70,8 +70,6 @@ export const SummaryCard = ({
         <FieldContext.Provider
           value={{
             recordId: objectRecordId,
-            recoilScopeId:
-              objectRecordId + labelIdentifierFieldMetadataItem?.id,
             isLabelIdentifier: false,
             fieldDefinition: {
               type:

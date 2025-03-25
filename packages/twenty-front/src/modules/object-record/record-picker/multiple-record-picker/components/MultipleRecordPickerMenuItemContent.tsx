@@ -3,17 +3,16 @@ import { useRecoilValue } from 'recoil';
 import { Avatar, MenuItemMultiSelectAvatar } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerIsSelectedComponentFamilySelector';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { isDefined } from 'twenty-shared';
+import { SearchRecord } from '~/generated-metadata/graphql';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -21,13 +20,13 @@ export const StyledSelectableItem = styled(SelectableItem)`
 `;
 
 type MultipleRecordPickerMenuItemContentProps = {
-  record: ObjectRecord;
+  searchRecord: SearchRecord;
   objectMetadataItem: ObjectMetadataItem;
   onChange: (morphItem: RecordPickerPickableMorphItem) => void;
 };
 
 export const MultipleRecordPickerMenuItemContent = ({
-  record,
+  searchRecord,
   objectMetadataItem,
   onChange,
 }: MultipleRecordPickerMenuItemContentProps) => {
@@ -43,49 +42,43 @@ export const MultipleRecordPickerMenuItemContent = ({
   );
 
   const isSelectedByKeyboard = useRecoilValue(
-    isSelectedItemIdSelector(record.id),
+    isSelectedItemIdSelector(searchRecord.recordId),
   );
 
   const isRecordSelectedWithObjectItem = useRecoilComponentFamilyValueV2(
     multipleRecordPickerIsSelectedComponentFamilySelector,
-    record.id,
+    searchRecord.recordId,
     componentInstanceId,
   );
 
   const handleSelectChange = (isSelected: boolean) => {
     onChange({
-      recordId: record.id,
+      recordId: searchRecord.recordId,
       objectMetadataId: objectMetadataItem.id,
       isSelected,
       isMatchingSearchFilter: true,
     });
   };
 
-  const recordIdentifier = getObjectRecordIdentifier({
-    objectMetadataItem,
-    record,
-  });
-
-  if (!isDefined(recordIdentifier)) {
-    return null;
-  }
-
   return (
-    <StyledSelectableItem itemId={record.id} key={record.id}>
+    <StyledSelectableItem
+      itemId={searchRecord.recordId}
+      key={searchRecord.recordId}
+    >
       <MenuItemMultiSelectAvatar
         onSelectChange={(isSelected) => handleSelectChange(isSelected)}
         isKeySelected={isSelectedByKeyboard}
         selected={isRecordSelectedWithObjectItem}
         avatar={
           <Avatar
-            avatarUrl={recordIdentifier.avatarUrl}
-            placeholderColorSeed={record.id}
-            placeholder={recordIdentifier.name}
+            avatarUrl={searchRecord.imageUrl}
+            placeholderColorSeed={searchRecord.recordId}
+            placeholder={searchRecord.label}
             size="md"
-            type={recordIdentifier.avatarType ?? 'rounded'}
+            type={getAvatarType(objectMetadataItem.nameSingular) ?? 'rounded'}
           />
         }
-        text={recordIdentifier.name}
+        text={searchRecord.label}
       />
     </StyledSelectableItem>
   );

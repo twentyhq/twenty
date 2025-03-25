@@ -27,24 +27,19 @@ import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
 import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
+import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
+import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { CodeEditor, IconCode, IconPlayerPlay, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -76,7 +71,6 @@ export const WorkflowEditActionServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionServerlessFunctionProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const activeTabId = useRecoilComponentValueV2(
@@ -287,10 +281,12 @@ export const WorkflowEditActionServerlessFunction = ({
     ? action.name
     : 'Code - Serverless Function';
   const headerIcon = getActionIcon(action.type);
+  const headerIconColor = useActionIconColorOrThrow(action.type);
+  const headerType = useActionHeaderTypeOrThrow(action.type);
 
   return (
     !loading && (
-      <StyledContainer>
+      <>
         <StyledTabList
           tabs={tabs}
           behaveAsLinks={false}
@@ -303,9 +299,9 @@ export const WorkflowEditActionServerlessFunction = ({
             updateAction({ name: newName });
           }}
           Icon={getIcon(headerIcon)}
-          iconColor={theme.color.orange}
+          iconColor={headerIconColor}
           initialTitle={headerTitle}
-          headerType="Code"
+          headerType={headerType}
           disabled={actionOptions.readonly}
         />
         <WorkflowStepBody>
@@ -373,7 +369,7 @@ export const WorkflowEditActionServerlessFunction = ({
             ]}
           />
         )}
-      </StyledContainer>
+      </>
     )
   );
 };

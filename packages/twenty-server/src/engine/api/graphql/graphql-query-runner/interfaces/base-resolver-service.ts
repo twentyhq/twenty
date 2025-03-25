@@ -1,12 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
-import {
-  capitalize,
-  isDefined,
-  PermissionsOnAllObjectRecords,
-} from 'twenty-shared';
 import { DataSource, ObjectLiteral } from 'typeorm';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
@@ -248,7 +245,6 @@ export abstract class GraphqlQueryBaseResolverService<
       case RESOLVER_METHOD_NAMES.FIND_MANY:
       case RESOLVER_METHOD_NAMES.FIND_ONE:
       case RESOLVER_METHOD_NAMES.FIND_DUPLICATES:
-      case RESOLVER_METHOD_NAMES.SEARCH:
         return PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS;
       case RESOLVER_METHOD_NAMES.CREATE_MANY:
       case RESOLVER_METHOD_NAMES.CREATE_ONE:

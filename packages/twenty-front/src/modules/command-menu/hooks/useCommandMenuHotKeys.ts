@@ -5,6 +5,7 @@ import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useO
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
@@ -62,7 +63,7 @@ export const useCommandMenuHotKeys = () => {
     () => {
       goBackFromCommandMenu();
     },
-    AppHotkeyScope.CommandMenuOpen,
+    CommandMenuHotkeyScope.CommandMenuFocused,
     [goBackFromCommandMenu],
   );
 
@@ -87,7 +88,7 @@ export const useCommandMenuHotKeys = () => {
         goBackFromCommandMenu();
       }
     },
-    AppHotkeyScope.CommandMenuOpen,
+    CommandMenuHotkeyScope.CommandMenuFocused,
     [
       commandMenuPage,
       commandMenuSearch,

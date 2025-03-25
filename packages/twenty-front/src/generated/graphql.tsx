@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -318,6 +318,17 @@ export type CreateOneFieldMetadataInput = {
   field: CreateFieldInput;
 };
 
+export type CreateRoleInput = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label: Scalars['String'];
+};
+
 export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -497,6 +508,7 @@ export enum FeatureFlagKey {
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsEnabled = 'IsPermissionsEnabled',
+  IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
@@ -629,16 +641,6 @@ export type GetServerlessFunctionSourceCodeInput = {
   id: Scalars['ID'];
   /** The version of the function */
   version?: Scalars['String'];
-};
-
-export type GlobalSearchRecord = {
-  __typename?: 'GlobalSearchRecord';
-  imageUrl?: Maybe<Scalars['String']>;
-  label: Scalars['String'];
-  objectSingularName: Scalars['String'];
-  recordId: Scalars['String'];
-  tsRank: Scalars['Float'];
-  tsRankCD: Scalars['Float'];
 };
 
 export enum HealthIndicatorId {
@@ -810,6 +812,7 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
+  createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
@@ -850,6 +853,7 @@ export type Mutation = {
   updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
+  updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWorkflowVersionStep: WorkflowAction;
@@ -912,6 +916,11 @@ export type MutationCreateOidcIdentityProviderArgs = {
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
+};
+
+
+export type MutationCreateOneRoleArgs = {
+  createRoleInput: CreateRoleInput;
 };
 
 
@@ -1085,6 +1094,11 @@ export type MutationUpdateOneFieldArgs = {
 
 export type MutationUpdateOneObjectArgs = {
   input: UpdateOneObjectInput;
+};
+
+
+export type MutationUpdateOneRoleArgs = {
+  updateRoleInput: UpdateRoleInput;
 };
 
 
@@ -1344,12 +1358,12 @@ export type Query = {
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
-  globalSearch: Array<GlobalSearchRecord>;
   index: Index;
   indexMetadatas: IndexConnection;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
+  search: Array<SearchRecord>;
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
@@ -1429,7 +1443,7 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 };
 
 
-export type QueryGlobalSearchArgs = {
+export type QuerySearchArgs = {
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
@@ -1621,6 +1635,16 @@ export enum SsoIdentityProviderStatus {
   Error = 'Error',
   Inactive = 'Inactive'
 }
+
+export type SearchRecord = {
+  __typename?: 'SearchRecord';
+  imageUrl?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
+  objectNameSingular: Scalars['String'];
+  recordId: Scalars['String'];
+  tsRank: Scalars['Float'];
+  tsRankCD: Scalars['Float'];
+};
 
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
@@ -1902,6 +1926,23 @@ export type UpdateOneObjectInput = {
   /** The id of the object to update */
   id: Scalars['UUID'];
   update: UpdateObjectPayload;
+};
+
+export type UpdateRoleInput = {
+  /** The id of the role to update */
+  id: Scalars['UUID'];
+  update: UpdateRolePayload;
+};
+
+export type UpdateRolePayload = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateServerlessFunctionInput = {
@@ -2386,7 +2427,7 @@ export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePa
 export type BillingBaseProductPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type BillingBaseProductPricesQuery = { __typename?: 'Query', plans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, baseProduct: { __typename?: 'BillingProductDTO', prices: Array<{ __typename?: 'BillingPriceLicensedDTO', unitAmount: number, stripePriceId: string, recurringInterval: SubscriptionInterval } | { __typename?: 'BillingPriceMeteredDTO' }> } }> };
+export type BillingBaseProductPricesQuery = { __typename?: 'Query', plans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, baseProduct: { __typename?: 'BillingProductDTO', name: string, prices: Array<{ __typename?: 'BillingPriceLicensedDTO', unitAmount: number, stripePriceId: string, recurringInterval: SubscriptionInterval } | { __typename?: 'BillingPriceMeteredDTO' }> } }> };
 
 export type BillingPortalSessionQueryVariables = Exact<{
   returnUrlPath?: InputMaybe<Scalars['String']>;
@@ -2415,14 +2456,16 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isEmailVerificationRequired: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, isAttachmentPreviewEnabled: boolean, chromeExtensionId?: string | null, canManageFeatureFlags: boolean, isMicrosoftMessagingEnabled: boolean, isMicrosoftCalendarEnabled: boolean, isGoogleMessagingEnabled: boolean, isGoogleCalendarEnabled: boolean, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, trialPeriods: Array<{ __typename?: 'BillingTrialPeriodDTO', duration: number, isCreditCardRequired: boolean }> }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number }, publicFeatureFlags: Array<{ __typename?: 'PublicFeatureFlag', key: FeatureFlagKey, metadata: { __typename?: 'PublicFeatureFlagMetadata', label: string, description: string, imagePath: string } }> } };
 
-export type GlobalSearchQueryVariables = Exact<{
+export type SearchQueryVariables = Exact<{
   searchInput: Scalars['String'];
   limit: Scalars['Int'];
-  excludedObjectNameSingulars: Array<Scalars['String']> | Scalars['String'];
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  filter?: InputMaybe<ObjectRecordFilterInput>;
 }>;
 
 
-export type GlobalSearchQuery = { __typename?: 'Query', globalSearch: Array<{ __typename?: 'GlobalSearchRecord', recordId: string, objectSingularName: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number }> };
+export type SearchQuery = { __typename?: 'Query', search: Array<{ __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number }> };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2625,6 +2668,13 @@ export type UpdateWorkflowVersionStepMutationVariables = Exact<{
 
 
 export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: string, settings: any, valid: boolean } };
+
+export type SubmitFormStepMutationVariables = Exact<{
+  input: SubmitFormStepInput;
+}>;
+
+
+export type SubmitFormStepMutation = { __typename?: 'Mutation', submitFormStep: boolean };
 
 export type DeleteWorkspaceInvitationMutationVariables = Exact<{
   appTokenId: Scalars['String'];
@@ -3857,6 +3907,7 @@ export const BillingBaseProductPricesDocument = gql`
   plans {
     planKey
     baseProduct {
+      name
       prices {
         ... on BillingPriceLicensedDTO {
           unitAmount
@@ -4094,15 +4145,17 @@ export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
-export const GlobalSearchDocument = gql`
-    query GlobalSearch($searchInput: String!, $limit: Int!, $excludedObjectNameSingulars: [String!]!) {
-  globalSearch(
+export const SearchDocument = gql`
+    query Search($searchInput: String!, $limit: Int!, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
+  search(
     searchInput: $searchInput
     limit: $limit
     excludedObjectNameSingulars: $excludedObjectNameSingulars
+    includedObjectNameSingulars: $includedObjectNameSingulars
+    filter: $filter
   ) {
     recordId
-    objectSingularName
+    objectNameSingular
     label
     imageUrl
     tsRankCD
@@ -4112,34 +4165,36 @@ export const GlobalSearchDocument = gql`
     `;
 
 /**
- * __useGlobalSearchQuery__
+ * __useSearchQuery__
  *
- * To run a query within a React component, call `useGlobalSearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useGlobalSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGlobalSearchQuery({
+ * const { data, loading, error } = useSearchQuery({
  *   variables: {
  *      searchInput: // value for 'searchInput'
  *      limit: // value for 'limit'
  *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
+ *      includedObjectNameSingulars: // value for 'includedObjectNameSingulars'
+ *      filter: // value for 'filter'
  *   },
  * });
  */
-export function useGlobalSearchQuery(baseOptions: Apollo.QueryHookOptions<GlobalSearchQuery, GlobalSearchQueryVariables>) {
+export function useSearchQuery(baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GlobalSearchQuery, GlobalSearchQueryVariables>(GlobalSearchDocument, options);
+        return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
       }
-export function useGlobalSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GlobalSearchQuery, GlobalSearchQueryVariables>) {
+export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GlobalSearchQuery, GlobalSearchQueryVariables>(GlobalSearchDocument, options);
+          return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
         }
-export type GlobalSearchQueryHookResult = ReturnType<typeof useGlobalSearchQuery>;
-export type GlobalSearchLazyQueryHookResult = ReturnType<typeof useGlobalSearchLazyQuery>;
-export type GlobalSearchQueryResult = Apollo.QueryResult<GlobalSearchQuery, GlobalSearchQueryVariables>;
+export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
+export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
+export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
 export const SkipSyncEmailOnboardingStepDocument = gql`
     mutation SkipSyncEmailOnboardingStep {
   skipSyncEmailOnboardingStep {
@@ -5247,6 +5302,37 @@ export function useUpdateWorkflowVersionStepMutation(baseOptions?: Apollo.Mutati
 export type UpdateWorkflowVersionStepMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionStepMutation>;
 export type UpdateWorkflowVersionStepMutationResult = Apollo.MutationResult<UpdateWorkflowVersionStepMutation>;
 export type UpdateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
+export const SubmitFormStepDocument = gql`
+    mutation SubmitFormStep($input: SubmitFormStepInput!) {
+  submitFormStep(input: $input)
+}
+    `;
+export type SubmitFormStepMutationFn = Apollo.MutationFunction<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
+
+/**
+ * __useSubmitFormStepMutation__
+ *
+ * To run a mutation, you first call `useSubmitFormStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitFormStepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitFormStepMutation, { data, loading, error }] = useSubmitFormStepMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSubmitFormStepMutation(baseOptions?: Apollo.MutationHookOptions<SubmitFormStepMutation, SubmitFormStepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SubmitFormStepMutation, SubmitFormStepMutationVariables>(SubmitFormStepDocument, options);
+      }
+export type SubmitFormStepMutationHookResult = ReturnType<typeof useSubmitFormStepMutation>;
+export type SubmitFormStepMutationResult = Apollo.MutationResult<SubmitFormStepMutation>;
+export type SubmitFormStepMutationOptions = Apollo.BaseMutationOptions<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
 export const DeleteWorkspaceInvitationDocument = gql`
     mutation DeleteWorkspaceInvitation($appTokenId: String!) {
   deleteWorkspaceInvitation(appTokenId: $appTokenId)

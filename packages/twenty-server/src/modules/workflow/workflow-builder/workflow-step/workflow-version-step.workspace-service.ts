@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FieldMetadataType, isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
@@ -506,12 +507,14 @@ export class WorkflowVersionStepWorkspaceService {
             input: [
               {
                 id: v4(),
+                name: 'company',
                 label: 'Company',
                 placeholder: 'Select a company',
                 type: FieldMetadataType.TEXT,
               },
               {
                 id: v4(),
+                name: 'number',
                 label: 'Number',
                 placeholder: '1000',
                 type: FieldMetadataType.NUMBER,

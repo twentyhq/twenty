@@ -1,6 +1,6 @@
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowSelectedNodeOrThrow = () => {
   const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);

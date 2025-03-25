@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { ClientConfigError } from '@/error-handler/components/ClientConfigError';
+import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -14,7 +14,13 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   if (!isLoaded) return null;
 
   return isErrored && error instanceof Error ? (
-    <ClientConfigError error={error} />
+    <AppFullScreenErrorFallback
+      error={error}
+      resetErrorBoundary={() => {
+        window.location.reload();
+      }}
+      title="Unable to Reach Back-end"
+    />
   ) : (
     children
   );
