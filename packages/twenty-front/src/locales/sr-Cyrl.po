@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr_Cyrl\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-01-01 00:00\n"
+"PO-Revision-Date: 2025-03-25 14:03\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Cyrillic)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -101,7 +101,7 @@ msgstr "{workspaceMemberName} ће бити уклоњен из следеће �
 #. js-lingui-id: YT0WJ4
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #~ msgid "1 000 workflow node executions"
-#~ msgstr "1 000 извршења чворова радног тока"
+#~ msgstr "1 000 workflow node executions"
 
 #. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
@@ -117,7 +117,7 @@ msgstr "1. Тип"
 #. js-lingui-id: AvXug3
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "10 000 workflow node executions"
-msgstr ""
+msgstr "10 000 извршења чворова радног тока"
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -138,7 +138,7 @@ msgstr "2. Конфигуришите поље"
 #. js-lingui-id: kAtmAv
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "20 000 workflow node executions"
-msgstr ""
+msgstr "20 000 извршења чворова радног тока"
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -199,7 +199,7 @@ msgstr "Налози"
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Action"
-msgstr ""
+msgstr "Акција"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
@@ -533,22 +533,22 @@ msgstr "Да ли сте сигурни да желите да променит�
 #. js-lingui-id: 8Y3Jbl
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 #~ msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
-#~ msgstr "Да ли сте сигурни да желите да обришете ове записе? Могу се повратити из командног менија ({osControlSymbol} + K)."
+#~ msgstr "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: 2BZAqa
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
-msgstr ""
+msgstr "Да ли сте сигурни да желите да обришете ове записе? Могу се повратити из командног менија."
 
 #. js-lingui-id: Se0vJw
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 #~ msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
-#~ msgstr "Да ли сте сигурни да желите да обришете овај запис? Може се повратити из командног менија ({osControlSymbol} + K)."
+#~ msgstr "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: yb2hF4
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
-msgstr ""
+msgstr "Да ли сте сигурни да желите да обришете овај запис? Може се повратити из командног менија."
 
 #. js-lingui-id: nYD/Cq
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -714,7 +714,7 @@ msgstr "Календари"
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
-msgstr ""
+msgstr "Не могу се мењати API имена за стандардне објекте"
 
 #. js-lingui-id: dEgA5A
 #: src/pages/auth/Authorize.tsx
@@ -829,7 +829,7 @@ msgstr "Затвори мени команди"
 #. js-lingui-id: EWPtMO
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Code"
-msgstr ""
+msgstr "Код"
 
 #. js-lingui-id: H86f9p
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -2025,7 +2025,7 @@ msgstr "Глобално"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Go to runs"
-msgstr ""
+msgstr "Иди на покретања"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -2037,7 +2037,7 @@ msgstr "Идите на Подешавања"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Go to workflows"
-msgstr ""
+msgstr "Иди на токове рада"
 
 #. js-lingui-id: hWp1MY
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -2506,7 +2506,7 @@ msgstr "Одјавите се"
 #. js-lingui-id: nOhz3x
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
 msgid "Logout"
-msgstr "Logout"
+msgstr "Одјава"
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -3527,7 +3527,7 @@ msgstr "Погледајте извршења"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See version"
-msgstr ""
+msgstr "Погледајте верзију"
 
 #. js-lingui-id: EtyY4+
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -3547,14 +3547,14 @@ msgstr "Погледајте историју верзија"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See workflow"
-msgstr ""
+msgstr "Погледајте ток рада"
 
 #. js-lingui-id: XThiR2
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "See workflows"
-msgstr ""
+msgstr "Погледајте токове рада"
 
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -3737,7 +3737,7 @@ msgstr "Јединствена пријава"
 #. js-lingui-id: vlvAkg
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "SSO (SAML / OIDC)"
-msgstr ""
+msgstr "ССО (SAML / OIDC)"
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -3831,7 +3831,7 @@ msgstr "Промени начин плаћања у {to}"
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Switch to {alternatePlanName}"
-msgstr ""
+msgstr "Промена на {alternatePlanName}"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -4475,3 +4475,4 @@ msgstr "Ваш радни простор"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Ваш радни простор ће бити онемогућен"
+
