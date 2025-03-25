@@ -16,7 +16,7 @@ import {
 } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
 
 type RecordTitleCellProps = {
   loading?: boolean;
@@ -32,11 +32,7 @@ export const RecordTitleCell = ({
   const isFieldInputOnly = useIsFieldInputOnly();
 
   const { closeInlineCell } = useInlineCell(
-    getRecordFieldInputId(
-      recordId,
-      fieldDefinition?.metadata?.fieldName,
-      'title',
-    ),
+    getRecordTitleCellId(recordId, fieldDefinition?.fieldMetadataId),
   );
 
   const handleEnter: FieldInputEvent = (persistField) => {
@@ -87,10 +83,9 @@ export const RecordTitleCell = ({
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: getRecordFieldInputId(
+        instanceId: getRecordTitleCellId(
           recordId,
-          fieldDefinition?.metadata?.fieldName,
-          'title',
+          fieldDefinition?.fieldMetadataId,
         ),
       }}
     >
