@@ -125,10 +125,7 @@ export const ObjectFilterDropdownSourceSelect = ({
         throw new Error('Selected operand in dropdown should be defined');
       }
 
-      const newFilterValue =
-        newSelectedItemIds.length > 0
-          ? JSON.stringify(newSelectedItemIds)
-          : EMPTY_FILTER_VALUE;
+    const newFilterValue = JSON.stringify(newSelectedItemIds);
 
       applyRecordFilter({
         id: recordFilterId,
