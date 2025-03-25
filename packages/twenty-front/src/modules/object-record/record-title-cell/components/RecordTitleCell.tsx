@@ -20,7 +20,7 @@ import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/ge
 
 type RecordTitleCellProps = {
   loading?: boolean;
-  sizeVariant?: 'sm' | 'md';
+  sizeVariant?: 'xs' | 'md';
 };
 
 export const RecordTitleCell = ({
