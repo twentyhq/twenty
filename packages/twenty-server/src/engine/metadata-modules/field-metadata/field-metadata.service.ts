@@ -629,8 +629,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return fieldMetadata[labelKey] ?? '';
     }
 
-    if (fieldMetadata.standardOverrides?.translations?.[locale]?.[labelKey]) {
-      return fieldMetadata.standardOverrides.translations[locale]?.[labelKey];
+    const translationValue =
+      fieldMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
+
+    if (isDefined(translationValue)) {
+      return translationValue;
     }
 
     const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');

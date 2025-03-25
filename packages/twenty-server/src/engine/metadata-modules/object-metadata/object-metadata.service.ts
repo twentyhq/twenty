@@ -572,8 +572,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return objectMetadata[labelKey];
     }
 
-    if (objectMetadata.standardOverrides?.translations?.[locale]?.[labelKey]) {
-      return objectMetadata.standardOverrides.translations[locale]?.[labelKey];
+    const translationValue =
+      objectMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
+
+    if (isDefined(translationValue)) {
+      return translationValue;
     }
 
     const messageId = generateMessageId(objectMetadata[labelKey] ?? '');
