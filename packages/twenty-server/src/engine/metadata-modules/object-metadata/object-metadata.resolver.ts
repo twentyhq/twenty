@@ -41,7 +41,7 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveTranslatableString(
+    return this.objectMetadataService.resolveOverridableString(
       objectMetadata,
       'labelPlural',
       context.req.headers['x-locale'],
@@ -53,7 +53,7 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveTranslatableString(
+    return this.objectMetadataService.resolveOverridableString(
       objectMetadata,
       'labelSingular',
       context.req.headers['x-locale'],
@@ -65,9 +65,21 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.objectMetadataService.resolveTranslatableString(
+    return this.objectMetadataService.resolveOverridableString(
       objectMetadata,
       'description',
+      context.req.headers['x-locale'],
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async icon(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: I18nContext,
+  ): Promise<string> {
+    return this.objectMetadataService.resolveOverridableString(
+      objectMetadata,
+      'icon',
       context.req.headers['x-locale'],
     );
   }
@@ -95,10 +107,13 @@ export class ObjectMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      await this.beforeUpdateOneObject.run(input, workspaceId);
+      const updatedInput = (await this.beforeUpdateOneObject.run(
+        input,
+        workspaceId,
+      )) as UpdateOneObjectInput;
 
       return await this.objectMetadataService.updateOneObject(
-        input,
+        updatedInput,
         workspaceId,
       );
     } catch (error) {

@@ -6,7 +6,7 @@ import { useSetRecoilState } from 'recoil';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { FieldMetadataType } from '~/generated/graphql';
 
-import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import {
@@ -50,26 +50,30 @@ const BooleanFieldInputWithContext = ({
         ),
       }}
     >
-      <FieldContextProvider
-        fieldDefinition={{
-          defaultValue: false,
-          fieldMetadataId: 'boolean',
-          label: 'Boolean',
-          iconName: 'Icon123',
-          type: FieldMetadataType.BOOLEAN,
-          metadata: {
-            fieldName: 'Boolean',
-            objectMetadataNameSingular: 'person',
+      <FieldContext.Provider
+        value={{
+          fieldDefinition: {
+            defaultValue: false,
+            fieldMetadataId: 'boolean',
+            label: 'Boolean',
+            iconName: 'Icon123',
+            type: FieldMetadataType.BOOLEAN,
+            metadata: {
+              fieldName: 'Boolean',
+              objectMetadataNameSingular: 'person',
+            },
           },
+          recordId: recordId ?? '123',
+          hotkeyScope: 'hotkey-scope',
+          isLabelIdentifier: false,
         }}
-        recordId={recordId}
       >
         <BooleanFieldValueSetterEffect
           value={value}
           recordId={recordId ?? ''}
         />
         <BooleanFieldInput onSubmit={onSubmit} testId="boolean-field-input" />
-      </FieldContextProvider>
+      </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );
 };

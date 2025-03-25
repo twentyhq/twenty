@@ -1,6 +1,7 @@
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, within } from '@storybook/test';
+import { expect, within } from '@storybook/test';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -9,7 +10,6 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { WorkflowEditActionFormFiller } from '../WorkflowEditActionFormFiller';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 const meta: Meta<typeof WorkflowEditActionFormFiller> = {
   title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormFiller',
@@ -67,7 +67,7 @@ export const Default: Story = {
   args: {
     action: mockAction,
     actionOptions: {
-      onActionUpdate: fn(),
+      readonly: false,
     },
   },
   play: async ({ canvasElement }) => {

@@ -12,6 +12,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   Card,
@@ -20,7 +21,6 @@ import {
   TooltipDelay,
 } from 'twenty-ui';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
-import { isDefined } from 'twenty-shared/utils';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
   existingOtherLabels: string[] = [],
@@ -71,7 +71,6 @@ const StyledAdvancedSettingsContainer = styled.div`
 `;
 
 type SettingsDataModelFieldIconLabelFormProps = {
-  disabled?: boolean;
   fieldMetadataItem?: FieldMetadataItem;
   maxLength?: number;
   canToggleSyncLabelWithName?: boolean;
@@ -79,7 +78,6 @@ type SettingsDataModelFieldIconLabelFormProps = {
 
 export const SettingsDataModelFieldIconLabelForm = ({
   canToggleSyncLabelWithName = true,
-  disabled,
   fieldMetadataItem,
   maxLength,
 }: SettingsDataModelFieldIconLabelFormProps) => {
@@ -107,6 +105,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
 
   const fillNameFromLabel = (label: string) => {
     isDefined(label) &&
+      fieldMetadataItem?.isCustom &&
       setValue('name', computeMetadataNameFromLabel(label), {
         shouldDirty: true,
       });
@@ -121,7 +120,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.icon ?? 'IconUsers'}
           render={({ field: { onChange, value } }) => (
             <IconPicker
-              disabled={disabled}
               selectedIconKey={value ?? ''}
               onChange={({ iconKey }) => onChange(iconKey)}
               variant="primary"
@@ -143,7 +141,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                 }
               }}
               error={getErrorMessageFromError(errors.label?.message)}
-              disabled={disabled}
+              disabled={isLabelSyncedWithName === true}
               maxLength={maxLength}
               fullWidth
             />
@@ -168,7 +166,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           value={value}
                           onChange={onChange}
                           disabled={
-                            disabled || (isLabelSyncedWithName ?? false)
+                            (isLabelSyncedWithName ?? false) ||
+                            !fieldMetadataItem?.isCustom
                           }
                           fullWidth
                           maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
@@ -211,10 +210,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
                         title={t`Synchronize Field Label and API Name`}
                         description={t`Should changing a field's label also change the API name?`}
                         checked={value ?? true}
-                        disabled={
-                          isDefined(fieldMetadataItem) &&
-                          !fieldMetadataItem.isCustom
-                        }
                         advancedMode
                         onChange={(value) => {
                           onChange(value);

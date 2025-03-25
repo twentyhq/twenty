@@ -6,6 +6,7 @@ import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
 import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
+import { useSeeWorkflowsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeWorkflowsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -35,6 +36,7 @@ import {
   IconPlus,
   IconRefresh,
   IconRotate2,
+  IconSettingsAutomation,
   IconTrash,
   IconTrashX,
 } from 'twenty-ui';
@@ -275,5 +277,19 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     isPinned: true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useRestoreMultipleRecordsAction,
+  },
+  seeAllWorkflows: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.SEE_WORKFLOWS,
+    label: msg`Go to workflows`,
+    shortLabel: msg`See workflows`,
+    position: 17,
+    Icon: IconSettingsAutomation,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeWorkflowsNoSelectionRecordAction,
+    hotKeys: ['G', 'W'],
   },
 };

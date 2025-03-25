@@ -113,6 +113,7 @@ export const queries = {
         settings
         defaultValue
         options
+        isLabelSyncedWithName
       }
     }
   `,

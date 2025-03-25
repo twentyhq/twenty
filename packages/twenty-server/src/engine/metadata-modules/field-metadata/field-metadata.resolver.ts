@@ -24,13 +24,17 @@ import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDefinitionDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
-import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import {
+  UpdateFieldInput,
+  UpdateOneFieldMetadataInput,
+} from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -43,6 +47,7 @@ export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
@@ -50,7 +55,7 @@ export class FieldMetadataResolver {
     @Parent() fieldMetadata: FieldMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.fieldMetadataService.resolveTranslatableString(
+    return this.fieldMetadataService.resolveOverridableString(
       fieldMetadata,
       'label',
       context.req.headers['x-locale'],
@@ -62,9 +67,21 @@ export class FieldMetadataResolver {
     @Parent() fieldMetadata: FieldMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.fieldMetadataService.resolveTranslatableString(
+    return this.fieldMetadataService.resolveOverridableString(
       fieldMetadata,
       'description',
+      context.req.headers['x-locale'],
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async icon(
+    @Parent() fieldMetadata: FieldMetadataDTO,
+    @Context() context: I18nContext,
+  ): Promise<string> {
+    return this.fieldMetadataService.resolveOverridableString(
+      fieldMetadata,
+      'icon',
       context.req.headers['x-locale'],
     );
   }
@@ -92,8 +109,13 @@ export class FieldMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return await this.fieldMetadataService.updateOne(input.id, {
-        ...input.update,
+      const updatedInput = (await this.beforeUpdateOneField.run(
+        input,
+        workspaceId,
+      )) as UpdateOneFieldMetadataInput;
+
+      return await this.fieldMetadataService.updateOne(updatedInput.id, {
+        ...updatedInput.update,
         workspaceId,
       });
     } catch (error) {

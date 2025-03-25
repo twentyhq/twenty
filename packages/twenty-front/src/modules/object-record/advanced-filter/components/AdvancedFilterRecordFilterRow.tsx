@@ -1,5 +1,5 @@
 import { AdvancedFilterDropdownRow } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownRow';
-import { AdvancedFilterFieldSelectDrodownButton } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDrodownButton';
+import { AdvancedFilterFieldSelectDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButton';
 import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
 import { AdvancedFilterRecordFilterOperandSelect } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelect';
 import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown';
@@ -26,7 +26,7 @@ export const AdvancedFilterRecordFilterRow = ({
           index={recordFilterIndex}
           recordFilterGroup={recordFilterGroup}
         />
-        <AdvancedFilterFieldSelectDrodownButton
+        <AdvancedFilterFieldSelectDropdownButton
           recordFilterId={recordFilter.id}
         />
         <AdvancedFilterRecordFilterOperandSelect
