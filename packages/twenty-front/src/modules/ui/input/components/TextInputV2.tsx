@@ -111,24 +111,17 @@ const StyledInput = styled.input<
   font-weight: ${({ theme, inheritFontStyles }) =>
     inheritFontStyles ? 'inherit' : theme.font.weight.regular};
   height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
-
-  outline: none;
-  padding: ${({ sizeVariant, autoGrow }) =>
-    autoGrow
-      ? 0
-      : sizeVariant === 'xs'
-        ? '20px'
-        : sizeVariant === 'sm'
-          ? '24px'
-          : sizeVariant === 'md'
-            ? '28px'
-            : '32px'};
-
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
   outline: none;
   padding: ${({ theme, sizeVariant, autoGrow }) =>
     autoGrow
-      ? theme.spacing(1)
+      ? 0
       : sizeVariant === 'xs'
         ? `${theme.spacing(2)} 0`
         : theme.spacing(2)};
