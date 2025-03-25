@@ -87,7 +87,8 @@ export const TitleInput = ({
       handleLeaveFocus();
       onEscape?.();
     },
-    onClickOutside: () => {
+    onClickOutside: (event) => {
+      event.stopImmediatePropagation();
       handleLeaveFocus();
       onClickOutside?.();
     },
@@ -103,10 +104,9 @@ export const TitleInput = ({
   });
 
   return (
-    <>
+    <div ref={wrapperRef}>
       {isOpened ? (
         <TextInputV2
-          ref={wrapperRef}
           autoGrow
           sizeVariant={sizeVariant}
           inheritFontStyles
@@ -128,6 +128,6 @@ export const TitleInput = ({
           <OverflowingTextWithTooltip text={draftValue ?? ''} />
         </StyledDiv>
       )}
-    </>
+    </div>
   );
 };
