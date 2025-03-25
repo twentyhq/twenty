@@ -293,37 +293,39 @@ export const SettingsDataModelObjectAboutForm = ({
                 </AdvancedSettingsWrapper>
               ),
             )}
-            <AdvancedSettingsWrapper>
-              <Controller
-                name="isLabelSyncedWithName"
-                control={control}
-                defaultValue={objectMetadataItem?.isLabelSyncedWithName}
-                render={({ field: { onChange, value } }) => (
-                  <Card rounded>
-                    <SettingsOptionCardContentToggle
-                      Icon={IconRefresh}
-                      title={t`Synchronize Objects Labels and API Names`}
-                      description={t`Should changing an object's label also change the API?`}
-                      checked={value ?? true}
-                      advancedMode
-                      onChange={(value) => {
-                        onChange(value);
-                        onNewDirtyField?.();
+            {objectMetadataItem?.isCustom && (
+              <AdvancedSettingsWrapper>
+                <Controller
+                  name="isLabelSyncedWithName"
+                  control={control}
+                  defaultValue={objectMetadataItem?.isLabelSyncedWithName}
+                  render={({ field: { onChange, value } }) => (
+                    <Card rounded>
+                      <SettingsOptionCardContentToggle
+                        Icon={IconRefresh}
+                        title={t`Synchronize Objects Labels and API Names`}
+                        description={t`Should changing an object's label also change the API?`}
+                        checked={value ?? true}
+                        advancedMode
+                        onChange={(value) => {
+                          onChange(value);
+                          onNewDirtyField?.();
 
-                        if (
-                          value === true &&
-                          isDefined(objectMetadataItem) &&
-                          objectMetadataItem.isCustom
-                        ) {
-                          fillNamePluralFromLabelPlural(labelPlural);
-                          fillNameSingularFromLabelSingular(labelSingular);
-                        }
-                      }}
-                    />
-                  </Card>
-                )}
-              />
-            </AdvancedSettingsWrapper>
+                          if (
+                            value === true &&
+                            isDefined(objectMetadataItem) &&
+                            objectMetadataItem.isCustom
+                          ) {
+                            fillNamePluralFromLabelPlural(labelPlural);
+                            fillNameSingularFromLabelSingular(labelSingular);
+                          }
+                        }}
+                      />
+                    </Card>
+                  )}
+                />
+              </AdvancedSettingsWrapper>
+            )}
           </StyledAdvancedSettingsSectionInputWrapper>
         </StyledAdvancedSettingsContainer>
       </StyledAdvancedSettingsOuterContainer>
