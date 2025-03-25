@@ -1,5 +1,5 @@
-import { AdvancedFilterFieldSelectDrodownContent } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDrodownContent';
-import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
+import { AdvancedFilterFieldSelectDropdownContent } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownContent';
+import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -11,15 +11,15 @@ const StyledContainer = styled.div`
   flex: 2;
 `;
 
-type AdvancedFilterFieldSelectDrodownButtonProps = {
+type AdvancedFilterFieldSelectDropdownButtonProps = {
   recordFilterId: string;
 };
 
-export const AdvancedFilterFieldSelectDrodownButton = ({
+export const AdvancedFilterFieldSelectDropdownButton = ({
   recordFilterId,
-}: AdvancedFilterFieldSelectDrodownButtonProps) => {
-  const { advancedFilterDropdownId } =
-    useAdvancedFilterDropdown(recordFilterId);
+}: AdvancedFilterFieldSelectDropdownButtonProps) => {
+  const { advancedFilterFieldSelectDropdownId } =
+    useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
@@ -34,7 +34,7 @@ export const AdvancedFilterFieldSelectDrodownButton = ({
   return (
     <StyledContainer>
       <Dropdown
-        dropdownId={advancedFilterDropdownId}
+        dropdownId={advancedFilterFieldSelectDropdownId}
         clickableComponent={
           <SelectControl
             selectedOption={{
@@ -43,8 +43,12 @@ export const AdvancedFilterFieldSelectDrodownButton = ({
             }}
           />
         }
-        dropdownComponents={<AdvancedFilterFieldSelectDrodownContent />}
-        dropdownHotkeyScope={{ scope: advancedFilterDropdownId }}
+        dropdownComponents={
+          <AdvancedFilterFieldSelectDropdownContent
+            recordFilterId={recordFilterId}
+          />
+        }
+        dropdownHotkeyScope={{ scope: advancedFilterFieldSelectDropdownId }}
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"
       />

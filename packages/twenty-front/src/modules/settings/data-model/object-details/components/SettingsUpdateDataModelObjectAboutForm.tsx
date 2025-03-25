@@ -1,6 +1,5 @@
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE } from '@/settings/constants/SettingsObjectModel';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import {
   SettingsDataModelObjectAboutFormValues,
@@ -15,7 +14,6 @@ import { useSetRecoilState } from 'recoil';
 import { ZodError } from 'zod';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
-import { isDefined } from 'twenty-shared/utils';
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -45,9 +43,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     defaultValues: {
       description,
       icon: icon ?? undefined,
-      isLabelSyncedWithName: isDefined(isLabelSyncedWithName)
-        ? isLabelSyncedWithName
-        : SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE,
+      isLabelSyncedWithName,
       labelPlural,
       labelSingular,
       namePlural,
@@ -68,29 +64,68 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     try {
       setUpdatedObjectNamePlural(objectNamePluralForRedirection);
 
-      await updateOneObjectMetadataItem({
-        idToUpdate: objectMetadataItem.id,
-        updatePayload: formValues,
-      });
+      const updatedObject = await updateObjectMetadata(formValues);
 
-      formConfig.reset(undefined, { keepValues: true });
+      if (formValues.isLabelSyncedWithName !== isLabelSyncedWithName) {
+        formConfig.reset({
+          description,
+          icon: icon ?? undefined,
+          isLabelSyncedWithName: formValues.isLabelSyncedWithName,
+          labelPlural: updatedObject.data?.updateOneObject.labelPlural,
+          labelSingular: updatedObject.data?.updateOneObject.labelSingular,
+          namePlural: updatedObject.data?.updateOneObject.namePlural,
+          nameSingular: updatedObject.data?.updateOneObject.nameSingular,
+        });
+      } else {
+        formConfig.reset(undefined, { keepValues: true });
+      }
 
       navigate(SettingsPath.ObjectDetail, {
         objectNamePlural: objectNamePluralForRedirection,
       });
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      if (error instanceof ZodError) {
-        enqueueSnackBar(error.issues[0].message, {
-          variant: SnackBarVariant.Error,
-        });
-      } else {
-        enqueueSnackBar((error as Error).message, {
-          variant: SnackBarVariant.Error,
-        });
-      }
+      handleError(error);
     }
+  };
+
+  const updateObjectMetadata = async (
+    formValues: SettingsDataModelObjectAboutFormValues,
+  ) => {
+    const updatePayload = { ...formValues };
+
+    if (!objectMetadataItem.isCustom) {
+      const {
+        nameSingular: _,
+        namePlural: __,
+        ...payloadWithoutNames
+      } = updatePayload;
+
+      return await updateOneObjectMetadataItem({
+        idToUpdate: objectMetadataItem.id,
+        updatePayload: payloadWithoutNames,
+      });
+    }
+
+    return await updateOneObjectMetadataItem({
+      idToUpdate: objectMetadataItem.id,
+      updatePayload,
+    });
+  };
+
+  const handleError = (error: unknown) => {
+    // eslint-disable-next-line no-console
+    console.error(error);
+
+    if (error instanceof ZodError) {
+      enqueueSnackBar(error.issues[0].message, {
+        variant: SnackBarVariant.Error,
+      });
+      return;
+    }
+
+    enqueueSnackBar((error as Error).message, {
+      variant: SnackBarVariant.Error,
+    });
   };
 
   return (
