@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { ClickhouseService } from 'src/database/clickhouse/clickhouse.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 type CreateEventInput = {
@@ -9,7 +10,10 @@ type CreateEventInput = {
 
 @Injectable()
 export class AnalyticsService {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(
+    private readonly environmentService: EnvironmentService,
+    private readonly clickhouseService: ClickhouseService,
+  ) {}
 
   async create(
     createEventInput: CreateEventInput,
@@ -39,15 +43,21 @@ export class AnalyticsService {
           version: '1',
           userId: userId,
           workspaceId: workspaceId,
-          payload: {
-            ...createEventInput.payload,
-          },
+          payload: JSON.stringify(createEventInput.payload),
         };
         break;
     }
 
-    // TODO: send event to clickhouse
-
-    return { success: true };
+    try {
+      if (createEventInput.action === 'pageview') {
+        await this.clickhouseService.insert('pageview', [data]);
+      } else {
+        await this.clickhouseService.insert('events', [data]);
+      }
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to send event to ClickHouse:', error);
+      return { success: false };
+    }
   }
 }
