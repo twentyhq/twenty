@@ -234,9 +234,6 @@ describe('WorkspaceService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
-      jest
-        .spyOn(billingSubscriptionService, 'deleteSubscriptions')
-        .mockResolvedValue();
 
       await service.deleteWorkspace(mockWorkspace.id, true);
 

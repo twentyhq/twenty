@@ -64,26 +64,27 @@ export class BillingSubscriptionService {
 
     const planKey = getPlanKeyFromSubscription(billingSubscription);
 
-    const getStripeProductId = (
-      await this.billingPlanService.getPlanBaseProduct(planKey)
-    )?.stripeProductId;
+    const baseProduct =
+      await this.billingPlanService.getPlanBaseProduct(planKey);
 
-    if (!getStripeProductId) {
+    if (!baseProduct) {
       throw new BillingException(
         'Base product not found',
         BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
       );
     }
 
+    const stripeProductId = baseProduct.stripeProductId;
+
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
         (billingSubscriptionItem) =>
-          billingSubscriptionItem.stripeProductId === getStripeProductId,
+          billingSubscriptionItem.stripeProductId === stripeProductId,
       )?.[0];
 
     if (!billingSubscriptionItem) {
       throw new Error(
-        `Cannot find billingSubscriptionItem for product ${getStripeProductId} for workspace ${workspaceId}`,
+        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
       );
     }
 
