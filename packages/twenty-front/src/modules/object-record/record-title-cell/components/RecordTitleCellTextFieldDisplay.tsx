@@ -6,7 +6,6 @@ import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 const StyledDiv = styled.div`
-  align-items: center;
   background: inherit;
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};

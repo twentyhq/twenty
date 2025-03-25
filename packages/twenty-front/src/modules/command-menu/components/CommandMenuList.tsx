@@ -119,7 +119,6 @@ export const CommandMenuList = ({
                     return (
                       <SelectableItem itemId={item.id} key={item.id}>
                         <CommandMenuItem
-                          key={item.id}
                           id={item.id}
                           Icon={item.Icon}
                           label={item.label}
