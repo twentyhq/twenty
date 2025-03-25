@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui';
 
@@ -65,32 +66,38 @@ export const TitleInput = ({
     }
   };
 
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
   const handleLeaveFocus = () => {
     setIsOpened(false);
+    goBackToPreviousHotkeyScope();
   };
 
   useRegisterInputEvents<string>({
     inputRef: wrapperRef,
     inputValue: draftValue ?? '',
     onEnter: () => {
-      onEnter?.();
       handleLeaveFocus();
+      onEnter?.();
     },
     onEscape: () => {
-      onEscape?.();
       handleLeaveFocus();
+      onEscape?.();
     },
     onClickOutside: () => {
-      onClickOutside?.();
       handleLeaveFocus();
+      onClickOutside?.();
     },
     onTab: () => {
-      onTab?.();
       handleLeaveFocus();
+      onTab?.();
     },
     onShiftTab: () => {
-      onShiftTab?.();
       handleLeaveFocus();
+      onShiftTab?.();
     },
     hotkeyScope: hotkeyScope,
   });
@@ -114,6 +121,7 @@ export const TitleInput = ({
           onClick={() => {
             if (!disabled) {
               setIsOpened(true);
+              setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
             }
           }}
         >
