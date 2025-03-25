@@ -108,11 +108,11 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const handleFilterClick = () => {
     if (column.type === 'ACTOR') {
       setFieldMetadataItemIdUsedInDropdown(column.fieldMetadataId);
-      setObjectFilterDropdownSubMenuFieldType(column.type);
-    } else {
-      closeDropdown();
-      onToggleColumnFilter?.(column.fieldMetadataId);
+      return setObjectFilterDropdownSubMenuFieldType(column.type);
     }
+
+    closeDropdown();
+    return onToggleColumnFilter?.(column.fieldMetadataId);
   };
 
   const handleAddFilterForActor = (
@@ -121,11 +121,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
   ) => {
     setFieldMetadataItemIdUsedInDropdown(null);
     closeDropdown();
+
     if (isDefined(operand)) {
-      onToggleColumnFilter?.(fieldMetadataId, operand);
-    } else {
-      onToggleColumnFilter?.(fieldMetadataId);
+      return onToggleColumnFilter?.(fieldMetadataId, operand);
     }
+
+    return onToggleColumnFilter?.(fieldMetadataId);
   };
 
   const isSubMenuOpen =
@@ -133,7 +134,11 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   return (
     <DropdownMenuItemsContainer>
-      {!isSubMenuOpen ? (
+      {isSubMenuOpen ? (
+        <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu
+          handelAddFilterForActor={handleAddFilterForActor}
+        />
+      ) : (
         <>
           {isFilterable && (
             <MenuItem
@@ -172,10 +177,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
             />
           )}
         </>
-      ) : (
-        <ObjectFilterDropdownFilterSelectCompositeFieldSubMenu
-          handelAddFilterForActor={handleAddFilterForActor}
-        />
       )}
     </DropdownMenuItemsContainer>
   );

@@ -54,7 +54,7 @@ export const ObjectFilterDropdownOperandSelect = ({
     filterDropdownId,
   );
 
-  const isActorAndIs =
+  const isActorAndIsOperand =
     fieldMetadataItemUsedInDropdown?.type === 'ACTOR' &&
     selectedOperandInDropdown !== null &&
     [ViewFilterOperand.Is, ViewFilterOperand.IsNot].includes(
@@ -66,7 +66,9 @@ export const ObjectFilterDropdownOperandSelect = ({
         filterType: getFilterTypeFromFieldType(
           fieldMetadataItemUsedInDropdown.type,
         ),
-        subFieldName: isActorAndIs ? 'source' : subFieldNameUsedInDropdown,
+        subFieldName: isActorAndIsOperand
+          ? 'source'
+          : subFieldNameUsedInDropdown,
       })
     : [];
 

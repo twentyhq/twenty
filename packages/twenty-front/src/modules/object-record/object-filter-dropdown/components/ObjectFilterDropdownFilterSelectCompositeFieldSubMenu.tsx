@@ -23,14 +23,15 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useState } from 'react';
-import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 
+type ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps = {
+  handelAddFilterForActor: (id: string, operand?: ViewFilterOperand) => void;
+};
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
   handelAddFilterForActor,
-}: {
-  handelAddFilterForActor: (id: string, operand?: ViewFilterOperand) => void;
-}) => {
+}: ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps) => {
   const [searchText] = useState('');
 
   const { getIcon } = useIcons();
@@ -171,10 +172,12 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
           testId={`select-filter-${-1}`}
           onClick={() => {
             if (isDefined(handelAddFilterForActor)) {
-              handelAddFilterForActor(fieldMetadataItemUsedInDropdown?.id);
-            } else {
-              handleSelectFilter(fieldMetadataItemUsedInDropdown);
+              return handelAddFilterForActor(
+                fieldMetadataItemUsedInDropdown?.id,
+              );
             }
+
+            return handleSelectFilter(fieldMetadataItemUsedInDropdown);
           }}
           LeftIcon={IconApps}
           text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
@@ -186,26 +189,28 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
               key={`select-filter-${index}`}
               testId={`select-filter-${index}`}
               onClick={() => {
-                if (isDefined(fieldMetadataItemUsedInDropdown)) {
-                  if (isDefined(handelAddFilterForActor)) {
-                    const type = getFilterTypeFromFieldType(
-                      fieldMetadataItemUsedInDropdown.type,
-                    );
-                    const operand = getRecordFilterOperands({
-                      filterType: type,
-                      subFieldName: subFieldName,
-                    })[0];
-                    handelAddFilterForActor(
-                      fieldMetadataItemUsedInDropdown.id,
-                      operand,
-                    );
-                  } else {
-                    handleSelectFilter(
-                      fieldMetadataItemUsedInDropdown,
-                      subFieldName,
-                    );
-                  }
+                if (!isDefined(fieldMetadataItemUsedInDropdown)) {
+                  return;
                 }
+
+                if (!isDefined(handelAddFilterForActor)) {
+                  return handleSelectFilter(
+                    fieldMetadataItemUsedInDropdown,
+                    subFieldName,
+                  );
+                }
+
+                const type = getFilterTypeFromFieldType(
+                  fieldMetadataItemUsedInDropdown.type,
+                );
+                const operand = getRecordFilterOperands({
+                  filterType: type,
+                  subFieldName: subFieldName,
+                })[0];
+                return handelAddFilterForActor(
+                  fieldMetadataItemUsedInDropdown.id,
+                  operand,
+                );
               }}
               text={getCompositeSubFieldLabel(
                 objectFilterDropdownSubMenuFieldType,
