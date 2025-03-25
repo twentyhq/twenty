@@ -14,22 +14,21 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui';
 import { getOperandLabel } from '../utils/getOperandLabel';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
 `;
 
-type ObjectFilterDropdownFilterInputProps = {
+type ObjectFilterDropdownOperandSelectProps = {
   filterDropdownId?: string;
 };
-
 export const ObjectFilterDropdownOperandSelect = ({
   filterDropdownId,
-}: ObjectFilterDropdownFilterInputProps) => {
+}: ObjectFilterDropdownOperandSelectProps) => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -50,24 +49,24 @@ export const ObjectFilterDropdownOperandSelect = ({
 
   const { closeDropdown } = useDropdown();
 
-const selectedOperandInDropdown = useRecoilComponentValueV2(
-  selectedOperandInDropdownComponentState,
-  filterDropdownId,
-);
+  const selectedOperandInDropdown = useRecoilComponentValueV2(
+    selectedOperandInDropdownComponentState,
+    filterDropdownId,
+  );
 
-const isActorAndIs =
-  fieldMetadataItemUsedInDropdown?.type=="ACTOR" && selectedOperandInDropdown !== null &&
-  [
-    ViewFilterOperand.Is,
-    ViewFilterOperand.IsNot,
-  ].includes(selectedOperandInDropdown);
+  const isActorAndIs =
+    fieldMetadataItemUsedInDropdown?.type === 'ACTOR' &&
+    selectedOperandInDropdown !== null &&
+    [ViewFilterOperand.Is, ViewFilterOperand.IsNot].includes(
+      selectedOperandInDropdown,
+    );
 
   const operandsForFilterType = isDefined(fieldMetadataItemUsedInDropdown)
     ? getRecordFilterOperands({
         filterType: getFilterTypeFromFieldType(
           fieldMetadataItemUsedInDropdown.type,
         ),
-        subFieldName: isActorAndIs?"source":subFieldNameUsedInDropdown,
+        subFieldName: isActorAndIs ? 'source' : subFieldNameUsedInDropdown,
       })
     : [];
 

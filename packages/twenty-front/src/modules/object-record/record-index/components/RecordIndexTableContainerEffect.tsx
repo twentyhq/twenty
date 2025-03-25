@@ -51,8 +51,8 @@ export const RecordIndexTableContainerEffect = () => {
 
   useEffect(() => {
     setOnToggleColumnFilter(
-      () => (fieldMetadataId: string,operand?:ViewFilterOperand) =>
-        handleToggleColumnFilter(fieldMetadataId,operand),
+      () => (fieldMetadataId: string, operand?: ViewFilterOperand) =>
+        handleToggleColumnFilter(fieldMetadataId, operand),
     );
   }, [setOnToggleColumnFilter, handleToggleColumnFilter]);
 

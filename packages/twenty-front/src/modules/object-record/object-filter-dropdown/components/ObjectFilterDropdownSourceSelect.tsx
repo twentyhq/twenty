@@ -62,11 +62,13 @@ export const ObjectFilterDropdownSourceSelect = ({
   const sourceTypes = getActorSourceMultiSelectOptions(
     objectFilterDropdownSelectedRecordIds,
   );
- const selectedFilterValues = Array.isArray(selectedFilter?.value)
-  ? selectedFilter.value
-  : isDefined(selectedFilter?.value) && typeof selectedFilter.value === "string" && selectedFilter.value.trim() !== ""
-    ? JSON.parse(selectedFilter.value)
-    : [];
+  const selectedFilterValues = Array.isArray(selectedFilter?.value)
+    ? selectedFilter.value
+    : isDefined(selectedFilter?.value) &&
+        typeof selectedFilter.value === 'string' &&
+        selectedFilter.value.trim() !== ''
+      ? JSON.parse(selectedFilter.value)
+      : [];
 
   const filteredSelectedItems = sourceTypes
     .filter((option) => selectedFilterValues.includes(option.id))

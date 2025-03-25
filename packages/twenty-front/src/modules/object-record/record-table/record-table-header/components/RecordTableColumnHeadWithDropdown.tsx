@@ -24,7 +24,7 @@ export const RecordTableColumnHeadWithDropdown = ({
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
     useToggleScrollWrapper();
 
-    const filterDropdownId = 'view-filter';
+  const filterDropdownId = 'view-filter';
 
   const handleDropdownOpen = useCallback(() => {
     toggleScrollXWrapper(false);
@@ -37,19 +37,21 @@ export const RecordTableColumnHeadWithDropdown = ({
   }, [toggleScrollXWrapper, toggleScrollYWrapper]);
 
   return (
-      <ObjectFilterDropdownComponentInstanceContext.Provider
-          value={{ instanceId: filterDropdownId }}
-        >
-    <StyledDropdown
-      onOpen={handleDropdownOpen}
-      onClose={handleDropdownClose}
-      dropdownId={column.fieldMetadataId + '-header'}
-      clickableComponent={<RecordTableColumnHead column={column} />}
-      dropdownComponents={<RecordTableColumnHeadDropdownMenu column={column} />}
-      dropdownOffset={{ x: -1 }}
-      dropdownPlacement="bottom-start"
-      dropdownHotkeyScope={{ scope: column.fieldMetadataId + '-header' }}
+    <ObjectFilterDropdownComponentInstanceContext.Provider
+      value={{ instanceId: filterDropdownId }}
+    >
+      <StyledDropdown
+        onOpen={handleDropdownOpen}
+        onClose={handleDropdownClose}
+        dropdownId={column.fieldMetadataId + '-header'}
+        clickableComponent={<RecordTableColumnHead column={column} />}
+        dropdownComponents={
+          <RecordTableColumnHeadDropdownMenu column={column} />
+        }
+        dropdownOffset={{ x: -1 }}
+        dropdownPlacement="bottom-start"
+        dropdownHotkeyScope={{ scope: column.fieldMetadataId + '-header' }}
       />
-      </ObjectFilterDropdownComponentInstanceContext.Provider>
+    </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };

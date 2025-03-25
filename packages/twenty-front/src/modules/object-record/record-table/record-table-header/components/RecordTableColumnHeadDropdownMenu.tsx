@@ -23,7 +23,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 
@@ -49,7 +49,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   );
 
   const fieldMetadataItemIdUsedInDropdown = useRecoilComponentValueV2(
-    fieldMetadataItemIdUsedInDropdownComponentState
+    fieldMetadataItemIdUsedInDropdownComponentState,
   );
 
   const secondVisibleColumn = visibleTableColumns[1];
@@ -115,7 +115,10 @@ export const RecordTableColumnHeadDropdownMenu = ({
     }
   };
 
-  const handleAddFilterForActor = (fieldMetadataId: string, operand?: ViewFilterOperand) => {
+  const handleAddFilterForActor = (
+    fieldMetadataId: string,
+    operand?: ViewFilterOperand,
+  ) => {
     setFieldMetadataItemIdUsedInDropdown(null);
     closeDropdown();
     if (isDefined(operand)) {
@@ -125,7 +128,8 @@ export const RecordTableColumnHeadDropdownMenu = ({
     }
   };
 
-  const isSubMenuOpen = fieldMetadataItemIdUsedInDropdown === column.fieldMetadataId;
+  const isSubMenuOpen =
+    fieldMetadataItemIdUsedInDropdown === column.fieldMetadataId;
 
   return (
     <DropdownMenuItemsContainer>

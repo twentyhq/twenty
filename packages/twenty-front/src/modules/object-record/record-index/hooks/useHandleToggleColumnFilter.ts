@@ -78,7 +78,7 @@ export const useHandleToggleColumnFilter = ({
   );
 
   const handleToggleColumnFilter = useCallback(
-    async (fieldMetadataId: string,operand?:ViewFilterOperand) => {
+    async (fieldMetadataId: string, operand?: ViewFilterOperand) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
           columnDefinition.fieldMetadataId === fieldMetadataId,
@@ -108,7 +108,9 @@ export const useHandleToggleColumnFilter = ({
           filterType,
         });
 
-          const defaultOperand = operand ? operand: availableOperandsForFilter[0];
+        const defaultOperand = operand
+          ? operand
+          : availableOperandsForFilter[0];
 
         const newFilter: RecordFilter = {
           id: newFilterId,

@@ -3,7 +3,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export const onToggleColumnFilterComponentState = createComponentStateV2<
-  ((fieldMetadataId: string,operand?:ViewFilterOperand) => void) | undefined
+  ((fieldMetadataId: string, operand?: ViewFilterOperand) => void) | undefined
 >({
   key: 'onToggleColumnFilterComponentState',
   defaultValue: undefined,

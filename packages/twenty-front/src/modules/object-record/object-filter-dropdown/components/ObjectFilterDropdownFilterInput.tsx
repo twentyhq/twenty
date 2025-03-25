@@ -71,10 +71,11 @@ export const ObjectFilterDropdownFilterInput = ({
   );
 
   const isActorAndIs =
-    filterType === 'ACTOR' && selectedOperandInDropdown !== null &&
-    [ViewFilterOperand.Is,
-      ViewFilterOperand.IsNot,
- ].includes(selectedOperandInDropdown);
+    filterType === 'ACTOR' &&
+    selectedOperandInDropdown !== null &&
+    [ViewFilterOperand.Is, ViewFilterOperand.IsNot].includes(
+      selectedOperandInDropdown,
+    );
 
   return (
     <>
@@ -97,12 +98,13 @@ export const ObjectFilterDropdownFilterInput = ({
               <ObjectFilterDropdownRecordSelect />
             </>
           )}
-          {filterType === 'ACTOR' && (isActorSourceCompositeFilter || isActorAndIs) && (
-            <>
-              <DropdownMenuSeparator />
-              <ObjectFilterDropdownSourceSelect />
-            </>
-          )}
+          {filterType === 'ACTOR' &&
+            (isActorSourceCompositeFilter || isActorAndIs) && (
+              <>
+                <DropdownMenuSeparator />
+                <ObjectFilterDropdownSourceSelect />
+              </>
+            )}
           {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
             <>
               <ObjectFilterDropdownSearchInput />
