@@ -180,7 +180,11 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
 
       if (newValue === translatedMessage) {
         update.standardOverrides = update.standardOverrides || {};
-        update.standardOverrides[overrideKey] = null;
+        update.standardOverrides.translations =
+          update.standardOverrides.translations || {};
+        update.standardOverrides.translations[locale] =
+          update.standardOverrides.translations[locale] || {};
+        update.standardOverrides.translations[locale][overrideKey] = null;
 
         return true;
       }
