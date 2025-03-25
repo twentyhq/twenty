@@ -14,7 +14,11 @@ const StyledDiv = styled.div`
   cursor: pointer;
   overflow: hidden;
   height: 28px;
-  line-height: 28px;
+  padding: ${({ theme }) => theme.spacing(0, 1.25)};
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
   }

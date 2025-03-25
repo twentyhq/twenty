@@ -104,7 +104,7 @@ const StyledInput = styled.input<
   outline: none;
   padding: ${({ theme, sizeVariant, autoGrow }) =>
     autoGrow
-      ? theme.spacing(1)
+      ? 0
       : sizeVariant === 'sm'
         ? `${theme.spacing(2)} 0`
         : theme.spacing(2)};
@@ -377,11 +377,10 @@ const TextInputV2Component = forwardRef<
 const StyledAutogrowWrapper = styled(AutogrowWrapper)<{
   sizeVariant?: TextInputV2Size;
 }>`
-  border: 1px solid transparent;
+  box-sizing: border-box;
   height: ${({ sizeVariant }) =>
     sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
   padding: 0 ${({ theme }) => theme.spacing(1.25)};
-  box-sizing: border-box;
 `;
 
 const TextInputV2WithAutoGrowWrapper = forwardRef<
