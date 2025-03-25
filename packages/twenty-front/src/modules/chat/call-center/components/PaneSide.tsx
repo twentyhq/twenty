@@ -76,9 +76,9 @@ export const PaneSide = () => {
           isSelected={
             selectedChatId === `${chat.integrationId}_${chat.client.phone}`
           }
-          onSelect={() =>
-            setSelectedChatId(`${chat.integrationId}_${chat.client.phone}`)
-          }
+          onSelect={() => {
+            setSelectedChatId(`${chat.integrationId}_${chat.client.phone}`);
+          }}
         />
       );
     });
@@ -115,10 +115,7 @@ export const PaneSide = () => {
             tabs={tabs}
           />
         </StyledTabListContainer>
-        <StyledChatsContainer>
-          {renderWhatsappChats()}
-          {/* {renderMessengerChats()} */}
-        </StyledChatsContainer>
+        <StyledChatsContainer>{renderWhatsappChats()}</StyledChatsContainer>
       </div>
       <ResolvedChats />
     </StyledPaneSideContainer>

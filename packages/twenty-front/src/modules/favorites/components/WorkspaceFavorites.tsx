@@ -14,10 +14,16 @@ export const WorkspaceFavorites = () => {
     return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
   }
 
+  const filteredWorkspaceFavoritesObjectMetadataItems =
+    workspaceFavoritesObjectMetadataItems.filter(
+      (item) =>
+        item.namePlural !== 'traceables' && item.namePlural !== 'linklogs',
+    );
+
   return (
     <NavigationDrawerSectionForObjectMetadataItems
       sectionTitle={t`Workspace`}
-      objectMetadataItems={workspaceFavoritesObjectMetadataItems}
+      objectMetadataItems={filteredWorkspaceFavoritesObjectMetadataItems}
       isRemote={false}
     />
   );

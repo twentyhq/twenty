@@ -36,5 +36,7 @@ export enum CoreObjectNameSingular {
   WorkflowVersion = 'workflowVersion',
   WorkflowRun = 'workflowRun',
   Charge = 'charge',
+  Traceable = 'traceable',
+  TraceableAccessLog = 'TraceableAccessLog',
   Integration = 'integration',
 }

@@ -184,7 +184,7 @@ export const SettingsServiceCenterAgentAboutForm = ({
                 label="Select Sectors"
                 options={sectorsOptions}
                 defaultValue={selectedSectors}
-                onPersist={onChange}
+                onChange={onChange}
               />
             );
           }}
@@ -199,7 +199,7 @@ export const SettingsServiceCenterAgentAboutForm = ({
               label="Select Inboxes"
               options={inboxesOptions}
               defaultValue={selectedInboxes}
-              onPersist={onChange}
+              onChange={onChange}
             />
           )}
         />

@@ -2,7 +2,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { createContext, useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -18,8 +17,8 @@ import { MessageEventType } from '@/chat/types/MessageEventType';
 import { MessageType, UnreadMessages } from '@/chat/types/MessageType';
 import {
   ChatStatus,
-  statusEnum,
   WhatsappDocument,
+  statusEnum,
 } from '@/chat/types/WhatsappDocument';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { sort } from '@/chat/utils/sort';
@@ -27,6 +26,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { useFindAllAgents } from '@/settings/service-center/agents/hooks/useFindAllAgents';
 import { Sector } from '@/settings/service-center/sectors/types/Sector';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const ChatContext = createContext<CallCenterContextType | null>(null);
@@ -55,7 +56,11 @@ export const CallCenterProvider = ({
   //   useGetAllMessengerIntegrations();
 
   const TAB_LIST_COMPONENT_ID = 'show-whats-page-side-tab-list';
-  const { activeTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+
+  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+    activeTabIdComponentState,
+    TAB_LIST_COMPONENT_ID,
+  );
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
@@ -207,7 +212,13 @@ export const CallCenterProvider = ({
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.STARTED} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
     });
 
-    setSelectedChat(undefined);
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (selectedChat) {
+      const chatId = `${selectedChat.integrationId}_${selectedChat.client.phone}`;
+      setSelectedChatId(chatId);
+    }
+
+    setActiveTabId('mine');
   };
 
   const finalizeService = () => {

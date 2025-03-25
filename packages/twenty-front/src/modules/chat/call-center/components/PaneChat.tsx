@@ -23,7 +23,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Button, IconButton, useIcons } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -259,6 +259,46 @@ const StyledContainer = styled.div<{ isSystemMessage: boolean }>`
   width: 100%;
 `;
 
+const StyledNewMessagesButton = styled.button`
+  position: fixed;
+  bottom: ${({ theme }) => theme.spacing(24)};
+  right: ${({ theme }) => theme.spacing(6)};
+  background-color: ${({ theme }) => theme.background.invertedPrimary};
+  color: ${({ theme }) => theme.font.color.inverted};
+  border: none;
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  padding: ${({ theme }) => theme.spacing(2)};
+  cursor: pointer;
+  z-index: 1000;
+`;
+
+const StyledUnreadMarker = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.color.red};
+  font-weight: bold;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin: ${({ theme }) => theme.spacing(2)} 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: ${({ theme }) => theme.color.red};
+    margin-right: ${({ theme }) => theme.spacing(2)};
+  }
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: ${({ theme }) => theme.color.red};
+    margin-left: ${({ theme }) => theme.spacing(2)};
+  }
+`;
+
 export const PaneChat = () => {
   const {
     selectedChat,
@@ -284,11 +324,25 @@ export const PaneChat = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalImageSrc, setModalImageSrc] = useState<string | null>(null);
 
+  const [isAtBottom, setIsAtBottom] = useState(true);
+  const [newMessagesIndicator, setNewMessagesIndicator] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { uploadFileToBucket } = useUploadFileToBucket();
   const { sendWhatsappMessage } = useSendWhatsappMessages();
   // const { messengerSendMessage } = useMessengerSendMessage();
+
+  useEffect(() => {
+    if (isAtBottom && chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    } else if (!isAtBottom) {
+      setNewMessagesIndicator(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChat?.messages]);
 
   const onSendMessage = async (type: MessageType) => {
     if (!selectedChat) return;
@@ -485,6 +539,28 @@ export const PaneChat = () => {
     }
   };
 
+  const handleScroll = () => {
+    if (chatContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } =
+        chatContainerRef.current;
+      const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
+      setIsAtBottom(isBottom);
+
+      if (isBottom) {
+        setNewMessagesIndicator(false);
+      }
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+      setIsAtBottom(true);
+      setNewMessagesIndicator(false);
+    }
+  };
+
   const renderButtons = () => {
     const IconX = getIcon('IconX');
     const IconMicrophone = getIcon('IconMicrophone');
@@ -587,143 +663,162 @@ export const PaneChat = () => {
   };
 
   return (
-    <StyledPaneChatContainer>
-      <PaneChatHeader />
-      <StyledChatContainer>
-        {selectedChat.messages.map((message, index: number) => {
-          const isSystemMessage = message.from === 'system';
+    <>
+      <StyledPaneChatContainer>
+        <PaneChatHeader />
+        <StyledChatContainer ref={chatContainerRef} onScroll={handleScroll}>
+          {selectedChat.messages.map((message, index: number) => {
+            const isSystemMessage = message.from === 'system';
 
-          const validMessageType =
-            message.type === MessageType.STARTED ||
-            message.type === MessageType.TRANSFER ||
-            message.type === MessageType.END ||
-            message.type === MessageType.ONHOLD;
+            const validMessageType =
+              message.type === MessageType.STARTED ||
+              message.type === MessageType.TRANSFER ||
+              message.type === MessageType.END ||
+              message.type === MessageType.ONHOLD;
 
-          let messageContent;
+            let messageContent;
 
-          if (validMessageType)
-            return <StyledMessageEvent>{message.message}</StyledMessageEvent>;
+            if (validMessageType)
+              return <StyledMessageEvent>{message.message}</StyledMessageEvent>;
 
-          switch (message.type) {
-            case MessageType.IMAGE:
-              messageContent = (
-                <StyledImageContainer
-                  key={index}
-                  isSystemMessage={isSystemMessage}
-                >
-                  <StyledImage
-                    src={message.message}
-                    onClick={() => {
-                      setModalImageSrc(message.message);
-                      setIsModalOpen(true);
-                    }}
-                  />
-                </StyledImageContainer>
-              );
-              break;
-            case MessageType.AUDIO:
-              messageContent = (
-                <StyledAudio
-                  isSystemMessage={isSystemMessage}
-                  key={index}
-                  controls
-                >
-                  {validAudioTypes.map((type) => (
-                    <source src={message.message} type={type} />
-                  ))}
-                </StyledAudio>
-              );
-              break;
-            case MessageType.DOCUMENT: {
-              const msg = message?.message
-                ? message.message.split('/').pop()?.split('?')[0]
-                : null;
-              messageContent = (
-                <StyledDocumentContainer
-                  key={index}
-                  isSystemMessage={isSystemMessage}
-                >
-                  <StyledDocument href={message.message} target="_blank">
-                    {msg}
-                  </StyledDocument>
-                  <OpenOnAnotherTab
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                    color={theme.font.color.primary}
-                  />
-                </StyledDocumentContainer>
-              );
-              break;
+            switch (message.type) {
+              case MessageType.IMAGE:
+                messageContent = (
+                  <StyledImageContainer
+                    key={index}
+                    isSystemMessage={isSystemMessage}
+                  >
+                    <StyledImage
+                      src={message.message}
+                      onClick={() => {
+                        setModalImageSrc(message.message);
+                        setIsModalOpen(true);
+                      }}
+                    />
+                  </StyledImageContainer>
+                );
+                break;
+              case MessageType.AUDIO:
+                messageContent = (
+                  <StyledAudio
+                    isSystemMessage={isSystemMessage}
+                    key={index}
+                    controls
+                  >
+                    {validAudioTypes.map((type) => (
+                      <source src={message.message} type={type} />
+                    ))}
+                  </StyledAudio>
+                );
+                break;
+              case MessageType.DOCUMENT: {
+                const msg = message?.message
+                  ? message.message.split('/').pop()?.split('?')[0]
+                  : null;
+                messageContent = (
+                  <StyledDocumentContainer
+                    key={index}
+                    isSystemMessage={isSystemMessage}
+                  >
+                    <StyledDocument href={message.message} target="_blank">
+                      {msg}
+                    </StyledDocument>
+                    <OpenOnAnotherTab
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                      color={theme.font.color.primary}
+                    />
+                  </StyledDocumentContainer>
+                );
+                break;
+              }
+              case MessageType.VIDEO:
+                messageContent = (
+                  <StyledVideo
+                    isSystemMessage={isSystemMessage}
+                    key={index}
+                    controls
+                  >
+                    {validVideoTypes.map((type) => (
+                      <source src={message.message} type={type} />
+                    ))}
+                  </StyledVideo>
+                );
+                break;
+              default:
+                messageContent = (
+                  <StyledMessage key={index} isSystemMessage={isSystemMessage}>
+                    {formatMessageContent(message.message)}
+                  </StyledMessage>
+                );
+                break;
             }
-            case MessageType.VIDEO:
-              messageContent = (
-                <StyledVideo
-                  isSystemMessage={isSystemMessage}
-                  key={index}
-                  controls
-                >
-                  {validVideoTypes.map((type) => (
-                    <source src={message.message} type={type} />
-                  ))}
-                </StyledVideo>
-              );
-              break;
-            default:
-              messageContent = (
-                <StyledMessage key={index} isSystemMessage={isSystemMessage}>
-                  {formatMessageContent(message.message)}
-                </StyledMessage>
-              );
-              break;
-          }
 
-          return (
-            <StyledMessageContainer
-              key={index}
-              isSystemMessage={isSystemMessage}
-            >
-              <StyledAvatarMessage>
-                <AvatarComponent
-                  message={message}
-                  selectedChat={selectedChat}
-                  currentWorkspaceMember={currentWorkspaceMember}
-                />
-              </StyledAvatarMessage>
-              <StyledContainer isSystemMessage={isSystemMessage}>
-                <StyledMessageItem
+            const unreadIndex =
+              selectedChat.messages.length - selectedChat.unreadMessages;
+            const showUnreadMarker = index === unreadIndex;
+
+            return (
+              <>
+                {showUnreadMarker && (
+                  <StyledUnreadMarker>New Messages</StyledUnreadMarker>
+                )}
+
+                <StyledMessageContainer
                   key={index}
                   isSystemMessage={isSystemMessage}
                 >
-                  <StyledBalloon isSystemMessage={isSystemMessage}>
-                    {messageContent}
-                  </StyledBalloon>
-                  <StyledNameAndTimeContainer isSystemMessage={isSystemMessage}>
-                    <UsernameComponent
+                  <StyledAvatarMessage>
+                    <AvatarComponent
                       message={message}
                       selectedChat={selectedChat}
                       currentWorkspaceMember={currentWorkspaceMember}
                     />
-                    <StyledDateContainer>
-                      {formatDate(message.createdAt).date}
-                      <span> - </span>
-                      {formatDate(message.createdAt).time}
-                    </StyledDateContainer>
-                  </StyledNameAndTimeContainer>
-                </StyledMessageItem>
-              </StyledContainer>
-            </StyledMessageContainer>
-          );
-        })}
-      </StyledChatContainer>
-      {renderButtons()}
-      {isModalOpen && modalImageSrc && (
-        <StyledModalOverlay onClick={closeModal}>
-          <StyledModalImage
-            src={modalImageSrc}
-            onClick={(ev) => ev.stopPropagation()}
-          />
-        </StyledModalOverlay>
+                  </StyledAvatarMessage>
+                  <StyledContainer isSystemMessage={isSystemMessage}>
+                    <StyledMessageItem
+                      key={index}
+                      isSystemMessage={isSystemMessage}
+                    >
+                      <StyledBalloon isSystemMessage={isSystemMessage}>
+                        {messageContent}
+                      </StyledBalloon>
+                      <StyledNameAndTimeContainer
+                        isSystemMessage={isSystemMessage}
+                      >
+                        <UsernameComponent
+                          message={message}
+                          selectedChat={selectedChat}
+                          currentWorkspaceMember={currentWorkspaceMember}
+                        />
+                        <StyledDateContainer>
+                          {formatDate(message.createdAt).date}
+                          <span> - </span>
+                          {formatDate(message.createdAt).time}
+                        </StyledDateContainer>
+                      </StyledNameAndTimeContainer>
+                    </StyledMessageItem>
+                  </StyledContainer>
+                </StyledMessageContainer>
+              </>
+            );
+          })}
+        </StyledChatContainer>
+        {renderButtons()}
+        {isModalOpen && modalImageSrc && (
+          <StyledModalOverlay onClick={closeModal}>
+            <StyledModalImage
+              src={modalImageSrc}
+              onClick={(ev) => ev.stopPropagation()}
+            />
+          </StyledModalOverlay>
+        )}
+      </StyledPaneChatContainer>
+      {newMessagesIndicator && (
+        <StyledNewMessagesButton onClick={scrollToBottom}>
+          More recent
+        </StyledNewMessagesButton>
       )}
-    </StyledPaneChatContainer>
+    </>
   );
 };
