@@ -1,13 +1,16 @@
 import { useLocation } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconRobot, IconSearch, IconSettings } from 'twenty-ui';
 
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
+import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -18,6 +21,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
@@ -34,6 +39,8 @@ export const MainNavigationDrawerItems = () => {
     navigationMemorizedUrlState,
   );
 
+  const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
+
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const setNavigationDrawerExpandedMemorized = useSetRecoilState(
@@ -43,6 +50,26 @@ export const MainNavigationDrawerItems = () => {
   const { t } = useLingui();
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+
+  const chatbotObject = useMemo(() => {
+    return workspaceFavoritesObjectMetadataItems?.find(
+      (item) => item.nameSingular === 'chatbot',
+    );
+  }, [workspaceFavoritesObjectMetadataItems]);
+
+  const viewId = chatbotObject?.id;
+
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
+
+  const lastVisitedViewId = lastVisitedViewPerObjectMetadataItem?.[viewId];
+
+  const navigationPath = getAppPath(
+    AppPath.RecordIndexPage,
+    { objectNamePlural: chatbotObject?.namePlural ?? '' },
+    lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
+  );
 
   return (
     <>
@@ -66,8 +93,8 @@ export const MainNavigationDrawerItems = () => {
           />
           <ChatNavigationNavItem />
           <NavigationDrawerItem
-            label="Bot"
-            to={'/chatbot'}
+            label="Chatbot"
+            to={navigationPath}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}

@@ -214,6 +214,27 @@ export const useRecordShowContainerTabs = (
           timeline: null,
         },
       },
+      [CoreObjectNameSingular.Chatbot]: {
+        hideSummaryAndFields: true,
+        tabs: {
+          workflow: {
+            title: 'Flow',
+            position: 0,
+            Icon: IconSettings,
+            cards: [{ type: CardType.ChatbotCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+          timeline: null,
+          fields: null,
+        },
+      },
     }),
     [],
   );
