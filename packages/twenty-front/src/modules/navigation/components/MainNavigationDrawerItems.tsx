@@ -1,13 +1,19 @@
+/* eslint-disable no-restricted-imports */
 import { useLocation } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconRobot, IconSearch, IconSettings } from 'twenty-ui';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { IconLink, IconRobot, IconSearch, IconSettings } from 'twenty-ui';
+
+import { IconChartBar } from '@tabler/icons-react';
 
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
+import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { ChatNavigationNavItem } from '@/navigation/components/ChatNavigationNavItem';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -18,6 +24,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
@@ -33,6 +41,7 @@ export const MainNavigationDrawerItems = () => {
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
   );
+  const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
@@ -43,6 +52,26 @@ export const MainNavigationDrawerItems = () => {
   const { t } = useLingui();
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+
+  const traceableObject = useMemo(() => {
+    return workspaceFavoritesObjectMetadataItems?.find(
+      (item) => item.nameSingular === 'traceable',
+    );
+  }, [workspaceFavoritesObjectMetadataItems]);
+
+  const viewId = traceableObject?.id;
+
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
+
+  const lastVisitedViewId = lastVisitedViewPerObjectMetadataItem?.[viewId];
+
+  const navigationPath = getAppPath(
+    AppPath.RecordIndexPage,
+    { objectNamePlural: traceableObject?.namePlural ?? '' },
+    lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
+  );
 
   return (
     <>
@@ -72,6 +101,19 @@ export const MainNavigationDrawerItems = () => {
               setNavigationMemorizedUrl(location.pathname + location.search);
             }}
             Icon={IconRobot}
+          />
+          <NavigationDrawerItem
+            label="Dashboard links"
+            to={'/dashboard-links'}
+            Icon={IconChartBar}
+          />
+          <NavigationDrawerItem
+            label="Traceable link"
+            to={navigationPath}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+            Icon={IconLink}
           />
         </StyledMainSection>
       )}
