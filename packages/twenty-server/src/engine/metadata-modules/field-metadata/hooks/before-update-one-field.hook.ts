@@ -78,7 +78,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     const updatableFields = ['isActive', 'isLabelSyncedWithName'];
     const overridableFields = ['label', 'icon', 'description'];
 
-    const hasNonUpdatableFields = Object.keys(instance.update).some(
+    const nonUpdatableFields = Object.keys(instance.update).filter(
       (key) =>
         !updatableFields.includes(key) && !overridableFields.includes(key),
     );
@@ -95,9 +95,9 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       );
     }
 
-    if (hasNonUpdatableFields) {
+    if (nonUpdatableFields.length > 0) {
       throw new BadRequestException(
-        'Only isActive, isLabelSyncedWithName, label, icon and description fields can be updated for standard fields',
+        `Only isActive, isLabelSyncedWithName, label, icon and description fields can be updated for standard fields. Invalid fields: ${nonUpdatableFields.join(', ')}`,
       );
     }
 
