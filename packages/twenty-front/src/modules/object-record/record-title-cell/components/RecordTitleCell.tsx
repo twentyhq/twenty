@@ -16,11 +16,11 @@ import {
 } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
 
 type RecordTitleCellProps = {
   loading?: boolean;
-  sizeVariant?: 'sm' | 'md';
+  sizeVariant?: 'xs' | 'md';
 };
 
 export const RecordTitleCell = ({
@@ -32,16 +32,12 @@ export const RecordTitleCell = ({
   const isFieldInputOnly = useIsFieldInputOnly();
 
   const { closeInlineCell } = useInlineCell(
-    getRecordFieldInputId(
-      recordId,
-      fieldDefinition?.metadata?.fieldName,
-      'title',
-    ),
+    getRecordTitleCellId(recordId, fieldDefinition?.fieldMetadataId),
   );
 
   const handleEnter: FieldInputEvent = (persistField) => {
-    persistField();
     closeInlineCell();
+    persistField();
   };
 
   const handleEscape = () => {
@@ -49,13 +45,13 @@ export const RecordTitleCell = ({
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    persistField();
     closeInlineCell();
+    persistField();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    persistField();
     closeInlineCell();
+    persistField();
   };
 
   const handleClickOutside: FieldInputClickOutsideEvent = (
@@ -63,9 +59,8 @@ export const RecordTitleCell = ({
     event,
   ) => {
     event.stopImmediatePropagation();
-
-    persistField();
     closeInlineCell();
+    persistField();
   };
 
   const recordTitleCellContextValue: RecordTitleCellContextProps = {
@@ -87,10 +82,9 @@ export const RecordTitleCell = ({
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
-        instanceId: getRecordFieldInputId(
+        instanceId: getRecordTitleCellId(
           recordId,
-          fieldDefinition?.metadata?.fieldName,
-          'title',
+          fieldDefinition?.fieldMetadataId,
         ),
       }}
     >

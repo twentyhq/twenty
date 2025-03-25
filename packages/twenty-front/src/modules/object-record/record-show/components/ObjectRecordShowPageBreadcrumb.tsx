@@ -89,7 +89,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
             isDisplayModeFixHeight: true,
           }}
         >
-          <RecordTitleCell sizeVariant="sm" />
+          <RecordTitleCell sizeVariant="xs" />
         </FieldContext.Provider>
       </StyledTitle>
     </StyledEditableTitleContainer>
