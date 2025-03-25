@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
@@ -10,14 +10,20 @@ export const DropdownOnToggleEffect = ({
   onDropdownOpen?: () => void;
 }) => {
   const { isDropdownOpen } = useDropdown();
+  const [currentIsDropdownOpen, setCurrentIsDropdownOpen] =
+    useState(isDropdownOpen);
 
   useEffect(() => {
-    if (isDropdownOpen) {
+    if (isDropdownOpen && !currentIsDropdownOpen) {
+      setCurrentIsDropdownOpen(isDropdownOpen);
       onDropdownOpen?.();
-    } else {
+    }
+
+    if (!isDropdownOpen && currentIsDropdownOpen) {
+      setCurrentIsDropdownOpen(isDropdownOpen);
       onDropdownClose?.();
     }
-  }, [isDropdownOpen, onDropdownClose, onDropdownOpen]);
+  }, [currentIsDropdownOpen, isDropdownOpen, onDropdownClose, onDropdownOpen]);
 
   return null;
 };

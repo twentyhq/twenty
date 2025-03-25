@@ -29,7 +29,9 @@ export const useOpenActivityTargetInlineCellEditMode = () => {
             (objectMetadataItem) =>
               objectMetadataItem.isSearchable &&
               objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task &&
-              objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note,
+              objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
+              objectMetadataItem.nameSingular !==
+                CoreObjectNameSingular.WorkspaceMember,
           );
 
         set(

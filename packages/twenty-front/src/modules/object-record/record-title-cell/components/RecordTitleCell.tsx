@@ -8,6 +8,7 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { useInlineCell } from '../../record-inline-cell/hooks/useInlineCell';
 
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordTitleCellContainer } from '@/object-record/record-title-cell/components/RecordTitleCellContainer';
 import {
   RecordTitleCellContext,
@@ -15,10 +16,7 @@ import {
 } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useRecoilCallback } from 'recoil';
+import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
 
 type RecordTitleCellProps = {
   loading?: boolean;
@@ -33,7 +31,9 @@ export const RecordTitleCell = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const { closeInlineCell } = useInlineCell();
+  const { closeInlineCell } = useInlineCell(
+    getRecordTitleCellId(recordId, fieldDefinition?.fieldMetadataId),
+  );
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -54,38 +54,19 @@ export const RecordTitleCell = ({
     closeInlineCell();
   };
 
-  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
-    ({ snapshot }) =>
-      (persistField, event) => {
-        const recordFieldDropdownId = getDropdownFocusIdForRecordField(
-          recordId,
-          fieldDefinition.fieldMetadataId,
-          'inline-cell',
-        );
+  const handleClickOutside: FieldInputClickOutsideEvent = (
+    persistField,
+    event,
+  ) => {
+    event.stopImmediatePropagation();
 
-        const activeDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
-          .getValue();
-
-        if (recordFieldDropdownId !== activeDropdownFocusId) {
-          return;
-        }
-
-        event.stopImmediatePropagation();
-
-        persistField();
-        closeInlineCell();
-      },
-    [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
-  );
+    persistField();
+    closeInlineCell();
+  };
 
   const recordTitleCellContextValue: RecordTitleCellContextProps = {
     editModeContent: (
       <RecordTitleCellFieldInput
-        recordFieldInputId={getRecordFieldInputId(
-          recordId,
-          fieldDefinition?.metadata?.fieldName,
-        )}
         onEnter={handleEnter}
         onEscape={handleEscape}
         onTab={handleTab}
@@ -100,10 +81,19 @@ export const RecordTitleCell = ({
   };
 
   return (
-    <FieldFocusContextProvider>
-      <RecordTitleCellContext.Provider value={recordTitleCellContextValue}>
-        <RecordTitleCellContainer />
-      </RecordTitleCellContext.Provider>
-    </FieldFocusContextProvider>
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: getRecordTitleCellId(
+          recordId,
+          fieldDefinition?.fieldMetadataId,
+        ),
+      }}
+    >
+      <FieldFocusContextProvider>
+        <RecordTitleCellContext.Provider value={recordTitleCellContextValue}>
+          <RecordTitleCellContainer />
+        </RecordTitleCellContext.Provider>
+      </FieldFocusContextProvider>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };

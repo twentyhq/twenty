@@ -1,5 +1,4 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createCustomTextFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-custom-text-field-metadata.util';
@@ -50,14 +49,6 @@ describe('deleteOne', () => {
       viewId = createdView.id;
     });
     afterEach(async () => {
-      // delete view
-      const deleteViewOperation = deleteOneOperationFactory({
-        objectMetadataSingularName: 'View',
-        gqlFields: 'id',
-        recordId: viewId,
-      });
-
-      await makeGraphqlAPIRequest(deleteViewOperation);
       await deleteOneObjectMetadataItem(listingObjectId);
     });
     it('should reset kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {

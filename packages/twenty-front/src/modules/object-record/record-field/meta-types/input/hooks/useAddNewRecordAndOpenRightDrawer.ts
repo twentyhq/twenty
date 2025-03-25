@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -9,11 +9,11 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import { isDefined } from 'twenty-shared';
 import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;
@@ -42,7 +42,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
         .nameSingular ?? 'workspaceMember',
   });
 
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   if (
     relationObjectMetadataNameSingular === 'workspaceMember' ||

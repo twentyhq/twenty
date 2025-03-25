@@ -18,6 +18,7 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#. js-lingui-id: gdf0h7
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 #~ msgid ""
 #~ " These are only the server values. Ensure your worker environment has the\n"
@@ -28,128 +29,185 @@ msgstr ""
 #~ "        same variables and values, this is required for asynchronous tasks like\n"
 #~ "        email sync."
 
+#. js-lingui-id: ypz2+E
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Empty"
 msgstr ": Gol"
 
+#. js-lingui-id: CE75IR
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Future"
 msgstr ": Viitor"
 
+#. js-lingui-id: Nk/d+Z
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Not"
 msgstr ": Nu"
 
+#. js-lingui-id: 1ORnec
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": NotEmpty"
 msgstr ": Nu este gol"
 
+#. js-lingui-id: 11QpPG
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": NotNull"
 msgstr ": Nu este null"
 
+#. js-lingui-id: gK4ysT
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Past"
 msgstr ": Trecut"
 
+#. js-lingui-id: 4iJDkt
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today"
 msgstr ": Azi"
 
+#. js-lingui-id: ZBGbuw
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+msgid "[empty string]"
+msgstr "[șir gol]"
+
+#. js-lingui-id: J/hVSQ
+#. placeholder {0}: theme.id
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
+msgid "{0}"
+msgstr "{0}"
+
+#. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} din {fieldLabel}"
 
+#. js-lingui-id: uogEAL
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "{apiKeyName} API Key"
 msgstr "Cheie API {apiKeyName}"
 
+#. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx
 msgid "{name}"
 msgstr "{name}"
 
+#. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} va fi retras din următorul rol:"
 
+#. js-lingui-id: YT0WJ4
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "1 000 workflow node executions"
-msgstr "1 000 de execuții ale nodurilor fluxului de lucru"
+#~ msgid "1 000 workflow node executions"
+#~ msgstr "1 000 de execuții ale nodurilor fluxului de lucru"
 
+#. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
 msgstr "1. Selectați un tip de câmp"
 
+#. js-lingui-id: SLjiTq
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "1. Type"
 msgstr "1. Tip"
 
+#. js-lingui-id: AvXug3
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "10 000 workflow node executions"
+msgstr ""
+
+#. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12h ({hour12Label})"
 
+#. js-lingui-id: yXvRMf
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "2. Configure"
 msgstr "2. Configurează"
 
+#. js-lingui-id: 0HAF12
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. Configurează câmpul"
 
+#. js-lingui-id: kAtmAv
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "20 000 workflow node executions"
+msgstr ""
+
+#. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
 msgstr "24h ({hour24Label})"
 
+#. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Un mediu comun unde veți putea gestiona relația cu clienții împreună cu echipa dumneavoastră."
 
+#. js-lingui-id: 09tRFp
 #: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Capacitatea de a interacționa cu fiecare obiect"
 
+#. js-lingui-id: ssjjFt
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Abort"
 msgstr "Anulează"
 
+#. js-lingui-id: uyJsf6
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "Despre"
 
+#. js-lingui-id: DhgC7B
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About this user"
 msgstr "Despre acest utilizator"
 
+#. js-lingui-id: PtK3Kn
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
 msgstr "Despre acest spațiu de lucru"
 
+#. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Account"
 msgstr "Cont"
 
+#. js-lingui-id: nD0Y+a
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Account Deletion"
 msgstr "Ștergerea contului"
 
+#. js-lingui-id: bPwFdf
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Accounts"
 msgstr "Conturi"
 
+#. js-lingui-id: bwRvnp
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Action"
+msgstr ""
+
+#. js-lingui-id: 7L01XJ
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
 msgid "Actions"
 msgstr "Acțiuni"
 
+#. js-lingui-id: FQBaXG
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -157,103 +215,124 @@ msgstr "Acțiuni"
 msgid "Activate"
 msgstr "Activează"
 
+#. js-lingui-id: tu8A/k
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Activate Workflow"
 msgstr "Activează Fluxul de Lucru"
 
+#. js-lingui-id: F6pfE9
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Active"
 msgstr "Activ"
 
+#. js-lingui-id: Mue4oc
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "Chei API active create de tine sau echipa ta."
 
+#. js-lingui-id: m16xKo
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #~ msgid "Add"
 #~ msgstr "Add"
 
+#. js-lingui-id: MPPZ54
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Adaugă cont"
 
+#. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
 msgstr "Adaugă Domeniu de Acces Aprobat"
 
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm.tsx
+#. js-lingui-id: DpV70M
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "Adaugă câmpul"
 
+#. js-lingui-id: vCSBPD
 #: src/modules/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton.tsx
 msgid "Add filter"
 msgstr "Adaugă filtru"
 
+#. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
 msgstr "Adaugă nou"
 
+#. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "Adaugă obiectul"
 
+#. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Add option"
 msgstr "Adaugă opțiune"
 
+#. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Adaugă Furnizor de Identitate SSO"
 
+#. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Add to blocklist"
 msgstr "Adaugă la lista neagră"
 
+#. js-lingui-id: yVOmgE
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Add to Favorite"
 msgstr "Adaugă la favorite"
 
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
+#. js-lingui-id: pBsoKL
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Add to favorites"
 msgstr "Adaugă la favorite"
 
+#. js-lingui-id: q9e2Bs
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
 msgstr "Adaugă vizualizare"
 
+#. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
 msgstr "Adaugă primul tău {objectLabel}"
 
+#. js-lingui-id: vLO+NG
 #: src/modules/ui/layout/show-page/components/ShowPageSummaryCard.tsx
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Adăugat {beautifiedCreatedAt}"
 
+#. js-lingui-id: jEHeq+
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Added {beautifyPastDateRelative}"
 msgstr "Adăugat {beautifyPastDateRelative}"
 
+#. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "Adăugat la lista neagră"
 
+#. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
 msgstr "Ajustează setările legate de rol"
 
+#. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -262,120 +341,155 @@ msgstr "Ajustează setările legate de rol"
 msgid "Admin Panel"
 msgstr "Panoul de administrare"
 
+#. js-lingui-id: tMFFwF
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "Filtru avansat"
 
+#. js-lingui-id: WsKDNF
+#: src/modules/navigation/components/AppNavigationDrawer.tsx
+msgid "Advanced:"
+msgstr "Avansat:"
+
+#. js-lingui-id: 1Cox/a
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Afrikaans"
 msgstr "Africană"
 
+#. js-lingui-id: N40H+G
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "All"
 msgstr "Toate"
 
+#. js-lingui-id: 3saA7W
 #: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx
 msgid "All ({relationRecordsCount})"
 msgstr "Toate ({relationRecordsCount})"
 
+#. js-lingui-id: 9ljU00
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "All Actions"
 msgstr "Toate acțiunile"
 
+#. js-lingui-id: 7EZqN0
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account will be deleted"
 msgstr "Toate emailurile și evenimentele legate de acest cont vor fi șterse"
 
+#. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "All lines"
 msgstr "Toate liniile"
 
+#. js-lingui-id: aFE/OW
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "All Objects"
 msgstr "Toate obiectele"
 
+#. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "All roles"
 msgstr "Toate rolurile"
 
+#. js-lingui-id: MLmnB2
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "All workspaces this user is a member of"
 msgstr "Toate spațiile de lucru din care face parte acest utilizator"
 
+#. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
 msgstr "Permite autentificarea prin funcția de single sign-on a Google."
 
+#. js-lingui-id: dea+zy
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Permite autentificarea prin funcția de single sign-on a Microsoft."
 
+#. js-lingui-id: wMg43c
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Permite invitația de noi utilizatori prin distribuirea unui link de invitație."
 
+#. js-lingui-id: vHeVg5
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow users to sign in with an email and password."
 msgstr "Permite utilizatorilor să se autentifice cu email și parolă."
 
+#. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
 msgid "An error occurred while updating password"
 msgstr "A survenit o eroare în timpul actualizării parolei"
 
+#. js-lingui-id: mJ6m4C
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "An optional description"
 msgstr "O descriere opțională"
 
+#. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "An unexpected error occurred"
 msgstr "A apărut o eroare neașteptată"
 
+#. js-lingui-id: HZFm5R
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
 msgstr "și"
 
+#. js-lingui-id: xJR+Wq
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "Oricine are o adresă de email la aceste domenii este permis să se înscrie pentru acest spațiu de lucru."
 
+#. js-lingui-id: OZtEcz
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API"
 msgstr "API"
 
+#. js-lingui-id: 0RqpZr
+#: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
+#. js-lingui-id: yRnk5W
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API Key"
 msgstr "Cheie API"
 
+#. js-lingui-id: r+NRG6
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "API Key copied to clipboard"
 msgstr "Cheia API copiată în clipboard"
 
+#. js-lingui-id: 5h8ooz
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "API keys"
 msgstr "Chei API"
 
+#. js-lingui-id: kAtj+q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "API Name"
 msgstr "Numele API"
 
+#. js-lingui-id: lwCAhN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Plural)"
 msgstr "Nume API (Plural)"
 
+#. js-lingui-id: KclpRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
 msgstr "Numele API (singular)"
 
+#. js-lingui-id: Z3Brb2
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "API values"
 msgstr "Valori API"
 
+#. js-lingui-id: JR6nY7
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -386,160 +500,223 @@ msgstr "Valori API"
 msgid "APIs"
 msgstr "API-uri"
 
+#. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Aspect"
 
+#. js-lingui-id: 9tggYj
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Approved Domains"
 msgstr "Domenii Aprobate"
 
+#. js-lingui-id: 1844JP
 #: src/pages/settings/security/SettingsSecurity.tsx
 #~ msgid "Approved Email Domain"
 #~ msgstr "Approved Email Domain"
 
+#. js-lingui-id: 8HV3WN
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
 msgstr "Arabă"
 
+#. js-lingui-id: 3iX0kh
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Are you sure that you want to change your billing interval?"
 msgstr "Sunteți sigur că doriți să schimbați intervalul de facturare?"
 
+#. js-lingui-id: 3SRf5B
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
 #~ msgstr "Are you sure you want to assign this role?"
 
+#. js-lingui-id: 8Y3Jbl
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
-msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr "Sigur doriți să ștergeți aceste înregistrări? Ele pot fi recuperate din meniul Command ({osControlSymbol} + K)."
+#~ msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
+#~ msgstr "Sigur doriți să ștergeți aceste înregistrări? Ele pot fi recuperate din meniul Command ({osControlSymbol} + K)."
 
+#. js-lingui-id: 2BZAqa
+#: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
+msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
+msgstr ""
+
+#. js-lingui-id: Se0vJw
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
-msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
-msgstr "Sigur doriți să ștergeți această înregistrare? Ea poate fi recuperată din meniul Command ({osControlSymbol} + K)."
+#~ msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
+#~ msgstr "Sigur doriți să ștergeți această înregistrare? Ea poate fi recuperată din meniul Command ({osControlSymbol} + K)."
 
+#. js-lingui-id: yb2hF4
+#: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
+msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
+msgstr ""
+
+#. js-lingui-id: nYD/Cq
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Ascending"
 msgstr "Ascendent"
 
+#. js-lingui-id: 9ch9Mz
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "Atribuiți lui {workspaceMemberName}?"
 
+#. js-lingui-id: rfYmIr
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Atribuiți roluri pentru a specifica permisiunile de acces ale fiecărui membru"
 
+#. js-lingui-id: 2y2quh
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Atribuie membrului"
 
+#. js-lingui-id: OItM/o
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Membrii asignați"
 
+#. js-lingui-id: lxQ+5m
 #: src/modules/settings/roles/components/RolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Asignat către"
 
+#. js-lingui-id: 0dtKl9
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
 msgid "Assignment"
 msgstr "Asignare"
 
+#. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx
 msgid "At least 8 characters long."
 msgstr "Cel puțin 8 caractere lungime."
 
+#. js-lingui-id: Y7Dx6e
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "At least one authentication method must be enabled"
 msgstr "Trebuie activată cel puțin o metodă de autentificare"
 
+#. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Authentication"
 msgstr "Autentificare"
 
+#. js-lingui-id: htuqBH
 #: src/modules/auth/hooks/useVerifyLogin.ts
 msgid "Authentication failed"
 msgstr "Autentificare eșuată"
 
+#. js-lingui-id: yIVrHZ
 #: src/pages/auth/Authorize.tsx
 msgid "Authorize"
 msgstr "Autorizează"
 
+#. js-lingui-id: wTBNbL
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URI"
 msgstr "URI autorizat"
 
+#. js-lingui-id: Ovw0c6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Authorized URL copied to clipboard"
 msgstr "URL-ul autorizat copiat în clipboard"
 
+#. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Auto-creation"
 msgstr "Creare automată"
 
+#. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
 msgstr "Creează automat contacte pentru persoanele cu care ați participat la un eveniment."
 
+#. js-lingui-id: lgw3U4
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people."
 msgstr "Creează automat contacte pentru persoane."
 
+#. js-lingui-id: RpExX0
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Creează automat înregistrări pentru persoane când primiți sau trimiteți emailuri"
 
+#. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Average"
 msgstr "Medie"
 
+#. js-lingui-id: Dht9W3
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Înapoi la conținut"
 
+#. js-lingui-id: R+w/Va
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Billing"
 msgstr "Facturare"
 
+#. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "Lista neagră"
 
+#. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Book a Call"
 msgstr "Programează un apel"
 
+#. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using Twenty, you agree to the"
 msgstr "Folosind Twenty, sunteți de acord cu"
 
+#. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
 msgid "Calculate"
 msgstr "Calculează"
 
+#. js-lingui-id: AjVXBS
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Calendar"
 msgstr "Calendar"
 
+#. js-lingui-id: wRpDAv
+#: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
+msgid "Calendar Event"
+msgstr "Eveniment de calendar"
+
+#. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Calendar settings"
 msgstr "Setări calendar"
 
+#. js-lingui-id: LbIh3Y
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
-msgid "Calendar Sync Status"
-msgstr "Stare Sincronizare Calendar"
+msgid "Calendar Sync"
+msgstr "Sincronizare Calendar"
 
+#. js-lingui-id: HlJKLT
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+#~ msgid "Calendar Sync Status"
+#~ msgstr "Calendar Sync Status"
+
+#. js-lingui-id: EUpfsd
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Calendars"
 msgstr "Calendare"
 
+#. js-lingui-id: msssZq
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Can't change API names for standard objects"
+msgstr ""
+
+#. js-lingui-id: dEgA5A
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -547,153 +724,197 @@ msgstr "Calendare"
 msgid "Cancel"
 msgstr "Anulare"
 
+#. js-lingui-id: 0TllC8
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Cancel anytime"
 msgstr "Anulează oricând"
 
+#. js-lingui-id: rRK/Lf
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Cancel Plan"
 msgstr "Anulează planul"
 
+#. js-lingui-id: N6gPiD
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Cancel your subscription"
 msgstr "Anulează abonamentul"
 
+#. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
 msgstr "Catalană"
 
+#. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Change {to}"
 msgstr "Schimbă {to}"
 
+#. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Change Password"
 msgstr "Schimbă parola"
 
+#. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Simplified"
 msgstr "Chineză — Simplificată"
 
+#. js-lingui-id: dzb4Ep
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Traditional"
 msgstr "Chineză — Tradițională"
 
+#. js-lingui-id: JEFFOR
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Choose an object"
 msgstr "Alegeți un obiect"
 
+#. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
 msgstr "Alegeți între protocoalele OIDC și SAML"
 
+#. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
 msgstr "Alegeți moneda implicită care se va aplica"
 
+#. js-lingui-id: LHce7q
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Choose the fields that will identify your records"
 msgstr "Alegeți câmpurile care vor identifica înregistrările dvs"
 
+#. js-lingui-id: KT6rEB
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Choose your provider"
 msgstr "Alegeți furnizorul dumneavoastră"
 
+#. js-lingui-id: 9qP96p
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your Trial"
 msgstr "Alegeți perioada de încercare"
 
+#. js-lingui-id: xCJdfg
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
 msgid "Clear"
 msgstr "Șterge"
 
+#. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
 msgstr "ID client"
 
+#. js-lingui-id: Bdj4LI
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Secret"
 msgstr "Secret client"
 
+#. js-lingui-id: XUe4cu
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Settings"
 msgstr "Setări Client"
 
+#. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
 msgstr "Închide"
 
+#. js-lingui-id: qYsAlX
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Close command menu"
 msgstr "Închide meniul de comandă"
 
-#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+#. js-lingui-id: EWPtMO
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Code"
+msgstr ""
+
+#. js-lingui-id: H86f9p
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Collapse"
 msgstr "Restrângere"
 
+#. js-lingui-id: Xose0w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
 msgstr "Cod culoare"
 
+#. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
 msgstr "Vizualizare compactă"
 
+#. js-lingui-id: +zUMwJ
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
 msgstr "Configurare conexiune SSO"
 
+#. js-lingui-id: QTNsSm
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure and customize your calendar preferences."
 msgstr "Configurați și personalizați preferințele calendarului dumneavoastră."
 
+#. js-lingui-id: aGwm+D
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure how dates are displayed across the app"
 msgstr "Configurați modul în care sunt afișate datele în aplicație"
 
+#. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
 msgstr "Configurați modul în care ar trebui să afișăm evenimentele dvs. în calendarul dvs"
 
+#. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
 msgstr "Configurați setările de e-mail și calendar."
 
+#. js-lingui-id: 7VpPHA
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Confirmă"
 
+#. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Connect a new account to your workspace"
 msgstr "Conectați un cont nou la spațiul dumneavoastră de lucru"
 
+#. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Conectați-vă cu Google"
 
+#. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Conectați-vă cu Microsoft"
 
+#. js-lingui-id: 9TzudL
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Connected accounts"
 msgstr "Conturi conectate"
 
+#. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Contact auto-creation"
 msgstr "Creare automată contacte"
 
+#. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Contains"
 msgstr "Conține"
 
+#. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Context"
 msgstr "Context"
 
+#. js-lingui-id: xGVfLh
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
@@ -702,27 +923,34 @@ msgstr "Context"
 msgid "Continue"
 msgstr "Continuă"
 
+#. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Continue with Email"
 msgstr "Continuați cu e-mail"
 
+#. js-lingui-id: oZyG4C
 #: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx
 msgid "Continue with Google"
 msgstr "Continuați cu Google"
 
+#. js-lingui-id: ztoybH
 #: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx
 msgid "Continue with Microsoft"
 msgstr "Continuați cu Microsoft"
 
+#. js-lingui-id: u+VWhB
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvCopyableText.tsx
 msgid "Copied to clipboard!"
 msgstr "Copiat în clipboard!"
 
+#. js-lingui-id: CcGOj+
 #: src/modules/command-menu/components/CommandMenu.tsx
 #~ msgid "Copilot"
 #~ msgstr "Copilot"
 
+#. js-lingui-id: he3ygx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -730,134 +958,182 @@ msgstr "Copiat în clipboard!"
 msgid "Copy"
 msgstr "Copiază"
 
+#. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
 msgstr "Copiați link-ul invitației"
 
+#. js-lingui-id: y1eoq1
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Copy link"
 msgstr "Copiază linkul"
 
+#. js-lingui-id: eZ5HO9
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Copy link to view"
 msgstr "Copiază linkul pentru vizualizare"
 
+#. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
 msgstr "Copiați această cheie deoarece nu va mai fi vizibilă"
 
+#. js-lingui-id: SGsgDO
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Core"
 msgstr "Nucleu"
 
+#. js-lingui-id: wBMjJ2
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "Count"
 msgstr "Număr"
 
+#. js-lingui-id: EkZfen
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count all"
 msgstr "Numără tot"
 
+#. js-lingui-id: vQJINq
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count empty"
 msgstr "Numără golurile"
 
+#. js-lingui-id: sLDQbp
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
+msgid "Count false"
+msgstr "Numără fals"
+
+#. js-lingui-id: DzRsDJ
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count not empty"
 msgstr "Numără non-golurile"
 
+#. js-lingui-id: ft6dHY
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
+msgid "Count true"
+msgstr "Numără adevărat"
+
+#. js-lingui-id: 9FZBbf
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"
 msgstr "Numără valorile unice"
 
+#. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create"
 msgstr "Creează"
 
+#. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
 msgstr "Creează un flux de lucru și revino aici pentru a vizualiza versiunile acestuia"
 
+#. js-lingui-id: uXGLuq
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
 msgstr "Creează cheie API"
 
+#. js-lingui-id: d0DCww
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Create new record"
 msgstr "Creează înregistrare nouă"
 
+#. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Create profile"
 msgstr "Creează profil"
 
+#. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/Roles.tsx
 msgid "Create Role"
 msgstr "Creează Rol"
 
+#. js-lingui-id: 6MP9lc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Create select field"
 msgstr "Creează câmp selectabil"
 
+#. js-lingui-id: zt6Erc
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Create view"
 msgstr "Creează vizualizare"
 
+#. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
 msgstr "Creează Webhook"
 
+#. js-lingui-id: kdLGki
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Create Workspace"
+msgstr "Creează Spațiul de Lucru"
+
+#. js-lingui-id: 9chYz/
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Create your workspace"
 msgstr "Creează spațiul tău de lucru"
 
+#. js-lingui-id: d+F6q9
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Created"
 msgstr "Creat"
 
+#. js-lingui-id: Hd06oy
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version"
 msgstr "Versiunea curentă"
 
+#. js-lingui-id: p76aoR
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Current version:"
 #~ msgstr "Current version:"
 
+#. js-lingui-id: XQ681Q
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Domeniu Personalizat"
 
+#. js-lingui-id: 1GTWIA
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Custom domain updated"
 msgstr "Domeniu personalizat actualizat"
 
+#. js-lingui-id: 8skTDV
+#: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Obiecte personalizate"
 
+#. js-lingui-id: qt+EaC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "Personalizează câmpurile disponibile în vizualizările {objectLabelSingular}."
 
+#. js-lingui-id: CMhr4u
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Customize Domain"
 msgstr "Personalizează Domeniul"
 
+#. js-lingui-id: RP2we8
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 msgid "Customize fields"
 msgstr "Personalizați câmpurile"
 
+#. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
 msgstr "Personalizează securitatea spațiului tău de lucru"
 
+#. js-lingui-id: w9VTXG
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Czech"
 msgstr "Cehă"
 
+#. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -867,28 +1143,34 @@ msgstr "Cehă"
 msgid "Danger zone"
 msgstr "Zonă periculoasă"
 
+#. js-lingui-id: Fo2vDn
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Danish"
 msgstr "Daneză"
 
+#. js-lingui-id: pvnfJD
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Dark"
 msgstr "Întunecat"
 
+#. js-lingui-id: TtG/MN
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Data deletion"
 msgstr "Ștergerea datelor"
 
+#. js-lingui-id: 5cNMFz
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Data model"
 msgstr "Model de date"
 
+#. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Data type"
 msgstr "Tip de date"
 
+#. js-lingui-id: mYGY3B
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -896,14 +1178,17 @@ msgstr "Tip de date"
 msgid "Date"
 msgstr "Dată"
 
+#. js-lingui-id: Ud9zHv
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Date and time"
 msgstr "Dată și oră"
 
+#. js-lingui-id: Lhd0oQ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "Date format"
 msgstr "Formatul datei"
 
+#. js-lingui-id: 5y3O+A
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -911,49 +1196,60 @@ msgstr "Formatul datei"
 msgid "Deactivate"
 msgstr "Dezactivează"
 
+#. js-lingui-id: qk4i22
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Deactivate \"Synchronize Objects Labels and API Names\" to set a custom API name"
 msgstr "Dezactivează \"Sincronizarea Etichetelor Obiectelor și Numelor API\" pentru a seta un nume API personalizat"
 
+#. js-lingui-id: T2YbXF
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Deactivate object"
 msgstr "Dezactivează obiectul"
 
+#. js-lingui-id: gexAq8
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Deactivate this field"
 msgstr "Dezactivează acest câmp"
 
+#. js-lingui-id: 4tpC8V
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Deactivate Workflow"
 msgstr "Dezactivează Fluxul de Lucru"
 
+#. js-lingui-id: yAT3be
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Deactivated"
 msgstr "Dezactivat"
 
+#. js-lingui-id: mC21D6
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Default Country"
 msgstr "Țară implicită"
 
+#. js-lingui-id: 4zuPQL
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "Codul de țară implicit"
 
+#. js-lingui-id: aQ8swY
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Default Value"
 msgstr "Valoare implicită"
 
+#. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
 msgstr "Definiți numele și descrierea obiectului dvs"
 
+#. js-lingui-id: bQkkFU
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
 msgstr "Definiți ce va fi vizibil pentru alți utilizatori în spațiul dvs. de lucru"
 
+#. js-lingui-id: cnGeoo
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -961,19 +1257,18 @@ msgstr "Definiți ce va fi vizibil pentru alți utilizatori în spațiul dvs. de
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete"
 msgstr "Șterge"
 
+#. js-lingui-id: ZDGm40
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -981,126 +1276,153 @@ msgstr "Șterge"
 msgid "Delete account"
 msgstr "Șterge contul"
 
+#. js-lingui-id: gAz0S5
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data"
 msgstr "Șterge contul și toate datele asociate"
 
+#. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete API key"
 msgstr "Șterge cheia API"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#. js-lingui-id: 4dpwsE
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete record"
 msgstr "Șterge înregistrare"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#. js-lingui-id: kf0A63
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete records"
 msgstr "Ștergere înregistrări"
 
+#. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "Șterge această integrare"
 
+#. js-lingui-id: aRG49z
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Delete view"
 msgstr "Șterge vizualizarea"
 
+#. js-lingui-id: snMaH4
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Delete webhook"
 msgstr "Șterge webhook"
 
+#. js-lingui-id: UA2IpC
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Delete workflow"
 msgstr "Șterge fluxul de lucru"
 
+#. js-lingui-id: ABwG9x
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Delete workflows"
 msgstr "Șterge fluxuri de lucru"
 
+#. js-lingui-id: kYu0eF
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete workspace"
 msgstr "Șterge spațiul de lucru"
 
+#. js-lingui-id: mk2Ygs
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Delete your whole workspace"
 msgstr "Șterge întregul spațiu de lucru"
 
+#. js-lingui-id: vGjmyl
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Deleted"
 msgstr "Șters"
 
+#. js-lingui-id: kcGoDz
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #~ msgid "Deleted {objectNamePlural}"
 #~ msgstr "Deleted {objectNamePlural}"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#. js-lingui-id: WH/5rN
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Deleted records"
 msgstr "Înregistrări șterse"
 
+#. js-lingui-id: /TC7qI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Deleted runs"
 msgstr "Rulări șterse"
 
+#. js-lingui-id: Wj5mzm
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Deleted versions"
 msgstr "Versiuni șterse"
 
+#. js-lingui-id: gw3Tlm
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Deleted workflows"
 msgstr "Fluxuri de lucru șterse"
 
+#. js-lingui-id: Cko536
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 msgid "Descending"
 msgstr "Descendent"
 
+#. js-lingui-id: Nu4oKW
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Description"
 msgstr "Descriere"
 
+#. js-lingui-id: 2xxBws
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Destroy"
 msgstr "Distrugere"
 
+#. js-lingui-id: n+SX4g
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Developers"
 msgstr "Dezvoltatori"
 
+#. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Discard Draft"
 msgstr "Renunță la ciornă"
 
+#. js-lingui-id: Xm/s+u
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Display"
 msgstr "Afișare"
 
+#. js-lingui-id: 8Vg8H7
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Display as a plain number or a percentage"
 msgstr "Afișați ca număr simplu sau procentaj"
 
+#. js-lingui-id: i66xz9
 #: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Display as relative date"
 msgstr "Afisează ca dată relativă"
 
+#. js-lingui-id: GoHpxA
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Display text on multiple lines"
 msgstr "Afișați textul pe mai multe linii"
 
+#. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
 msgstr "Nu conține"
 
+#. js-lingui-id: EoKe5U
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -1108,117 +1430,146 @@ msgstr "Nu conține"
 msgid "Domain"
 msgstr "Domeniu"
 
+#. js-lingui-id: yGpVSw
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain added successfully."
 msgstr "Domeniul a fost adăugat cu succes."
 
+#. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
 msgstr "Domeniile trebuie să fie mai mici de 256 de caractere, să nu conțină spații și să nu conțină caractere speciale."
 
+#. js-lingui-id: KUxVkp
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Don’t auto-create contacts."
 msgstr "Nu se creează automat contacte."
 
+#. js-lingui-id: cx0Ws8
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t create contacts from/to Gmail, Outlook emails"
 msgstr "Nu creați contacte din/înspre emailurile Gmail, Outlook"
 
+#. js-lingui-id: 3qDEYI
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "Nu sincronizați emailurile de la team@ support@ noreply@..."
 
+#. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
 msgstr "Descarcă fișierul"
 
+#. js-lingui-id: KIjvtr
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
 msgstr "Olandeză"
 
+#. js-lingui-id: QVVmxi
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "E.g. backoffice integration"
 msgstr "Ex. integrare backoffice"
 
+#. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Earliest"
 msgstr "Cel mai devreme"
 
+#. js-lingui-id: JTbQuO
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Earliest date"
 msgstr "Data cea mai devreme"
 
+#. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "Edit"
 msgstr "Editare"
 
+#. js-lingui-id: v+uKyy
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit billing interval"
 msgstr "Editează intervalul de facturare"
 
+#. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
 msgstr "Editați valorile câmpului"
 
+#. js-lingui-id: oKQ7ls
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
 msgstr "Editați câmpurile"
 
+#. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "Editează metoda de plată, vezi facturile tale și mai mult"
 
+#. js-lingui-id: 6o1M/Q
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Editează numele subdomeniului tău sau setează un domeniu personalizat."
 
+#. js-lingui-id: O3oNi5
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "E-mail"
 
+#. js-lingui-id: 2SWjdJ
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #~ msgid "Email can not be empty"
 #~ msgstr "Email can not be empty"
 
+#. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
 msgstr "Emailul nu poate fi gol"
 
+#. js-lingui-id: lfQsvW
+#: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
 msgstr "Integrare email"
 
+#. js-lingui-id: QT/Wo7
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Email or domain is already in blocklist"
 msgstr "Emailul sau domeniul este deja în lista de blocare"
 
+#. js-lingui-id: LimKOG
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email verification"
 msgstr "Verificare email"
 
+#. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verification failed."
 msgstr "Verificarea emailului a eșuat."
 
+#. js-lingui-id: svTijF
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Email verification link resent!"
 msgstr "Link de verificare a emailului retrimis!"
 
+#. js-lingui-id: 00icDW
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Email verified."
 msgstr "Email verificat."
 
+#. js-lingui-id: VI2hiF
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Email/Domain"
 msgstr "Email/Domeniu"
 
+#. js-lingui-id: BXEcos
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -1226,266 +1577,338 @@ msgstr "Email/Domeniu"
 msgid "Emails"
 msgstr "Emailuri"
 
+#. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Emails settings"
 msgstr "Setări emailuri"
 
+#. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
 msgstr "angajați"
 
+#. js-lingui-id: gqv5ZL
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Employees"
 msgstr "Angajați"
 
+#. js-lingui-id: N2S1rs
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 msgid "Empty"
 msgstr "Gol"
 
-#: src/modules/workflow/components/json-visualizer/components/JsonArrayNode.tsx
+#. js-lingui-id: OMbipf
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Empty Array"
 msgstr "Array Gol"
 
-#: src/modules/workflow/components/json-visualizer/components/JsonObjectNode.tsx
+#. js-lingui-id: 3hSGoJ
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Empty Object"
 msgstr "Obiect Gol"
 
+#. js-lingui-id: T3juzf
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Endpoint URL"
 msgstr "URL endpoint"
 
+#. js-lingui-id: lYGfRP
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "English"
 msgstr "Engleză"
 
+#. js-lingui-id: /bfFKe
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Bucură-te de un proces gratuit de {withCreditCardTrialPeriodDuration} de zile"
 
+#. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
 msgstr "Introduceți acreditările pentru a stabili conexiunea"
 
+#. js-lingui-id: rGWgcm
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
 msgstr "Introduceți informațiile pentru a stabili conexiunea"
 
+#. js-lingui-id: rYIISB
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Enter user ID or email address"
 msgstr "Introduceți ID-ul utilizatorului sau adresa de email"
 
+#. js-lingui-id: GpB8YV
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
 msgstr "Întreprindere"
 
+#. js-lingui-id: 8PrrNJ
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Entity ID copied to clipboard"
 msgstr "ID-ul Entității copiat în clipboard"
 
+#. js-lingui-id: 7RnAWe
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Env Variables"
 msgstr "Variabile de mediu"
 
+#. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
 msgstr "Eroare la copierea în clipboard"
 
+#. js-lingui-id: c3qGJX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key: {err}"
 msgstr "Eroare la ștergerea cheii API: {err}"
 
+#. js-lingui-id: QnVLjD
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error deleting invitation"
 msgstr "Eroare la ștergerea invitației"
 
+#. js-lingui-id: cyvTSq
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error deleting SSO Identity Provider"
 msgstr "Eroare la ștergerea Furnizorului de Identitate SSO"
 
+#. js-lingui-id: WEltn2
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error editing SSO Identity Provider"
 msgstr "Eroare la editarea Furnizorului de Identitate SSO"
 
+#. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
 msgstr "Eroare la regenerarea cheii API: {err}"
 
+#. js-lingui-id: clfpgU
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "Eroare la retrimiterea invitației"
 
+#. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription {to}."
 msgstr "Eroare în timpul schimbării abonamentului {to}."
 
+#. js-lingui-id: JLxMta
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Stabilește puncte finale Webhook pentru notificări privind evenimentele asincrone."
 
+#. js-lingui-id: poC90w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Event visibility"
 msgstr "Vizibilitatea evenimentului"
 
+#. js-lingui-id: jvNRZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Events you participated in are displayed in red."
 msgstr "Evenimentele la care ați participat sunt afișate cu roșu."
 
+#. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Everything"
 msgstr "Tot"
 
+#. js-lingui-id: QQlMid
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Exclude group emails"
 msgstr "Excludere email-uri de grup"
 
+#. js-lingui-id: +tk2yZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Exclude non-professional emails"
 msgstr "Excludeți emailurile neprofesionale"
 
+#. js-lingui-id: cIgBjB
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #~ msgid "Exclude the following people and domains from my email sync"
 #~ msgstr "Exclude the following people and domains from my email sync"
 
+#. js-lingui-id: yhhfqh
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Exclude următoarele persoane și domenii din sincronizarea mea de email. Conversațiile interne nu vor fi importate"
 
+#. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
 msgstr "Obiecte existente"
 
+#. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
 msgid "Exit Full Screen"
 msgstr "Ieșiți din modul Ecran complet"
 
+#. js-lingui-id: IZ4o2e
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
 msgid "Exit Settings"
 msgstr "Ieșire din Setări"
 
-#: src/modules/workflow/components/json-visualizer/components/internal/JsonArrow.tsx
+#. js-lingui-id: 1A3EXy
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
+#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
 msgid "Expand"
 msgstr "Extinde"
 
+#. js-lingui-id: tXGQvS
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect.tsx
 #~ msgid "Expected selected node to be a create step node."
 #~ msgstr "Expected selected node to be a create step node."
 
+#. js-lingui-id: bKBhgb
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Experience"
 msgstr "Experiență"
 
+#. js-lingui-id: LxRNPw
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Expiration"
 msgstr "Expirare"
 
+#. js-lingui-id: SkXfL0
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "Expiration Date"
 msgstr "Data expirării"
 
+#. js-lingui-id: M1RnFv
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expired"
 msgstr "Expirat"
 
+#. js-lingui-id: i9qiyR
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
 msgstr "Expiră în"
 
+#. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
-#: src/modules/action-menu/components/__stories__/RightDrawerActionMenuDropdown.stories.tsx
+#: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export"
 msgstr "Export"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#. js-lingui-id: G5DJkP
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export record"
 msgstr "Exportă înregistrarea"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#. js-lingui-id: ep2rbf
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export records"
 msgstr "Exportul înregistrărilor"
 
+#. js-lingui-id: iHK6np
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Export run"
+msgstr "Exportare rulare"
+
+#. js-lingui-id: vwtAUW
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Export runs"
 msgstr "Exportă rulările"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#. js-lingui-id: q46CjD
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export to PDF"
 msgstr "Export în format PDF"
 
+#. js-lingui-id: BuprEs
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Export version"
+msgstr "Exportă versiunea"
+
+#. js-lingui-id: 4FLUle
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Export versions"
 msgstr "Exportă versiunile"
 
+#. js-lingui-id: DaGxE0
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export view"
 msgstr "Exportați vizualizarea"
 
+#. js-lingui-id: +FMXdE
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflow"
 msgstr "Exportă flux de lucru"
 
+#. js-lingui-id: XcAij/
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Export workflows"
 msgstr "Exportă fluxuri de lucru"
 
+#. js-lingui-id: eWCNmu
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #~ msgid "Export Workflows"
 #~ msgstr "Export Workflows"
 
+#. js-lingui-id: jARNNi
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Failed to validate API key. Please check your API key and try again."
 msgstr "Nu s-a reușit validarea cheii API. Vă rugăm să verificați cheia API și să încercați din nou."
 
+#. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "False"
 msgstr "Fals"
 
+#. js-lingui-id: X9kySA
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
 msgstr "Favorite"
 
+#. js-lingui-id: YXjpZx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Feature Flag"
 msgstr "Steag de caracteristici"
 
+#. js-lingui-id: kP/brT
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Feature Flags & Impersonation"
 msgstr "Steaguri de caracteristici și impersonare"
 
+#. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field name"
 msgstr "Nume câmp"
 
+#. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Field type"
 msgstr "Tipul câmpului"
 
+#. js-lingui-id: vF68cg
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -1495,65 +1918,81 @@ msgstr "Tipul câmpului"
 msgid "Fields"
 msgstr "Câmpuri"
 
+#. js-lingui-id: 3w/aqw
 #: src/testing/mock-data/tableData.ts
 msgid "Fields Count"
 msgstr "Numărul de câmpuri"
 
+#. js-lingui-id: o7J4JM
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/object-filter-dropdown/components/SingleEntityObjectFilterDropdownButton.tsx
 #: src/modules/object-record/object-filter-dropdown/components/MultipleFiltersButton.tsx
 msgid "Filter"
 msgstr "Filtru"
 
+#. js-lingui-id: cSev+j
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Filters"
 msgstr "Filtre"
 
+#. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
 msgstr "Finlandeză"
 
+#. js-lingui-id: ZyIk6Y
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 10 lines"
 msgstr "Primele 10 linii"
 
+#. js-lingui-id: I3hko2
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 2 lines"
 msgstr "Primele 2 linii"
 
+#. js-lingui-id: BDDkm3
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "First 5 lines"
 msgstr "Primele 5 linii"
 
+#. js-lingui-id: kODvZJ
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "Prenume"
 
+#. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Ați uitat parola?"
 
+#. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
 msgstr "Franceză"
 
+#. js-lingui-id: aTieE0
 #: src/pages/settings/SettingsBilling.tsx
 msgid "from monthly to yearly"
 msgstr "de la lunar la anual"
 
+#. js-lingui-id: K04lE5
 #: src/pages/settings/SettingsBilling.tsx
 msgid "from yearly to monthly"
 msgstr "de la anual la lunar"
 
+#. js-lingui-id: scmRyR
+#: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Full access"
 msgstr "Acces complet"
 
+#. js-lingui-id: xANKBj
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Functions"
 msgstr "Funcții"
 
+#. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -1562,437 +2001,562 @@ msgstr "Funcții"
 msgid "General"
 msgstr "General"
 
+#. js-lingui-id: DDcvSo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "German"
 msgstr "Germană"
 
+#. js-lingui-id: NXEW3h
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Get the most out of your workspace by inviting your team."
 msgstr "Maximizați potențialul spațiului de lucru invitați echipa."
 
+#. js-lingui-id: zSGbaR
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Get your subscription"
 msgstr "Obțineți abonamentul"
 
+#. js-lingui-id: 2GT3Hf
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Global"
 msgstr "Global"
 
+#. js-lingui-id: iS69s6
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Go to runs"
+msgstr ""
+
+#. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Go to Settings"
 msgstr "Mergeți la Setări"
 
+#. js-lingui-id: A5WHZY
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Go to workflows"
+msgstr ""
+
+#. js-lingui-id: hWp1MY
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 msgstr "Acordați suport Twenty acces temporar la spațiul dvs. de lucru pentru a putea depista probleme sau a recupera conținut în numele dvs. Puteți revoca accesul oricând."
 
+#. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
 msgstr "GraphQL"
 
+#. js-lingui-id: /YalkJ
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 msgid "GraphQL API Playground"
 msgstr "Platformă de Testare API GraphQL"
 
+#. js-lingui-id: JXaffl
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than"
 msgstr "Mai mare decât"
 
+#. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Greek"
 msgstr "Greacă"
 
+#. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Group by"
 msgstr "Grupare după"
 
+#. js-lingui-id: I1IOmb
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr "Starea de sănătate"
 
+#. js-lingui-id: 3oTCgM
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hebrew"
 msgstr "Ebraică"
 
+#. js-lingui-id: D+zLDD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Hidden"
 msgstr "Ascuns"
 
+#. js-lingui-id: oK+1Wj
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Hidden Fields"
 msgstr "Câmpuri ascunse"
 
+#. js-lingui-id: vLyv1R
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Hide"
 msgstr "Ascunde"
 
+#. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
 msgstr "Ascundeți grupurile goale"
 
+#. js-lingui-id: B06Bgk
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
 msgstr "Cum veți fi identificat în aplicație."
 
+#. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
 msgstr "Cum funcționează sistemul tău"
 
+#. js-lingui-id: mkWad2
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
 msgstr "Maghiară"
 
+#. js-lingui-id: wwu18a
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Icon"
 msgstr "Pictogramă"
 
+#. js-lingui-id: XTWO+W
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Icon and Name"
 msgstr "Icoană și Nume"
 
+#. js-lingui-id: S0kLOH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "ID"
 msgstr "ID"
 
+#. js-lingui-id: sJGljQ
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Identifier"
 msgstr "Identificator"
 
+#. js-lingui-id: 06cbfQ
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Identity Provider"
 msgstr "Furnizor de Identitate"
 
+#. js-lingui-id: LPN8Ma
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
 msgstr "XML-ul de Metadate al Furnizorului de Identitate"
 
+#. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Dacă ați pierdut această cheie, o puteți regenera, dar aveți în vedere că orice script folosind această cheie va necesita actualizare. Vă rugăm să tastați \"{confirmationValue}\" pentru confirmare."
 
+#. js-lingui-id: tSVr6t
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
 msgstr "Impersonați"
 
+#. js-lingui-id: l3s5ri
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Import"
 msgstr "Importați"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#. js-lingui-id: eECp4f
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Import records"
 msgstr "Importă înregistrări"
 
+#. js-lingui-id: ZsIcZZ
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Import workflows"
 msgstr "Importă fluxuri de lucru"
 
+#. js-lingui-id: RqSvT0
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
 msgstr "Importând"
 
+#. js-lingui-id: NoNwIX
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Inactive"
 msgstr "Inactiv"
 
+#. js-lingui-id: pZ/USH
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Indexes"
 msgstr "Indici"
 
+#. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "Intrarea trebuie să fie în formă 'camel case' și nu poate începe cu un număr"
 
+#. js-lingui-id: /6i28D
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
+msgid "Input settings"
+msgstr "Setări de intrare"
+
+#. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Instances"
 msgstr "Instanțe"
 
+#. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Integrări"
 
+#. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Furnizor de autentificare invalid"
 
+#. js-lingui-id: qcXnvu
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #~ msgid "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 #~ msgstr "Invalid custom domain. Custom domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
+#. js-lingui-id: P3qQyo
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
 msgstr "Domeniu personalizat invalid. Vă rugăm să includeți cel puțin un subdomeniu (de exemplu, sub.exemplu.com)."
 
+#. js-lingui-id: u3hwhx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Domeniu invalid. Domeniile trebuie să fie mai mici de 256 de caractere, nu pot fi adrese IP, nu pot conține spații, nu pot conține caractere speciale precum _~`!@#$%^*()=+{}[]|\\\\;:'\\\",<>/? și nu trebuie să înceapă sau să se termine cu caracterul '-'."
 
+#. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "Invalid email"
 msgstr "Email invalid"
 
+#. js-lingui-id: /m52AE
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Invalid email or domain"
 msgstr "Email sau domeniu invalid"
 
+#. js-lingui-id: b2B7Ze
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "Invalid email verification link."
 msgstr "Link de verificare a emailului invalid."
 
+#. js-lingui-id: uzxr9u
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Invalid File"
 msgstr "Fișier Invalid"
 
+#. js-lingui-id: QdoUFL
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Valori de formular invalide"
 
+#. js-lingui-id: K8XJhc
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Invalid workspace"
 msgstr "Spațiu de lucru nevalid"
 
+#. js-lingui-id: MFKlMB
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
 msgstr "Invită"
 
+#. js-lingui-id: 0M8+El
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Invite by email"
 msgstr "Invită prin email"
 
+#. js-lingui-id: PWIq/W
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Invite by link"
 msgstr "Invită printr-un link"
 
+#. js-lingui-id: 3athPG
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invite by Link"
 msgstr "Invită printr-un Link"
 
+#. js-lingui-id: 5IfmKA
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Invite link sent to email addresses"
 msgstr "Link-ul de invitație a fost trimis la adresele de email"
 
+#. js-lingui-id: x1m5RZ
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Invite user"
+msgstr "Invită utilizator"
+
+#. js-lingui-id: d+Y+rP
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Invite your team"
 msgstr "Invită-ți echipa"
 
+#. js-lingui-id: W153SA
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
 msgstr "Este"
 
+#. js-lingui-id: N73SBG
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after"
 msgstr "Este după"
 
+#. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is before"
 msgstr "Este înainte"
 
+#. js-lingui-id: Hte7bc
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is empty"
 msgstr "Este gol"
 
+#. js-lingui-id: glSyvW
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is in future"
 msgstr "Este în viitor"
 
+#. js-lingui-id: F9Vw4E
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is in past"
 msgstr "Este în trecut"
 
+#. js-lingui-id: 5pz6vU
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not"
 msgstr "Nu este"
 
+#. js-lingui-id: ldI7NO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not empty"
 msgstr "Nu este gol"
 
+#. js-lingui-id: HQFVAU
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not null"
 msgstr "Nu este nul"
 
+#. js-lingui-id: jPtV7x
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is relative"
 msgstr "Este relativ"
 
+#. js-lingui-id: 0TLhix
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today"
 msgstr "Este astăzi"
 
+#. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Issuer URI"
 msgstr "URI al Emitentului"
 
+#. js-lingui-id: Lj7sBL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Italian"
 msgstr "Italiană"
 
+#. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
 msgstr "Japoneză"
 
+#. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Kanban"
 msgstr "Kanban"
 
+#. js-lingui-id: h6S9Yz
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Korean"
 msgstr "Coreeană"
 
+#. js-lingui-id: zrpwCd
 #: src/pages/settings/lab/SettingsLab.tsx
 #: src/pages/settings/lab/SettingsLab.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Lab"
 msgstr "Laborator"
 
+#. js-lingui-id: vXIe7J
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Language"
 msgstr "Limbă"
 
+#. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 1 hour"
 msgstr "Ultima 1 oră"
 
+#. js-lingui-id: 0LzSIl
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Ultima 1 oră (cel mai vechi → cel mai nou)"
 
+#. js-lingui-id: XUlP/Y
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 12 hours"
 msgstr "Ultimele 12 ore"
 
+#. js-lingui-id: n7EOpf
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 12 Hours (oldest → newest)"
 msgstr "Ultimele 12 ore (cel mai vechi → cel mai nou)"
 
+#. js-lingui-id: j5nqnO
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Ultimele 24 de ore (cel mai vechi → cel mai nou)"
 
+#. js-lingui-id: gdAJ4I
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Last 4 hours"
 msgstr "Ultimele 4 ore"
 
+#. js-lingui-id: MjAVB0
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 4 Hours (oldest → newest)"
 msgstr "Ultimele 4 ore (cel mai vechi → cel mai nou)"
 
+#. js-lingui-id: GQgBSj
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Last 7 Days (oldest → newest)"
 msgstr "Ultimele 7 zile (cel mai vechi → cel mai nou)"
 
+#. js-lingui-id: UXBCwc
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
 msgstr "Nume de familie"
 
+#. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Latest"
 msgstr "Cel mai recent"
 
+#. js-lingui-id: Kcjbmz
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Latest date"
 msgstr "Data cea mai recentă"
 
+#. js-lingui-id: zUzYWu
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
 msgstr "Ultima versiune"
 
+#. js-lingui-id: 7dWjtB
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #~ msgid "Latest version:"
 #~ msgstr "Latest version:"
 
+#. js-lingui-id: ZEP8tT
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
 msgstr "Lansează"
 
+#. js-lingui-id: rdU729
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Layout"
 msgstr "Aspect"
 
+#. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
 msgstr "Mai mic decât"
 
+#. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Light"
 msgstr "Luminos"
 
+#. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Link copied to clipboard"
 msgstr "Link-ul a fost copiat în clipboard"
 
+#. js-lingui-id: DL2sg0
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listings"
 msgstr "Listări"
 
+#. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
 msgstr "Se încarcă datele metrice..."
 
+#. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Log out"
 msgstr "Deconectare"
 
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#. js-lingui-id: nOhz3x
+#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
 msgid "Logout"
-msgstr "Deconectare"
+msgstr "Logout"
 
+#. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users and manage their workspace feature flags or impersonate them."
 msgstr "Caută utilizatori și administrează steagurile de caracteristici ale spațiului lor de lucru sau impersonați-i."
 
+#. js-lingui-id: GPSwzy
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users to impersonate them."
 msgstr "Caută utilizatori pentru a-i impersona."
 
+#. js-lingui-id: U8dG4j
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Manage favorite"
 msgstr "Gestionează favoritele"
 
+#. js-lingui-id: T6YjCk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
 msgstr "Gestionează Membrii"
 
+#. js-lingui-id: 4cjU2u
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage the members of your space here"
 msgstr "Aici poți gestiona membrii spațiului tău"
 
+#. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Manage your internet accounts."
 msgstr "Gestionează-ți conturile de internet."
 
+#. js-lingui-id: 36kYu0
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Manage your subscription"
 msgstr "Gestionează-ți abonamentul"
 
+#. js-lingui-id: 3Sdni6
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 msgid "Mark as done"
 msgstr "Marchează ca realizat"
 
+#. js-lingui-id: CK1KXz
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Max"
 msgstr "Maxim"
 
+#. js-lingui-id: wlQNTg
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2000,10 +2564,17 @@ msgstr "Maxim"
 msgid "Members"
 msgstr "Membri"
 
+#. js-lingui-id: elpx6r
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
-msgid "Message Sync Status"
-msgstr "Stare Sincronizare Mesaje"
+msgid "Message Sync"
+msgstr "Sincronizare Mesaje"
 
+#. js-lingui-id: Lt5rXo
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+#~ msgid "Message Sync Status"
+#~ msgstr "Message Sync Status"
+
+#. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -2011,29 +2582,45 @@ msgstr "Stare Sincronizare Mesaje"
 msgid "Metadata"
 msgstr "Metadata"
 
+#. js-lingui-id: dN5YOb
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
 msgstr "Generarea fișierului de metadate a eșuat"
 
+#. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Min"
 msgstr "Minim"
 
+#. js-lingui-id: 8g3Cgz
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Monitor the execution of your calendar events sync job"
+msgstr "Monitorizează execuția sarcinii de sincronizare a evenimentelor din calendar"
+
+#. js-lingui-id: IL/nIb
+#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+msgid "Monitor the execution of your emails sync job"
+msgstr "Monitorizează execuția sarcinii de sincronizare a e-mailurilor"
+
+#. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "More options"
 msgstr "Mai multe opțiuni"
 
+#. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Move left"
 msgstr "Mută la stânga"
 
+#. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Move right"
 msgstr "Mută la dreapta"
 
+#. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -2057,222 +2644,292 @@ msgstr "Mută la dreapta"
 msgid "Name"
 msgstr "Nume"
 
+#. js-lingui-id: XSwyCU
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Name can not be empty"
 msgstr "Numele nu poate fi gol"
 
+#. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Numele în ambele forme, singular (de exemplu, 'Factură') și plural (de exemplu, 'Facturi')."
 
+#. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Name of your API key"
 msgstr "Numele cheii tale API"
 
+#. js-lingui-id: J7w8lI
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Name of your workspace"
 msgstr "Numele spațiului tău de lucru"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#. js-lingui-id: 2T8KCk
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Navigate to next record"
 msgstr "Navighează la următoarea înregistrare"
 
+#. js-lingui-id: UX6+vb
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to next run"
 msgstr "Navighează la rularea următoare"
 
+#. js-lingui-id: veSA19
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to next version"
 msgstr "Navigați la versiunea următoare"
 
+#. js-lingui-id: ZTEho+
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Navigate to next workflow"
 msgstr "Navigați la workflow-ul următor"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#. js-lingui-id: 2tw9bo
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Navigate to previous record"
 msgstr "Navigați la înregistrarea anterioară"
 
+#. js-lingui-id: HddE65
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Navigate to previous run"
 msgstr "Navighează la rularea anterioară"
 
+#. js-lingui-id: I+Pm5V
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Navigate to previous version"
 msgstr "Navigați la versiunea anterioară"
 
+#. js-lingui-id: QVUN3K
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Navigate to previous workflow"
 msgstr "Navigați la workflow-ul anterior"
 
+#. js-lingui-id: isRobC
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "New"
 msgstr "Nou"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#. js-lingui-id: Gntx7w
+#: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
 msgid "New {capitalizedObjectNameSingular}"
 msgstr "Nou {capitalizedObjectNameSingular}"
 
+#. js-lingui-id: Kcr9Fr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "New account"
 msgstr "Cont nou"
 
+#. js-lingui-id: 2qr/61
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
 msgstr "Nou Domeniu de Acces Aprobat"
 
+#. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
 msgstr "Câmp nou"
 
+#. js-lingui-id: o8MyXb
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "New key"
 msgstr "Cheie nouă"
 
+#. js-lingui-id: j313SZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "New Key"
 msgstr "Cheie nouă"
 
+#. js-lingui-id: hFxdey
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "New Object"
 msgstr "Obiect nou"
 
+#. js-lingui-id: 7vhWI8
 #: src/pages/auth/PasswordReset.tsx
 msgid "New Password"
 msgstr "Parolă nouă"
 
+#. js-lingui-id: BcCzLv
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "New record"
 msgstr "Înregistrare nouă"
 
+#. js-lingui-id: 2lmOC5
 #: src/pages/settings/roles/SettingsRoles.tsx
 #~ msgid "New Role"
 #~ msgstr "New Role"
 
+#. js-lingui-id: OzWuT+
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO Configuration"
 msgstr "Nouă Configurare SSO"
 
+#. js-lingui-id: C7WtCv
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 msgid "New SSO provider"
 msgstr "Nou furnizor SSO"
 
+#. js-lingui-id: U1DAok
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhooksNew.tsx
 #~ msgid "New Webhook"
 #~ msgstr "New Webhook"
 
+#. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
 msgstr "Schimbare nedetectată"
 
+#. js-lingui-id: pwenQu
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "No connected account"
 msgstr "Niciun cont conectat"
 
+#. js-lingui-id: 4BSfjK
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
 msgstr "Fără țară"
 
+#. js-lingui-id: UwvrGq
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "No members"
+msgstr "Niciun membru"
+
+#. js-lingui-id: Y4qK8/
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+msgid "No members assigned"
+msgstr "Niciun membru atribuit"
+
+#. js-lingui-id: hfYSED
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members assigned to this role yet"
 #~ msgstr "No members assigned to this role yet"
 
+#. js-lingui-id: /nLvVj
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+msgid "No members match your search"
+msgstr "Niciun membru care să corespundă căutării"
+
+#. js-lingui-id: F9pWel
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No members matching this search"
 #~ msgstr "No members matching this search"
 
+#. js-lingui-id: NluSN3
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "No members matching your search"
 #~ msgstr "No members matching your search"
 
+#. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "No metrics data available"
 msgstr "Nu sunt disponibile date metrice"
 
+#. js-lingui-id: iMCnTm
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No more members to add"
 #~ msgstr "No more members to add"
 
+#. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Nu mai sunt membri de atribuit"
 
+#. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "No records found"
 msgstr "Nu s-au găsit înregistrări"
 
+#. js-lingui-id: 4bobEy
 #: src/pages/settings/roles/components/RoleWorkspaceMemberPickerDropdownContent.tsx
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
+#. js-lingui-id: MA3x23
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Niciun rezultat"
 
+#. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Select field"
 msgstr "Fără câmp selectabil"
 
+#. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
 msgstr "Niciun workflow rulat încă"
 
+#. js-lingui-id: AQCvCC
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow versions yet"
 msgstr "Nicio versiune de workflow încă"
 
+#. js-lingui-id: EdQY6l
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "None"
 msgstr "Niciunul"
 
+#. js-lingui-id: 1IipHp
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Norwegian"
 msgstr "Norvegiană"
 
+#. js-lingui-id: 0qBE9S
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Not available on Default View"
 msgstr "Nu este disponibil pe Vizualizare Implicită"
 
+#. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
 msgstr "Nu este gol"
 
+#. js-lingui-id: pAtylB
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Not Found"
 msgstr "Nu a fost găsit"
 
+#. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Not synced"
 msgstr "Neacordat"
 
+#. js-lingui-id: HptUxX
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
 msgstr "Număr"
 
+#. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number of decimals"
 msgstr "Numărul de zecimale"
 
+#. js-lingui-id: qg5nhQ
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number type"
 msgstr "Tip număr"
 
+#. js-lingui-id: W0i24j
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Obiect"
 
+#. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
 msgstr "Destinația obiect"
 
+#. js-lingui-id: B3toQF
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -2283,35 +2940,43 @@ msgstr "Destinația obiect"
 msgid "Objects"
 msgstr "Obiecte"
 
+#. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "În afara cărărilor bătătorite"
 
+#. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "Doar data și participanții vor fi partajați cu echipa dvs."
 
+#. js-lingui-id: 50ETCF
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Doar marca temporală și participanții vor fi partajați cu echipa dvs."
 
+#. js-lingui-id: 69b7aE
 #: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
 msgid "Open command menu"
 msgstr "Deschide meniul de comandă"
 
+#. js-lingui-id: C39K59
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Deschide în"
 
+#. js-lingui-id: OV5wZZ
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Deschis"
 
+#. js-lingui-id: qNELak
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Opțional: Definiți un șir secret pe care îl vom include în fiecare webhook. Folosiți acest lucru pentru a autentifica și verifica webhook-ul la recepție."
 
+#. js-lingui-id: 0zpgxV
 #: src/modules/settings/roles/components/RolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2319,10 +2984,12 @@ msgstr "Opțional: Definiți un șir secret pe care îl vom include în fiecare 
 msgid "Options"
 msgstr "Opțiuni"
 
+#. js-lingui-id: BzEFor
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "or"
 msgstr "sau"
 
+#. js-lingui-id: /IX/7x
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/lab/SettingsLab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
@@ -2332,381 +2999,486 @@ msgstr "sau"
 msgid "Other"
 msgstr "Altul"
 
+#. js-lingui-id: 3V8SRM
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 #: src/pages/settings/admin-panel/SettingsAdminSecondaryEnvVariables.tsx
 msgid "Other Environment Variables"
 msgstr "Alte variabile de mediu"
 
+#. js-lingui-id: P7KMWx
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "Other Variables"
 msgstr "Alte variabile"
 
+#. js-lingui-id: +vDFPm
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Other workspaces"
+msgstr "Alte spații de lucru"
+
+#. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
 msgstr "Pagina nu a fost găsită"
 
+#. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Password"
 msgstr "Parolă"
 
+#. js-lingui-id: BxQ79w
 #: src/pages/auth/PasswordReset.tsx
 msgid "Password has been updated"
 msgstr "Parola a fost actualizată"
 
+#. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 msgid "Password reset link has been sent to the email"
 msgstr "Link-ul pentru resetarea parolei a fost trimis către email"
 
+#. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to and received emails from."
 msgstr "Persoanele cărora le-am trimis emailuri și de la care am primit emailuri."
 
+#. js-lingui-id: U/UvMm
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to."
 msgstr "Persoanele cărora le-am trimis emailuri."
 
+#. js-lingui-id: SrVzRe
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 msgid "Percent"
 msgstr "Procent"
 
+#. js-lingui-id: yIK1GU
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Percent empty"
 msgstr "Procent gol"
 
+#. js-lingui-id: PWLd4c
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Percent not empty"
 msgstr "Procent ne-gol"
 
+#. js-lingui-id: /roQKz
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Percentage"
 msgstr "Procentaj"
 
+#. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Permanently destroy record"
 msgstr "Distrugere definitivă a înregistrării"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
+#. js-lingui-id: xjWlSJ
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Permanently destroy records"
 msgstr "Distrugere definitivă a înregistrărilor"
 
+#. js-lingui-id: uKWXhB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Permanently destroy workflows"
 msgstr "Distrugere definitivă a workflow-urilor"
 
+#. js-lingui-id: 9cDpsw
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
 msgid "Permissions"
 msgstr "Permisiuni"
 
+#. js-lingui-id: qlqT9z
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
 msgstr "Număr de telefon copiat în clipboard"
 
+#. js-lingui-id: N0+GsR
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Picture"
 msgstr "Imagine"
 
+#. js-lingui-id: 0LrFTO
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Playground"
 msgstr "Teren de joacă"
 
+#. js-lingui-id: jEw0Mr
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please enter a valid URL"
 msgstr "Vă rugăm să introduceți un URL valid"
 
+#. js-lingui-id: X5x85V
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
 msgstr "Vă rugăm să căutați mai întâi un utilizator"
 
+#. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Vă rugăm să introduceți \"{confirmationValue}\" pentru a confirma că doriți să ștergeți această Cheie API. Fiți conștient că orice script care folosește această cheie va înceta să funcționeze."
 
+#. js-lingui-id: mFZTXr
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Please type {confirmationText} to confirm you want to delete this webhook."
 msgstr "Vă rugăm să introduceți {confirmationText} pentru a confirma că doriți să ștergeți acest webhook."
 
+#. js-lingui-id: aRWD63
+#: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
+msgid "Please use different names for your source and destination fields"
+msgstr "Vă rugăm să folosiți nume diferite pentru câmpurile sursă și destinație"
+
+#. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"
 msgstr "Plural"
 
+#. js-lingui-id: trnWaw
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Polish"
 msgstr "Poloneză"
 
+#. js-lingui-id: MOERNx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 #~ msgid "Portuguese"
 #~ msgstr "Portuguese"
 
+#. js-lingui-id: 0nsqwk
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Portuguese — Brazil"
 msgstr "Portugheză — Brasil"
 
+#. js-lingui-id: xtXHeo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Portuguese — Portugal"
 msgstr "Portugheză — Portugalia"
 
+#. js-lingui-id: R7+D0/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 #~ msgid "Portuguese (Brazil)"
 #~ msgstr "Portuguese (Brazil)"
 
+#. js-lingui-id: 512Uma
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 #~ msgid "Portuguese (Portugal)"
 #~ msgstr "Portuguese (Portugal)"
 
+#. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 msgid "Preview"
 msgstr "Previzualizare"
 
+#. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
 msgstr "Politica de confidențialitate"
 
+#. js-lingui-id: vERlcd
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Profile"
 msgstr "Profil"
 
+#. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
 msgstr "Furnizați detaliile furnizorului OIDC"
 
+#. js-lingui-id: YJgRqq
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
 msgstr "Pseudo-Engleză"
 
+#. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
 msgstr "Informațiile despre coadă nu sunt disponibile deoarece lucrătorul este oprit"
 
+#. js-lingui-id: e9OqcR
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Queue performance"
 msgstr "Performanța cozii"
 
+#. js-lingui-id: ibPuCP
 #: src/modules/settings/developers/components/SettingsReadDocumentationButton.tsx
 #~ msgid "Read documentation"
 #~ msgstr "Read documentation"
 
+#. js-lingui-id: v3xM25
 #: src/modules/settings/profile/components/ChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "Primește un email cu linkul de actualizare a parolei"
 
+#. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
 msgstr "Evenimente recente (cel mai vechi → cel mai nou)"
 
+#. js-lingui-id: gcoiFh
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
 msgstr "Reconectare"
 
+#. js-lingui-id: mj1fkT
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record image"
 msgstr "Imagine înregistrare"
 
+#. js-lingui-id: K6/7kH
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
 msgstr "Etichetă înregistrare"
 
+#. js-lingui-id: mAHjRd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Record Page"
 msgstr "Pagina de înregistrare"
 
+#. js-lingui-id: dSCufP
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
 msgstr "Selecția înregistrărilor"
 
+#. js-lingui-id: LfH+Ea
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirect Url copied to clipboard"
 msgstr "URL de redirecționare copiat în clipboard"
 
+#. js-lingui-id: RZjynQ
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirection URI"
 msgstr "URI Redirecționare"
 
+#. js-lingui-id: vpZcGd
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate an API key"
 msgstr "Regenerează o cheie API"
 
+#. js-lingui-id: Mwqo5m
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate key"
 msgstr "Regenerează cheia"
 
+#. js-lingui-id: D+Mv78
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate Key"
 msgstr "Regenerează Cheia"
 
+#. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
 msgstr "Tip relație"
 
+#. js-lingui-id: 5icoS1
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/Releases.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Releases"
 msgstr "Versiuni"
 
+#. js-lingui-id: HpK/8d
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Reload"
 msgstr "Reîncarcă"
 
+#. js-lingui-id: t/YqKh
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Remove"
 msgstr "Elimină"
 
+#. js-lingui-id: ken+P9
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModal.tsx
 #~ msgid "Remove {workspaceMemberName}?"
 #~ msgstr "Remove {workspaceMemberName}?"
 
+#. js-lingui-id: 1O32oy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Remove account"
 msgstr "Elimină contul"
 
+#. js-lingui-id: Q2u5E9
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove as default"
 msgstr "Elimină ca implicită"
 
+#. js-lingui-id: T/pF0Z
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Remove from favorites"
 msgstr "Elimină din favorite"
 
+#. js-lingui-id: 00Lxnh
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
 msgstr "Elimină opțiunea"
 
+#. js-lingui-id: OfhWJH
 #: src/modules/views/components/ViewBarDetails.tsx
 msgid "Reset"
 msgstr "Resetează"
 
+#. js-lingui-id: KbS2K9
 #: src/pages/auth/PasswordReset.tsx
 msgid "Reset Password"
 msgstr "Resetează Parola"
 
+#. js-lingui-id: 1IWc1n
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
 msgid "Reset to"
 msgstr "Resetează la"
 
+#. js-lingui-id: WHiaOl
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "REST"
 msgstr "REST"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#. js-lingui-id: yKu/3Y
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Restore"
 msgstr "Restaurează"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#. js-lingui-id: y4Ib1n
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Restore record"
 msgstr "Restaurează înregistrarea"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#. js-lingui-id: Vw369F
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Restore records"
 msgstr "Restaurează înregistrările"
 
-#: src/modules/command-menu/hooks/useSearchRecords.tsx
+#. js-lingui-id: kx0s+n
+#: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
 msgid "Results"
 msgstr "Rezultate"
 
+#. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "Roluri"
 
+#. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Romanian"
 msgstr "Română"
 
+#. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
 msgstr "Rulează un workflow și întoarce-te aici pentru a vedea execuțiile acestuia"
 
+#. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Russian"
 msgstr "Rusă"
 
+#. js-lingui-id: tfDRzk
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 msgid "Save"
 msgstr "Salvează"
 
+#. js-lingui-id: apLRCm
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
 msgstr "Salvează ca nouă vizualizare"
 
+#. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
 msgstr "Schemat"
 
+#. js-lingui-id: A1taO8
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search"
 msgstr "Caută"
 
+#. js-lingui-id: 8NBMeZ
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Search ''{commandMenuSearch}'' with..."
 msgstr "Caută ''{commandMenuSearch}'' cu..."
 
+#. js-lingui-id: l1/uy2
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Search a field..."
 msgstr "Caută un câmp..."
 
+#. js-lingui-id: t3n1Qy
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
-msgid "Search a member"
-msgstr "Caută un membru"
+#~ msgid "Search a member"
+#~ msgstr "Search a member"
 
+#. js-lingui-id: xdl79x
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Search a team member..."
+msgstr "Caută un membru al echipei..."
+
+#. js-lingui-id: lnDfeK
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Search a type"
 msgstr "Căutați un tip"
 
+#. js-lingui-id: x55IVv
+#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+msgid "Search an assigned team member..."
+msgstr "Caută un membru al echipei asignat..."
+
+#. js-lingui-id: k7kp5/
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Search an index..."
 msgstr "Caută un index..."
 
+#. js-lingui-id: 7taA9j
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
 msgid "Search fields"
 msgstr "Caută câmpuri"
 
+#. js-lingui-id: ofuw3g
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Search for an object..."
 msgstr "Caută un obiect..."
 
+#. js-lingui-id: lnwW17
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
 msgstr "Pictogramă căutare"
 
+#. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.ts
 msgid "Search records"
 msgstr "Caută înregistrări"
 
+#. js-lingui-id: 8VEDbV
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Secret"
 msgstr "Secret"
 
+#. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2715,77 +3487,117 @@ msgstr "Secret"
 msgid "Security"
 msgstr "Securitate"
 
+#. js-lingui-id: QREcJS
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See active version"
 msgstr "Vezi versiunea activă"
 
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV2.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfigV1.ts
+#. js-lingui-id: BxIUpp
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "See deleted records"
 msgstr "Vezi înregistrările șterse"
 
+#. js-lingui-id: Z+SGGW
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See deleted runs"
 msgstr "Vezi rulări șterse"
 
+#. js-lingui-id: 91fiCe
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "See deleted versions"
 msgstr "Vezi versiuni șterse"
 
+#. js-lingui-id: 5jZIe5
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See deleted workflows"
 msgstr "Vezi fluxuri de lucru șterse"
 
+#. js-lingui-id: OpPn5Z
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See runs"
 msgstr "Vezi rulările"
 
+#. js-lingui-id: gGEfj/
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "See version"
+msgstr ""
+
+#. js-lingui-id: EtyY4+
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See versions"
 msgstr "Vezi versiunile"
 
+#. js-lingui-id: lYhPN0
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See versions history"
 msgstr "Vezi istoricul versiunilor"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#. js-lingui-id: qEKLJV
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "See workflow"
+msgstr ""
+
+#. js-lingui-id: XThiR2
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "See workflows"
+msgstr ""
+
+#. js-lingui-id: WZvt/6
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select Action"
 msgstr "Selectează acțiunea"
 
+#. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
 msgstr "Selectați valoarea implicită pentru acest câmp boolean"
 
+#. js-lingui-id: xraglu
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Selectează evenimentele pe care dorești să le trimiți la acest endpoint"
 
+#. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Select your preferred language"
 msgstr "Selectează limba preferată"
 
+#. js-lingui-id: mjK8F3
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "Trimite un email de invitație echipei tale"
 
+#. js-lingui-id: h69WC6
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Sent"
 msgstr "Trimis"
 
+#. js-lingui-id: hdVMzO
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "Sent and Received"
 msgstr "Trimis și primit"
 
+#. js-lingui-id: 6oxz/y
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
 msgstr "Sârbă (Chirilic)"
 
+#. js-lingui-id: WKimFU
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -2793,39 +3605,48 @@ msgstr "Sârbă (Chirilic)"
 #~ msgid "Server Admin"
 #~ msgstr "Server Admin"
 
+#. js-lingui-id: yy5k7a
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #~ msgid "Server Admin Panel"
 #~ msgstr "Server Admin Panel"
 
+#. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
 msgstr "Detalii Furnizor de Servicii"
 
+#. js-lingui-id: YZwx1e
 #: src/modules/settings/roles/components/RolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
 msgstr "Setați un rol prestabilit pentru acest spațiu de lucru"
 
+#. js-lingui-id: PPcets
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Setează ca implicită"
 
+#. js-lingui-id: V7fgiB
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Setează vizibilitatea emailului, administrează lista de blocare și altele."
 
+#. js-lingui-id: qNbuWB
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Setează numele domeniului tău personalizat și configurează înregistrările DNS."
 
+#. js-lingui-id: cx14rp
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
 #~ msgid "Set the name of your domain"
 #~ msgstr "Set the name of your domain"
 
+#. js-lingui-id: tn41zE
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
 msgstr "Stabilește numele subdomeniului tău"
 
+#. js-lingui-id: Tz0i8g
 #: src/pages/settings/roles/SettingsRoleEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
@@ -2835,392 +3656,512 @@ msgstr "Stabilește numele subdomeniului tău"
 msgid "Settings"
 msgstr "Setări"
 
+#. js-lingui-id: p8fNBm
 #: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Permisiuni pentru setări"
 
+#. js-lingui-id: Vy9kmk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "Distribuiți acest link pentru a invita utilizatori să se alăture spațiului dumneavoastră de lucru"
 
+#. js-lingui-id: gWk8gY
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Should changing a field's label also change the API name?"
 msgstr "Modificarea etichetei unui câmp ar trebui să schimbe și numele pentru API?"
 
+#. js-lingui-id: WFtdWr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Should changing an object's label also change the API?"
 msgstr "Schimbarea etichetei unui obiect ar trebui să schimbe și API-ul?"
 
+#. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Side Panel"
 msgstr "Panou lateral"
 
+#. js-lingui-id: 5lWFkC
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Autentificare"
 
+#. js-lingui-id: e+RpCP
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Sign up"
 msgstr "Înregistrare"
 
+#. js-lingui-id: 5v3IHX
 #: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx
 msgid "Single sign-on (SSO)"
 msgstr "Autentificare unică (SSO)"
 
+#. js-lingui-id: maCaRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Singular"
 msgstr "Singular"
 
+#. js-lingui-id: djfBXF
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural labels must be different"
 msgstr "Etichetele pentru singular și plural trebuie să fie diferite"
 
+#. js-lingui-id: zvwLTy
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
 msgstr "Numele pentru singular și plural trebuie să fie diferite"
 
+#. js-lingui-id: 6Uau97
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Skip"
 msgstr "Omite"
 
+#. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Sort"
 msgstr "Sortează"
 
+#. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Spanish"
 msgstr "Spaniolă"
 
+#. js-lingui-id: vnS6Rf
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "SSO"
 msgstr "Autentificare Unică"
 
+#. js-lingui-id: vlvAkg
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "SSO (SAML / OIDC)"
+msgstr ""
+
+#. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Stages"
 msgstr "Etape"
 
+#. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Status"
 msgstr "Status"
 
+#. js-lingui-id: ku9TbG
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
 msgid "Subdomain"
 msgstr "Subdomeniu"
 
+#. js-lingui-id: omhc+7
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain already taken"
 msgstr "Subdomeniul este deja luat"
 
+#. js-lingui-id: OlC/tU
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Subdomeniul nu poate fi mai lung de 30 de caractere"
 
+#. js-lingui-id: ZETwlU
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdomeniul nu poate fi mai scurt de 3 caractere"
 
+#. js-lingui-id: DTG2nE
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Subdomain updated"
 msgstr "Subdomeniu actualizat"
 
+#. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Subject and metadata"
 msgstr "Subiect și meta-date"
 
+#. js-lingui-id: LYbP/A
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject and metadata will be shared with your team."
 msgstr "Subiectul și meta-datele vor fi partajate cu echipa dvs."
 
+#. js-lingui-id: J9ylmk
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
 msgstr "Subiectul, corpul și atașamentele vor fi partajate cu echipa dvs."
 
+#. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Subscription has been switched {to}"
 msgstr "Abonamentul a fost schimbat {to}"
 
+#. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Sum"
 msgstr "Sumă"
 
+#. js-lingui-id: XYLcNv
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Support"
 msgstr "Suport"
 
+#. js-lingui-id: UaISq3
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Swedish"
 msgstr "Suedeză"
 
+#. js-lingui-id: 9yk9d1
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Switch {from}"
 msgstr "Schimbă {from}"
 
+#. js-lingui-id: qi74XZ
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Switch {to}"
 msgstr "Schimbă {to}"
 
+#. js-lingui-id: L6Fg36
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Switch billing {to}"
 msgstr "Schimbă facturarea {to}"
 
+#. js-lingui-id: lz+f/E
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Switch to {alternatePlanName}"
+msgstr ""
+
+#. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Sync failed"
 msgstr "Sincronizare eșuată"
 
+#. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Synced"
 msgstr "Sincronizat"
 
+#. js-lingui-id: AtzMpB
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Synchronize Field Label and API Name"
 msgstr "Sincronizare Etichetă Câmp și Nume API"
 
+#. js-lingui-id: WZ6bN9
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Synchronize Objects Labels and API Names"
 msgstr "Sincronizează etichetele obiectelor și numele API"
 
+#. js-lingui-id: D4SseJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "System settings"
 msgstr "Setările sistemului"
 
+#. js-lingui-id: E3AMmw
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "Setări sistem - {systemDateFormatLabel}"
 
+#. js-lingui-id: 0ZgB1e
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "System Settings - {systemTimeFormatLabel}"
 msgstr "Setări Sistem - {systemTimeFormatLabel}"
 
+#. js-lingui-id: 4hJhzz
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Table"
 msgstr "Tabel"
 
+#. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
 msgstr "Termeni și Condiții"
 
+#. js-lingui-id: NnH3pK
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test"
 msgstr "Test"
 
+#. js-lingui-id: bU9B27
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Test Workflow"
 msgstr "Test Workflows"
 
+#. js-lingui-id: xeiujy
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
+msgid "Text"
+msgstr "Text"
+
+#. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
 msgstr "Text copiat în clipboard"
 
+#. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
 msgstr "Codul de țară implicit pentru noile numere de telefon."
 
+#. js-lingui-id: PmXLtL
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "Țara implicită pentru noile adrese"
 
+#. js-lingui-id: 2OUtmv
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
 msgstr "Descrierea acestui câmp"
 
+#. js-lingui-id: VGZYbZ
 #: src/pages/settings/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "Emailul asociat contului dumneavoastră"
 
+#. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The name and icon of this field"
 msgstr "Numele și iconița acestui câmp"
 
+#. js-lingui-id: e/dfFe
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "The name of your connection"
 msgstr "Numele conexiunii dvs"
 
+#. js-lingui-id: 8EkdZh
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "The name of your Domain"
 msgstr "Numele domeniului dvs"
 
+#. js-lingui-id: +C8Rdp
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
 msgstr "Numele organizației dumneavoastră"
 
+#. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "Pagina pe care o căutați a dispărut sau nu a existat niciodată. Hai să vă redirecționăm pe calea cea bună"
 
+#. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "The values of this field"
 msgstr "Valorile acestui câmp"
 
+#. js-lingui-id: +69KDk
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field must be unique"
 msgstr "Valorile acestui câmp trebuie să fie unice"
 
+#. js-lingui-id: MHLapp
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "The whole event details will be shared with your team."
 msgstr "Detaliile întregului eveniment vor fi partajate cu echipa dvs."
 
+#. js-lingui-id: FEr96N
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
+msgid "Theme"
+msgstr "Temă"
+
+#. js-lingui-id: 6tNbxl
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+msgid "Theme "
+msgstr "Temă "
+
+#. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "A apărut o eroare în timpul actualizării parolei."
 
+#. js-lingui-id: PmtLRf
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 msgid "There was an issue"
 msgstr "A intervenit o problemă"
 
+#. js-lingui-id: DHjmMm
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 msgstr "Acestea sunt doar valorile serverului. Asigură-te că mediul lucrătorului tău are aceleași variabile și valori, acest lucru este necesar pentru sarcini asincrone precum sincronizarea emailului."
 
+#. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
 msgstr "Această acțiune nu poate fi anulată. Acest lucru va șterge definitiv acest utilizator și îl va elimina din toate atribuirile sale."
 
+#. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Această acțiune nu poate fi anulată. Acest lucru va șterge definitiv întregul spațiu de lucru. <0/> Vă rugăm să introduceți emailul dumneavoastră pentru confirmare."
 
+#. js-lingui-id: yHIStW
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "This member will be unassigned from this role."
 #~ msgstr "This member will be unassigned from this role."
 
+#. js-lingui-id: /tr8Uy
 #: src/pages/settings/roles/components/RolePermissions.tsx
 #~ msgid "This Role has the following permissions."
 #~ msgstr "This Role has the following permissions."
 
+#. js-lingui-id: 6j5nJX
 #: src/pages/settings/roles/components/RoleAssignment.tsx
 #~ msgid "This Role is assigned to these workspace member."
 #~ msgstr "This Role is assigned to these workspace member."
 
+#. js-lingui-id: xPfDRx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Acest rol este atribuit acestor membri ai spațiului de lucru."
 
+#. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "This week"
 msgstr "Săptămâna aceasta"
 
+#. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "Time format"
 msgstr "Formatul orei"
 
+#. js-lingui-id: Mz2JN2
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 msgid "Time zone"
 msgstr "Fusul orar"
 
+#. js-lingui-id: /VwdtK
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Timestamp and participants will be shared with your team."
 msgstr "Marca temporală și participanții vor fi partajați cu echipa dvs."
 
+#. js-lingui-id: aqMzDX
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to monthly"
 msgstr "pentru lunar"
 
+#. js-lingui-id: WXXiXO
 #: src/pages/settings/SettingsBilling.tsx
 msgid "to yearly"
 msgstr "pentru anual"
 
+#. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "Azi"
 
+#. js-lingui-id: vb0Q0/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Total Users"
 #~ msgstr "Total Users"
 
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#. js-lingui-id: PiUt3N
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Trigger Type"
 msgstr "Tipul Trigger-ului"
 
+#. js-lingui-id: IQ5pAL
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Trigger type should be Manual - when no record(s) are selected"
 #~ msgstr "Trigger type should be Manual - when no record(s) are selected"
 
+#. js-lingui-id: c+xCSz
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
+#: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "True"
 msgstr "Adevărat"
 
+#. js-lingui-id: haaL9N
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "Încercați terenurile noastre de joc REST sau GraphQL API."
 
+#. js-lingui-id: Kz91g/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "Turcă"
 
+#. js-lingui-id: +zy2Nq
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
 msgid "Type"
 msgstr "Tip"
 
+#. js-lingui-id: U83IeL
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything"
 msgstr "Tastează orice"
 
+#. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Ukrainian"
 msgstr "Ucraineană"
 
+#. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Unique"
 msgstr "Unic"
 
+#. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Unknown error"
 msgstr "Eroare necunoscută"
 
+#. js-lingui-id: GQCXQS
+#: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Contacte nelimitate"
 
+#. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Updated"
 msgstr "Actualizat"
 
+#. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
 msgstr "Încarcă"
 
+#. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload file"
 msgstr "Încărcați fișierul"
 
+#. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Încărcați fișierul XML cu informațiile conexiunii"
 
+#. js-lingui-id: IagCbF
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "URL"
 msgstr "URL"
 
+#. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Use as draft"
 msgstr "Utilizează ca schiță"
 
+#. js-lingui-id: oTTQsc
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "Utilizați litere, numere și liniuțe doar. Începeți și terminați cu o literă sau un număr"
 
+#. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Utilizează API-ul nostru sau adaugă primul tău {objectLabel} manual"
 
+#. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -3230,106 +4171,131 @@ msgstr "Utilizează API-ul nostru sau adaugă primul tău {objectLabel} manual"
 msgid "User"
 msgstr "Utilizator"
 
+#. js-lingui-id: YFciqL
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Email"
 #~ msgstr "User Email"
 
+#. js-lingui-id: GjhOGB
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User ID"
 #~ msgstr "User ID"
 
+#. js-lingui-id: RNv3YS
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
 msgstr "Impersonare utilizator"
 
+#. js-lingui-id: tNT8wT
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Info"
 msgstr "Informații utilizator"
 
+#. js-lingui-id: IjyOjp
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "User is not logged in"
 msgstr "Utilizatorul nu este autentificat"
 
+#. js-lingui-id: 5ZYU8G
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "User Name"
 #~ msgstr "User Name"
 
+#. js-lingui-id: Sxm8rQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Users"
 #~ msgstr "Users"
 
+#. js-lingui-id: fXVIZq
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "Valori"
 
+#. js-lingui-id: dY/1ir
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
 msgstr "Variabilă negăsită"
 
+#. js-lingui-id: IHIWR4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
 msgstr "Versiunea aplicației"
 
+#. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Vietnamese"
 msgstr "Vietnameză"
 
+#. js-lingui-id: jpctdh
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "View"
 msgstr "Vizualizare"
 
+#. js-lingui-id: KANz0G
 #: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
 msgstr "Vizualizează detalii despre facturare"
 
+#. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "View execution details"
 msgstr "Vizualizați detaliile execuției"
 
+#. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #~ msgid "View settings"
 #~ msgstr "View settings"
 
+#. js-lingui-id: bJAIqT
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
 msgstr "Tip de vizualizare"
 
+#. js-lingui-id: 2q/Q7x
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Visibility"
 msgstr "Vizibilitate"
 
+#. js-lingui-id: oh8+os
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Visible"
 msgstr "Vizibil"
 
+#. js-lingui-id: JiDDG4
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Visible groups"
 msgstr "Grupuri vizibile"
 
+#. js-lingui-id: 6n7jtr
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
 msgid "Visualize"
 msgstr "Vizualizează"
 
+#. js-lingui-id: id6ein
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Suportăm PNG-uri pătrate, JPEG-uri și GIF-uri sub 10MB"
 
+#. js-lingui-id: ZS7vYp
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "Vom trimite cereri POST către acest endpoint pentru fiecare eveniment nou"
 
+#. js-lingui-id: PI4LiB
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "We will send your a link to verify domain ownership"
 msgstr "Vă vom trimite un link pentru a verifica deținerea domeniului"
 
+#. js-lingui-id: TRDppN
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Webhook"
 msgstr "Webhook"
 
+#. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -3337,34 +4303,42 @@ msgstr "Webhook"
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#. js-lingui-id: Jt1WNL
 #: src/pages/auth/SignInUp.tsx
 #~ msgid "Welcome to"
 #~ msgstr "Welcome to"
 
+#. js-lingui-id: ke0EDP
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
 msgstr "Bun venit la {workspaceName}"
 
+#. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
 msgstr "Când va expira cheia API."
 
+#. js-lingui-id: leUubq
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "Când va fi dezactivată cheia"
 
+#. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
 #~ msgid "Workflow cannot be tested"
 #~ msgstr "Workflow cannot be tested"
 
+#. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow is running..."
 msgstr "Workflow-ul rulează..."
 
+#. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 msgid "Workflow run failed"
 msgstr "Execuția workflow-ului a eșuat"
 
+#. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
@@ -3393,34 +4367,42 @@ msgstr "Execuția workflow-ului a eșuat"
 msgid "Workspace"
 msgstr "Spațiu de lucru"
 
+#. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
 msgstr "Ștergere Spațiu de lucru"
 
+#. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
 msgstr "Informații despre spațiul de lucru"
 
+#. js-lingui-id: Y0Fj4S
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
 msgstr "Logo Spațiu de lucru"
 
+#. js-lingui-id: CozWO1
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace name"
 msgstr "Nume Spațiu de lucru"
 
+#. js-lingui-id: 6X+cfX
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Workspace Name"
 #~ msgstr "Workspace Name"
 
+#. js-lingui-id: pmt7u4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Workspaces"
 msgstr "Spații de lucru"
 
+#. js-lingui-id: 5iSD9O
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Wrap on record pages"
 msgstr "Înfășurare pe paginile de înregistrare"
 
+#. js-lingui-id: Q9pNST
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -3428,55 +4410,68 @@ msgstr "Înfășurare pe paginile de înregistrare"
 msgid "Write a description"
 msgstr "Scrie o descriere"
 
+#. js-lingui-id: L80fMJ
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Write a secret"
 msgstr "Scrieți un secret"
 
+#. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "yes"
 msgstr "da"
 
+#. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 msgid "You are not allowed to create records for this object"
 msgstr "Nu aveți permisiunea de a crea înregistrări pentru acest obiect"
 
+#. js-lingui-id: 5eVYbs
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #~ msgid "You are not allowed to create records in this object"
 #~ msgstr "You are not allowed to create records in this object"
 
+#. js-lingui-id: TBApzn
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
 #~ msgstr "You do not have access to impersonate users."
 
+#. js-lingui-id: zSkMV0
 #: src/pages/settings/SettingsBilling.tsx
 msgid "You will be charged immediately for the full year."
 msgstr "Veți fi taxat imediat pentru întregul an."
 
+#. js-lingui-id: XVnj6K
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your credit balance will be used to pay the monthly bills."
 msgstr "Soldul dvs. de credit va fi utilizat pentru a plăti facturile lunare."
 
+#. js-lingui-id: +5YqGH
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Your email subjects and meeting titles will be shared with your team."
 msgstr "Subiectele emailurilor și titlurile întâlnirilor vor fi partajate cu echipa dvs."
 
+#. js-lingui-id: la0RPA
 #: src/modules/onboarding/components/onboardingSyncEmailsOptions.tsx
 msgid "Your emails and events content will be shared with your team."
 msgstr "Conținutul emailurilor și evenimentelor va fi partajat cu echipa dvs."
 
+#. js-lingui-id: 9ivpwk
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"
 msgstr "Numele dvs. așa cum va fi afișat"
 
+#. js-lingui-id: 3RASGN
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Your name as it will be displayed on the app"
 msgstr "Numele dvs. așa cum va fi afișat în aplicație"
 
+#. js-lingui-id: YQK8fJ
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Spațiul tău de lucru"
 
+#. js-lingui-id: RhNbPE
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Spațiul tău de lucru va fi dezactivat"

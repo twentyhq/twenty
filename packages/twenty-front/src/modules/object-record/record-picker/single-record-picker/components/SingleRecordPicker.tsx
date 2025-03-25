@@ -7,7 +7,7 @@ import {
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SINGLE_RECORD_PICKER_LISTENER_ID = 'single-record-select';
 
@@ -39,6 +39,7 @@ export const SingleRecordPicker = ({
         event.target instanceof HTMLInputElement &&
         event.target.tagName === 'INPUT'
       );
+
       if (weAreNotInAnHTMLInput && isDefined(onCancel)) {
         onCancel();
       }

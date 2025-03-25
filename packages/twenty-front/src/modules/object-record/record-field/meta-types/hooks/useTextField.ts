@@ -28,7 +28,7 @@ export const useTextField = () => {
   const fieldTextValue = isFieldTextValue(fieldValue) ? fieldValue : '';
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldTextValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldTextValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

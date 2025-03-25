@@ -2,9 +2,9 @@ import { useCallback, useContext } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -17,8 +17,8 @@ import {
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { isCreateStepNode } from '@/workflow/workflow-diagram/utils/isCreateStepNode';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
-import { isDefined } from 'twenty-shared';
 import { useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
   const { getIcon } = useIcons();
@@ -27,7 +27,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
   const {
     openWorkflowTriggerTypeInCommandMenu,
     openWorkflowEditStepInCommandMenu,
-  } = useCommandMenu();
+  } = useWorkflowCommandMenu();
 
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
 
@@ -41,10 +41,14 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0] as WorkflowDiagramNode;
+      const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
 
       if (!isInRightDrawer) {
         setCommandMenuNavigationStack([]);
+      }
+
+      if (!isDefined(selectedNode)) {
+        return;
       }
 
       const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;

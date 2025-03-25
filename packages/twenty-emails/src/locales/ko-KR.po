@@ -18,143 +18,178 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
 "X-Crowdin-File-ID: 27\n"
 
+#. js-lingui-id: 4WPI3S
 #: src/emails/send-invite-link.email.tsx
 msgid "Accept invite"
 msgstr "초대 수락"
 
+#. js-lingui-id: Yxj+Uc
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "All data in this workspace has been permanently deleted."
 msgstr "이 워크스페이스의 모든 데이터가 영구적으로 삭제되었습니다."
 
+#. js-lingui-id: RPHFhC
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "이메일 주소를 확인하세요"
 
+#. js-lingui-id: nvkBPN
 #: src/emails/password-update-notify.email.tsx
 msgid "Connect to Twenty"
 msgstr "Twenty에 연결하세요"
 
+#. js-lingui-id: jPQSEz
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Create a new workspace"
 msgstr "새 워크스페이스 만들기"
 
+#. js-lingui-id: JRzgV7
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "Dear"
 #~ msgstr "Dear"
 
+#. js-lingui-id: Lm5BBI
 #: src/emails/password-update-notify.email.tsx
 msgid "Dear {userName}"
 msgstr "{userName}님께"
 
+#. js-lingui-id: lIdkf2
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Dear {userName},"
 msgstr "{userName}님께,"
 
+#. js-lingui-id: NTwcnq
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Deleted Workspace"
 msgstr "삭제된 워크스페이스"
 
+#. js-lingui-id: S3uuQj
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "email addresses to join your workspace without requiring an invitation."
 msgstr "초대를 요구하지 않고 워크스페이스에 참여할 수 있는 이메일 주소입니다."
 
+#. js-lingui-id: tGme7M
 #: src/emails/send-invite-link.email.tsx
 msgid "has invited you to join a workspace called "
 msgstr "라는 워크스페이스에 초대되었습니다 "
 
+#. js-lingui-id: uzTaYi
 #: src/emails/password-update-notify.email.tsx
 msgid "Hello"
 msgstr "안녕하세요"
 
+#. js-lingui-id: Xa0d85
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Hello,"
 msgstr "안녕하세요,"
 
+#. js-lingui-id: eE1nG1
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "이 변경을 시작하지 않으셨다면 즉시 워크스페이스 소유자에게 문의하세요."
 
+#. js-lingui-id: Gz91L8
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
 msgstr "Twenty를 계속 사용하려면 다음 {remainingDays} {dayOrDays} 내에 구독을 업데이트하세요."
 
+#. js-lingui-id: 0weyko
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you wish to use Twenty again, you can create a new workspace."
 msgstr "Twenty를 다시 사용하려면 새 워크스페이스를 생성하세요."
 
+#. js-lingui-id: 7JuhZQ
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
 msgstr "워크스페이스 <0>{workspaceDisplayName}</0>이(가) {daysSinceInactive}일 동안 일시 중단된 것 같습니다."
 
+#. js-lingui-id: PviVyk
 #: src/emails/send-invite-link.email.tsx
 msgid "Join your team on Twenty"
 msgstr "Twenty에서 팀에 합류하세요"
 
+#. js-lingui-id: ogtYkT
 #: src/emails/password-update-notify.email.tsx
 msgid "Password updated"
 msgstr "비밀번호가 업데이트되었습니다"
 
+#. js-lingui-id: Yucjaa
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Please validate this domain to allow users with"
 msgstr "이 도메인을 인증하여 사용자를 허용하세요"
 
+#. js-lingui-id: u3Ns4p
 #: src/emails/validate-approved-access-domain.email.tsx
 #~ msgid "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
 #~ msgstr "Please validate this domain to allow users with <0>@{domain}</0> email addresses to join your workspace without requiring an invitation."
 
+#. js-lingui-id: OfhWJH
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "초기화"
 
+#. js-lingui-id: RE5NiU
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "비밀번호를 재설정하세요 🗝"
 
+#. js-lingui-id: UBadaJ
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace "
 msgstr "중단된 워크스페이스 "
 
+#. js-lingui-id: 7yDt8q
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address."
 msgstr "Twenty에 계정을 등록해 주셔서 감사합니다! 시작하기 전에 본인 확인이 필요합니다. 위를 클릭하여 이메일 주소를 인증하세요."
 
+#. js-lingui-id: igorB1
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
 msgstr "워크스페이스는 {remainingDays} {dayOrDays} 후에 비활성화되며 모든 데이터가 삭제됩니다."
 
+#. js-lingui-id: 7OEHy1
 #: src/emails/password-update-notify.email.tsx
 msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
 msgstr "계정({email})의 비밀번호가 {formattedDate}에 성공적으로 변경되었음을 확인합니다."
 
+#. js-lingui-id: wSOsS+
 #: src/emails/password-update-notify.email.tsx
 #~ msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 #~ msgstr "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}.<0/><1/>If you did not initiate this change, please contact your workspace owner immediately."
 
+#. js-lingui-id: R4gMjN
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "이 링크는 다음 {duration} 동안만 유효합니다. 링크가 작동하지 않으면 로그인 인증 링크를 직접 사용할 수 있습니다:"
 
+#. js-lingui-id: 2oA637
 #: src/emails/password-reset-link.email.tsx
 #~ msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
 #~ msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:<0/>"
 
+#. js-lingui-id: H0v4yC
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Update your subscription"
 msgstr "구독을 업데이트하세요"
 
+#. js-lingui-id: QbiUqd
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "도메인 검증"
 
+#. js-lingui-id: wCKkSr
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "이메일 인증"
 
+#. js-lingui-id: 9MqLGX
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
 msgstr "구독이 {daysSinceInactive}일 전에 만료되어 워크스페이스 <0>{workspaceDisplayName}</0>이(가) 삭제되었습니다."
 
+#. js-lingui-id: KFmFrQ
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
 #~ msgstr "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."

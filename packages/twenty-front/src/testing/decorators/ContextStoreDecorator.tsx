@@ -2,7 +2,7 @@ import { Decorator } from '@storybook/react';
 import { useEffect, useState } from 'react';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isUndefined } from '@sniptt/guards';
@@ -17,8 +17,8 @@ export const ContextStoreDecorator: Decorator = (Story, context) => {
     componentInstanceId = MAIN_CONTEXT_STORE_INSTANCE_ID;
   }
 
-  const setCurrentObjectMetadataItem = useSetRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const setCurrentObjectMetadataItemId = useSetRecoilComponentStateV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     componentInstanceId,
   );
 
@@ -27,9 +27,9 @@ export const ContextStoreDecorator: Decorator = (Story, context) => {
   const objectMetadataItem = getMockCompanyObjectMetadataItem();
 
   useEffect(() => {
-    setCurrentObjectMetadataItem(objectMetadataItem);
+    setCurrentObjectMetadataItemId(objectMetadataItem.id);
     setIsLoaded(true);
-  }, [setCurrentObjectMetadataItem, objectMetadataItem]);
+  }, [setCurrentObjectMetadataItemId, objectMetadataItem]);
 
   return (
     <ContextStoreComponentInstanceContext.Provider

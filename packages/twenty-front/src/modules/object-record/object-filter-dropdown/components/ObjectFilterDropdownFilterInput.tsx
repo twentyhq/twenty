@@ -5,13 +5,12 @@ import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
-import { ObjectFilterDropdownTextSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isDefined } from 'twenty-shared';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
+import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
@@ -20,6 +19,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId?: string;
@@ -82,7 +82,7 @@ export const ObjectFilterDropdownFilterInput = ({
         <>
           {TEXT_FILTER_TYPES.includes(filterType) &&
             !isActorSourceCompositeFilter &&
-            !isActorAndIs && <ObjectFilterDropdownTextSearchInput />}
+            !isActorAndIs && <ObjectFilterDropdownTextInput />}
           {NUMBER_FILTER_TYPES.includes(filterType) && (
             <ObjectFilterDropdownNumberInput />
           )}
@@ -97,7 +97,7 @@ export const ObjectFilterDropdownFilterInput = ({
               <ObjectFilterDropdownRecordSelect />
             </>
           )}
-          {(isActorSourceCompositeFilter || isActorAndIs) && (
+          {filterType === 'ACTOR' && (isActorSourceCompositeFilter || isActorAndIs) && (
             <>
               <DropdownMenuSeparator />
               <ObjectFilterDropdownSourceSelect />

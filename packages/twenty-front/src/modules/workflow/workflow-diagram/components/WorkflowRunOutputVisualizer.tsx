@@ -1,7 +1,7 @@
 import { useWorkflowRunUnsafe } from '@/workflow/hooks/useWorkflowRunUnsafe';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
 import { CodeEditor } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledSourceCodeContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(4)};

@@ -44,7 +44,7 @@ const StyledEditor = styled.div`
     background: transparent;
   }
   & .bn-editor {
-    padding-inline: 36px;
+    padding-inline: 44px;
   }
   & .bn-container .bn-drag-handle {
     width: 20px;

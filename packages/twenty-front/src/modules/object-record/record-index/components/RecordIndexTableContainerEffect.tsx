@@ -5,7 +5,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
-import { useSetRecordIndexEntityCount } from '@/object-record/record-index/hooks/useSetRecordIndexEntityCount';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
@@ -13,7 +12,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordIndexTableContainerEffect = () => {
   const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
@@ -22,7 +21,6 @@ export const RecordIndexTableContainerEffect = () => {
 
   const {
     setAvailableTableColumns,
-    setOnEntityCountChange,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
   } = useRecordTable({
@@ -35,8 +33,6 @@ export const RecordIndexTableContainerEffect = () => {
 
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
-
-  const { setRecordIndexEntityCount } = useSetRecordIndexEntityCount(viewBarId);
 
   useEffect(() => {
     setAvailableTableColumns(columnDefinitions);
@@ -66,13 +62,6 @@ export const RecordIndexTableContainerEffect = () => {
         handleToggleColumnSort(fieldMetadataId),
     );
   }, [setOnToggleColumnSort, handleToggleColumnSort]);
-
-  useEffect(() => {
-    setOnEntityCountChange(
-      () => (entityCount: number, currentRecordGroupId?: string) =>
-        setRecordIndexEntityCount(entityCount, currentRecordGroupId),
-    );
-  }, [setRecordIndexEntityCount, setOnEntityCountChange]);
 
   const setViewFieldAggregateOperation = useRecoilCallback(
     ({ set, snapshot }) =>

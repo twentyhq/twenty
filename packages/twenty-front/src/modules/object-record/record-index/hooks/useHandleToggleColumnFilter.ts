@@ -19,7 +19,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseHandleToggleColumnFilterProps = {
   objectNameSingular: string;

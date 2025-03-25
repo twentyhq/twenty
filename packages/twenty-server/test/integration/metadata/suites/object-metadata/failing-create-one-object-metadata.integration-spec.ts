@@ -1,9 +1,9 @@
 import { getMockCreateObjectInput } from 'test/integration/utils/object-metadata/generate-mock-create-object-metadata-input';
 import { performFailingObjectMetadataCreation } from 'test/integration/utils/object-metadata/perform-failing-object-metadata-creation';
-import { EachTestingContext } from 'twenty-shared';
+import { EachTestingContext } from 'twenty-shared/testing';
 
-import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 type CreateObjectInputPayload = Omit<
   CreateObjectInput,

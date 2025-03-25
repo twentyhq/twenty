@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';

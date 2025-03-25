@@ -3,6 +3,7 @@ import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql'
 
 export type ServerlessFunctionTestData = {
   input: { [field: string]: any };
+  shouldInitInput: boolean;
   output: {
     data?: string;
     logs: string;
@@ -29,6 +30,7 @@ export const serverlessFunctionTestDataFamilyState = createFamilyState<
     language: 'plaintext',
     height: 64,
     input: {},
+    shouldInitInput: true,
     output: DEFAULT_OUTPUT_VALUE,
   },
 });

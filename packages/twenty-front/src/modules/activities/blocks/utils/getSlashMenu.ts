@@ -1,5 +1,6 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
 import {
+  IconCode,
   IconComponent,
   IconFile,
   IconH1,
@@ -27,6 +28,7 @@ const Icons: Record<string, IconComponent> = {
   'Numbered List': IconListNumbers,
   'Bullet List': IconList,
   'Check List': IconListCheck,
+  'Code Block': IconCode,
   Paragraph: IconPilcrow,
   Table: IconTable,
   Image: IconPhoto,

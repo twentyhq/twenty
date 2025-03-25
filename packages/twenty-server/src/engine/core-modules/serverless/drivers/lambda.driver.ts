@@ -20,7 +20,7 @@ import {
   LogType,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ServerlessDriver,
@@ -288,12 +288,9 @@ export class LambdaDriver implements ServerlessDriver {
 
     const startTime = Date.now();
 
-    const computedVersion =
-      version === 'latest' ? serverlessFunction.latestVersion : version;
-
     const folderPath = getServerlessFolder({
       serverlessFunction,
-      version: computedVersion,
+      version,
     });
 
     const tsCodeStream = await this.fileStorageService.read({

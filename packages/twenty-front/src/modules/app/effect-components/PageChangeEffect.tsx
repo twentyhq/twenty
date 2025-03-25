@@ -21,9 +21,10 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { isDefined } from 'twenty-shared';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
+import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
+import { isDefined } from 'twenty-shared/utils';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -178,15 +179,10 @@ export const PageChangeEffect = () => {
   const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
 
   useEffect(() => {
-    if (
-      isCaptchaScriptLoaded &&
-      (isMatchingLocation(AppPath.SignInUp) ||
-        isMatchingLocation(AppPath.Invite) ||
-        isMatchingLocation(AppPath.ResetPassword))
-    ) {
+    if (isCaptchaScriptLoaded && isCaptchaRequiredForPath(location.pathname)) {
       requestFreshCaptchaToken();
     }
-  }, [isCaptchaScriptLoaded, isMatchingLocation, requestFreshCaptchaToken]);
+  }, [isCaptchaScriptLoaded, location.pathname, requestFreshCaptchaToken]);
 
   return <></>;
 };

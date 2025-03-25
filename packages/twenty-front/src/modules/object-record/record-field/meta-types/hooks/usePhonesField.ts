@@ -27,7 +27,7 @@ export const usePhonesField = () => {
   );
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldPhonesValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldPhonesValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

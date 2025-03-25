@@ -85,7 +85,7 @@ export const SettingsListCard = <
           description={getItemDescription?.(item)}
           rightComponent={<RowRightComponent item={item} />}
           divider={index < items.length - 1}
-          onClick={() => onRowClick?.(item)}
+          onClick={onRowClick ? () => onRowClick?.(item) : undefined}
           to={to?.(item)}
         />
       ))}

@@ -197,7 +197,9 @@ export const RecordDetailRelationSection = ({
   const handleOpenRelationPickerDropdown = () => {
     if (isToOneObject) {
       setSingleRecordPickerSearchFilter('');
-      setSingleRecordPickerSelectedId(relationRecords[0].id);
+      if (relationRecords.length > 0) {
+        setSingleRecordPickerSelectedId(relationRecords[0].id);
+      }
     }
 
     if (isToManyObjects) {
@@ -260,6 +262,7 @@ export const RecordDetailRelationSection = ({
                     accent="tertiary"
                   />
                 }
+                dropdownHotkeyScope={{ scope: dropdownId }}
                 dropdownComponents={
                   isToOneObject ? (
                     <SingleRecordPicker
@@ -269,6 +272,7 @@ export const RecordDetailRelationSection = ({
                       objectNameSingular={relationObjectMetadataNameSingular}
                       recordPickerInstanceId={dropdownId}
                       onCreate={createNewRecordAndOpenRightDrawer}
+                      onCancel={closeDropdown}
                       layoutDirection={
                         dropdownPlacement?.includes('end')
                           ? 'search-bar-on-bottom'
@@ -293,7 +297,6 @@ export const RecordDetailRelationSection = ({
                     />
                   )
                 }
-                dropdownHotkeyScope={{ scope: dropdownId }}
               />
             </DropdownScope>
           )

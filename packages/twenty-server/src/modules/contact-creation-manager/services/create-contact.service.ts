@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConnectedAccountProvider } from 'twenty-shared';
 import { DeepPartial, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -51,7 +51,10 @@ export class CreateContactService {
 
       return {
         id,
-        emails: { primaryEmail: handle, additionalEmails: null },
+        emails: {
+          primaryEmail: handle.toLowerCase(),
+          additionalEmails: null,
+        },
         name: {
           firstName,
           lastName,

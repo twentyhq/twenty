@@ -1,5 +1,4 @@
 import { createCustomTextFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-custom-text-field-metadata.util';
-import { deleteFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-factory.util';
 import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -22,7 +21,6 @@ describe('updateOne', () => {
       testFieldId = createdFieldMetadaId;
     });
     afterEach(async () => {
-      await deleteFieldMetadata(testFieldId);
       await deleteOneObjectMetadataItem(listingObjectId);
     });
 

@@ -8,6 +8,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import {
   ColorSample,
   IconCheck,
@@ -21,7 +22,6 @@ import {
   MenuItemSelectColor,
 } from 'twenty-ui';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
-import { t } from '@lingui/core/macro';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -102,7 +102,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         stroke={theme.icon.stroke.sm}
         color={theme.font.color.extraLight}
       />
-      <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
+      <AdvancedSettingsWrapper animationDimension="width" hideDot>
         <StyledOptionInput
           value={option.value}
           onChange={(input) =>

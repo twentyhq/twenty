@@ -89,7 +89,7 @@ export const Disabled: Story = {
       addressLat: 39.781721,
       addressLng: -89.650148,
     },
-    onPersist: fn(),
+    onChange: fn(),
     VariablePicker: () => <div>VariablePicker</div>,
   },
   play: async ({ canvasElement, args }) => {
@@ -113,7 +113,7 @@ export const Disabled: Story = {
     const searchInputInModal = canvas.queryByPlaceholderText('Search');
     expect(searchInputInModal).not.toBeInTheDocument();
 
-    expect(args.onPersist).not.toHaveBeenCalled();
+    expect(args.onChange).not.toHaveBeenCalled();
 
     const variablePickers = canvas.queryAllByText('VariablePicker');
     expect(variablePickers).toHaveLength(0);

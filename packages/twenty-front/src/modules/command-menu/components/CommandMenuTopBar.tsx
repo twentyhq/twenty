@@ -2,14 +2,16 @@ import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuCon
 import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
 import { CommandMenuContextChipGroupsWithRecordSelection } from '@/command-menu/components/CommandMenuContextChipGroupsWithRecordSelection';
 import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/CommandMenuTopBarInputFocusEffect';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
+import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -18,7 +20,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   Button,
   IconChevronLeft,
@@ -26,6 +27,7 @@ import {
   getOsControlSymbol,
   useIsMobile,
 } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -90,10 +92,13 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu, goBackFromCommandMenu } = useCommandMenu();
+  const { closeCommandMenu } = useCommandMenu();
 
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const { goBackFromCommandMenu } = useCommandMenuHistory();
+
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
@@ -129,11 +134,11 @@ export const CommandMenuTopBar = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {isDefined(contextStoreCurrentObjectMetadataItem) &&
+        {isDefined(contextStoreCurrentObjectMetadataItemId) &&
         commandMenuPage !== CommandMenuPages.SearchRecords ? (
           <CommandMenuContextChipGroupsWithRecordSelection
             contextChips={contextChips}
-            objectMetadataItemId={contextStoreCurrentObjectMetadataItem.id}
+            objectMetadataItemId={contextStoreCurrentObjectMetadataItemId}
           />
         ) : (
           <CommandMenuContextChipGroups contextChips={contextChips} />

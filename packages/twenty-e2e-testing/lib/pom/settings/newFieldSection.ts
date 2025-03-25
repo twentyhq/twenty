@@ -29,6 +29,7 @@ export class NewFieldSection {
   private readonly relationFieldLink: Locator;
   private readonly relationTypeSelect: Locator;
   private readonly objectDestinationSelect: Locator;
+  private readonly relationIconSelect: Locator;
   private readonly relationFieldNameInput: Locator;
   private readonly fullNameFieldLink: Locator;
   private readonly UUIDFieldLink: Locator;
@@ -223,6 +224,11 @@ export class NewFieldSection {
   async selectObjectDestination(name: string) {
     await this.objectDestinationSelect.click();
     await this.page.getByTestId('tooltip').filter({ hasText: name }).click();
+  }
+
+  async selectRelationIcon(name: string) {
+    await this.relationIconSelect.click();
+    await this.page.getByTitle(name).click();
   }
 
   async typeRelationName(name: string) {

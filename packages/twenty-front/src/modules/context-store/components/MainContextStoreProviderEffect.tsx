@@ -1,5 +1,5 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
@@ -40,10 +40,10 @@ export const MainContextStoreProviderEffect = ({
     );
 
   const [
-    contextStoreCurrentObjectMetadataItem,
-    setContextStoreCurrentObjectMetadataItem,
+    contextStoreCurrentObjectMetadataItemId,
+    setContextStoreCurrentObjectMetadataItemId,
   ] = useRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
@@ -54,8 +54,8 @@ export const MainContextStoreProviderEffect = ({
   );
 
   useEffect(() => {
-    if (contextStoreCurrentObjectMetadataItem?.id !== objectMetadataItem.id) {
-      setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
+    if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {
+      setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     }
 
     setLastVisitedViewForObjectMetadataNamePlural({
@@ -71,11 +71,11 @@ export const MainContextStoreProviderEffect = ({
       setContextStoreCurrentViewId(viewId);
     }
   }, [
-    contextStoreCurrentObjectMetadataItem,
+    contextStoreCurrentObjectMetadataItemId,
     contextStoreCurrentViewId,
     objectMetadataItem,
     objectMetadataItem.namePlural,
-    setContextStoreCurrentObjectMetadataItem,
+    setContextStoreCurrentObjectMetadataItemId,
     setContextStoreCurrentViewId,
     setLastVisitedObjectMetadataId,
     setLastVisitedViewForObjectMetadataNamePlural,

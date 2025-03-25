@@ -1,7 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
-import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
@@ -10,13 +9,15 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-typ
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
+import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
+import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { isDefined } from 'twenty-shared';
 import { HorizontalSeparator, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionUpdateRecordProps = {
   action: WorkflowUpdateRecordAction;
@@ -59,7 +60,6 @@ export const WorkflowEditActionUpdateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionUpdateRecordProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
@@ -160,6 +160,8 @@ export const WorkflowEditActionUpdateRecord = ({
 
   const headerTitle = isDefined(action.name) ? action.name : `Update Record`;
   const headerIcon = getActionIcon(action.type);
+  const headerIconColor = useActionIconColorOrThrow(action.type);
+  const headerType = useActionHeaderTypeOrThrow(action.type);
 
   return (
     <>
@@ -175,9 +177,9 @@ export const WorkflowEditActionUpdateRecord = ({
           });
         }}
         Icon={getIcon(headerIcon)}
-        iconColor={theme.font.color.tertiary}
+        iconColor={headerIconColor}
         initialTitle={headerTitle}
-        headerType="Action"
+        headerType={headerType}
         disabled={isFormDisabled}
       />
 
@@ -227,7 +229,7 @@ export const WorkflowEditActionUpdateRecord = ({
             icon: getIcon(field.iconName),
             color: 'gray',
           }))}
-          onPersist={(fieldsToUpdate) =>
+          onChange={(fieldsToUpdate) =>
             handleFieldChange('fieldsToUpdate', fieldsToUpdate)
           }
           placeholder="Select fields to update"
@@ -254,7 +256,7 @@ export const WorkflowEditActionUpdateRecord = ({
               key={fieldDefinition.metadata.fieldName}
               defaultValue={currentValue}
               field={fieldDefinition}
-              onPersist={(value) => {
+              onChange={(value) => {
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}

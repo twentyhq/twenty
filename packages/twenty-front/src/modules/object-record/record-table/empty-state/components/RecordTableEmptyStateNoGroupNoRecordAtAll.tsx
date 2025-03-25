@@ -5,18 +5,17 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { getEmptyStateSubTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateSubTitle';
 import { getEmptyStateTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateTitle';
-import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 
 export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
-  const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const { createNewTableRecord } = useCreateNewTableRecord({
+  const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
-    recordTableId,
   });
 
   const handleButtonClick = () => {
-    createNewTableRecord();
+    createNewIndexRecord();
   };
 
   const objectLabel = useObjectLabel(objectMetadataItem);

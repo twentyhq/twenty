@@ -20,7 +20,7 @@ import {
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
@@ -32,6 +32,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
+import { useTheme } from '@emotion/react';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -187,6 +188,8 @@ export const ObjectSortDropdownButton = ({
 
   const { t } = useLingui();
 
+  const theme = useTheme();
+
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
@@ -218,12 +221,12 @@ export const ObjectSortDropdownButton = ({
             </StyledSelectedSortDirectionContainer>
           )}
           <DropdownMenuHeader
-            EndIcon={IconChevronDown}
             onClick={() =>
               setIsRecordSortDirectionMenuUnfolded(
                 !isRecordSortDirectionMenuUnfolded,
               )
             }
+            EndComponent={<IconChevronDown size={theme.icon.size.md} />}
           >
             {selectedRecordSortDirection === 'asc'
               ? t`Ascending`
@@ -237,7 +240,7 @@ export const ObjectSortDropdownButton = ({
               setObjectSortDropdownSearchInput(event.target.value)
             }
           />
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer scrollable={false}>
             {visibleFieldMetadataItems.map(
               (visibleFieldMetadataItem, index) => (
                 <MenuItem

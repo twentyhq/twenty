@@ -35,7 +35,7 @@ export const useMultiSelectField = () => {
   const persistField = usePersistField();
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldMultiSelectValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldMultiSelectValue>();
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {

@@ -20,13 +20,14 @@ import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-gr
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useLingui } from '@lingui/react/macro';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -88,7 +89,14 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={resetContent}
+            Icon={IconChevronLeft}
+          />
+        }
+      >
         Group by
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>

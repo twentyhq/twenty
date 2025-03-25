@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ObjectRecord,

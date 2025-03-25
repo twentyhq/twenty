@@ -1,7 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
@@ -11,6 +10,8 @@ import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useI
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { WorkspaceUrls } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { isDefined } from 'twenty-shared/utils';
+
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
 

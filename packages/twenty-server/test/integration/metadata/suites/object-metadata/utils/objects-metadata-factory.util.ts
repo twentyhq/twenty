@@ -17,7 +17,7 @@ export const objectsMetadataFactory = ({
         objects(filter: $filter, paging: $paging) {
           edges {
             node {
-               ${gqlFields}
+              ${gqlFields}
             }
           }
         }

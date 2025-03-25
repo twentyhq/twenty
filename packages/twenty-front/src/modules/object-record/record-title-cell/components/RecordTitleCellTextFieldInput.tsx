@@ -5,8 +5,8 @@ import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useRef } from 'react';
-import { isDefined } from 'twenty-shared';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTitleCellTextFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
@@ -65,6 +65,7 @@ export const RecordTitleCellTextFieldInput = ({
 
   return (
     <TextInputV2
+      ref={wrapperRef}
       autoGrow
       sizeVariant={sizeVariant}
       inheritFontStyles

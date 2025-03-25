@@ -7,9 +7,10 @@ import { createOneRelationMetadataFactory } from 'test/integration/metadata/suit
 import { deleteOneRelationMetadataItemFactory } from 'test/integration/metadata/suites/utils/delete-one-relation-metadata-factory.util';
 import { fieldsMetadataFactory } from 'test/integration/metadata/suites/utils/fields-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+
 const LISTING_NAME_SINGULAR = 'listing';
 
 describe('Custom object renaming', () => {
@@ -168,7 +169,7 @@ describe('Custom object renaming', () => {
     // Act
     const createRelationGraphqlOperation = createOneRelationMetadataFactory({
       input: {
-        relation: {
+        relationMetadata: {
           fromDescription: '',
           fromIcon: 'IconRelationOneToMany',
           fromLabel: 'Guest',
@@ -193,10 +194,10 @@ describe('Custom object renaming', () => {
     );
 
     // Assert
-    customRelationId = relationResponse.body.data.createOneRelation.id;
+    customRelationId = relationResponse.body.data.createOneRelationMetadata.id;
 
     relationFieldMetadataOnPersonId =
-      relationResponse.body.data.createOneRelation.fromFieldMetadataId;
+      relationResponse.body.data.createOneRelationMetadata.fromFieldMetadataId;
   });
 
   it('3. should rename custom object', async () => {

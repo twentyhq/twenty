@@ -51,14 +51,16 @@ export const ConnectedAccountHealthStatus = () => {
       {!isMessageSyncDown && serviceDetails.messageSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
           details={serviceDetails.messageSync.details}
-          title={t`Message Sync Status`}
+          title={t`Message Sync`}
+          description={t`Monitor the execution of your emails sync job`}
         />
       )}
 
       {!isCalendarSyncDown && serviceDetails.calendarSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
           details={serviceDetails.calendarSync.details}
-          title={t`Calendar Sync Status`}
+          title={t`Calendar Sync`}
+          description={t`Monitor the execution of your calendar events sync job`}
         />
       )}
     </StyledContainer>

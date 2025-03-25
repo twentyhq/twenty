@@ -4,7 +4,9 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
-import { APP_LOCALES, FieldMetadataType, isDefined } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4, v4 } from 'uuid';
 
@@ -16,6 +18,7 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import {
   RelationDefinitionDTO,
   RelationDefinitionType,
@@ -455,13 +458,22 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: UpdateFieldInput,
     existingFieldMetadata: FieldMetadataEntity,
   ) {
-    const updatableStandardFieldInput: UpdateFieldInput = {
+    const updatableStandardFieldInput: UpdateFieldInput & {
+      standardOverrides?: FieldStandardOverridesDTO;
+    } = {
       id: fieldMetadataInput.id,
       isActive: fieldMetadataInput.isActive,
       workspaceId: fieldMetadataInput.workspaceId,
       defaultValue: fieldMetadataInput.defaultValue,
       settings: fieldMetadataInput.settings,
+      isLabelSyncedWithName: fieldMetadataInput.isLabelSyncedWithName,
     };
+
+    if ('standardOverrides' in fieldMetadataInput) {
+      updatableStandardFieldInput.standardOverrides = (
+        fieldMetadataInput as any
+      ).standardOverrides;
+    }
 
     if (
       existingFieldMetadata.type === FieldMetadataType.SELECT ||
@@ -597,9 +609,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     return fieldMetadataInput;
   }
 
-  async resolveTranslatableString(
+  async resolveOverridableString(
     fieldMetadata: FieldMetadataDTO,
-    labelKey: 'label' | 'description',
+    labelKey: 'label' | 'description' | 'icon',
     locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
     if (fieldMetadata.isCustom) {
@@ -608,6 +620,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (!locale) {
       return fieldMetadata[labelKey] ?? '';
+    }
+
+    if (
+      fieldMetadata.standardOverrides &&
+      isDefined(fieldMetadata.standardOverrides[labelKey])
+    ) {
+      return fieldMetadata.standardOverrides[labelKey] as string;
     }
 
     const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');

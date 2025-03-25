@@ -2,6 +2,7 @@ import { ReactNode, useContext } from 'react';
 
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
@@ -15,6 +16,7 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -71,7 +73,6 @@ export const RecordTableCellFieldContextWrapper = ({
   return (
     <FieldContext.Provider
       value={{
-        recoilScopeId: recordId + columnDefinition.label,
         recordId,
         fieldDefinition: columnDefinition,
         useUpdateRecord: () => [updateRecord, {}],
@@ -87,7 +88,17 @@ export const RecordTableCellFieldContextWrapper = ({
         displayedMaxRows: 1,
       }}
     >
-      {children}
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: getRecordFieldInputId(
+            recordId,
+            columnDefinition.metadata.fieldName,
+            'record-table-cell',
+          ),
+        }}
+      >
+        {children}
+      </RecordFieldComponentInstanceContext.Provider>
     </FieldContext.Provider>
   );
 };

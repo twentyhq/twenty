@@ -3,8 +3,9 @@ import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/Ac
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockNoteEditor } from '@blocknote/core';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useExportNoteAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
@@ -20,10 +21,13 @@ export const useExportNoteAction: ActionHookWithObjectMetadataItem = ({
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
 
   const shouldBeRegistered =
-    isDefined(objectMetadataItem) && isDefined(selectedRecord) && isNoteOrTask;
+    isDefined(objectMetadataItem) &&
+    isDefined(selectedRecord) &&
+    isNoteOrTask &&
+    isNonEmptyString(selectedRecord.bodyV2?.blocknote);
 
   const onClick = async () => {
-    if (!shouldBeRegistered || !selectedRecord?.body) {
+    if (!shouldBeRegistered || !selectedRecord.bodyV2.blocknote) {
       return;
     }
 

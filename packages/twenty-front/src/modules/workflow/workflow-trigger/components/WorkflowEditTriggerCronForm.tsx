@@ -12,8 +12,8 @@ import { useTheme } from '@emotion/react';
 import { isNumber } from '@sniptt/guards';
 import cron from 'cron-validate';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
 import { useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
@@ -117,7 +117,7 @@ export const WorkflowEditTriggerCronForm = ({
             hint="Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
             readonly={triggerOptions.readonly}
             defaultValue={trigger.settings.pattern}
-            onPersist={(newPattern: string) => {
+            onChange={(newPattern: string) => {
               if (triggerOptions.readonly === true) {
                 return;
               }
@@ -156,7 +156,7 @@ export const WorkflowEditTriggerCronForm = ({
               error={errorMessagesVisible ? errorMessages.DAYS_day : undefined}
               onBlur={onBlur}
               defaultValue={trigger.settings.schedule.day}
-              onPersist={(newDay) => {
+              onChange={(newDay) => {
                 if (triggerOptions.readonly === true) {
                   return;
                 }
@@ -205,7 +205,7 @@ export const WorkflowEditTriggerCronForm = ({
               error={errorMessagesVisible ? errorMessages.DAYS_hour : undefined}
               onBlur={onBlur}
               defaultValue={trigger.settings.schedule.hour}
-              onPersist={(newHour) => {
+              onChange={(newHour) => {
                 if (triggerOptions.readonly === true) {
                   return;
                 }
@@ -256,7 +256,7 @@ export const WorkflowEditTriggerCronForm = ({
               }
               onBlur={onBlur}
               defaultValue={trigger.settings.schedule.minute}
-              onPersist={(newMinute) => {
+              onChange={(newMinute) => {
                 if (triggerOptions.readonly === true) {
                   return;
                 }
@@ -311,7 +311,7 @@ export const WorkflowEditTriggerCronForm = ({
               }
               onBlur={onBlur}
               defaultValue={trigger.settings.schedule.hour}
-              onPersist={(newHour) => {
+              onChange={(newHour) => {
                 if (triggerOptions.readonly === true) {
                   return;
                 }
@@ -358,7 +358,7 @@ export const WorkflowEditTriggerCronForm = ({
               }
               onBlur={onBlur}
               defaultValue={trigger.settings.schedule.minute}
-              onPersist={(newMinute) => {
+              onChange={(newMinute) => {
                 if (triggerOptions.readonly === true) {
                   return;
                 }
@@ -406,7 +406,7 @@ export const WorkflowEditTriggerCronForm = ({
             error={errorMessagesVisible ? errorMessages.MINUTES : undefined}
             onBlur={onBlur}
             defaultValue={trigger.settings.schedule.minute}
-            onPersist={(newMinute) => {
+            onChange={(newMinute) => {
               if (triggerOptions.readonly === true) {
                 return;
               }

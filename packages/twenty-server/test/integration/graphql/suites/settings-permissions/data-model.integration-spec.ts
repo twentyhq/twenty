@@ -3,7 +3,6 @@ import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-
 import { createCustomTextFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-custom-text-field-metadata.util';
 import { createOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-factory.util';
 import { deleteOneFieldMetadataItemFactory } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata-factory.util';
-import { deleteFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-factory.util';
 import { createOneObjectMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-factory.util';
 import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
@@ -11,7 +10,7 @@ import { deleteOneObjectMetadataItemFactory } from 'test/integration/metadata/su
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-factory.util';
 import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -52,7 +51,6 @@ describe('datamodel permissions', () => {
       testFieldId = createdFieldMetadaId;
     });
     afterAll(async () => {
-      await deleteFieldMetadata(testFieldId);
       await deleteOneObjectMetadataItem(listingObjectId);
     });
     describe('createOne', () => {

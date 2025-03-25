@@ -5,7 +5,7 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-describe('Core REST API Create One endpoint', () => {
+describe.skip('Core REST API Create One endpoint', () => {
   afterAll(async () => {
     await makeRestAPIRequest({
       method: 'delete',

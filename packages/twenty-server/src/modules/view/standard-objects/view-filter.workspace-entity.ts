@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -92,7 +92,6 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Position in the view filter group`,
     icon: 'IconHierarchy2',
   })
-  @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   positionInViewFilterGroup: number | null;
 }

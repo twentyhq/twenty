@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -72,10 +72,11 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredAttachments',
   })
-  author: Relation<WorkspaceMemberWorkspaceEntity>;
+  @WorkspaceIsNullable()
+  author: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('author')
-  authorId: string;
+  authorId: string | null;
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.task,

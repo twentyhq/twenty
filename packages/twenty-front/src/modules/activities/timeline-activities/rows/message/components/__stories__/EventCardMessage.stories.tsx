@@ -16,9 +16,7 @@ const meta: Meta<typeof EventCardMessage> = {
     SnackBarDecorator,
     (Story) => {
       return (
-        <TimelineActivityContext.Provider
-          value={{ labelIdentifierValue: 'Mock' }}
-        >
+        <TimelineActivityContext.Provider value={{ recordId: 'mock-id' }}>
           <Story />
         </TimelineActivityContext.Provider>
       );

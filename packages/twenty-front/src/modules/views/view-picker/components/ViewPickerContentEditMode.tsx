@@ -3,7 +3,7 @@ import { IconChevronLeft } from 'twenty-ui';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -21,6 +21,7 @@ import { viewPickerInputNameComponentState } from '@/views/view-picker/states/vi
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 export const ViewPickerContentEditMode = () => {
   const { setViewPickerMode } = useViewPickerMode();
@@ -67,7 +68,14 @@ export const ViewPickerContentEditMode = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={handleClose}>
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={handleClose}
+            Icon={IconChevronLeft}
+          />
+        }
+      >
         Edit view
       </DropdownMenuHeader>
       <DropdownMenuSeparator />

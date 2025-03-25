@@ -5,6 +5,7 @@ import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
 import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
+import { useSeeRunsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeRunsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -130,7 +131,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     key: WorkflowSingleRecordActionKeys.SEE_RUNS,
     label: msg`See runs`,
     shortLabel: msg`See runs`,
-    isPinned: false,
+    isPinned: true,
     position: 5,
     Icon: IconHistoryToggle,
     type: ActionMenuEntryType.Standard,
@@ -198,7 +199,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
     position: 10,
-    isPinned: true,
+    isPinned: false,
     Icon: IconHeart,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -212,7 +213,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: msg`Remove from favorites`,
     shortLabel: msg`Remove from favorites`,
-    isPinned: true,
+    isPinned: false,
     position: 11,
     Icon: IconHeartOff,
     availableOn: [
@@ -346,6 +347,19 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useImportRecordsNoSelectionRecordAction,
+  },
+  seeAllRuns: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.SEE_RUNS,
+    label: msg`Go to runs`,
+    shortLabel: msg`See runs`,
+    position: 21,
+    Icon: IconHistoryToggle,
+    accent: 'default',
+    isPinned: true,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeRunsNoSelectionRecordAction,
   },
   // TODO: uncomment when restore is implemented for workflows
   // restoreSingleRecord: {

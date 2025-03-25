@@ -5,7 +5,8 @@ import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import styled from '@emotion/styled';
-import { FieldMetadataType, capitalize } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;
@@ -41,7 +42,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectLabelPlural: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
-  const { record, loading } = useFindOneRecord({
+  const { loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
     recordGqlFields: {
@@ -52,7 +53,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
     objectRecordId,
-    recordFromStore: record ?? null,
   });
 
   if (loading) {
@@ -69,8 +69,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
         <FieldContext.Provider
           value={{
             recordId: objectRecordId,
-            recoilScopeId:
-              objectRecordId + labelIdentifierFieldMetadataItem?.id,
             isLabelIdentifier: false,
             fieldDefinition: {
               type:

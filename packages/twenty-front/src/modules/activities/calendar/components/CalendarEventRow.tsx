@@ -10,8 +10,7 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { isDefined } from 'twenty-shared';
+import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
 import {
   Avatar,
   AvatarGroup,
@@ -24,6 +23,7 @@ import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,
 } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -114,7 +114,8 @@ export const CalendarEventRow = ({
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { displayCurrentEventCursor = false } = useContext(CalendarContext);
-  const { openCalendarEventInCommandMenu } = useCommandMenu();
+  const { openCalendarEventInCommandMenu } =
+    useOpenCalendarEventInCommandMenu();
 
   const startsAt = getCalendarEventStartDate(calendarEvent);
   const endsAt = getCalendarEventEndDate(calendarEvent);

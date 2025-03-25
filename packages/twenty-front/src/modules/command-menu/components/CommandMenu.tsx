@@ -5,12 +5,13 @@ import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContex
 import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Command } from '@/command-menu/types/Command';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export type CommandGroupConfig = {
   heading: string;
@@ -35,15 +36,14 @@ export const CommandMenu = () => {
     commandMenuSearch,
   });
 
-  const previousContextStoreCurrentObjectMetadataItem =
+  const previousContextStoreCurrentObjectMetadataItemId =
     useRecoilComponentValueV2(
-      contextStoreCurrentObjectMetadataItemComponentState,
+      contextStoreCurrentObjectMetadataItemIdComponentState,
       'command-menu-previous',
     );
 
-  const currentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
-  );
+  const { objectMetadataItem: currentObjectMetadataItem } =
+    useContextStoreObjectMetadataItemOrThrow();
 
   const commandGroups: CommandGroupConfig[] = [
     {
@@ -59,8 +59,8 @@ export const CommandMenu = () => {
     {
       heading: t`Global`,
       items: matchingStandardActionGlobalCommands
-        .concat(matchingNavigateCommands)
-        .concat(matchingWorkflowRunGlobalCommands),
+        .concat(matchingWorkflowRunGlobalCommands)
+        .concat(matchingNavigateCommands),
     },
     {
       heading: t`Search ''${commandMenuSearch}'' with...`,
@@ -74,7 +74,7 @@ export const CommandMenu = () => {
 
   const selectableItemIds = selectableItems.map((item) => item.id);
 
-  if (isDefined(previousContextStoreCurrentObjectMetadataItem)) {
+  if (isDefined(previousContextStoreCurrentObjectMetadataItemId)) {
     selectableItemIds.unshift(RESET_CONTEXT_TO_SELECTION);
   }
 
@@ -84,7 +84,7 @@ export const CommandMenu = () => {
       selectableItemIds={selectableItemIds}
       noResults={noResults}
     >
-      {isDefined(previousContextStoreCurrentObjectMetadataItem) && (
+      {isDefined(previousContextStoreCurrentObjectMetadataItemId) && (
         <CommandGroup heading={t`Context`}>
           <SelectableItem itemId={RESET_CONTEXT_TO_SELECTION}>
             <ResetContextToSelectionCommandButton />

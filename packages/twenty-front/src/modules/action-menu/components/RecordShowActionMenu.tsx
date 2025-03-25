@@ -4,15 +4,24 @@ import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RecordShowActionMenuButtons } from '@/action-menu/components/RecordShowActionMenuButtons';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordShowActionMenu = () => {
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
   );
+
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const hasSelectedRecord =
+    contextStoreTargetedRecordsRule.mode === 'selection' &&
+    contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
 
   const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsWorkflowEnabled,
@@ -20,7 +29,7 @@ export const RecordShowActionMenu = () => {
 
   return (
     <>
-      {contextStoreCurrentObjectMetadataItem && (
+      {hasSelectedRecord && contextStoreCurrentObjectMetadataItemId && (
         <ActionMenuContext.Provider
           value={{
             isInRightDrawer: false,

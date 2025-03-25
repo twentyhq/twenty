@@ -13,7 +13,7 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
@@ -48,7 +48,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -122,8 +122,8 @@ export class UserResolver {
           workspaceId: workspace.id,
         });
 
-      const grantedSettingsPermissions: SettingsPermissions[] = (
-        Object.keys(settingsPermissions) as SettingsPermissions[]
+      const grantedSettingsPermissions: SettingPermissionType[] = (
+        Object.keys(settingsPermissions) as SettingPermissionType[]
       ).filter((feature) => settingsPermissions[feature] === true);
 
       const grantedObjectRecordsPermissions = (
@@ -265,6 +265,7 @@ export class UserResolver {
             label: roleEntity.label,
             canUpdateAllSettings: roleEntity.canUpdateAllSettings,
             description: roleEntity.description,
+            icon: roleEntity.icon,
             isEditable: roleEntity.isEditable,
             userWorkspaceRoles: roleEntity.userWorkspaceRoles,
             canReadAllObjectRecords: roleEntity.canReadAllObjectRecords,

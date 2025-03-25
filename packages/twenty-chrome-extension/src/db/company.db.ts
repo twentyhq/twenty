@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared';
 import {
   CompanyInput,
   CreateCompanyResponse,
@@ -9,6 +8,7 @@ import { CREATE_COMPANY } from '~/graphql/company/mutations';
 import { FIND_COMPANY } from '~/graphql/company/queries';
 
 import { callMutation, callQuery } from '../utils/requestDb';
+import { isDefined } from 'twenty-shared/utils';
 
 export const fetchCompany = async (
   companyfilerInput: CompanyFilterInput,

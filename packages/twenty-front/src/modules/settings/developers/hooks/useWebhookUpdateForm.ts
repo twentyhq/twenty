@@ -6,11 +6,15 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useState } from 'react';
-import { getUrlHostnameOrThrow, isDefined, isValidUrl } from 'twenty-shared';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
+import {
+  getUrlHostnameOrThrow,
+  isDefined,
+  isValidUrl,
+} from 'twenty-shared/utils';
 
 type WebhookFormData = {
   targetUrl: string;
@@ -35,7 +39,12 @@ export const useWebhookUpdateForm = ({
   const [formData, setFormData] = useState<WebhookFormData>({
     targetUrl: '',
     description: '',
-    operations: [],
+    operations: [
+      {
+        object: '*',
+        action: '*',
+      },
+    ],
     secret: '',
   });
 
@@ -98,20 +107,35 @@ export const useWebhookUpdateForm = ({
     });
   }, 300);
 
-  const validateData = (data: Partial<WebhookFormData>) => {
-    if (isDefined(data?.targetUrl)) {
-      const trimmedUrl = data.targetUrl.trim();
-      const isTargetUrlValid = isValidUrl(trimmedUrl);
-      setIsTargetUrlValid(isTargetUrlValid);
-      if (isTargetUrlValid) {
-        setTitle(getUrlHostnameOrThrow(trimmedUrl) || 'New Webhook');
+  const isFormValidAndSetErrors = () => {
+    const { targetUrl } = formData;
+
+    if (isDefined(targetUrl)) {
+      const trimmedUrl = targetUrl.trim();
+      const isValid = isValidUrl(trimmedUrl);
+
+      if (!isValid) {
+        setIsTargetUrlValid(false);
+        return false;
       }
+
+      setIsTargetUrlValid(true);
     }
+
+    return true;
   };
 
   const updateWebhook = async (data: Partial<WebhookFormData>) => {
-    validateData(data);
     setFormData((prev) => ({ ...prev, ...data }));
+
+    if (!isFormValidAndSetErrors()) {
+      return;
+    }
+
+    if (isDefined(data?.targetUrl)) {
+      setTitle(getUrlHostnameOrThrow(data.targetUrl) || 'New Webhook');
+    }
+
     await handleSave();
   };
 
@@ -173,7 +197,10 @@ export const useWebhookUpdateForm = ({
         operations,
         secret: data.secret,
       });
-      setTitle(getUrlHostnameOrThrow(data.targetUrl) || 'New Webhook');
+      if (isValidUrl(data.targetUrl)) {
+        setTitle(getUrlHostnameOrThrow(data.targetUrl));
+      }
+
       setLoading(false);
     },
   });
