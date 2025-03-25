@@ -32,10 +32,12 @@ const StyledInputContainer = styled.div`
   position: relative;
 `;
 
-const StyledAdornmentContainer = styled.div<{
+type StyledAdornmentContainerProps = {
   sizeVariant: TextInputV2Size;
   position: 'left' | 'right';
-}>`
+};
+
+const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.light};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -98,8 +100,7 @@ const StyledInput = styled.input<
     inheritFontStyles ? 'inherit' : theme.font.weight.regular};
   height: ${({ sizeVariant }) =>
     sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
-  line-height: ${({ sizeVariant }) =>
-    sizeVariant === 'sm' ? '20px' : sizeVariant === 'md' ? '28px' : '32px'};
+
   outline: none;
   padding: ${({ theme, sizeVariant, autoGrow }) =>
     autoGrow
