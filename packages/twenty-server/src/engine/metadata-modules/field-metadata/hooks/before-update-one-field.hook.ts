@@ -167,11 +167,9 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     this.handleLabelOverride(instance, fieldMetadata, update, locale);
   }
 
-  private resetOverrideIfMatchesOriginal<
-    K extends keyof FieldStandardOverridesDTO,
-  >(
+  private resetOverrideIfMatchesOriginal(
     update: StandardFieldUpdate,
-    overrideKey: K,
+    overrideKey: 'label' | 'description' | 'icon',
     newValue: string,
     originalValue: string,
     locale?: keyof typeof APP_LOCALES | undefined,
@@ -200,10 +198,10 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     }
   }
 
-  private setOverrideValue<K extends keyof FieldStandardOverridesDTO>(
+  private setOverrideValue(
     update: StandardFieldUpdate,
     overrideKey: 'label' | 'description' | 'icon',
-    value: any,
+    value: string,
     locale?: keyof typeof APP_LOCALES,
   ): void {
     update.standardOverrides = update.standardOverrides || {};

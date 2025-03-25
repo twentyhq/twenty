@@ -187,11 +187,9 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     this.handleLabelOverrides(instance, objectMetadata, update, locale);
   }
 
-  private resetOverrideIfMatchesOriginal<
-    K extends keyof ObjectStandardOverridesDTO,
-  >(
+  private resetOverrideIfMatchesOriginal(
     update: StandardObjectUpdate,
-    overrideKey: K,
+    overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
     newValue: string,
     originalValue: string,
     locale?: keyof typeof APP_LOCALES | undefined,
@@ -220,7 +218,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     }
   }
 
-  private setOverrideValue<K extends keyof ObjectStandardOverridesDTO>(
+  private setOverrideValue(
     update: StandardObjectUpdate,
     overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
     value: any,
