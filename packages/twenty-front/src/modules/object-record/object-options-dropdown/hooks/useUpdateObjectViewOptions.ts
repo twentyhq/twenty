@@ -8,7 +8,7 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-export const useObjectOptions = () => {
+export const useUpdateObjectViewOptions = () => {
   const setRecordIndexOpenRecordIn = useSetRecoilState(
     recordIndexOpenRecordInState,
   );

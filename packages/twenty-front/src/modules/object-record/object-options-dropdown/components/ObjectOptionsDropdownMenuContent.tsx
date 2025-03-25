@@ -10,7 +10,7 @@ import {
   MenuItem,
 } from 'twenty-ui';
 
-import { ObjectOptionsDropdownMenuName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuName';
+import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
@@ -41,9 +41,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
   );
 
   const isGroupByEnabled =
-    (isDefined(currentView?.viewGroups) &&
-      currentView?.viewGroups?.length &&
-      currentView.viewGroups.length > 0) ||
+    (isDefined(currentView?.viewGroups) && currentView.viewGroups.length > 0) ||
     currentView?.key !== 'INDEX';
 
   useScopedHotkeys(
@@ -78,7 +76,9 @@ export const ObjectOptionsDropdownMenuContent = () => {
 
   return (
     <>
-      <ObjectOptionsDropdownMenuName currentView={currentView} />
+      {currentView && (
+        <ObjectOptionsDropdownMenuViewName currentView={currentView} />
+      )}
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem

@@ -1,6 +1,6 @@
 import { Key } from 'ts-key-enum';
 
-import { useObjectOptions } from '@/object-record/object-options-dropdown/hooks/useObjectOptions';
+import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -19,6 +19,7 @@ import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from '@ui/display';
 import { useState } from 'react';
 import { useIcons } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`
   align-items: center;
@@ -50,10 +51,10 @@ const StyledMainText = styled.div`
   max-width: 100%;
 `;
 
-export const ObjectOptionsDropdownMenuName = ({
+export const ObjectOptionsDropdownMenuViewName = ({
   currentView,
 }: {
-  currentView: View | undefined;
+  currentView: View;
 }) => {
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
@@ -65,11 +66,11 @@ export const ObjectOptionsDropdownMenuName = ({
     viewPickerIsDirtyComponentState,
   );
 
-  const { setAndPersistViewName, setAndPersistViewIcon } = useObjectOptions();
+  const { setAndPersistViewName, setAndPersistViewIcon } =
+    useUpdateObjectViewOptions();
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
-  const [viewNameNotReactivelyUpdated, setViewNameNotReactivelyUpdated] =
-    useState(currentView?.name);
+  const [viewName, setViewName] = useState(currentView?.name);
 
   useScopedHotkeys(
     Key.Enter,
@@ -83,11 +84,14 @@ export const ObjectOptionsDropdownMenuName = ({
     ViewsHotkeyScope.ListDropdown,
   );
 
-  const onIconChange = ({ iconKey }: { iconKey: string }) => {
+  const handleIconChange = ({ iconKey }: { iconKey: string }) => {
     setViewPickerIsDirty(true);
     setViewPickerSelectedIcon(iconKey);
     setAndPersistViewIcon(iconKey, currentView);
   };
+  const handleViewNameChange = useDebouncedCallback((value: string) => {
+    setAndPersistViewName(value, currentView);
+  }, 500);
   const theme = useTheme();
   const { getIcon } = useIcons();
   const MainIcon = getIcon(currentView?.icon);
@@ -109,14 +113,14 @@ export const ObjectOptionsDropdownMenuName = ({
           <StyledDropdownMenuIconAndNameContainer>
             <IconPicker
               size="small"
-              onChange={onIconChange}
+              onChange={handleIconChange}
               selectedIconKey={viewPickerSelectedIcon}
             />
             <TextInputV2
-              value={viewNameNotReactivelyUpdated}
+              value={viewName}
               onChange={(value) => {
-                setViewNameNotReactivelyUpdated(value);
-                setAndPersistViewName(value, currentView);
+                setViewName(value);
+                handleViewNameChange(value);
               }}
               autoGrow={false}
               sizeVariant="sm"
