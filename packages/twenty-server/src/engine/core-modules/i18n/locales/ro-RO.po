@@ -2777,3 +2777,4 @@ msgstr "Parola dumneavoastră a fost schimbată cu succes"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Your team member responsible for managing the company account"
 msgstr "Membrul echipei dumneavoastră responsabil de gestionarea contului companiei"
+

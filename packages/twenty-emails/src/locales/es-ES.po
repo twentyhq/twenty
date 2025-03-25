@@ -193,3 +193,4 @@ msgstr "Tu espacio de trabajo <0>{workspaceDisplayName}</0> ha sido eliminado po
 #: src/emails/clean-suspended-workspace.email.tsx
 #~ msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
 #~ msgstr "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {inactiveDaysBeforeDelete} days ago."
+
