@@ -10,26 +10,26 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-@Entity('settingsPermissions')
-@Unique('IndexOnSettingsPermissionsUnique', ['setting', 'roleId'])
-export class SettingsPermissionsEntity {
+@Entity('settingPermission')
+@Unique('IndexOnSettingPermissionUnique', ['setting', 'roleId'])
+export class SettingPermissionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'uuid' })
   roleId: string;
 
-  @ManyToOne(() => RoleEntity, (role) => role.settingsPermissions, {
+  @ManyToOne(() => RoleEntity, (role) => role.settingPermissions, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'roleId' })
   role: Relation<RoleEntity>;
 
   @Column({ nullable: false, type: 'varchar' })
-  setting: SettingsPermissions;
+  setting: SettingPermissionType;
 
   @Column({ nullable: true, type: 'boolean' })
   canUpdateSetting?: boolean;

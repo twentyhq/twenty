@@ -3,7 +3,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,
   OnboardingStatus,
-  SettingsPermissions,
+  SettingPermissionType,
   SubscriptionInterval,
   SubscriptionStatus,
   User,
@@ -131,7 +131,7 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    settingsPermissions: [SettingsPermissions.WORKSPACE_MEMBERS],
+    settingsPermissions: [SettingPermissionType.WORKSPACE_MEMBERS],
   },
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],
