@@ -10,7 +10,7 @@ import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.e
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SearchModule } from 'src/engine/metadata-modules/search/search.module';
+import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/search-vector.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
@@ -23,7 +23,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       'metadata',
     ),
     WorkspaceDataSourceModule,
-    SearchModule,
+    SearchVectorModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceMetadataVersionModule,
   ],

@@ -1,4 +1,4 @@
-import { formatGlobalSearchRecordAsSingleRecordPickerRecord } from '@/object-metadata/utils/formatGlobalSearchRecordAsSingleRecordPickerRecord';
+import { formatSearchRecordAsSingleRecordPickerRecord } from '@/object-metadata/utils/formatSearchRecordAsSingleRecordPickerRecord';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
@@ -57,13 +57,13 @@ export const useFilteredSearchRecordQuery = ({
 
   return {
     selectedRecords: selectedRecords
-      .map(formatGlobalSearchRecordAsSingleRecordPickerRecord)
+      .map(formatSearchRecordAsSingleRecordPickerRecord)
       .filter(isDefined),
     filteredSelectedRecords: filteredSelectedRecords
-      .map(formatGlobalSearchRecordAsSingleRecordPickerRecord)
+      .map(formatSearchRecordAsSingleRecordPickerRecord)
       .filter(isDefined),
     recordsToSelect: recordsToSelect
-      .map(formatGlobalSearchRecordAsSingleRecordPickerRecord)
+      .map(formatSearchRecordAsSingleRecordPickerRecord)
       .filter(isDefined),
     loading:
       recordsToSelectLoading ||

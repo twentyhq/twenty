@@ -8,6 +8,7 @@ export enum ActionMenuEntryType {
   Standard = 'Standard',
   WorkflowRun = 'WorkflowRun',
   Fallback = 'Fallback',
+  Navigation = 'Navigation',
 }
 
 export enum ActionMenuEntryScope {
