@@ -31,7 +31,7 @@ type VersionCommands = {
   description: 'Upgrade workspaces to the latest version',
 })
 export class UpgradeCommand extends UpgradeCommandRunner {
-  fromWorkspaceVersion = new SemVer('0.43.0');
+  fromWorkspaceVersion = new SemVer('0.44.0');
   private commands: VersionCommands;
 
   constructor(
@@ -86,7 +86,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
-    this.commands = commands_044;
+    this.commands = _commands_050;
   }
 
   override async runBeforeSyncMetadata(args: RunOnWorkspaceArgs) {
