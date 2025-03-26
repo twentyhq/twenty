@@ -12,14 +12,6 @@ export const USER_QUERY_FRAGMENT = gql`
     canAccessFullAdminPanel
     canImpersonate
     supportUserHash
-    analyticsTinybirdJwts {
-      getWebhookAnalytics
-      getPageviewsAnalytics
-      getUsersAnalytics
-      getServerlessFunctionDuration
-      getServerlessFunctionSuccessRate
-      getServerlessFunctionErrorCount
-    }
     onboardingStatus
     workspaceMember {
       ...WorkspaceMemberQueryFragment

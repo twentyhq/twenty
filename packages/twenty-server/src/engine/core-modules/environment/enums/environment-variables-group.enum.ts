@@ -15,6 +15,6 @@ export enum EnvironmentVariablesGroup {
   ServerlessConfig = 'serverless-config',
   SSL = 'ssl',
   SupportChatConfig = 'support-chat-config',
-  TinybirdConfig = 'tinybird-config',
+  AnalyticsConfig = 'analytics-config',
   TokensDuration = 'tokens-duration',
 }
