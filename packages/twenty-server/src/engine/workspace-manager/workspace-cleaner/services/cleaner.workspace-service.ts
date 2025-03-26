@@ -9,9 +9,9 @@ import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
 } from 'twenty-emails';
-import { In, Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { In, Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
@@ -254,6 +254,38 @@ export class CleanerWorkspaceService {
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}Soft deleting Workspace ${workspace.id} ${workspace.displayName}`,
     );
+  }
+
+  async batchCleanOnboardingWorkspaces(
+    workspaceIds: string[],
+    dryRun = false,
+  ): Promise<void> {
+    this.logger.log(
+      `${dryRun ? 'DRY RUN - ' : ''}batchCleanOnboardingWorkspaces running...`,
+    );
+
+    const workspaces = await this.workspaceRepository.find({
+      where: {
+        id: In(workspaceIds),
+        activationStatus: In([
+          WorkspaceActivationStatus.PENDING_CREATION,
+          WorkspaceActivationStatus.ONGOING_CREATION,
+        ]),
+      },
+      withDeleted: true,
+    });
+
+    if (workspaces.length !== 0) {
+      if (!dryRun) {
+        await this.workspaceRepository.delete(
+          workspaces.map((workspace) => workspace.id),
+        );
+      }
+
+      this.logger.log(
+        `${dryRun ? 'DRY RUN - ' : ''}batchCleanOnboardingWorkspaces done with ${workspaces.length} workspaces!`,
+      );
+    }
   }
 
   async batchWarnOrCleanSuspendedWorkspaces(
