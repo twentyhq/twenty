@@ -71,6 +71,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     }
   };
 
+  const isDefaultView = currentView?.key === 'INDEX';
+
   return (
     <>
       <DropdownMenuHeader
@@ -97,10 +99,13 @@ export const ObjectOptionsDropdownLayoutContent = () => {
           <MenuItemSelect
             LeftIcon={IconLayoutKanban}
             text={t`Kanban`}
+            disabled={isDefaultView}
             contextualText={
-              availableFieldsForKanban.length === 0
-                ? t`Create Select...`
-                : undefined
+              isDefaultView
+                ? t`Not available for default view`
+                : availableFieldsForKanban.length === 0
+                  ? t`Create Select...`
+                  : undefined
             }
             selected={currentView?.type === ViewType.Kanban}
             onClick={handleClickOnKanban}

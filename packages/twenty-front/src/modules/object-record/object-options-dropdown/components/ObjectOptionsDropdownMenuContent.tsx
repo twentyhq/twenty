@@ -74,6 +74,8 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
 
+  const isDefaultView = currentView?.key === 'INDEX';
+
   return (
     <>
       {currentView && (
@@ -112,12 +114,12 @@ export const ObjectOptionsDropdownMenuContent = () => {
             LeftIcon={IconLayoutList}
             text={t`Group`}
             contextualText={
-              !isGroupByEnabled
+              isDefaultView
                 ? t`Not available on Default View`
                 : recordGroupFieldMetadata?.label
             }
             hasSubMenu
-            disabled={!isGroupByEnabled}
+            disabled={isDefaultView}
           />
         </div>
         {!isGroupByEnabled && (
