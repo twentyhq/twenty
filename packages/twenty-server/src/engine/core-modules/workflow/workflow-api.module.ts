@@ -10,6 +10,8 @@ import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/wor
 import { WorkflowVersionModule } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/workflow-trigger.module';
+import { WorkflowRunResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-run.resolver';
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -18,6 +20,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowCommonModule,
     WorkflowVersionModule,
     WorkflowRunModule,
+    SubscriptionsModule,
   ],
   controllers: [WorkflowTriggerController],
   providers: [
@@ -25,6 +28,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowBuilderResolver,
     WorkflowStepResolver,
     WorkflowVersionResolver,
+    WorkflowRunResolver,
   ],
 })
 export class WorkflowApiModule {}
