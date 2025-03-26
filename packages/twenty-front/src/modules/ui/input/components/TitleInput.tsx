@@ -87,8 +87,7 @@ export const TitleInput = ({
       handleLeaveFocus();
       onEscape?.();
     },
-    onClickOutside: (event) => {
-      event.stopImmediatePropagation();
+    onClickOutside: () => {
       handleLeaveFocus();
       onClickOutside?.();
     },
