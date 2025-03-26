@@ -5,7 +5,7 @@ export type DeleteOneFieldFactoryInput = {
   idToDelete: string;
 };
 
-export const deleteOneFieldMetadataItemFactory = ({
+export const deleteOneFieldMetadataQueryFactory = ({
   input,
   gqlFields = 'id',
 }: PerformMetadataQueryParams<DeleteOneFieldFactoryInput>) => ({

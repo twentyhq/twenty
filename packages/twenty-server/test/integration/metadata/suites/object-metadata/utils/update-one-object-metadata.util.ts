@@ -25,5 +25,5 @@ export const updateOneObjectMetadata = async ({
     });
   }
 
-  return response.body.data.updateOneObject;
+  return { data: response.body.data, errors: response.body.errors };
 };

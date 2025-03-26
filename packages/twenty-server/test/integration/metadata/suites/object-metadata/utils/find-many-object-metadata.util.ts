@@ -1,6 +1,6 @@
 import {
   FindManyObjectMetadataFactoryInput,
-  findManyObjectMetadataFactory,
+  findManyObjectMetadataQueryFactory,
 } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
@@ -11,7 +11,7 @@ export const findManyObjectMetadata = async ({
   gqlFields,
   expectToFail = false,
 }: PerformMetadataQueryParams<FindManyObjectMetadataFactoryInput>) => {
-  const graphqlOperation = findManyObjectMetadataFactory({
+  const graphqlOperation = findManyObjectMetadataQueryFactory({
     input,
     gqlFields,
   });

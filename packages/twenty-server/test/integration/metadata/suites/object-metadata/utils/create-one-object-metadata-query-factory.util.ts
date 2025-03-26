@@ -8,7 +8,7 @@ export type CreateOneObjectFactoryInput = Omit<
   'workspaceId' | 'dataSourceId'
 >;
 
-export const createOneObjectMetadataFactory = ({
+export const createOneObjectMetadataQueryFactory = ({
   input,
   gqlFields = 'id',
 }: PerformMetadataQueryParams<CreateOneObjectFactoryInput>) => ({

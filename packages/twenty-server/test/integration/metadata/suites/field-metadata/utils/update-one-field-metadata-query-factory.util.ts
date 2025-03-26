@@ -8,7 +8,7 @@ export type UpdateOneFieldFactoryInput = {
   updatePayload: Omit<UpdateFieldInput, 'workspaceId' | 'id'>;
 };
 
-export const updateOneFieldMetadataFactory = ({
+export const updateOneFieldMetadataQueryFactory = ({
   gqlFields = 'id',
   input,
 }: PerformMetadataQueryParams<UpdateOneFieldFactoryInput>) => ({

@@ -8,7 +8,11 @@ describe('createOne', () => {
     let createdObjectMetadataId = '';
 
     beforeEach(async () => {
-      const { id: objectMetadataId } = await createOneObjectMetadata({
+      const {
+        data: {
+          createOneObject: { id: objectMetadataId },
+        },
+      } = await createOneObjectMetadata({
         input: {
           nameSingular: 'myTestObject',
           namePlural: 'myTestObjects',

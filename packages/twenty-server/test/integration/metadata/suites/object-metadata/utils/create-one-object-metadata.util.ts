@@ -1,6 +1,6 @@
 import {
   CreateOneObjectFactoryInput,
-  createOneObjectMetadataFactory,
+  createOneObjectMetadataQueryFactory,
 } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
@@ -11,7 +11,7 @@ export const createOneObjectMetadata = async ({
   gqlFields,
   expectToFail = false,
 }: PerformMetadataQueryParams<CreateOneObjectFactoryInput>) => {
-  const graphqlOperation = createOneObjectMetadataFactory({
+  const graphqlOperation = createOneObjectMetadataQueryFactory({
     input,
     gqlFields,
   });
@@ -25,5 +25,5 @@ export const createOneObjectMetadata = async ({
     });
   }
 
-  return response.body.data.createOneObject;
+  return { data: response.body.data, errors: response.body.errors };
 };

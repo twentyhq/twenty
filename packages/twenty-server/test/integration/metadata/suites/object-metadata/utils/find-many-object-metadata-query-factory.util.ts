@@ -6,7 +6,7 @@ export type FindManyObjectMetadataFactoryInput = {
   paging: object;
 };
 
-export const findManyObjectMetadataFactory = ({
+export const findManyObjectMetadataQueryFactory = ({
   gqlFields = 'id',
   input,
 }: PerformMetadataQueryParams<FindManyObjectMetadataFactoryInput>) => ({
