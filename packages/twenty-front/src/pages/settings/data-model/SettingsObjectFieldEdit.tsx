@@ -239,7 +239,6 @@ export const SettingsObjectFieldEdit = () => {
                 description={t`The description of this field`}
               />
               <SettingsDataModelFieldDescriptionForm
-                disabled={!fieldMetadataItem.isCustom}
                 fieldMetadataItem={fieldMetadataItem}
               />
             </Section>

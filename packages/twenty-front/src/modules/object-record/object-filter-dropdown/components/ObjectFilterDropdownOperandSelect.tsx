@@ -23,12 +23,7 @@ const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   border-radius: ${({ theme }) => theme.border.radius.md};
 `;
 
-type ObjectFilterDropdownOperandSelectProps = {
-  filterDropdownId?: string;
-};
-export const ObjectFilterDropdownOperandSelect = ({
-  filterDropdownId,
-}: ObjectFilterDropdownOperandSelectProps) => {
+export const ObjectFilterDropdownOperandSelect = () => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -49,26 +44,12 @@ export const ObjectFilterDropdownOperandSelect = ({
 
   const { closeDropdown } = useDropdown();
 
-  const selectedOperandInDropdown = useRecoilComponentValueV2(
-    selectedOperandInDropdownComponentState,
-    filterDropdownId,
-  );
-
-  const isActorAndIsOperand =
-    fieldMetadataItemUsedInDropdown?.type === 'ACTOR' &&
-    selectedOperandInDropdown !== null &&
-    [ViewFilterOperand.Is, ViewFilterOperand.IsNot].includes(
-      selectedOperandInDropdown,
-    );
-
   const operandsForFilterType = isDefined(fieldMetadataItemUsedInDropdown)
     ? getRecordFilterOperands({
         filterType: getFilterTypeFromFieldType(
           fieldMetadataItemUsedInDropdown.type,
         ),
-        subFieldName: isActorAndIsOperand
-          ? 'source'
-          : subFieldNameUsedInDropdown,
+        subFieldName: subFieldNameUsedInDropdown,
       })
     : [];
 
@@ -92,6 +73,7 @@ export const ObjectFilterDropdownOperandSelect = ({
         value: '',
         type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
         label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
       return;
     }
@@ -119,6 +101,7 @@ export const ObjectFilterDropdownOperandSelect = ({
         value,
         type: filterType,
         label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
     }
   };

@@ -17,7 +17,6 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -78,7 +77,7 @@ export const useHandleToggleColumnFilter = ({
   );
 
   const handleToggleColumnFilter = useCallback(
-    async (fieldMetadataId: string, operand?: ViewFilterOperand) => {
+    async (fieldMetadataId: string) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
           columnDefinition.fieldMetadataId === fieldMetadataId,
@@ -108,9 +107,7 @@ export const useHandleToggleColumnFilter = ({
           filterType,
         });
 
-        const defaultOperand = operand
-          ? operand
-          : availableOperandsForFilter[0];
+        const defaultOperand = availableOperandsForFilter[0];
 
         const newFilter: RecordFilter = {
           id: newFilterId,

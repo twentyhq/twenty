@@ -10,7 +10,6 @@ import { viewFieldAggregateOperationState } from '@/object-record/record-table/r
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewField } from '@/views/types/ViewField';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -51,8 +50,8 @@ export const RecordIndexTableContainerEffect = () => {
 
   useEffect(() => {
     setOnToggleColumnFilter(
-      () => (fieldMetadataId: string, operand?: ViewFilterOperand) =>
-        handleToggleColumnFilter(fieldMetadataId, operand),
+      () => (fieldMetadataId: string) =>
+        handleToggleColumnFilter(fieldMetadataId),
     );
   }, [setOnToggleColumnFilter, handleToggleColumnFilter]);
 

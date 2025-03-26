@@ -5,7 +5,6 @@ import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-re
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
-import { getSelectedRecordFilters } from '@/object-record/object-filter-dropdown/utils/getSelectedRecordFilters';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
@@ -24,6 +23,7 @@ export const MAX_ITEMS_TO_DISPLAY = 3;
 type ObjectFilterDropdownSourceSelectProps = {
   viewComponentId?: string;
 };
+
 export const ObjectFilterDropdownSourceSelect = ({
   viewComponentId,
 }: ObjectFilterDropdownSourceSelectProps) => {
@@ -56,13 +56,10 @@ export const ObjectFilterDropdownSourceSelect = ({
   const sourceTypes = getActorSourceMultiSelectOptions(
     objectFilterDropdownSelectedRecordIds,
   );
-  const selectedFilterValues = getSelectedRecordFilters(selectedFilter);
-  const filteredSelectedItems = sourceTypes
-    .filter((option) => selectedFilterValues.includes(option.id))
-    .map((option) => ({
-      ...option,
-      isSelected: true,
-    }));
+
+  const filteredSelectedItems = sourceTypes.filter((option) =>
+    objectFilterDropdownSelectedRecordIds.includes(option.id),
+  );
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
@@ -72,11 +69,11 @@ export const ObjectFilterDropdownSourceSelect = ({
     itemToSelect: SelectableItem,
     newSelectedValue: boolean,
   ) => {
-    const updatedSelectedItems = newSelectedValue
-      ? [...filteredSelectedItems, { ...itemToSelect, isSelected: true }]
-      : filteredSelectedItems.filter((item) => item.id !== itemToSelect.id);
-
-    const newSelectedItemIds = updatedSelectedItems.map((item) => item.id);
+    const newSelectedItemIds = newSelectedValue
+      ? [...objectFilterDropdownSelectedRecordIds, itemToSelect.id]
+      : objectFilterDropdownSelectedRecordIds.filter(
+          (id) => id !== itemToSelect.id,
+        );
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(

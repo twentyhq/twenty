@@ -239,11 +239,10 @@ export const ViewBarDetails = ({
               <DropdownScope dropdownScopeId={recordFilter.id}>
                 <ViewBarFilterEffect filterDropdownId={recordFilter.id} />
                 <EditableFilterDropdownButton
-                  viewFilter={recordFilter}
+                  recordFilter={recordFilter}
                   hotkeyScope={{
                     scope: recordFilter.id,
                   }}
-                  viewFilterDropdownId={recordFilter.id}
                 />
               </DropdownScope>
             </ObjectFilterDropdownComponentInstanceContext.Provider>

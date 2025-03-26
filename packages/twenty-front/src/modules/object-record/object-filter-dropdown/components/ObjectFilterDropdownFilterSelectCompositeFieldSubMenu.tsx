@@ -21,17 +21,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 
-type ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps = {
-  handelAddFilterForActor?: (id: string, operand?: ViewFilterOperand) => void;
-};
-export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
-  handelAddFilterForActor,
-}: ObjectFilterDropdownFilterSelectCompositeFieldSubMenuProps) => {
+export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText] = useState('');
 
   const { getIcon } = useIcons();
@@ -138,6 +132,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
     return null;
   }
+
   const options = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
     objectFilterDropdownSubMenuFieldType
   ].filterableSubFields
@@ -145,20 +140,19 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
     .filter((item) =>
       item.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
     );
+
   return (
     <>
-      {!isDefined(handelAddFilterForActor) && (
-        <DropdownMenuHeader
-          StartComponent={
-            <DropdownMenuHeaderLeftComponent
-              onClick={handleSubMenuBack}
-              Icon={IconChevronLeft}
-            />
-          }
-        >
-          {getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)}
-        </DropdownMenuHeader>
-      )}
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={handleSubMenuBack}
+            Icon={IconChevronLeft}
+          />
+        }
+      >
+        {getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)}
+      </DropdownMenuHeader>
       {/* <StyledInput
         value={searchText}
         autoFocus
@@ -172,13 +166,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
           key={`select-filter-${-1}`}
           testId={`select-filter-${-1}`}
           onClick={() => {
-            if (isDefined(handelAddFilterForActor)) {
-              return handelAddFilterForActor(
-                fieldMetadataItemUsedInDropdown?.id,
-              );
-            }
-
-            return handleSelectFilter(fieldMetadataItemUsedInDropdown);
+            handleSelectFilter(fieldMetadataItemUsedInDropdown);
           }}
           LeftIcon={IconApps}
           text={`Any ${getFilterableFieldTypeLabel(objectFilterDropdownSubMenuFieldType)} field`}
@@ -190,28 +178,12 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
               key={`select-filter-${index}`}
               testId={`select-filter-${index}`}
               onClick={() => {
-                if (!isDefined(fieldMetadataItemUsedInDropdown)) {
-                  return;
-                }
-
-                if (!isDefined(handelAddFilterForActor)) {
-                  return handleSelectFilter(
+                if (isDefined(fieldMetadataItemUsedInDropdown)) {
+                  handleSelectFilter(
                     fieldMetadataItemUsedInDropdown,
                     subFieldName,
                   );
                 }
-
-                const type = getFilterTypeFromFieldType(
-                  fieldMetadataItemUsedInDropdown.type,
-                );
-                const operand = getRecordFilterOperands({
-                  filterType: type,
-                  subFieldName: subFieldName,
-                })[0];
-                return handelAddFilterForActor(
-                  fieldMetadataItemUsedInDropdown.id,
-                  operand,
-                );
               }}
               text={getCompositeSubFieldLabel(
                 objectFilterDropdownSubMenuFieldType,

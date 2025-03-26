@@ -78,7 +78,11 @@ export const getRecordFilterOperands = ({
       ];
     case 'ACTOR': {
       if (isFilterOnActorSourceSubField(subFieldName)) {
-        return [RecordFilterOperand.Is, RecordFilterOperand.IsNot];
+        return [
+          RecordFilterOperand.Is,
+          RecordFilterOperand.IsNot,
+          ...emptyOperands,
+        ];
       }
 
       return [
