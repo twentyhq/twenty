@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
@@ -33,16 +32,6 @@ export class WorkspaceMemberPreQueryHookService {
     workspaceId: string;
     apiKey?: ApiKeyWorkspaceEntity | null;
   }) {
-    const featureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
-
-    const isPermissionsEnabled =
-      featureFlagsMap[FeatureFlagKey.IsPermissionsEnabled];
-
-    if (!isPermissionsEnabled) {
-      return;
-    }
-
     if (isDefined(apiKey)) {
       return;
     }

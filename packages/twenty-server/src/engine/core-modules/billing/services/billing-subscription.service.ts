@@ -17,7 +17,6 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -63,26 +62,29 @@ export class BillingSubscriptionService {
       { workspaceId },
     );
 
-    const getStripeProductId = (
-      await this.billingPlanService.getPlanBaseProduct(BillingPlanKey.PRO)
-    )?.stripeProductId;
+    const planKey = getPlanKeyFromSubscription(billingSubscription);
 
-    if (!getStripeProductId) {
+    const baseProduct =
+      await this.billingPlanService.getPlanBaseProduct(planKey);
+
+    if (!baseProduct) {
       throw new BillingException(
         'Base product not found',
         BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
       );
     }
 
+    const stripeProductId = baseProduct.stripeProductId;
+
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
         (billingSubscriptionItem) =>
-          billingSubscriptionItem.stripeProductId === getStripeProductId,
+          billingSubscriptionItem.stripeProductId === stripeProductId,
       )?.[0];
 
     if (!billingSubscriptionItem) {
       throw new Error(
-        `Cannot find billingSubscriptionItem for product ${getStripeProductId} for workspace ${workspaceId}`,
+        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
       );
     }
 

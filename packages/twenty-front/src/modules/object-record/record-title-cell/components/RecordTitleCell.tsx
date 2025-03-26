@@ -20,7 +20,7 @@ import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/ge
 
 type RecordTitleCellProps = {
   loading?: boolean;
-  sizeVariant?: 'sm' | 'md';
+  sizeVariant?: 'xs' | 'md';
 };
 
 export const RecordTitleCell = ({
@@ -36,8 +36,8 @@ export const RecordTitleCell = ({
   );
 
   const handleEnter: FieldInputEvent = (persistField) => {
-    persistField();
     closeInlineCell();
+    persistField();
   };
 
   const handleEscape = () => {
@@ -45,13 +45,13 @@ export const RecordTitleCell = ({
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    persistField();
     closeInlineCell();
+    persistField();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    persistField();
     closeInlineCell();
+    persistField();
   };
 
   const handleClickOutside: FieldInputClickOutsideEvent = (
@@ -59,9 +59,8 @@ export const RecordTitleCell = ({
     event,
   ) => {
     event.stopImmediatePropagation();
-
-    persistField();
     closeInlineCell();
+    persistField();
   };
 
   const recordTitleCellContextValue: RecordTitleCellContextProps = {

@@ -671,6 +671,10 @@ export const computeFilterRecordGqlOperationFilter = ({
     case 'ACTOR': {
       switch (filter.operand) {
         case RecordFilterOperand.Is: {
+          if (filter.value === '[]') {
+            return;
+          }
+
           const parsedRecordIds = JSON.parse(filter.value) as string[];
 
           return {
@@ -682,6 +686,10 @@ export const computeFilterRecordGqlOperationFilter = ({
           };
         }
         case RecordFilterOperand.IsNot: {
+          if (filter.value === '[]') {
+            return;
+          }
+
           const parsedRecordIds = JSON.parse(filter.value) as string[];
 
           if (parsedRecordIds.length === 0) return;
