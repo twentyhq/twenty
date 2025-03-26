@@ -15,8 +15,11 @@ export const useActionMenuEntries = () => {
           .getLoadable(actionMenuEntryState)
           .getValue();
 
-        currentEntries.set(entryToAdd.key, entryToAdd);
-        set(actionMenuEntryState, currentEntries);
+        const newEntries = new Map([
+          ...currentEntries,
+          [entryToAdd.key, entryToAdd],
+        ]);
+        set(actionMenuEntryState, newEntries);
       },
     [actionMenuEntriesComponentState],
   );
@@ -28,10 +31,12 @@ export const useActionMenuEntries = () => {
           .getLoadable(actionMenuEntryState)
           .getValue();
 
-        if (currentEntries.has(entryKeyToRemove)) {
-          currentEntries.delete(entryKeyToRemove);
-          set(actionMenuEntryState, currentEntries);
+        if (!currentEntries.has(entryKeyToRemove)) {
+          return;
         }
+        const newEntries = new Map(currentEntries);
+        newEntries.delete(entryKeyToRemove);
+        set(actionMenuEntryState, newEntries);
       },
     [actionMenuEntriesComponentState],
   );
