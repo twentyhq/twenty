@@ -28,7 +28,10 @@ export class MicrosoftFetchByBatchService {
       await this.microsoftClientProvider.getMicrosoftClient(connectedAccount);
 
     for (let i = 0; i < messageIds.length; i += batchLimit) {
+      console.log('i', i);
       const batchMessageIds = messageIds.slice(i, i + batchLimit);
+
+      console.log('batchMessageIds', batchMessageIds);
 
       messageIdsByBatch.push(batchMessageIds);
 
@@ -42,9 +45,13 @@ export class MicrosoftFetchByBatchService {
         },
       }));
 
+      console.log('batchRequests', batchRequests);
+
       const batchResponse = await client
         .api('/$batch')
         .post({ requests: batchRequests });
+
+      console.log('batchResponse', batchResponse);
 
       batchResponses.push(batchResponse);
     }
