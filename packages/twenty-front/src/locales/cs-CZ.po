@@ -87,6 +87,11 @@ msgstr "{aggregateLabel} z {fieldLabel}"
 msgid "{apiKeyName} API Key"
 msgstr "{apiKeyName} API klíč"
 
+#. js-lingui-id: zi5SHH
+#: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
+msgid "{contextStoreNumberOfSelectedRecords} selected"
+msgstr ""
+
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx
