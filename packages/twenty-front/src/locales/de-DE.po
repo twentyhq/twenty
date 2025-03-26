@@ -2098,6 +2098,34 @@ msgstr "Versteckte Felder"
 msgid "Hide"
 msgstr "Ausblenden"
 
+#. js-lingui-id: OlbYor
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Hide deleted"
+msgstr ""
+
+#. js-lingui-id: FHhlye
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Hide deleted records"
+msgstr ""
+
+#. js-lingui-id: 0dZtKR
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Hide deleted runs"
+msgstr ""
+
+#. js-lingui-id: Jc6FrI
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Hide deleted versions"
+msgstr ""
+
+#. js-lingui-id: aOZAIB
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Hide deleted workflows"
+msgstr ""
+
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
