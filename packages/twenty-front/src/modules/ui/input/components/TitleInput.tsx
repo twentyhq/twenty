@@ -93,7 +93,8 @@ const Input = ({
       handleLeaveFocus();
       onEscape?.();
     },
-    onClickOutside: () => {
+    onClickOutside: (event) => {
+      event.stopImmediatePropagation();
       handleLeaveFocus();
       onClickOutside?.();
     },
