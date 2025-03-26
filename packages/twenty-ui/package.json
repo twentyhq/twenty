@@ -24,5 +24,35 @@
   },
   "scripts": {
     "build": "npx vite build"
-  }
+  },
+  "preconstruct": {
+    "entrypoints": [
+      "./index.ts",
+      "./accessibility/index.ts",
+      "./components/index.ts",
+      "./display/index.ts",
+      "./feedback/index.ts",
+      "./input/index.ts",
+      "./json-visualizer/index.ts",
+      "./layout/index.ts",
+      "./navigation/index.ts",
+      "./testing/index.ts",
+      "./theme/index.ts",
+      "./utilities/index.ts"
+    ]
+  },
+  "files": [
+    "dist",
+    "accessibility",
+    "components",
+    "display",
+    "feedback",
+    "input",
+    "json-visualizer",
+    "layout",
+    "navigation",
+    "testing",
+    "theme",
+    "utilities"
+  ]
 }
