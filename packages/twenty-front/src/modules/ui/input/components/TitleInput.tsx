@@ -10,30 +10,41 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui';
 
-export type TitleInputProps = {
-  sizeVariant: TextInputV2Size;
+type InputProps = {
   draftValue?: string;
   onChange: (value: string) => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
-  placeholder?: string;
+  placeholder: string;
   hotkeyScope: string;
-  disabled?: boolean;
   onEnter?: () => void;
   onEscape?: () => void;
   onClickOutside?: () => void;
   onTab?: () => void;
   onShiftTab?: () => void;
+  sizeVariant: TextInputV2Size;
 };
 
-const StyledDiv = styled.div`
+export type TitleInputProps = {
+  disabled?: boolean;
+} & InputProps;
+
+const StyledDiv = styled.div<{
+  sizeVariant: TextInputV2Size;
+  disabled?: boolean;
+}>`
   background: inherit;
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   overflow: hidden;
-  height: 28px;
+  height: ${({ sizeVariant }) =>
+    sizeVariant === 'xs'
+      ? '20px'
+      : sizeVariant === 'sm'
+        ? '24px'
+        : sizeVariant === 'md'
+          ? '28px'
+          : '32px'};
   padding: ${({ theme }) => theme.spacing(0, 1.25)};
   box-sizing: border-box;
   display: flex;
@@ -43,9 +54,7 @@ const StyledDiv = styled.div`
   }
 `;
 
-export const TitleInput = ({
-  disabled,
-  sizeVariant,
+const Input = ({
   draftValue,
   onChange,
   placeholder,
@@ -55,10 +64,10 @@ export const TitleInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
-}: TitleInputProps) => {
+  setIsOpened,
+  sizeVariant,
+}: InputProps & { setIsOpened: (isOpened: boolean) => void }) => {
   const wrapperRef = useRef<HTMLInputElement>(null);
-
-  const [isOpened, setIsOpened] = useState(false);
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     if (isDefined(draftValue)) {
@@ -66,10 +75,7 @@ export const TitleInput = ({
     }
   };
 
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const handleLeaveFocus = () => {
     setIsOpened(false);
@@ -103,20 +109,57 @@ export const TitleInput = ({
   });
 
   return (
-    <div ref={wrapperRef}>
+    <TextInputV2
+      ref={wrapperRef}
+      autoGrow
+      sizeVariant={sizeVariant}
+      inheritFontStyles
+      value={draftValue ?? ''}
+      onChange={onChange}
+      placeholder={placeholder}
+      onFocus={handleFocus}
+      autoFocus
+    />
+  );
+};
+
+export const TitleInput = ({
+  disabled,
+  sizeVariant,
+  draftValue,
+  onChange,
+  placeholder,
+  hotkeyScope,
+  onEnter,
+  onEscape,
+  onClickOutside,
+  onTab,
+  onShiftTab,
+}: TitleInputProps) => {
+  const [isOpened, setIsOpened] = useState(false);
+
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+
+  return (
+    <>
       {isOpened ? (
-        <TextInputV2
-          autoGrow
+        <Input
           sizeVariant={sizeVariant}
-          inheritFontStyles
-          value={draftValue ?? ''}
+          draftValue={draftValue}
           onChange={onChange}
           placeholder={placeholder}
-          onFocus={handleFocus}
-          autoFocus
+          hotkeyScope={hotkeyScope}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+          setIsOpened={setIsOpened}
         />
       ) : (
         <StyledDiv
+          sizeVariant={sizeVariant}
+          disabled={disabled}
           onClick={() => {
             if (!disabled) {
               setIsOpened(true);
@@ -124,9 +167,9 @@ export const TitleInput = ({
             }
           }}
         >
-          <OverflowingTextWithTooltip text={draftValue ?? ''} />
+          <OverflowingTextWithTooltip text={draftValue} />
         </StyledDiv>
       )}
-    </div>
+    </>
   );
 };
