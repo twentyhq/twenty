@@ -3,12 +3,14 @@ import { useCallback } from 'react';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared/utils';
 
-export const useSeeDeletedRecordsNoSelectionRecordAction: ActionHookWithObjectMetadataItem =
+export const useHideDeletedRecordsNoSelectionRecordAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
     const currentViewId = useRecoilComponentValueV2(
       contextStoreCurrentViewIdComponentState,
@@ -23,11 +25,10 @@ export const useSeeDeletedRecordsNoSelectionRecordAction: ActionHookWithObjectMe
       currentViewId,
     );
 
-    const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =
-      useHandleToggleTrashColumnFilter({
-        objectNameSingular: objectMetadataItem.nameSingular,
-        viewBarId: recordIndexId,
-      });
+    const { toggleSoftDeleteFilterState } = useHandleToggleTrashColumnFilter({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      viewBarId: recordIndexId,
+    });
 
     const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
 
@@ -36,17 +37,22 @@ export const useSeeDeletedRecordsNoSelectionRecordAction: ActionHookWithObjectMe
       recordIndexId,
     );
 
-    const isDeletedFilterActive = currentRecordFilters.some(
-      checkIsSoftDeleteFilter,
-    );
+    const deletedFilter = currentRecordFilters.find(checkIsSoftDeleteFilter);
+
+    const { removeRecordFilter } = useRemoveRecordFilter();
 
     const onClick = useCallback(() => {
-      handleToggleTrashColumnFilter();
-      toggleSoftDeleteFilterState(true);
-    }, [handleToggleTrashColumnFilter, toggleSoftDeleteFilterState]);
+      if (!isDefined(deletedFilter)) {
+        return;
+      }
+
+      removeRecordFilter({ recordFilterId: deletedFilter.id });
+
+      toggleSoftDeleteFilterState(false);
+    }, [deletedFilter, removeRecordFilter, toggleSoftDeleteFilterState]);
 
     return {
-      shouldBeRegistered: !isDeletedFilterActive,
+      shouldBeRegistered: isDefined(deletedFilter),
       onClick,
     };
   };
