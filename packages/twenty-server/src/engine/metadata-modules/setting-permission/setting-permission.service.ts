@@ -28,6 +28,11 @@ export class SettingPermissionService {
     workspaceId: string;
     input: UpsertSettingPermissionInput;
   }): Promise<SettingPermissionEntity | null | undefined> {
+    await this.validateRoleIsEditableOrThrow({
+      roleId: input.roleId,
+      workspaceId,
+    });
+
     if (!Object.values(SettingPermissionType).includes(input.setting)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.INVALID_SETTING,
@@ -74,6 +79,28 @@ export class SettingPermissionService {
       }
 
       throw error;
+    }
+  }
+
+  private async validateRoleIsEditableOrThrow({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }) {
+    const role = await this.roleRepository.findOne({
+      where: {
+        id: roleId,
+        workspaceId,
+      },
+    });
+
+    if (!role?.isEditable) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
+        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+      );
     }
   }
 }

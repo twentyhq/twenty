@@ -54,7 +54,8 @@ const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(0.5)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   overflow: hidden;
 `;

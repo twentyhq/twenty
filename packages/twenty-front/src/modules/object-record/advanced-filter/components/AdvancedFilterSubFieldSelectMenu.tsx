@@ -12,6 +12,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { getFilterableFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFilterableFieldTypeLabel';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
@@ -35,6 +36,10 @@ export const AdvancedFilterSubFieldSelectMenu = ({
 
   const [, setObjectFilterDropdownFilterIsSelected] = useRecoilComponentStateV2(
     objectFilterDropdownFilterIsSelectedComponentState,
+  );
+
+  const [, setSubFieldNameUsedInDropdown] = useRecoilComponentStateV2(
+    subFieldNameUsedInDropdownComponentState,
   );
 
   const [, setObjectFilterDropdownIsSelectingCompositeField] =
@@ -81,6 +86,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
     setObjectFilterDropdownSubMenuFieldType(null);
     setObjectFilterDropdownIsSelectingCompositeField(false);
     setObjectFilterDropdownFilterIsSelected(false);
+    setSubFieldNameUsedInDropdown(null);
   };
 
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {

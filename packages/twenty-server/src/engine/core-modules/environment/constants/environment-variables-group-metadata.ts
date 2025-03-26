@@ -101,7 +101,7 @@ export const ENVIRONMENT_VARIABLES_GROUP_METADATA: Record<
       'We use this to setup a small support chat on the bottom left. Currently powered by Front.',
     isHiddenOnLoad: true,
   },
-  [EnvironmentVariablesGroup.TinybirdConfig]: {
+  [EnvironmentVariablesGroup.AnalyticsConfig]: {
     position: 1700,
     description:
       'We’re running a test to perform analytics within the app. This will evolve.',
