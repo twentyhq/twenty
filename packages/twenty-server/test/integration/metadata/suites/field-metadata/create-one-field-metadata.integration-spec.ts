@@ -37,7 +37,7 @@ describe('createOne', () => {
       };
 
       // Act
-      const response = await createOneFieldMetadata({
+      const { data } = await createOneFieldMetadata({
         input: createFieldInput,
         gqlFields: `
           id
@@ -48,7 +48,7 @@ describe('createOne', () => {
       });
 
       // Assert
-      expect(response.name).toBe(FIELD_NAME);
+      expect(data.createOneField.name).toBe(FIELD_NAME);
     });
 
     it('should set isLabelSyncWithName to false if not in input', async () => {
@@ -61,7 +61,7 @@ describe('createOne', () => {
       };
 
       // Act
-      const response = await createOneFieldMetadata({
+      const { data } = await createOneFieldMetadata({
         input: createFieldInput,
         gqlFields: `
             id
@@ -72,7 +72,7 @@ describe('createOne', () => {
       });
 
       // Assert
-      expect(response.isLabelSyncedWithName).toBe(false);
+      expect(data.createOneField.isLabelSyncedWithName).toBe(false);
     });
 
     it('should return an error when name and label are not synced but isLabelSyncedWithName is true', async () => {
@@ -86,7 +86,7 @@ describe('createOne', () => {
       };
 
       // Act
-      const response = await createOneFieldMetadata({
+      const { errors } = await createOneFieldMetadata({
         input: createFieldInput,
         gqlFields: `
             id
@@ -94,10 +94,11 @@ describe('createOne', () => {
             label
             isLabelSyncedWithName
           `,
+        expectToFail: true,
       });
 
       // Assert
-      expect(response.errors[0].message).toBe(
+      expect(errors[0].message).toBe(
         'Name is not synced with label. Expected name: "differentLabel", got testField',
       );
     });
