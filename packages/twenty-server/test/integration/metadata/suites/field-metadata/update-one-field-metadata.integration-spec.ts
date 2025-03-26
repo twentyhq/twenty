@@ -20,6 +20,8 @@ describe('updateOne', () => {
           labelPlural: LISTING_NAME_PLURAL,
           nameSingular: LISTING_NAME_SINGULAR,
           namePlural: LISTING_NAME_PLURAL,
+          icon: 'IconBuildingSkyscraper',
+          isLabelSyncedWithName: true,
         },
       });
 
@@ -30,7 +32,8 @@ describe('updateOne', () => {
           objectMetadataId: listingObjectId,
           type: FieldMetadataType.TEXT,
           name: 'testName',
-          label: 'testLabel',
+          label: 'Test name',
+          isLabelSyncedWithName: true,
         },
       });
 
@@ -47,6 +50,7 @@ describe('updateOne', () => {
       const updateFieldInput = {
         name: 'newName',
         label: 'New name',
+        isLabelSyncedWithName: true,
       };
 
       // Act
@@ -91,10 +95,11 @@ describe('updateOne', () => {
       // Arrange
       const updateFieldInput = {
         name: 'newName',
+        isLabelSyncedWithName: true,
       };
 
       // Act
-      const { data } = await updateOneFieldMetadata({
+      const { errors } = await updateOneFieldMetadata({
         input: { idToUpdate: testFieldId, updatePayload: updateFieldInput },
         gqlFields: `
               id
@@ -106,7 +111,7 @@ describe('updateOne', () => {
       });
 
       // Assert
-      expect(data.errors[0].message).toBe(
+      expect(errors[0].message).toBe(
         'Name is not synced with label. Expected name: "testName", got newName',
       );
     });
