@@ -87,6 +87,11 @@ msgstr "{aggregateLabel} de {fieldLabel}"
 msgid "{apiKeyName} API Key"
 msgstr "{apiKeyName} Chave API"
 
+#. js-lingui-id: zi5SHH
+#: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
+msgid "{contextStoreNumberOfSelectedRecords} selected"
+msgstr "{contextStoreNumberOfSelectedRecords} selecionado"
+
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx
@@ -2097,6 +2102,34 @@ msgstr "Campos Ocultos"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Hide"
 msgstr "Esconder"
+
+#. js-lingui-id: OlbYor
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Hide deleted"
+msgstr "Ocultar eliminados"
+
+#. js-lingui-id: FHhlye
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Hide deleted records"
+msgstr "Ocultar registos eliminados"
+
+#. js-lingui-id: 0dZtKR
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Hide deleted runs"
+msgstr "Ocultar execuções eliminadas"
+
+#. js-lingui-id: Jc6FrI
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Hide deleted versions"
+msgstr "Ocultar versões eliminadas"
+
+#. js-lingui-id: aOZAIB
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Hide deleted workflows"
+msgstr "Ocultar workflows eliminados"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
