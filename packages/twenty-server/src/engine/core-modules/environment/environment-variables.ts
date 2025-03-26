@@ -470,32 +470,12 @@ export class EnvironmentVariables {
   })
   CLICKHOUSE_URL: string;
 
-  @IsString()
   @IsOptional()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.AnalyticsConfig,
-    description: 'Clickhouse user for analytics',
-  })
-  CLICKHOUSE_USER: string;
-
-  @IsString()
-  @IsOptional()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.AnalyticsConfig,
-    description: 'Clickhouse password for analytics',
-  })
-  CLICKHOUSE_PASSWORD: string;
-
-  @IsString()
-  @IsOptional()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.AnalyticsConfig,
     description: 'Clickhouse database for analytics',
   })
-  CLICKHOUSE_DB: string;
+  CLICKHOUSE_DB = 'default';
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,

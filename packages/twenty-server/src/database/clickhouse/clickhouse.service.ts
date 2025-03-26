@@ -11,8 +11,6 @@ export class ClickhouseService {
   constructor(private readonly environmentService: EnvironmentService) {
     this.clickhouseClient = createClient({
       url: environmentService.get('CLICKHOUSE_URL'),
-      username: environmentService.get('CLICKHOUSE_USER'),
-      password: environmentService.get('CLICKHOUSE_PASSWORD'),
       database: environmentService.get('CLICKHOUSE_DB'),
     });
   }
