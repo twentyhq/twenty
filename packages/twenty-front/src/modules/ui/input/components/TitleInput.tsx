@@ -167,7 +167,7 @@ export const TitleInput = ({
             }
           }}
         >
-          <OverflowingTextWithTooltip text={draftValue} />
+          <OverflowingTextWithTooltip text={draftValue || placeholder} />
         </StyledDiv>
       )}
     </>
