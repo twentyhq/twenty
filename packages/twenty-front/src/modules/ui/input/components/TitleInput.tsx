@@ -50,7 +50,8 @@ const StyledDiv = styled.div<{
   display: flex;
   align-items: center;
   :hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${({ theme, disabled }) =>
+      disabled ? 'inherit' : theme.background.transparent.light};
   }
 `;
 
