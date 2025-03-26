@@ -140,16 +140,16 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         </>
       )}
       {hiddenRecordGroupIds.length > 0 && (
-        <div>
+        <>
           <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer scrollable={false}>
             <MenuItemNavigate
               onClick={() => onContentChange('hiddenRecordGroups')}
               LeftIcon={IconEyeOff}
               text={`Hidden ${recordGroupFieldMetadata?.label ?? ''}`}
             />
           </DropdownMenuItemsContainer>
-        </div>
+        </>
       )}
       <RecordGroupReorderConfirmationModal
         onConfirmClick={handleRecordGroupReorderConfirmClick}
