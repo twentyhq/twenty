@@ -20,15 +20,15 @@ import styled from '@emotion/styled';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledTabList = styled(TabList)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+`;
+
+const StyledTabList = styled(TabList)`
+  background-color: ${({ theme }) => theme.background.secondary};
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 type TabId = WorkflowRunTabIdType;

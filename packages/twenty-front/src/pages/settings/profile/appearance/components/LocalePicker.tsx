@@ -9,10 +9,10 @@ import { Select } from '@/ui/input/components/Select';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useLingui } from '@lingui/react/macro';
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { logError } from '~/utils/logError';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { logError } from '~/utils/logError';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -62,7 +62,7 @@ export const LocalePicker = () => {
     await refreshObjectMetadataItems();
   };
 
-  const localeOptions: Array<{
+  const unsortedLocaleOptions: Array<{
     label: string;
     value: (typeof APP_LOCALES)[keyof typeof APP_LOCALES];
   }> = [
@@ -187,12 +187,17 @@ export const LocalePicker = () => {
       value: APP_LOCALES['vi-VN'],
     },
   ];
+
   if (isDebugMode) {
-    localeOptions.push({
+    unsortedLocaleOptions.push({
       label: t`Pseudo-English`,
       value: APP_LOCALES['pseudo-en'],
     });
   }
+
+  const localeOptions = [...unsortedLocaleOptions].sort((a, b) =>
+    a.label.localeCompare(b.label),
+  );
 
   return (
     <StyledContainer>

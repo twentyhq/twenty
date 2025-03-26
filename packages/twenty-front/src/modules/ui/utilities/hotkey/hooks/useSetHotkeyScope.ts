@@ -3,13 +3,13 @@ import { useRecoilCallback } from 'recoil';
 import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
 import { logDebug } from '~/utils/logDebug';
 
+import { isDefined } from 'twenty-shared/utils';
 import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants/DefaultHotkeysScopeCustomScopes';
 import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
 import { internalHotkeysEnabledScopesState } from '../states/internal/internalHotkeysEnabledScopesState';
 import { AppHotkeyScope } from '../types/AppHotkeyScope';
 import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
 import { HotkeyScope } from '../types/HotkeyScope';
-import { isDefined } from 'twenty-shared/utils';
 
 const isCustomScopesEqual = (
   customScopesA: CustomHotkeyScopes | undefined,
@@ -67,6 +67,10 @@ export const useSetHotkeyScope = () =>
 
         if (newHotkeyScope.customScopes?.commandMenu === true) {
           scopesToSet.push(AppHotkeyScope.CommandMenu);
+        }
+
+        if (newHotkeyScope.customScopes?.commandMenuOpen === true) {
+          scopesToSet.push(AppHotkeyScope.CommandMenuOpen);
         }
 
         if (newHotkeyScope?.customScopes?.goto === true) {

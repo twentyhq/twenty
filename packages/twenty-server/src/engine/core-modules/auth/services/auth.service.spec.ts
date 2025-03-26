@@ -423,7 +423,7 @@ describe('AuthService', () => {
       });
 
       expect(result).toBeUndefined();
-      expect(spyWorkspaceRepository).toHaveBeenCalledTimes(0);
+      expect(spyWorkspaceRepository).toHaveBeenCalledTimes(1);
       expect(spyAuthSsoService).toHaveBeenCalledTimes(0);
     });
     it('findWorkspaceForSignInUp - signup password auth with workspaceInviteHash', async () => {
