@@ -55,7 +55,7 @@ const StyledButton = styled('button', {
     | 'to'
     | 'target'
     | 'isLoading'
-  > & { hasIcon: boolean }
+  > & { hasIcon: boolean, hasTitle: boolean }
 >`
   align-items: center;
   ${({ theme, variant, inverted, accent, disabled, focus }) => {
@@ -341,7 +341,10 @@ const StyledButton = styled('button', {
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: ${({ justify }) => justify};
-  padding: ${({ theme, hasIcon }) => {
+  padding: ${({ theme, hasIcon, hasTitle }) => {
+    if (hasIcon && !hasTitle) {
+      return `0 ${theme.spacing(5)} 0 ${theme.spacing(2)}`;
+    }
     return `0 ${theme.spacing(2)} 0 ${
       hasIcon ? theme.spacing(7) : theme.spacing(2)
     }`;
@@ -459,6 +462,7 @@ export const Button = ({
         position={position}
         disabled={soon || disabled}
         hasIcon={!!Icon}
+        hasTitle={!!title}
         focus={isFocused}
         justify={justify}
         accent={accent}
