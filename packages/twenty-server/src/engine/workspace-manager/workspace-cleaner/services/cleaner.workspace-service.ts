@@ -281,10 +281,6 @@ export class CleanerWorkspaceService {
     if (workspaces.length !== 0) {
       if (!dryRun) {
         for (const workspace of workspaces) {
-          await this.workspaceRepository.delete(
-            workspaces.map((workspace) => workspace.id),
-          );
-
           const userWorkspaces = await this.userWorkspaceRepository.find({
             where: {
               workspaceId: workspace.id,
@@ -299,6 +295,8 @@ export class CleanerWorkspaceService {
               false,
             );
           }
+
+          await this.workspaceRepository.delete(workspace.id);
         }
       }
 
