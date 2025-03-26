@@ -23,8 +23,8 @@ describe('datamodel permissions', () => {
     beforeAll(async () => {
       const { data } = await createOneObjectMetadata({
         input: {
-          nameSingular: 'Listing',
-          namePlural: 'Listings',
+          nameSingular: 'listing',
+          namePlural: 'listings',
           labelSingular: 'Listing',
           labelPlural: 'Listings',
           icon: 'IconBuildingSkyscraper',
