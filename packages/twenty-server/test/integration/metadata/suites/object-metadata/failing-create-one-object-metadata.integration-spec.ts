@@ -126,9 +126,6 @@ describe('Object metadata creation should fail', () => {
   it.each(allTestsUseCases)('$title', async ({ context }) => {
     const { errors } = await createOneObjectMetadata({
       input: getMockCreateObjectInput(context),
-      gqlFields: `
-        id
-      `,
       expectToFail: true,
     });
 

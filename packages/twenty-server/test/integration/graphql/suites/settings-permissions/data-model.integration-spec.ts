@@ -27,6 +27,7 @@ describe('datamodel permissions', () => {
           namePlural: 'Listings',
           labelSingular: 'Listing',
           labelPlural: 'Listings',
+          icon: 'IconBuildingSkyscraper',
         },
       });
 
@@ -178,6 +179,7 @@ describe('datamodel permissions', () => {
             labelSingular: 'Listing',
             namePlural: 'listings',
             nameSingular: 'listing',
+            icon: 'IconBuildingSkyscraper',
           },
         });
 

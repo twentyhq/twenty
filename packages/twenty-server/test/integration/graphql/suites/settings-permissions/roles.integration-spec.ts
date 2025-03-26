@@ -459,6 +459,7 @@ describe('roles permissions', () => {
             namePlural: 'Houses',
             labelSingular: 'House',
             labelPlural: 'Houses',
+            icon: 'IconBuildingSkyscraper',
           },
         });
 

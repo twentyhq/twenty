@@ -69,6 +69,7 @@ describe('SearchResolver', () => {
             labelPlural: LISTING_NAME_PLURAL,
             nameSingular: LISTING_NAME_SINGULAR,
             namePlural: LISTING_NAME_PLURAL,
+            icon: 'IconBuildingSkyscraper',
           },
         });
 

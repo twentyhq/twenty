@@ -21,6 +21,7 @@ describe('deleteOne', () => {
           namePlural: 'Houses',
           labelSingular: 'House',
           labelPlural: 'Houses',
+          icon: 'IconBuildingSkyscraper',
         },
       });
 
