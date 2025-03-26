@@ -141,7 +141,7 @@ export class RoleResolver {
   ): Promise<string> {
     await this.validatePermissionsV2EnabledOrThrow(workspace);
     await this.validateRoleIsEditableOrThrow({
-      roleId: roleId,
+      roleId,
       workspaceId: workspace.id,
     });
 

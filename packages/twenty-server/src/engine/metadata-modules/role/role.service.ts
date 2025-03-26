@@ -286,13 +286,15 @@ export class RoleService {
       workspaceId,
     );
 
-    for (const userWorkspaceId of userWorkspaceIds) {
-      await this.userRoleService.assignRoleToUserWorkspace({
-        userWorkspaceId,
-        roleId: defaultRoleId,
-        workspaceId,
-      });
-    }
+    await Promise.all(
+      userWorkspaceIds.map((userWorkspaceId) =>
+        this.userRoleService.assignRoleToUserWorkspace({
+          userWorkspaceId,
+          roleId: defaultRoleId,
+          workspaceId,
+        }),
+      ),
+    );
   }
 
   private async getUserWorkspaceIdsForRole(

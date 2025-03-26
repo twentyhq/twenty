@@ -522,7 +522,7 @@ describe('roles permissions', () => {
           });
       });
 
-      it('should upsert a setting permission when user has permission to create a setting permission', async () => {
+      it('should upsert an object permission when user has permission', async () => {
         const query = {
           query: upsertObjectPermissionMutation({
             objectMetadataId: listingObjectId,
@@ -598,7 +598,7 @@ describe('roles permissions', () => {
           });
       });
 
-      it('should upsert a setting permission when user has permission to create a setting permission', async () => {
+      it('should upsert a setting permission when user has permission', async () => {
         const query = {
           query: upsertSettingPermissionMutation({
             roleId: createdEditableRoleId,
