@@ -455,8 +455,8 @@ describe('roles permissions', () => {
       beforeAll(async () => {
         const { data } = await createOneObjectMetadata({
           input: {
-            nameSingular: 'House',
-            namePlural: 'Houses',
+            nameSingular: 'house',
+            namePlural: 'houses',
             labelSingular: 'House',
             labelPlural: 'Houses',
             icon: 'IconBuildingSkyscraper',
