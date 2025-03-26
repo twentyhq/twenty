@@ -5,13 +5,16 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { i18n } from '@lingui/core';
 import {
   BeforeUpdateOneHook,
   UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Equal, In, Repository } from 'typeorm';
 
+import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -36,7 +39,13 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   // TODO: this logic could be moved to a policy guard
   async run(
     instance: UpdateOneInputType<T>,
-    workspaceId: string,
+    {
+      workspaceId,
+      locale,
+    }: {
+      workspaceId: string;
+      locale: keyof typeof APP_LOCALES | undefined;
+    },
   ): Promise<UpdateOneInputType<T>> {
     if (!workspaceId) {
       throw new UnauthorizedException();
@@ -45,7 +54,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     const objectMetadata = await this.getObjectMetadata(instance, workspaceId);
 
     if (!objectMetadata.isCustom) {
-      return this.handleStandardObjectUpdate(instance, objectMetadata);
+      return this.handleStandardObjectUpdate(instance, objectMetadata, locale);
     }
 
     await this.validateIdentifierFields(instance, workspaceId);
@@ -74,6 +83,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   private handleStandardObjectUpdate(
     instance: UpdateOneInputType<T>,
     objectMetadata: ObjectMetadataEntity,
+    locale: keyof typeof APP_LOCALES | undefined,
   ): UpdateOneInputType<T> {
     const update: StandardObjectUpdate = {};
     const updatableFields = ['isActive', 'isLabelSyncedWithName'];
@@ -84,13 +94,10 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       'description',
     ];
 
-    // Check if any field is not allowed
     const nonUpdatableFields = Object.keys(instance.update).filter(
       (key) =>
         !updatableFields.includes(key) && !overridableFields.includes(key),
     );
-
-    const hasNonUpdatableFields = nonUpdatableFields.length > 0;
 
     const isUpdatingLabelsWhenSynced =
       (instance.update.labelSingular || instance.update.labelPlural) &&
@@ -105,7 +112,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       );
     }
 
-    if (hasNonUpdatableFields) {
+    if (nonUpdatableFields.length > 0) {
       throw new BadRequestException(
         `Only isActive, isLabelSyncedWithName, labelSingular, labelPlural, icon and description fields can be updated for standard objects. Disallowed fields: ${nonUpdatableFields.join(', ')}`,
       );
@@ -118,7 +125,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
 
     this.handleActiveField(instance, update);
     this.handleLabelSyncedWithNameField(instance, update);
-    this.handleStandardOverrides(instance, objectMetadata, update);
+    this.handleStandardOverrides(instance, objectMetadata, update, locale);
 
     return {
       id: instance.id,
@@ -161,6 +168,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     instance: UpdateOneInputType<T>,
     objectMetadata: ObjectMetadataEntity,
     update: StandardObjectUpdate,
+    locale: keyof typeof APP_LOCALES | undefined,
   ): void {
     const hasStandardOverrides =
       isDefined(instance.update.description) ||
@@ -174,29 +182,156 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
 
     update.standardOverrides = update.standardOverrides || {};
 
-    this.handleDescriptionOverride(instance, objectMetadata, update);
     this.handleIconOverride(instance, objectMetadata, update);
-    this.handleLabelOverrides(instance, objectMetadata, update);
+    this.handleDescriptionOverride(instance, objectMetadata, update, locale);
+    this.handleLabelOverrides(instance, objectMetadata, update, locale);
+  }
+
+  private resetOverrideIfMatchesOriginal({
+    update,
+    overrideKey,
+    newValue,
+    originalValue,
+    locale,
+  }: {
+    update: StandardObjectUpdate;
+    overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon';
+    newValue: string;
+    originalValue: string;
+    locale?: keyof typeof APP_LOCALES | undefined;
+  }): boolean {
+    if (locale && locale !== SOURCE_LOCALE) {
+      const wasOverrideReset = this.resetLocalizedOverride(
+        update,
+        overrideKey,
+        newValue,
+        originalValue,
+        locale,
+      );
+
+      return wasOverrideReset;
+    }
+
+    const wasOverrideReset = this.resetDefaultOverride(
+      update,
+      overrideKey,
+      newValue,
+      originalValue,
+    );
+
+    return wasOverrideReset;
+  }
+
+  private resetLocalizedOverride(
+    update: StandardObjectUpdate,
+    overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
+    newValue: string,
+    originalValue: string,
+    locale: keyof typeof APP_LOCALES,
+  ): boolean {
+    const messageId = generateMessageId(originalValue ?? '');
+    const translatedMessage = i18n._(messageId);
+
+    if (newValue !== translatedMessage) {
+      return false;
+    }
+
+    // Initialize the translations structure if needed
+    update.standardOverrides = update.standardOverrides || {};
+    update.standardOverrides.translations =
+      update.standardOverrides.translations || {};
+    update.standardOverrides.translations[locale] =
+      update.standardOverrides.translations[locale] || {};
+
+    // Reset the override by setting it to null
+    const localeTranslations = update.standardOverrides.translations[locale];
+
+    (localeTranslations as Record<string, any>)[overrideKey] = null;
+
+    return true;
+  }
+
+  private resetDefaultOverride(
+    update: StandardObjectUpdate,
+    overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
+    newValue: string,
+    originalValue: string,
+  ): boolean {
+    if (newValue !== originalValue) {
+      return false;
+    }
+
+    update.standardOverrides = update.standardOverrides || {};
+    update.standardOverrides[overrideKey] = null;
+
+    return true;
+  }
+
+  private setOverrideValue(
+    update: StandardObjectUpdate,
+    overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
+    value: string,
+    locale?: keyof typeof APP_LOCALES,
+  ): void {
+    update.standardOverrides = update.standardOverrides || {};
+
+    const shouldSetLocalizedOverride =
+      locale && locale !== SOURCE_LOCALE && overrideKey !== 'icon';
+
+    if (!shouldSetLocalizedOverride) {
+      update.standardOverrides[overrideKey] = value;
+
+      return;
+    }
+
+    this.setLocalizedOverrideValue(update, overrideKey, value, locale);
+  }
+
+  private setLocalizedOverrideValue(
+    update: StandardObjectUpdate,
+    overrideKey: 'labelSingular' | 'labelPlural' | 'description' | 'icon',
+    value: string,
+    locale: keyof typeof APP_LOCALES,
+  ): void {
+    update.standardOverrides = update.standardOverrides || {};
+    update.standardOverrides.translations =
+      update.standardOverrides.translations || {};
+    update.standardOverrides.translations[locale] =
+      update.standardOverrides.translations[locale] || {};
+
+    const localeTranslations = update.standardOverrides.translations[locale];
+
+    (localeTranslations as Record<string, any>)[overrideKey] = value;
   }
 
   private handleDescriptionOverride(
     instance: UpdateOneInputType<T>,
     objectMetadata: ObjectMetadataEntity,
     update: StandardObjectUpdate,
+    locale?: keyof typeof APP_LOCALES,
   ): void {
     if (!isDefined(instance.update.description)) {
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.description === objectMetadata.description) {
-      update.standardOverrides.description = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal({
+        update,
+        overrideKey: 'description',
+        newValue: instance.update.description,
+        originalValue: objectMetadata.description,
+        locale,
+      })
+    ) {
       return;
     }
 
-    update.standardOverrides.description = instance.update.description;
+    this.setOverrideValue(
+      update,
+      'description',
+      instance.update.description,
+      locale,
+    );
   }
 
   private handleIconOverride(
@@ -208,21 +343,26 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.icon === objectMetadata.icon) {
-      update.standardOverrides.icon = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal({
+        update,
+        overrideKey: 'icon',
+        newValue: instance.update.icon,
+        originalValue: objectMetadata.icon,
+        locale: undefined,
+      })
+    ) {
       return;
     }
 
-    update.standardOverrides.icon = instance.update.icon;
+    this.setOverrideValue(update, 'icon', instance.update.icon);
   }
 
   private handleLabelOverrides(
     instance: UpdateOneInputType<T>,
     objectMetadata: ObjectMetadataEntity,
     update: StandardObjectUpdate,
+    locale?: keyof typeof APP_LOCALES,
   ): void {
     // Skip label updates if labels are synced with name or will be synced
     if (
@@ -232,48 +372,68 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
       return;
     }
 
-    this.handleLabelSingularOverride(instance, objectMetadata, update);
-    this.handleLabelPluralOverride(instance, objectMetadata, update);
+    this.handleLabelSingularOverride(instance, objectMetadata, update, locale);
+    this.handleLabelPluralOverride(instance, objectMetadata, update, locale);
   }
 
   private handleLabelSingularOverride(
     instance: UpdateOneInputType<T>,
     objectMetadata: ObjectMetadataEntity,
     update: StandardObjectUpdate,
+    locale?: keyof typeof APP_LOCALES,
   ): void {
     if (!isDefined(instance.update.labelSingular)) {
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.labelSingular === objectMetadata.labelSingular) {
-      update.standardOverrides.labelSingular = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal({
+        update,
+        overrideKey: 'labelSingular',
+        newValue: instance.update.labelSingular,
+        originalValue: objectMetadata.labelSingular,
+        locale,
+      })
+    ) {
       return;
     }
 
-    update.standardOverrides.labelSingular = instance.update.labelSingular;
+    this.setOverrideValue(
+      update,
+      'labelSingular',
+      instance.update.labelSingular,
+      locale,
+    );
   }
 
   private handleLabelPluralOverride(
     instance: UpdateOneInputType<T>,
     objectMetadata: ObjectMetadataEntity,
     update: StandardObjectUpdate,
+    locale?: keyof typeof APP_LOCALES,
   ): void {
     if (!isDefined(instance.update.labelPlural)) {
       return;
     }
 
-    update.standardOverrides = update.standardOverrides || {};
-
-    if (instance.update.labelPlural === objectMetadata.labelPlural) {
-      update.standardOverrides.labelPlural = null;
-
+    if (
+      this.resetOverrideIfMatchesOriginal({
+        update,
+        overrideKey: 'labelPlural',
+        newValue: instance.update.labelPlural,
+        originalValue: objectMetadata.labelPlural,
+        locale,
+      })
+    ) {
       return;
     }
 
-    update.standardOverrides.labelPlural = instance.update.labelPlural;
+    this.setOverrideValue(
+      update,
+      'labelPlural',
+      instance.update.labelPlural,
+      locale,
+    );
   }
 
   private async validateIdentifierFields(

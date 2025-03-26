@@ -1,6 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsOptional, IsString } from 'class-validator';
+import { IsJSON, IsOptional, IsString } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 @ObjectType('ObjectStandardOverrides')
 export class ObjectStandardOverridesDTO {
@@ -23,4 +25,20 @@ export class ObjectStandardOverridesDTO {
   @IsOptional()
   @Field(() => String, { nullable: true })
   icon?: string | null;
+
+  @IsJSON()
+  @IsOptional()
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+  })
+  translations?: Partial<
+    Record<
+      keyof typeof APP_LOCALES,
+      {
+        labelSingular?: string | null;
+        labelPlural?: string | null;
+        description?: string | null;
+      }
+    >
+  > | null;
 }

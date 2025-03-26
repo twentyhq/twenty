@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
+import { In, LessThan, Repository } from 'typeorm';
 
 import {
   MigrationCommandOptions,
@@ -12,16 +12,16 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
 @Command({
-  name: 'workspace:clean',
-  description: 'Clean suspended workspace',
+  name: 'workspace:clean:onboarding',
+  description: 'Clean onboarding workspaces',
 })
-export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
+export class CleanOnboardingWorkspacesCommand extends MigrationCommandRunner {
   private workspaceIds: string[] = [];
 
   constructor(
     private readonly cleanerWorkspaceService: CleanerWorkspaceService,
     @InjectRepository(Workspace, 'core')
-    protected readonly workspaceRepository: Repository<Workspace>,
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {
     super();
   }
@@ -29,7 +29,7 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description:
-      'workspace id. Command runs on all suspended workspaces if not provided',
+      'workspace id. Command runs on all onboarding workspaces if not provided',
     required: false,
   })
   parseWorkspaceId(val: string): string[] {
@@ -38,16 +38,24 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
     return this.workspaceIds;
   }
 
-  async fetchSuspendedWorkspaceIds(): Promise<string[]> {
-    const suspendedWorkspaces = await this.workspaceRepository.find({
+  async fetchOnboardingWorkspaceIds(): Promise<string[]> {
+    const sevenDaysAgo = new Date();
+
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const onboardingWorkspaces = await this.workspaceRepository.find({
       select: ['id'],
       where: {
-        activationStatus: In([WorkspaceActivationStatus.SUSPENDED]),
+        activationStatus: In([
+          WorkspaceActivationStatus.PENDING_CREATION,
+          WorkspaceActivationStatus.ONGOING_CREATION,
+        ]),
+        createdAt: LessThan(sevenDaysAgo),
       },
       withDeleted: true,
     });
 
-    return suspendedWorkspaces.map((workspace) => workspace.id);
+    return onboardingWorkspaces.map((workspace) => workspace.id);
   }
 
   override async runMigrationCommand(
@@ -56,17 +64,17 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
   ): Promise<void> {
     const { dryRun } = options;
 
-    const suspendedWorkspaceIds =
+    const onboardingWorkspaceIds =
       this.workspaceIds.length > 0
         ? this.workspaceIds
-        : await this.fetchSuspendedWorkspaceIds();
+        : await this.fetchOnboardingWorkspaceIds();
 
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}Cleaning ${onboardingWorkspaceIds.length} onboarding workspaces`,
     );
 
-    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
-      suspendedWorkspaceIds,
+    await this.cleanerWorkspaceService.batchCleanOnboardingWorkspaces(
+      onboardingWorkspaceIds,
       dryRun,
     );
   }

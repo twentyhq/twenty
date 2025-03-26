@@ -6,7 +6,6 @@ import { configurableViewFilterOperands } from '@/object-record/object-filter-dr
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
@@ -79,14 +78,12 @@ export const AdvancedFilterValueInputDropdownButton = ({
             setSelectedFilter(filter);
           }}
           dropdownComponents={
-            <DropdownMenuItemsContainer>
-              <ObjectFilterDropdownFilterInput />
-            </DropdownMenuItemsContainer>
+            <ObjectFilterDropdownFilterInput recordFilterId={filter.id} />
           }
           dropdownHotkeyScope={{ scope: dropdownId }}
           dropdownOffset={{ y: 8, x: 0 }}
           dropdownPlacement="bottom-start"
-          dropdownMenuWidth={280}
+          dropdownMenuWidth={200}
         />
       )}
     </StyledValueDropdownContainer>

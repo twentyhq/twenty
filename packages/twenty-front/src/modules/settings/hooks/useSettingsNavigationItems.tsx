@@ -21,14 +21,12 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { SettingPermissionType } from '~/generated/graphql';
@@ -63,7 +61,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     false;
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
-  const featureFlags = useFeatureFlagsMap();
   const permissionMap = useSettingsPermissionMap();
   return [
     {
@@ -120,9 +117,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Roles`,
           path: SettingsPath.Roles,
           Icon: IconLock,
-          isHidden:
-            !featureFlags[FeatureFlagKey.IsPermissionsEnabled] ||
-            !permissionMap[SettingPermissionType.ROLES],
+          isHidden: !permissionMap[SettingPermissionType.ROLES],
         },
         {
           label: t`Billing`,
