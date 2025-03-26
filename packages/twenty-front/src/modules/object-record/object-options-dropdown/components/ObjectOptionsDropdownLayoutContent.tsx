@@ -55,13 +55,13 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     recordGroupFieldMetadataComponentState,
   );
 
-  const { useSetAndPersistViewType } = useObjectOptionsForLayout();
+  const { setAndPersistViewType } = useObjectOptionsForLayout();
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const handleClickOnKanban = () => {
+  const handleClickOnKanban = async () => {
     if (isDefaultView) {
       return;
     }
@@ -70,7 +70,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       closeDropdown();
     }
     if (currentView?.type !== ViewType.Kanban) {
-      useSetAndPersistViewType(ViewType.Kanban);
+      await setAndPersistViewType(ViewType.Kanban);
     }
   };
 
@@ -94,9 +94,10 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             LeftIcon={IconTable}
             text={t`Table`}
             selected={currentView?.type === ViewType.Table}
-            onClick={() => {
-              currentView?.type !== ViewType.Table &&
-                useSetAndPersistViewType(ViewType.Table);
+            onClick={async () => {
+              if (currentView?.type !== ViewType.Table) {
+                await setAndPersistViewType(ViewType.Table);
+              }
             }}
           />
           <MenuItemSelect

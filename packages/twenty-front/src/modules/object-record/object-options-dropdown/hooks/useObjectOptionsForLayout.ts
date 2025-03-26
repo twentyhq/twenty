@@ -66,8 +66,8 @@ export const useObjectOptionsForLayout = () => {
     [objectMetadataItem, createViewGroupRecords],
   );
 
-  const setAndPersistViewType = useCallback(
-    (viewType: ViewType, currentView: View) => {
+  const switchViewType = useCallback(
+    async (viewType: ViewType, currentView: View) => {
       const updateCurrentViewParams: Partial<GraphQLView> = {};
       updateCurrentViewParams.type = viewType;
 
@@ -97,7 +97,7 @@ export const useObjectOptionsForLayout = () => {
             const randomFieldForKanban = availableFieldsForKanban[0];
             updateCurrentViewParams.kanbanFieldMetadataId =
               randomFieldForKanban.id;
-            createViewGroupAssociatedWithKanbanField(
+            await createViewGroupAssociatedWithKanbanField(
               randomFieldForKanban.id,
               currentView.id,
             );
@@ -124,9 +124,9 @@ export const useObjectOptionsForLayout = () => {
     ],
   );
 
-  const useSetAndPersistViewType = useRecoilCallback(
+  const setAndPersistViewType = useRecoilCallback(
     ({ snapshot }) =>
-      (viewType: ViewType) => {
+      async (viewType: ViewType) => {
         if (!isDefined(currentViewId)) {
           throw new Error('No view id found');
         }
@@ -139,13 +139,12 @@ export const useObjectOptionsForLayout = () => {
           throw new Error('No current view found');
         }
 
-        return setAndPersistViewType(viewType, currentView);
+        return await switchViewType(viewType, currentView);
       },
-    [currentViewId, setAndPersistViewType],
+    [currentViewId, switchViewType],
   );
 
   return {
     setAndPersistViewType,
-    useSetAndPersistViewType,
   };
 };
