@@ -90,7 +90,7 @@ msgstr "{apiKeyName} API 密鑰"
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
-msgstr ""
+msgstr "{contextStoreNumberOfSelectedRecords} 已選取"
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
@@ -2109,27 +2109,27 @@ msgstr "隱藏"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted"
-msgstr ""
+msgstr "隱藏已刪除的"
 
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted records"
-msgstr ""
+msgstr "隱藏已刪除記錄"
 
 #. js-lingui-id: 0dZtKR
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Hide deleted runs"
-msgstr ""
+msgstr "隱藏已刪除的執行"
 
 #. js-lingui-id: Jc6FrI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Hide deleted versions"
-msgstr ""
+msgstr "隱藏已刪除的版本"
 
 #. js-lingui-id: aOZAIB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Hide deleted workflows"
-msgstr ""
+msgstr "隱藏已刪除的工作流程"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx

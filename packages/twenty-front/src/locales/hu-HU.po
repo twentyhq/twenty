@@ -90,7 +90,7 @@ msgstr "{apiKeyName} API kulcs"
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
-msgstr ""
+msgstr "{contextStoreNumberOfSelectedRecords} kiválasztva"
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
@@ -2109,27 +2109,27 @@ msgstr "Elrejtés"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted"
-msgstr ""
+msgstr "Törlés elrejtése"
 
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted records"
-msgstr ""
+msgstr "Törölt rekordok elrejtése"
 
 #. js-lingui-id: 0dZtKR
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Hide deleted runs"
-msgstr ""
+msgstr "Törölt futtatások elrejtése"
 
 #. js-lingui-id: Jc6FrI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Hide deleted versions"
-msgstr ""
+msgstr "Törölt verziók elrejtése"
 
 #. js-lingui-id: aOZAIB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Hide deleted workflows"
-msgstr ""
+msgstr "Törölt munkafolyamatok elrejtése"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx

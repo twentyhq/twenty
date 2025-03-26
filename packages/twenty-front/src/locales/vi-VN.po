@@ -90,7 +90,7 @@ msgstr "Khóa API {apiKeyName}"
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
-msgstr ""
+msgstr "{contextStoreNumberOfSelectedRecords} được chọn"
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
@@ -2109,27 +2109,27 @@ msgstr "\\"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted"
-msgstr ""
+msgstr "Ẩn đã xóa"
 
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted records"
-msgstr ""
+msgstr "Ẩn các bản ghi đã xóa"
 
 #. js-lingui-id: 0dZtKR
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Hide deleted runs"
-msgstr ""
+msgstr "Ẩn các lần chạy đã xóa"
 
 #. js-lingui-id: Jc6FrI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Hide deleted versions"
-msgstr ""
+msgstr "Ẩn các phiên bản đã xóa"
 
 #. js-lingui-id: aOZAIB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Hide deleted workflows"
-msgstr ""
+msgstr "Ẩn quy trình công việc đã xóa"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
