@@ -1,6 +1,6 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 // @ts-expect-error  // Todo: remove usage of react-data-grid
-import { useTheme } from '@emotion/react';
 import DataGrid, { DataGridProps } from 'react-data-grid';
 import { RGBA } from 'twenty-ui';
 
@@ -136,7 +136,7 @@ export const SpreadsheetImportTable = <Data,>({
       direction={rtl ? 'rtl' : 'ltr'}
       rowHeight={52}
       {...{
-        className: `${className || ''} ${themeClassName}`.trim(),
+        className: `${className || ''} ${themeClassName}`,
         columns,
         components,
         headerRowHeight,
