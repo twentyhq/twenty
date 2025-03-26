@@ -65,6 +65,7 @@
     "navigation",
     "testing",
     "theme",
-    "utilities"
+    "utilities",
+    "assets"
   ]
 }

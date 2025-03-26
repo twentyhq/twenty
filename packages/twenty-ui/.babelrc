@@ -11,7 +11,8 @@
       {
         "root": ["./"],
         "alias": {
-          "@ui": "./src"
+          "@ui": "./src",
+          "@assets": "./assets"
         }
       }
     ]
