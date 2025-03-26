@@ -132,6 +132,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = ({
     setObjectFilterDropdownSubMenuFieldType(null);
     setObjectFilterDropdownIsSelectingCompositeField(false);
     setObjectFilterDropdownFilterIsSelected(false);
+    setSubFieldNameUsedInDropdown(null);
   };
 
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {

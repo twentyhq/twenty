@@ -85,7 +85,7 @@ export const ObjectFilterDropdownOperandSelect = ({
 
     if (isValuelessOperand && isDefined(fieldMetadataItemUsedInDropdown)) {
       applyRecordFilter({
-        id: v4(),
+        id: selectedFilter?.id ? selectedFilter.id : v4(),
         fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
         displayValue: '',
         operand: newOperand,

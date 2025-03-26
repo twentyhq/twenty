@@ -1,8 +1,4 @@
-import { useState } from 'react';
-import { v4 } from 'uuid';
-
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { useEmptyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useEmptyRecordFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
@@ -11,8 +7,8 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { getSelectedRecordFilters } from '@/object-record/object-filter-dropdown/utils/getSelectedRecordFilters';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
-import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -20,6 +16,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 3;
@@ -56,9 +53,6 @@ export const ObjectFilterDropdownSourceSelect = ({
 
   const { applyRecordFilter } = useApplyRecordFilter(viewComponentId);
 
-  // TODO: this should be removed as it is not consistent across re-renders
-  const [fieldId] = useState(v4());
-
   const sourceTypes = getActorSourceMultiSelectOptions(
     objectFilterDropdownSelectedRecordIds,
   );
@@ -69,10 +63,6 @@ export const ObjectFilterDropdownSourceSelect = ({
       ...option,
       isSelected: true,
     }));
-
-  const { emptyRecordFilter } = useEmptyRecordFilter();
-
-  const { removeRecordFilter } = useRemoveRecordFilter();
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
@@ -94,22 +84,6 @@ export const ObjectFilterDropdownSourceSelect = ({
       );
     }
 
-    const recordFilter = currentRecordFilters.find(
-      (recordFilter) =>
-        recordFilter.fieldMetadataId ===
-        fieldMetadataItemUsedInFilterDropdown.id,
-    );
-
-    const filterId = recordFilter?.id ?? fieldId;
-    const recordFilterId = selectedFilter?.id ? selectedFilter.id : filterId;
-
-    if (newSelectedItemIds.length === 0) {
-      emptyRecordFilter();
-      removeRecordFilter({ recordFilterId });
-
-      return;
-    }
-
     setObjectFilterDropdownSelectedRecordIds(newSelectedItemIds);
 
     const selectedItemNames = sourceTypes
@@ -121,24 +95,44 @@ export const ObjectFilterDropdownSourceSelect = ({
         ? `${selectedItemNames.length} source types`
         : selectedItemNames.join(', ');
 
-    if (!isDefined(selectedOperandInDropdown)) {
-      throw new Error('Selected operand in dropdown should be defined');
+    if (
+      isDefined(fieldMetadataItemUsedInFilterDropdown) &&
+      isDefined(selectedOperandInDropdown)
+    ) {
+      const newFilterValue =
+        newSelectedItemIds.length > 0
+          ? JSON.stringify(newSelectedItemIds)
+          : EMPTY_FILTER_VALUE;
+
+      const duplicateFilterInCurrentRecordFilters =
+        findDuplicateRecordFilterInNonAdvancedRecordFilters({
+          recordFilters: currentRecordFilters,
+          fieldMetadataItemId: fieldMetadataItemUsedInFilterDropdown.id,
+          subFieldName: 'source',
+        });
+
+      const filterIsAlreadyInCurrentRecordFilters = isDefined(
+        duplicateFilterInCurrentRecordFilters,
+      );
+
+      const filterId = filterIsAlreadyInCurrentRecordFilters
+        ? duplicateFilterInCurrentRecordFilters?.id
+        : v4();
+
+      applyRecordFilter({
+        id: selectedFilter?.id ? selectedFilter.id : filterId,
+        type: getFilterTypeFromFieldType(
+          fieldMetadataItemUsedInFilterDropdown.type,
+        ),
+        label: fieldMetadataItemUsedInFilterDropdown.label,
+        operand: selectedOperandInDropdown || ViewFilterOperand.Is,
+        displayValue: filterDisplayValue,
+        fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
+        value: newFilterValue,
+        recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+        subFieldName: 'source',
+      });
     }
-
-    const newFilterValue = JSON.stringify(newSelectedItemIds);
-
-    applyRecordFilter({
-      id: recordFilterId,
-      type: getFilterTypeFromFieldType(
-        fieldMetadataItemUsedInFilterDropdown.type,
-      ),
-      label: fieldMetadataItemUsedInFilterDropdown.label,
-      operand: selectedOperandInDropdown || ViewFilterOperand.Is,
-      displayValue: filterDisplayValue,
-      fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
-      value: newFilterValue,
-      recordFilterGroupId: selectedFilter?.recordFilterGroupId,
-    });
   };
 
   return (

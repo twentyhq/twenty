@@ -101,7 +101,7 @@ msgstr "{workspaceMemberName} a következő szerepkörből lesz kivezetve:"
 #. js-lingui-id: YT0WJ4
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #~ msgid "1 000 workflow node executions"
-#~ msgstr "1 000 munkafolyamat-csomópont végrehajtása"
+#~ msgstr "1 000 workflow node executions"
 
 #. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
@@ -117,7 +117,7 @@ msgstr "1. Típus"
 #. js-lingui-id: AvXug3
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "10 000 workflow node executions"
-msgstr ""
+msgstr "10 000 munkafolyamat csomópont végrehajtás"
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -138,7 +138,7 @@ msgstr "2. Mező konfigurálása"
 #. js-lingui-id: kAtmAv
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "20 000 workflow node executions"
-msgstr ""
+msgstr "20 000 munkafolyamat csomópont végrehajtás"
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -199,7 +199,7 @@ msgstr "Fiókok"
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Action"
-msgstr ""
+msgstr "Művelet"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
@@ -533,22 +533,22 @@ msgstr "Biztosan meg akarja változtatni a számlázási intervallumát?"
 #. js-lingui-id: 8Y3Jbl
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 #~ msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
-#~ msgstr "Biztosan törölni szeretné ezeket a rekordokat? Visszaállíthatók a Parancs menüből ({osControlSymbol} + K)."
+#~ msgstr "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: 2BZAqa
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
-msgstr ""
+msgstr "Biztosan törölni szeretné ezeket a rekordokat? Visszaállíthatók a Parancs menüből."
 
 #. js-lingui-id: Se0vJw
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 #~ msgid "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
-#~ msgstr "Biztosan törölni szeretné ezt a rekordot? Visszaállítható a Parancs menüből ({osControlSymbol} + K)."
+#~ msgstr "Are you sure you want to delete this record? It can be recovered from the Command menu ({osControlSymbol} + K)."
 
 #. js-lingui-id: yb2hF4
 #: src/modules/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
-msgstr ""
+msgstr "Biztosan törölni szeretné ezt a rekordot? Visszaállítható a Parancs menüből."
 
 #. js-lingui-id: nYD/Cq
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -714,7 +714,7 @@ msgstr "Naptárak"
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
-msgstr ""
+msgstr "Nem változtathatók meg a szabványos objektumok API-nevei"
 
 #. js-lingui-id: dEgA5A
 #: src/pages/auth/Authorize.tsx
@@ -829,7 +829,7 @@ msgstr "Parancsmenü bezárása"
 #. js-lingui-id: EWPtMO
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Code"
-msgstr ""
+msgstr "Kód"
 
 #. js-lingui-id: H86f9p
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -2025,7 +2025,7 @@ msgstr "Globális"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Go to runs"
-msgstr ""
+msgstr "Ugrás a futásokhoz"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -2037,7 +2037,7 @@ msgstr "Ugrás a beállításokhoz"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Go to workflows"
-msgstr ""
+msgstr "Munkafolyamatokhoz"
 
 #. js-lingui-id: hWp1MY
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -2506,7 +2506,7 @@ msgstr "Kijelentkezés"
 #. js-lingui-id: nOhz3x
 #: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
 msgid "Logout"
-msgstr "Logout"
+msgstr "Kijelentkezés"
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -3527,7 +3527,7 @@ msgstr "Futtatások megtekintése"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See version"
-msgstr ""
+msgstr "Verzió megtekintése"
 
 #. js-lingui-id: EtyY4+
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -3547,14 +3547,14 @@ msgstr "Verziótörténet megtekintése"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "See workflow"
-msgstr ""
+msgstr "Workflow megtekintése"
 
 #. js-lingui-id: XThiR2
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "See workflows"
-msgstr ""
+msgstr "Munkafolyamatok megtekintése"
 
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -3737,7 +3737,7 @@ msgstr "SSO"
 #. js-lingui-id: vlvAkg
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "SSO (SAML / OIDC)"
-msgstr ""
+msgstr "SSO (SAML / OIDC)"
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -3831,7 +3831,7 @@ msgstr "Számlázás váltás {to}"
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Switch to {alternatePlanName}"
-msgstr ""
+msgstr "Váltás {alternatePlanName} tervre"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx

@@ -23,10 +23,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId?: string;
+  recordFilterId?: string;
 };
 
 export const ObjectFilterDropdownFilterInput = ({
   filterDropdownId,
+  recordFilterId,
 }: ObjectFilterDropdownFilterInputProps) => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
@@ -81,9 +83,9 @@ export const ObjectFilterDropdownFilterInput = ({
     <>
       {isConfigurable && selectedOperandInDropdown && (
         <>
-          {TEXT_FILTER_TYPES.includes(filterType) &&
-            !isActorSourceCompositeFilter &&
-            !isActorAndIsOperand && <ObjectFilterDropdownTextInput />}
+          {TEXT_FILTER_TYPES.includes(filterType) && (
+            <ObjectFilterDropdownTextInput />
+          )}
           {NUMBER_FILTER_TYPES.includes(filterType) && (
             <ObjectFilterDropdownNumberInput />
           )}
@@ -95,16 +97,21 @@ export const ObjectFilterDropdownFilterInput = ({
             <>
               <ObjectFilterDropdownSearchInput />
               <DropdownMenuSeparator />
-              <ObjectFilterDropdownRecordSelect />
+              <ObjectFilterDropdownRecordSelect
+                recordFilterId={recordFilterId}
+              />
             </>
           )}
           {filterType === 'ACTOR' &&
-            (isActorSourceCompositeFilter || isActorAndIsOperand) && (
+            (isActorSourceCompositeFilter ? (
               <>
-                <DropdownMenuSeparator />
                 <ObjectFilterDropdownSourceSelect />
               </>
-            )}
+            ) : (
+              <>
+                <ObjectFilterDropdownTextInput />
+              </>
+            ))}
           {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
             <>
               <ObjectFilterDropdownSearchInput />
