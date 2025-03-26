@@ -29,6 +29,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
+import { assertCanDeactivateField } from 'src/engine/metadata-modules/field-metadata/utils/assert-can-deactivate-field';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
 import {
   computeColumnName,
@@ -154,6 +155,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
+      if (!objectMetadata.labelIdentifierFieldMetadataId) {
+        throw new FieldMetadataException(
+          'Label identifier field metadata id does not exist',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
       assertMutationNotOnRemoteObject(objectMetadata);
 
       assertDoesNotNullifyDefaultValueForNonNullableField({
@@ -161,16 +168,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         defaultValueFromUpdate: fieldMetadataInput.defaultValue,
       });
 
-      if (
-        objectMetadata.labelIdentifierFieldMetadataId ===
-          existingFieldMetadata.id &&
-        fieldMetadataInput.isActive === false
-      ) {
-        throw new FieldMetadataException(
-          'Cannot deactivate label identifier field',
-          FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
-        );
-      }
+      assertCanDeactivateField({
+        isActiveInput: fieldMetadataInput.isActive,
+        labelIdentifierFieldMetadataId:
+          objectMetadata.labelIdentifierFieldMetadataId,
+        existingFieldMetadata,
+      });
 
       if (fieldMetadataInput.isActive === false) {
         const viewsRepository =
