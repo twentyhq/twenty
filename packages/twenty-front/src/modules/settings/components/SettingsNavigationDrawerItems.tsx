@@ -55,7 +55,7 @@ export const SettingsNavigationDrawerItems = () => {
       defaultEnableXScroll={false}
     >
       <StyledInnerContainer>
-        {settingsNavigationItems.map((section) => {
+        {settingsNavigationItems.map((section, sectionIndex) => {
           const allItemsHidden = section.items.every((item) => item.isHidden);
           if (allItemsHidden) {
             return null;
@@ -126,16 +126,16 @@ export const SettingsNavigationDrawerItems = () => {
                   />
                 );
               })}
+              {sectionIndex === settingsNavigationItems.length - 1 && (
+                <NavigationDrawerItem
+                  label={t`Logout`}
+                  onClick={signOut}
+                  Icon={IconDoorEnter}
+                />
+              )}
             </NavigationDrawerSection>
           );
         })}
-        <NavigationDrawerSection>
-          <NavigationDrawerItem
-            label={t`Logout`}
-            onClick={signOut}
-            Icon={IconDoorEnter}
-          />
-        </NavigationDrawerSection>
       </StyledInnerContainer>
     </ScrollWrapper>
   );
