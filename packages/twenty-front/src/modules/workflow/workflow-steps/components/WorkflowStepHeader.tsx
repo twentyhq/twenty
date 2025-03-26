@@ -80,7 +80,7 @@ export const WorkflowStepHeader = ({
     setTitle(newTitle);
   };
 
-  const submitTitle = () => {
+  const saveTitle = () => {
     onTitleChange?.(title);
     updateCommandMenuPageInfo({
       pageTitle: title,
@@ -106,13 +106,13 @@ export const WorkflowStepHeader = ({
             onChange={handleChange}
             placeholder={headerType}
             hotkeyScope="workflow-step-title"
-            onEnter={submitTitle}
+            onEnter={saveTitle}
             onEscape={() => {
               setTitle(initialTitle);
             }}
-            onClickOutside={submitTitle}
-            onTab={submitTitle}
-            onShiftTab={submitTitle}
+            onClickOutside={saveTitle}
+            onTab={saveTitle}
+            onShiftTab={saveTitle}
           />
         </StyledHeaderTitle>
         <StyledHeaderType>{headerType}</StyledHeaderType>
