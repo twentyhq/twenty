@@ -11,7 +11,7 @@ import ts from 'typescript';
 const INDEX_FILENAME = 'index';
 const PACKAGE_JSON_FILENAME = 'package.json';
 const NX_PROJECT_CONFIGURATION_FILENAME = 'project.json';
-const PACKAGE_PATH = path.resolve('packages/twenty-shared');
+const PACKAGE_PATH = path.resolve('packages/twenty-ui');
 const SRC_PATH = path.resolve(`${PACKAGE_PATH}/src`);
 const PACKAGE_JSON_PATH = path.join(PACKAGE_PATH, PACKAGE_JSON_FILENAME);
 const NX_PROJECT_CONFIGURATION_PATH = path.join(
@@ -199,7 +199,7 @@ const computePackageJsonFilesAndPreconstructConfig = (
         ...entrypoints.map((module) => `./${module}/index.ts`),
       ],
     },
-    files: ['dist', ...entrypoints],
+    files: ['dist', 'assets', ...entrypoints],
   };
 };
 
@@ -325,7 +325,7 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
               ) {
                 return;
               }
-              
+
               exports.push({
                 kind,
                 name: element.name.text,
@@ -347,8 +347,17 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
           node.exportClause.elements.forEach((element) => {
             const exportName = element.name.text;
 
+            if (element.isTypeOnly) {
+              // should handle kind
+              exports.push({
+                kind: 'type',
+                name: exportName,
+              });
+              return;
+            }
+
             exports.push({
-              kind: 'const', // TODO is it possible to determine type ? Should be calling switch case for atomic declaration that I could refactor ?
+              kind: 'const',
               name: exportName,
             });
           });
@@ -412,6 +421,7 @@ type ExportByBarrel = {
 const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
   return barrelDirectories.map<ExportByBarrel>((moduleDirectory) => {
     const moduleExportsPerFile = findAllExports(moduleDirectory);
+    console.log(JSON.stringify(moduleExportsPerFile));
     const moduleName = getLastPathFolder(moduleDirectory);
     if (!moduleName) {
       throw new Error(
