@@ -74,7 +74,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.addTasksAssignedToMeViewCommand,
       ],
     };
-    const commands_044: VersionCommands = {
+    const _commands_044: VersionCommands = {
       beforeSyncMetadata: [
         this.initializePermissionsCommand,
         this.updateViewAggregateOperationsCommand,
