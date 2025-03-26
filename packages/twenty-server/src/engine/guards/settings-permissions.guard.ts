@@ -9,8 +9,6 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
@@ -24,24 +22,11 @@ export const SettingsPermissionsGuard = (
 ): Type<CanActivate> => {
   @Injectable()
   class SettingsPermissionsMixin implements CanActivate {
-    constructor(
-      private readonly featureFlagService: FeatureFlagService,
-      private readonly permissionsService: PermissionsService,
-    ) {}
+    constructor(private readonly permissionsService: PermissionsService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const ctx = GqlExecutionContext.create(context);
       const workspaceId = ctx.getContext().req.workspace.id;
-
-      const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsEnabled,
-        workspaceId,
-      );
-
-      if (!permissionsEnabled) {
-        return true;
-      }
-
       const userWorkspaceId = ctx.getContext().req.userWorkspaceId;
 
       const hasPermission =
