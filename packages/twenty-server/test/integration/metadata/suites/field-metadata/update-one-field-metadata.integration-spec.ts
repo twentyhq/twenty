@@ -1,8 +1,12 @@
-import { createCustomTextFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { updateOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import {
+  LISTING_NAME_PLURAL,
+  LISTING_NAME_SINGULAR,
+} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('updateOne', () => {
   describe('FieldMetadataService name/label sync', () => {
@@ -10,18 +14,32 @@ describe('updateOne', () => {
     let testFieldId = '';
 
     beforeEach(async () => {
-      const { objectMetadataId: createdObjectId } =
-        await createListingCustomObject();
+      const { data } = await createOneObjectMetadata({
+        input: {
+          labelSingular: LISTING_NAME_SINGULAR,
+          labelPlural: LISTING_NAME_PLURAL,
+          nameSingular: LISTING_NAME_SINGULAR,
+          namePlural: LISTING_NAME_PLURAL,
+        },
+      });
 
-      listingObjectId = createdObjectId;
+      listingObjectId = data.createOneObject.id;
 
-      const { fieldMetadataId: createdFieldMetadaId } =
-        await createCustomTextFieldMetadata(createdObjectId);
+      const { data: createdFieldMetadata } = await createOneFieldMetadata({
+        input: {
+          objectMetadataId: listingObjectId,
+          type: FieldMetadataType.TEXT,
+          name: 'testName',
+          label: 'testLabel',
+        },
+      });
 
-      testFieldId = createdFieldMetadaId;
+      testFieldId = createdFieldMetadata.createOneField.id;
     });
     afterEach(async () => {
-      await deleteOneObjectMetadataItem(listingObjectId);
+      await deleteOneObjectMetadata({
+        input: { idToDelete: listingObjectId },
+      });
     });
 
     it('should update a field name and label when they are synced correctly', async () => {
@@ -32,8 +50,8 @@ describe('updateOne', () => {
       };
 
       // Act
-      const graphqlOperation = updateOneFieldMetadataFactory({
-        input: { id: testFieldId, update: updateFieldInput },
+      const { data } = await updateOneFieldMetadata({
+        input: { idToUpdate: testFieldId, updatePayload: updateFieldInput },
         gqlFields: `
             id
             name
@@ -42,10 +60,8 @@ describe('updateOne', () => {
         `,
       });
 
-      const response = await makeMetadataAPIRequest(graphqlOperation);
-
       // Assert
-      expect(response.body.data.updateOneField.name).toBe('newName');
+      expect(data.updateOneField.name).toBe('newName');
     });
 
     it('should update a field name and label when they are not synced correctly and labelSync is false', async () => {
@@ -57,8 +73,8 @@ describe('updateOne', () => {
       };
 
       // Act
-      const graphqlOperation = updateOneFieldMetadataFactory({
-        input: { id: testFieldId, update: updateFieldInput },
+      const { data } = await updateOneFieldMetadata({
+        input: { idToUpdate: testFieldId, updatePayload: updateFieldInput },
         gqlFields: `
               id
               name
@@ -67,10 +83,8 @@ describe('updateOne', () => {
           `,
       });
 
-      const response = await makeMetadataAPIRequest(graphqlOperation);
-
       // Assert
-      expect(response.body.data.updateOneField.name).toBe('differentName');
+      expect(data.updateOneField.name).toBe('differentName');
     });
 
     it('should not update a field name if it is not synced correctly with label and labelSync is true', async () => {
@@ -80,20 +94,19 @@ describe('updateOne', () => {
       };
 
       // Act
-      const graphqlOperation = updateOneFieldMetadataFactory({
-        input: { id: testFieldId, update: updateFieldInput },
+      const { data } = await updateOneFieldMetadata({
+        input: { idToUpdate: testFieldId, updatePayload: updateFieldInput },
         gqlFields: `
               id
               name
               label
               isLabelSyncedWithName
           `,
+        expectToFail: true,
       });
 
-      const response = await makeMetadataAPIRequest(graphqlOperation);
-
       // Assert
-      expect(response.body.errors[0].message).toBe(
+      expect(data.errors[0].message).toBe(
         'Name is not synced with label. Expected name: "testName", got newName',
       );
     });
