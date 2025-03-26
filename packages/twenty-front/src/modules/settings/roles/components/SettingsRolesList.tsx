@@ -2,8 +2,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
-import { RolesTableHeader } from '@/settings/roles/components/RolesTableHeader';
-import { RolesTableRow } from '@/settings/roles/components/RolesTableRow';
+import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
+import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
@@ -24,7 +24,7 @@ const StyledTableRows = styled.div`
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const AllRoles = ({ roles }: { roles: Role[] }) => {
+export const SettingsRolesList = ({ roles }: { roles: Role[] }) => {
   const navigateSettings = useNavigateSettings();
   const isPermissionsV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsV2Enabled,
@@ -37,10 +37,10 @@ export const AllRoles = ({ roles }: { roles: Role[] }) => {
         description={t`Assign roles to specify each member's access permissions`}
       />
       <Table>
-        <RolesTableHeader />
+        <SettingsRolesTableHeader />
         <StyledTableRows>
           {roles.map((role) => (
-            <RolesTableRow key={role.id} role={role} />
+            <SettingsRolesTableRow key={role.id} role={role} />
           ))}
         </StyledTableRows>
       </Table>

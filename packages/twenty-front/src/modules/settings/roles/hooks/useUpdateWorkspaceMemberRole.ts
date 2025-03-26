@@ -1,10 +1,22 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useUpdateWorkspaceMemberRoleMutation } from '~/generated/graphql';
+import {
+  useUpdateWorkspaceMemberRoleMutation,
+  WorkspaceMember,
+} from '~/generated/graphql';
 
-type UpdateWorkspaceMemberRoleParams = {
+type AddWorkspaceMemberRoleParams = {
   workspaceMemberId: string;
+};
+
+type UpdateWorkspaceMemberRoleStateParams = {
+  workspaceMember: WorkspaceMember;
+};
+
+type AddWorkspaceMembersToRoleParams = {
+  roleId: string;
+  workspaceMemberIds: string[];
 };
 
 export const useUpdateWorkspaceMemberRole = (roleId: string) => {
@@ -18,9 +30,26 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
   const [updateWorkspaceMemberRoleMutation] =
     useUpdateWorkspaceMemberRoleMutation();
 
-  const updateWorkspaceMemberRole = async ({
+  const updateWorkspaceMemberRoleState = ({
+    workspaceMember,
+  }: UpdateWorkspaceMemberRoleStateParams) => {
+    setSettingsDraftRole({
+      ...settingsDraftRole,
+      workspaceMembers: [
+        ...settingsDraftRole.workspaceMembers,
+        {
+          id: workspaceMember.id,
+          name: workspaceMember.name,
+          colorScheme: workspaceMember.colorScheme,
+          userEmail: workspaceMember.userEmail,
+        },
+      ],
+    });
+  };
+
+  const addWorkspaceMemberRole = async ({
     workspaceMemberId,
-  }: UpdateWorkspaceMemberRoleParams) => {
+  }: AddWorkspaceMemberRoleParams) => {
     const { data } = await updateWorkspaceMemberRoleMutation({
       variables: {
         workspaceMemberId,
@@ -45,12 +74,30 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
         workspaceMembers: updatedWorkspaceMembers,
       };
 
-      // setSettingsPersistedRole(updatedRole);
-      // setSettingsDraftRole(updatedRole);
+      setSettingsPersistedRole(updatedRole);
+      setSettingsDraftRole(updatedRole);
     }
 
     return data?.updateWorkspaceMemberRole;
   };
 
-  return { updateWorkspaceMemberRole };
+  const addWorkspaceMembersToRole = async ({
+    roleId,
+    workspaceMemberIds,
+  }: AddWorkspaceMembersToRoleParams) => {
+    for (const workspaceMemberId of workspaceMemberIds) {
+      await updateWorkspaceMemberRoleMutation({
+        variables: {
+          roleId,
+          workspaceMemberId,
+        },
+      });
+    }
+  };
+
+  return {
+    addWorkspaceMemberRole,
+    updateWorkspaceMemberRoleState,
+    addWorkspaceMembersToRole,
+  };
 };

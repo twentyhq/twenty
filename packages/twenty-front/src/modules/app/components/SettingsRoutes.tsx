@@ -301,15 +301,15 @@ const SettingsRoles = lazy(() =>
   })),
 );
 
-const SettingsRoleEdit = lazy(() =>
-  import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
-    default: module.SettingsRoleEdit,
-  })),
-);
-
 const SettingsRoleCreate = lazy(() =>
   import('~/pages/settings/roles/SettingsRoleCreate').then((module) => ({
     default: module.SettingsRoleCreate,
+  })),
+);
+
+const SettingsRoleEdit = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
+    default: module.SettingsRoleEdit,
   })),
 );
 

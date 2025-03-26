@@ -45,6 +45,14 @@ const StyledDiv = styled.div<{
         : sizeVariant === 'md'
           ? '28px'
           : '32px'};
+  font-size: ${({ sizeVariant }) =>
+    sizeVariant === 'xs'
+      ? '13px'
+      : sizeVariant === 'sm'
+        ? '16px'
+        : sizeVariant === 'md'
+          ? '20px'
+          : '24px'};
   padding: ${({ theme }) => theme.spacing(0, 1.25)};
   box-sizing: border-box;
   display: flex;

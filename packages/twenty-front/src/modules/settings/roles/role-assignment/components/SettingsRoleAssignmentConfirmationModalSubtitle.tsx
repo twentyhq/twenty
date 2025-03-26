@@ -1,5 +1,5 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
+import { SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Avatar } from 'twenty-ui';
@@ -8,15 +8,15 @@ const StyledSettingsCardContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(6)};
 `;
 
-type RoleAssignmentConfirmationModalSubtitleProps = {
-  selectedWorkspaceMember: RoleAssignmentConfirmationModalSelectedWorkspaceMember;
+type SettingsRoleAssignmentConfirmationModalSubtitleProps = {
+  selectedWorkspaceMember: SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember;
   onRoleClick: (roleId: string) => void;
 };
 
-export const RoleAssignmentConfirmationModalSubtitle = ({
+export const SettingsRoleAssignmentConfirmationModalSubtitle = ({
   selectedWorkspaceMember,
   onRoleClick,
-}: RoleAssignmentConfirmationModalSubtitleProps) => {
+}: SettingsRoleAssignmentConfirmationModalSubtitleProps) => {
   const workspaceMemberName = selectedWorkspaceMember.name;
 
   return (

@@ -1,11 +1,11 @@
-import { RolesContainer } from '@/settings/roles/components/RolesContainer';
-import { RolesQueryEffect } from '@/settings/roles/components/RolesQueryEffect';
+import { SettingsRolesContainer } from '@/settings/roles/components/SettingsRolesContainer';
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 
 export const SettingsRoles = () => {
   return (
     <>
-      <RolesQueryEffect />
-      <RolesContainer />
+      <SettingsRolesQueryEffect />
+      <SettingsRolesContainer />
     </>
   );
 };

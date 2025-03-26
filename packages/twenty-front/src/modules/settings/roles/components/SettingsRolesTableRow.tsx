@@ -52,7 +52,7 @@ const StyledTableRow = styled(TableRow)`
   }
 `;
 
-export const RolesTableRow = ({ role }: { role: Role }) => {
+export const SettingsRolesTableRow = ({ role }: { role: Role }) => {
   const theme = useTheme();
 
   const navigateSettings = useNavigateSettings();

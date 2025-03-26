@@ -1,23 +1,23 @@
-import { RoleAssignmentConfirmationModalSubtitle } from '@/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle';
-import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
+import { SettingsRoleAssignmentConfirmationModalSubtitle } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle';
+import { SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { t } from '@lingui/core/macro';
 
-type RoleAssignmentConfirmationModalProps = {
-  selectedWorkspaceMember: RoleAssignmentConfirmationModalSelectedWorkspaceMember;
+type SettingsRoleAssignmentConfirmationModalProps = {
+  selectedWorkspaceMember: SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   onRoleClick: (roleId: string) => void;
 };
 
-export const RoleAssignmentConfirmationModal = ({
+export const SettingsRoleAssignmentConfirmationModal = ({
   selectedWorkspaceMember,
   isOpen,
   onClose,
   onConfirm,
   onRoleClick,
-}: RoleAssignmentConfirmationModalProps) => {
+}: SettingsRoleAssignmentConfirmationModalProps) => {
   const workspaceMemberName = selectedWorkspaceMember.name;
 
   const title = t`Assign ${workspaceMemberName}?`;
@@ -28,7 +28,7 @@ export const RoleAssignmentConfirmationModal = ({
       setIsOpen={onClose}
       title={title}
       subtitle={
-        <RoleAssignmentConfirmationModalSubtitle
+        <SettingsRoleAssignmentConfirmationModalSubtitle
           selectedWorkspaceMember={selectedWorkspaceMember}
           onRoleClick={onRoleClick}
         />

@@ -28,13 +28,13 @@ const StyledTableCell = styled(TableCell)`
   overflow: hidden;
 `;
 
-type RoleAssignmentTableRowProps = {
+type SettingsRoleAssignmentTableRowProps = {
   workspaceMember: WorkspaceMember;
 };
 
-export const RoleAssignmentTableRow = ({
+export const SettingsRoleAssignmentTableRow = ({
   workspaceMember,
-}: RoleAssignmentTableRowProps) => {
+}: SettingsRoleAssignmentTableRowProps) => {
   return (
     <TableRow gridAutoColumns="2fr 4fr">
       <StyledTableCell>

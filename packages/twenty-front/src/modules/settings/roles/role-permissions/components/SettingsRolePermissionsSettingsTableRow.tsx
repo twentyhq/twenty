@@ -1,4 +1,4 @@
-import { RolePermissionsSettingPermission } from '@/settings/roles/types/RolePermissionsSettingPermission';
+import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/types/SettingsRolePermissionsSettingPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
@@ -33,13 +33,13 @@ const StyledIconContainer = styled.div`
   justify-content: center;
 `;
 
-type RolePermissionsSettingsTableRowProps = {
-  permission: RolePermissionsSettingPermission;
+type SettingsRolePermissionsSettingsTableRowProps = {
+  permission: SettingsRolePermissionsSettingPermission;
 };
 
-export const RolePermissionsSettingsTableRow = ({
+export const SettingsRolePermissionsSettingsTableRow = ({
   permission,
-}: RolePermissionsSettingsTableRowProps) => {
+}: SettingsRolePermissionsSettingsTableRowProps) => {
   const theme = useTheme();
 
   return (

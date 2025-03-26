@@ -20,12 +20,15 @@ const StyledInputContainer = styled.div`
   flex-direction: column;
 `;
 
-type RoleSettingsProps = {
+type SettingsRoleSettingsProps = {
   roleId: string;
   isEditable: boolean;
 };
 
-export const RoleSettings = ({ roleId, isEditable }: RoleSettingsProps) => {
+export const SettingsRoleSettings = ({
+  roleId,
+  isEditable,
+}: SettingsRoleSettingsProps) => {
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );

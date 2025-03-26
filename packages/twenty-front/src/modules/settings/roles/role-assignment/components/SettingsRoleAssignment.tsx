@@ -1,10 +1,11 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
-import { RoleAssignmentTableHeader } from '@/settings/roles/role-assignment/components/RoleAssignmentTableHeader';
-import { RoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown';
-import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
-import { settingsAllRolesState } from '@/settings/roles/states/settingsAllRolesState';
+import { SettingsRoleAssignmentConfirmationModal } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal';
+import { SettingsRoleAssignmentTableHeader } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader';
+import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
+import { SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember';
+import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -15,6 +16,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   Button,
@@ -26,8 +28,7 @@ import {
 } from 'twenty-ui';
 import { SearchRecord } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { RoleAssignmentConfirmationModal } from './RoleAssignmentConfirmationModal';
-import { RoleAssignmentTableRow } from './RoleAssignmentTableRow';
+import { SettingsRoleAssignmentTableRow } from './SettingsRoleAssignmentTableRow';
 
 const StyledAssignToMemberContainer = styled.div`
   display: flex;
@@ -61,22 +62,27 @@ const StyledNoMembers = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-type RoleAssignmentProps = {
+type SettingsRoleAssignmentProps = {
   roleId: string;
+  isCreateMode?: boolean;
 };
 
-export const RoleAssignment = ({ roleId }: RoleAssignmentProps) => {
+export const SettingsRoleAssignment = ({
+  roleId,
+  isCreateMode,
+}: SettingsRoleAssignmentProps) => {
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );
 
   const navigateSettings = useNavigateSettings();
-  const { updateWorkspaceMemberRole } = useUpdateWorkspaceMemberRole(roleId);
+  const { addWorkspaceMemberRole, updateWorkspaceMemberRoleState } =
+    useUpdateWorkspaceMemberRole(roleId);
 
   const [confirmationModalIsOpen, setConfirmationModalIsOpen] =
     useState<boolean>(false);
   const [selectedWorkspaceMember, setSelectedWorkspaceMember] =
-    useState<RoleAssignmentConfirmationModalSelectedWorkspaceMember | null>(
+    useState<SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember | null>(
       null,
     );
   const { closeDropdown } = useDropdown('role-member-select');
@@ -84,13 +90,17 @@ export const RoleAssignment = ({ roleId }: RoleAssignmentProps) => {
   const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const settingsAllRoles = useRecoilValue(settingsAllRolesState);
+  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
 
   const workspaceMemberRoleMap = new Map<
     string,
     { id: string; label: string }
   >();
   settingsAllRoles.forEach((role) => {
+    if (!isDefined(role)) {
+      return;
+    }
+
     role.workspaceMembers.forEach((member) => {
       workspaceMemberRoleMap.set(member.id, { id: role.id, label: role.label });
     });
@@ -148,9 +158,26 @@ export const RoleAssignment = ({ roleId }: RoleAssignmentProps) => {
   const handleConfirm = async () => {
     if (!selectedWorkspaceMember || !confirmationModalIsOpen) return;
 
-    await updateWorkspaceMemberRole({
-      workspaceMemberId: selectedWorkspaceMember.id,
-    });
+    if (!isCreateMode) {
+      await addWorkspaceMemberRole({
+        workspaceMemberId: selectedWorkspaceMember.id,
+      });
+    } else {
+      const workspaceMember = currentWorkspaceMembers.find(
+        (member) => member.id === selectedWorkspaceMember.id,
+      );
+
+      if (!workspaceMember) return;
+
+      updateWorkspaceMemberRoleState({
+        workspaceMember: {
+          id: workspaceMember.id,
+          name: workspaceMember.name,
+          colorScheme: '',
+          userEmail: '',
+        },
+      });
+    }
 
     handleModalClose();
   };
@@ -182,11 +209,11 @@ export const RoleAssignment = ({ roleId }: RoleAssignmentProps) => {
           />
         </StyledSearchContainer>
         <StyledTable>
-          <RoleAssignmentTableHeader />
+          <SettingsRoleAssignmentTableHeader />
           <StyledTableRows>
             {filteredWorkspaceMembers.length > 0 ? (
               filteredWorkspaceMembers.map((workspaceMember) => (
-                <RoleAssignmentTableRow
+                <SettingsRoleAssignmentTableRow
                   key={workspaceMember.id}
                   workspaceMember={workspaceMember}
                 />
@@ -225,7 +252,7 @@ export const RoleAssignment = ({ roleId }: RoleAssignmentProps) => {
               </>
             }
             dropdownComponents={
-              <RoleAssignmentWorkspaceMemberPickerDropdown
+              <SettingsRoleAssignmentWorkspaceMemberPickerDropdown
                 excludedWorkspaceMemberIds={[
                   ...assignedWorkspaceMemberIds,
                   currentWorkspaceMember?.id,
@@ -238,7 +265,7 @@ export const RoleAssignment = ({ roleId }: RoleAssignmentProps) => {
       </Section>
 
       {confirmationModalIsOpen && selectedWorkspaceMember && (
-        <RoleAssignmentConfirmationModal
+        <SettingsRoleAssignmentConfirmationModal
           selectedWorkspaceMember={selectedWorkspaceMember}
           isOpen={true}
           onClose={handleModalClose}

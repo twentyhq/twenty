@@ -5,19 +5,19 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { RolesDefaultRole } from '@/settings/roles/components/RolesDefaultRole';
+import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRolesDefaultRole';
 
-import { AllRoles } from '@/settings/roles/components/AllRoles';
-import { settingsAllRolesState } from '@/settings/roles/states/settingsAllRolesState';
+import { SettingsRolesList } from '@/settings/roles/components/SettingsRolesList';
+import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const RolesContainer = () => {
+export const SettingsRolesContainer = () => {
   const { t } = useLingui();
 
-  const settingsAllRoles = useRecoilValue(settingsAllRolesState);
+  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
 
   if (!isDefined(settingsAllRoles) || settingsAllRoles.length === 0) {
     return null;
@@ -25,7 +25,7 @@ export const RolesContainer = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={settingsAllRoles && <H3Title title={t`Roles`} />}
+      title={<H3Title title={t`Roles`} />}
       links={[
         {
           children: <Trans>Workspace</Trans>,
@@ -37,8 +37,8 @@ export const RolesContainer = () => {
       <SettingsPageContainer>
         {settingsAllRoles && (
           <>
-            <AllRoles roles={settingsAllRoles} />
-            <RolesDefaultRole roles={settingsAllRoles} />
+            <SettingsRolesList roles={settingsAllRoles} />
+            <SettingsRoleDefaultRole roles={settingsAllRoles} />
           </>
         )}
       </SettingsPageContainer>

@@ -1,5 +1,5 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePermissionsObjectPermission';
+import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/types/SettingsRolePermissionsObjectPermission';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
@@ -18,17 +18,17 @@ const StyledActionsHeader = styled(TableHeader)`
   padding-right: ${({ theme }) => theme.spacing(4)};
 `;
 
-type RolePermissionsObjectsTableHeaderProps = {
+type SettingsRolePermissionsObjectsTableHeaderProps = {
   roleId: string;
-  objectPermissionsConfig: RolePermissionsObjectPermission[];
+  objectPermissionsConfig: SettingsRolePermissionsObjectPermission[];
   isEditable: boolean;
 };
 
-export const RolePermissionsObjectsTableHeader = ({
+export const SettingsRolePermissionsObjectsTableHeader = ({
   roleId,
   objectPermissionsConfig,
   isEditable,
-}: RolePermissionsObjectsTableHeaderProps) => {
+}: SettingsRolePermissionsObjectsTableHeaderProps) => {
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );

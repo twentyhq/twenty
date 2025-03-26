@@ -3,7 +3,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Trans } from '@lingui/react/macro';
 
-export const RolesTableHeader = () => {
+export const SettingsRolesTableHeader = () => {
   return (
     <Table>
       <TableRow gridAutoColumns="332px 3fr 2fr 1fr">

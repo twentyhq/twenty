@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
-import { RoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent';
+import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -9,15 +9,15 @@ import { useLingui } from '@lingui/react/macro';
 import { ChangeEvent, useState } from 'react';
 import { SearchRecord } from '~/generated-metadata/graphql';
 
-type RoleAssignmentWorkspaceMemberPickerDropdownProps = {
+type SettingsRoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
   onSelect: (workspaceMemberSearchRecord: SearchRecord) => void;
 };
 
-export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
+export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
   excludedWorkspaceMemberIds,
   onSelect,
-}: RoleAssignmentWorkspaceMemberPickerDropdownProps) => {
+}: SettingsRoleAssignmentWorkspaceMemberPickerDropdownProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
   const { loading, searchRecords: workspaceMembers } =
@@ -46,7 +46,7 @@ export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        <RoleAssignmentWorkspaceMemberPickerDropdownContent
+        <SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent
           loading={loading}
           searchFilter={searchFilter}
           filteredWorkspaceMembers={filteredWorkspaceMembers}

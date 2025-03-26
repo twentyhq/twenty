@@ -1,4 +1,4 @@
-import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePermissionsObjectPermission';
+import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/types/SettingsRolePermissionsObjectPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
@@ -46,15 +46,15 @@ const StyledTableRow = styled(TableRow)`
   display: flex;
 `;
 
-type RolePermissionsObjectsTableRowProps = {
-  permission: RolePermissionsObjectPermission;
+type SettingsRolePermissionsObjectsTableRowProps = {
+  permission: SettingsRolePermissionsObjectPermission;
   isEditable: boolean;
 };
 
-export const RolePermissionsObjectsTableRow = ({
+export const SettingsRolePermissionsObjectsTableRow = ({
   permission,
   isEditable,
-}: RolePermissionsObjectsTableRowProps) => {
+}: SettingsRolePermissionsObjectsTableRowProps) => {
   return (
     <StyledTableRow key={permission.key}>
       <StyledPermissionCell>

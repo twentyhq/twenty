@@ -1,20 +1,23 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { RoleAssignment } from '@/settings/roles/role-assignment/components/RoleAssignment';
-import { RolePermissions } from '@/settings/roles/role-permissions/components/RolePermissions';
-import { RoleSettings } from '@/settings/roles/role-settings/components/RoleSettings';
-import { RoleLabelContainer } from '@/settings/roles/role/components/RoleLabelContainer';
+import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
+import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
+import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
+import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/RoleSettings';
+import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/SettingsRoleLabelContainer';
+import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Button, IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui';
+import { v4 } from 'uuid';
 import {
   FeatureFlagKey,
   useCreateOneRoleMutation,
@@ -24,24 +27,15 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-export const SETTINGS_ROLE_DETAIL_TABS = {
-  COMPONENT_INSTANCE_ID: 'settings-role-detail-tabs',
-  TABS_IDS: {
-    ASSIGNMENT: 'assignment',
-    PERMISSIONS: 'permissions',
-    SETTINGS: 'settings',
-  },
-} as const;
-
-type RoleProps = {
+type SettingsRoleProps = {
   roleId: string;
   isCreateMode: boolean;
 };
 
-export const Role = ({ roleId, isCreateMode }: RoleProps) => {
-  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
+  const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + `-${roleId}`,
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
 
   const isPermissionsV2Enabled = useIsFeatureEnabled(
@@ -61,15 +55,13 @@ export const Role = ({ roleId, isCreateMode }: RoleProps) => {
     settingsPersistedRoleFamilyState(roleId),
   );
 
+  const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
+
   if (!isDefined(settingsDraftRole)) {
     return <></>;
   }
 
   const isRoleEditable = isPermissionsV2Enabled && settingsDraftRole.isEditable;
-
-  if (!activeTabId) {
-    setActiveTabId(SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS);
-  }
 
   const tabs = [
     {
@@ -93,6 +85,8 @@ export const Role = ({ roleId, isCreateMode }: RoleProps) => {
 
   const handleSave = () => {
     if (isCreateMode) {
+      const roleId = v4();
+
       createRole({
         variables: {
           createRoleInput: {
@@ -110,7 +104,14 @@ export const Role = ({ roleId, isCreateMode }: RoleProps) => {
               settingsDraftRole.canDestroyAllObjectRecords,
           },
         },
-        onCompleted: (data) => {
+        onCompleted: async (data) => {
+          await addWorkspaceMembersToRole({
+            roleId: data.createOneRole.id,
+            workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
+              (member) => member.id,
+            ),
+          });
+
           navigateSettings(SettingsPath.RoleDetail, {
             roleId: data.createOneRole.id,
           });
@@ -143,7 +144,7 @@ export const Role = ({ roleId, isCreateMode }: RoleProps) => {
 
   return (
     <SubMenuTopBarContainer
-      title={<RoleLabelContainer roleId={roleId} />}
+      title={<SettingsRoleLabelContainer roleId={roleId} />}
       links={[
         {
           children: 'Workspace',
@@ -162,6 +163,7 @@ export const Role = ({ roleId, isCreateMode }: RoleProps) => {
           <Button
             title={isCreateMode ? t`Create` : t`Save`}
             variant="primary"
+            size="small"
             accent="blue"
             onClick={handleSave}
             disabled={!isRoleEditable}
@@ -173,18 +175,19 @@ export const Role = ({ roleId, isCreateMode }: RoleProps) => {
         <TabList
           tabs={tabs}
           className="tab-list"
-          componentInstanceId={
-            SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + `-${roleId}`
-          }
+          componentInstanceId={SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID}
         />
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT && (
-          <RoleAssignment roleId={roleId} />
+          <SettingsRoleAssignment roleId={roleId} isCreateMode={isCreateMode} />
         )}
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS && (
-          <RolePermissions roleId={roleId} isEditable={isRoleEditable} />
+          <SettingsRolePermissions
+            roleId={roleId}
+            isEditable={isRoleEditable}
+          />
         )}
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS && (
-          <RoleSettings roleId={roleId} isEditable={isRoleEditable} />
+          <SettingsRoleSettings roleId={roleId} isEditable={isRoleEditable} />
         )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

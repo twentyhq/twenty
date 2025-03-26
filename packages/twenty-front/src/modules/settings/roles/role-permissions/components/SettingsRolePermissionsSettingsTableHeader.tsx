@@ -19,15 +19,15 @@ const StyledActionsHeader = styled(TableHeader)`
   padding-right: ${({ theme }) => theme.spacing(4)};
 `;
 
-type RolePermissionsSettingsTableHeaderProps = {
+type SettingsRolePermissionsSettingsTableHeaderProps = {
   allPermissions: boolean;
   onToggleAll?: () => void;
 };
 
-export const RolePermissionsSettingsTableHeader = ({
+export const SettingsRolePermissionsSettingsTableHeader = ({
   allPermissions,
   onToggleAll,
-}: RolePermissionsSettingsTableHeaderProps) => (
+}: SettingsRolePermissionsSettingsTableHeaderProps) => (
   <TableRow gridAutoColumns="3fr 4fr 24px">
     <StyledNameHeader>{t`Name`}</StyledNameHeader>
     <StyledTypeHeader>{t`Description`}</StyledTypeHeader>

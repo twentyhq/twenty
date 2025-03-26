@@ -1,6 +1,6 @@
 import { IconComponent } from 'twenty-ui';
 
-export type RolePermissionsSettingPermission = {
+export type SettingsRolePermissionsSettingPermission = {
   key: string;
   name: string;
   description: string;

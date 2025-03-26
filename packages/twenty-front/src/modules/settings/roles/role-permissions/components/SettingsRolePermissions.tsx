@@ -1,9 +1,10 @@
-import { RolePermissionsObjectsTableHeader } from '@/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader';
-import { RolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader';
-import { RolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/components/RolePermissionsSettingsTableRow';
+import { SettingsRolePermissionsObjectsTableHeader } from '@/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader';
+import { SettingsRolePermissionsObjectsTableRow } from '@/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableRow';
+import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader';
+import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableRow';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePermissionsObjectPermission';
-import { RolePermissionsSettingPermission } from '@/settings/roles/types/RolePermissionsSettingPermission';
+import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/types/SettingsRolePermissionsObjectPermission';
+import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/types/SettingsRolePermissionsSettingPermission';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
@@ -23,7 +24,6 @@ import {
   Section,
 } from 'twenty-ui';
 import { SettingPermissionType } from '~/generated-metadata/graphql';
-import { RolePermissionsObjectsTableRow } from './RolePermissionsObjectsTableRow';
 
 const StyledRolePermissionsContainer = styled.div`
   display: flex;
@@ -40,20 +40,20 @@ const StyledTableRows = styled.div`
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-type RolePermissionsProps = {
+type SettingsRolePermissionsProps = {
   roleId: string;
   isEditable: boolean;
 };
 
-export const RolePermissions = ({
+export const SettingsRolePermissions = ({
   roleId,
   isEditable,
-}: RolePermissionsProps) => {
+}: SettingsRolePermissionsProps) => {
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const objectPermissionsConfig: RolePermissionsObjectPermission[] = [
+  const objectPermissionsConfig: SettingsRolePermissionsObjectPermission[] = [
     {
       key: 'seeRecords',
       label: 'See Records on All Objects',
@@ -104,57 +104,58 @@ export const RolePermissions = ({
     },
   ];
 
-  const settingsPermissionsConfig: RolePermissionsSettingPermission[] = [
-    {
-      key: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
-      name: 'API Keys & Webhooks',
-      description: 'Manage API keys and webhooks',
-      value: settingsDraftRole.canUpdateAllSettings,
-      Icon: IconCode,
-    },
-    {
-      key: SettingPermissionType.WORKSPACE,
-      name: 'Workspace',
-      description: 'Set global workspace preferences',
-      value: settingsDraftRole.canUpdateAllSettings,
-      Icon: IconSettings,
-    },
-    {
-      key: SettingPermissionType.WORKSPACE_MEMBERS,
-      name: 'Users',
-      description: 'Add or remove users',
-      value: settingsDraftRole.canUpdateAllSettings,
-      Icon: IconUsers,
-    },
-    {
-      key: SettingPermissionType.ROLES,
-      name: 'Roles',
-      description: 'Define user roles and access levels',
-      value: settingsDraftRole.canUpdateAllSettings,
-      Icon: IconLockOpen,
-    },
-    {
-      key: SettingPermissionType.DATA_MODEL,
-      name: 'Data Model',
-      description: 'Edit CRM data structure and fields',
-      value: settingsDraftRole.canUpdateAllSettings,
-      Icon: IconHierarchy,
-    },
-    {
-      key: SettingPermissionType.ADMIN_PANEL,
-      name: 'Admin Panel',
-      description: 'Admin settings and system tools',
-      value: settingsDraftRole.canUpdateAllSettings,
-      Icon: IconServer,
-    },
-    {
-      key: SettingPermissionType.SECURITY,
-      name: 'Security',
-      description: 'Manage security policies',
-      value: settingsDraftRole.canUpdateAllSettings,
-      Icon: IconKey,
-    },
-  ];
+  const settingsPermissionsConfig: SettingsRolePermissionsSettingPermission[] =
+    [
+      {
+        key: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
+        name: 'API Keys & Webhooks',
+        description: 'Manage API keys and webhooks',
+        value: settingsDraftRole.canUpdateAllSettings,
+        Icon: IconCode,
+      },
+      {
+        key: SettingPermissionType.WORKSPACE,
+        name: 'Workspace',
+        description: 'Set global workspace preferences',
+        value: settingsDraftRole.canUpdateAllSettings,
+        Icon: IconSettings,
+      },
+      {
+        key: SettingPermissionType.WORKSPACE_MEMBERS,
+        name: 'Users',
+        description: 'Add or remove users',
+        value: settingsDraftRole.canUpdateAllSettings,
+        Icon: IconUsers,
+      },
+      {
+        key: SettingPermissionType.ROLES,
+        name: 'Roles',
+        description: 'Define user roles and access levels',
+        value: settingsDraftRole.canUpdateAllSettings,
+        Icon: IconLockOpen,
+      },
+      {
+        key: SettingPermissionType.DATA_MODEL,
+        name: 'Data Model',
+        description: 'Edit CRM data structure and fields',
+        value: settingsDraftRole.canUpdateAllSettings,
+        Icon: IconHierarchy,
+      },
+      {
+        key: SettingPermissionType.ADMIN_PANEL,
+        name: 'Admin Panel',
+        description: 'Admin settings and system tools',
+        value: settingsDraftRole.canUpdateAllSettings,
+        Icon: IconServer,
+      },
+      {
+        key: SettingPermissionType.SECURITY,
+        name: 'Security',
+        description: 'Manage security policies',
+        value: settingsDraftRole.canUpdateAllSettings,
+        Icon: IconKey,
+      },
+    ];
 
   return (
     <StyledRolePermissionsContainer>
@@ -164,14 +165,14 @@ export const RolePermissions = ({
           description={t`Ability to interact with each object`}
         />
         <StyledTable>
-          <RolePermissionsObjectsTableHeader
+          <SettingsRolePermissionsObjectsTableHeader
             roleId={roleId}
             objectPermissionsConfig={objectPermissionsConfig}
             isEditable={isEditable}
           />
           <StyledTableRows>
             {objectPermissionsConfig.map((permission) => (
-              <RolePermissionsObjectsTableRow
+              <SettingsRolePermissionsObjectsTableRow
                 key={permission.key}
                 permission={permission}
                 isEditable={isEditable}
@@ -183,12 +184,12 @@ export const RolePermissions = ({
       <Section>
         <H2Title title={t`Settings`} description={t`Settings permissions`} />
         <StyledTable>
-          <RolePermissionsSettingsTableHeader
+          <SettingsRolePermissionsSettingsTableHeader
             allPermissions={settingsDraftRole.canUpdateAllSettings}
           />
           <StyledTableRows>
             {settingsPermissionsConfig.map((permission) => (
-              <RolePermissionsSettingsTableRow
+              <SettingsRolePermissionsSettingsTableRow
                 key={permission.key}
                 permission={permission}
               />
