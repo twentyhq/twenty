@@ -20,6 +20,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -33,8 +34,13 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();
   const { currentView } = useGetCurrentViewOnly();
 
-  const { recordIndexId, objectMetadataItem, resetContent, onContentChange } =
-    useOptionsDropdown();
+  const {
+    recordIndexId,
+    objectMetadataItem,
+    resetContent,
+    onContentChange,
+    dropdownId,
+  } = useOptionsDropdown();
 
   const { isCompactModeActive, setAndPersistIsCompactModeActive } =
     useObjectOptionsForBoard({
@@ -53,9 +59,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
 
+  const { closeDropdown } = useDropdown(dropdownId);
+
   const handleClickOnKanban = () => {
     if (availableFieldsForKanban.length === 0) {
       navigateToSelectSettings();
+      closeDropdown();
     }
     if (currentView?.type !== ViewType.Kanban) {
       useSetAndPersistViewType(ViewType.Kanban);

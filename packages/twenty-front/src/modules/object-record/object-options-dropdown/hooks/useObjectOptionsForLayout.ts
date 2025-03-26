@@ -32,39 +32,39 @@ export const useObjectOptionsForLayout = () => {
 
   const { createViewGroupRecords } = usePersistViewGroupRecords();
 
-  const createViewGroupAssociatedWithKanbanField = async (
-    randomFieldForKanban: string,
-    currentViewId: string,
-  ) => {
-    const viewGroupsToCreate =
-      objectMetadataItem.fields
-        ?.find((field) => field.id === randomFieldForKanban)
-        ?.options?.map(
-          (option, index) =>
-            ({
-              id: v4(),
-              __typename: 'ViewGroup',
-              fieldMetadataId: randomFieldForKanban,
-              fieldValue: option.value,
-              isVisible: true,
-              position: index,
-            }) satisfies ViewGroup,
-        ) ?? [];
+  const createViewGroupAssociatedWithKanbanField = useCallback(
+    async (randomFieldForKanban: string, currentViewId: string) => {
+      const viewGroupsToCreate =
+        objectMetadataItem.fields
+          ?.find((field) => field.id === randomFieldForKanban)
+          ?.options?.map(
+            (option, index) =>
+              ({
+                id: v4(),
+                __typename: 'ViewGroup',
+                fieldMetadataId: randomFieldForKanban,
+                fieldValue: option.value,
+                isVisible: true,
+                position: index,
+              }) satisfies ViewGroup,
+          ) ?? [];
 
-    viewGroupsToCreate.push({
-      __typename: 'ViewGroup',
-      id: v4(),
-      fieldValue: '',
-      position: viewGroupsToCreate.length,
-      isVisible: true,
-      fieldMetadataId: randomFieldForKanban,
-    } satisfies ViewGroup);
+      viewGroupsToCreate.push({
+        __typename: 'ViewGroup',
+        id: v4(),
+        fieldValue: '',
+        position: viewGroupsToCreate.length,
+        isVisible: true,
+        fieldMetadataId: randomFieldForKanban,
+      } satisfies ViewGroup);
 
-    await createViewGroupRecords({
-      viewGroupsToCreate,
-      viewId: currentViewId,
-    });
-  };
+      await createViewGroupRecords({
+        viewGroupsToCreate,
+        viewId: currentViewId,
+      });
+    },
+    [objectMetadataItem, createViewGroupRecords],
+  );
 
   const setAndPersistViewType = useCallback(
     (viewType: ViewType, currentView: View) => {
@@ -119,6 +119,7 @@ export const useObjectOptionsForLayout = () => {
       availableFieldsForKanban,
       updateCurrentView,
       setRecordIndexViewType,
+      createViewGroupAssociatedWithKanbanField,
       setViewPickerKanbanFieldMetadataId,
     ],
   );
@@ -126,8 +127,6 @@ export const useObjectOptionsForLayout = () => {
   const useSetAndPersistViewType = useRecoilCallback(
     ({ snapshot }) =>
       (viewType: ViewType) => {
-        console.log('snapshot', snapshot);
-
         if (!isDefined(currentViewId)) {
           throw new Error('No view id found');
         }
@@ -136,13 +135,13 @@ export const useObjectOptionsForLayout = () => {
             prefetchViewFromViewIdFamilySelector({ viewId: currentViewId }),
           )
           .getValue();
-        console.log('currentView', currentView);
         if (!isDefined(currentView)) {
           throw new Error('No current view found');
         }
+
         return setAndPersistViewType(viewType, currentView);
       },
-    [],
+    [currentViewId, setAndPersistViewType],
   );
 
   return {
