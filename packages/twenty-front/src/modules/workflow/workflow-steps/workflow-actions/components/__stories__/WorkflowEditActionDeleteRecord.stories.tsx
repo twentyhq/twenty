@@ -123,9 +123,14 @@ export const DisabledWithDefaultStaticValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const titleInput = await canvas.findByDisplayValue('Delete Record');
+    const titleText = await canvas.findByText('Delete Record');
 
-    expect(titleInput).toBeDisabled();
+    expect(window.getComputedStyle(titleText).cursor).toBe('default');
+
+    await userEvent.click(titleText);
+
+    const titleInput = canvas.queryByDisplayValue('Delete Record');
+    expect(titleInput).not.toBeInTheDocument();
 
     const objectSelectCurrentValue = await canvas.findByText('People');
 
