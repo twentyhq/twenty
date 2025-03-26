@@ -29,7 +29,6 @@
     "entrypoints": [
       "./index.ts",
       "./constants/index.ts",
-      "./prastoin/index.ts",
       "./testing/index.ts",
       "./translations/index.ts",
       "./types/index.ts",
@@ -40,7 +39,6 @@
   "files": [
     "dist",
     "constants",
-    "prastoin",
     "testing",
     "translations",
     "types",
