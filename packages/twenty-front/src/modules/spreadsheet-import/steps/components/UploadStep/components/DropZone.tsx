@@ -7,6 +7,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui';
 
 const StyledContainer = styled.div`
@@ -130,6 +131,8 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
     },
   });
 
+  const { t } = useLingui();
+
   return (
     <StyledContainer
       // eslint-disable-next-line react/jsx-props-no-spreading
@@ -141,13 +144,19 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
         {...getInputProps()}
       />
       {isDragActive ? (
-        <StyledText>Drop file here...</StyledText>
+        <StyledText>
+          <Trans>Drop file here...</Trans>
+        </StyledText>
       ) : loading || isLoading ? (
-        <StyledText>Processing...</StyledText>
+        <StyledText>
+          <Trans>Processing...</Trans>
+        </StyledText>
       ) : (
         <>
-          <StyledText>Upload .xlsx, .xls or .csv file</StyledText>
-          <MainButton onClick={open} title="Select file" />
+          <StyledText>
+            <Trans>Upload .xlsx, .xls or .csv file</Trans>
+          </StyledText>
+          <MainButton onClick={open} title={t`Select file`} />
         </>
       )}
     </StyledContainer>

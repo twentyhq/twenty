@@ -26,6 +26,7 @@ import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumn
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
@@ -151,6 +152,8 @@ export const MatchColumnsStep = <T extends string>({
 
   const { matchColumnsStepHook } = useSpreadsheetImportInternal();
 
+  const { t } = useLingui();
+
   const onIgnore = useCallback(
     (columnIndex: number) => {
       setColumns(
@@ -275,9 +278,8 @@ export const MatchColumnsStep = <T extends string>({
   const handleOnContinue = useCallback(async () => {
     if (unmatchedRequiredFields.length > 0) {
       enqueueDialog({
-        title: 'Not all columns matched',
-        message:
-          'There are required columns that are not matched or ignored. Do you want to continue?',
+        title: t`Not all columns matched`,
+        message: t`There are required columns that are not matched or ignored. Do you want to continue?`,
         children: (
           <StyledColumnsContainer>
             <StyledColumns>Columns not matched:</StyledColumns>
@@ -287,9 +289,9 @@ export const MatchColumnsStep = <T extends string>({
           </StyledColumnsContainer>
         ),
         buttons: [
-          { title: 'Cancel' },
+          { title: t`Cancel` },
           {
-            title: 'Continue',
+            title: t`Continue`,
             onClick: handleAlertOnContinue,
             variant: 'primary',
             role: 'confirm',
@@ -313,6 +315,7 @@ export const MatchColumnsStep = <T extends string>({
     columns,
     data,
     fields,
+    t,
   ]);
 
   useEffect(() => {
@@ -334,8 +337,8 @@ export const MatchColumnsStep = <T extends string>({
       >
         <StyledContent>
           <Heading
-            title="Match Columns"
-            description="Select the correct field for each column you'd like to import."
+            title={t`Match Columns`}
+            description={t`Select the correct field for each column you'd like to import.`}
           />
           <ColumnGrid
             columns={columns}
@@ -367,7 +370,7 @@ export const MatchColumnsStep = <T extends string>({
       <StepNavigationButton
         onClick={handleOnContinue}
         isLoading={isLoading}
-        title="Next Step"
+        title={t`Next Step`}
         onBack={() => {
           onBack?.();
           setColumns([]);
