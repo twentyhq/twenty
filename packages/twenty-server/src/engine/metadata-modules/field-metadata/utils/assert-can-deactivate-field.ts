@@ -27,6 +27,13 @@ export const assertCanDeactivateField = ({
     );
   }
 
+  if (existingFieldMetadata.isSystem === true) {
+    throw new FieldMetadataException(
+      'Cannot deactivate system field',
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    );
+  }
+
   if (
     ['deletedAt', 'createdAt', 'updatedAt'].includes(existingFieldMetadata.name)
   ) {
