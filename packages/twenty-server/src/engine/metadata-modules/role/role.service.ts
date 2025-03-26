@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
@@ -16,12 +17,19 @@ import {
   UpdateRolePayload,
 } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
 
 export class RoleService {
   constructor(
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(RoleEntity, 'metadata')
     private readonly roleRepository: Repository<RoleEntity>,
+    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleEntity[]> {
@@ -123,6 +131,44 @@ export class RoleService {
     });
   }
 
+  public async deleteRole(
+    roleId: string,
+    workspaceId: string,
+  ): Promise<string> {
+    const defaultRole = await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceId,
+      },
+    });
+
+    const defaultRoleId = defaultRole?.defaultRoleId;
+
+    if (!isDefined(defaultRoleId)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
+        PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+      );
+    }
+
+    await this.validateRoleIsNotDefaultRoleOrThrow({
+      roleId,
+      defaultRoleId,
+    });
+
+    await this.assignDefaultRoleToMembersWithRoleToDelete({
+      roleId,
+      workspaceId,
+      defaultRoleId,
+    });
+
+    await this.roleRepository.delete({
+      id: roleId,
+      workspaceId,
+    });
+
+    return roleId;
+  }
+
   public async createMemberRole({
     workspaceId,
   }: {
@@ -209,5 +255,61 @@ export class RoleService {
         );
       }
     }
+  }
+
+  private async validateRoleIsNotDefaultRoleOrThrow({
+    roleId,
+    defaultRoleId,
+  }: {
+    roleId: string;
+    defaultRoleId: string;
+  }): Promise<void> {
+    if (defaultRoleId === roleId) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
+        PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
+      );
+    }
+  }
+
+  private async assignDefaultRoleToMembersWithRoleToDelete({
+    roleId,
+    workspaceId,
+    defaultRoleId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+    defaultRoleId: string;
+  }): Promise<void> {
+    const userWorkspaceIds = await this.getUserWorkspaceIdsForRole(
+      roleId,
+      workspaceId,
+    );
+
+    for (const userWorkspaceId of userWorkspaceIds) {
+      await this.userRoleService.assignRoleToUserWorkspace({
+        userWorkspaceId,
+        roleId: defaultRoleId,
+        workspaceId,
+      });
+    }
+  }
+
+  private async getUserWorkspaceIdsForRole(
+    roleId: string,
+    workspaceId: string,
+  ): Promise<string[]> {
+    return this.userWorkspaceRoleRepository
+      .find({
+        where: {
+          roleId: roleId,
+          workspaceId,
+        },
+      })
+      .then((userWorkspaceRoles) =>
+        userWorkspaceRoles.map(
+          (userWorkspaceRole) => userWorkspaceRole.userWorkspaceId,
+        ),
+      );
   }
 }

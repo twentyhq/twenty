@@ -134,6 +134,20 @@ export class RoleResolver {
     });
   }
 
+  @Mutation(() => String)
+  async deleteOneRole(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('roleId') roleId: string,
+  ): Promise<string> {
+    await this.validatePermissionsV2EnabledOrThrow(workspace);
+    await this.validateRoleIsEditableOrThrow({
+      roleId: roleId,
+      workspaceId: workspace.id,
+    });
+
+    return this.roleService.deleteRole(roleId, workspace.id);
+  }
+
   @Mutation(() => ObjectPermissionDTO)
   async upsertOneObjectPermission(
     @AuthWorkspace() workspace: Workspace,
