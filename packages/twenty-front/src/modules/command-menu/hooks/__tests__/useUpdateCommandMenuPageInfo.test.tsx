@@ -34,10 +34,6 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('useUpdateCommandMenuPageInfo', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   const renderHooks = () => {
     const { result } = renderHook(
       () => {
@@ -79,6 +75,12 @@ describe('useUpdateCommandMenuPageInfo', () => {
         pageId: 'test-page-id',
       },
     ]);
+
+    expect(result.current.commandMenuPageInfo).toEqual({
+      title: 'New Title',
+      Icon: IconArrowDown,
+      instanceId: 'test-instance',
+    });
   });
 
   it('should update command menu page info with new title', () => {
@@ -98,6 +100,12 @@ describe('useUpdateCommandMenuPageInfo', () => {
         pageId: 'test-page-id',
       },
     ]);
+
+    expect(result.current.commandMenuPageInfo).toEqual({
+      title: 'New Title',
+      Icon: IconDotsVertical,
+      instanceId: 'test-instance',
+    });
   });
 
   it('should update command menu page info with new icon', () => {
@@ -117,5 +125,11 @@ describe('useUpdateCommandMenuPageInfo', () => {
         pageId: 'test-page-id',
       },
     ]);
+
+    expect(result.current.commandMenuPageInfo).toEqual({
+      title: 'Initial Title',
+      Icon: IconArrowDown,
+      instanceId: 'test-instance',
+    });
   });
 });
