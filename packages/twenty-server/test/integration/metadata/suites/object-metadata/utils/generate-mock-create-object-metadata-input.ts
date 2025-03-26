@@ -4,8 +4,8 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 export const getMockCreateObjectInput = (
   overrides?: Partial<Omit<CreateObjectInput, 'workspaceId' | 'dataSourceId'>>,
 ) => ({
-  namePlural: 'listings',
-  nameSingular: 'listing',
+  namePlural: 'listingas',
+  nameSingular: 'listinga',
   labelPlural: 'Listings',
   labelSingular: 'Listing',
   description: 'Listing object',

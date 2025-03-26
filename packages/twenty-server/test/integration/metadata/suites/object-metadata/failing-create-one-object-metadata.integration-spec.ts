@@ -1,5 +1,5 @@
-import { getMockCreateObjectInput } from 'test/integration/utils/object-metadata/generate-mock-create-object-metadata-input';
-import { performFailingObjectMetadataCreation } from 'test/integration/utils/object-metadata/perform-failing-object-metadata-creation';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { EachTestingContext } from 'twenty-shared/testing';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -124,9 +124,10 @@ const allTestsUseCases = [
 
 describe('Object metadata creation should fail', () => {
   it.each(allTestsUseCases)('$title', async ({ context }) => {
-    const errors = await performFailingObjectMetadataCreation(
-      getMockCreateObjectInput(context),
-    );
+    const { errors } = await createOneObjectMetadata({
+      input: getMockCreateObjectInput(context),
+      expectToFail: true,
+    });
 
     expect(errors.length).toBe(1);
     const firstError = errors[0];
