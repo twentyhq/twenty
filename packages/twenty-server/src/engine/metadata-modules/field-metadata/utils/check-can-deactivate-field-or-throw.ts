@@ -5,21 +5,15 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
-type AssertCanDeactivateFieldOptions = {
-  isActiveInput?: boolean;
+type CheckCanDeactivateFieldOptions = {
   labelIdentifierFieldMetadataId: string;
   existingFieldMetadata: FieldMetadataInterface;
 };
 
-export const assertCanDeactivateField = ({
-  isActiveInput,
+export const checkCanDeactivateFieldOrThrow = ({
   labelIdentifierFieldMetadataId,
   existingFieldMetadata,
-}: AssertCanDeactivateFieldOptions) => {
-  if (isActiveInput === true) {
-    return;
-  }
-
+}: CheckCanDeactivateFieldOptions) => {
   if (existingFieldMetadata.id === labelIdentifierFieldMetadataId) {
     throw new FieldMetadataException(
       'Cannot deactivate label identifier field',

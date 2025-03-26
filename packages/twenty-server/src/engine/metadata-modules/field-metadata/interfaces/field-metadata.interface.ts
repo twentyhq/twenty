@@ -31,6 +31,7 @@ export interface FieldMetadataInterface<
   relationTargetObjectMetadata?: ObjectMetadataEntity;
   isCustom?: boolean;
   isSystem?: boolean;
+  isActive?: boolean;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
 }
