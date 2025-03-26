@@ -29,7 +29,7 @@ export class CleanOnboardingWorkspacesCommand extends MigrationCommandRunner {
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description:
-      'workspace id. Command runs on all suspended workspaces if not provided',
+      'workspace id. Command runs on all onboarding workspaces if not provided',
     required: false,
   })
   parseWorkspaceId(val: string): string[] {

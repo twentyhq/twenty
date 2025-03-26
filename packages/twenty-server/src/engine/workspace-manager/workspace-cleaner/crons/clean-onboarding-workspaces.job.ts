@@ -29,7 +29,7 @@ export class CleanOnboardingWorkspacesJob {
 
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const suspendedWorkspaceIds = await this.workspaceRepository.find({
+    const onboardingWorkspaces = await this.workspaceRepository.find({
       select: ['id'],
       where: {
         activationStatus: In([
@@ -42,7 +42,7 @@ export class CleanOnboardingWorkspacesJob {
     });
 
     await this.cleanerWorkspaceService.batchCleanOnboardingWorkspaces(
-      suspendedWorkspaceIds.map((workspace) => workspace.id),
+      onboardingWorkspaces.map((workspace) => workspace.id),
     );
   }
 }

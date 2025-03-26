@@ -16,6 +16,7 @@ import { In, Repository } from 'typeorm';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -47,6 +48,8 @@ export class CleanerWorkspaceService {
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectRepository(UserWorkspace, 'core')
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {
     this.inactiveDaysBeforeSoftDelete = this.environmentService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
@@ -277,9 +280,26 @@ export class CleanerWorkspaceService {
 
     if (workspaces.length !== 0) {
       if (!dryRun) {
-        await this.workspaceRepository.delete(
-          workspaces.map((workspace) => workspace.id),
-        );
+        for (const workspace of workspaces) {
+          await this.workspaceRepository.delete(
+            workspaces.map((workspace) => workspace.id),
+          );
+
+          const userWorkspaces = await this.userWorkspaceRepository.find({
+            where: {
+              workspaceId: workspace.id,
+            },
+            withDeleted: true,
+          });
+
+          for (const userWorkspace of userWorkspaces) {
+            await this.workspaceService.handleRemoveWorkspaceMember(
+              workspace.id,
+              userWorkspace.userId,
+              false,
+            );
+          }
+        }
       }
 
       this.logger.log(
