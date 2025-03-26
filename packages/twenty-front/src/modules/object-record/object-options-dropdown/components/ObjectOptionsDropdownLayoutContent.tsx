@@ -49,8 +49,18 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     recordGroupFieldMetadataComponentState,
   );
 
-  const { setAndPersistViewType } = useObjectOptionsForLayout();
-  const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
+  const { useSetAndPersistViewType } = useObjectOptionsForLayout();
+  const { availableFieldsForKanban, navigateToSelectSettings } =
+    useGetAvailableFieldsForKanban();
+
+  const handleClickOnKanban = () => {
+    if (availableFieldsForKanban.length === 0) {
+      navigateToSelectSettings();
+    }
+    if (currentView?.type !== ViewType.Kanban) {
+      useSetAndPersistViewType(ViewType.Kanban);
+    }
+  };
 
   return (
     <>
@@ -64,75 +74,74 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       >
         {t`Layout`}
       </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          LeftIcon={IconTable}
-          text={t`Table`}
-          selected={currentView?.type === ViewType.Table}
-          onClick={() => {
-            currentView?.type !== ViewType.Table &&
-              setAndPersistViewType(ViewType.Table);
-          }}
-        />
-        <MenuItemSelect
-          LeftIcon={IconLayoutKanban}
-          text={t`Kanban`}
-          contextualText={
-            availableFieldsForKanban.length === 0
-              ? t`Create Select...`
-              : undefined
-          }
-          selected={currentView?.type === ViewType.Kanban}
-          onClick={() => {
-            currentView?.type !== ViewType.Kanban &&
-              setAndPersistViewType(ViewType.Kanban);
-          }}
-        />
-        <DropdownMenuSeparator />
-        <MenuItem
-          onClick={() => onContentChange('layoutOpenIn')}
-          LeftIcon={
-            recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-              ? IconLayoutSidebarRight
-              : IconLayoutNavbar
-          }
-          text={t`Open in`}
-          contextualText={
-            recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-              ? t`Side Panel`
-              : t`Record Page`
-          }
-          hasSubMenu
-        />
-        {currentView?.type === ViewType.Kanban && (
-          <>
-            <MenuItem
-              onClick={() =>
-                isDefined(recordGroupFieldMetadata)
-                  ? onContentChange('recordGroups')
-                  : onContentChange('recordGroupFields')
-              }
-              LeftIcon={IconLayoutList}
-              text={t`Group`}
-              contextualText={recordGroupFieldMetadata?.label}
-              hasSubMenu
-            />
+      {!!currentView && (
+        <DropdownMenuItemsContainer>
+          <MenuItemSelect
+            LeftIcon={IconTable}
+            text={t`Table`}
+            selected={currentView?.type === ViewType.Table}
+            onClick={() => {
+              currentView?.type !== ViewType.Table &&
+                useSetAndPersistViewType(ViewType.Table);
+            }}
+          />
+          <MenuItemSelect
+            LeftIcon={IconLayoutKanban}
+            text={t`Kanban`}
+            contextualText={
+              availableFieldsForKanban.length === 0
+                ? t`Create Select...`
+                : undefined
+            }
+            selected={currentView?.type === ViewType.Kanban}
+            onClick={handleClickOnKanban}
+          />
+          <DropdownMenuSeparator />
+          <MenuItem
+            onClick={() => onContentChange('layoutOpenIn')}
+            LeftIcon={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                ? IconLayoutSidebarRight
+                : IconLayoutNavbar
+            }
+            text={t`Open in`}
+            contextualText={
+              recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+                ? t`Side Panel`
+                : t`Record Page`
+            }
+            hasSubMenu
+          />
+          {currentView?.type === ViewType.Kanban && (
+            <>
+              <MenuItem
+                onClick={() =>
+                  isDefined(recordGroupFieldMetadata)
+                    ? onContentChange('recordGroups')
+                    : onContentChange('recordGroupFields')
+                }
+                LeftIcon={IconLayoutList}
+                text={t`Group`}
+                contextualText={recordGroupFieldMetadata?.label}
+                hasSubMenu
+              />
 
-            <MenuItemToggle
-              LeftIcon={IconBaselineDensitySmall}
-              onToggleChange={() =>
-                setAndPersistIsCompactModeActive(
-                  !isCompactModeActive,
-                  currentView,
-                )
-              }
-              toggled={isCompactModeActive}
-              text={t`Compact view`}
-              toggleSize="small"
-            />
-          </>
-        )}
-      </DropdownMenuItemsContainer>
+              <MenuItemToggle
+                LeftIcon={IconBaselineDensitySmall}
+                onToggleChange={() =>
+                  setAndPersistIsCompactModeActive(
+                    !isCompactModeActive,
+                    currentView,
+                  )
+                }
+                toggled={isCompactModeActive}
+                text={t`Compact view`}
+                toggleSize="small"
+              />
+            </>
+          )}
+        </DropdownMenuItemsContainer>
+      )}
     </>
   );
 };
