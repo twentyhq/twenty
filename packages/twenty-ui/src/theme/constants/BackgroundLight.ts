@@ -1,5 +1,5 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-import LightNoise from '../assets/light-noise.png';
+import LightNoise from '@/assets/themes/light-noise.png';
 
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
