@@ -29,7 +29,10 @@
     "react-router-dom": "^6.4.4",
     "react-tooltip": "^5.13.1",
     "recoil": "^0.7.7",
-    "twenty-shared": "workspace:*"
+    "hex-rgb": "^5.0.0",
+    "twenty-shared": "workspace:*",
+    "zod": "3.23.8",
+    "@linaria/react": "^6.2.1"
   },
   "scripts": {
     "build": "preconstruct build"
