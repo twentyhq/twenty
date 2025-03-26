@@ -1,12 +1,14 @@
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
+import { MainContextStoreSettingsSideEffect } from '@/context-store/components/MainContextStoreSettingsSideEffect';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { isDefined } from 'twenty-shared/utils';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const getViewId = (
   viewIdFromQueryParams: string | null,
@@ -32,6 +34,7 @@ export const MainContextStoreProvider = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
   const isRecordIndexPage = isMatchingLocation(AppPath.RecordIndexPage);
   const isRecordShowPage = isMatchingLocation(AppPath.RecordShowPage);
+  const isSettingsPage = useIsSettingsPage();
 
   const pageName = isRecordIndexPage
     ? 'record-index'
@@ -66,6 +69,21 @@ export const MainContextStoreProvider = () => {
   );
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
+
+  if (isSettingsPage) {
+    return <MainContextStoreSettingsSideEffect />;
+  }
+
+  // not sure what should happen here, should we return null when page name and object metadata item are not defined as it was before?
+  // or should we return the provider with the default/reset values? -- ie like one of settings side effect?
+
+  // if (
+  //   !isDefined(pageName) ||
+  //   !isDefined(objectMetadataItem) ||
+  //   isSettingsPage
+  // ) {
+  //   return <MainContextStoreSettingsSideEffect />;
+  // }
 
   if (!isDefined(pageName) || !isDefined(objectMetadataItem)) {
     return null;

@@ -6,7 +6,10 @@ export const getActionViewType = (
   contextStoreCurrentViewType: ContextStoreViewType | null,
   contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule,
 ) => {
-  if (contextStoreCurrentViewType === null) {
+  if (
+    contextStoreCurrentViewType === null ||
+    contextStoreCurrentViewType === ContextStoreViewType.Settings
+  ) {
     return null;
   }
 
