@@ -1,16 +1,17 @@
 import gql from 'graphql-tag';
+import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 
-type UpdateOneFieldFactoryParams = {
-  gqlFields: string;
-  input: { id: string; update: Omit<UpdateFieldInput, 'workspaceId' | 'id'> };
+export type UpdateOneFieldFactoryInput = {
+  idToUpdate: string;
+  updatePayload: Omit<UpdateFieldInput, 'workspaceId' | 'id'>;
 };
 
 export const updateOneFieldMetadataFactory = ({
-  gqlFields,
+  gqlFields = 'id',
   input,
-}: UpdateOneFieldFactoryParams) => ({
+}: PerformMetadataQueryParams<UpdateOneFieldFactoryInput>) => ({
   query: gql`
         mutation UpdateOneFieldMetadataItem($idToUpdate: UUID!, $updatePayload: UpdateFieldInput!) {
             updateOneField(input: {id: $idToUpdate, update: $updatePayload}) {
@@ -19,7 +20,7 @@ export const updateOneFieldMetadataFactory = ({
       }
       `,
   variables: {
-    idToUpdate: input.id,
-    updatePayload: input.update,
+    idToUpdate: input.idToUpdate,
+    updatePayload: input.updatePayload,
   },
 });

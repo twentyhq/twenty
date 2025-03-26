@@ -1,16 +1,17 @@
 import gql from 'graphql-tag';
+import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 
-type CreateOneFieldFactoryParams = {
-  gqlFields: string;
-  input?: { field: Omit<CreateFieldInput, 'workspaceId' | 'dataSourceId'> };
-};
+export type CreateOneFieldFactoryInput = Omit<
+  CreateFieldInput,
+  'workspaceId' | 'dataSourceId'
+>;
 
 export const createOneFieldMetadataFactory = ({
-  gqlFields,
   input,
-}: CreateOneFieldFactoryParams) => ({
+  gqlFields = 'id',
+}: PerformMetadataQueryParams<CreateOneFieldFactoryInput>) => ({
   query: gql`
         mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {
           createOneField(input: $input) {
@@ -19,6 +20,6 @@ export const createOneFieldMetadataFactory = ({
       }
       `,
   variables: {
-    input,
+    input: { field: input },
   },
 });

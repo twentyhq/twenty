@@ -14,7 +14,7 @@ import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
-import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
+import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectsMetadataItems } from 'test/integration/metadata/suites/object-metadata/utils/find-many-objects-metadata-items.util';
 import { EachTestingContext } from 'twenty-shared/testing';

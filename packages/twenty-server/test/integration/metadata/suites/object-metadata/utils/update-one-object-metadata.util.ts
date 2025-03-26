@@ -1,17 +1,17 @@
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
-  DeleteOneObjectFactoryInput,
-  deleteOneObjectMetadataItemFactory,
-} from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
+  UpdateOneObjectFactoryInput,
+  updateOneObjectMetadataFactory,
+} from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
 import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-export const deleteOneObjectMetadata = async ({
+export const updateOneObjectMetadata = async ({
   input,
   gqlFields,
   expectToFail = false,
-}: PerformMetadataQueryParams<DeleteOneObjectFactoryInput>) => {
-  const graphqlOperation = deleteOneObjectMetadataItemFactory({
+}: PerformMetadataQueryParams<UpdateOneObjectFactoryInput>) => {
+  const graphqlOperation = updateOneObjectMetadataFactory({
     input,
     gqlFields,
   });
@@ -21,9 +21,9 @@ export const deleteOneObjectMetadata = async ({
   if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'Object Metadata deletion should have failed but did not',
+      errorMessage: 'Object Metadata update should have failed but did not',
     });
   }
 
-  return response.body.data.deleteOneObject;
+  return response.body.data.updateOneObject;
 };

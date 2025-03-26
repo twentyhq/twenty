@@ -1,17 +1,15 @@
 import gql from 'graphql-tag';
+import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-type ObjectsFactoryParams = {
-  gqlFields: string;
-  input: {
-    filter: object;
-    paging: object;
-  };
+export type FindManyObjectMetadataFactoryInput = {
+  filter: object;
+  paging: object;
 };
 
-export const objectsMetadataFactory = ({
-  gqlFields,
+export const findManyObjectMetadataFactory = ({
+  gqlFields = 'id',
   input,
-}: ObjectsFactoryParams) => ({
+}: PerformMetadataQueryParams<FindManyObjectMetadataFactoryInput>) => ({
   query: gql`
       query ObjectsMetadata($filter: ObjectFilter!, $paging: CursorPaging!) {
         objects(filter: $filter, paging: $paging) {
