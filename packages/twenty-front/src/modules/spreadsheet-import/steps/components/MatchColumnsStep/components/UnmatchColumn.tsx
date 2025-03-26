@@ -4,9 +4,10 @@ import { UnmatchColumnBanner } from '@/spreadsheet-import/steps/components/Match
 import { Column } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Fields } from '@/spreadsheet-import/types';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { AnimatedExpandableContainer } from 'twenty-ui';
 
 const getExpandableContainerTitle = <T extends string>(
   fields: Fields<T>,
@@ -50,6 +51,7 @@ export const UnmatchColumn = <T extends string>({
   const [isExpanded, setIsExpanded] = useState(false);
   const column = columns[columnIndex];
   const isSelect = 'matchedOptions' in column;
+  const { t } = useLingui();
 
   if (!isSelect) return null;
 
@@ -73,7 +75,7 @@ export const UnmatchColumn = <T extends string>({
               column={column}
               onSubChange={onSubChange}
               key={option.entry}
-              placeholder="Select an option"
+              placeholder={t`Select an option`}
             />
           ))}
         </StyledContentWrapper>

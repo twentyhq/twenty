@@ -20,6 +20,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useLingui } from '@lingui/react/macro';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 const StyledFloatingDropdown = styled.div`
@@ -109,6 +110,8 @@ export const MatchColumnSelect = ({
     setOptions(initialOptions);
   }, [initialOptions]);
 
+  const { t } = useLingui();
+
   return (
     <>
       <div ref={refs.setReference}>
@@ -152,7 +155,7 @@ export const MatchColumnSelect = ({
                           <AppTooltip
                             key={option.value}
                             anchorSelect={`#${option.value}`}
-                            content="You are already importing this column."
+                            content={t`You are already importing this column.`}
                             place="right"
                             offset={-20}
                           />,
@@ -161,7 +164,7 @@ export const MatchColumnSelect = ({
                     </React.Fragment>
                   ))}
                   {options?.length === 0 && (
-                    <MenuItem key="No results" text="No results" />
+                    <MenuItem key="No results" text={t`No results`} />
                   )}
                 </DropdownMenuItemsContainer>
               </DropdownMenu>
