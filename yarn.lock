@@ -2165,21 +2165,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-annotate-as-pure@npm:^7.18.6, @babel/helper-annotate-as-pure@npm:^7.24.7":
-  version: 7.24.7
-  resolution: "@babel/helper-annotate-as-pure@npm:7.24.7"
-  dependencies:
-    "@babel/types": "npm:^7.24.7"
-  checksum: 10c0/4679f7df4dffd5b3e26083ae65228116c3da34c3fff2c11ae11b259a61baec440f51e30fd236f7a0435b9d471acd93d0bc5a95df8213cbf02b1e083503d81b9a
-  languageName: node
-  linkType: hard
-
-"@babel/helper-annotate-as-pure@npm:^7.25.9":
+"@babel/helper-annotate-as-pure@npm:^7.18.6, @babel/helper-annotate-as-pure@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/helper-annotate-as-pure@npm:7.25.9"
   dependencies:
     "@babel/types": "npm:^7.25.9"
   checksum: 10c0/095b6ba50489d797733abebc4596a81918316a99e3632755c9f02508882912b00c2ae5e468532a25a5c2108d109ddbe9b7da78333ee7cc13817fc50c00cf06fe
+  languageName: node
+  linkType: hard
+
+"@babel/helper-annotate-as-pure@npm:^7.24.7":
+  version: 7.24.7
+  resolution: "@babel/helper-annotate-as-pure@npm:7.24.7"
+  dependencies:
+    "@babel/types": "npm:^7.24.7"
+  checksum: 10c0/4679f7df4dffd5b3e26083ae65228116c3da34c3fff2c11ae11b259a61baec440f51e30fd236f7a0435b9d471acd93d0bc5a95df8213cbf02b1e083503d81b9a
   languageName: node
   linkType: hard
 
@@ -25979,6 +25979,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"babel-plugin-inline-import@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "babel-plugin-inline-import@npm:3.0.0"
+  dependencies:
+    require-resolve: "npm:0.0.2"
+  checksum: 10c0/06a38d31042c0059840e63ae6a5b7997eab842cf65f928f4cb8879faacde3b934d1bcff2492588cff47a10708bba94523bd97693ebcb27dc2052ac79d58e5c45
+  languageName: node
+  linkType: hard
+
 "babel-plugin-inline-react-svg@npm:^2.0.2":
   version: 2.0.2
   resolution: "babel-plugin-inline-react-svg@npm:2.0.2"
@@ -46570,6 +46579,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path-extra@npm:^1.0.2":
+  version: 1.0.3
+  resolution: "path-extra@npm:1.0.3"
+  checksum: 10c0/3c6fd4e49c158a54645a62726223262542078b515a3a4c46c6c528a795986f96e530c7024e7a118337d24ec3d312c2d4d5361a10955fd471a54da0a82d866004
+  languageName: node
+  linkType: hard
+
 "path-is-absolute@npm:^1.0.0, path-is-absolute@npm:^1.0.1":
   version: 1.0.1
   resolution: "path-is-absolute@npm:1.0.1"
@@ -50197,6 +50213,15 @@ __metadata:
   version: 2.0.0
   resolution: "require-main-filename@npm:2.0.0"
   checksum: 10c0/db91467d9ead311b4111cbd73a4e67fa7820daed2989a32f7023785a2659008c6d119752d9c4ac011ae07e537eb86523adff99804c5fdb39cd3a017f9b401bb6
+  languageName: node
+  linkType: hard
+
+"require-resolve@npm:0.0.2":
+  version: 0.0.2
+  resolution: "require-resolve@npm:0.0.2"
+  dependencies:
+    x-path: "npm:^0.0.2"
+  checksum: 10c0/4187c223cb8f1d468e5903434410fab1a49318026f742a9fd65fe3289e856977cd377c47d7c1e3e4871f7cc81b0c73a91be3222eb84be0bfe39d988d7a27aeb5
   languageName: node
   linkType: hard
 
@@ -54306,6 +54331,7 @@ __metadata:
     "@types/babel__preset-env": "npm:^7"
     "@types/react": "npm:^18.2.39"
     "@types/react-dom": "npm:^18.2.15"
+    babel-plugin-inline-import: "npm:^3.0.0"
     babel-plugin-inline-react-svg: "npm:^2.0.2"
     babel-plugin-module-resolver: "npm:^5.0.2"
     cpx: "npm:^1.5.0"
@@ -57371,6 +57397,15 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10c0/25eb33aff17edcb90721ed6b0eb250976328533ad3cd1a28a274bd263682e7296a6591ff1436d6cbc50fa67463158b062f9d1122013b361cec99a05f84680e06
+  languageName: node
+  linkType: hard
+
+"x-path@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "x-path@npm:0.0.2"
+  dependencies:
+    path-extra: "npm:^1.0.2"
+  checksum: 10c0/0e068e75c1bde6dab03e60147d228178098fee8c7ab99ce37df290ddc547c42f468ba9aca07fc16ba292d5e2869b32990b3db720104a556e8128c744f1a5009f
   languageName: node
   linkType: hard
 

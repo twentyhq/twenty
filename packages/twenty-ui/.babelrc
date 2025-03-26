@@ -16,6 +16,16 @@
         }
       }
     ],
-    "inline-react-svg"
+    "inline-react-svg",
+    [
+      "inline-import",
+      {
+        "extensions": [
+          ".png",
+          ".jpg",
+          ".jpeg"
+        ]
+      }
+    ]
   ]
 }
