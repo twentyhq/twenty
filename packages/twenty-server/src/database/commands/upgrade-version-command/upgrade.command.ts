@@ -81,12 +81,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
       afterSyncMetadata: [],
     };
-    const _commands_050: VersionCommands = {
+    const commands_050: VersionCommands = {
       beforeSyncMetadata: [this.migrateRelationsToFieldMetadataCommand],
       afterSyncMetadata: [],
     };
 
-    this.commands = _commands_050;
+    this.commands = commands_050;
   }
 
   override async runBeforeSyncMetadata(args: RunOnWorkspaceArgs) {
