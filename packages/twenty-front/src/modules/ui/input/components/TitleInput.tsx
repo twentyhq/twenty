@@ -70,7 +70,7 @@ const Input = ({
 }: InputProps & { setIsOpened: (isOpened: boolean) => void }) => {
   const wrapperRef = useRef<HTMLInputElement>(null);
 
-  const [draftValue, setDraftValue] = useState(value);
+  const [draftValue, setDraftValue] = useState(value ?? '');
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     if (isDefined(value)) {
@@ -87,7 +87,7 @@ const Input = ({
 
   useRegisterInputEvents<string>({
     inputRef: wrapperRef,
-    inputValue: value ?? '',
+    inputValue: draftValue,
     onEnter: () => {
       handleLeaveFocus();
       onEnter?.();
