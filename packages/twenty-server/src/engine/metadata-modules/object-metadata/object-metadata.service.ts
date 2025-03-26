@@ -5,8 +5,8 @@ import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'class-validator';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
-import { APP_LOCALES } from 'twenty-shared/translations';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
@@ -552,17 +552,31 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
   };
 
-  async resolveTranslatableString(
+  async resolveOverridableString(
     objectMetadata: ObjectMetadataDTO,
-    labelKey: 'labelPlural' | 'labelSingular' | 'description',
+    labelKey: 'labelPlural' | 'labelSingular' | 'description' | 'icon',
     locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
     if (objectMetadata.isCustom) {
       return objectMetadata[labelKey];
     }
 
-    if (!locale) {
+    if (!locale || locale === SOURCE_LOCALE) {
+      if (
+        objectMetadata.standardOverrides &&
+        isDefined(objectMetadata.standardOverrides[labelKey])
+      ) {
+        return objectMetadata.standardOverrides[labelKey] as string;
+      }
+
       return objectMetadata[labelKey];
+    }
+
+    const translationValue =
+      objectMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
+
+    if (isDefined(translationValue)) {
+      return translationValue;
     }
 
     const messageId = generateMessageId(objectMetadata[labelKey] ?? '');

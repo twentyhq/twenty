@@ -40,7 +40,8 @@ export const useSettingsIntegrationCategories =
       isStripeIntegrationActive,
     });
 
-    const SETTINGS_INTEGRATION_STRIPE_CATEGORY= useSettingsIntegrationStripeCategory();
+    const SETTINGS_INTEGRATION_STRIPE_CATEGORY =
+      useSettingsIntegrationStripeCategory();
 
     return [
       ...(allIntegrations.integrations.length > 0 ? [allIntegrations] : []),

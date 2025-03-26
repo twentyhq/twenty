@@ -47,9 +47,7 @@ export const WithFieldMetadataItem: Story = {
 };
 
 export const Disabled: Story = {
-  args: {
-    disabled: true,
-  },
+  args: {},
 };
 
 export const WithMaxLength: Story = {

@@ -17,7 +17,28 @@ export const useCommandMenuCommands = () => {
     actionMenuEntriesComponentSelector,
   );
 
-  const navigateCommands = Object.values(COMMAND_MENU_NAVIGATE_COMMANDS);
+  const navigateCommands = actionMenuEntries
+    ?.filter(
+      (actionMenuEntry) =>
+        actionMenuEntry.type === ActionMenuEntryType.Navigation,
+    )
+    ?.map((actionMenuEntry) => ({
+      id: actionMenuEntry.key,
+      label: i18n._(actionMenuEntry.label),
+      Icon: actionMenuEntry.Icon,
+      onCommandClick: actionMenuEntry.onClick,
+      type: CommandType.Navigate,
+      scope: CommandScope.Global,
+      hotKeys: actionMenuEntry.hotKeys,
+    })) as Command[];
+
+  // TODO: refactor this to use the config
+  const navigateCommandsFromConstants = Object.values(
+    COMMAND_MENU_NAVIGATE_COMMANDS,
+  );
+  const allNavigateCommands = navigateCommands.concat(
+    navigateCommandsFromConstants,
+  );
 
   const actionRecordSelectionCommands: Command[] = actionMenuEntries
     ?.filter(
@@ -115,7 +136,7 @@ export const useCommandMenuCommands = () => {
     }));
 
   return {
-    navigateCommands,
+    navigateCommands: allNavigateCommands,
     actionRecordSelectionCommands,
     actionGlobalCommands,
     actionObjectCommands,

@@ -562,7 +562,14 @@ export class AuthService {
       );
     }
 
-    return undefined;
+    return params.workspaceId
+      ? await this.workspaceRepository.findOne({
+          where: {
+            id: params.workspaceId,
+          },
+          relations: ['approvedAccessDomains'],
+        })
+      : undefined;
   }
 
   formatUserDataPayload(

@@ -34,11 +34,11 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { isDefined } from 'twenty-shared/utils';
 
 //TODO: fix this type
 type SettingsDataModelFieldEditFormValues = z.infer<
@@ -209,7 +209,6 @@ export const SettingsObjectFieldEdit = () => {
                 description={t`The name and icon of this field`}
               />
               <SettingsDataModelFieldIconLabelForm
-                disabled={!fieldMetadataItem.isCustom}
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 canToggleSyncLabelWithName={
@@ -240,7 +239,6 @@ export const SettingsObjectFieldEdit = () => {
                 description={t`The description of this field`}
               />
               <SettingsDataModelFieldDescriptionForm
-                disabled={!fieldMetadataItem.isCustom}
                 fieldMetadataItem={fieldMetadataItem}
               />
             </Section>

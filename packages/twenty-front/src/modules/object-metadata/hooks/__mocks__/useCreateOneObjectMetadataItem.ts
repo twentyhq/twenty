@@ -18,6 +18,7 @@ export const query = gql`
       updatedAt
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
+      isLabelSyncedWithName
     }
   }
 `;

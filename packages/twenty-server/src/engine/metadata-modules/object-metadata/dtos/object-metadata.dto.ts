@@ -13,6 +13,7 @@ import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspa
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
+import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-delete-one-object.hook';
 
 @ObjectType('Object')
@@ -53,6 +54,9 @@ export class ObjectMetadataDTO {
 
   @Field({ nullable: true })
   icon: string;
+
+  @Field(() => ObjectStandardOverridesDTO, { nullable: true })
+  standardOverrides?: ObjectStandardOverridesDTO;
 
   @Field({ nullable: true })
   shortcut: string;

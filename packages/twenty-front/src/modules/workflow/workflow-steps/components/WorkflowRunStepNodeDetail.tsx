@@ -171,8 +171,6 @@ export const WorkflowRunStepNodeDetail = ({
               action={stepDefinition.definition}
               actionOptions={{
                 readonly: stepExecutionStatus !== 'running',
-                // TODO: Implement update worklfow run flow step
-                onActionUpdate: () => {},
               }}
             />
           );

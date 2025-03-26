@@ -5,7 +5,7 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { SettingsPermissions } from '~/generated/graphql';
+import { SettingPermissionType } from '~/generated/graphql';
 import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/SettingsIntegrationWhatsappDatabase';
 import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
 import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappNewDatabaseConnection';
@@ -349,7 +349,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.WORKSPACE}
+            settingsPermission={SettingPermissionType.WORKSPACE}
           />
         }
       >
@@ -360,7 +360,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.WORKSPACE_MEMBERS}
+            settingsPermission={SettingPermissionType.WORKSPACE_MEMBERS}
           />
         }
       >
@@ -432,7 +432,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.DATA_MODEL}
+            settingsPermission={SettingPermissionType.DATA_MODEL}
           />
         }
       >
@@ -462,7 +462,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.ROLES}
+            settingsPermission={SettingPermissionType.ROLES}
             requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
           />
         }
@@ -473,7 +473,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.API_KEYS_AND_WEBHOOKS}
+            settingsPermission={SettingPermissionType.API_KEYS_AND_WEBHOOKS}
           />
         }
       >
@@ -584,7 +584,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.SECURITY}
+            settingsPermission={SettingPermissionType.SECURITY}
           />
         }
       >
@@ -615,7 +615,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.WORKSPACE}
+            settingsPermission={SettingPermissionType.WORKSPACE}
           />
         }
       >

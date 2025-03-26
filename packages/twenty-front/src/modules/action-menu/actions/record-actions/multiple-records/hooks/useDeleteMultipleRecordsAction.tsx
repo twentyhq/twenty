@@ -18,7 +18,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
-import { getOsControlSymbol } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
@@ -110,14 +109,12 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       setIsDeleteRecordsModalOpen(true);
     };
 
-    const osControlSymbol = getOsControlSymbol();
-
     const confirmationModal = (
       <ConfirmationModal
         isOpen={isDeleteRecordsModalOpen}
         setIsOpen={setIsDeleteRecordsModalOpen}
         title={'Delete Records'}
-        subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu (${osControlSymbol} + K).`}
+        subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
         onConfirmClick={handleDeleteClick}
         confirmButtonText={'Delete Records'}
       />
