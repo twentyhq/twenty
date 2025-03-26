@@ -347,7 +347,10 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
           node.exportClause.elements.forEach((element) => {
             const exportName = element.name.text;
 
-            if (element.isTypeOnly) {
+            // Check both the declaration and the individual specifier for type-only exports
+            const isTypeExport =
+              node.isTypeOnly || ts.isTypeOnlyExportDeclaration(node);
+            if (isTypeExport) {
               // should handle kind
               exports.push({
                 kind: 'type',
@@ -421,7 +424,6 @@ type ExportByBarrel = {
 const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
   return barrelDirectories.map<ExportByBarrel>((moduleDirectory) => {
     const moduleExportsPerFile = findAllExports(moduleDirectory);
-    console.log(JSON.stringify(moduleExportsPerFile));
     const moduleName = getLastPathFolder(moduleDirectory);
     if (!moduleName) {
       throw new Error(

@@ -58,6 +58,7 @@
   },
   "files": [
     "dist",
+    "assets",
     "accessibility",
     "components",
     "display",

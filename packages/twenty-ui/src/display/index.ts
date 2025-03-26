@@ -76,6 +76,7 @@ export { IllustrationIconToggle } from './icon/components/IllustrationIconToggle
 export { IllustrationIconUid } from './icon/components/IllustrationIconUid';
 export { IllustrationIconUser } from './icon/components/IllustrationIconUser';
 export { IllustrationIconWrapper } from './icon/components/IllustrationIconWrapper';
+export type { TablerIconsProps } from './icon/components/TablerIcons';
 export {
   Icon123,
   IconAlertCircle,
@@ -373,7 +374,6 @@ export {
   IconWebhook,
   IconWorld,
   IconX,
-  TablerIconsProps,
 } from './icon/components/TablerIcons';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';
