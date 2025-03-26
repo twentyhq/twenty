@@ -11,10 +11,14 @@
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.js"],
-      "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
+      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.ts"],
+      "outputs": [
+        "{projectRoot}/src/index.ts",
+        "{projectRoot}/src/*/index.ts",
+        "{projectRoot}/package.json"
+      ],
       "options": {
-        "command": "node {projectRoot}/scripts/generateBarrels.js"
+        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
       }
     },
     "lint": {
