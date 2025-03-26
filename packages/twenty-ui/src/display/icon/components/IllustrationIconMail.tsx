@@ -1,4 +1,4 @@
-import IllustrationIconMailRaw from '@assets/icons/illustration-mail.svg?react';
+import IllustrationIconMailRaw from '@assets/icons/illustration-mail.svg';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';

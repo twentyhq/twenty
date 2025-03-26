@@ -1,4 +1,4 @@
-import IllustrationIconArrayRaw from '@assets/icons/illustration-array.svg?react';
+import IllustrationIconArrayRaw from '@assets/icons/illustration-array.svg';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';

@@ -15,6 +15,7 @@
           "@assets": "./assets"
         }
       }
-    ]
+    ],
+    "inline-react-svg"
   ]
 }

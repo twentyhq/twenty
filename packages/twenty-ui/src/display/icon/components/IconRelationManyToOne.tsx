@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 
-import IconRelationManyToOneRaw from '@assets/icons/many-to-one.svg?react';
+import IconRelationManyToOneRaw from '@assets/icons/many-to-one.svg';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
 type IconRelationManyToOneProps = Pick<IconComponentProps, 'size' | 'stroke'>;

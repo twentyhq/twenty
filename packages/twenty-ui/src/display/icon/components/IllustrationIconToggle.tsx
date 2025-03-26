@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
-import IllustrationIconToggleRaw from '@assets/icons/illustration-toggle.svg?react';
+import IllustrationIconToggleRaw from '@assets/icons/illustration-toggle.svg';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
 type IllustrationIconToggleProps = Pick<IconComponentProps, 'size'>;

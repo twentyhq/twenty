@@ -1,4 +1,4 @@
-import IconAddressBookRaw from '@assets/icons/address-book.svg?react';
+import IconAddressBookRaw from '@assets/icons/address-book.svg';
 import { useTheme } from '@emotion/react';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 

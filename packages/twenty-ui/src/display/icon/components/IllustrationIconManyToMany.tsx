@@ -1,4 +1,4 @@
-import IllustrationIconManyToManyRaw from '@assets/icons/illustration-many-to-many.svg?react';
+import IllustrationIconManyToManyRaw from '@assets/icons/illustration-many-to-many.svg';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';

@@ -1,4 +1,4 @@
-import IllustrationIconNumbersRaw from '@assets/icons/illustration-numbers.svg?react';
+import IllustrationIconNumbersRaw from '@assets/icons/illustration-numbers.svg';
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';

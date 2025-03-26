@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
-import IllustrationIconPhoneRaw from '@assets/icons/illustration-phone.svg?react';
+import IllustrationIconPhoneRaw from '@assets/icons/illustration-phone.svg';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
 type IllustrationIconPhoneProps = Pick<IconComponentProps, 'size'>;
