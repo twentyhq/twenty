@@ -30,8 +30,6 @@ export const SettingsIntegrations = () => {
         {filteredIntegrationCategories.map((group) => (
           <SettingsIntegrationGroup key={group.key} integrationGroup={group} />
         ))}
-
-        <SettigsIntegrationStripeConnectionsListCard />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
