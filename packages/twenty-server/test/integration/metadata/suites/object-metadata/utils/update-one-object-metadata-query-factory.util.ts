@@ -8,7 +8,7 @@ export type UpdateOneObjectFactoryInput = {
   updatePayload: UpdateObjectPayload;
 };
 
-export const updateOneObjectMetadataFactory = ({
+export const updateOneObjectMetadataQueryFactory = ({
   gqlFields = 'id',
   input,
 }: PerformMetadataQueryParams<UpdateOneObjectFactoryInput>) => ({
