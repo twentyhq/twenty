@@ -25,6 +25,14 @@ const StyledHeader = styled(Modal.Header)`
 `;
 
 export const SpreadsheetImportStepperContainer = () => {
+  const { t } = useLingui();
+
+  const stepTitles = {
+    uploadStep: t`Upload file`,
+    matchColumnsStep: t`Match columns`,
+    validationStep: t`Validate data`,
+  };
+
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const { steps, initialStep } = useSpreadsheetImportInitialStep(
@@ -34,14 +42,6 @@ export const SpreadsheetImportStepperContainer = () => {
   const { nextStep, prevStep, activeStep } = useStepBar({
     initialStep,
   });
-
-  const { t } = useLingui();
-
-  const stepTitles = {
-    uploadStep: t`Upload file`,
-    matchColumnsStep: t`Match columns`,
-    validationStep: t`Validate data`,
-  } as const;
 
   return (
     <>
