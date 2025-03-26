@@ -1,5 +1,5 @@
 import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
-import { createState } from '@ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui';
 
 export const flowState = createState<
   | {

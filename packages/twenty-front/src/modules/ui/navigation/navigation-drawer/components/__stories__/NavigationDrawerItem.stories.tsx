@@ -5,7 +5,7 @@ import { CatalogDecorator, CatalogStory, IconSearch } from 'twenty-ui';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
-import { getOsControlSymbol } from '@ui/utilities/device/getOsControlSymbol';
+import { getOsControlSymbol } from 'twenty-ui';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 
 const StyledContainer = styled.div`
