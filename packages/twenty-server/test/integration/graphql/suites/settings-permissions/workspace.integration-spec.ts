@@ -33,8 +33,6 @@ describe('workspace permissions', () => {
     const response = await makeGraphqlAPIRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
-
-
   });
 
   afterAll(async () => {

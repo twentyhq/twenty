@@ -89,9 +89,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       if (objectMetadataItemWithFieldMaps.isSystem === true) {
         await this.validateSystemObjectPermissionsOrThrow(options);
-      }
-
-      if (!objectMetadataItemWithFieldMaps.isSystem) {
+      } else {
         await this.validateObjectRecordPermissionsOrThrow({
           operationName,
           options,

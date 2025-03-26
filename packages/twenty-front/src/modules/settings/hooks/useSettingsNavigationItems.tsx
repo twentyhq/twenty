@@ -27,7 +27,6 @@ import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { SettingPermissionType } from '~/generated/graphql';
@@ -62,7 +61,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     false;
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
-  const featureFlags = useFeatureFlagsMap();
   const permissionMap = useSettingsPermissionMap();
   return [
     {

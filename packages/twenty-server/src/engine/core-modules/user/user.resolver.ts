@@ -27,7 +27,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -82,7 +81,6 @@ export class UserResolver {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => User)
