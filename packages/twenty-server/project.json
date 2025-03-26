@@ -211,6 +211,13 @@
         "command": "nx ts-node-no-deps -- src/database/clickhouse/migrations/run-migrations.ts"
       }
     },
+    "clickhouse:seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "nx ts-node-no-deps -- src/database/clickhouse/seeds/run-seeds.ts"
+      }
+    },
     "lingui:extract": {
       "executor": "nx:run-commands",
       "options": {

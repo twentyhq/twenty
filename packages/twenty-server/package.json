@@ -79,6 +79,7 @@
     "@types/react": "^18.2.39",
     "@types/unzipper": "^0",
     "rimraf": "^5.0.5",
+    "twenty-analytics": "workspace:*",
     "twenty-emails": "workspace:*",
     "twenty-shared": "workspace:*",
     "typescript": "5.3.3"

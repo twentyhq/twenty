@@ -1,0 +1,30 @@
+{
+  "name": "twenty-analytics",
+  "version": "0.50.0-canary",
+  "main": "dist/twenty-analytics.cjs.js",
+  "module": "dist/twenty-analytics.esm.js",
+  "license": "AGPL-3.0",
+  "scripts": {
+    "build": "npx vite build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./tests/fixtures": {
+      "types": "./dist/tests.d.ts",
+      "import": "./dist/tests.mjs",
+      "require": "./dist/tests.js"
+    }
+  },
+  "engines": {
+    "node": "^18.17.1",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
+  },
+  "dependencies": {
+    "zod": "3.23.8"
+  }
+}

@@ -52722,6 +52722,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"twenty-analytics@workspace:*, twenty-analytics@workspace:packages/twenty-analytics":
+  version: 0.0.0-use.local
+  resolution: "twenty-analytics@workspace:packages/twenty-analytics"
+  dependencies:
+    zod: "npm:3.23.8"
+  languageName: unknown
+  linkType: soft
+
 "twenty-chrome-extension@workspace:packages/twenty-chrome-extension":
   version: 0.0.0-use.local
   resolution: "twenty-chrome-extension@workspace:packages/twenty-chrome-extension"
@@ -52852,6 +52860,7 @@ __metadata:
     rimraf: "npm:^5.0.5"
     ts-morph: "npm:^24.0.0"
     tsconfig-paths: "npm:^4.2.0"
+    twenty-analytics: "workspace:*"
     twenty-emails: "workspace:*"
     twenty-shared: "workspace:*"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
