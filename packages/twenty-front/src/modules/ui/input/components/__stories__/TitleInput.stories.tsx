@@ -12,6 +12,10 @@ const meta: Meta<typeof TitleInput> = {
     hotkeyScope: 'titleInput',
     sizeVariant: 'md',
   },
+  argTypes: {
+    hotkeyScope: { control: false },
+    sizeVariant: { control: false },
+  },
 };
 
 export default meta;
@@ -47,6 +51,11 @@ export const WithLongText: Story = {
   args: {
     draftValue:
       'This is a very long title that will likely overflow and demonstrate the tooltip behavior of the component',
+  },
+  parameters: {
+    container: {
+      width: 250,
+    },
   },
 };
 
