@@ -55,7 +55,7 @@ const StyledButton = styled('button', {
     | 'to'
     | 'target'
     | 'isLoading'
-  > & { hasIcon: boolean, hasTitle: boolean }
+  > & { hasIcon: boolean; hasTitle: boolean }
 >`
   align-items: center;
   ${({ theme, variant, inverted, accent, disabled, focus }) => {
