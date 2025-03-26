@@ -8,5 +8,4 @@ CREATE TABLE IF NOT EXISTS events
     `payload`     String
 )
     ENGINE = MergeTree
-        PARTITION BY toYear(timestamp)
         ORDER BY (action, workspaceId, timestamp);

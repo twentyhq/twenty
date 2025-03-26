@@ -13,5 +13,4 @@ CREATE TABLE IF NOT EXISTS pageview
     `workspaceId` String DEFAULT ''
 )
     ENGINE = MergeTree
-        PARTITION BY toYear(timestamp)
         ORDER BY (workspaceId, userId, timestamp);
