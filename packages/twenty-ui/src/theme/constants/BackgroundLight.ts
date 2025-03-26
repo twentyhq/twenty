@@ -1,12 +1,12 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-// import LightNoise from '@assets/themes/light-noise.png';
+import LightNoise from '@assets/themes/light-noise.png';
 
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { RGBA } from './Rgba';
 
 export const BACKGROUND_LIGHT = {
-  // noisy: `url(${LightNoise.toString()});`,
+  noisy: `url(${LightNoise.toString()});`,
   primary: GRAY_SCALE.gray0,
   secondary: GRAY_SCALE.gray10,
   tertiary: GRAY_SCALE.gray15,

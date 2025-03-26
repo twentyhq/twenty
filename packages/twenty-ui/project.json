@@ -34,6 +34,8 @@
         "{projectRoot}/testing/dist",
         "{projectRoot}/theme/package.json",
         "{projectRoot}/theme/dist",
+        "{projectRoot}/types/package.json",
+        "{projectRoot}/types/dist",
         "{projectRoot}/utilities/package.json",
         "{projectRoot}/utilities/dist"
       ]

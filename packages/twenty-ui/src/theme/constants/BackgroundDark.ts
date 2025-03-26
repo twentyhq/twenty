@@ -1,12 +1,12 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-// import DarkNoise from '@assets/themes/dark-noise.jpg';
+import DarkNoise from '@assets/themes/dark-noise.jpg';
 
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { RGBA } from './Rgba';
 
 export const BACKGROUND_DARK = {
-  // noisy: `url(${DarkNoise.toString()});`,
+  noisy: `url(${DarkNoise.toString()});`,
   primary: GRAY_SCALE.gray85,
   secondary: GRAY_SCALE.gray80,
   tertiary: GRAY_SCALE.gray75,
