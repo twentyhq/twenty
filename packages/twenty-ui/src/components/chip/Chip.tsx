@@ -68,10 +68,7 @@ const StyledContainer = withTheme(styled.div<
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme, size }) =>
     size === ChipSize.Large ? theme.spacing(4) : theme.spacing(3)};
-  max-width: ${({ maxWidth }) =>
-    maxWidth
-      ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
-      : '200px'};
+  max-width: 100%;
   overflow: hidden;
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
