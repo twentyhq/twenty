@@ -62,6 +62,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const { closeDropdown } = useDropdown(dropdownId);
 
   const handleClickOnKanban = () => {
+    if (isDefaultView) {
+      return;
+    }
     if (availableFieldsForKanban.length === 0) {
       navigateToSelectSettings();
       closeDropdown();
