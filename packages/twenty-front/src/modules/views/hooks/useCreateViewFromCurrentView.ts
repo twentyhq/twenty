@@ -7,6 +7,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
+import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -25,10 +26,10 @@ import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicate
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilRefresher_UNSTABLE } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
@@ -51,6 +52,12 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { createViewFilterGroupRecords } = usePersistViewFilterGroupRecords();
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
+
+  const refreshViews = useRecoilRefresher_UNSTABLE(
+    prefetchViewsFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
 
   const { findManyRecords } = useLazyFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.View,
@@ -107,6 +114,20 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           return;
         }
 
+        const allViews = snapshot
+          .getLoadable(
+            prefetchViewsFromObjectMetadataItemFamilySelector({
+              objectMetadataItemId: objectMetadataItem.id,
+            }),
+          )
+          .getValue();
+
+        const nextPosition =
+          allViews.length > 0
+            ? Math.max(...allViews.map((view) => view.position)) + 1
+            : 0;
+
+        await findManyRecords();
         set(isPersistingViewFieldsState, true);
 
         const newView = await createOneRecord({
@@ -114,6 +135,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           name: name ?? sourceView.name,
           icon: icon ?? sourceView.icon,
           key: null,
+          position: nextPosition,
           kanbanFieldMetadataId:
             kanbanFieldMetadataId ?? sourceView.kanbanFieldMetadataId,
           kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
@@ -128,6 +150,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         });
 
         if (isUndefinedOrNull(newView)) {
+          set(isPersistingViewFieldsState, false);
           throw new Error('Failed to create view');
         }
 
@@ -206,6 +229,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         await findManyRecords();
         set(isPersistingViewFieldsState, false);
+
+        refreshViews();
       },
     [
       currentViewIdCallbackState,
@@ -213,6 +238,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       createViewFieldRecords,
       findManyRecords,
       objectMetadataItem.fields,
+      objectMetadataItem.id,
       createViewGroupRecords,
       createViewSortRecords,
       createViewFilterRecords,
@@ -220,6 +246,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       currentRecordFilters,
       currentRecordSorts,
       currentRecordFilterGroups,
+      refreshViews,
     ],
   );
 

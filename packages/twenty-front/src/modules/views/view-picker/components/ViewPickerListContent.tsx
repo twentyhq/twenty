@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
-import { MouseEvent, useCallback } from 'react';
+import { MouseEvent, useCallback, useEffect, useState } from 'react';
+import { IconPlus, MenuItem } from 'twenty-ui';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
@@ -18,11 +19,8 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { IconPlus } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -34,6 +32,12 @@ export const ViewPickerListContent = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const viewsOnCurrentObject = useRecoilValue(
+    prefetchViewsFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
+  const refreshViews = useRecoilRefresher_UNSTABLE(
     prefetchViewsFromObjectMetadataItemFamilySelector({
       objectMetadataItemId: objectMetadataItem.id,
     }),
@@ -61,6 +65,7 @@ export const ViewPickerListContent = () => {
     if (isDefined(currentView?.id)) {
       setViewPickerReferenceViewId(currentView.id);
       setViewPickerMode('create-empty');
+      refreshViews();
     }
   };
 
@@ -73,20 +78,51 @@ export const ViewPickerListContent = () => {
     setViewPickerMode('edit');
   };
 
-  const handleDragEnd = useCallback(
-    (result: DropResult) => {
-      if (!result.destination) return;
+  const [localViews, setLocalViews] = useState<typeof viewsOnCurrentObject>([]);
 
-      moveArrayItem(viewsOnCurrentObject, {
-        fromIndex: result.source.index,
-        toIndex: result.destination.index,
-      }).forEach((view, index) => {
-        if (view.position !== index) {
-          updateView({ ...view, position: index });
-        }
-      });
+  useEffect(() => {
+    const sortedViews = [...viewsOnCurrentObject].sort(
+      (a, b) => a.position - b.position,
+    );
+    setLocalViews(sortedViews);
+  }, [viewsOnCurrentObject]);
+
+  const handleDragEnd = useCallback(
+    async (result: DropResult) => {
+      if (
+        !result.destination ||
+        result.source.index === result.destination.index
+      )
+        return;
+
+      const newViews = [...localViews];
+      const [movedView] = newViews.splice(result.source.index, 1);
+      newViews.splice(result.destination.index, 0, movedView);
+
+      const updatedViews = newViews.map((view, index) => ({
+        ...view,
+        position: index,
+      }));
+
+      setLocalViews(updatedViews);
+
+      try {
+        await Promise.all(
+          updatedViews.map((view) =>
+            updateView({
+              id: view.id,
+              position: view.position,
+            }),
+          ),
+        );
+        refreshViews();
+      } catch (error) {
+        setLocalViews(
+          [...viewsOnCurrentObject].sort((a, b) => a.position - b.position),
+        );
+      }
     },
-    [updateView, viewsOnCurrentObject],
+    [localViews, viewsOnCurrentObject, updateView, refreshViews],
   );
 
   return (
@@ -94,7 +130,7 @@ export const ViewPickerListContent = () => {
       <DropdownMenuItemsContainer>
         <DraggableList
           onDragEnd={handleDragEnd}
-          draggableItems={viewsOnCurrentObject.map((view, index) => {
+          draggableItems={localViews.map((view, index) => {
             const isIndexView = view.key === 'INDEX';
             return (
               <DraggableItem
