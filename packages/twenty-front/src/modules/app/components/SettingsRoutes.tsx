@@ -4,7 +4,6 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingPermissionType } from '~/generated/graphql';
 
 const SettingsApiKeys = lazy(() =>
@@ -388,7 +387,6 @@ export const SettingsRoutes = ({
         element={
           <SettingsProtectedRouteWrapper
             settingsPermission={SettingPermissionType.ROLES}
-            requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
           />
         }
       >

@@ -3,10 +3,8 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -19,25 +17,6 @@ const WORKSPACE_MEMBER_GQL_FIELDS = `
 `;
 
 describe('workspace members permissions', () => {
-  beforeAll(async () => {
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
-  });
-
-  afterAll(async () => {
-    const disablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      false,
-    );
-
-    await makeGraphqlAPIRequest(disablePermissionsQuery);
-  });
   describe('updateOne', () => {
     it('should allow update when user is updating themself (member role)', async () => {
       const graphqlOperation = updateOneOperationFactory({

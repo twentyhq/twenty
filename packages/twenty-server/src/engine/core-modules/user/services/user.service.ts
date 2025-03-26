@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { Repository } from 'typeorm';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -12,7 +12,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -97,16 +96,11 @@ export class UserService extends TypeOrmQueryService<User> {
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-    const isPermissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspaceId,
-    );
-
     const workspaceMembers = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember"`,
     );
 
-    if (isPermissionsEnabled && workspaceMembers.length > 1) {
+    if (workspaceMembers.length > 1) {
       const userWorkspace =
         await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
           userId,
