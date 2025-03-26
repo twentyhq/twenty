@@ -38,19 +38,12 @@ describe('roles permissions', () => {
   let guestRoleId: string;
 
   beforeAll(async () => {
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
-
     const enablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
       'IsPermissionsV2Enabled',
       true,
     );
 
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
     await makeGraphqlAPIRequest(enablePermissionsV2Query);
 
     const query = {

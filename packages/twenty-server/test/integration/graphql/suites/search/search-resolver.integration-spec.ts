@@ -14,9 +14,9 @@ import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
-import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { findManyObjectsMetadataItems } from 'test/integration/metadata/suites/object-metadata/utils/find-many-objects-metadata-items.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { EachTestingContext } from 'twenty-shared/testing';
 
 import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record-dto';
@@ -46,7 +46,14 @@ describe('SearchResolver', () => {
 
   beforeAll(async () => {
     try {
-      const objectsMetadata = await findManyObjectsMetadataItems();
+      const objectsMetadata = await findManyObjectMetadata({
+        input: {
+          filter: {},
+          paging: {
+            first: 1000,
+          },
+        },
+      });
       const listingObjectMetadata = objectsMetadata.find(
         (object) => object.nameSingular === LISTING_NAME_SINGULAR,
       );
@@ -56,7 +63,18 @@ describe('SearchResolver', () => {
           objectMetadataId: listingObjectMetadata.id,
         };
       } else {
-        listingObjectMetadataId = await createListingCustomObject();
+        const { data } = await createOneObjectMetadata({
+          input: {
+            labelSingular: LISTING_NAME_SINGULAR,
+            labelPlural: LISTING_NAME_PLURAL,
+            nameSingular: LISTING_NAME_SINGULAR,
+            namePlural: LISTING_NAME_PLURAL,
+          },
+        });
+
+        listingObjectMetadataId = {
+          objectMetadataId: data.createOneObject.id,
+        };
       }
 
       await performCreateManyOperation(
@@ -102,9 +120,9 @@ describe('SearchResolver', () => {
       console.log(error);
     });
 
-    await deleteOneObjectMetadataItem(
-      listingObjectMetadataId.objectMetadataId,
-    ).catch((error) => {
+    await deleteOneObjectMetadata({
+      input: { idToDelete: listingObjectMetadataId.objectMetadataId },
+    }).catch((error) => {
       // eslint-disable-next-line no-console
       console.log(error);
     });
