@@ -20,11 +20,11 @@ export class AnalyticsService {
       return { success: true };
     }
 
-    let data;
+    let _data;
 
     switch (createEventInput.action) {
       case 'pageview':
-        data = {
+        _data = {
           timestamp: new Date().toISOString(),
           version: '1',
           userId: userId,
@@ -33,7 +33,7 @@ export class AnalyticsService {
         };
         break;
       default:
-        data = {
+        _data = {
           action: createEventInput.action,
           timestamp: new Date().toISOString(),
           version: '1',
