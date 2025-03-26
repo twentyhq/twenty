@@ -14,7 +14,6 @@
     "babel-plugin-inline-react-svg": "^2.0.2",
     "babel-plugin-module-resolver": "^5.0.2",
     "cpx": "^1.5.0",
-    "glob": "^11.0.1",
     "tsx": "^4.19.3"
   },
   "dependencies": {
@@ -24,7 +23,9 @@
     "@linaria/react": "^6.2.1",
     "@monaco-editor/react": "^4.6.0",
     "@sniptt/guards": "^0.2.0",
+    "@tabler/icons-react": "^3.31.0",
     "date-fns": "^2.30.0",
+    "glob": "^11.0.1",
     "framer-motion": "^11.18.0",
     "hex-rgb": "^5.0.0",
     "react": "^18.2.0",
@@ -34,8 +35,7 @@
     "react-tooltip": "^5.13.1",
     "recoil": "^0.7.7",
     "twenty-shared": "workspace:*",
-    "zod": "3.23.8",
-    "@tabler/icons-react": "^3.31.0"
+    "zod": "3.23.8"
   },
   "scripts": {
     "build": "preconstruct build && cpx \"assets/**/*\" dist/assets"

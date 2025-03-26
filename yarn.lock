@@ -54301,6 +54301,7 @@ __metadata:
     "@preconstruct/cli": "patch:@preconstruct/cli@npm%3A2.8.11#./patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
+    "@tabler/icons-react": "npm:^3.31.0"
     "@types/babel__preset-env": "npm:^7"
     "@types/react": "npm:^18.2.39"
     "@types/react-dom": "npm:^18.2.15"
