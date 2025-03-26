@@ -24,7 +24,7 @@ import {
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -72,6 +72,7 @@ export class ObjectMetadataResolver {
     );
   }
 
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @ResolveField(() => String, { nullable: true })
   async icon(
     @Parent() objectMetadata: ObjectMetadataDTO,
@@ -84,7 +85,7 @@ export class ObjectMetadataResolver {
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
@@ -100,17 +101,18 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') input: UpdateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     try {
-      const updatedInput = (await this.beforeUpdateOneObject.run(
-        input,
+      const updatedInput = (await this.beforeUpdateOneObject.run(input, {
         workspaceId,
-      )) as UpdateOneObjectInput;
+        locale: context.req.headers['x-locale'],
+      })) as UpdateOneObjectInput;
 
       return await this.objectMetadataService.updateOneObject(
         updatedInput,

@@ -1,11 +1,10 @@
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { createOneObjectMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-factory.util';
-import { deleteOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-factory.util';
-import { objectsMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/objects-metadata-factory.util';
-import { updateOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-factory.util';
+import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneRelationMetadataFactory } from 'test/integration/metadata/suites/utils/create-one-relation-metadata-factory.util';
 import { deleteOneRelationMetadataItemFactory } from 'test/integration/metadata/suites/utils/delete-one-relation-metadata-factory.util';
-import { fieldsMetadataFactory } from 'test/integration/metadata/suites/utils/fields-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -37,7 +36,7 @@ describe('Custom object renaming', () => {
     {},
   );
 
-  const standardObjectsGraphqlOperation = objectsMetadataFactory({
+  const standardObjectsGraphqlOperation = findManyObjectMetadataQueryFactory({
     gqlFields: `
     id
     nameSingular
@@ -50,7 +49,7 @@ describe('Custom object renaming', () => {
     },
   });
 
-  const fieldsGraphqlOperation = fieldsMetadataFactory({
+  const fieldsGraphqlOperation = findManyFieldsMetadataQueryFactory({
     gqlFields: `
         id
         name
@@ -94,22 +93,18 @@ describe('Custom object renaming', () => {
     };
 
     // Act
-    const graphqlOperation = createOneObjectMetadataFactory({
-      input: { object: LISTING_OBJECT },
+    const { data } = await createOneObjectMetadata({
+      input: LISTING_OBJECT,
       gqlFields: `
           id
           nameSingular
       `,
     });
 
-    const response = await makeMetadataAPIRequest(graphqlOperation);
-
     // Assert
-    expect(response.body.data.createOneObject.nameSingular).toBe(
-      LISTING_NAME_SINGULAR,
-    );
+    expect(data.createOneObject.nameSingular).toBe(LISTING_NAME_SINGULAR);
 
-    listingObjectId = response.body.data.createOneObject.id;
+    listingObjectId = data.createOneObject.id;
 
     const fields = await makeMetadataAPIRequest(fieldsGraphqlOperation);
 
@@ -206,43 +201,31 @@ describe('Custom object renaming', () => {
     const HOUSE_NAME_PLURAL = 'houses';
     const HOUSE_LABEL_SINGULAR = 'House';
     const HOUSE_LABEL_PLURAL = 'Houses';
-    const updateListingNameGraphqlOperation =
-      updateOneObjectMetadataItemFactory({
-        gqlFields: `
+
+    // Act
+    const { data } = await updateOneObjectMetadata({
+      gqlFields: `
         nameSingular
         labelSingular
         namePlural
         labelPlural
         `,
-        input: {
-          idToUpdate: listingObjectId,
-          updatePayload: {
-            nameSingular: HOUSE_NAME_SINGULAR,
-            namePlural: HOUSE_NAME_PLURAL,
-            labelSingular: HOUSE_LABEL_SINGULAR,
-            labelPlural: HOUSE_LABEL_PLURAL,
-          },
+      input: {
+        idToUpdate: listingObjectId,
+        updatePayload: {
+          nameSingular: HOUSE_NAME_SINGULAR,
+          namePlural: HOUSE_NAME_PLURAL,
+          labelSingular: HOUSE_LABEL_SINGULAR,
+          labelPlural: HOUSE_LABEL_PLURAL,
         },
-      });
-
-    // Act
-    const updateListingNameResponse = await makeMetadataAPIRequest(
-      updateListingNameGraphqlOperation,
-    );
+      },
+    });
 
     // Assert
-    expect(
-      updateListingNameResponse.body.data.updateOneObject.nameSingular,
-    ).toBe(HOUSE_NAME_SINGULAR);
-    expect(updateListingNameResponse.body.data.updateOneObject.namePlural).toBe(
-      HOUSE_NAME_PLURAL,
-    );
-    expect(
-      updateListingNameResponse.body.data.updateOneObject.labelSingular,
-    ).toBe(HOUSE_LABEL_SINGULAR);
-    expect(
-      updateListingNameResponse.body.data.updateOneObject.labelPlural,
-    ).toBe(HOUSE_LABEL_PLURAL);
+    expect(data.updateOneObject.nameSingular).toBe(HOUSE_NAME_SINGULAR);
+    expect(data.updateOneObject.namePlural).toBe(HOUSE_NAME_PLURAL);
+    expect(data.updateOneObject.labelSingular).toBe(HOUSE_LABEL_SINGULAR);
+    expect(data.updateOneObject.labelPlural).toBe(HOUSE_LABEL_PLURAL);
 
     const fieldsResponse = await makeMetadataAPIRequest(fieldsGraphqlOperation);
 
@@ -306,14 +289,12 @@ describe('Custom object renaming', () => {
   });
 
   it('5. should delete custom object', async () => {
-    const graphqlOperation = deleteOneObjectMetadataItemFactory({
-      idToDelete: listingObjectId,
+    const { data } = await deleteOneObjectMetadata({
+      input: {
+        idToDelete: listingObjectId,
+      },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-    const deleteListingResponse = response.body.data.deleteOneObject;
-
-    expect(deleteListingResponse.id).toBe(listingObjectId);
+    expect(data.deleteOneObject.id).toBe(listingObjectId);
   });
 });

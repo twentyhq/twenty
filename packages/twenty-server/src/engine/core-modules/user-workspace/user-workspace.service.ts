@@ -2,9 +2,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -37,8 +37,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')

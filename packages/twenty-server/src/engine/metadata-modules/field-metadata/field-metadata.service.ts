@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { i18n } from '@lingui/core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import isEmpty from 'lodash.isempty';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, FindOneOptions, In, Repository } from 'typeorm';
@@ -30,6 +30,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
+import { checkCanDeactivateFieldOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/check-can-deactivate-field-or-throw';
 import {
   computeColumnName,
   computeCompositeColumnName,
@@ -154,6 +155,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
+      if (!objectMetadata.labelIdentifierFieldMetadataId) {
+        throw new FieldMetadataException(
+          'Label identifier field metadata id does not exist',
+          FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
+        );
+      }
       assertMutationNotOnRemoteObject(objectMetadata);
 
       assertDoesNotNullifyDefaultValueForNonNullableField({
@@ -161,18 +168,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         defaultValueFromUpdate: fieldMetadataInput.defaultValue,
       });
 
-      if (
-        objectMetadata.labelIdentifierFieldMetadataId ===
-          existingFieldMetadata.id &&
-        fieldMetadataInput.isActive === false
-      ) {
-        throw new FieldMetadataException(
-          'Cannot deactivate label identifier field',
-          FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
-        );
-      }
-
       if (fieldMetadataInput.isActive === false) {
+        checkCanDeactivateFieldOrThrow({
+          labelIdentifierFieldMetadataId:
+            objectMetadata.labelIdentifierFieldMetadataId,
+          existingFieldMetadata,
+        });
+
         const viewsRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace(
             fieldMetadataInput.workspaceId,
@@ -618,15 +620,22 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return fieldMetadata[labelKey] ?? '';
     }
 
-    if (!locale) {
+    if (!locale || locale === SOURCE_LOCALE) {
+      if (
+        fieldMetadata.standardOverrides &&
+        isDefined(fieldMetadata.standardOverrides[labelKey])
+      ) {
+        return fieldMetadata.standardOverrides[labelKey] as string;
+      }
+
       return fieldMetadata[labelKey] ?? '';
     }
 
-    if (
-      fieldMetadata.standardOverrides &&
-      isDefined(fieldMetadata.standardOverrides[labelKey])
-    ) {
-      return fieldMetadata.standardOverrides[labelKey] as string;
+    const translationValue =
+      fieldMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
+
+    if (isDefined(translationValue)) {
+      return translationValue;
     }
 
     const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');
