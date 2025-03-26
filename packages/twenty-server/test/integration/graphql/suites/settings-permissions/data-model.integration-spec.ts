@@ -35,7 +35,7 @@ describe('datamodel permissions', () => {
 
       const { data: createdFieldData } = await createOneFieldMetadata({
         input: {
-          name: 'House',
+          name: 'house',
           type: FieldMetadataType.TEXT,
           label: 'House',
           objectMetadataId: listingObjectId,
