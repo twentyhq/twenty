@@ -84,6 +84,11 @@ export class RoleService {
     input: UpdateRoleInput;
     workspaceId: string;
   }): Promise<RoleEntity> {
+    await this.validateRoleIsEditableOrThrow({
+      roleId: input.id,
+      workspaceId,
+    });
+
     const existingRole = await this.roleRepository.findOne({
       where: {
         id: input.id,
@@ -135,6 +140,11 @@ export class RoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<string> {
+    await this.validateRoleIsEditableOrThrow({
+      roleId,
+      workspaceId,
+    });
+
     const defaultRole = await this.workspaceRepository.findOne({
       where: {
         id: workspaceId,
@@ -313,5 +323,34 @@ export class RoleService {
           (userWorkspaceRole) => userWorkspaceRole.userWorkspaceId,
         ),
       );
+  }
+
+  private async getRole(
+    roleId: string,
+    workspaceId: string,
+  ): Promise<RoleEntity | null> {
+    return this.roleRepository.findOne({
+      where: {
+        id: roleId,
+        workspaceId,
+      },
+    });
+  }
+
+  private async validateRoleIsEditableOrThrow({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }) {
+    const role = await this.getRole(roleId, workspaceId);
+
+    if (!role?.isEditable) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
+        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+      );
+    }
   }
 }

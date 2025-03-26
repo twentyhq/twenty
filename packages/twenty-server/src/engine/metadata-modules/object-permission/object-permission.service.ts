@@ -31,6 +31,11 @@ export class ObjectPermissionService {
     input: UpsertObjectPermissionInput;
   }): Promise<ObjectPermissionEntity | null> {
     try {
+      await this.validateRoleIsEditableOrThrow({
+        roleId: input.roleId,
+        workspaceId,
+      });
+
       const result = await this.objectPermissionRepository.upsert(
         {
           workspaceId,
@@ -76,7 +81,12 @@ export class ObjectPermissionService {
     objectMetadataId: string;
   }) {
     if (error.message.includes('violates foreign key constraint')) {
-      const role = await this.getRole(roleId, workspaceId);
+      const role = await this.roleRepository.findOne({
+        where: {
+          id: roleId,
+          workspaceId,
+        },
+      });
 
       if (!isDefined(role)) {
         throw new PermissionsException(
@@ -101,15 +111,25 @@ export class ObjectPermissionService {
     }
   }
 
-  private async getRole(
-    roleId: string,
-    workspaceId: string,
-  ): Promise<RoleEntity | null> {
-    return this.roleRepository.findOne({
+  private async validateRoleIsEditableOrThrow({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }) {
+    const role = await this.roleRepository.findOne({
       where: {
         id: roleId,
         workspaceId,
       },
     });
+
+    if (!role?.isEditable) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
+        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+      );
+    }
   }
 }
