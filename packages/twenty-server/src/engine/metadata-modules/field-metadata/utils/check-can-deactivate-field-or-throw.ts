@@ -7,7 +7,10 @@ import {
 
 type CheckCanDeactivateFieldOptions = {
   labelIdentifierFieldMetadataId: string;
-  existingFieldMetadata: FieldMetadataInterface;
+  existingFieldMetadata: Pick<
+    FieldMetadataInterface,
+    'id' | 'isSystem' | 'name'
+  >;
 };
 
 export const checkCanDeactivateFieldOrThrow = ({
