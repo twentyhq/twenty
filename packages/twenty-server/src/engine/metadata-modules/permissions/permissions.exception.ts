@@ -28,6 +28,7 @@ export enum PermissionsExceptionCode {
   OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND',
   INVALID_SETTING = 'INVALID_SETTING',
   ROLE_NOT_EDITABLE = 'ROLE_NOT_EDITABLE',
+  DEFAULT_ROLE_CANNOT_BE_DELETED = 'DEFAULT_ROLE_CANNOT_BE_DELETED',
 }
 
 export enum PermissionsExceptionMessage {
@@ -51,4 +52,5 @@ export enum PermissionsExceptionMessage {
   OBJECT_METADATA_NOT_FOUND = 'Object metadata not found',
   INVALID_SETTING = 'Invalid permission setting (unknown value)',
   ROLE_NOT_EDITABLE = 'Role is not editable',
+  DEFAULT_ROLE_CANNOT_BE_DELETED = 'Default role cannot be deleted',
 }
