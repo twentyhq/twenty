@@ -13,7 +13,7 @@ export const updateOneObjectMetadataFactory = ({
   input,
 }: PerformMetadataQueryParams<UpdateOneObjectFactoryInput>) => ({
   query: gql`
-        mutation UpdateOneObjectMetadataItem($idToUpdate: UUID!, $updatePayload: UpdateOneObjectInput!) {
+        mutation UpdateOneObjectMetadataItem($idToUpdate: UUID!, $updatePayload: UpdateObjectPayload!) {
             updateOneObject(input: {id: $idToUpdate, update: $updatePayload}) {
             ${gqlFields}
         }

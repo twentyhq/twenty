@@ -25,5 +25,5 @@ export const updateOneFieldMetadata = async ({
     });
   }
 
-  return response.body.data.updateOneField;
+  return { data: response.body.data, errors: response.body.errors };
 };

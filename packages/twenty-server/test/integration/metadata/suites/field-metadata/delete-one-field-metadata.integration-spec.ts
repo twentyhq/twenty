@@ -1,12 +1,12 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { createCustomTextFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { deleteOneFieldMetadataItemFactory } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata-query-factory.util';
-import { updateOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('deleteOne', () => {
   describe('Kanban aggregate operation', () => {
@@ -15,14 +15,26 @@ describe('deleteOne', () => {
     let viewId = '';
 
     beforeEach(async () => {
-      const { objectMetadataId: createdObjectId } =
-        await createListingCustomObject();
+      const { data } = await createOneObjectMetadata({
+        input: {
+          nameSingular: 'House',
+          namePlural: 'Houses',
+          labelSingular: 'House',
+          labelPlural: 'Houses',
+        },
+      });
 
-      listingObjectId = createdObjectId;
-      const { fieldMetadataId: createdFieldMetadaId } =
-        await createCustomTextFieldMetadata(createdObjectId);
+      listingObjectId = data.createOneObject.id;
+      const { data: createdFieldData } = await createOneFieldMetadata({
+        input: {
+          name: 'House',
+          type: FieldMetadataType.TEXT,
+          label: 'House',
+          objectMetadataId: listingObjectId,
+        },
+      });
 
-      testFieldId = createdFieldMetadaId;
+      testFieldId = createdFieldData.createOneField.id;
 
       // create view
       const graphqlOperation = createOneOperationFactory({
@@ -49,7 +61,9 @@ describe('deleteOne', () => {
       viewId = createdView.id;
     });
     afterEach(async () => {
-      await deleteOneObjectMetadataItem(listingObjectId);
+      await deleteOneObjectMetadata({
+        input: { idToDelete: listingObjectId },
+      });
     });
     it('should reset kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {
       // Arrange
@@ -76,25 +90,25 @@ describe('deleteOne', () => {
       expect(viewResponse.body.data.view.kanbanAggregateOperation).toBe('MAX');
 
       // Deactivate field to be able to delete it after
-      const deactivateFieldOperation = updateOneFieldMetadataFactory({
-        input: { id: testFieldId, update: { isActive: false } },
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: testFieldId,
+          updatePayload: { isActive: false },
+        },
         gqlFields: `
               id
               isActive
           `,
       });
 
-      await makeMetadataAPIRequest(deactivateFieldOperation);
-
       // Act
-      const graphqlOperation = deleteOneFieldMetadataItemFactory({
-        idToDelete: testFieldId,
+      const { data } = await deleteOneFieldMetadata({
+        input: { idToDelete: testFieldId },
       });
-      const response = await makeMetadataAPIRequest(graphqlOperation);
 
       // Assert
       // 1. Field is deleted
-      expect(response.body.data.deleteOneField.id).toBe(testFieldId);
+      expect(data.deleteOneField.id).toBe(testFieldId);
 
       // 2. Kanban aggregate operation has been reset on view using this field as kanbanAggregateOperationFieldMetadataId
       const updatedViewResponse =
