@@ -102,12 +102,14 @@ export const WorkflowStepHeader = ({
           <TitleInput
             disabled={disabled}
             sizeVariant="md"
-            draftValue={title}
+            value={title}
             onChange={handleChange}
             placeholder={headerType}
             hotkeyScope="workflow-step-title"
             onEnter={submitTitle}
-            onEscape={submitTitle}
+            onEscape={() => {
+              setTitle(initialTitle);
+            }}
             onClickOutside={submitTitle}
             onTab={submitTitle}
             onShiftTab={submitTitle}

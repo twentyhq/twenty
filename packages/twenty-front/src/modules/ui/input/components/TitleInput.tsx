@@ -11,16 +11,16 @@ import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 type InputProps = {
-  draftValue?: string;
+  value?: string;
   onChange: (value: string) => void;
-  placeholder: string;
-  hotkeyScope: string;
+  placeholder?: string;
+  hotkeyScope?: string;
   onEnter?: () => void;
   onEscape?: () => void;
   onClickOutside?: () => void;
   onTab?: () => void;
   onShiftTab?: () => void;
-  sizeVariant: TextInputV2Size;
+  sizeVariant?: TextInputV2Size;
 };
 
 export type TitleInputProps = {
@@ -56,10 +56,10 @@ const StyledDiv = styled.div<{
 `;
 
 const Input = ({
-  draftValue,
+  value,
   onChange,
   placeholder,
-  hotkeyScope,
+  hotkeyScope = 'title-input',
   onEnter,
   onEscape,
   onClickOutside,
@@ -70,8 +70,10 @@ const Input = ({
 }: InputProps & { setIsOpened: (isOpened: boolean) => void }) => {
   const wrapperRef = useRef<HTMLInputElement>(null);
 
+  const [draftValue, setDraftValue] = useState(value);
+
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    if (isDefined(draftValue)) {
+    if (isDefined(value)) {
       event.target.select();
     }
   };
@@ -85,7 +87,7 @@ const Input = ({
 
   useRegisterInputEvents<string>({
     inputRef: wrapperRef,
-    inputValue: draftValue ?? '',
+    inputValue: value ?? '',
     onEnter: () => {
       handleLeaveFocus();
       onEnter?.();
@@ -116,8 +118,11 @@ const Input = ({
       autoGrow
       sizeVariant={sizeVariant}
       inheritFontStyles
-      value={draftValue ?? ''}
-      onChange={onChange}
+      value={draftValue}
+      onChange={(text) => {
+        setDraftValue(text);
+        onChange?.(text);
+      }}
       placeholder={placeholder}
       onFocus={handleFocus}
       autoFocus
@@ -127,11 +132,11 @@ const Input = ({
 
 export const TitleInput = ({
   disabled,
-  sizeVariant,
-  draftValue,
+  value,
+  sizeVariant = 'md',
   onChange,
   placeholder,
-  hotkeyScope,
+  hotkeyScope = 'title-input',
   onEnter,
   onEscape,
   onClickOutside,
@@ -147,7 +152,7 @@ export const TitleInput = ({
       {isOpened ? (
         <Input
           sizeVariant={sizeVariant}
-          draftValue={draftValue}
+          value={value}
           onChange={onChange}
           placeholder={placeholder}
           hotkeyScope={hotkeyScope}
@@ -169,7 +174,7 @@ export const TitleInput = ({
             }
           }}
         >
-          <OverflowingTextWithTooltip text={draftValue || placeholder} />
+          <OverflowingTextWithTooltip text={value || placeholder} />
         </StyledDiv>
       )}
     </>
