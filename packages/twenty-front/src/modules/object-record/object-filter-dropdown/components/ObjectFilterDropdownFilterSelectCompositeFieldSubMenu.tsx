@@ -22,8 +22,8 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useState } from 'react';
-import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconApps, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText] = useState('');
@@ -126,6 +126,7 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
     setObjectFilterDropdownSubMenuFieldType(null);
     setObjectFilterDropdownIsSelectingCompositeField(false);
     setObjectFilterDropdownFilterIsSelected(false);
+    setSubFieldNameUsedInDropdown(null);
   };
 
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {

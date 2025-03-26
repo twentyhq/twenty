@@ -1,5 +1,6 @@
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { useHideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useHideDeletedRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { useSeeWorkflowsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeWorkflowsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
@@ -23,6 +24,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconDatabaseExport,
+  IconEyeOff,
   IconHeart,
   IconHeartOff,
   IconHistory,
@@ -173,13 +175,26 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
+  hideDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
+    label: msg`Hide deleted runs`,
+    shortLabel: msg`Hide deleted`,
+    position: 10,
+    Icon: IconEyeOff,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useHideDeletedRecordsNoSelectionRecordAction,
+  },
   seeAllWorkflows: {
     type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
     key: NoSelectionRecordActionKeys.SEE_WORKFLOWS,
     label: msg`Go to workflows`,
     shortLabel: msg`See workflows`,
-    position: 10,
+    position: 11,
     Icon: IconSettingsAutomation,
     accent: 'default',
     isPinned: true,

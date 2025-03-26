@@ -16,8 +16,8 @@ import {
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useState } from 'react';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectFilterDropdownDateInput = () => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
@@ -114,7 +114,6 @@ export const ObjectFilterDropdownDateInput = () => {
       date={internalDate}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
-      onClose={handleAbsoluteDateChange}
       isDateTimeInput={isDateTimeInput}
     />
   );
