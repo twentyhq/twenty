@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-ui-accessibility.cjs.js",
+  "module": "dist/twenty-ui-accessibility.esm.js"
+}

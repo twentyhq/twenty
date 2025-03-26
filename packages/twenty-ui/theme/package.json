@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-ui-theme.cjs.js",
+  "module": "dist/twenty-ui-theme.esm.js"
+}

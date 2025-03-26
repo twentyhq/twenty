@@ -1,15 +1,8 @@
 {
   "name": "twenty-ui",
   "version": "0.50.0-canary",
-  "type": "module",
-  "main": "./src/index.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
-  },
+  "main": "dist/twenty-ui.cjs.js",
+  "module": "dist/twenty-ui.esm.js",
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "@preconstruct/cli": "patch:@preconstruct/cli@npm%3A2.8.11#./patches/@preconstruct-cli-npm-2.8.11-030abfa6ae.patch",
@@ -23,7 +16,7 @@
     "twenty-shared": "workspace:*"
   },
   "scripts": {
-    "build": "npx vite build"
+    "build": "preconstruct build"
   },
   "preconstruct": {
     "entrypoints": [
