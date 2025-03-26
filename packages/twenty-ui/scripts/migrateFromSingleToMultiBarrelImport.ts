@@ -86,7 +86,7 @@ function getTypeScriptFiles(
 
   return files.filter(
     (file) =>
-      !file.endsWith('.d.ts') &&
+      (includeIndex ? true : !file.endsWith('.d.ts')) &&
       (includeIndex ? true : !file.endsWith('index.ts')),
   );
 }
@@ -104,7 +104,6 @@ const getKind = (node: ts.VariableStatement) => {
 
   return 'var';
 };
-
 
 function extractExports(sourceFile: ts.SourceFile) {
   const exports: DeclarationOccurence[] = [];
@@ -509,9 +508,7 @@ const main = () => {
   const packageSrcPath = 'packages/twenty-ui/src';
   const exportsPerModule = retrievePackageExportsPerModule(packageSrcPath);
 
-  const packagesToMigrate = [
-    'twenty-front',
-  ];
+  const packagesToMigrate = ['twenty-front'];
   for (const currPackage of packagesToMigrate) {
     console.log(`About to run over ${currPackage}`);
     const importsPerFile = retrieveImportFromPackageInSource(
