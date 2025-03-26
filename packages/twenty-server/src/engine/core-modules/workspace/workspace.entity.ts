@@ -29,7 +29,7 @@ registerEnumType(WorkspaceActivationStatus, {
 });
 
 @Check(
-  'workspace_active_requires_default_role',
+  'onboarded_workspace_requires_default_role',
   `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "defaultRoleId" IS NOT NULL`,
 )
 @Entity({ name: 'workspace', schema: 'core' })
