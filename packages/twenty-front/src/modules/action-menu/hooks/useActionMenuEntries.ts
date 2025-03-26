@@ -21,7 +21,7 @@ export const useActionMenuEntries = () => {
         ]);
         set(actionMenuEntryState, newEntries);
       },
-    [actionMenuEntriesComponentState, actionMenuEntryState],
+    [actionMenuEntryState],
   );
 
   const removeActionMenuEntry = useRecoilCallback(
@@ -38,7 +38,7 @@ export const useActionMenuEntries = () => {
         newEntries.delete(entryKeyToRemove);
         set(actionMenuEntryState, newEntries);
       },
-    [actionMenuEntriesComponentState, actionMenuEntryState],
+    [actionMenuEntryState],
   );
 
   return {
