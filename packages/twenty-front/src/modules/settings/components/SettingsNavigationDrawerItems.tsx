@@ -11,7 +11,6 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -20,8 +19,6 @@ const StyledInnerContainer = styled.div`
 `;
 
 export const SettingsNavigationDrawerItems = () => {
-  const { t } = useLingui();
-
   const settingsNavigationItems: SettingsNavigationSection[] =
     useSettingsNavigationItems();
 
