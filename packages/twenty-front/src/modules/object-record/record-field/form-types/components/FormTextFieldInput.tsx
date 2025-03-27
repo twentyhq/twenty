@@ -16,11 +16,11 @@ type FormTextFieldInputProps = {
   error?: string;
   hint?: string;
   defaultValue: string | undefined;
-  placeholder: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
   multiline?: boolean;
   readonly?: boolean;
+  placeholder?: string;
   VariablePicker?: VariablePickerComponent;
 };
 
@@ -39,7 +39,7 @@ export const FormTextFieldInput = ({
   const inputId = useId();
 
   const editor = useTextVariableEditor({
-    placeholder,
+    placeholder: placeholder ?? 'Enter text',
     multiline,
     readonly,
     defaultValue,
