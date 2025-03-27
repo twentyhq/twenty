@@ -3035,7 +3035,6 @@ msgid "Not synced"
 msgstr "동기화되지 않음"
 
 #. js-lingui-id: HptUxX
-#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number"
 msgstr "숫자"
@@ -4081,8 +4080,8 @@ msgstr "테스트 워크플로"
 
 #. js-lingui-id: xeiujy
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
-msgid "Text"
-msgstr "텍스트"
+#~ msgid "Text"
+#~ msgstr "텍스트"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
