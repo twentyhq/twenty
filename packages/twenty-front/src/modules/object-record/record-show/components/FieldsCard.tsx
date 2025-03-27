@@ -108,6 +108,7 @@ export const FieldsCard = ({
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                    isDisplayModeFixHeight: true,
                   }}
                 >
                   <ActivityTargetsInlineCell
@@ -144,6 +145,7 @@ export const FieldsCard = ({
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                  isDisplayModeFixHeight: true,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
@@ -179,6 +181,7 @@ export const FieldsCard = ({
             }),
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             hotkeyScope: InlineCellHotkeyScope.InlineCell,
+            isDisplayModeFixHeight: true,
           }}
         >
           <RecordDetailRelationSection

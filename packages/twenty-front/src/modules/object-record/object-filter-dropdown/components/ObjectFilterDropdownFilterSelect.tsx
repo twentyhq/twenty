@@ -16,8 +16,6 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 import { useSelectFilterUsedInDropdown } from '@/object-record/object-filter-dropdown/hooks/useSelectFilterUsedInDropdown';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
@@ -134,14 +132,8 @@ export const ObjectFilterDropdownFilterSelect = ({
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const isAdvancedFiltersEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAdvancedFiltersEnabled,
-  );
-
   const shouldShowAdvancedFilterButton =
-    isDefined(currentView?.objectMetadataId) &&
-    isAdvancedFilterButtonVisible &&
-    isAdvancedFiltersEnabled;
+    isDefined(currentView?.objectMetadataId) && isAdvancedFilterButtonVisible;
 
   const { t } = useLingui();
 

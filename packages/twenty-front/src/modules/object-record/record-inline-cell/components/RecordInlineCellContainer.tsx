@@ -38,7 +38,6 @@ const StyledLabelAndIconContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: 18px;
-  padding-top: 3px;
 `;
 
 const StyledValueContainer = styled.div`
@@ -57,15 +56,16 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
 const StyledInlineCellBaseContainer = styled.div<{
   isDisplayModeFixHeight?: boolean;
 }>`
-  align-items: flex-start;
   box-sizing: border-box;
   width: 100%;
   display: flex;
-  height: fit-content;
   line-height: ${({ isDisplayModeFixHeight }) =>
+    isDisplayModeFixHeight ? `24px` : `18px`};
+  height: ${({ isDisplayModeFixHeight }) =>
     isDisplayModeFixHeight ? `24px` : `18px`};
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
+  align-items: center;
   justify-content: center;
 `;
 
