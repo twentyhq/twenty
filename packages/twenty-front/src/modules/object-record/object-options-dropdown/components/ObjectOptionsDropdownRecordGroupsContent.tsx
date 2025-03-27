@@ -97,7 +97,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           />
         }
       >
-        Group by
+        Group
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {currentView?.key !== 'INDEX' && (

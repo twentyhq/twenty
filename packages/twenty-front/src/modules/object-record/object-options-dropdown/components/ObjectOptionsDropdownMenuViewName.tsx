@@ -37,6 +37,7 @@ const StyledMenuTitleContainer = styled.div`
 `;
 
 const StyledMenuIconContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   align-items: center;
   display: flex;
   height: ${({ theme }) => theme.spacing(6)};
@@ -44,6 +45,7 @@ const StyledMenuIconContainer = styled.div`
   width: ${({ theme }) => theme.spacing(6)};
 `;
 const StyledMainText = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   flex-shrink: 0;
   overflow: hidden;
   text-overflow: ellipsis;
