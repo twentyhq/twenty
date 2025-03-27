@@ -20,6 +20,7 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
+import { IconVersions } from '@tabler/icons-react';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -27,7 +28,6 @@ import {
   IconEyeOff,
   IconHeart,
   IconHeartOff,
-  IconHistory,
   IconRotate2,
   IconSettingsAutomation,
 } from 'twenty-ui';
@@ -61,7 +61,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     isPinned: true,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    Icon: IconHistory,
+    Icon: IconVersions,
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,

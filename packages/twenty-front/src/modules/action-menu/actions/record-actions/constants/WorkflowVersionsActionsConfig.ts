@@ -23,6 +23,7 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
+import { IconVersions } from '@tabler/icons-react';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -30,7 +31,6 @@ import {
   IconEyeOff,
   IconHeart,
   IconHeartOff,
-  IconHistory,
   IconHistoryToggle,
   IconPencil,
   IconRotate2,
@@ -95,7 +95,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     position: 4,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    Icon: IconHistory,
+    Icon: IconVersions,
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
