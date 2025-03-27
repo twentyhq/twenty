@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { PubSub } from 'graphql-subscriptions';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -10,7 +10,7 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 
 @Injectable()
 export class WorkflowRunListener {
-  constructor(@Inject('PUB_SUB') private readonly pubSub: PubSub) {}
+  constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
 
   @OnDatabaseBatchEvent('workflowRun', DatabaseEventAction.UPDATED)
   async handleWorkflowRunUpdated(
@@ -20,7 +20,9 @@ export class WorkflowRunListener {
   ): Promise<void> {
     for (const eventPayload of batchEvent.events) {
       await this.pubSub.publish('workflowRunUpdated', {
-        workflowRunId: eventPayload.properties.after.id,
+        workflowRunUpdated: {
+          workflowRunId: eventPayload.properties.after.id,
+        },
       });
     }
   }
