@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 
-import IconMicrosoftOutlookRaw from '@assets/icons/microsoft-outlook.svg';
+import IconMicrosoftOutlookRaw from '@assets/icons/microsoft-outlook.svg?react';
 
 interface IconMicrosoftOutlookProps {
   size?: number | string;
