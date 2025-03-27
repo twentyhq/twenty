@@ -1,6 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { Field, ObjectType } from '@nestjs/graphql';
+import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -33,6 +36,7 @@ export const SEARCH_FIELDS_FOR_LINKLOGS: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: LINKLOGS_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
+@ObjectType()
 export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: LINKLOGS_STANDARD_FIELD_IDS.name,
@@ -42,6 +46,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
+  @IDField(() => UUIDScalarType)
   product: string;
 
   @WorkspaceField({
@@ -52,6 +57,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
   linkName: string;
 
   @WorkspaceField({
@@ -62,6 +68,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
   uv: number;
 
   @WorkspaceField({
@@ -71,6 +78,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`ID of the traceable link associated with this log`,
     icon: 'IconLink',
   })
+  @Field(() => String, { nullable: true })
   linkId: string;
 
   @WorkspaceField({
@@ -80,6 +88,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Source of the traffic (e.g., Google, Facebook)`,
     icon: 'IconMessage',
   })
+  @Field(() => String)
   utmSource: string;
 
   @WorkspaceField({
@@ -89,6 +98,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Medium of the traffic (e.g., cpc, email)`,
     icon: 'IconMessage',
   })
+  @Field(() => String)
   utmMedium: string;
 
   @WorkspaceField({
@@ -109,6 +119,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Campaign associated with the traffic`,
     icon: 'IconMessage',
   })
+  @Field(() => String)
   utmCampaign: string;
 
   @WorkspaceField({
@@ -119,6 +130,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
   })
   @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
   userIp: string | null;
 
   @WorkspaceField({
@@ -129,6 +141,7 @@ export class LinkLogsWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconDeviceMobile',
   })
   @WorkspaceIsNullable()
+  @Field(() => String, { nullable: true })
   userAgent: string | null;
 
   @WorkspaceField({

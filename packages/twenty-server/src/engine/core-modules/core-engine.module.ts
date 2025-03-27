@@ -55,6 +55,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
+import { DashboardLinklogsModule } from 'src/engine/core-modules/dadshboard-linklogs/dashboard-linlogs.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
@@ -95,6 +96,7 @@ import { StripeModule } from './stripe/stripe.module';
     InboxModule,
     GoogleStorageModule,
     TelephonyModule,
+    DashboardLinklogsModule,
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
       inject: [EnvironmentService],
