@@ -17,18 +17,12 @@ export const SettingsProtectedRouteWrapper = ({
   settingsPermission,
   requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
-  const isPermissionsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsEnabled,
-  );
   const hasPermission = useHasSettingsPermission(settingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );
 
-  if (
-    (requiredFeatureFlag && !requiredFeatureFlagEnabled) ||
-    (!hasPermission && isPermissionsEnabled)
-  ) {
+  if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
     return <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />;
   }
 

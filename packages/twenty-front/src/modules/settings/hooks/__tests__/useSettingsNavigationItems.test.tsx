@@ -6,7 +6,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 import {
   Billing,
-  FeatureFlagKey,
   OnboardingStatus,
   SettingPermissionType,
 } from '~/generated/graphql';
@@ -20,7 +19,6 @@ const mockCurrentUser = {
   id: 'fake-user-id',
   email: 'fake@email.com',
   supportUserHash: null,
-  analyticsTinybirdJwts: null,
   canAccessFullAdminPanel: false,
   canImpersonate: false,
   onboardingStatus: OnboardingStatus.COMPLETED,
@@ -50,12 +48,6 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 jest.mock('@/settings/roles/hooks/useSettingsPermissionMap', () => ({
   useSettingsPermissionMap: jest.fn(),
-}));
-
-jest.mock('@/workspace/hooks/useFeatureFlagsMap', () => ({
-  useFeatureFlagsMap: () => ({
-    [FeatureFlagKey.IsPermissionsEnabled]: true,
-  }),
 }));
 
 describe('useSettingsNavigationItems', () => {

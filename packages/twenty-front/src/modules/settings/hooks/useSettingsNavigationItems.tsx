@@ -6,6 +6,7 @@ import {
   IconColorSwatch,
   IconComponent,
   IconCurrencyDollar,
+  IconDoorEnter,
   IconFlask,
   IconFunction,
   IconHierarchy2,
@@ -21,14 +22,13 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
+import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { SettingPermissionType } from '~/generated/graphql';
@@ -54,6 +54,7 @@ export type SettingsNavigationItem = {
 
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const billing = useRecoilValue(billingState);
+  const { signOut } = useAuth();
 
   const isFunctionSettingsEnabled = false;
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
@@ -63,7 +64,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     false;
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
-  const featureFlags = useFeatureFlagsMap();
   const permissionMap = useSettingsPermissionMap();
   return [
     {
@@ -120,9 +120,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Roles`,
           path: SettingsPath.Roles,
           Icon: IconLock,
-          isHidden:
-            !featureFlags[FeatureFlagKey.IsPermissionsEnabled] ||
-            !permissionMap[SettingPermissionType.ROLES],
+          isHidden: !permissionMap[SettingPermissionType.ROLES],
         },
         {
           label: t`Billing`,
@@ -201,6 +199,11 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Releases`,
           path: SettingsPath.Releases,
           Icon: IconRocket,
+        },
+        {
+          label: t`Logout`,
+          onClick: signOut,
+          Icon: IconDoorEnter,
         },
       ],
     },

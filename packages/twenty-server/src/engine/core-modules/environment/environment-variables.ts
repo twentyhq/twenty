@@ -453,7 +453,7 @@ export class EnvironmentVariables {
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
+    group: EnvironmentVariablesGroup.AnalyticsConfig,
     description: 'Enable or disable analytics for telemetry',
   })
   @CastToBoolean()
@@ -469,33 +469,6 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   TELEMETRY_ENABLED = true;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
-    sensitive: true,
-    description: 'Ingest token for Tinybird analytics',
-  })
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_INGEST_TOKEN: string;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
-    sensitive: true,
-    description: 'Workspace UUID for Tinybird analytics',
-  })
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_WORKSPACE_UUID: string;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
-    sensitive: true,
-    description: 'JWT token for Tinybird analytics',
-  })
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_GENERATE_JWT_TOKEN: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.BillingConfig,

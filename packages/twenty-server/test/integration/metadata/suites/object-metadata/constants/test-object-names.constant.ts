@@ -1,2 +1,2 @@
-export const LISTING_NAME_SINGULAR = 'listing';
-export const LISTING_NAME_PLURAL = 'listings';
+export const LISTING_NAME_SINGULAR = 'listinga';
+export const LISTING_NAME_PLURAL = 'listingas';
