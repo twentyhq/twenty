@@ -13,8 +13,8 @@ import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-c
 
       useFactory: (redisClientService: RedisClientService) =>
         new RedisPubSub({
-          publisher: redisClientService.getClient().duplicate(),
-          subscriber: redisClientService.getClient().duplicate(),
+          publisher: redisClientService.getPubSubClient().duplicate(),
+          subscriber: redisClientService.getPubSubClient().duplicate(),
         }),
     },
   ],
