@@ -155,6 +155,7 @@
     "pluralize": "^8.0.0",
     "prettier": "^3.0.3",
     "prism-react-renderer": "^2.1.0",
+    "pubsub-ioredis": "npm:ioredis@5.6.0",
     "qs": "^6.11.2",
     "react": "^18.2.0",
     "react-data-grid": "7.0.0-beta.13",
