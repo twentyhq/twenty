@@ -1,8 +1,8 @@
 import { Tag, THEME_COMMON } from 'twenty-ui';
 
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { SelectOption } from '@/spreadsheet-import/types';
 import styled from '@emotion/styled';
+import { SelectOption } from '~/types/SelectOption';
 
 const spacing1 = THEME_COMMON.spacing(1);
 

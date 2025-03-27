@@ -2,7 +2,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { SelectOption } from '@/spreadsheet-import/types';
 
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 
@@ -11,6 +10,7 @@ import { SelectInput } from '@/ui/input/components/SelectInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useEffect, useState } from 'react';
 import { IconChevronDown, Tag, TagColor } from 'twenty-ui';
+import { SelectOption } from '~/types/SelectOption';
 import {
   MatchedOptions,
   MatchedSelectColumn,

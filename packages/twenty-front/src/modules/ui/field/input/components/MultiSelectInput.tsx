@@ -3,7 +3,6 @@ import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -15,6 +14,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemMultiSelectTag } from 'twenty-ui';
+import { SelectOption } from '~/types/SelectOption';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {

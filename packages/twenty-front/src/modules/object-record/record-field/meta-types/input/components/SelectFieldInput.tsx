@@ -2,13 +2,13 @@ import { useClearField } from '@/object-record/record-field/hooks/useClearField'
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { SelectOption } from '~/types/SelectOption';
 
 type SelectFieldInputProps = {
   onSubmit?: FieldInputEvent;

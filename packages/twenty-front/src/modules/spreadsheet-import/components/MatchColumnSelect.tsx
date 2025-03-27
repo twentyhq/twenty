@@ -13,7 +13,6 @@ import { AppTooltip, MenuItem, MenuItemSelect } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { SelectOption } from '@/spreadsheet-import/types';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -22,6 +21,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useLingui } from '@lingui/react/macro';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
+import { SelectOption } from '~/types/SelectOption';
 
 const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};

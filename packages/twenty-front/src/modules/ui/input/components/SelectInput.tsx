@@ -1,5 +1,3 @@
-import { SelectOption } from '@/spreadsheet-import/types';
-
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -10,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelectTag, TagColor } from 'twenty-ui';
+import { SelectOption } from '~/types/SelectOption';
 
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;

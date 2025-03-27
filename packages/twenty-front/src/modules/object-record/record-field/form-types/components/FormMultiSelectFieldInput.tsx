@@ -8,7 +8,6 @@ import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-fie
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -17,8 +16,9 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
-import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
+import { SelectOption } from '~/types/SelectOption';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
