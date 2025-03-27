@@ -26,7 +26,7 @@ import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumn
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
@@ -282,7 +282,9 @@ export const MatchColumnsStep = <T extends string>({
         message: t`There are required columns that are not matched or ignored. Do you want to continue?`,
         children: (
           <StyledColumnsContainer>
-            <StyledColumns>Columns not matched:</StyledColumns>
+            <StyledColumns>
+              <Trans>Columns not matched:</Trans>
+            </StyledColumns>
             {unmatchedRequiredFields.map((field) => (
               <StyledColumn key={field}>{field}</StyledColumn>
             ))}
