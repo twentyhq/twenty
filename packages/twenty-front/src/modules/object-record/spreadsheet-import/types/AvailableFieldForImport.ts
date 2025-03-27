@@ -5,7 +5,7 @@ import {
 import { IconComponent } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 export type AvailableFieldForImport = {
-  icon: IconComponent;
+  Icon: IconComponent;
   label: string;
   key: string;
   fieldType: SpreadsheetImportFieldType;

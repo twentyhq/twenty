@@ -29,21 +29,21 @@ describe('getMatchedColumns', () => {
       label: 'Name',
       fieldType: { type: 'input' },
       fieldMetadataType: FieldMetadataType.TEXT,
-      icon: null,
+      Icon: null,
     },
     {
       key: 'Location',
       label: 'Location',
       fieldType: { type: 'select', options: [] },
       fieldMetadataType: FieldMetadataType.POSITION,
-      icon: null,
+      Icon: null,
     },
     {
       key: 'Age',
       label: 'Age',
       fieldType: { type: 'input' },
       fieldMetadataType: FieldMetadataType.NUMBER,
-      icon: null,
+      Icon: null,
     },
   ];
 
@@ -120,14 +120,14 @@ describe('getMatchedColumns', () => {
         label: 'Hobby',
         fieldType: { type: 'input' },
         fieldMetadataType: FieldMetadataType.TEXT,
-        icon: null,
+        Icon: null,
       },
       {
         key: 'Interest',
         label: 'Interest',
         fieldType: { type: 'input' },
         fieldMetadataType: FieldMetadataType.TEXT,
-        icon: null,
+        Icon: null,
       },
     ];
 

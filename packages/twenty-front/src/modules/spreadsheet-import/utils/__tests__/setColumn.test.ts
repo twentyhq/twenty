@@ -8,7 +8,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('setColumn', () => {
   const defaultField: SpreadsheetImportField<'Name'> = {
-    icon: null,
+    Icon: null,
     label: 'label',
     key: 'Name',
     fieldType: { type: 'input' },

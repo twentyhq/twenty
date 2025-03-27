@@ -24,14 +24,14 @@ describe('normalizeTableData', () => {
       label: 'Name',
       fieldType: { type: 'input' },
       fieldMetadataType: FieldMetadataType.TEXT,
-      icon: null,
+      Icon: null,
     },
     {
       key: 'age',
       label: 'Age',
       fieldType: { type: 'input' },
       fieldMetadataType: FieldMetadataType.NUMBER,
-      icon: null,
+      Icon: null,
     },
     {
       key: 'active',
@@ -40,7 +40,7 @@ describe('normalizeTableData', () => {
         type: 'checkbox',
       },
       fieldMetadataType: FieldMetadataType.BOOLEAN,
-      icon: null,
+      Icon: null,
     },
   ];
 
@@ -79,7 +79,7 @@ describe('normalizeTableData', () => {
           booleanMatches: { yes: true, no: false },
         },
         fieldMetadataType: FieldMetadataType.BOOLEAN,
-        icon: null,
+        Icon: null,
       },
     ];
 
@@ -116,7 +116,7 @@ describe('normalizeTableData', () => {
           ],
         },
         fieldMetadataType: FieldMetadataType.SELECT,
-        icon: null,
+        Icon: null,
       },
     ];
 

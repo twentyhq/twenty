@@ -25,7 +25,7 @@ export const useBuildAvailableFieldsForImport = () => {
       overrides: Partial<AvailableFieldForImport> = {},
       customLabel?: string,
     ): AvailableFieldForImport => ({
-      icon: getIcon(fieldMetadataItem.icon),
+      Icon: getIcon(fieldMetadataItem.icon),
       label: customLabel ?? fieldMetadataItem.label,
       key: fieldMetadataItem.name,
       fieldType: { type: 'input' },
@@ -91,52 +91,50 @@ export const useBuildAvailableFieldsForImport = () => {
         ? FieldMetadataType.NUMBER
         : FieldMetadataType.CURRENCY;
 
-    // Define the mapping of field types to their handlers
     const fieldTypeHandlers: Record<
       string,
       (fieldMetadataItem: FieldMetadataItem) => void
     > = {
-      // Composite fields with standard handling
       [FieldMetadataType.FULL_NAME]: (fieldMetadataItem) => {
         handleCompositeFieldWithLabels(
           fieldMetadataItem,
-          FieldMetadataType.FULL_NAME as CompositeFieldType,
+          FieldMetadataType.FULL_NAME,
         );
       },
       [FieldMetadataType.ADDRESS]: (fieldMetadataItem) => {
         handleCompositeFieldWithLabels(
           fieldMetadataItem,
-          FieldMetadataType.ADDRESS as CompositeFieldType,
+          FieldMetadataType.ADDRESS,
         );
       },
       [FieldMetadataType.LINKS]: (fieldMetadataItem) => {
         handleCompositeFieldWithLabels(
           fieldMetadataItem,
-          FieldMetadataType.LINKS as CompositeFieldType,
+          FieldMetadataType.LINKS,
         );
       },
       [FieldMetadataType.EMAILS]: (fieldMetadataItem) => {
         handleCompositeFieldWithLabels(
           fieldMetadataItem,
-          FieldMetadataType.EMAILS as CompositeFieldType,
+          FieldMetadataType.EMAILS,
         );
       },
       [FieldMetadataType.PHONES]: (fieldMetadataItem) => {
         handleCompositeFieldWithLabels(
           fieldMetadataItem,
-          FieldMetadataType.PHONES as CompositeFieldType,
+          FieldMetadataType.PHONES,
         );
       },
       [FieldMetadataType.RICH_TEXT_V2]: (fieldMetadataItem) => {
         handleCompositeFieldWithLabels(
           fieldMetadataItem,
-          FieldMetadataType.RICH_TEXT_V2 as CompositeFieldType,
+          FieldMetadataType.RICH_TEXT_V2,
         );
       },
       [FieldMetadataType.CURRENCY]: (fieldMetadataItem) => {
         handleCompositeFieldWithLabels(
           fieldMetadataItem,
-          FieldMetadataType.CURRENCY as CompositeFieldType,
+          FieldMetadataType.CURRENCY,
           currencyValidationResolver,
         );
       },

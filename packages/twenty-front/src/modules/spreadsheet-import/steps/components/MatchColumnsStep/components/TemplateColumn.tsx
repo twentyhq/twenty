@@ -33,7 +33,7 @@ export const TemplateColumn = <T extends string>({
 
   const fieldOptions = fields
     .filter((field) => field.fieldMetadataType !== FieldMetadataType.RICH_TEXT)
-    .map(({ icon, label, key }) => {
+    .map(({ Icon, label, key }) => {
       const isSelected =
         columns.findIndex((column) => {
           if ('value' in column) {
@@ -43,7 +43,7 @@ export const TemplateColumn = <T extends string>({
         }) !== -1;
 
       return {
-        icon: icon,
+        Icon: Icon,
         value: key,
         label: label,
         disabled: isSelected,
@@ -52,7 +52,7 @@ export const TemplateColumn = <T extends string>({
 
   const selectOptions = [
     {
-      icon: IconForbid,
+      Icon: IconForbid,
       value: 'do-not-import',
       label: t`Do not import`,
     },

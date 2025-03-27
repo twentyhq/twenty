@@ -12,7 +12,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 const nameField: SpreadsheetImportField<'Name'> = {
   key: 'Name',
   label: 'Name',
-  icon: null,
+  Icon: null,
   fieldType: {
     type: 'input',
   },
@@ -22,7 +22,7 @@ const nameField: SpreadsheetImportField<'Name'> = {
 const ageField: SpreadsheetImportField<'Age'> = {
   key: 'Age',
   label: 'Age',
-  icon: null,
+  Icon: null,
   fieldType: {
     type: 'input',
   },

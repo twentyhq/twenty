@@ -20,7 +20,7 @@ describe('getFieldOptions', () => {
   const fields: SpreadsheetImportField<'Options' | 'Name'>[] = [
     {
       key: 'Options',
-      icon: null,
+      Icon: null,
       label: 'options',
       fieldType: {
         type: 'select',
@@ -30,7 +30,7 @@ describe('getFieldOptions', () => {
     },
     {
       key: 'Name',
-      icon: null,
+      Icon: null,
       label: 'name',
       fieldType: {
         type: 'input',

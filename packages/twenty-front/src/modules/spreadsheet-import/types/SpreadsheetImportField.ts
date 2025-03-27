@@ -5,7 +5,7 @@ import { IconComponent } from 'twenty-ui';
 
 export type SpreadsheetImportField<T extends string> = {
   // Icon
-  icon: IconComponent | null | undefined;
+  Icon: IconComponent | null | undefined;
   // UI-facing field label
   label: string;
   // Field's unique identifier

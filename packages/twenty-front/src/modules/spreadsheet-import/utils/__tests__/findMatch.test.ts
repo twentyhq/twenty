@@ -5,7 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 describe('findMatch', () => {
   const defaultField: SpreadsheetImportField<'defaultField'> = {
     key: 'defaultField',
-    icon: null,
+    Icon: null,
     label: 'label',
     fieldType: {
       type: 'input',
@@ -16,7 +16,7 @@ describe('findMatch', () => {
 
   const secondaryField: SpreadsheetImportField<'secondaryField'> = {
     key: 'secondaryField',
-    icon: null,
+    Icon: null,
     label: 'label',
     fieldType: {
       type: 'input',

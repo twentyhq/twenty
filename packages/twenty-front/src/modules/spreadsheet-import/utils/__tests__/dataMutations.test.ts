@@ -14,7 +14,7 @@ describe('addErrorsAndRunHooks', () => {
     key: 'name',
     label: 'Name',
     fieldValidationDefinitions: [{ rule: 'required' }],
-    icon: null,
+    Icon: null,
     fieldType: { type: 'input' },
     fieldMetadataType: FieldMetadataType.TEXT,
   };
@@ -25,7 +25,7 @@ describe('addErrorsAndRunHooks', () => {
     fieldValidationDefinitions: [
       { rule: 'regex', value: '\\d+', errorMessage: 'Regex error' },
     ],
-    icon: null,
+    Icon: null,
     fieldType: { type: 'input' },
     fieldMetadataType: FieldMetadataType.NUMBER,
   };
@@ -34,7 +34,7 @@ describe('addErrorsAndRunHooks', () => {
     key: 'country',
     label: 'Country',
     fieldValidationDefinitions: [{ rule: 'unique' }],
-    icon: null,
+    Icon: null,
     fieldType: { type: 'input' },
     fieldMetadataType: FieldMetadataType.SELECT,
   };
@@ -49,7 +49,7 @@ describe('addErrorsAndRunHooks', () => {
         errorMessage: 'Field is invalid',
       },
     ],
-    icon: null,
+    Icon: null,
     fieldType: { type: 'input' },
     fieldMetadataType: FieldMetadataType.EMAILS,
   };
@@ -64,7 +64,7 @@ describe('addErrorsAndRunHooks', () => {
         errorMessage: 'Field is invalid',
       },
     ],
-    icon: null,
+    Icon: null,
     fieldType: { type: 'input' },
     fieldMetadataType: FieldMetadataType.EMAILS,
   };

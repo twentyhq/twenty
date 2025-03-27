@@ -5,7 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 describe('generateExampleRow', () => {
   const defaultField: SpreadsheetImportField<'defaultField'> = {
     key: 'defaultField',
-    icon: null,
+    Icon: null,
     label: 'label',
     fieldType: {
       type: 'input',
