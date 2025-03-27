@@ -29,6 +29,7 @@ import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpande
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { LightButton } from 'twenty-ui';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -61,21 +62,6 @@ const StyledChipcontainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   z-index: 1;
-`;
-
-const StyledCancelButton = styled.button`
-  background-color: inherit;
-  border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  user-select: none;
-  margin-right: ${({ theme }) => theme.spacing(2)};
-  height: 24px;
-  &:hover {
-    background-color: ${({ theme }) => theme.background.tertiary};
-    border-radius: ${({ theme }) => theme.spacing(1)};
-  }
 `;
 
 const StyledFilterContainer = styled.div`
@@ -258,15 +244,17 @@ export const ViewBarDetails = ({
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
-      {canResetView && (
-        <StyledCancelButton
-          data-testid="cancel-button"
-          onClick={handleCancelClick}
-        >
-          {t`Reset`}
-        </StyledCancelButton>
-      )}
-      {rightComponent}
-    </StyledBar>
+       <StyledChipcontainer>
+              {canResetView && (
+                <LightButton
+                  data-testid="cancel-button"
+                  accent="tertiary"
+                  title={t`Reset`}
+                  onClick={handleCancelClick}
+                />
+              )}
+              {rightComponent}
+            </StyledChipcontainer>
+          </StyledBar>
   );
 };
