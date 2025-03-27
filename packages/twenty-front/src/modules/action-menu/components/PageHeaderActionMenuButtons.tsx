@@ -1,7 +1,12 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
-import { Button, IconButton } from 'twenty-ui';
+import { AppTooltip, Button, IconButton, TooltipDelay } from 'twenty-ui';
+
+const StyledWrapper = styled.div`
+  font-size: ${({ theme }) => theme.font.size.md};
+`;
 
 export const PageHeaderActionMenuButtons = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
@@ -15,7 +20,7 @@ export const PageHeaderActionMenuButtons = () => {
       {pinnedEntries.map((entry) =>
         entry.shortLabel ? (
           <Button
-            key={entry.key || `action-menu-entry-${entry.label}`}
+            key={entry.key}
             Icon={entry.Icon}
             size="small"
             variant="secondary"
@@ -25,15 +30,26 @@ export const PageHeaderActionMenuButtons = () => {
             ariaLabel={i18n._(entry.label)}
           />
         ) : (
-          <IconButton
-            key={entry.key || `action-menu-entry-${entry.label}`}
-            Icon={entry.Icon}
-            size="small"
-            variant="secondary"
-            accent="default"
-            onClick={() => entry.onClick?.()}
-            ariaLabel={i18n._(entry.label)}
-          />
+          <div id={`action-menu-entry-${entry.key}`} key={entry.key}>
+            <IconButton
+              Icon={entry.Icon}
+              size="small"
+              variant="secondary"
+              accent="default"
+              onClick={() => entry.onClick?.()}
+              ariaLabel={i18n._(entry.label)}
+            />
+            <StyledWrapper>
+              <AppTooltip
+                // eslint-disable-next-line
+                anchorSelect={`#action-menu-entry-${entry.key}`}
+                content={i18n._(entry.label)}
+                delay={TooltipDelay.longDelay}
+                offset={5}
+                noArrow
+              />
+            </StyledWrapper>
+          </div>
         ),
       )}
     </>
