@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import diff, { DifferenceChange, DifferenceRemove } from 'microdiff';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import {
