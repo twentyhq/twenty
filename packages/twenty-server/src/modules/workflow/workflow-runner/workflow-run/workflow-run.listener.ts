@@ -20,7 +20,7 @@ export class WorkflowRunListener {
   ): Promise<void> {
     for (const eventPayload of batchEvent.events) {
       await this.pubSub.publish('workflowRunUpdated', {
-        payload: eventPayload.properties.after,
+        workflowRunId: eventPayload.properties.after.id,
       });
     }
   }
