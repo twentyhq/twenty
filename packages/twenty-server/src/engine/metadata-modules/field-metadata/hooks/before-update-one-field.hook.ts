@@ -75,7 +75,12 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     locale?: keyof typeof APP_LOCALES,
   ): UpdateOneInputType<T> {
     const update: StandardFieldUpdate = {};
-    const updatableFields = ['isActive', 'isLabelSyncedWithName', 'options'];
+    const updatableFields = [
+      'isActive',
+      'isLabelSyncedWithName',
+      'options',
+      'settings',
+    ];
     const overridableFields = ['label', 'icon', 'description'];
 
     const nonUpdatableFields = Object.keys(instance.update).filter(
@@ -110,6 +115,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     this.handleLabelSyncedWithNameField(instance, update);
     this.handleStandardOverrides(instance, fieldMetadata, update, locale);
     this.handleOptionsField(instance, update);
+    this.handleSettingsField(instance, update);
 
     return {
       id: instance.id,
@@ -126,6 +132,17 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     }
 
     update.options = instance.update.options;
+  }
+
+  private handleSettingsField(
+    instance: UpdateOneInputType<T>,
+    update: StandardFieldUpdate,
+  ): void {
+    if (!isDefined(instance.update.settings)) {
+      return;
+    }
+
+    update.settings = instance.update.settings;
   }
 
   private handleActiveField(

@@ -44,6 +44,8 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   height: fit-content;
+  padding-top: 3px;
+  padding-bottom: 3px;
 
   overflow: hidden;
   text-overflow: ellipsis;
