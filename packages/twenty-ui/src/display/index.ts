@@ -7,14 +7,6 @@
  *                              |___/
  */
 
-export type { AvatarChipProps } from './avatar-chip/components/AvatarChip';
-export { AvatarChip } from './avatar-chip/components/AvatarChip';
-export type { AvatarChipsLeftComponentProps } from './avatar-chip/components/AvatarChipLeftComponent';
-export { AvatarChipsLeftComponent } from './avatar-chip/components/AvatarChipLeftComponent';
-export type { LinkAvatarChipProps } from './avatar-chip/components/LinkAvatarChip';
-export { LinkAvatarChip } from './avatar-chip/components/LinkAvatarChip';
-export type { AvatarChipsCommonProps } from './avatar-chip/types/AvatarChipsCommonProps.type';
-export { AvatarChipVariant } from './avatar-chip/types/AvatarChipsVariant.type';
 export type { AvatarProps } from './avatar/components/Avatar';
 export { Avatar } from './avatar/components/Avatar';
 export type { AvatarGroupProps } from './avatar/components/AvatarGroup';
@@ -29,15 +21,6 @@ export type { AnimatedCheckmarkProps } from './checkmark/components/AnimatedChec
 export { AnimatedCheckmark } from './checkmark/components/AnimatedCheckmark';
 export type { CheckmarkProps } from './checkmark/components/Checkmark';
 export { Checkmark } from './checkmark/components/Checkmark';
-export type { ChipProps } from './chip/components/Chip';
-export {
-  ChipSize,
-  ChipAccent,
-  ChipVariant,
-  Chip,
-} from './chip/components/Chip';
-export type { LinkChipProps } from './chip/components/LinkChip';
-export { LinkChip } from './chip/components/LinkChip';
 export type {
   ColorSampleVariant,
   ColorSampleProps,
@@ -385,8 +368,6 @@ export type {
 export type { InfoAccent, InfoProps } from './info/components/Info';
 export { Info } from './info/components/Info';
 export { Status } from './status/components/Status';
-export type { TagColor } from './tag/components/Tag';
-export { Tag } from './tag/components/Tag';
 export { HorizontalSeparator } from './text/components/HorizontalSeparator';
 export { SeparatorLineText } from './text/components/SeparatorLineText';
 export type { AppTooltipProps } from './tooltip/AppTooltip';

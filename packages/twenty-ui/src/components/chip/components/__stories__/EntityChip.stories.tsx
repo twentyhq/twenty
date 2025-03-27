@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { AvatarChip } from '@ui/display/avatar-chip/components/AvatarChip';
+import { AvatarChip } from '@ui/components/avatar-chip/components/AvatarChip';
 
 import { ComponentDecorator, RouterDecorator } from '@ui/testing';
 

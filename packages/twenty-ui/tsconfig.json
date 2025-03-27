@@ -11,7 +11,7 @@
     "outDir": "../../.cache/tsc",
     "paths": {
       "@ui/*": ["./src/*"],
-      "@assets/*": ["./assets/*"]
+      "@assets/*": ["./src/assets/*"]
     }
   },
   "files": [],

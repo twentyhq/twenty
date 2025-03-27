@@ -28,7 +28,7 @@
     {
       "include": [
         "**/OverflowingTextWithTooltip.tsx",
-        // "**/Tag.tsx",
+        "**/Tag.tsx",
         "**/Avatar.tsx",
         "**/Chip.tsx",
         "**/ContactLink.tsx",

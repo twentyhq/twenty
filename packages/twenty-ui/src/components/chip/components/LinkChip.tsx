@@ -5,7 +5,7 @@ import {
   ChipProps,
   ChipSize,
   ChipVariant,
-} from '@ui/display/chip/components/Chip';
+} from '@ui/components/chip/components/Chip';
 import { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 

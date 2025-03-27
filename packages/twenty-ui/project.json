@@ -10,6 +10,7 @@
     "build": {
       "dependsOn": [
         "^build",
+        "clearDist",
         "generateBarrels"
       ],
       "outputs": [
@@ -52,6 +53,12 @@
       ],
       "options": {
         "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
+      }
+    },
+    "clearDist": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "rimraf {projectRoot}/dist"
       }
     },
     "lint": {

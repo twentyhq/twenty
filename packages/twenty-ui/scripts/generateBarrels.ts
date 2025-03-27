@@ -187,12 +187,45 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
   });
 };
 
+type ExportOccurence = {
+  types: string;
+  import: string;
+  require: string;
+};
+type ExportsConfig = Record<string, ExportOccurence>;
+const generateModulePackageExports = (moduleDirectories: string[]) => {
+  return moduleDirectories.reduce<ExportsConfig>(
+    (acc, moduleDirectory) => {
+      const moduleName = getLastPathFolder(moduleDirectory);
+      if (moduleName === undefined) {
+        throw new Error(
+          `Should never occur, moduleName is undefined ${moduleDirectory}`,
+        );
+      }
+
+      return {
+        ...acc,
+        [`./${moduleName}`]: {
+          types: `./dist/${moduleName}/index.d.ts`,
+          import: `./dist/${moduleName}.mjs`,
+          require: `./dist/${moduleName}.cjs`,
+        },
+      };
+    },
+    {
+      // TODO prastoin
+      './style.css': './dist/style.css' as any,
+    },
+  );
+};
+
 const computePackageJsonFilesAndPreconstructConfig = (
   moduleDirectories: string[],
 ) => {
   const entrypoints = moduleDirectories.map(getLastPathFolder);
-
+  const exports = generateModulePackageExports(moduleDirectories);
   return {
+    exports,
     preconstruct: {
       entrypoints: [
         './index.ts',
@@ -228,6 +261,7 @@ const EXCLUDED_DIRECTORIES = [
   '**/__mocks__/**',
   '**/__stories__/**',
   '**/internal/**',
+  '**/assets/**',
 ] as const;
 function getTypeScriptFiles(
   directoryPath: string,
