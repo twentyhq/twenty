@@ -4,7 +4,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { MetricsCounterKeys } from 'src/engine/core-modules/metrics/types/metrics-counter-keys.type';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const CACHE_BUCKET_DURATION_MS = 15000; // 15 seconds window for each cache bucket
 
@@ -50,7 +50,7 @@ export class MetricsCacheService {
     );
   }
 
-  async updateCounter(key: MetricsCounterKeys, items: string[]) {
+  async updateCounter(key: MetricsKeys, items: string[]) {
     return await this.cacheStorage.setAdd(
       this.getCacheKeyWithTimestamp(key),
       items,
@@ -63,7 +63,7 @@ export class MetricsCacheService {
     timeWindowInSeconds = this.healthMetricsTimeWindowInMinutes * 60,
     date = Date.now(),
   }: {
-    key: MetricsCounterKeys;
+    key: MetricsKeys;
     timeWindowInSeconds?: number;
     date?: number;
   }): Promise<number> {
@@ -78,10 +78,7 @@ export class MetricsCacheService {
 
     const cacheKeys = this.computeTimeStampedCacheKeys(key, cacheBuckets, date);
 
-    const channelIdsCount =
-      await this.cacheStorage.countAllSetMembers(cacheKeys);
-
-    return channelIdsCount;
+    return await this.cacheStorage.countAllSetMembers(cacheKeys);
   }
 
   computeTimeStampedCacheKeys(

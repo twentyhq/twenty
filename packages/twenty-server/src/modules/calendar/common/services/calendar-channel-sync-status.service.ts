@@ -6,10 +6,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import {
-  MeterKeys,
-  MetricsCounterKeys,
-} from 'src/engine/core-modules/metrics/types/metrics-counter-keys.type';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   CalendarChannelSyncStage,
@@ -182,11 +179,10 @@ export class CalendarChannelSyncStatusService {
 
     await this.schedulePartialCalendarEventListFetch(calendarChannelIds);
 
-    await this.metricsService.incrementCounter(
-      MetricsCounterKeys.CalendarEventSyncJobActive,
-      calendarChannelIds,
-      MeterKeys.CalendarEventSyncJob,
-    );
+    await this.metricsService.batchIncrementCounter({
+      key: MetricsKeys.CalendarEventSyncJobActive,
+      eventIds: calendarChannelIds,
+    });
   }
 
   public async markAsFailedUnknownAndFlushCalendarEventsToImport(
@@ -213,11 +209,10 @@ export class CalendarChannelSyncStatusService {
       syncStage: CalendarChannelSyncStage.FAILED,
     });
 
-    await this.metricsService.incrementCounter(
-      MetricsCounterKeys.CalendarEventSyncJobFailedUnknown,
-      calendarChannelIds,
-      MeterKeys.CalendarEventSyncJob,
-    );
+    await this.metricsService.batchIncrementCounter({
+      key: MetricsKeys.CalendarEventSyncJobFailedUnknown,
+      eventIds: calendarChannelIds,
+    });
   }
 
   public async markAsFailedInsufficientPermissionsAndFlushCalendarEventsToImport(
@@ -269,11 +264,10 @@ export class CalendarChannelSyncStatusService {
       workspaceId,
     );
 
-    await this.metricsService.incrementCounter(
-      MetricsCounterKeys.CalendarEventSyncJobFailedInsufficientPermissions,
-      calendarChannelIds,
-      MeterKeys.CalendarEventSyncJob,
-    );
+    await this.metricsService.batchIncrementCounter({
+      key: MetricsKeys.CalendarEventSyncJobFailedInsufficientPermissions,
+      eventIds: calendarChannelIds,
+    });
   }
 
   private async addToAccountsToReconnect(

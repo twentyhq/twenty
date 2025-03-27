@@ -36955,13 +36955,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"install@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "install@npm:0.13.0"
-  checksum: 10c0/364d7d1e9404ff7ae3015dee7266b4ffb0e2aae348474b7ffd3e42fcbb78b37e29848e18ca94f93166f6ddb248be0f775fbed87cc92dafb018c289a86d010cf1
-  languageName: node
-  linkType: hard
-
 "internal-slot@npm:^1.0.4, internal-slot@npm:^1.0.7":
   version: 1.0.7
   resolution: "internal-slot@npm:1.0.7"
@@ -53231,6 +53224,9 @@ __metadata:
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch"
     "@node-saml/passport-saml": "npm:^5.0.0"
     "@nx/js": "npm:18.3.3"
+    "@opentelemetry/api": "npm:^1.9.0"
+    "@opentelemetry/exporter-metrics-otlp-http": "npm:^0.200.0"
+    "@opentelemetry/sdk-metrics": "npm:^2.0.0"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     "@revertdotdev/revert-react": "npm:^0.0.21"
     "@sentry/nestjs": "npm:^8.30.0"
@@ -53407,9 +53403,6 @@ __metadata:
     "@nx/vite": "npm:18.3.3"
     "@nx/web": "npm:18.3.3"
     "@octokit/graphql": "npm:^7.0.2"
-    "@opentelemetry/api": "npm:^1.9.0"
-    "@opentelemetry/exporter-metrics-otlp-http": "npm:^0.200.0"
-    "@opentelemetry/sdk-metrics": "npm:^2.0.0"
     "@playwright/test": "npm:^1.46.0"
     "@ptc-org/nestjs-query-core": "npm:^4.2.0"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
@@ -53569,7 +53562,6 @@ __metadata:
     http-server: "npm:^14.1.1"
     iframe-resizer-react: "npm:^1.1.0"
     immer: "npm:^10.0.2"
-    install: "npm:^0.13.0"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:29.7.0"
     jest-environment-node: "npm:^29.4.1"

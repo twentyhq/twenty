@@ -6,10 +6,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import {
-  MeterKeys,
-  MetricsCounterKeys,
-} from 'src/engine/core-modules/metrics/types/metrics-counter-keys.type';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -155,11 +152,10 @@ export class MessageChannelSyncStatusService {
       syncedAt: new Date().toISOString(),
     });
 
-    await this.metricsService.incrementCounter(
-      MetricsCounterKeys.MessageChannelSyncJobActive,
-      messageChannelIds,
-      MeterKeys.MessageChannelSyncJob,
-    );
+    await this.metricsService.batchIncrementCounter({
+      key: MetricsKeys.MessageChannelSyncJobActive,
+      eventIds: messageChannelIds,
+    });
   }
 
   public async markAsMessagesImportOngoing(messageChannelIds: string[]) {
@@ -202,11 +198,10 @@ export class MessageChannelSyncStatusService {
       syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
     });
 
-    await this.metricsService.incrementCounter(
-      MetricsCounterKeys.MessageChannelSyncJobFailedUnknown,
-      messageChannelIds,
-      MeterKeys.MessageChannelSyncJob,
-    );
+    await this.metricsService.batchIncrementCounter({
+      key: MetricsKeys.MessageChannelSyncJobFailedUnknown,
+      eventIds: messageChannelIds,
+    });
   }
 
   public async markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
@@ -233,11 +228,10 @@ export class MessageChannelSyncStatusService {
       syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
     });
 
-    await this.metricsService.incrementCounter(
-      MetricsCounterKeys.MessageChannelSyncJobFailedInsufficientPermissions,
-      messageChannelIds,
-      MeterKeys.MessageChannelSyncJob,
-    );
+    await this.metricsService.batchIncrementCounter({
+      key: MetricsKeys.MessageChannelSyncJobFailedInsufficientPermissions,
+      eventIds: messageChannelIds,
+    });
 
     const connectedAccountRepository =
       await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(

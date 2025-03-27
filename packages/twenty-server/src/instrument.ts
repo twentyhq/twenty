@@ -13,13 +13,9 @@ import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
+import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { WorkspaceCacheKeys } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { parseArrayEnvVar } from 'src/utils/parse-array-env-var';
-
-export enum MeterDriver {
-  OpenTelemetry = 'opentelemetry',
-  Console = 'console',
-}
 
 const meterDrivers = parseArrayEnvVar(
   process.env.METER_DRIVER,
@@ -80,5 +76,4 @@ opentelemetry.metrics.setGlobalMeterProvider(meterProvider);
 
 process.on('SIGTERM', async () => {
   await meterProvider.shutdown();
-  process.exit(0);
 });

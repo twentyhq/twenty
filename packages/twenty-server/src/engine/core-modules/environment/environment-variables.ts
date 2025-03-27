@@ -37,8 +37,8 @@ import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/e
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
+import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
-import { MeterDriver } from 'src/instrument';
 
 export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({

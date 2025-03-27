@@ -3,35 +3,56 @@ import { Injectable } from '@nestjs/common';
 import { metrics } from '@opentelemetry/api';
 
 import { MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
-import {
-  MeterKeys,
-  MetricsCounterKeys,
-} from 'src/engine/core-modules/metrics/types/metrics-counter-keys.type';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 @Injectable()
 export class MetricsService {
   constructor(private readonly metricsCacheService: MetricsCacheService) {}
 
-  async incrementCounter(
-    key: MetricsCounterKeys,
-    items: string[],
-    meterName: MeterKeys,
+  async incrementCounter({
+    key,
+    eventId,
     shouldStoreInCache = true,
-  ) {
-    const meter = metrics.getMeter(meterName);
+  }: {
+    key: MetricsKeys;
+    eventId: string;
+    shouldStoreInCache?: boolean;
+  }) {
+    //TODO : Define meter name usage in monitoring
+    const meter = metrics.getMeter('twenty-server');
     const counter = meter.createCounter(key);
 
-    counter.add(items.length);
+    counter.add(1);
 
     if (shouldStoreInCache) {
-      this.metricsCacheService.updateCounter(key, items);
+      this.metricsCacheService.updateCounter(key, [eventId]);
+    }
+  }
+
+  async batchIncrementCounter({
+    key,
+    eventIds,
+    shouldStoreInCache = true,
+  }: {
+    key: MetricsKeys;
+    eventIds: string[];
+    shouldStoreInCache?: boolean;
+  }) {
+    //TODO : Define meter name usage in monitoring
+    const meter = metrics.getMeter('twenty-server');
+    const counter = meter.createCounter(key);
+
+    counter.add(eventIds.length);
+
+    if (shouldStoreInCache) {
+      this.metricsCacheService.updateCounter(key, eventIds);
     }
   }
 
   async groupMetrics(
-    metrics: { name: string; cacheKey: MetricsCounterKeys }[],
+    metrics: { name: string; cacheKey: MetricsKeys }[],
   ): Promise<Record<string, number>> {
-    const groupedMetrics = {} as Record<string, number>;
+    const groupedMetrics: Record<string, number> = {};
 
     const date = Date.now();
 

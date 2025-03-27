@@ -8,10 +8,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { CaptchaService } from 'src/engine/core-modules/captcha/captcha.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import {
-  MeterKeys,
-  MetricsCounterKeys,
-} from 'src/engine/core-modules/metrics/types/metrics-counter-keys.type';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 @Injectable()
 export class CaptchaGuard implements CanActivate {
@@ -30,11 +27,10 @@ export class CaptchaGuard implements CanActivate {
     if (result.success) {
       return true;
     } else {
-      await this.metricsService.incrementCounter(
-        MetricsCounterKeys.InvalidCaptcha,
-        [token],
-        MeterKeys.InvalidCaptcha,
-      );
+      await this.metricsService.incrementCounter({
+        key: MetricsKeys.InvalidCaptcha,
+        eventId: token,
+      });
 
       throw new BadRequestException(
         'Invalid Captcha, please try another device',
