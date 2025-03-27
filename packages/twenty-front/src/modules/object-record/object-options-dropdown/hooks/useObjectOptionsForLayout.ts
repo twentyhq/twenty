@@ -1,13 +1,14 @@
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
-import { View } from '@/views/types/View';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
@@ -17,18 +18,17 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-export const useObjectOptionsForLayout = () => {
-  const currentViewId = useRecoilComponentValueV2(
-    contextStoreCurrentViewIdComponentState,
-  );
+export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
   const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const [, setViewPickerKanbanFieldMetadataId] = useRecoilComponentStateV2(
+  const setViewPickerKanbanFieldMetadataId = useSetRecoilComponentStateV2(
     viewPickerKanbanFieldMetadataIdComponentState,
   );
+
+  const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const { createViewGroupRecords } = usePersistViewGroupRecords();
 
@@ -62,71 +62,23 @@ export const useObjectOptionsForLayout = () => {
         viewGroupsToCreate,
         viewId: currentViewId,
       });
+
+      return viewGroupsToCreate;
     },
     [objectMetadataItem, createViewGroupRecords],
-  );
-
-  const switchViewType = useCallback(
-    async (viewType: ViewType, currentView: View) => {
-      const updateCurrentViewParams: Partial<GraphQLView> = {};
-      updateCurrentViewParams.type = viewType;
-
-      switch (viewType) {
-        case ViewType.Kanban: {
-          if (availableFieldsForKanban.length === 0) {
-            throw new Error('No fields for kanban - should not happen');
-          }
-          const previouslySelectedKanbanField = availableFieldsForKanban.find(
-            (fieldsForKanban) =>
-              fieldsForKanban.id === currentView.kanbanFieldMetadataId,
-          );
-          if (isDefined(previouslySelectedKanbanField)) {
-            const viewGroupExists = currentView.viewGroups.some(
-              (viewGroup: ViewGroup) =>
-                viewGroup.fieldMetadataId === previouslySelectedKanbanField.id,
-            );
-            if (!viewGroupExists) {
-              throw new Error(
-                'View group for kanban field does not exist (was probably deleted) - should not happen',
-              );
-            }
-            setViewPickerKanbanFieldMetadataId(
-              previouslySelectedKanbanField.id,
-            );
-          } else {
-            const randomFieldForKanban = availableFieldsForKanban[0];
-            updateCurrentViewParams.kanbanFieldMetadataId =
-              randomFieldForKanban.id;
-            await createViewGroupAssociatedWithKanbanField(
-              randomFieldForKanban.id,
-              currentView.id,
-            );
-            setViewPickerKanbanFieldMetadataId(randomFieldForKanban.id);
-          }
-          break;
-        }
-        case ViewType.Table:
-          break;
-        default: {
-          return assertUnreachable(viewType);
-        }
-      }
-
-      setRecordIndexViewType(viewType);
-      updateCurrentView(updateCurrentViewParams);
-    },
-    [
-      availableFieldsForKanban,
-      updateCurrentView,
-      setRecordIndexViewType,
-      createViewGroupAssociatedWithKanbanField,
-      setViewPickerKanbanFieldMetadataId,
-    ],
   );
 
   const setAndPersistViewType = useRecoilCallback(
     ({ snapshot }) =>
       async (viewType: ViewType) => {
+        const currentViewId = snapshot
+          .getLoadable(
+            contextStoreCurrentViewIdComponentState.atomFamily({
+              instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+            }),
+          )
+          .getValue();
+
         if (!isDefined(currentViewId)) {
           throw new Error('No view id found');
         }
@@ -139,9 +91,65 @@ export const useObjectOptionsForLayout = () => {
           throw new Error('No current view found');
         }
 
-        return await switchViewType(viewType, currentView);
+        const updateCurrentViewParams: Partial<GraphQLView> = {};
+        updateCurrentViewParams.type = viewType;
+
+        switch (viewType) {
+          case ViewType.Kanban: {
+            if (availableFieldsForKanban.length === 0) {
+              throw new Error('No fields for kanban - should not happen');
+            }
+            const previouslySelectedKanbanField = availableFieldsForKanban.find(
+              (fieldsForKanban) =>
+                fieldsForKanban.id === currentView.kanbanFieldMetadataId,
+            );
+
+            const kanbanField = isDefined(previouslySelectedKanbanField)
+              ? previouslySelectedKanbanField
+              : availableFieldsForKanban[0];
+
+            if (!isDefined(previouslySelectedKanbanField)) {
+              updateCurrentViewParams.kanbanFieldMetadataId = kanbanField.id;
+            }
+
+            const hasViewGroups = currentView.viewGroups.some(
+              (viewGroup: ViewGroup) =>
+                viewGroup.fieldMetadataId === kanbanField.id,
+            );
+
+            if (!hasViewGroups) {
+              const viewGroups = await createViewGroupAssociatedWithKanbanField(
+                kanbanField.id,
+                currentView.id,
+              );
+              loadRecordIndexStates(
+                { ...currentView, viewGroups },
+                objectMetadataItem,
+              );
+              setViewPickerKanbanFieldMetadataId(kanbanField.id);
+            }
+            setRecordIndexViewType(viewType);
+            await updateCurrentView(updateCurrentViewParams);
+            break;
+          }
+          case ViewType.Table:
+            setRecordIndexViewType(viewType);
+            await updateCurrentView(updateCurrentViewParams);
+            break;
+          default: {
+            return assertUnreachable(viewType);
+          }
+        }
       },
-    [currentViewId, switchViewType],
+    [
+      availableFieldsForKanban,
+      objectMetadataItem,
+      updateCurrentView,
+      setRecordIndexViewType,
+      createViewGroupAssociatedWithKanbanField,
+      setViewPickerKanbanFieldMetadataId,
+      loadRecordIndexStates,
+    ],
   );
 
   return {
