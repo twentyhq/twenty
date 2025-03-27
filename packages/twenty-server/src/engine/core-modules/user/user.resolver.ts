@@ -20,7 +20,6 @@ import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/su
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
-import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -278,11 +277,6 @@ export class UserResolver {
     const key = this.environmentService.get('SUPPORT_FRONT_HMAC_KEY');
 
     return getHMACKey(parent.email, key);
-  }
-
-  @ResolveField(() => AnalyticsTinybirdJwtMap, { nullable: true })
-  analyticsTinybirdJwts(@AuthWorkspace() workspace: Workspace | undefined) {
-    return this.analyticsService.generateWorkspaceJwt(workspace?.id);
   }
 
   @Mutation(() => String)

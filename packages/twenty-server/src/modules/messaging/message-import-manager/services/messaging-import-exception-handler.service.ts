@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -25,6 +26,7 @@ export class MessageImportExceptionHandlerService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   public async handleDriverException(
@@ -151,6 +153,10 @@ export class MessageImportExceptionHandlerService {
       [messageChannel.id],
       workspaceId,
     );
+
+    this.exceptionHandlerService.captureExceptions([
+      `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+    ]);
 
     throw new MessageImportException(
       `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,

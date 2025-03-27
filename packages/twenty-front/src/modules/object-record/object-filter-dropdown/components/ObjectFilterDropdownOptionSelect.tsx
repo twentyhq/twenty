@@ -23,8 +23,8 @@ import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/sin
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 
 export const EMPTY_FILTER_VALUE = '';
 export const MAX_OPTIONS_TO_DISPLAY = 3;
@@ -146,6 +146,8 @@ export const ObjectFilterDropdownOptionSelect = () => {
         fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
         value: newFilterValue,
         recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+        positionInRecordFilterGroup:
+          selectedFilter?.positionInRecordFilterGroup,
       });
     }
     resetSelectedItem();

@@ -7,7 +7,6 @@ export enum FeatureFlagKey {
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
-  IsAdvancedFiltersEnabled = 'IS_ADVANCED_FILTERS_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
   IsCustomDomainEnabled = 'IS_CUSTOM_DOMAIN_ENABLED',
   IsApprovedAccessDomainsEnabled = 'IS_APPROVED_ACCESS_DOMAINS_ENABLED',

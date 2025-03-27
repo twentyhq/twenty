@@ -28,6 +28,7 @@ export const useOpenActivityTargetInlineCellEditMode = () => {
           .filter(
             (objectMetadataItem) =>
               objectMetadataItem.isSearchable &&
+              objectMetadataItem.isActive &&
               objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task &&
               objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
               objectMetadataItem.nameSingular !==

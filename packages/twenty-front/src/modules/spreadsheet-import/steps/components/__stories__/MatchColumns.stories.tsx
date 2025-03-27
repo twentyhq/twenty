@@ -6,6 +6,7 @@ import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/comp
 import { MatchColumnsStep } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof MatchColumnsStep> = {
@@ -14,7 +15,7 @@ const meta: Meta<typeof MatchColumnsStep> = {
   parameters: {
     layout: 'fullscreen',
   },
-  decorators: [SnackBarDecorator],
+  decorators: [SnackBarDecorator, I18nFrontDecorator],
 };
 
 export default meta;
