@@ -1,11 +1,11 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
 import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import {
-  Fields,
   SpreadsheetImportDialogOptions,
+  SpreadsheetImportFields
 } from '@/spreadsheet-import/types';
-import { sleep } from '~/utils/sleep';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { sleep } from '~/utils/sleep';
 
 const fields = [
   {
@@ -92,7 +92,7 @@ const fields = [
     },
     example: 'true',
   },
-] as Fields<string>;
+] as SpreadsheetImportFields<string>;
 
 export const importedColums: Columns<string> = [
   {

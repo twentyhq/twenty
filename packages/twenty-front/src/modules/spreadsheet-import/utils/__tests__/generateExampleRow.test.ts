@@ -1,9 +1,9 @@
-import { Field } from '@/spreadsheet-import/types';
+import { SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { generateExampleRow } from '@/spreadsheet-import/utils/generateExampleRow';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('generateExampleRow', () => {
-  const defaultField: Field<'defaultField'> = {
+  const defaultField: SpreadsheetImportField<'defaultField'> = {
     key: 'defaultField',
     icon: null,
     label: 'label',
@@ -14,7 +14,7 @@ describe('generateExampleRow', () => {
   };
 
   it('should generate an example row from input field type', () => {
-    const fields: Field<'defaultField'>[] = [defaultField];
+    const fields: SpreadsheetImportField<'defaultField'>[] = [defaultField];
 
     const result = generateExampleRow(fields);
 
@@ -22,7 +22,7 @@ describe('generateExampleRow', () => {
   });
 
   it('should generate an example row from checkbox field type', () => {
-    const fields: Field<'defaultField'>[] = [
+    const fields: SpreadsheetImportField<'defaultField'>[] = [
       {
         ...defaultField,
         fieldType: { type: 'checkbox' },
@@ -36,7 +36,7 @@ describe('generateExampleRow', () => {
   });
 
   it('should generate an example row from select field type', () => {
-    const fields: Field<'defaultField'>[] = [
+    const fields: SpreadsheetImportField<'defaultField'>[] = [
       {
         ...defaultField,
         fieldType: { type: 'select', options: [] },
@@ -50,7 +50,7 @@ describe('generateExampleRow', () => {
   });
 
   it('should generate an example row with provided example values for fields', () => {
-    const fields: Field<'defaultField'>[] = [
+    const fields: SpreadsheetImportField<'defaultField'>[] = [
       {
         ...defaultField,
         example: 'Example',

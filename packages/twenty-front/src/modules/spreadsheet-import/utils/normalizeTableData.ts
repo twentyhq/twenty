@@ -3,18 +3,18 @@ import {
   ColumnType,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import {
-  Fields,
   ImportedRow,
   ImportedStructuredRow,
+  SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
-import { isDefined } from 'twenty-shared/utils';
 
 export const normalizeTableData = <T extends string>(
   columns: Columns<T>,
   data: ImportedRow[],
-  fields: Fields<T>,
+  fields: SpreadsheetImportFields<T>,
 ) =>
   data.map((row) =>
     columns.reduce((acc, column, index) => {

@@ -5,9 +5,9 @@ import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import {
-  Field,
   ImportedRow,
   ImportedStructuredRow,
+  SpreadsheetImportField,
 } from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
 import { getMatchedColumns } from '@/spreadsheet-import/utils/getMatchedColumns';
@@ -187,7 +187,7 @@ export const MatchColumnsStep = <T extends string>({
       } else {
         const field = fields.find(
           (field) => field.key === value,
-        ) as unknown as Field<T>;
+        ) as unknown as SpreadsheetImportField<T>;
         const existingFieldIndex = columns.findIndex(
           (column) => 'value' in column && column.value === field.key,
         );

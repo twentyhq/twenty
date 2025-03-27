@@ -138,7 +138,7 @@ export const generateColumns = <T extends string>(
                 value={
                   value
                     ? ({
-                        icon: undefined,
+                        Icon: undefined,
                         ...value,
                       } as const)
                     : value

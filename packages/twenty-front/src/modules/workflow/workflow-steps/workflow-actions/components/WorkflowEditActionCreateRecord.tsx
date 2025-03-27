@@ -13,7 +13,7 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator, useIcons } from 'twenty-ui';
+import { HorizontalSeparator, SelectOption, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';

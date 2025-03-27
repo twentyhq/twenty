@@ -2,12 +2,12 @@ import {
   Column,
   ColumnType,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Field } from '@/spreadsheet-import/types';
+import { SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('setColumn', () => {
-  const defaultField: Field<'Name'> = {
+  const defaultField: SpreadsheetImportField<'Name'> = {
     icon: null,
     label: 'label',
     key: 'Name',
@@ -29,7 +29,7 @@ describe('setColumn', () => {
         type: 'select',
         options: [{ value: 'John' }, { value: 'Alice' }],
       },
-    } as Field<'Name'>;
+    } as SpreadsheetImportField<'Name'>;
 
     const data = [['John'], ['Alice']];
     const result = setColumn(oldColumn, field, data);
@@ -56,7 +56,7 @@ describe('setColumn', () => {
     const field = {
       ...defaultField,
       fieldType: { type: 'checkbox' },
-    } as Field<'Name'>;
+    } as SpreadsheetImportField<'Name'>;
 
     const result = setColumn(oldColumn, field);
 
@@ -72,7 +72,7 @@ describe('setColumn', () => {
     const field = {
       ...defaultField,
       fieldType: { type: 'input' },
-    } as Field<'Name'>;
+    } as SpreadsheetImportField<'Name'>;
 
     const result = setColumn(oldColumn, field);
 
@@ -88,7 +88,7 @@ describe('setColumn', () => {
     const field = {
       ...defaultField,
       fieldType: { type: 'unknown' },
-    } as unknown as Field<'Name'>;
+    } as unknown as SpreadsheetImportField<'Name'>;
 
     const result = setColumn(oldColumn, field);
 

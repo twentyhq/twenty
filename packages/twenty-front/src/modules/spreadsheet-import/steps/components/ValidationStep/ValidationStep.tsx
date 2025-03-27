@@ -9,8 +9,8 @@ import {
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import {
-  ImportValidationResult,
   ImportedStructuredRow,
+  SpreadsheetImportImportValidationResult,
 } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
@@ -214,7 +214,7 @@ export const ValidationStep = <T extends string>({
         validStructuredRows: [] as ImportedStructuredRow<T>[],
         invalidStructuredRows: [] as ImportedStructuredRow<T>[],
         allStructuredRows: data,
-      } satisfies ImportValidationResult<T>,
+      } satisfies SpreadsheetImportImportValidationResult<T>,
     );
 
     setCurrentStepState({

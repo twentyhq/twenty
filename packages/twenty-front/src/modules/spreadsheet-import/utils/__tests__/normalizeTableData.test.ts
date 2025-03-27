@@ -2,7 +2,7 @@ import {
   Column,
   ColumnType,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Field } from '@/spreadsheet-import/types';
+import { SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableData';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -18,7 +18,7 @@ describe('normalizeTableData', () => {
     },
   ];
 
-  const fields: Field<string>[] = [
+  const fields: SpreadsheetImportField<string>[] = [
     {
       key: 'name',
       label: 'Name',
@@ -70,7 +70,7 @@ describe('normalizeTableData', () => {
       },
     ];
 
-    const fields: Field<string>[] = [
+    const fields: SpreadsheetImportField<string>[] = [
       {
         key: 'active',
         label: 'Active',
@@ -104,7 +104,7 @@ describe('normalizeTableData', () => {
       },
     ];
 
-    const fields: Field<string>[] = [
+    const fields: SpreadsheetImportField<string>[] = [
       {
         key: 'number',
         label: 'Number',

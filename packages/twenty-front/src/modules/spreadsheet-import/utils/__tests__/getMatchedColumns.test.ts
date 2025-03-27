@@ -2,7 +2,7 @@ import {
   Column,
   ColumnType,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Field } from '@/spreadsheet-import/types';
+import { SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { getMatchedColumns } from '@/spreadsheet-import/utils/getMatchedColumns';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -23,7 +23,7 @@ describe('getMatchedColumns', () => {
     },
   ];
 
-  const fields: Field<string>[] = [
+  const fields: SpreadsheetImportField<string>[] = [
     {
       key: 'Name',
       label: 'Name',
@@ -114,7 +114,7 @@ describe('getMatchedColumns', () => {
       ['Alice', 'Los Angeles', '25'],
     ];
 
-    const unmatchedFields: Field<string>[] = [
+    const unmatchedFields: SpreadsheetImportField<string>[] = [
       {
         key: 'Hobby',
         label: 'Hobby',

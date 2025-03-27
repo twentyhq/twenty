@@ -19,7 +19,7 @@ const nameField: SpreadsheetImportField<'Name'> = {
   fieldMetadataType: FieldMetadataType.TEXT,
 };
 
-const ageField: SpreadsheetImportFieldField<'Age'> = {
+const ageField: SpreadsheetImportField<'Age'> = {
   key: 'Age',
   label: 'Age',
   icon: null,
