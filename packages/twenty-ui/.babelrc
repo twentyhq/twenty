@@ -3,7 +3,7 @@
   "presets": [
     "@babel/preset-env",
     "@babel/preset-typescript",
-    "@babel/preset-react"
+    ["@babel/preset-react", {"runtime": "automatic"}]
   ],
   "plugins": [
     [
@@ -20,12 +20,30 @@
     [
       "inline-import",
       {
-        "extensions": [
-          ".png",
-          ".jpg",
-          ".jpeg"
-        ]
+        "extensions": [".png", ".jpg", ".jpeg"]
       }
     ]
+  ],
+  "overrides": [
+    {
+      "include": [
+        "**/OverflowingTextWithTooltip.tsx",
+        // "**/Tag.tsx",
+        "**/Avatar.tsx",
+        "**/Chip.tsx",
+        "**/ContactLink.tsx",
+        "**/RoundedLink.tsx"
+      ],
+      "presets": [
+        [
+          "@wyw-in-js",
+          {
+            "evaluate": false,
+            "displayName": false,
+            "preprocessor": "none"
+          }
+        ]
+      ]
+    }
   ]
 }

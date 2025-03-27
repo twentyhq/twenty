@@ -24207,6 +24207,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wyw-in-js/babel-preset@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@wyw-in-js/babel-preset@npm:0.6.0"
+  dependencies:
+    "@babel/core": "npm:^7.23.5"
+    "@wyw-in-js/transform": "npm:0.6.0"
+  checksum: 10c0/29a1ee3e5207a41b7009bf582e22d03a686c0a5b70c98e7bf1cb3d7494cf1df7227368e7bb28493385c11b484a37c90b9c7fc10bcd06f9839f4c872e4fd57522
+  languageName: node
+  linkType: hard
+
 "@wyw-in-js/processor-utils@npm:0.5.4, @wyw-in-js/processor-utils@npm:^0.5.3":
   version: 0.5.4
   resolution: "@wyw-in-js/processor-utils@npm:0.5.4"
@@ -24214,6 +24224,16 @@ __metadata:
     "@babel/generator": "npm:^7.23.5"
     "@wyw-in-js/shared": "npm:0.5.4"
   checksum: 10c0/f6f34f780d116bc5fc976f7fa550d297795cef9447d8c531323886fa33e4bac6e1a80db1115e63f928b9fb0e677fdb28e00228c1a13631572341dbffbf9aecd0
+  languageName: node
+  linkType: hard
+
+"@wyw-in-js/processor-utils@npm:0.6.0":
+  version: 0.6.0
+  resolution: "@wyw-in-js/processor-utils@npm:0.6.0"
+  dependencies:
+    "@babel/generator": "npm:^7.23.5"
+    "@wyw-in-js/shared": "npm:0.6.0"
+  checksum: 10c0/e7338afb71aa1eccf7646447df9d20c2ac895dc1d5a5ad8c26931997fa31595ece5890e8ada39b3c1fda28439c7598de950980dded714dbe003b232f95d22d9e
   languageName: node
   linkType: hard
 
@@ -24225,6 +24245,17 @@ __metadata:
     find-up: "npm:^5.0.0"
     minimatch: "npm:^9.0.3"
   checksum: 10c0/47ec8bf5196679c42bdd1fa0f9831171fd8d8727031bbf7dcafbdbe19ee658660343405249d77ab2b9e7c1004ff30e4e6eaa4790784f223118089812020d0d4b
+  languageName: node
+  linkType: hard
+
+"@wyw-in-js/shared@npm:0.6.0":
+  version: 0.6.0
+  resolution: "@wyw-in-js/shared@npm:0.6.0"
+  dependencies:
+    debug: "npm:^4.3.4"
+    find-up: "npm:^5.0.0"
+    minimatch: "npm:^9.0.3"
+  checksum: 10c0/a7bab831ebdf9172c8b7a117525550b57c6b338bb6579f186b0f54a3cae5cde75dd245e375b93766fe1f1fc1d42f804353622594115727a2a8c4eb4de84aaaab
   languageName: node
   linkType: hard
 
@@ -24248,6 +24279,29 @@ __metadata:
     stylis: "npm:^4.3.0"
     ts-invariant: "npm:^0.10.3"
   checksum: 10c0/ec083911264f0e607f3b29afe3d8b661efa69b4563580786ac47fe425ee32679293930fa0e78dc5269948035fb25dc0c1a4c2c8b0963c5fd396e406b1110f79b
+  languageName: node
+  linkType: hard
+
+"@wyw-in-js/transform@npm:0.6.0":
+  version: 0.6.0
+  resolution: "@wyw-in-js/transform@npm:0.6.0"
+  dependencies:
+    "@babel/core": "npm:^7.23.5"
+    "@babel/generator": "npm:^7.23.5"
+    "@babel/helper-module-imports": "npm:^7.22.15"
+    "@babel/plugin-transform-modules-commonjs": "npm:^7.23.3"
+    "@babel/template": "npm:^7.22.15"
+    "@babel/traverse": "npm:^7.23.5"
+    "@babel/types": "npm:^7.23.5"
+    "@wyw-in-js/processor-utils": "npm:0.6.0"
+    "@wyw-in-js/shared": "npm:0.6.0"
+    babel-merge: "npm:^3.0.0"
+    cosmiconfig: "npm:^8.0.0"
+    happy-dom: "npm:^15.11.0"
+    source-map: "npm:^0.7.4"
+    stylis: "npm:^4.3.0"
+    ts-invariant: "npm:^0.10.3"
+  checksum: 10c0/f94c1477effefee8116530f415e1442317144131d9032eb91e2d3ee7e765594e657aaf65defb71bcc249341147c253cf72190063a9d22a38b13cb80ab6d6eabd
   languageName: node
   linkType: hard
 
@@ -35784,6 +35838,17 @@ __metadata:
     whatwg-encoding: "npm:^2.0.0"
     whatwg-mimetype: "npm:^3.0.0"
   checksum: 10c0/fbf8647e17c4af5c166d7c4b6963f4bbc9d1c279e94a4c77234b1fecca98c59989b894c7b186f5107e1062d40ffd84f12350b757f51330a5fc1c5228eb199517
+  languageName: node
+  linkType: hard
+
+"happy-dom@npm:^15.11.0":
+  version: 15.11.7
+  resolution: "happy-dom@npm:15.11.7"
+  dependencies:
+    entities: "npm:^4.5.0"
+    webidl-conversions: "npm:^7.0.0"
+    whatwg-mimetype: "npm:^3.0.0"
+  checksum: 10c0/22b08cac20192b08edf2e9c857ceeda8333a3301c4b5965a9550787b00db60d6d107c726390bd45a35305cd12ab086abd656bf957a408be0fcdc9fcd389f1973
   languageName: node
   linkType: hard
 
@@ -54331,6 +54396,7 @@ __metadata:
     "@types/babel__preset-env": "npm:^7"
     "@types/react": "npm:^18.2.39"
     "@types/react-dom": "npm:^18.2.15"
+    "@wyw-in-js/babel-preset": "npm:^0.6.0"
     babel-plugin-inline-import: "npm:^3.0.0"
     babel-plugin-inline-react-svg: "npm:^2.0.2"
     babel-plugin-module-resolver: "npm:^5.0.2"
