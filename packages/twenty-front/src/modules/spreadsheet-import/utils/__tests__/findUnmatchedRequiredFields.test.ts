@@ -2,11 +2,14 @@ import {
   Column,
   ColumnType,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Field, FieldValidationDefinition } from '@/spreadsheet-import/types';
+import {
+  SpreadsheetImportField,
+  SpreadsheetImportFieldValidationDefinition,
+} from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const nameField: Field<'Name'> = {
+const nameField: SpreadsheetImportField<'Name'> = {
   key: 'Name',
   label: 'Name',
   icon: null,
@@ -16,7 +19,7 @@ const nameField: Field<'Name'> = {
   fieldMetadataType: FieldMetadataType.TEXT,
 };
 
-const ageField: Field<'Age'> = {
+const ageField: SpreadsheetImportFieldField<'Age'> = {
   key: 'Age',
   label: 'Age',
   icon: null,
@@ -26,12 +29,14 @@ const ageField: Field<'Age'> = {
   fieldMetadataType: FieldMetadataType.NUMBER,
 };
 
-const validations: FieldValidationDefinition[] = [{ rule: 'required' }];
-const nameFieldWithValidations: Field<'Name'> = {
+const validations: SpreadsheetImportFieldValidationDefinition[] = [
+  { rule: 'required' },
+];
+const nameFieldWithValidations: SpreadsheetImportField<'Name'> = {
   ...nameField,
   fieldValidationDefinitions: validations,
 };
-const ageFieldWithValidations: Field<'Age'> = {
+const ageFieldWithValidations: SpreadsheetImportField<'Age'> = {
   ...ageField,
   fieldValidationDefinitions: validations,
 };

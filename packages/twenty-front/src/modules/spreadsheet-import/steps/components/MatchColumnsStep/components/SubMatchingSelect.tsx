@@ -9,8 +9,7 @@ import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectField
 import { SelectInput } from '@/ui/input/components/SelectInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useEffect, useState } from 'react';
-import { IconChevronDown, Tag, TagColor } from 'twenty-ui';
-import { SelectOption } from '~/types/SelectOption';
+import { IconChevronDown, SelectOption, Tag, TagColor } from 'twenty-ui';
 import {
   MatchedOptions,
   MatchedSelectColumn,

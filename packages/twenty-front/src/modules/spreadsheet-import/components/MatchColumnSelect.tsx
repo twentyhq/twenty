@@ -9,7 +9,7 @@ import {
 } from '@floating-ui/react';
 import React, { useCallback, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AppTooltip, MenuItem, MenuItemSelect } from 'twenty-ui';
+import { AppTooltip, MenuItem, MenuItemSelect, SelectOption } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -21,7 +21,6 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useLingui } from '@lingui/react/macro';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
-import { SelectOption } from '~/types/SelectOption';
 
 const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
@@ -116,7 +115,7 @@ export const MatchColumnSelect = ({
     <>
       <div ref={refs.setReference}>
         <MenuItem
-          LeftIcon={value?.icon}
+          LeftIcon={value?.Icon}
           onClick={handleDropdownItemClick}
           text={value?.label ?? placeholder ?? ''}
           accent={value?.label ? 'default' : 'placeholder'}
@@ -146,7 +145,7 @@ export const MatchColumnSelect = ({
                         disabled={
                           option.disabled && value?.value !== option.value
                         }
-                        LeftIcon={option?.icon}
+                        LeftIcon={option?.Icon}
                         text={option.label}
                       />
                       {option.disabled &&

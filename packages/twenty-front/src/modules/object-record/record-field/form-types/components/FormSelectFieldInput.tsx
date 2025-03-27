@@ -18,8 +18,7 @@ import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
-import { SelectOption } from '~/types/SelectOption';
+import { IconChevronDown, SelectOption, VisibilityHidden } from 'twenty-ui';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -245,7 +244,7 @@ export const FormSelectFieldInput = ({
                     <SelectDisplay
                       color={selectedOption.color ?? 'transparent'}
                       label={selectedOption.label}
-                      Icon={selectedOption.icon ?? undefined}
+                      Icon={selectedOption.Icon ?? undefined}
                       preventPadding={preventDisplayPadding}
                     />
                   </StyledSelectDisplayContainer>
@@ -269,7 +268,7 @@ export const FormSelectFieldInput = ({
                     <SelectDisplay
                       color={selectedOption.color ?? 'transparent'}
                       label={selectedOption.label}
-                      Icon={selectedOption.icon ?? undefined}
+                      Icon={selectedOption.Icon ?? undefined}
                       preventPadding={preventDisplayPadding}
                     />
                   </StyledSelectDisplayContainer>

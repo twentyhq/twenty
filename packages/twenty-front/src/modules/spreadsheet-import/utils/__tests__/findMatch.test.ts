@@ -1,9 +1,9 @@
-import { Field } from '@/spreadsheet-import/types';
+import { SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { findMatch } from '@/spreadsheet-import/utils/findMatch';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('findMatch', () => {
-  const defaultField: Field<'defaultField'> = {
+  const defaultField: SpreadsheetImportField<'defaultField'> = {
     key: 'defaultField',
     icon: null,
     label: 'label',
@@ -14,7 +14,7 @@ describe('findMatch', () => {
     alternateMatches: ['Full Name', 'First Name'],
   };
 
-  const secondaryField: Field<'secondaryField'> = {
+  const secondaryField: SpreadsheetImportField<'secondaryField'> = {
     key: 'secondaryField',
     icon: null,
     label: 'label',

@@ -1,4 +1,4 @@
-import { SelectOption } from '../../../types/SelectOption';
+import { SelectOption } from 'twenty-ui';
 
 export type SpreadsheetImportCheckbox = {
   type: 'checkbox';

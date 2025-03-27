@@ -8,6 +8,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   IconSettingsAutomation,
   IconX,
@@ -15,7 +16,6 @@ import {
   IllustrationIconText,
   LightIconButton,
 } from 'twenty-ui';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
@@ -109,13 +109,13 @@ export const WorkflowEditActionFormFieldSettings = ({
                 label: getDefaultFormFieldSettings(FieldMetadataType.TEXT)
                   .label,
                 value: FieldMetadataType.TEXT,
-                icon: IllustrationIconText,
+                Icon: IllustrationIconText,
               },
               {
                 label: getDefaultFormFieldSettings(FieldMetadataType.NUMBER)
                   .label,
                 value: FieldMetadataType.NUMBER,
-                icon: IllustrationIconNumbers,
+                Icon: IllustrationIconNumbers,
               },
             ]}
             onChange={(newType: string | null) => {

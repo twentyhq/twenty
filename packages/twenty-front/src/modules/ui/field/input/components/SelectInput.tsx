@@ -1,6 +1,6 @@
 import { SelectInput as SelectBaseInput } from '@/ui/input/components/SelectInput';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectOption } from '~/types/SelectOption';
+import { SelectOption } from 'twenty-ui';
 
 type SelectInputProps = {
   selectableListComponentInstanceId: string;

@@ -13,8 +13,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemMultiSelectTag } from 'twenty-ui';
-import { SelectOption } from '~/types/SelectOption';
+import { MenuItemMultiSelectTag, SelectOption } from 'twenty-ui';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
@@ -128,7 +127,7 @@ export const MultiSelectInput = ({
                 selected={values?.includes(option.value) || false}
                 text={option.label}
                 color={option.color ?? 'transparent'}
-                Icon={option.icon ?? undefined}
+                Icon={option.Icon ?? undefined}
                 onClick={() =>
                   onOptionSelected(formatNewSelectedOptions(option.value))
                 }

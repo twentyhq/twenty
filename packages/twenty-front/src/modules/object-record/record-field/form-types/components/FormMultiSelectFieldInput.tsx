@@ -17,8 +17,7 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
-import { SelectOption } from '~/types/SelectOption';
+import { IconChevronDown, SelectOption, VisibilityHidden } from 'twenty-ui';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;

@@ -4,14 +4,14 @@ import {
   MatchColumnsStepProps,
   MatchedOptions,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Field } from '@/spreadsheet-import/types';
 
+import { SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { z } from 'zod';
 import { uniqueEntries } from './uniqueEntries';
 
 export const setColumn = <T extends string>(
   oldColumn: Column<T>,
-  field?: Field<T>,
+  field?: SpreadsheetImportField<T>,
   data?: MatchColumnsStepProps['data'],
 ): Column<T> => {
   if (field?.fieldType.type === 'select') {
