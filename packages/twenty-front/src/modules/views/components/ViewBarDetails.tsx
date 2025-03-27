@@ -71,6 +71,7 @@ const StyledCancelButton = styled.button`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   user-select: none;
   margin-right: ${({ theme }) => theme.spacing(2)};
+  height: 24px;
   &:hover {
     background-color: ${({ theme }) => theme.background.tertiary};
     border-radius: ${({ theme }) => theme.spacing(1)};
