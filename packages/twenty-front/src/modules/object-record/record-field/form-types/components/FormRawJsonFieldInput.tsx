@@ -6,16 +6,16 @@ import { useTextVariableEditor } from '@/object-record/record-field/form-types/h
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useId } from 'react';
-import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { isDefined } from 'twenty-shared/utils';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type FormRawJsonFieldInputProps = {
   label?: string;
   defaultValue: string | null | undefined;
-  placeholder: string;
   onChange: (value: string | null) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
+  placeholder?: string;
 };
 
 export const FormRawJsonFieldInput = ({
@@ -29,7 +29,7 @@ export const FormRawJsonFieldInput = ({
   const inputId = useId();
 
   const editor = useTextVariableEditor({
-    placeholder,
+    placeholder: placeholder ?? 'Enter a JSON object',
     multiline: true,
     readonly,
     defaultValue: defaultValue ?? undefined,

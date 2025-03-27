@@ -2,12 +2,13 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, within } from '@storybook/test';
+import { userEvent } from '@storybook/testing-library';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),
@@ -89,9 +90,14 @@ export const DisabledWithEmptyValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const titleInput = await canvas.findByDisplayValue('Form');
+    const titleText = await canvas.findByText('Form');
 
-    expect(titleInput).toBeDisabled();
+    expect(window.getComputedStyle(titleText).cursor).toBe('default');
+
+    await userEvent.click(titleText);
+
+    const titleInput = canvas.queryByDisplayValue('Form');
+    expect(titleInput).not.toBeInTheDocument();
 
     await canvas.findByText('Company');
 

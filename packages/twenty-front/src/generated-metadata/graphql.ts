@@ -63,16 +63,6 @@ export type Analytics = {
   success: Scalars['Boolean']['output'];
 };
 
-export type AnalyticsTinybirdJwtMap = {
-  __typename?: 'AnalyticsTinybirdJwtMap';
-  getPageviewsAnalytics: Scalars['String']['output'];
-  getServerlessFunctionDuration: Scalars['String']['output'];
-  getServerlessFunctionErrorCount: Scalars['String']['output'];
-  getServerlessFunctionSuccessRate: Scalars['String']['output'];
-  getUsersAnalytics: Scalars['String']['output'];
-  getWebhookAnalytics: Scalars['String']['output'];
-};
-
 export type ApiConfig = {
   __typename?: 'ApiConfig';
   mutationMaximumAffectedRecords: Scalars['Float']['output'];
@@ -516,6 +506,7 @@ export type EnvironmentVariable = {
 };
 
 export enum EnvironmentVariablesGroup {
+  AnalyticsConfig = 'AnalyticsConfig',
   BillingConfig = 'BillingConfig',
   CaptchaConfig = 'CaptchaConfig',
   CloudflareConfig = 'CloudflareConfig',
@@ -532,7 +523,6 @@ export enum EnvironmentVariablesGroup {
   ServerlessConfig = 'ServerlessConfig',
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
-  TinybirdConfig = 'TinybirdConfig',
   TokensDuration = 'TokensDuration'
 }
 
@@ -2273,7 +2263,6 @@ export type UpsertSettingPermissionInput = {
 
 export type User = {
   __typename?: 'User';
-  analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
   canAccessFullAdminPanel: Scalars['Boolean']['output'];
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];

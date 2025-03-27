@@ -16,7 +16,6 @@ import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/co
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
 import { InitializePermissionsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-initialize-permissions.command';
 import { UpdateViewAggregateOperationsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-update-view-aggregate-operations.command';
-import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-50/0-50-migrate-relations-to-field-metadata.command';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -31,7 +30,7 @@ type VersionCommands = {
   description: 'Upgrade workspaces to the latest version',
 })
 export class UpgradeCommand extends UpgradeCommandRunner {
-  fromWorkspaceVersion = new SemVer('0.43.0');
+  fromWorkspaceVersion = new SemVer('0.44.0');
   private commands: VersionCommands;
 
   constructor(
@@ -51,9 +50,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 0.44 Commands
     protected readonly initializePermissionsCommand: InitializePermissionsCommand,
     protected readonly updateViewAggregateOperationsCommand: UpdateViewAggregateOperationsCommand,
-
-    // 0.50 Commands
-    protected readonly migrateRelationsToFieldMetadataCommand: MigrateRelationsToFieldMetadataCommand,
   ) {
     super(
       workspaceRepository,
@@ -74,19 +70,19 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.addTasksAssignedToMeViewCommand,
       ],
     };
-    const commands_044: VersionCommands = {
+    const _commands_044: VersionCommands = {
       beforeSyncMetadata: [
         this.initializePermissionsCommand,
         this.updateViewAggregateOperationsCommand,
       ],
       afterSyncMetadata: [],
     };
-    const _commands_050: VersionCommands = {
-      beforeSyncMetadata: [this.migrateRelationsToFieldMetadataCommand],
+    const commands_050: VersionCommands = {
+      beforeSyncMetadata: [],
       afterSyncMetadata: [],
     };
 
-    this.commands = commands_044;
+    this.commands = commands_050;
   }
 
   override async runBeforeSyncMetadata(args: RunOnWorkspaceArgs) {

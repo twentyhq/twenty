@@ -5,6 +5,7 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useLingui } from '@lingui/react/macro';
 import { ChangeEvent, useState } from 'react';
 import { SearchRecord } from '~/generated-metadata/graphql';
 
@@ -34,13 +35,14 @@ export const RoleAssignmentWorkspaceMemberPickerDropdown = ({
   const handleSearchFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchFilter(event.target.value);
   };
+  const { t } = useLingui();
 
   return (
     <DropdownMenu>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleSearchFilterChange}
-        placeholder="Search"
+        placeholder={t`Search`}
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>

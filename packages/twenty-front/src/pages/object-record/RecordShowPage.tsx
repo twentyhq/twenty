@@ -24,7 +24,7 @@ export const RecordShowPage = () => {
     objectRecordId: string;
   }>();
 
-  const { objectNameSingular, objectRecordId, headerIcon } = useRecordShowPage(
+  const { objectNameSingular, objectRecordId } = useRecordShowPage(
     parameters.objectNameSingular ?? '',
     parameters.objectRecordId ?? '',
   );
@@ -55,7 +55,6 @@ export const RecordShowPage = () => {
                   <RecordShowPageHeader
                     objectNameSingular={objectNameSingular}
                     objectRecordId={objectRecordId}
-                    headerIcon={headerIcon}
                   >
                     <RecordShowActionMenu />
                   </RecordShowPageHeader>

@@ -68,6 +68,8 @@ export const ObjectFilterDropdownTextInput = () => {
               ),
               label: fieldMetadataItemUsedInDropdown.label,
               recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+              positionInRecordFilterGroup:
+                selectedFilter?.positionInRecordFilterGroup,
             });
           }}
         />

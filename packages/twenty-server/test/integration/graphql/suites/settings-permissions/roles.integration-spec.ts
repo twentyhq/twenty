@@ -2,8 +2,8 @@ import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
-import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
@@ -38,19 +38,12 @@ describe('roles permissions', () => {
   let guestRoleId: string;
 
   beforeAll(async () => {
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
-
     const enablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
       'IsPermissionsV2Enabled',
       true,
     );
 
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
     await makeGraphqlAPIRequest(enablePermissionsV2Query);
 
     const query = {
@@ -460,14 +453,23 @@ describe('roles permissions', () => {
       let listingObjectId = '';
 
       beforeAll(async () => {
-        const { objectMetadataId: createdObjectId } =
-          await createListingCustomObject();
+        const { data } = await createOneObjectMetadata({
+          input: {
+            nameSingular: 'house',
+            namePlural: 'houses',
+            labelSingular: 'House',
+            labelPlural: 'Houses',
+            icon: 'IconBuildingSkyscraper',
+          },
+        });
 
-        listingObjectId = createdObjectId;
+        listingObjectId = data.createOneObject.id;
       });
 
       afterAll(async () => {
-        await deleteOneObjectMetadataItem(listingObjectId);
+        await deleteOneObjectMetadata({
+          input: { idToDelete: listingObjectId },
+        });
       });
 
       const upsertObjectPermissionMutation = ({
