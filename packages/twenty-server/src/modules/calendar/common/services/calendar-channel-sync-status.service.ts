@@ -5,8 +5,11 @@ import { Any } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
-import { HealthCounterCacheKeys } from 'src/engine/core-modules/health/types/health-counter-cache-keys.type';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import {
+  MeterKeys,
+  MetricsCounterKeys,
+} from 'src/engine/core-modules/metrics/types/metrics-counter-keys.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   CalendarChannelSyncStage,
@@ -24,7 +27,7 @@ export class CalendarChannelSyncStatusService {
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
-    private readonly healthCacheService: HealthCacheService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   public async scheduleFullCalendarEventListFetch(
@@ -179,10 +182,10 @@ export class CalendarChannelSyncStatusService {
 
     await this.schedulePartialCalendarEventListFetch(calendarChannelIds);
 
-    await this.healthCacheService.updateMessageOrCalendarChannelSyncJobByStatusCache(
-      HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
-      CalendarChannelSyncStatus.ACTIVE,
+    await this.metricsService.incrementCounter(
+      MetricsCounterKeys.CalendarEventSyncJobActive,
       calendarChannelIds,
+      MeterKeys.CalendarEventSyncJob,
     );
   }
 
@@ -210,10 +213,10 @@ export class CalendarChannelSyncStatusService {
       syncStage: CalendarChannelSyncStage.FAILED,
     });
 
-    await this.healthCacheService.updateMessageOrCalendarChannelSyncJobByStatusCache(
-      HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
-      CalendarChannelSyncStatus.FAILED_UNKNOWN,
+    await this.metricsService.incrementCounter(
+      MetricsCounterKeys.CalendarEventSyncJobFailedUnknown,
       calendarChannelIds,
+      MeterKeys.CalendarEventSyncJob,
     );
   }
 
@@ -266,10 +269,10 @@ export class CalendarChannelSyncStatusService {
       workspaceId,
     );
 
-    await this.healthCacheService.updateMessageOrCalendarChannelSyncJobByStatusCache(
-      HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
-      CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+    await this.metricsService.incrementCounter(
+      MetricsCounterKeys.CalendarEventSyncJobFailedInsufficientPermissions,
       calendarChannelIds,
+      MeterKeys.CalendarEventSyncJob,
     );
   }
 
