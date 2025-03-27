@@ -1,5 +1,4 @@
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
-import { MainContextStoreSettingsSideEffect } from '@/context-store/components/MainContextStoreSettingsSideEffect';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -70,22 +69,10 @@ export const MainContextStoreProvider = () => {
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
 
-  if (isSettingsPage) {
-    return <MainContextStoreSettingsSideEffect />;
-  }
-
-  // not sure what should happen here, should we return null when page name and object metadata item are not defined as it was before?
-  // or should we return the provider with the default/reset values? -- ie like one of settings side effect?
-
-  // if (
-  //   !isDefined(pageName) ||
-  //   !isDefined(objectMetadataItem) ||
-  //   isSettingsPage
-  // ) {
-  //   return <MainContextStoreSettingsSideEffect />;
-  // }
-
-  if (!isDefined(pageName) || !isDefined(objectMetadataItem)) {
+  if (
+    !isSettingsPage &&
+    (!isDefined(pageName) || !isDefined(objectMetadataItem))
+  ) {
     return null;
   }
 

@@ -3,6 +3,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -18,9 +19,11 @@ export const MainContextStoreProviderEffect = ({
   pageName,
 }: {
   viewId?: string;
-  objectMetadataItem: ObjectMetadataItem;
-  pageName: string;
+  objectMetadataItem?: ObjectMetadataItem;
+  pageName?: string;
 }) => {
+  const isSettingsPage = useIsSettingsPage();
+
   const { setLastVisitedViewForObjectMetadataNamePlural } =
     useSetLastVisitedViewForObjectMetadataNamePlural();
 
@@ -54,6 +57,15 @@ export const MainContextStoreProviderEffect = ({
   );
 
   useEffect(() => {
+    if (isSettingsPage) {
+      setContextStoreCurrentViewId(undefined);
+      return;
+    }
+
+    if (!objectMetadataItem) {
+      return;
+    }
+
     if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {
       setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     }
@@ -74,15 +86,24 @@ export const MainContextStoreProviderEffect = ({
     contextStoreCurrentObjectMetadataItemId,
     contextStoreCurrentViewId,
     objectMetadataItem,
-    objectMetadataItem.namePlural,
     setContextStoreCurrentObjectMetadataItemId,
     setContextStoreCurrentViewId,
     setLastVisitedObjectMetadataId,
     setLastVisitedViewForObjectMetadataNamePlural,
     viewId,
+    isSettingsPage,
   ]);
 
   useEffect(() => {
+    if (isSettingsPage) {
+      setContextStoreCurrentViewType(null);
+      return;
+    }
+
+    if (!pageName) {
+      return;
+    }
+
     const viewType =
       pageName === 'record-show'
         ? ContextStoreViewType.ShowPage
@@ -98,6 +119,7 @@ export const MainContextStoreProviderEffect = ({
     pageName,
     setContextStoreCurrentViewType,
     view,
+    isSettingsPage,
   ]);
 
   return null;
