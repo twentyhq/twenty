@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { capitalize, FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 

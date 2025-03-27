@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { EntitySchemaRelationOptions } from 'typeorm';
 
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
