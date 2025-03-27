@@ -87,6 +87,11 @@ msgstr "crwdns45:0{aggregateLabel}crwdnd45:0{fieldLabel}crwdne45:0"
 msgid "{apiKeyName} API Key"
 msgstr "crwdns47:0{apiKeyName}crwdne47:0"
 
+#. js-lingui-id: zi5SHH
+#: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
+msgid "{contextStoreNumberOfSelectedRecords} selected"
+msgstr "crwdns5630:0{contextStoreNumberOfSelectedRecords}crwdne5630:0"
+
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
 #: src/modules/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions.tsx
@@ -2097,6 +2102,34 @@ msgstr "crwdns5153:0crwdne5153:0"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Hide"
 msgstr "crwdns413:0crwdne413:0"
+
+#. js-lingui-id: OlbYor
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Hide deleted"
+msgstr "crwdns5620:0crwdne5620:0"
+
+#. js-lingui-id: FHhlye
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Hide deleted records"
+msgstr "crwdns5622:0crwdne5622:0"
+
+#. js-lingui-id: 0dZtKR
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+msgid "Hide deleted runs"
+msgstr "crwdns5624:0crwdne5624:0"
+
+#. js-lingui-id: Jc6FrI
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+msgid "Hide deleted versions"
+msgstr "crwdns5626:0crwdne5626:0"
+
+#. js-lingui-id: aOZAIB
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Hide deleted workflows"
+msgstr "crwdns5628:0crwdne5628:0"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx

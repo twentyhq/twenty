@@ -2529,7 +2529,7 @@ msgid "Log out"
 msgstr ""
 
 #. js-lingui-id: nOhz3x
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr ""
 

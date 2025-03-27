@@ -90,7 +90,7 @@ msgstr "Klucz API {apiKeyName}"
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
-msgstr ""
+msgstr "{contextStoreNumberOfSelectedRecords} wybrano"
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
@@ -2109,27 +2109,27 @@ msgstr "Ukryj"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted"
-msgstr ""
+msgstr "Ukryj usunięte"
 
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted records"
-msgstr ""
+msgstr "Ukryj usunięte rekordy"
 
 #. js-lingui-id: 0dZtKR
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Hide deleted runs"
-msgstr ""
+msgstr "Ukryj usunięte uruchomienia"
 
 #. js-lingui-id: Jc6FrI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Hide deleted versions"
-msgstr ""
+msgstr "Ukryj usunięte wersje"
 
 #. js-lingui-id: aOZAIB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Hide deleted workflows"
-msgstr ""
+msgstr "Ukryj usunięte przepływy pracy"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -2537,7 +2537,7 @@ msgid "Log out"
 msgstr "Wyloguj się"
 
 #. js-lingui-id: nOhz3x
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Wyloguj"
 

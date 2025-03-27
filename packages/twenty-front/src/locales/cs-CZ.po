@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-03-25 14:03\n"
+"PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -90,7 +90,7 @@ msgstr "{apiKeyName} API klíč"
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
-msgstr ""
+msgstr "{contextStoreNumberOfSelectedRecords} vybrané"
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions.tsx
@@ -2109,27 +2109,27 @@ msgstr "Skrýt"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted"
-msgstr ""
+msgstr "Skrýt smazané"
 
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Hide deleted records"
-msgstr ""
+msgstr "Skrýt smazané záznamy"
 
 #. js-lingui-id: 0dZtKR
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 msgid "Hide deleted runs"
-msgstr ""
+msgstr "Skrýt smazaná spuštění"
 
 #. js-lingui-id: Jc6FrI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 msgid "Hide deleted versions"
-msgstr ""
+msgstr "Skrýt smazané verze"
 
 #. js-lingui-id: aOZAIB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Hide deleted workflows"
-msgstr ""
+msgstr "Skryt smazané pracovní postupy"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -2537,7 +2537,7 @@ msgid "Log out"
 msgstr "Odhlásit se"
 
 #. js-lingui-id: nOhz3x
-#: src/modules/settings/components/SettingsNavigationDrawerItems.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Odhlásit"
 

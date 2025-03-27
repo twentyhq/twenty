@@ -8,6 +8,7 @@ import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSo
 import { useIsMobile } from '@ui/utilities';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { ButtonText } from './internal/ButtonText';
 
 export type ButtonSize = 'medium' | 'small';
@@ -341,10 +342,8 @@ const StyledButton = styled('button', {
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: ${({ justify }) => justify};
-  padding: ${({ theme, hasIcon }) => {
-    return `0 ${theme.spacing(2)} 0 ${
-      hasIcon ? theme.spacing(7) : theme.spacing(2)
-    }`;
+  padding: ${({ theme }) => {
+    return `0 ${theme.spacing(2)} 0 ${theme.spacing(2)}`;
   }};
 
   transition: background 0.1s ease;
@@ -435,7 +434,7 @@ export const Button = ({
   hotkeys,
   ariaLabel,
   type,
-  isLoading,
+  isLoading = false,
 }: ButtonProps) => {
   const isMobile = useIsMobile();
 
@@ -449,9 +448,6 @@ export const Button = ({
       disabled={soon || disabled}
       fullWidth={fullWidth}
     >
-      {(isLoading || Icon) && (
-        <ButtonIcon Icon={Icon} isLoading={!!isLoading} />
-      )}
       <StyledButton
         fullWidth={fullWidth}
         variant={variant}
@@ -475,7 +471,12 @@ export const Button = ({
         onBlur={() => setIsFocused(false)}
         size={size}
       >
-        <ButtonText hasIcon={!!Icon} title={title} isLoading={isLoading} />
+        {(isLoading || Icon) && (
+          <ButtonIcon Icon={Icon} isLoading={!!isLoading} />
+        )}
+        {isDefined(title) && (
+          <ButtonText hasIcon={!!Icon} title={title} isLoading={isLoading} />
+        )}
         {hotkeys && !isMobile && (
           <ButtonHotkeys
             hotkeys={hotkeys}
