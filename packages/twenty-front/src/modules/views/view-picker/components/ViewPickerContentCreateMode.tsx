@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
-import { IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -35,6 +34,7 @@ import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPic
 import { useMemo, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { IconLayoutKanban, IconTable, IconX } from 'twenty-ui/display';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};

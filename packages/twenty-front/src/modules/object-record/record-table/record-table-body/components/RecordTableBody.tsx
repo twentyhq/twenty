@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledTbody = styled.tbody`
   &.first-columns-sticky {

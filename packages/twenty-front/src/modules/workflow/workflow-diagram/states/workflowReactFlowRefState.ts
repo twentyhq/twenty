@@ -1,5 +1,5 @@
 import { RefObject } from 'react';
-import { createState } from 'twenty-ui';
+import { createState } from 'twenty-ui/utilities';
 
 export const workflowReactFlowRefState =
   createState<RefObject<HTMLDivElement> | null>({

@@ -17,8 +17,9 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
-import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconChevronDown } from 'twenty-ui/display';
+import { VisibilityHidden } from 'twenty-ui/accessibility';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;

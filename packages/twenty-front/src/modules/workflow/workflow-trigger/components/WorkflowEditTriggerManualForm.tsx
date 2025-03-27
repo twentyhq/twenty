@@ -10,8 +10,8 @@ import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/workflow-trigger
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { useTheme } from '@emotion/react';
-import { useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;

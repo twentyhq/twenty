@@ -1,17 +1,16 @@
-import {
-  IconBuildingSkyscraper,
-  IconCheckbox,
-  IconSettings,
-  IconTargetArrow,
-  IconUser,
-} from 'twenty-ui';
-
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { Command, CommandType } from '../types/Command';
+import {
+  IconBuildingSkyscraper,
+  IconCheckbox,
+  IconSettings,
+  IconTargetArrow,
+  IconUser,
+} from 'twenty-ui/display';
 
 export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   people: {

@@ -1,7 +1,7 @@
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import styled from '@emotion/styled';
-import { AppTooltip, Tag, TooltipDelay } from 'twenty-ui';
+import { AppTooltip, Tag, TooltipDelay } from 'twenty-ui/display';
 
 const StyledTag = styled(Tag)`
   width: 100%;

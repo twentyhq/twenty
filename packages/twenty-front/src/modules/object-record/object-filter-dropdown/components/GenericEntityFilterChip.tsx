@@ -1,6 +1,5 @@
-import { AvatarChip, IconComponent } from 'twenty-ui';
-
 import { RecordFilter } from '../../record-filter/types/RecordFilter';
+import { AvatarChip, IconComponent } from 'twenty-ui/display';
 
 type GenericEntityFilterChipProps = {
   filter: RecordFilter;

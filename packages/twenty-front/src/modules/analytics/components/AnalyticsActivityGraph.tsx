@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
 import { Section } from '@react-email/components';
 import { useId, useState } from 'react';
-import { H2Title } from 'twenty-ui';
+import { H2Title } from 'twenty-ui/display';
 
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};

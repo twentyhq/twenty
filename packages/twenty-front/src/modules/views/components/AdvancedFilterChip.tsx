@@ -1,5 +1,3 @@
-import { IconFilterCog } from 'twenty-ui';
-
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -11,6 +9,7 @@ import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { plural } from 'pluralize';
 import { isDefined } from 'twenty-shared/utils';
+import { IconFilterCog } from 'twenty-ui/display';
 
 export const AdvancedFilterChip = () => {
   const { closeDropdown } = useDropdown(ADVANCED_FILTER_DROPDOWN_ID);

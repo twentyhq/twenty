@@ -14,8 +14,8 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { useIcons } from 'twenty-ui/display';
 
 export type WorkflowEditActionFormFillerProps = {
   action: WorkflowFormAction;

@@ -2,18 +2,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import {
-  Button,
-  H2Title,
-  IconBox,
-  IconButton,
-  IconNorthStar,
-  IconPlus,
-  IconRefresh,
-  IconTrash,
-  Section,
-  useIcons,
-} from 'twenty-ui';
 
 import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
 import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
@@ -34,6 +22,17 @@ import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isDefined } from 'twenty-shared/utils';
+import { Button, IconButton } from 'twenty-ui/input';
+import {
+  H2Title,
+  IconBox,
+  IconNorthStar,
+  IconPlus,
+  IconRefresh,
+  IconTrash,
+  useIcons,
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;

@@ -9,8 +9,10 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { IconButton, IconDotsVertical, MenuItem } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconButton } from 'twenty-ui/input';
+import { IconDotsVertical } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type AdvancedFilterRecordFilterOptionsDropdownProps = {
   recordFilterId: string;

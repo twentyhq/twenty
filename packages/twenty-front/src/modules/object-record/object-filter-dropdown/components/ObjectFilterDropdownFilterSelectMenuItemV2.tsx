@@ -4,7 +4,8 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilValue } from 'recoil';
-import { MenuItemSelect, useIcons } from 'twenty-ui';
+import { MenuItemSelect } from 'twenty-ui/navigation';
+import { useIcons } from 'twenty-ui/display';
 
 export type ObjectFilterDropdownFilterSelectMenuItemV2Props = {
   fieldMetadataItemToSelect: FieldMetadataItem;

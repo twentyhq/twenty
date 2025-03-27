@@ -13,7 +13,7 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
 import { MainNavigationDrawerItems } from '@/navigation/components/MainNavigationDrawerItems';
 import { useLingui } from '@lingui/react/macro';
-import { AdvancedSettingsToggle } from 'twenty-ui';
+import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 
 export type AppNavigationDrawerProps = {
   className?: string;

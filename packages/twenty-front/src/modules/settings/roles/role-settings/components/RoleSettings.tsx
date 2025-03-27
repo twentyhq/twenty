@@ -4,8 +4,8 @@ import { t } from '@lingui/core/macro';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Section } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
+import { Section } from 'twenty-ui/layout';
 
 const StyledInputsContainer = styled.div`
   display: flex;

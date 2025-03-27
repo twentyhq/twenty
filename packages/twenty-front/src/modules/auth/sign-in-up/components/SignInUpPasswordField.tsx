@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 import { Controller, useFormContext } from 'react-hook-form';
-import { StyledText } from 'twenty-ui';
+import { StyledText } from 'twenty-ui/display';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;

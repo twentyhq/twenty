@@ -1,5 +1,5 @@
-import { Status } from 'twenty-ui';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
+import { Status } from 'twenty-ui/display';
 
 export const SettingsAdminHealthStatusRightContainer = ({
   status,

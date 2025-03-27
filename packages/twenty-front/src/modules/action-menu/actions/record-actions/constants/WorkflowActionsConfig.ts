@@ -47,7 +47,7 @@ import {
   IconRotate2,
   IconTrash,
   IconTrashX,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 export const WORKFLOW_ACTIONS_CONFIG: Record<
   string,

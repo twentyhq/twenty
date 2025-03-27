@@ -11,9 +11,10 @@ import {
   useRef,
   useState,
 } from 'react';
-import { AutogrowWrapper, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { AutogrowWrapper } from 'twenty-ui/utilities';
+import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui/display';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>

@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { IconForbid } from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Columns, ColumnType } from '../MatchColumnsStep';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { IconForbid } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   display: flex;

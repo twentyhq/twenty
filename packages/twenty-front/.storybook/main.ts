@@ -1,5 +1,6 @@
 import { StorybookConfig } from '@storybook/react-vite';
 
+
 const computeStoriesGlob = () => {
   if (process.env.STORYBOOK_SCOPE === 'pages') {
     return [

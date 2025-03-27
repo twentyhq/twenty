@@ -2,18 +2,18 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  IconComponent,
-  IconX,
-  LightIconButton,
-  MOBILE_VIEWPORT,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import {
+  IconComponent,
+  IconX,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 

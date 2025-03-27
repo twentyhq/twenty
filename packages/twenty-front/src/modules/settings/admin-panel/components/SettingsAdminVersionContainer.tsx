@@ -4,8 +4,9 @@ import { fetchLatestTwentyRelease } from '@/settings/admin-panel/utils/fetchLate
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { GITHUB_LINK, IconCircleDot, IconStatusChange } from 'twenty-ui';
 import packageJson from '../../../../../package.json';
+import { GITHUB_LINK } from 'twenty-ui/navigation';
+import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
 
 const StyledActionLink = styled.a`
   align-items: center;

@@ -1,15 +1,5 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef, useState } from 'react';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  Button,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  IconPlus,
-} from 'twenty-ui';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
@@ -19,6 +9,16 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui/display';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;

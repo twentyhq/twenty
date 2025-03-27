@@ -2,7 +2,8 @@ import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionM
 import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { i18n } from '@lingui/core';
-import { Button, IconButton, useIsMobile } from 'twenty-ui';
+import { Button, IconButton } from 'twenty-ui/input';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordShowActionMenuButtons = () => {
   const actionMenuEntries = useRecoilComponentValueV2(

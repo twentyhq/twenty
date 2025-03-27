@@ -3,8 +3,8 @@ import { useRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Toggle } from 'twenty-ui';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { Toggle } from 'twenty-ui/input';
 
 export const ToggleImpersonate = () => {
   const { enqueueSnackBar } = useSnackBar();

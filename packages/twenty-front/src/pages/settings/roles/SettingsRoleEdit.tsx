@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { H3Title, IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { RoleAssignment } from '@/settings/roles/role-assignment/components/RoleAssignment';
@@ -15,6 +14,12 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useGetRolesQuery } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import {
+  H3Title,
+  IconLockOpen,
+  IconSettings,
+  IconUserPlus,
+} from 'twenty-ui/display';
 
 export const SETTINGS_ROLE_DETAIL_TABS = {
   COMPONENT_INSTANCE_ID: 'settings-role-detail-tabs',

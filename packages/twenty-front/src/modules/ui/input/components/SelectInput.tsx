@@ -8,8 +8,9 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { MenuItemSelectTag, TagColor } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { TagColor } from 'twenty-ui/display';
 
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;

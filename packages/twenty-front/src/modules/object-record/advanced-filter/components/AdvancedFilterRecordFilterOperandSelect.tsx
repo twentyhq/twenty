@@ -14,7 +14,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledContainer = styled.div`
   flex: 1;

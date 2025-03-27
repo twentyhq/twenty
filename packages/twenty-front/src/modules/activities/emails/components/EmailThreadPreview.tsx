@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
-import { Avatar, GRAY_SCALE } from 'twenty-ui';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
 import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { Avatar } from 'twenty-ui/display';
+import { GRAY_SCALE } from 'twenty-ui/theme';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;

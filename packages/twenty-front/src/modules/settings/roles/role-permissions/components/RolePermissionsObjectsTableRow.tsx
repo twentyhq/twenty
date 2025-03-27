@@ -2,7 +2,7 @@ import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePerm
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
-import { Checkbox } from 'twenty-ui';
+import { Checkbox } from 'twenty-ui/input';
 
 const StyledIconWrapper = styled.div`
   align-items: center;

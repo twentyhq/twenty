@@ -29,8 +29,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { Nullable } from 'twenty-ui/utilities';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
 const StyledInputContainer = styled(FormFieldInputInputContainer)`
   display: grid;

@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
@@ -13,6 +12,7 @@ import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal
 import { css } from '@emotion/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
 export const DEFAULT_PHONE_CALLING_CODE = '1';
 

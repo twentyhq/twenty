@@ -2,10 +2,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { RolesDefaultRole } from '@/settings/roles/components/RolesDefaultRole';
 import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
-import { ComponentDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const rolesMock = getRolesMock();
 

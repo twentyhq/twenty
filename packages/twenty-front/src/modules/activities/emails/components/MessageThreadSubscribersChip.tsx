@@ -7,8 +7,8 @@ import {
   Chip,
   ChipVariant,
   IconChevronDown,
-  ThemeContext,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const MAX_NUMBER_OF_AVATARS = 3;
 

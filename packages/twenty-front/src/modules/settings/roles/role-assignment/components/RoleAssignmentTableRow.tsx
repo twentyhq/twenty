@@ -1,8 +1,8 @@
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
-import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
+import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledIconWrapper = styled.div`
   align-items: center;

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { IconCircleOff, useIcons } from 'twenty-ui';
 import { ZodError, isDirty, z } from 'zod';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
@@ -14,6 +13,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
+import { IconCircleOff, useIcons } from 'twenty-ui/display';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
   objectMetadataItemSchema.pick({

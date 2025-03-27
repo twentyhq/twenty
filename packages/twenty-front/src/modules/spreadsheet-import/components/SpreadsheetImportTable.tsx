@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 // @ts-expect-error  // Todo: remove usage of react-data-grid
 import DataGrid, { DataGridProps } from 'react-data-grid';
-import { RGBA } from 'twenty-ui';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { RGBA } from 'twenty-ui/theme';
 
 const StyledDataGrid = styled(DataGrid)`
   --rdg-background-color: ${({ theme }) => theme.background.primary};

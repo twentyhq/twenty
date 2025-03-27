@@ -1,5 +1,5 @@
 import { WorkspaceInvitation } from '@/workspace-member/types/WorkspaceMember';
-import { createState } from 'twenty-ui';
+import { createState } from 'twenty-ui/utilities';
 
 export const workspaceInvitationsState = createState<
   Omit<WorkspaceInvitation, '__typename'>[]

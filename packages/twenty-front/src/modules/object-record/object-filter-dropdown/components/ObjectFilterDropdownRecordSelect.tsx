@@ -22,8 +22,8 @@ import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFil
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { isDefined } from 'twenty-shared/utils';
-import { IconUserCircle } from 'twenty-ui';
 import { v4 } from 'uuid';
+import { IconUserCircle } from 'twenty-ui/display';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,

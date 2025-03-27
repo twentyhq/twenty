@@ -14,8 +14,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { IconCheck } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconCheck } from 'twenty-ui/display';
 
 const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
   align-items: center;

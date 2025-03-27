@@ -9,8 +9,8 @@ import { SingleRecordPicker } from '@/object-record/record-picker/single-record-
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { IconForbid } from 'twenty-ui';
 import { FieldInputEvent } from './DateTimeFieldInput';
+import { IconForbid } from 'twenty-ui/display';
 
 export type RelationToOneFieldInputProps = {
   onSubmit?: FieldInputEvent;

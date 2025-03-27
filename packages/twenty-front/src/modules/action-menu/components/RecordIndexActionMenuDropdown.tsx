@@ -16,7 +16,7 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
 import { useRecoilValue } from 'recoil';
-import { MenuItem } from 'twenty-ui';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledDropdownMenuContainer = styled.div`
   width: 100%;

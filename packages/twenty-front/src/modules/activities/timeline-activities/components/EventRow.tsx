@@ -13,9 +13,9 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledTimelineItemContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};

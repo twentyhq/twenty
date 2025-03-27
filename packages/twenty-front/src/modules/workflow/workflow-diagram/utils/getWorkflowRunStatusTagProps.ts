@@ -1,5 +1,5 @@
 import { WorkflowRunStatus } from '@/workflow/types/Workflow';
-import { TagColor } from 'twenty-ui';
+import { TagColor } from 'twenty-ui/display';
 
 export const getWorkflowRunStatusTagProps = ({
   workflowRunStatus,

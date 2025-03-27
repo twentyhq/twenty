@@ -1,5 +1,4 @@
-import { AvatarType } from 'twenty-ui';
-
+import { AvatarType } from 'twenty-ui/display';
 export type ObjectRecordIdentifier = {
   id: string;
   name: string;

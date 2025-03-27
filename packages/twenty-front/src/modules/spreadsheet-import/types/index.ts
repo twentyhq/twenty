@@ -1,10 +1,11 @@
-import { IconComponent, ThemeColor } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 
 import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { IconComponent } from 'twenty-ui/display';
+import { ThemeColor } from 'twenty-ui/theme';
 
 export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   // Is modal visible.

@@ -2,7 +2,7 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { Avatar } from 'twenty-ui';
+import { Avatar } from 'twenty-ui/display';
 
 const StyledSettingsCardContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(6)};

@@ -5,9 +5,9 @@ import { Roles } from '@/settings/roles/components/Roles';
 import { RolesDefaultRole } from '@/settings/roles/components/RolesDefaultRole';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { H3Title } from 'twenty-ui';
 import { useGetRolesQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { H3Title } from 'twenty-ui/display';
 
 export const SettingsRoles = () => {
   const { t } = useLingui();

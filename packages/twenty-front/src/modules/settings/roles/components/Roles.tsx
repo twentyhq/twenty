@@ -4,8 +4,10 @@ import { t } from '@lingui/core/macro';
 
 import { RolesTableHeader } from '@/settings/roles/components/RolesTableHeader';
 import { RolesTableRow } from '@/settings/roles/components/RolesTableRow';
-import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconPlus } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledCreateRoleSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};

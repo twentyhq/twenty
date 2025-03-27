@@ -1,12 +1,3 @@
-import {
-  IconBaselineDensitySmall,
-  IconChevronLeft,
-  IconLayoutNavbar,
-  IconLayoutSidebarRight,
-  MenuItem,
-  MenuItemToggle,
-} from 'twenty-ui';
-
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -18,6 +9,13 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import {
+  IconBaselineDensitySmall,
+  IconChevronLeft,
+  IconLayoutNavbar,
+  IconLayoutSidebarRight,
+} from 'twenty-ui/display';
+import { MenuItem, MenuItemToggle } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();

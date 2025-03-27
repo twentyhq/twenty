@@ -5,14 +5,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { useState } from 'react';
-import {
-  IconX,
-  MenuItem,
-  MenuItemSelect,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { IconX, OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownWorkflowStepItemsProps = {
   dropdownId: string;

@@ -2,7 +2,9 @@ import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/Advan
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { AnimatedExpandableContainer, IconPoint, MAIN_COLORS } from 'twenty-ui';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { IconPoint } from 'twenty-ui/display';
+import { MAIN_COLORS } from 'twenty-ui/theme';
 
 type DotPosition = 'top' | 'centered';
 

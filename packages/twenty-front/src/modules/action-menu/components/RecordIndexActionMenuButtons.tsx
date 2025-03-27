@@ -1,7 +1,7 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { i18n } from '@lingui/core';
-import { Button } from 'twenty-ui';
+import { Button } from 'twenty-ui/input';
 
 export const RecordIndexActionMenuButtons = () => {
   const actionMenuEntries = useRecoilComponentValueV2(

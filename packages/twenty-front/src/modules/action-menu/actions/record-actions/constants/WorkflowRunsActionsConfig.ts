@@ -28,7 +28,7 @@ import {
   IconHistory,
   IconRotate2,
   IconSettingsAutomation,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
   string,

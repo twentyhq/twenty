@@ -5,7 +5,7 @@ import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObj
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { IconPlus } from 'twenty-ui';
+import { IconPlus } from 'twenty-ui/display';
 
 const StyledNewButton = styled.button`
   align-items: center;

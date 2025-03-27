@@ -15,8 +15,8 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilCallback } from 'recoil';
-import { IconComponent } from 'twenty-ui';
 import { v4 } from 'uuid';
+import { IconComponent } from 'twenty-ui/display';
 
 export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;

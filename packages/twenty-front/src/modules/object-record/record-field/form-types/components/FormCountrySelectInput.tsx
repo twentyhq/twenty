@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { IconCircleOff, IconComponentProps } from 'twenty-ui';
 
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { SelectOption } from '@/spreadsheet-import/types';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { IconCircleOff, IconComponentProps } from 'twenty-ui/display';
 
 export const FormCountrySelectInput = ({
   selectedCountryName,

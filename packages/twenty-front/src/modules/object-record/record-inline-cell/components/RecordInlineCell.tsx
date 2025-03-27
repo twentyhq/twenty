@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useIcons } from 'twenty-ui';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
@@ -29,6 +28,8 @@ import {
   RecordInlineCellContext,
   RecordInlineCellContextProps,
 } from './RecordInlineCellContext';
+import { useIcons } from 'twenty-ui/display';
+
 type RecordInlineCellProps = {
   readonly?: boolean;
   loading?: boolean;

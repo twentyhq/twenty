@@ -1,4 +1,5 @@
-import { IconComponent, Tag, ThemeColor } from 'twenty-ui';
+import { IconComponent, Tag } from 'twenty-ui/display';
+import { ThemeColor } from 'twenty-ui/theme';
 
 type SelectDisplayProps = {
   color: ThemeColor | 'transparent';

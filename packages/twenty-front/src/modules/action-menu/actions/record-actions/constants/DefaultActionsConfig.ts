@@ -39,7 +39,7 @@ import {
   IconSettingsAutomation,
   IconTrash,
   IconTrashX,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 export const DEFAULT_ACTIONS_CONFIG: Record<
   string,

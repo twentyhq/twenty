@@ -2,12 +2,12 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, within } from '@storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),

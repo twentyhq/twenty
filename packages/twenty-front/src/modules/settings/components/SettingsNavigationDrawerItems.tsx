@@ -15,8 +15,8 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
-import { IconDoorEnter } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { IconDoorEnter } from 'twenty-ui/display';
 
 const StyledInnerContainer = styled.div`
   height: 100%;

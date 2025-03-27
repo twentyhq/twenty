@@ -17,8 +17,9 @@ import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/compone
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import { IconChevronDown, IconForbid, LightIconButton } from 'twenty-ui';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { IconChevronDown, IconForbid } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`
   justify-content: space-between;

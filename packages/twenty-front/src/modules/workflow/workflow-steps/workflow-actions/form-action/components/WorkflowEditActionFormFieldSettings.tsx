@@ -8,14 +8,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   IconSettingsAutomation,
   IconX,
   IllustrationIconNumbers,
   IllustrationIconText,
-  LightIconButton,
-} from 'twenty-ui';
-import { FieldMetadataType } from 'twenty-shared/types';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
