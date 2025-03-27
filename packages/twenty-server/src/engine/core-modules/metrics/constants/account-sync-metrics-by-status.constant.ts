@@ -11,8 +11,7 @@ export const MESSAGE_SYNC_METRICS_BY_STATUS = [
   },
   {
     name: 'FAILED_INSUFFICIENT_PERMISSIONS',
-    cacheKey:
-      MetricsKeys.MessageChannelSyncJobFailedInsufficientPermissions,
+    cacheKey: MetricsKeys.MessageChannelSyncJobFailedInsufficientPermissions,
   },
 ];
 
@@ -27,7 +26,6 @@ export const CALENDAR_SYNC_METRICS_BY_STATUS = [
   },
   {
     name: 'FAILED_INSUFFICIENT_PERMISSIONS',
-    cacheKey:
-      MetricsKeys.CalendarEventSyncJobFailedInsufficientPermissions,
+    cacheKey: MetricsKeys.CalendarEventSyncJobFailedInsufficientPermissions,
   },
 ];
