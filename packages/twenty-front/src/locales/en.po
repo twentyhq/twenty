@@ -1394,6 +1394,7 @@ msgstr "Developers"
 
 #. js-lingui-id: wqAFwb
 #: src/modules/softphone/components/WebSoftphone.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
 msgid "Dial the phone number"
 msgstr "Dial the phone number"
 

@@ -1399,6 +1399,7 @@ msgstr "Kehitt\\u00e4j\\u00e4t"
 
 #. js-lingui-id: wqAFwb
 #: src/modules/softphone/components/WebSoftphone.tsx
+#: src/modules/softphone/components/WebSoftphone.tsx
 msgid "Dial the phone number"
 msgstr ""
 
