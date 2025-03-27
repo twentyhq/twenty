@@ -29,4 +29,4 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
   providers: [],
   exports: [],
 })
-export class V0_50_UpgradeVersionCommandModule {}
+export class V0_51_UpgradeVersionCommandModule {}

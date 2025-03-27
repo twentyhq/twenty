@@ -2,8 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { In, Repository } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { In, Repository } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -21,7 +21,7 @@ import {
 import { isFieldMetadataOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Command({
-  name: 'upgrade:0-50:migrate-relations-to-field-metadata',
+  name: 'upgrade:0-51:migrate-relations-to-field-metadata',
   description: 'Migrate relations to field metadata',
 })
 export class MigrateRelationsToFieldMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
