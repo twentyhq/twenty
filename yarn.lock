@@ -35025,6 +35025,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"graphql-redis-subscriptions@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "graphql-redis-subscriptions@npm:2.7.0"
+  dependencies:
+    ioredis: "npm:^5.3.2"
+  peerDependencies:
+    graphql-subscriptions: ^1.0.0 || ^2.0.0 || ^3.0.0
+  dependenciesMeta:
+    ioredis:
+      optional: true
+  checksum: 10c0/f98e9a16aa60d5470f6916f5a85b0b91898e3ec341a70ae3ddac878aa5b415dae9081ba872afdab5873cef3933fde1c3f1ee690ffa6d5b6d164a9165aed5cad1
+  languageName: node
+  linkType: hard
+
 "graphql-request@npm:^6.0.0":
   version: 6.1.0
   resolution: "graphql-request@npm:6.1.0"
@@ -36966,6 +36980,23 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.0.0"
   checksum: 10c0/5af133a917c0bcf65e84e7f23e779e7abc1cd49cb7fdc62d00d1de74b0d8c1b5ee74ac7766099fb3be1b05b26dfc67bab76a17030d2fe7ea2eef867434362dfc
+  languageName: node
+  linkType: hard
+
+"ioredis@npm:^5.3.2":
+  version: 5.6.0
+  resolution: "ioredis@npm:5.6.0"
+  dependencies:
+    "@ioredis/commands": "npm:^1.1.1"
+    cluster-key-slot: "npm:^1.1.0"
+    debug: "npm:^4.3.4"
+    denque: "npm:^2.1.0"
+    lodash.defaults: "npm:^4.2.0"
+    lodash.isarguments: "npm:^3.1.0"
+    redis-errors: "npm:^1.2.0"
+    redis-parser: "npm:^3.0.0"
+    standard-as-callback: "npm:^2.1.0"
+  checksum: 10c0/a885e5146640fc448706871290ef424ffa39af561f7ee3cf1590085209a509f85e99082bdaaf3cd32fa66758aea3fc2055d1109648ddca96fac4944bf2092c30
   languageName: node
   linkType: hard
 
@@ -53506,6 +53537,7 @@ __metadata:
     graphql-fields: "npm:^2.0.3"
     graphql-middleware: "npm:^6.1.35"
     graphql-rate-limit: "npm:^3.3.0"
+    graphql-redis-subscriptions: "npm:^2.7.0"
     graphql-scalars: "npm:^1.23.0"
     graphql-subscriptions: "npm:2.0.0"
     graphql-tag: "npm:^2.12.6"
