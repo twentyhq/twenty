@@ -70,14 +70,8 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const {
-    readonly,
-    IconLabel,
-    label,
-    labelWidth,
-    showLabel,
-    isDisplayModeFixHeight,
-  } = useRecordInlineCellContext();
+  const { readonly, IconLabel, label, labelWidth, showLabel } =
+    useRecordInlineCellContext();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
