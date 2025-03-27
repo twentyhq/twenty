@@ -28,6 +28,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
@@ -36,6 +37,7 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -267,7 +269,6 @@ export const RecordDetailRelationRecordsListItem = ({
                 value={{
                   recordId: relationRecord.id,
                   maxWidth: 200,
-                  recoilScopeId: `${relationRecord.id}-${fieldMetadataItem.id}`,
                   isLabelIdentifier: false,
                   fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                     field: fieldMetadataItem,
@@ -280,7 +281,17 @@ export const RecordDetailRelationRecordsListItem = ({
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
                 }}
               >
-                <RecordInlineCell />
+                <RecordFieldComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getRecordFieldInputId(
+                      relationRecord.id,
+                      fieldMetadataItem.name,
+                      'record-detail',
+                    ),
+                  }}
+                >
+                  <RecordInlineCell />
+                </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ),
           )}

@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, Option } from 'nest-commander';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import {

@@ -3,8 +3,8 @@ import { IconForbid } from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-
-import { FieldMetadataType } from 'twenty-shared';
+import { useLingui } from '@lingui/react/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { Columns, ColumnType } from '../MatchColumnsStep';
 
 const StyledContainer = styled.div`
@@ -29,6 +29,8 @@ export const TemplateColumn = <T extends string>({
   const column = columns[columnIndex];
   const isIgnored = column.type === ColumnType.ignored;
 
+  const { t } = useLingui();
+
   const fieldOptions = fields
     .filter((field) => field.fieldMetadataType !== FieldMetadataType.RICH_TEXT)
     .map(({ icon, label, key }) => {
@@ -52,7 +54,7 @@ export const TemplateColumn = <T extends string>({
     {
       icon: IconForbid,
       value: 'do-not-import',
-      label: 'Do not import',
+      label: t`Do not import`,
     },
     ...fieldOptions,
   ];
@@ -68,7 +70,7 @@ export const TemplateColumn = <T extends string>({
   return (
     <StyledContainer>
       <MatchColumnSelect
-        placeholder="Select column..."
+        placeholder={t`Select column...`}
         value={isIgnored ? ignoreValue : selectValue}
         onChange={(value) => onChange(value?.value as T, column.index)}
         options={selectOptions}

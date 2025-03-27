@@ -1,4 +1,4 @@
-import { absoluteUrlSchema } from 'src/utils/url/absoluteUrlSchema';
+import { absoluteUrlSchema } from '@/utils/url/absoluteUrlSchema';
 
 export const getUrlHostnameOrThrow = (url: string): string => {
   const result = absoluteUrlSchema.safeParse(url);

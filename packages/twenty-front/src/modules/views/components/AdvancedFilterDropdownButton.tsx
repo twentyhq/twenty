@@ -1,21 +1,18 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
-import { AdvancedFilterRootLevelViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootLevelViewFilterGroup';
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { AdvancedFilterRootRecordFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootRecordFilterGroup';
+import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
+import { isDefined } from 'twenty-shared/utils';
 
 export const AdvancedFilterDropdownButton = () => {
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
-    currentRecordFilterGroupsComponentState,
+  const rootLevelRecordFilterGroup = useRecoilComponentValueV2(
+    rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const outermostRecordFilterGroupId = currentRecordFilterGroups.find(
-    (recordFilterGroup) => !recordFilterGroup.parentRecordFilterGroupId,
-  )?.id;
-
-  if (!outermostRecordFilterGroupId) {
+  if (!isDefined(rootLevelRecordFilterGroup)) {
     return null;
   }
 
@@ -23,7 +20,7 @@ export const AdvancedFilterDropdownButton = () => {
     <Dropdown
       dropdownId={ADVANCED_FILTER_DROPDOWN_ID}
       clickableComponent={<AdvancedFilterChip />}
-      dropdownComponents={<AdvancedFilterRootLevelViewFilterGroup />}
+      dropdownComponents={<AdvancedFilterRootRecordFilterGroup />}
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"

@@ -1,5 +1,6 @@
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
@@ -10,9 +11,9 @@ import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups
 import { ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordGroupHandlersParams = {
   viewBarId: string;
@@ -24,6 +25,7 @@ export const useRecordGroupReorder = ({
   viewType,
 }: UseRecordGroupHandlersParams) => {
   const { setRecordGroups } = useSetRecordGroups();
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackStateV2(
     visibleRecordGroupIdsComponentFamilySelector,
@@ -78,12 +80,13 @@ export const useRecordGroupReorder = ({
           ];
         }, []);
 
-        setRecordGroups(updatedRecordGroups, viewBarId);
+        setRecordGroups(updatedRecordGroups, viewBarId, objectMetadataItem.id);
         saveViewGroups(
           mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
         );
       },
     [
+      objectMetadataItem,
       saveViewGroups,
       setRecordGroups,
       viewBarId,

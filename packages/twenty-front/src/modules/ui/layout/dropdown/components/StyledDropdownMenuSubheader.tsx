@@ -1,11 +1,8 @@
 import styled from '@emotion/styled';
+import { Label } from 'twenty-ui';
 
-export const StyledDropdownMenuSubheader = styled.div`
+export const StyledDropdownMenuSubheader = styled(Label)`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xxs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
-  text-transform: uppercase;
   width: 100%;
 `;

@@ -1,22 +1,25 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
+import * as generateFakeValueModule from 'src/engine/utils/generate-fake-value';
 import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
-import { camelToTitleCase } from 'src/utils/camel-to-title-case';
+import * as camelToTitleCaseModule from 'src/utils/camel-to-title-case';
 
 jest.mock('src/engine/utils/generate-fake-value');
 jest.mock('src/utils/camel-to-title-case');
 jest.mock('src/engine/metadata-modules/field-metadata/composite-types', () => {
-  const mockCompositeTypeDefinitions = new Map();
+  const actualTypes = jest.requireActual('twenty-shared/types');
+  const { FieldMetadataType } = actualTypes;
 
-  mockCompositeTypeDefinitions.set(FieldMetadataType.LINKS, {
+  const compositeTypeDefinitions = new Map();
+
+  compositeTypeDefinitions.set(FieldMetadataType.LINKS, {
     properties: [
       { name: 'label', type: FieldMetadataType.TEXT },
       { name: 'url', type: FieldMetadataType.TEXT },
     ],
   });
 
-  mockCompositeTypeDefinitions.set(FieldMetadataType.CURRENCY, {
+  compositeTypeDefinitions.set(FieldMetadataType.CURRENCY, {
     properties: [
       { name: 'amount', type: FieldMetadataType.NUMBER },
       { name: 'currencyCode', type: FieldMetadataType.TEXT },
@@ -24,24 +27,30 @@ jest.mock('src/engine/metadata-modules/field-metadata/composite-types', () => {
   });
 
   return {
-    compositeTypeDefinitions: mockCompositeTypeDefinitions,
+    compositeTypeDefinitions,
   };
 });
 
 describe('generateFakeField', () => {
+  const generateFakeValueSpy = jest.spyOn(
+    generateFakeValueModule,
+    'generateFakeValue',
+  );
+  const camelToTitleCaseSpy = jest.spyOn(
+    camelToTitleCaseModule,
+    'camelToTitleCase',
+  );
+
   beforeEach(() => {
     jest.clearAllMocks();
-
     // Default mock implementations
-    (generateFakeValue as jest.Mock).mockImplementation(
-      (type) => `fake-${type}`,
-    );
-    (camelToTitleCase as jest.Mock).mockImplementation((str) => `Title ${str}`);
+    generateFakeValueSpy.mockImplementation((type) => `fake-${type}`);
+    camelToTitleCaseSpy.mockImplementation((str) => `Title ${str}`);
   });
 
   describe('for simple field types', () => {
     it('should generate a leaf node for TEXT type', () => {
-      (generateFakeValue as jest.Mock).mockReturnValueOnce('Fake Text');
+      generateFakeValueSpy.mockReturnValueOnce('Fake Text');
 
       const result = generateFakeField({
         type: FieldMetadataType.TEXT,
@@ -56,14 +65,14 @@ describe('generateFakeField', () => {
         value: 'Fake Text',
       });
 
-      expect(generateFakeValue).toHaveBeenCalledWith(
+      expect(generateFakeValueSpy).toHaveBeenCalledWith(
         FieldMetadataType.TEXT,
         'FieldMetadataType',
       );
     });
 
     it('should generate a leaf node for NUMBER type with icon', () => {
-      (generateFakeValue as jest.Mock).mockReturnValueOnce(42);
+      generateFakeValueSpy.mockReturnValueOnce(42);
 
       const result = generateFakeField({
         type: FieldMetadataType.NUMBER,
@@ -83,7 +92,7 @@ describe('generateFakeField', () => {
     it('should generate a leaf node for DATE type', () => {
       const fakeDate = new Date('2023-01-01');
 
-      (generateFakeValue as jest.Mock).mockReturnValueOnce(fakeDate);
+      generateFakeValueSpy.mockReturnValueOnce(fakeDate);
 
       const result = generateFakeField({
         type: FieldMetadataType.DATE,
@@ -102,11 +111,11 @@ describe('generateFakeField', () => {
 
   describe('for composite field types', () => {
     it('should generate a node with properties for LINKS type', () => {
-      (generateFakeValue as jest.Mock)
+      generateFakeValueSpy
         .mockReturnValueOnce('Fake Label')
         .mockReturnValueOnce('https://example.com');
 
-      (camelToTitleCase as jest.Mock)
+      camelToTitleCaseSpy
         .mockReturnValueOnce('Label')
         .mockReturnValueOnce('Url');
 
@@ -135,17 +144,15 @@ describe('generateFakeField', () => {
         },
       });
 
-      expect(generateFakeValue).toHaveBeenCalledTimes(2);
-      expect(camelToTitleCase).toHaveBeenCalledWith('label');
-      expect(camelToTitleCase).toHaveBeenCalledWith('url');
+      expect(generateFakeValueSpy).toHaveBeenCalledTimes(2);
+      expect(camelToTitleCaseSpy).toHaveBeenCalledWith('label');
+      expect(camelToTitleCaseSpy).toHaveBeenCalledWith('url');
     });
 
     it('should generate a node with properties for CURRENCY type', () => {
-      (generateFakeValue as jest.Mock)
-        .mockReturnValueOnce(100)
-        .mockReturnValueOnce('USD');
+      generateFakeValueSpy.mockReturnValueOnce(100).mockReturnValueOnce('USD');
 
-      (camelToTitleCase as jest.Mock)
+      camelToTitleCaseSpy
         .mockReturnValueOnce('Amount')
         .mockReturnValueOnce('Currency Code');
 
@@ -181,7 +188,7 @@ describe('generateFakeField', () => {
     it('should handle unknown field types as leaf nodes', () => {
       const unknownType = 'UNKNOWN_TYPE' as FieldMetadataType;
 
-      (generateFakeValue as jest.Mock).mockReturnValueOnce('Unknown Value');
+      generateFakeValueSpy.mockReturnValueOnce('Unknown Value');
 
       const result = generateFakeField({
         type: unknownType,
@@ -198,7 +205,7 @@ describe('generateFakeField', () => {
     });
 
     it('should handle empty label', () => {
-      (generateFakeValue as jest.Mock).mockReturnValueOnce('Fake Boolean');
+      generateFakeValueSpy.mockReturnValueOnce('Fake Boolean');
 
       const result = generateFakeField({
         type: FieldMetadataType.BOOLEAN,

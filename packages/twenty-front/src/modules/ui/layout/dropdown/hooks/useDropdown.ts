@@ -9,7 +9,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDropdown = (dropdownId?: string) => {
   const {
@@ -80,12 +80,12 @@ export const useDropdown = (dropdownId?: string) => {
         }
       },
     [
-      dropdownId,
       isDropdownOpen,
+      setIsDropdownOpen,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      dropdownId,
       scopeId,
       setHotkeyScopeAndMemorizePreviousScope,
-      setActiveDropdownFocusIdAndMemorizePrevious,
-      setIsDropdownOpen,
     ],
   );
 

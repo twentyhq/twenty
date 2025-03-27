@@ -10,9 +10,11 @@ const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
 export const SettingsAdminHealthAccountSyncCountersTable = ({
   details,
   title,
+  description,
 }: {
   details: Record<string, any> | null;
   title: string;
+  description: string;
 }) => {
   if (!details) {
     return null;
@@ -43,10 +45,7 @@ export const SettingsAdminHealthAccountSyncCountersTable = ({
 
   return (
     <Section>
-      <H2Title
-        title={title}
-        description={`How your ${title.toLowerCase()} is doing`}
-      />
+      <H2Title title={title} description={description} />
       <StyledSettingsAdminTableCard
         items={items}
         rounded

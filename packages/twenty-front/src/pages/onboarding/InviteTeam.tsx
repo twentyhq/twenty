@@ -29,10 +29,9 @@ import {
   SeparatorLineText,
 } from 'twenty-ui';
 import { z } from 'zod';
-
-import { isDefined } from 'twenty-shared';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledAnimatedContainer = styled.div`
   display: flex;

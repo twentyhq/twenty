@@ -63,9 +63,9 @@ export const WithVariables: Story = {
 
 export const Disabled: Story = {
   args: {
-    label: 'Number field...',
+    label: 'Domain Name',
     readonly: true,
-    onPersist: fn(),
+    onChange: fn(),
     VariablePicker: () => <div>VariablePicker</div>,
     defaultValue: {
       primaryLinkLabel: 'Google',
@@ -81,7 +81,7 @@ export const Disabled: Story = {
     await userEvent.type(labelInput, 'Yahoo');
     await userEvent.type(linkInput, 'https://www.yahoo.com');
 
-    expect(args.onPersist).not.toHaveBeenCalled();
+    expect(args.onChange).not.toHaveBeenCalled();
 
     const variablePickers = canvas.queryAllByText('VariablePicker');
     expect(variablePickers).toHaveLength(0);

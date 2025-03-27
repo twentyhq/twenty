@@ -4,23 +4,23 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/form-ty
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
-import { isDefined } from 'twenty-shared';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
-import { InputHint } from '@/ui/input/components/InputHint';
+import { isDefined } from 'twenty-shared/utils';
 
 type FormTextFieldInputProps = {
   label?: string;
   error?: string;
   hint?: string;
   defaultValue: string | undefined;
-  placeholder: string;
-  onPersist: (value: string) => void;
+  onChange: (value: string) => void;
   onBlur?: () => void;
   multiline?: boolean;
   readonly?: boolean;
+  placeholder?: string;
   VariablePicker?: VariablePickerComponent;
 };
 
@@ -30,7 +30,7 @@ export const FormTextFieldInput = ({
   hint,
   defaultValue,
   placeholder,
-  onPersist,
+  onChange,
   onBlur,
   multiline,
   readonly,
@@ -39,7 +39,7 @@ export const FormTextFieldInput = ({
   const inputId = useId();
 
   const editor = useTextVariableEditor({
-    placeholder,
+    placeholder: placeholder ?? 'Enter text',
     multiline,
     readonly,
     defaultValue,
@@ -47,7 +47,7 @@ export const FormTextFieldInput = ({
       const jsonContent = editor.getJSON();
       const parsedContent = parseEditorContent(jsonContent);
 
-      onPersist(parsedContent);
+      onChange(parsedContent);
     },
   });
 

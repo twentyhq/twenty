@@ -2,7 +2,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuOnItemClick = () => {
   const { toggleCommandMenu } = useCommandMenu();

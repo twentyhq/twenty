@@ -1,16 +1,16 @@
 import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
   const setWorkflowCreateStepFromParentStepId = useSetRecoilState(
     workflowCreateStepFromParentStepIdState,
   );
-  const { openWorkflowActionInCommandMenu } = useCommandMenu();
+  const { openStepSelectInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowId = useRecoilValue(workflowIdState);
 
@@ -23,14 +23,14 @@ export const useStartNodeCreation = () => {
       setWorkflowCreateStepFromParentStepId(parentNodeId);
 
       if (isDefined(workflowId)) {
-        openWorkflowActionInCommandMenu(workflowId);
+        openStepSelectInCommandMenu(workflowId);
         return;
       }
     },
     [
       setWorkflowCreateStepFromParentStepId,
       workflowId,
-      openWorkflowActionInCommandMenu,
+      openStepSelectInCommandMenu,
     ],
   );
 

@@ -9,7 +9,6 @@ it('Preserves the properties defined in the previous version but not in the next
           nodeType: 'action',
           name: '',
           actionType: 'CODE',
-          isLeafNode: true,
         },
         id: '1',
         position: { x: 0, y: 0 },
@@ -25,7 +24,6 @@ it('Preserves the properties defined in the previous version but not in the next
           nodeType: 'action',
           name: '',
           actionType: 'CODE',
-          isLeafNode: true,
         },
         id: '1',
         position: { x: 0, y: 0 },
@@ -42,7 +40,6 @@ it('Preserves the properties defined in the previous version but not in the next
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": true,
         "name": "",
         "nodeType": "action",
       },
@@ -66,7 +63,6 @@ it('Replaces duplicated properties with the next value', () => {
           nodeType: 'action',
           name: '',
           actionType: 'CODE',
-          isLeafNode: true,
         },
         id: '1',
         position: { x: 0, y: 0 },
@@ -81,7 +77,6 @@ it('Replaces duplicated properties with the next value', () => {
           nodeType: 'action',
           name: '2',
           actionType: 'CODE',
-          isLeafNode: false,
         },
         id: '1',
         position: { x: 0, y: 0 },
@@ -98,7 +93,6 @@ it('Replaces duplicated properties with the next value', () => {
     {
       "data": {
         "actionType": "CODE",
-        "isLeafNode": false,
         "name": "2",
         "nodeType": "action",
       },

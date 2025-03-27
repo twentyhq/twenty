@@ -34,7 +34,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
       variant={getNodeVariantFromRunStatus(data.runStatus)}
       nodeType={data.nodeType}
       Icon={<WorkflowDiagramStepNodeIcon data={data} />}
-      isLeafNode={data.isLeafNode}
     />
   );
 };

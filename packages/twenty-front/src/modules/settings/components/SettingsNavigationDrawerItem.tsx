@@ -4,8 +4,8 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { SettingsNavigationItem } from '@/settings/hooks/useSettingsNavigationItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
-import { isDefined } from 'twenty-shared';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsNavigationDrawerItemProps = {
   item: SettingsNavigationItem;
@@ -29,7 +29,7 @@ export const SettingsNavigationDrawerItem = ({
 
   if (isDefined(item.isAdvanced) && item.isAdvanced) {
     return (
-      <AdvancedSettingsWrapper navigationDrawerItem>
+      <AdvancedSettingsWrapper>
         <NavigationDrawerItem
           indentationLevel={item.indentationLevel}
           subItemState={subItemState}

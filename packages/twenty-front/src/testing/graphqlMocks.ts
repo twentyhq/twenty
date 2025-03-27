@@ -182,86 +182,47 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query('GlobalSearch', () => {
+    graphql.query('Search', () => {
       return HttpResponse.json({
         data: {
-          globalSearch: [
+          search: [
             {
-              __typename: 'GlobalSearchRecordDTO',
+              __typename: 'SearchRecordDTO',
               recordId: '20202020-2d40-4e49-8df4-9c6a049191de',
-              objectSingularName: 'person',
+              objectNameSingular: 'person',
               label: 'Louis Duss',
               imageUrl: '',
               tsRankCD: 0.2,
               tsRank: 0.12158542,
             },
             {
-              __typename: 'GlobalSearchRecordDTO',
+              __typename: 'SearchRecordDTO',
               recordId: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-              objectSingularName: 'company',
+              objectNameSingular: 'company',
               label: 'Linkedin',
               imageUrl: 'https://twenty-icons.com/linkedin.com',
               tsRankCD: 0.2,
               tsRank: 0.12158542,
             },
             {
-              __typename: 'GlobalSearchRecordDTO',
+              __typename: 'SearchRecordDTO',
               recordId: '20202020-3f74-492d-a101-2a70f50a1645',
-              objectSingularName: 'company',
+              objectNameSingular: 'company',
               label: 'Libeo',
               imageUrl: 'https://twenty-icons.com/libeo.io',
               tsRankCD: 0.2,
               tsRank: 0.12158542,
             },
             {
-              __typename: 'GlobalSearchRecordDTO',
+              __typename: 'SearchRecordDTO',
               recordId: '20202020-ac73-4797-824e-87a1f5aea9e0',
-              objectSingularName: 'person',
+              objectNameSingular: 'person',
               label: 'Sylvie Palmer',
               imageUrl: '',
               tsRankCD: 0.1,
               tsRank: 0.06079271,
             },
           ],
-        },
-      });
-    }),
-    graphql.query('CombinedSearchRecords', () => {
-      return HttpResponse.json({
-        data: {
-          searchOpportunities: {
-            edges: [],
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-          searchCompanies: {
-            edges: companiesMock.slice(0, 3).map((company) => ({
-              node: company,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-          searchPeople: {
-            edges: peopleMock.slice(0, 3).map((person) => ({
-              node: person,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
         },
       });
     }),

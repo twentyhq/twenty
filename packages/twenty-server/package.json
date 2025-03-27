@@ -1,6 +1,6 @@
 {
   "name": "twenty-server",
-  "version": "0.44.0-canary",
+  "version": "0.50.0-canary",
   "description": "",
   "author": "",
   "private": true,
@@ -19,6 +19,7 @@
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
     "@langchain/mistralai": "^0.0.24",
     "@langchain/openai": "^0.1.3",
+    "@lingui/core": "^5.1.2",
     "@monaco-editor/react": "^4.6.0",
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/devtools-integration": "^0.1.6",
@@ -58,6 +59,7 @@
     "zod-to-json-schema": "^3.23.1"
   },
   "devDependencies": {
+    "@lingui/cli": "^5.1.2",
     "@nestjs/cli": "10.3.0",
     "@nx/js": "18.3.3",
     "@types/express-session": "^1.18.0",

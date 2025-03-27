@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';

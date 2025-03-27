@@ -1,7 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE } from '@/settings/constants/SettingsObjectModel';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -12,7 +11,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   Card,
@@ -69,8 +68,6 @@ const StyledLabel = styled.span`
 
 const infoCircleElementId = 'info-circle-id';
 
-export const IS_LABEL_SYNCED_WITH_NAME_LABEL = 'isLabelSyncedWithName';
-
 export const SettingsDataModelObjectAboutForm = ({
   disableEdition = false,
   onNewDirtyField,
@@ -81,20 +78,20 @@ export const SettingsDataModelObjectAboutForm = ({
   const { t } = useLingui();
   const theme = useTheme();
 
-  const isLabelSyncedWithName =
-    watch(IS_LABEL_SYNCED_WITH_NAME_LABEL) ??
-    (isDefined(objectMetadataItem)
-      ? objectMetadataItem.isLabelSyncedWithName
-      : SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE);
+  const isLabelSyncedWithName = watch('isLabelSyncedWithName');
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
   watch('nameSingular');
   watch('namePlural');
   watch('description');
   watch('icon');
-  const apiNameTooltipText = isLabelSyncedWithName
-    ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
-    : t`Input must be in camel case and cannot start with a number`;
+
+  const apiNameTooltipText =
+    !isDefined(objectMetadataItem) || objectMetadataItem.isCustom
+      ? isLabelSyncedWithName
+        ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
+        : t`Input must be in camel case and cannot start with a number`
+      : t`Can't change API names for standard objects`;
 
   const fillLabelPlural = (labelSingular: string | undefined) => {
     if (!isDefined(labelSingular)) return;
@@ -103,9 +100,7 @@ export const SettingsDataModelObjectAboutForm = ({
     setValue('labelPlural', labelPluralFromSingularLabel, {
       shouldDirty: true,
     });
-    if (isLabelSyncedWithName === true) {
-      fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
-    }
+    fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
   };
 
   const fillNameSingularFromLabelSingular = (
@@ -137,7 +132,6 @@ export const SettingsDataModelObjectAboutForm = ({
             defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
             render={({ field: { onChange, value } }) => (
               <IconPicker
-                disabled={disableEdition}
                 selectedIconKey={value}
                 onChange={({ iconKey }) => {
                   onChange(iconKey);
@@ -168,7 +162,11 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={disableEdition}
+              disabled={
+                objectMetadataItem &&
+                !objectMetadataItem?.isCustom &&
+                isLabelSyncedWithName
+              }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -194,7 +192,11 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={disableEdition}
+              disabled={
+                objectMetadataItem &&
+                !objectMetadataItem?.isCustom &&
+                isLabelSyncedWithName
+              }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -210,7 +212,6 @@ export const SettingsDataModelObjectAboutForm = ({
             minRows={4}
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
-            disabled={disableEdition}
             onBlur={() => onNewDirtyField?.()}
           />
         )}
@@ -246,7 +247,10 @@ export const SettingsDataModelObjectAboutForm = ({
                 tooltip,
                 defaultValue,
               }) => (
-                <AdvancedSettingsWrapper key={`object-${fieldName}-text-input`}>
+                <AdvancedSettingsWrapper
+                  key={`object-${fieldName}-text-input`}
+                  dotPosition="top"
+                >
                   <StyledInputContainer>
                     <Controller
                       name={fieldName}
@@ -298,39 +302,40 @@ export const SettingsDataModelObjectAboutForm = ({
                 </AdvancedSettingsWrapper>
               ),
             )}
-            <AdvancedSettingsWrapper>
-              <Controller
-                name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
-                control={control}
-                defaultValue={
-                  objectMetadataItem?.isLabelSyncedWithName ??
-                  SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE
-                }
-                render={({ field: { onChange, value } }) => (
-                  <Card rounded>
-                    <SettingsOptionCardContentToggle
-                      Icon={IconRefresh}
-                      title={t`Synchronize Objects Labels and API Names`}
-                      description={t`Should changing an object's label also change the API?`}
-                      checked={value ?? true}
-                      disabled={
-                        isDefined(objectMetadataItem) &&
-                        !objectMetadataItem.isCustom
-                      }
-                      advancedMode
-                      onChange={(value) => {
-                        onChange(value);
-                        if (value === true) {
-                          fillNamePluralFromLabelPlural(labelPlural);
-                          fillNameSingularFromLabelSingular(labelSingular);
-                        }
-                        onNewDirtyField?.();
-                      }}
-                    />
-                  </Card>
-                )}
-              />
-            </AdvancedSettingsWrapper>
+            {(!objectMetadataItem || objectMetadataItem?.isCustom) && (
+              <AdvancedSettingsWrapper>
+                <Controller
+                  name="isLabelSyncedWithName"
+                  control={control}
+                  defaultValue={objectMetadataItem?.isLabelSyncedWithName}
+                  render={({ field: { onChange, value } }) => (
+                    <Card rounded>
+                      <SettingsOptionCardContentToggle
+                        Icon={IconRefresh}
+                        title={t`Synchronize Objects Labels and API Names`}
+                        description={t`Should changing an object's label also change the API?`}
+                        checked={value ?? true}
+                        advancedMode
+                        onChange={(value) => {
+                          onChange(value);
+                          onNewDirtyField?.();
+
+                          if (
+                            value === true &&
+                            ((isDefined(objectMetadataItem) &&
+                              objectMetadataItem.isCustom) ||
+                              !isDefined(objectMetadataItem))
+                          ) {
+                            fillNamePluralFromLabelPlural(labelPlural);
+                            fillNameSingularFromLabelSingular(labelSingular);
+                          }
+                        }}
+                      />
+                    </Card>
+                  )}
+                />
+              </AdvancedSettingsWrapper>
+            )}
           </StyledAdvancedSettingsSectionInputWrapper>
         </StyledAdvancedSettingsContainer>
       </StyledAdvancedSettingsOuterContainer>

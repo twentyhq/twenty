@@ -16,6 +16,7 @@ import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   Dispatch,
   SetStateAction,
@@ -25,7 +26,7 @@ import {
 } from 'react';
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { Button, IconTrash, Toggle } from 'twenty-ui';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
@@ -119,6 +120,8 @@ export const ValidationStep = <T extends string>({
       setSelectedRows(new Set());
     }
   };
+
+  const { t } = useLingui();
 
   const updateRow = useCallback(
     (
@@ -234,13 +237,12 @@ export const ValidationStep = <T extends string>({
       submitData();
     } else {
       enqueueDialog({
-        title: 'Finish flow with errors',
-        message:
-          'There are still some rows that contain errors. Rows with errors will be ignored when submitting.',
+        title: t`Finish flow with errors`,
+        message: t`There are still some rows that contain errors. Rows with errors will be ignored when submitting.`,
         buttons: [
-          { title: 'Cancel' },
+          { title: t`Cancel` },
           {
-            title: 'Submit',
+            title: t`Submit`,
             variant: 'primary',
             onClick: submitData,
             role: 'confirm',
@@ -254,8 +256,8 @@ export const ValidationStep = <T extends string>({
     <>
       <StyledContent>
         <Heading
-          title="Review your import"
-          description="Correct the issues and fill the missing data."
+          title={t`Review your import`}
+          description={t`Correct the issues and fill the missing data.`}
         />
         <StyledToolbar>
           <StyledErrorToggle>
@@ -264,7 +266,7 @@ export const ValidationStep = <T extends string>({
               onChange={() => setFilterByErrors(!filterByErrors)}
             />
             <StyledErrorToggleDescription>
-              Show only rows with errors
+              <Trans>Show only rows with errors</Trans>
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
           <StyledErrorToggle>
@@ -273,12 +275,12 @@ export const ValidationStep = <T extends string>({
               onChange={() => setShowUnmatchedColumns(!showUnmatchedColumns)}
             />
             <StyledErrorToggleDescription>
-              Show unmatched columns
+              <Trans>Show unmatched columns</Trans>
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
           <Button
             Icon={IconTrash}
-            title="Remove"
+            title={t`Remove`}
             accent="danger"
             onClick={deleteSelectedRows}
             disabled={selectedRows.size === 0}
@@ -296,8 +298,8 @@ export const ValidationStep = <T extends string>({
               noRowsFallback: (
                 <StyledNoRowsContainer>
                   {filterByErrors
-                    ? 'No data containing errors'
-                    : 'No data found'}
+                    ? t`No data containing errors`
+                    : t`No data found`}
                 </StyledNoRowsContainer>
               ),
             }}
@@ -307,7 +309,7 @@ export const ValidationStep = <T extends string>({
       <StepNavigationButton
         onClick={onContinue}
         onBack={onBack}
-        title="Confirm"
+        title={t`Confirm`}
       />
     </>
   );

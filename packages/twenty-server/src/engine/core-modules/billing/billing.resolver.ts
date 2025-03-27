@@ -3,7 +3,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
@@ -17,7 +17,6 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -28,7 +27,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -52,7 +51,7 @@ export class BillingResolver {
   @Query(() => BillingSessionOutput)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
   )
   async billingPortalSession(
     @AuthWorkspace() workspace: Workspace,
@@ -115,7 +114,7 @@ export class BillingResolver {
   @Mutation(() => BillingUpdateOutput)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingsPermissions.WORKSPACE),
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
   )
   async updateBillingSubscription(@AuthWorkspace() workspace: Workspace) {
     await this.billingSubscriptionService.applyBillingSubscription(workspace);
@@ -140,15 +139,6 @@ export class BillingResolver {
     userWorkspaceId: string;
     isExecutedByApiKey: boolean;
   }) {
-    const isPermissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspaceId,
-    );
-
-    if (!isPermissionsEnabled) {
-      return;
-    }
-
     if (
       await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspaceId,
@@ -161,7 +151,7 @@ export class BillingResolver {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        _setting: SettingsPermissions.WORKSPACE,
+        _setting: SettingPermissionType.WORKSPACE,
         isExecutedByApiKey,
       });
 

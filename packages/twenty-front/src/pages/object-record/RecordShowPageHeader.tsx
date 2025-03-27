@@ -13,7 +13,6 @@ export const RecordShowPageHeader = ({
 }: {
   objectNameSingular: string;
   objectRecordId: string;
-  headerIcon: React.ComponentType;
   children?: React.ReactNode;
 }) => {
   const { viewName, navigateToIndexView, objectMetadataItem } =

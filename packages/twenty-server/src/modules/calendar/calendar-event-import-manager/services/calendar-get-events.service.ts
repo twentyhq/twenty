@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConnectedAccountProvider } from 'twenty-shared';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { GoogleCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
 import { MicrosoftCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-get-events.service';

@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode, useState } from 'react';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui';
+import { IconChevronDown, IconChevronUp, Label } from 'twenty-ui';
 import { TableBody } from './TableBody';
 
 type TableSectionProps = {
@@ -14,16 +14,12 @@ const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  color: ${({ theme }) => theme.font.color.light};
   cursor: pointer;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   height: ${({ theme }) => theme.spacing(6)};
   justify-content: space-between;
   padding: 0 ${({ theme }) => theme.spacing(2)};
   text-align: left;
-  text-transform: uppercase;
 `;
 
 const StyledSection = styled.div<{ isExpanded: boolean }>`
@@ -44,8 +40,8 @@ export const TableSection = ({
   isInitiallyExpanded = true,
   title,
 }: TableSectionProps) => {
-  const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
+  const theme = useTheme();
 
   const handleToggleSection = () =>
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
@@ -56,11 +52,17 @@ export const TableSection = ({
         isExpanded={isExpanded}
         onClick={handleToggleSection}
       >
-        {title}
+        <Label>{title}</Label>
         {isExpanded ? (
-          <IconChevronUp size={theme.icon.size.sm} />
+          <IconChevronUp
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
         ) : (
-          <IconChevronDown size={theme.icon.size.sm} />
+          <IconChevronDown
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
         )}
       </StyledSectionHeader>
       <StyledSection isExpanded={isExpanded}>

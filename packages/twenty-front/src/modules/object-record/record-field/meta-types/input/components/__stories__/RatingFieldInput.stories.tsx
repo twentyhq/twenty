@@ -3,10 +3,12 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { isDefined } from 'twenty-shared';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { useRatingField } from '../../../hooks/useRatingField';
 import { RatingFieldInput, RatingFieldInputProps } from '../RatingFieldInput';
@@ -42,22 +44,36 @@ const RatingFieldInputWithContext = ({
   }, [setHotKeyScope]);
 
   return (
-    <FieldContextProvider
-      fieldDefinition={{
-        fieldMetadataId: 'rating',
-        label: 'Rating',
-        type: FieldMetadataType.RATING,
-        iconName: 'Icon123',
-        metadata: {
-          fieldName: 'Rating',
-          objectMetadataNameSingular: 'person',
-        },
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: getRecordFieldInputId(
+          recordId ?? '',
+          'Rating',
+          'record-table-cell',
+        ),
       }}
-      recordId={recordId}
     >
-      <RatingFieldValueSetterEffect value={value} />
-      <RatingFieldInput onSubmit={onSubmit} />
-    </FieldContextProvider>
+      <FieldContext.Provider
+        value={{
+          fieldDefinition: {
+            fieldMetadataId: 'rating',
+            label: 'Rating',
+            iconName: 'IconStar',
+            type: FieldMetadataType.RATING,
+            metadata: {
+              fieldName: 'rating',
+              objectMetadataNameSingular: 'person',
+            },
+          },
+          recordId: recordId ?? '123',
+          hotkeyScope: 'hotkey-scope',
+          isLabelIdentifier: false,
+        }}
+      >
+        <RatingFieldValueSetterEffect value={value} />
+        <RatingFieldInput onSubmit={onSubmit} />
+      </FieldContext.Provider>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
 

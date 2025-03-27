@@ -9,8 +9,8 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import React from 'react';
-import { capitalize, isDefined } from 'twenty-shared';
 import { Label, Loader, OverflowingTextWithTooltip } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;
@@ -194,14 +194,12 @@ export const WorkflowDiagramStepNodeBase = ({
   variant,
   Icon,
   RightFloatingElement,
-  isLeafNode,
 }: {
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
   variant: WorkflowDiagramNodeVariant;
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
-  isLeafNode: boolean;
 }) => {
   return (
     <StyledStepNodeContainer className="workflow-node-container">
@@ -227,9 +225,7 @@ export const WorkflowDiagramStepNodeBase = ({
         ) : null}
       </StyledStepNodeInnerContainer>
 
-      {!isLeafNode && (
-        <StyledSourceHandle type="source" position={Position.Bottom} />
-      )}
+      <StyledSourceHandle type="source" position={Position.Bottom} />
     </StyledStepNodeContainer>
   );
 };

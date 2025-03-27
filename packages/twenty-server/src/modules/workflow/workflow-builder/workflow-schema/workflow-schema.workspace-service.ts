@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
@@ -59,6 +59,7 @@ export class WorkflowSchemaWorkspaceService {
           objectMetadataRepository: this.objectMetadataRepository,
         });
       }
+      case WorkflowTriggerType.WEBHOOK:
       case WorkflowTriggerType.CRON: {
         return {};
       }

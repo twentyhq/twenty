@@ -18,7 +18,6 @@ import {
   SelectFilter,
   StringFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { isDefined } from 'twenty-shared';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
@@ -43,6 +42,7 @@ import { z } from 'zod';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { isDefined } from 'twenty-shared/utils';
 
 type ComputeFilterRecordGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;
@@ -671,6 +671,10 @@ export const computeFilterRecordGqlOperationFilter = ({
     case 'ACTOR': {
       switch (filter.operand) {
         case RecordFilterOperand.Is: {
+          if (filter.value === '[]') {
+            return;
+          }
+
           const parsedRecordIds = JSON.parse(filter.value) as string[];
 
           return {
@@ -682,6 +686,10 @@ export const computeFilterRecordGqlOperationFilter = ({
           };
         }
         case RecordFilterOperand.IsNot: {
+          if (filter.value === '[]') {
+            return;
+          }
+
           const parsedRecordIds = JSON.parse(filter.value) as string[];
 
           if (parsedRecordIds.length === 0) return;

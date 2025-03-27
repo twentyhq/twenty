@@ -36,7 +36,7 @@ import { isFieldSelectValue } from '@/object-record/record-field/types/guards/is
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldTsVector } from '@/object-record/record-field/types/guards/isFieldTsVectorValue';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 const isValueEmpty = (value: unknown) =>
@@ -146,9 +146,7 @@ export const isFieldValueEmpty = ({
 
   if (isFieldRichTextV2(fieldDefinition)) {
     return (
-      !isFieldRichTextV2Value(fieldValue) ||
-      (isValueEmpty(fieldValue?.blocknote) &&
-        isValueEmpty(fieldValue?.markdown))
+      !isFieldRichTextV2Value(fieldValue) || isValueEmpty(fieldValue?.markdown)
     );
   }
 

@@ -1,7 +1,7 @@
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
 import { WorkflowDiagramRunStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { isNull } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getWorkflowRunStepExecutionStatus = ({
   workflowRunOutput,
@@ -18,6 +18,10 @@ export const getWorkflowRunStepExecutionStatus = ({
 
   if (isDefined(stepOutput?.error)) {
     return 'failure';
+  }
+
+  if (isDefined(stepOutput?.pendingEvent)) {
+    return 'running';
   }
 
   if (isDefined(stepOutput?.result)) {

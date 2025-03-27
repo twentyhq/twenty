@@ -7,11 +7,9 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
-import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
-export const useCloseRecordTableCellInGroup = (recordGroupId: string) => {
+export const useCloseRecordTableCellInGroup = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const setHotkeyScope = useSetHotkeyScope();
@@ -24,26 +22,15 @@ export const useCloseRecordTableCellInGroup = (recordGroupId: string) => {
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const recordTablePendingRecordIdByGroupFamilyState =
-    useRecoilComponentCallbackStateV2(
-      recordTablePendingRecordIdByGroupComponentFamilyState,
-      recordTableId,
-    );
-
   const closeTableCellInGroup = useRecoilCallback(
-    ({ reset }) =>
-      () => {
-        toggleClickOutsideListener(true);
-        setDragSelectionStartEnabled(true);
-        closeCurrentTableCellInEditMode();
-        setHotkeyScope(TableHotkeyScope.TableSoftFocus);
-
-        reset(recordTablePendingRecordIdByGroupFamilyState(recordGroupId));
-      },
+    () => () => {
+      toggleClickOutsideListener(true);
+      setDragSelectionStartEnabled(true);
+      closeCurrentTableCellInEditMode();
+      setHotkeyScope(TableHotkeyScope.TableSoftFocus);
+    },
     [
       closeCurrentTableCellInEditMode,
-      recordGroupId,
-      recordTablePendingRecordIdByGroupFamilyState,
       setDragSelectionStartEnabled,
       setHotkeyScope,
       toggleClickOutsideListener,

@@ -66,7 +66,7 @@ export const Disabled: Story = {
       lastName: 'Doe',
     },
     VariablePicker: () => <div>VariablePicker</div>,
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -77,7 +77,7 @@ export const Disabled: Story = {
     await userEvent.type(firstNameVariable, 'Jane');
     await userEvent.type(lastNameVariable, 'Smith');
 
-    expect(args.onPersist).not.toHaveBeenCalled();
+    expect(args.onChange).not.toHaveBeenCalled();
 
     const variablePickers = canvas.queryAllByText('VariablePicker');
     expect(variablePickers).toHaveLength(0);

@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 

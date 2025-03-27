@@ -4,8 +4,10 @@ import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-act
 import { useRestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useRestoreMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
+import { useHideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useHideDeletedRecordsNoSelectionRecordAction';
 import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
+import { useSeeWorkflowsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeWorkflowsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -28,6 +30,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconDatabaseExport,
+  IconEyeOff,
   IconFileExport,
   IconFileImport,
   IconHeart,
@@ -35,6 +38,7 @@ import {
   IconPlus,
   IconRefresh,
   IconRotate2,
+  IconSettingsAutomation,
   IconTrash,
   IconTrashX,
 } from 'twenty-ui';
@@ -183,13 +187,26 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
+  hideDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
+    label: msg`Hide deleted records`,
+    shortLabel: msg`Hide deleted`,
+    position: 10,
+    Icon: IconEyeOff,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useHideDeletedRecordsNoSelectionRecordAction,
+  },
   importRecords: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.IMPORT_RECORDS,
     label: msg`Import records`,
     shortLabel: msg`Import`,
-    position: 10,
+    position: 11,
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
@@ -202,7 +219,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.DESTROY,
     label: msg`Permanently destroy record`,
     shortLabel: msg`Destroy`,
-    position: 11,
+    position: 12,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
@@ -217,7 +234,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: msg`Navigate to previous record`,
-    position: 12,
+    position: 13,
     isPinned: true,
     Icon: IconChevronUp,
     availableOn: [ActionViewType.SHOW_PAGE],
@@ -228,7 +245,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: msg`Navigate to next record`,
-    position: 13,
+    position: 14,
     isPinned: true,
     Icon: IconChevronDown,
     availableOn: [ActionViewType.SHOW_PAGE],
@@ -240,7 +257,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     key: MultipleRecordsActionKeys.DESTROY,
     label: msg`Permanently destroy records`,
     shortLabel: msg`Destroy`,
-    position: 14,
+    position: 15,
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
@@ -253,7 +270,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.RESTORE,
     label: msg`Restore record`,
     shortLabel: msg`Restore`,
-    position: 15,
+    position: 16,
     Icon: IconRefresh,
     accent: 'default',
     isPinned: true,
@@ -269,11 +286,25 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     key: MultipleRecordsActionKeys.RESTORE,
     label: msg`Restore records`,
     shortLabel: msg`Restore`,
-    position: 16,
+    position: 17,
     Icon: IconRefresh,
     accent: 'default',
     isPinned: true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useRestoreMultipleRecordsAction,
+  },
+  seeAllWorkflows: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.SEE_WORKFLOWS,
+    label: msg`Go to workflows`,
+    shortLabel: msg`See workflows`,
+    position: 18,
+    Icon: IconSettingsAutomation,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeWorkflowsNoSelectionRecordAction,
+    hotKeys: ['G', 'W'],
   },
 };

@@ -33,7 +33,7 @@ export const SetUuidWithDashes: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -46,7 +46,7 @@ export const SetUuidWithDashes: Story = {
     await userEvent.type(input, uuid);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
   },
 };
@@ -55,7 +55,7 @@ export const SetUuidWithoutDashes: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -68,7 +68,7 @@ export const SetUuidWithoutDashes: Story = {
     await userEvent.type(input, uuid);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
   },
 };
@@ -77,7 +77,7 @@ export const SetInvalidUuidWithNoValidation: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -90,7 +90,7 @@ export const SetInvalidUuidWithNoValidation: Story = {
     await userEvent.type(input, uuid);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
   },
 };
@@ -99,7 +99,7 @@ export const TrimInputBeforePersisting: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -112,7 +112,7 @@ export const TrimInputBeforePersisting: Story = {
     await userEvent.type(input, `{Space>2}${uuid}{Space>3}`);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
   },
 };
@@ -121,7 +121,7 @@ export const ClearField: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -134,14 +134,14 @@ export const ClearField: Story = {
     await userEvent.type(input, uuid);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
 
     await Promise.all([
       userEvent.clear(input),
 
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(null);
+        expect(args.onChange).toHaveBeenCalledWith(null);
       }),
     ]);
   },

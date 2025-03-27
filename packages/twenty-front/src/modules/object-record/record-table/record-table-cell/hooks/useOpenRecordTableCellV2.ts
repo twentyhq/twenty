@@ -15,19 +15,20 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { isDefined } from 'twenty-shared';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useNavigate } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -75,7 +76,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const { openFieldInput } = useOpenFieldInputEditMode();
 
@@ -158,6 +159,11 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           value: initialValue,
           recordId,
           fieldDefinition,
+          fieldComponentInstanceId: getRecordFieldInputId(
+            recordId,
+            fieldDefinition.metadata.fieldName,
+            'record-table-cell',
+          ),
         });
 
         toggleClickOutsideListener(false);

@@ -8,7 +8,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
@@ -17,17 +17,17 @@ const StyledInput = styled(TextInput)`
 type FormUuidFieldInputProps = {
   label?: string;
   defaultValue: string | null | undefined;
-  placeholder: string;
-  onPersist: (value: string | null) => void;
+  onChange: (value: string | null) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
+  placeholder?: string;
 };
 
 export const FormUuidFieldInput = ({
   label,
   defaultValue,
   placeholder,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
 }: FormUuidFieldInputProps) => {
@@ -63,12 +63,12 @@ export const FormUuidFieldInput = ({
     const trimmedNewText = newText.trim();
 
     if (trimmedNewText === '') {
-      onPersist(null);
+      onChange(null);
 
       return;
     }
 
-    onPersist(trimmedNewText);
+    onChange(trimmedNewText);
   };
 
   const handleUnlinkVariable = () => {
@@ -77,7 +77,7 @@ export const FormUuidFieldInput = ({
       value: '',
     });
 
-    onPersist(null);
+    onChange(null);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -86,7 +86,7 @@ export const FormUuidFieldInput = ({
       value: variableName,
     });
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   return (
@@ -100,7 +100,7 @@ export const FormUuidFieldInput = ({
           {draftValue.type === 'static' ? (
             <StyledInput
               inputId={inputId}
-              placeholder={placeholder}
+              placeholder={placeholder ?? 'Enter a UUID'}
               value={draftValue.value}
               copyButton={false}
               hotkeyScope="record-create"
