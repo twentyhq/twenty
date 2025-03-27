@@ -56,7 +56,8 @@
     "file-saver": "^2.0.5",
     "recoil-sync": "^0.2.0",
     "transliteration": "^2.3.5",
-    "twenty-shared": "workspace:*"
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*"
   },
   "devDependencies": {
     "@lingui/cli": "^5.1.2",

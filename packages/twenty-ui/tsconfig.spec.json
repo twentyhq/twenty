@@ -9,12 +9,10 @@
     }
   },
   "include": [
-    "vite.config.ts",
     "jest.config.ts",
     "setupTests.ts",
     "src/**/*.d.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
-    "vite.config.ts"
   ]
 }

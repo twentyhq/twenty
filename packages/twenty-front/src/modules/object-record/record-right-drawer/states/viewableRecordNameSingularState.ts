@@ -1,4 +1,4 @@
-import { createState } from '@ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui';
 
 // TODO: deprecate this state once we remove IS_COMMAND_MENU_V2_ENABLED flag
 export const viewableRecordNameSingularState = createState<string | null>({

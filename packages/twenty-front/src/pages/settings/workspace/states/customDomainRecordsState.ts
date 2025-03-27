@@ -1,4 +1,4 @@
-import { createState } from '@ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui';
 import { CustomDomainValidRecords } from '~/generated/graphql';
 
 export const customDomainRecordsState = createState<{

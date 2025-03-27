@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json.schemastore.org/babelrc.json",
+  "presets": [
+    "@babel/preset-env",
+    "@babel/preset-typescript",
+    ["@babel/preset-react", { "runtime": "automatic" }]
+  ],
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": ["./"],
+        "alias": {
+          "@ui": "./src",
+          "@assets": "./assets"
+        }
+      }
+    ],
+    // [
+    //   "@emotion",
+    //   {
+    //     // sourceMap is on by default but source maps are dead code eliminated in production
+    //     "sourceMap": true,
+    //     "autoLabel": "dev-only",
+    //     "labelFormat": "[local]",
+    //     "cssPropOptimization": true
+    //   }
+    // ],
+    "inline-react-svg",
+    [
+      "inline-import",
+      {
+        "extensions": [".png", ".jpg", ".jpeg", "svg"]
+      }
+    ]
+  ],
+  "overrides": [
+    {
+      "include": [
+        "**/OverflowingTextWithTooltip.tsx",
+        // "**/Tag.tsx",
+        "**/Avatar.tsx",
+        "**/Chip.tsx",
+        "**/ContactLink.tsx",
+        "**/RoundedLink.tsx"
+      ],
+      "presets": [
+        [
+          "@wyw-in-js",
+          {
+            "evaluate": false,
+            "displayName": false,
+            "preprocessor": "none"
+          }
+        ]
+      ]
+    }
+  ]
+}

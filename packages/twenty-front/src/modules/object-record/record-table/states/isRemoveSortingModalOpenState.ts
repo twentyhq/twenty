@@ -1,4 +1,4 @@
-import { createState } from '@ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui';
 
 export const isRemoveSortingModalOpenState = createState<boolean>({
   key: 'isRemoveSortingModalOpenState',

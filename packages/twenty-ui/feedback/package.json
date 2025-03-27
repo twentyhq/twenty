@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-ui-feedback.cjs.js",
+  "module": "dist/twenty-ui-feedback.esm.js"
+}

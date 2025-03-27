@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-ui-json-visualizer.cjs.js",
+  "module": "dist/twenty-ui-json-visualizer.esm.js"
+}
