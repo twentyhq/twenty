@@ -17,12 +17,7 @@ import { RecordDetailDuplicatesSection } from '@/object-record/record-show/recor
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
-import styled from '@emotion/styled';
 import { FieldMetadataType } from '~/generated/graphql';
-
-const StyledInlineCellContainer = styled.div`
-  height: 24px;
-`;
 
 type FieldsCardProps = {
   objectNameSingular: string;
@@ -113,6 +108,7 @@ export const FieldsCard = ({
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                    isDisplayModeFixHeight: true,
                   }}
                 >
                   <ActivityTargetsInlineCell
@@ -149,6 +145,7 @@ export const FieldsCard = ({
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                  isDisplayModeFixHeight: true,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
@@ -160,9 +157,7 @@ export const FieldsCard = ({
                     ),
                   }}
                 >
-                  <StyledInlineCellContainer>
-                    <RecordInlineCell loading={recordLoading} />
-                  </StyledInlineCellContainer>
+                  <RecordInlineCell loading={recordLoading} />
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ))}
@@ -186,6 +181,7 @@ export const FieldsCard = ({
             }),
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             hotkeyScope: InlineCellHotkeyScope.InlineCell,
+            isDisplayModeFixHeight: true,
           }}
         >
           <RecordDetailRelationSection
