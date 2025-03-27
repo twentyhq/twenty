@@ -64,6 +64,13 @@ const StyledChipcontainer = styled.div`
   z-index: 1;
 `;
 
+const StyledActionButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledFilterContainer = styled.div`
   display: flex;
   align-items: center;
@@ -244,7 +251,7 @@ export const ViewBarDetails = ({
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
-       <StyledChipcontainer>
+      <StyledActionButtonContainer>
         {canResetView && (
           <LightButton
             data-testid="cancel-button"
@@ -254,7 +261,7 @@ export const ViewBarDetails = ({
           />
         )}
         {rightComponent}
-      </StyledChipcontainer>
+      </StyledActionButtonContainer>
     </StyledBar>
   );
 };
