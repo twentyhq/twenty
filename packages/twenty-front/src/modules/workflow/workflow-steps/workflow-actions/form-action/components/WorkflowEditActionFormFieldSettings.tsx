@@ -51,6 +51,7 @@ const StyledSettingsHeader = styled.div`
 `;
 
 const StyledTitleContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
