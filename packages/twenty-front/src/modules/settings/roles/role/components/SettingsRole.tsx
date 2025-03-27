@@ -144,7 +144,12 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   return (
     <SubMenuTopBarContainer
-      title={<SettingsRoleLabelContainer roleId={roleId} />}
+      title={
+        <SettingsRoleLabelContainer
+          roleId={roleId}
+          isCreateMode={isCreateMode}
+        />
+      }
       links={[
         {
           children: 'Workspace',
