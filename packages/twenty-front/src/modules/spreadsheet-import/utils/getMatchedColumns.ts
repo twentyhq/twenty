@@ -5,22 +5,27 @@ import {
   Columns,
   MatchColumnsStepProps,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Field, Fields } from '@/spreadsheet-import/types';
 
+import {
+  SpreadsheetImportField,
+  SpreadsheetImportFields,
+} from '@/spreadsheet-import/types';
+import { isDefined } from 'twenty-shared/utils';
 import { findMatch } from './findMatch';
 import { setColumn } from './setColumn';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getMatchedColumns = <T extends string>(
   columns: Columns<T>,
-  fields: Fields<T>,
+  fields: SpreadsheetImportFields<T>,
   data: MatchColumnsStepProps['data'],
   autoMapDistance: number,
 ) =>
   columns.reduce<Column<T>[]>((arr, column) => {
     const autoMatch = findMatch(column.header, fields, autoMapDistance);
     if (isDefined(autoMatch)) {
-      const field = fields.find((field) => field.key === autoMatch) as Field<T>;
+      const field = fields.find(
+        (field) => field.key === autoMatch,
+      ) as SpreadsheetImportField<T>;
       const duplicateIndex = arr.findIndex(
         (column) => 'value' in column && column.value === field.key,
       );
