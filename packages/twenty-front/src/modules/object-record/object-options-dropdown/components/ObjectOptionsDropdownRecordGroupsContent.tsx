@@ -142,7 +142,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
       {hiddenRecordGroupIds.length > 0 && (
         <>
           <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer scrollable={false}>
             <MenuItemNavigate
               onClick={() => onContentChange('hiddenRecordGroups')}
               LeftIcon={IconEyeOff}

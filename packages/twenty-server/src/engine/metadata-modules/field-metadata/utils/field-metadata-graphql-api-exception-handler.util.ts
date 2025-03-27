@@ -30,6 +30,7 @@ export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR:
       case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED:
       case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED:
+      case FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND:
       default:
         throw new InternalServerError(error.message);
     }

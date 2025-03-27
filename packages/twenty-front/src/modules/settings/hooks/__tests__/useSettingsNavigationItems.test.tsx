@@ -19,7 +19,6 @@ const mockCurrentUser = {
   id: 'fake-user-id',
   email: 'fake@email.com',
   supportUserHash: null,
-  analyticsTinybirdJwts: null,
   canAccessFullAdminPanel: false,
   canImpersonate: false,
   onboardingStatus: OnboardingStatus.COMPLETED,

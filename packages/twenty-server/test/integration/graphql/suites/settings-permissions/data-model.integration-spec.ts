@@ -1,12 +1,12 @@
-import { createCustomTextFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-custom-text-field-metadata.util';
-import { createOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-factory.util';
-import { deleteOneFieldMetadataItemFactory } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata-factory.util';
-import { updateOneFieldMetadataFactory } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-factory.util';
-import { createOneObjectMetadataFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-factory.util';
-import { createListingCustomObject } from 'test/integration/metadata/suites/object-metadata/utils/create-test-object-metadata.util';
-import { deleteOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-factory.util';
-import { deleteOneObjectMetadataItem } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { updateOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-factory.util';
+import { createOneFieldMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { deleteOneFieldMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata-query-factory.util';
+import { updateOneFieldMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-query-factory.util';
+import { createOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
 import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -21,18 +21,33 @@ describe('datamodel permissions', () => {
     let testFieldId = '';
 
     beforeAll(async () => {
-      const { objectMetadataId: createdObjectId } =
-        await createListingCustomObject();
+      const { data } = await createOneObjectMetadata({
+        input: {
+          nameSingular: 'listing',
+          namePlural: 'listings',
+          labelSingular: 'Listing',
+          labelPlural: 'Listings',
+          icon: 'IconBuildingSkyscraper',
+        },
+      });
 
-      listingObjectId = createdObjectId;
+      listingObjectId = data.createOneObject.id;
 
-      const { fieldMetadataId: createdFieldMetadaId } =
-        await createCustomTextFieldMetadata(createdObjectId);
+      const { data: createdFieldData } = await createOneFieldMetadata({
+        input: {
+          name: 'house',
+          type: FieldMetadataType.TEXT,
+          label: 'House',
+          objectMetadataId: listingObjectId,
+        },
+      });
 
-      testFieldId = createdFieldMetadaId;
+      testFieldId = createdFieldData.createOneField.id;
     });
     afterAll(async () => {
-      await deleteOneObjectMetadataItem(listingObjectId);
+      await deleteOneObjectMetadata({
+        input: { idToDelete: listingObjectId },
+      });
     });
     describe('createOne', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
@@ -46,8 +61,8 @@ describe('datamodel permissions', () => {
         };
 
         // Act
-        const graphqlOperation = createOneFieldMetadataFactory({
-          input: { field: createFieldInput },
+        const graphqlOperation = createOneFieldMetadataQueryFactory({
+          input: createFieldInput,
           gqlFields: `
               id
               name
@@ -77,8 +92,8 @@ describe('datamodel permissions', () => {
           label: 'Updated Name',
         };
 
-        const graphqlOperation = updateOneFieldMetadataFactory({
-          input: { id: testFieldId, update: updateFieldInput },
+        const graphqlOperation = updateOneFieldMetadataQueryFactory({
+          input: { idToUpdate: testFieldId, updatePayload: updateFieldInput },
           gqlFields: `
             id
             name
@@ -103,8 +118,8 @@ describe('datamodel permissions', () => {
     describe('deleteOne', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         // Arrange
-        const graphqlOperation = deleteOneFieldMetadataItemFactory({
-          idToDelete: testFieldId,
+        const graphqlOperation = deleteOneFieldMetadataQueryFactory({
+          input: { idToDelete: testFieldId },
         });
 
         const response =
@@ -127,17 +142,15 @@ describe('datamodel permissions', () => {
     describe('createOne', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         // Arrange
-        const graphqlOperation = createOneObjectMetadataFactory({
+        const graphqlOperation = createOneObjectMetadataQueryFactory({
           gqlFields: `
             id
         `,
           input: {
-            object: {
-              labelPlural: 'Test Objects',
-              labelSingular: 'Test Object',
-              namePlural: 'testObjects',
-              nameSingular: 'testObject',
-            },
+            labelPlural: 'Test Objects',
+            labelSingular: 'Test Object',
+            namePlural: 'testObjects',
+            nameSingular: 'testObject',
           },
         });
 
@@ -160,18 +173,27 @@ describe('datamodel permissions', () => {
       let listingObjectId = '';
 
       beforeAll(async () => {
-        const { objectMetadataId: createdObjectId } =
-          await createListingCustomObject();
+        const { data } = await createOneObjectMetadata({
+          input: {
+            labelPlural: 'Listings',
+            labelSingular: 'Listing',
+            namePlural: 'listings',
+            nameSingular: 'listing',
+            icon: 'IconBuildingSkyscraper',
+          },
+        });
 
-        listingObjectId = createdObjectId;
+        listingObjectId = data.createOneObject.id;
       });
       afterAll(async () => {
-        await deleteOneObjectMetadataItem(listingObjectId);
+        await deleteOneObjectMetadata({
+          input: { idToDelete: listingObjectId },
+        });
       });
       describe('updateOne', () => {
         it('should throw a permission error when user does not have permission (member role)', async () => {
           // Arrange
-          const graphqlOperation = updateOneObjectMetadataItemFactory({
+          const graphqlOperation = updateOneObjectMetadataQueryFactory({
             gqlFields: `
           id
         `,
@@ -201,8 +223,8 @@ describe('datamodel permissions', () => {
       describe('deleteOne', () => {
         it('should throw a permission error when user does not have permission (member role)', async () => {
           // Arrange
-          const graphqlOperation = deleteOneObjectMetadataItemFactory({
-            idToDelete: listingObjectId,
+          const graphqlOperation = deleteOneObjectMetadataQueryFactory({
+            input: { idToDelete: listingObjectId },
           });
 
           const response =
