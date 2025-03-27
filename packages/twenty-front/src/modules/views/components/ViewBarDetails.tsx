@@ -245,16 +245,16 @@ export const ViewBarDetails = ({
         )}
       </StyledFilterContainer>
        <StyledChipcontainer>
-              {canResetView && (
-                <LightButton
-                  data-testid="cancel-button"
-                  accent="tertiary"
-                  title={t`Reset`}
-                  onClick={handleCancelClick}
-                />
-              )}
-              {rightComponent}
-            </StyledChipcontainer>
-          </StyledBar>
+        {canResetView && (
+          <LightButton
+            data-testid="cancel-button"
+            accent="tertiary"
+            title={t`Reset`}
+            onClick={handleCancelClick}
+          />
+        )}
+        {rightComponent}
+      </StyledChipcontainer>
+    </StyledBar>
   );
 };
