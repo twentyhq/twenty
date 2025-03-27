@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -15,12 +18,20 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
   async createWorkflowRun({
@@ -107,11 +118,19 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    return workflowRunRepository.update(workflowRunToUpdate.id, {
+    const partialUpdate = {
       status: WorkflowRunStatus.RUNNING,
       startedAt: new Date().toISOString(),
       context,
       output,
+    };
+
+    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
+
+    await this.emitWorkflowRunUpdatedEvent({
+      workflowRunBefore: workflowRunToUpdate,
+      diff: partialUpdate,
+      updatedFields: ['status', 'startedAt', 'context', 'output'],
     });
   }
 
@@ -140,13 +159,24 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    return workflowRunRepository.update(workflowRunToUpdate.id, {
+    const partialUpdate = {
       status,
       endedAt: new Date().toISOString(),
       output: {
         ...(workflowRunToUpdate.output ?? {}),
         error,
       },
+    };
+
+    const updatedRun = await workflowRunRepository.update(
+      workflowRunToUpdate.id,
+      partialUpdate,
+    );
+
+    await this.emitWorkflowRunUpdatedEvent({
+      workflowRunBefore: workflowRunToUpdate,
+      diff: partialUpdate,
+      updatedFields: ['status', 'startedAt', 'context', 'output'],
     });
   }
 
@@ -175,7 +205,7 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    return workflowRunRepository.update(workflowRunId, {
+    const partialUpdate = {
       output: {
         flow: workflowRunToUpdate.output?.flow ?? {
           trigger: undefined,
@@ -187,7 +217,20 @@ export class WorkflowRunWorkspaceService {
         },
       },
       context,
+    };
+
+    const updatedRun = await workflowRunRepository.update(
+      workflowRunId,
+      partialUpdate,
+    );
+
+    await this.emitWorkflowRunUpdatedEvent({
+      workflowRunBefore: workflowRunToUpdate,
+      diff: partialUpdate,
+      updatedFields: ['status', 'startedAt', 'context', 'output'],
     });
+
+    return updatedRun;
   }
 
   async updateWorkflowRunStep({
@@ -258,5 +301,69 @@ export class WorkflowRunWorkspaceService {
     }
 
     return workflowRun;
+  }
+
+  private async emitWorkflowRunUpdatedEvent({
+    workflowRunBefore,
+    updatedFields,
+    diff,
+  }: {
+    workflowRunBefore: WorkflowRunWorkspaceEntity;
+    updatedFields: string[];
+    diff: object;
+  }) {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      return;
+    }
+
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: {
+        nameSingular: 'workflowRun',
+        workspaceId,
+      },
+    });
+
+    if (!objectMetadata) {
+      throw new WorkflowRunException(
+        'Object metadata not found',
+        WorkflowRunExceptionCode.FAILURE,
+      );
+    }
+
+    const workflowRunRepository =
+      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+        'workflowRun',
+      );
+
+    const workflowRunAfter = await workflowRunRepository.findOneBy({
+      id: workflowRunBefore.id,
+    });
+
+    if (!workflowRunAfter) {
+      throw new WorkflowRunException(
+        'WorkflowRun not found',
+        WorkflowRunExceptionCode.FAILURE,
+      );
+    }
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: 'workflowRun',
+      action: DatabaseEventAction.UPDATED,
+      events: [
+        {
+          recordId: workflowRunBefore.id,
+          objectMetadata,
+          properties: {
+            after: workflowRunAfter,
+            before: workflowRunBefore,
+            updatedFields,
+            diff,
+          },
+        },
+      ],
+      workspaceId,
+    });
   }
 }
