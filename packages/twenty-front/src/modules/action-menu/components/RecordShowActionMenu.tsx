@@ -2,12 +2,13 @@ import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-acti
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { RecordShowActionMenuButtons } from '@/action-menu/components/RecordShowActionMenuButtons';
+import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordShowActionMenu = () => {
@@ -27,6 +28,8 @@ export const RecordShowActionMenu = () => {
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
+  const isMobile = useIsMobile();
+
   return (
     <>
       {hasSelectedRecord && contextStoreCurrentObjectMetadataItemId && (
@@ -36,7 +39,7 @@ export const RecordShowActionMenu = () => {
             onActionExecutedCallback: () => {},
           }}
         >
-          <RecordShowActionMenuButtons />
+          {!isMobile && <PageHeaderActionMenuButtons />}
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
           <RecordAgnosticActionMenuEntriesSetter />
