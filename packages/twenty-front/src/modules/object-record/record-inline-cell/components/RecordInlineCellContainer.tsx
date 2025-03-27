@@ -38,6 +38,7 @@ const StyledLabelAndIconContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: 18px;
+  padding-top: 3px;
 `;
 
 const StyledValueContainer = styled.div`
@@ -53,16 +54,11 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
-const StyledInlineCellBaseContainer = styled.div<{
-  isDisplayModeFixHeight?: boolean;
-}>`
+const StyledInlineCellBaseContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
   display: flex;
-  line-height: ${({ isDisplayModeFixHeight }) =>
-    isDisplayModeFixHeight ? `24px` : `18px`};
-  height: ${({ isDisplayModeFixHeight }) =>
-    isDisplayModeFixHeight ? `24px` : `18px`};
+  height: fit-content;
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   align-items: center;
@@ -111,7 +107,6 @@ export const RecordInlineCellContainer = () => {
 
   return (
     <StyledInlineCellBaseContainer
-      isDisplayModeFixHeight={isDisplayModeFixHeight}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
