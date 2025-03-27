@@ -730,6 +730,7 @@ msgstr "لا يمكن تغيير أسماء API للكائنات القياسي�
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
@@ -855,6 +856,11 @@ msgstr "طي"
 msgid "Color code"
 msgstr "رمز اللون"
 
+#. js-lingui-id: 93hd3e
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "Columns not matched:"
+msgstr ""
+
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
@@ -886,6 +892,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "ضبط إعدادات بريدك الإلكتروني والتقويم."
 
 #. js-lingui-id: 7VpPHA
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "تأكيد"
@@ -996,6 +1003,11 @@ msgstr "انسخ هذا المفتاح لأنه لن يظهر مرة أخرى"
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Core"
 msgstr "النواة"
+
+#. js-lingui-id: w5Stxm
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Correct the issues and fill the missing data."
+msgstr ""
 
 #. js-lingui-id: wBMjJ2
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -1969,6 +1981,11 @@ msgstr "تصفية"
 msgid "Filters"
 msgstr "الفلاتر"
 
+#. js-lingui-id: SNdnlf
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Finish flow with errors"
+msgstr ""
+
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
@@ -2871,6 +2888,16 @@ msgstr "لا يوجد حساب متصل"
 msgid "No country"
 msgstr "لا دولة"
 
+#. js-lingui-id: pxvJ9B
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "No data containing errors"
+msgstr ""
+
+#. js-lingui-id: dihZwh
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "No data found"
+msgstr ""
+
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
@@ -3382,6 +3409,7 @@ msgstr "إعادة تحميل"
 
 #. js-lingui-id: t/YqKh
 #: src/modules/ui/input/components/ImageInput.tsx
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Remove"
 msgstr "\\\\"
 
@@ -3459,6 +3487,11 @@ msgstr "استعادة السجلات"
 msgid "Results"
 msgstr "\\\\"
 
+#. js-lingui-id: BohSvm
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Review your import"
+msgstr ""
+
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
@@ -3499,6 +3532,7 @@ msgstr "مخطط"
 #. js-lingui-id: A1taO8
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
@@ -3799,6 +3833,16 @@ msgstr "هل ينبغي أن يؤدي تغيير تسمية الحقل أيضا�
 msgid "Should changing an object's label also change the API?"
 msgstr "هل يجب أن يؤدي تغيير مسمى الكائن أيضاً إلى تغيير الواجهة برمجية؟"
 
+#. js-lingui-id: qi+g0a
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Show only rows with errors"
+msgstr ""
+
+#. js-lingui-id: MHlGJL
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Show unmatched columns"
+msgstr ""
+
 #. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -3914,6 +3958,11 @@ msgstr "سيتم مشاركة الموضوع والبيانات الوصفية �
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
 msgstr "سيتم مشاركة الموضوع والمحتوى والمرفقات مع فريقك."
+
+#. js-lingui-id: hQRttt
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Submit"
+msgstr ""
 
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
@@ -4099,6 +4148,11 @@ msgstr "سمة "
 #. js-lingui-id: /cSDOy
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "There are required columns that are not matched or ignored. Do you want to continue?"
+msgstr ""
+
+#. js-lingui-id: luL9RX
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr ""
 
 #. js-lingui-id: ynfkhb

@@ -730,6 +730,7 @@ msgstr "표준 객체에 대한 API 이름을 변경할 수 없습니다."
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
@@ -855,6 +856,11 @@ msgstr "접기"
 msgid "Color code"
 msgstr "색상 코드"
 
+#. js-lingui-id: 93hd3e
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "Columns not matched:"
+msgstr ""
+
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
@@ -886,6 +892,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "이메일 및 캘린더 설정 구성."
 
 #. js-lingui-id: 7VpPHA
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "확인"
@@ -996,6 +1003,11 @@ msgstr "이 키는 다시 표시되지 않으므로 복사하세요"
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Core"
 msgstr "코어"
+
+#. js-lingui-id: w5Stxm
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Correct the issues and fill the missing data."
+msgstr ""
 
 #. js-lingui-id: wBMjJ2
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -1969,6 +1981,11 @@ msgstr "필터"
 msgid "Filters"
 msgstr "필터"
 
+#. js-lingui-id: SNdnlf
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Finish flow with errors"
+msgstr ""
+
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
@@ -2871,6 +2888,16 @@ msgstr "연결된 계정 없음"
 msgid "No country"
 msgstr "국가 없음"
 
+#. js-lingui-id: pxvJ9B
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "No data containing errors"
+msgstr ""
+
+#. js-lingui-id: dihZwh
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "No data found"
+msgstr ""
+
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
@@ -3382,6 +3409,7 @@ msgstr "새로 고침"
 
 #. js-lingui-id: t/YqKh
 #: src/modules/ui/input/components/ImageInput.tsx
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Remove"
 msgstr "제거"
 
@@ -3459,6 +3487,11 @@ msgstr "레코드 복원"
 msgid "Results"
 msgstr "결과"
 
+#. js-lingui-id: BohSvm
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Review your import"
+msgstr ""
+
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
@@ -3499,6 +3532,7 @@ msgstr "스키마"
 #. js-lingui-id: A1taO8
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
@@ -3799,6 +3833,16 @@ msgstr "필드의 레이블을 변경하면 API 이름도 변경되어야 하나
 msgid "Should changing an object's label also change the API?"
 msgstr "객체의 레이블을 변경할 때 API도 변경되어야 하나요?"
 
+#. js-lingui-id: qi+g0a
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Show only rows with errors"
+msgstr ""
+
+#. js-lingui-id: MHlGJL
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Show unmatched columns"
+msgstr ""
+
 #. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -3914,6 +3958,11 @@ msgstr "주제와 메타데이터가 팀과 공유됩니다."
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
 msgstr "주제, 본문, 첨부 파일이 팀과 공유됩니다."
+
+#. js-lingui-id: hQRttt
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Submit"
+msgstr ""
 
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
@@ -4099,6 +4148,11 @@ msgstr "테마 "
 #. js-lingui-id: /cSDOy
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "There are required columns that are not matched or ignored. Do you want to continue?"
+msgstr ""
+
+#. js-lingui-id: luL9RX
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr ""
 
 #. js-lingui-id: ynfkhb
