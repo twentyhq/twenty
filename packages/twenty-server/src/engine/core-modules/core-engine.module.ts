@@ -13,6 +13,7 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
+import { ChatbotFlowModule } from 'src/engine/core-modules/chatbot-flow/chatbot-flow.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { emailModuleFactory } from 'src/engine/core-modules/email/email.module-factory';
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
@@ -95,6 +96,7 @@ import { StripeModule } from './stripe/stripe.module';
     InboxModule,
     GoogleStorageModule,
     TelephonyModule,
+    ChatbotFlowModule,
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
       inject: [EnvironmentService],
