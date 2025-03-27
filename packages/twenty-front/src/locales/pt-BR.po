@@ -555,6 +555,11 @@ msgstr "Tem certeza de que deseja excluir esses registros? Eles podem ser recupe
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
 msgstr "Tem certeza de que deseja excluir este registro? Ele pode ser recuperado no menu Comando."
 
+#. js-lingui-id: rnCqBK
+#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+msgid "Are you sure? Your current information will not be saved."
+msgstr ""
+
 #. js-lingui-id: nYD/Cq
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -725,6 +730,9 @@ msgstr "Não é possível alterar nomes de API para objetos padrão"
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 msgid "Cancel"
 msgstr "Cancelar"
@@ -848,6 +856,11 @@ msgstr "Colapsar"
 msgid "Color code"
 msgstr "Código de cor"
 
+#. js-lingui-id: 93hd3e
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "Columns not matched:"
+msgstr ""
+
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
@@ -879,6 +892,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "Configure suas configurações de e-mail e calendário."
 
 #. js-lingui-id: 7VpPHA
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Confirmar"
@@ -924,6 +938,8 @@ msgstr "Contexto"
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "Continuar"
@@ -987,6 +1003,11 @@ msgstr "Copie essa chave, pois ela não ficará visível novamente"
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Core"
 msgstr "Núcleo"
+
+#. js-lingui-id: w5Stxm
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Correct the issues and fill the missing data."
+msgstr ""
 
 #. js-lingui-id: wBMjJ2
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -1422,6 +1443,11 @@ msgstr "Exibir como data relativa"
 msgid "Display text on multiple lines"
 msgstr "Exibir texto em várias linhas"
 
+#. js-lingui-id: ji7sqw
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
+msgid "Do not import"
+msgstr ""
+
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
@@ -1464,6 +1490,11 @@ msgstr "Não sincronize e-mails de team@ support@ noreply@..."
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
 msgstr "Baixar arquivo"
+
+#. js-lingui-id: 6D/BnN
+#: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
+msgid "Drop file here..."
+msgstr ""
 
 #. js-lingui-id: KIjvtr
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1750,10 +1781,20 @@ msgstr "Excluir as seguintes pessoas e domínios da sincronização do meu e-mai
 msgid "Existing objects"
 msgstr "Objetos existentes"
 
+#. js-lingui-id: ydzS9x
+#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+msgid "Exit"
+msgstr ""
+
 #. js-lingui-id: LFNXuj
 #: src/modules/ui/layout/fullscreen/components/FullScreenContainer.tsx
 msgid "Exit Full Screen"
 msgstr "Sair do modo tela cheia"
+
+#. js-lingui-id: XB4onr
+#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+msgid "Exit import flow"
+msgstr ""
 
 #. js-lingui-id: IZ4o2e
 #: src/modules/navigation/components/AppNavigationDrawer.tsx
@@ -1939,6 +1980,11 @@ msgstr "Filtro"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Filters"
 msgstr "Filtros"
+
+#. js-lingui-id: SNdnlf
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Finish flow with errors"
+msgstr ""
 
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2583,6 +2629,16 @@ msgstr "Gerenciar sua assinatura"
 msgid "Mark as done"
 msgstr "Marcar como concluído"
 
+#. js-lingui-id: 7h8ch8
+#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
+msgid "Match columns"
+msgstr ""
+
+#. js-lingui-id: gDLior
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "Match Columns"
+msgstr ""
+
 #. js-lingui-id: CK1KXz
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -2811,6 +2867,12 @@ msgstr "Novo provedor SSO"
 #~ msgid "New Webhook"
 #~ msgstr "New Webhook"
 
+#. js-lingui-id: AxNmtI
+#: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "Next Step"
+msgstr ""
+
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "No change detected"
@@ -2825,6 +2887,16 @@ msgstr "Nenhuma conta conectada"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
 msgstr "Sem país"
+
+#. js-lingui-id: pxvJ9B
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "No data containing errors"
+msgstr ""
+
+#. js-lingui-id: dihZwh
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "No data found"
+msgstr ""
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2882,6 +2954,11 @@ msgstr "Nenhum registro encontrado"
 #~ msgid "No Result"
 #~ msgstr "No Result"
 
+#. js-lingui-id: Ev2r9A
+#: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
+msgid "No results"
+msgstr ""
+
 #. js-lingui-id: MA3x23
 #: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
@@ -2913,6 +2990,11 @@ msgstr "Nenhum"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Norwegian"
 msgstr "Noruegu\\u00eas"
+
+#. js-lingui-id: v3W9iu
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "Not all columns matched"
+msgstr ""
 
 #. js-lingui-id: 0qBE9S
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -3209,6 +3291,11 @@ msgstr "Prévia"
 msgid "Privacy Policy"
 msgstr "Política de privacidade"
 
+#. js-lingui-id: k1ifdL
+#: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
+msgid "Processing..."
+msgstr ""
+
 #. js-lingui-id: vERlcd
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/SettingsProfile.tsx
@@ -3322,6 +3409,7 @@ msgstr "Recarregar"
 
 #. js-lingui-id: t/YqKh
 #: src/modules/ui/input/components/ImageInput.tsx
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Remove"
 msgstr "Remover"
 
@@ -3399,6 +3487,11 @@ msgstr "Restaurar registros"
 msgid "Results"
 msgstr "Resultados"
 
+#. js-lingui-id: BohSvm
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Review your import"
+msgstr ""
+
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/roles/SettingsRoles.tsx
@@ -3439,6 +3532,7 @@ msgstr "Esquema"
 #. js-lingui-id: A1taO8
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
@@ -3595,6 +3689,31 @@ msgstr "Ver workflows"
 msgid "Select Action"
 msgstr "Selecionar Ação"
 
+#. js-lingui-id: hVPa4O
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
+msgid "Select an option"
+msgstr ""
+
+#. js-lingui-id: 21YIUv
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
+msgid "Select column..."
+msgstr ""
+
+#. js-lingui-id: J6WI1B
+#: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
+msgid "Select file"
+msgstr ""
+
+#. js-lingui-id: ljSvAs
+#: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
+msgid "Select header row"
+msgstr ""
+
+#. js-lingui-id: mWHn81
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "Select the correct field for each column you'd like to import."
+msgstr ""
+
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Select the default value for this boolean field"
@@ -3604,6 +3723,11 @@ msgstr "Selecione o valor padrão para este campo booleano"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Selecione os eventos que deseja enviar para este endpoint"
+
+#. js-lingui-id: +xn1pe
+#: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
+msgid "Select the sheet to use"
+msgstr ""
 
 #. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -3708,6 +3832,16 @@ msgstr "Alterar o rótulo de um campo também deve alterar o nome da API?"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Should changing an object's label also change the API?"
 msgstr "Alterar o rótulo de um objeto também deve alterar a API?"
+
+#. js-lingui-id: qi+g0a
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Show only rows with errors"
+msgstr ""
+
+#. js-lingui-id: MHlGJL
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Show unmatched columns"
+msgstr ""
 
 #. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
@@ -3824,6 +3958,11 @@ msgstr "Assunto e metadados serão compartilhados com sua equipe."
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
 msgstr "Assunto, corpo e anexos serão compartilhados com sua equipe."
+
+#. js-lingui-id: hQRttt
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "Submit"
+msgstr ""
 
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
@@ -4006,6 +4145,16 @@ msgstr "Tema"
 msgid "Theme "
 msgstr "Tema "
 
+#. js-lingui-id: /cSDOy
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "There are required columns that are not matched or ignored. Do you want to continue?"
+msgstr ""
+
+#. js-lingui-id: luL9RX
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
+msgstr ""
+
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
@@ -4163,7 +4312,13 @@ msgstr "Atualizado"
 msgid "Upload"
 msgstr "Carregar"
 
+#. js-lingui-id: 7OP1Xi
+#: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
+msgid "Upload .xlsx, .xls or .csv file"
+msgstr ""
+
 #. js-lingui-id: 2IXDgU
+#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload file"
 msgstr "Fazer upload de arquivo"
@@ -4239,6 +4394,11 @@ msgstr "O usuário não está conectado"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #~ msgid "Users"
 #~ msgstr "Users"
+
+#. js-lingui-id: MGeZsN
+#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
+msgid "Validate data"
+msgstr ""
 
 #. js-lingui-id: fXVIZq
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -4453,6 +4613,11 @@ msgstr "Escreva um segredo"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "yes"
 msgstr "sim"
+
+#. js-lingui-id: qsAug0
+#: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
+msgid "You are already importing this column."
+msgstr ""
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
