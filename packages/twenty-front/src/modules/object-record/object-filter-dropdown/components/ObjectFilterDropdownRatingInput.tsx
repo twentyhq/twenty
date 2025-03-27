@@ -71,6 +71,8 @@ export const ObjectFilterDropdownRatingInput = () => {
               operand: selectedOperandInDropdown,
               displayValue: convertFieldRatingValueToNumber(newValue),
               recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+              positionInRecordFilterGroup:
+                selectedFilter?.positionInRecordFilterGroup,
               type: getFilterTypeFromFieldType(
                 fieldMetadataItemUsedInDropdown.type,
               ),
