@@ -507,7 +507,6 @@ export enum FeatureFlagKey {
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
-  IsPermissionsEnabled = 'IsPermissionsEnabled',
   IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
@@ -537,6 +536,7 @@ export type Field = {
   relation?: Maybe<Relation>;
   relationDefinition?: Maybe<RelationDefinition>;
   settings?: Maybe<Scalars['JSON']>;
+  standardOverrides?: Maybe<StandardOverrides>;
   toRelationMetadata?: Maybe<RelationMetadata>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
@@ -821,6 +821,7 @@ export type Mutation = {
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
+  deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteUser: User;
@@ -959,6 +960,11 @@ export type MutationDeleteOneFieldArgs = {
 
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
+};
+
+
+export type MutationDeleteOneRoleArgs = {
+  roleId: Scalars['String'];
 };
 
 
@@ -1209,6 +1215,7 @@ export type Object = {
   namePlural: Scalars['String'];
   nameSingular: Scalars['String'];
   shortcut?: Maybe<Scalars['String']>;
+  standardOverrides?: Maybe<ObjectStandardOverrides>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -1286,6 +1293,15 @@ export type ObjectRecordFilterInput = {
   not?: InputMaybe<ObjectRecordFilterInput>;
   or?: InputMaybe<Array<ObjectRecordFilterInput>>;
   updatedAt?: InputMaybe<DateFilter>;
+};
+
+export type ObjectStandardOverrides = {
+  __typename?: 'ObjectStandardOverrides';
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  labelPlural?: Maybe<Scalars['String']>;
+  labelSingular?: Maybe<Scalars['String']>;
+  translations?: Maybe<Scalars['JSON']>;
 };
 
 /** Onboarding status */
@@ -1785,6 +1801,14 @@ export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
+};
+
+export type StandardOverrides = {
+  __typename?: 'StandardOverrides';
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  label?: Maybe<Scalars['String']>;
+  translations?: Maybe<Scalars['JSON']>;
 };
 
 export type SubmitFormStepInput = {
