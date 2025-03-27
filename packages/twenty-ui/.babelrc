@@ -3,7 +3,7 @@
   "presets": [
     "@babel/preset-env",
     "@babel/preset-typescript",
-    ["@babel/preset-react", {"runtime": "automatic"}]
+    ["@babel/preset-react", { "runtime": "automatic" }]
   ],
   "plugins": [
     [
@@ -16,11 +16,21 @@
         }
       }
     ],
+    // [
+    //   "@emotion",
+    //   {
+    //     // sourceMap is on by default but source maps are dead code eliminated in production
+    //     "sourceMap": true,
+    //     "autoLabel": "dev-only",
+    //     "labelFormat": "[local]",
+    //     "cssPropOptimization": true
+    //   }
+    // ],
     "inline-react-svg",
     [
       "inline-import",
       {
-        "extensions": [".png", ".jpg", ".jpeg"]
+        "extensions": [".png", ".jpg", ".jpeg", "svg"]
       }
     ]
   ],
