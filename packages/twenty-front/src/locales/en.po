@@ -1077,6 +1077,11 @@ msgstr "Create Role"
 msgid "Create select field"
 msgstr "Create select field"
 
+#. js-lingui-id: jmetDx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Create Select..."
+msgstr "Create Select..."
+
 #. js-lingui-id: zt6Erc
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -2110,9 +2115,14 @@ msgstr "Greater than"
 msgid "Greek"
 msgstr "Greek"
 
+#. js-lingui-id: L8fEEm
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Group"
+msgstr "Group"
+
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Group by"
 msgstr "Group by"
 
@@ -2448,6 +2458,7 @@ msgstr "Japanese"
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Kanban"
 msgstr "Kanban"
 
@@ -2990,6 +3001,11 @@ msgstr "Norwegian"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Not all columns matched"
 msgstr "Not all columns matched"
+
+#. js-lingui-id: tqk+dw
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Not available for default view"
+msgstr "Not available for default view"
 
 #. js-lingui-id: 0qBE9S
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -4039,6 +4055,7 @@ msgstr "System Settings - {systemTimeFormatLabel}"
 
 #. js-lingui-id: 4hJhzz
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Table"
 msgstr "Table"
 

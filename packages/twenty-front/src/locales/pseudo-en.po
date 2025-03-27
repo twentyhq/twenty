@@ -1074,6 +1074,11 @@ msgstr ""
 msgid "Create select field"
 msgstr ""
 
+#. js-lingui-id: jmetDx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Create Select..."
+msgstr ""
+
 #. js-lingui-id: zt6Erc
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -2107,9 +2112,14 @@ msgstr ""
 msgid "Greek"
 msgstr ""
 
+#. js-lingui-id: L8fEEm
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Group"
+msgstr ""
+
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 msgid "Group by"
 msgstr ""
 
@@ -2445,6 +2455,7 @@ msgstr ""
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Kanban"
 msgstr ""
 
@@ -2986,6 +2997,11 @@ msgstr ""
 #. js-lingui-id: v3W9iu
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Not all columns matched"
+msgstr ""
+
+#. js-lingui-id: tqk+dw
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+msgid "Not available for default view"
 msgstr ""
 
 #. js-lingui-id: 0qBE9S
@@ -4036,6 +4052,7 @@ msgstr ""
 
 #. js-lingui-id: 4hJhzz
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Table"
 msgstr ""
 
