@@ -4,26 +4,27 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { AnimatedExpandableContainer, IconPoint, MAIN_COLORS } from 'twenty-ui';
 
+type DotPosition = 'top' | 'centered';
+
 const StyledAdvancedWrapper = styled.div`
   position: relative;
   width: 100%;
 `;
 
-const StyledIconContainer = styled.div<{ navigationDrawerItem: boolean }>`
+const StyledDotContainer = styled.div<{ dotPosition: DotPosition }>`
   display: flex;
   position: absolute;
+  height: 100%;
+  left: ${({ theme }) => theme.spacing(-5)};
 
-  ${({ navigationDrawerItem, theme }) => {
-    if (navigationDrawerItem) {
+  ${({ dotPosition }) => {
+    if (dotPosition === 'top') {
       return `
-        height: 100%;
-        left: ${theme.spacing(-5)};
-        align-items: center;
+        top: 0;
       `;
     }
     return `
-      left: ${theme.spacing(-4)};
-      top: ${theme.spacing(1)};
+      align-items: center;
     `;
   }}
 `;
@@ -38,36 +39,36 @@ const StyledIconPoint = styled(IconPoint)`
 
 type AdvancedSettingsWrapperProps = {
   children: React.ReactNode;
-  dimension?: 'width' | 'height';
-  hideIcon?: boolean;
-  navigationDrawerItem?: boolean;
+  animationDimension?: 'width' | 'height';
+  hideDot?: boolean;
+  dotPosition?: DotPosition;
 };
 
 export const AdvancedSettingsWrapper = ({
   children,
-  dimension = 'height',
-  hideIcon = false,
-  navigationDrawerItem = false,
+  hideDot = false,
+  dotPosition = 'centered',
+  animationDimension = 'height',
 }: AdvancedSettingsWrapperProps) => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   return (
     <AnimatedExpandableContainer
       isExpanded={isAdvancedModeEnabled}
-      dimension={dimension}
+      dimension={animationDimension}
       animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
       mode="scroll-height"
       containAnimation={false}
     >
       <StyledAdvancedWrapper>
-        {!hideIcon && (
-          <StyledIconContainer navigationDrawerItem={navigationDrawerItem}>
+        {!hideDot && (
+          <StyledDotContainer dotPosition={dotPosition}>
             <StyledIconPoint
               size={12}
               color={MAIN_COLORS.yellow}
               fill={MAIN_COLORS.yellow}
             />
-          </StyledIconContainer>
+          </StyledDotContainer>
         )}
         <StyledContent>{children}</StyledContent>
       </StyledAdvancedWrapper>

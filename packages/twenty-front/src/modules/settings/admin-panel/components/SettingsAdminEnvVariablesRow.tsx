@@ -1,3 +1,5 @@
+import { SettingsAdminEnvCopyableText } from '@/settings/admin-panel/components/SettingsAdminEnvCopyableText';
+import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
@@ -19,6 +21,8 @@ type SettingsAdminEnvVariablesRowProps = {
     value: string;
     sensitive: boolean;
   };
+  isExpanded: boolean;
+  onExpandToggle: (name: string) => void;
 };
 
 const StyledTruncatedCell = styled(TableCell)`
@@ -43,53 +47,36 @@ const StyledButton = styled(motion.button)`
 
 const MotionIconChevronDown = motion(IconChevronRight);
 
-const StyledExpandedDetails = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  margin: ${({ theme }) => theme.spacing(2)} 0;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: fit-content;
-  min-height: min-content;
-`;
-
-const StyledDetailLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding-right: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledEllipsisLabel = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 `;
 
-const StyledExpandedLabel = styled.div`
-  word-break: break-word;
-  white-space: normal;
-  overflow: visible;
-`;
-
 const StyledValueContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
   justify-content: space-between;
+  width: 100%;
 `;
 
 const StyledTableRow = styled(TableRow)<{ isExpanded: boolean }>`
   background-color: ${({ isExpanded, theme }) =>
     isExpanded ? theme.background.transparent.light : 'transparent'};
-  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const StyledExpandableContainer = styled.div`
+  width: 100%;
+  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsAdminEnvVariablesRow = ({
   variable,
+  isExpanded,
+  onExpandToggle,
 }: SettingsAdminEnvVariablesRowProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [showSensitiveValue, setShowSensitiveValue] = useState(false);
   const theme = useTheme();
 
@@ -105,10 +92,47 @@ export const SettingsAdminEnvVariablesRow = ({
     setShowSensitiveValue(!showSensitiveValue);
   };
 
+  const environmentVariablesDetails = [
+    {
+      label: 'Name',
+      value: <SettingsAdminEnvCopyableText text={variable.name} />,
+    },
+    {
+      label: 'Description',
+      value: (
+        <SettingsAdminEnvCopyableText
+          text={variable.description}
+          maxRows={1}
+          multiline={true}
+        />
+      ),
+    },
+    {
+      label: 'Value',
+      value: (
+        <StyledValueContainer>
+          <SettingsAdminEnvCopyableText
+            text={variable.value}
+            displayText={displayValue}
+            multiline={true}
+          />
+          {variable.sensitive && variable.value !== '' && (
+            <LightIconButton
+              Icon={showSensitiveValue ? IconEyeOff : IconEye}
+              size="small"
+              accent="secondary"
+              onClick={handleToggleVisibility}
+            />
+          )}
+        </StyledValueContainer>
+      ),
+    },
+  ];
+
   return (
     <>
       <StyledTableRow
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => onExpandToggle(variable.name)}
         gridAutoColumns="5fr 4fr 3fr 1fr"
         isExpanded={isExpanded}
       >
@@ -122,7 +146,12 @@ export const SettingsAdminEnvVariablesRow = ({
           <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
         </StyledTruncatedCell>
         <TableCell align="right">
-          <StyledButton onClick={() => setIsExpanded(!isExpanded)}>
+          <StyledButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onExpandToggle(variable.name);
+            }}
+          >
             <MotionIconChevronDown
               size={theme.icon.size.md}
               color={theme.font.color.tertiary}
@@ -133,26 +162,12 @@ export const SettingsAdminEnvVariablesRow = ({
         </TableCell>
       </StyledTableRow>
       <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
-        <StyledExpandedDetails>
-          <StyledDetailLabel>Name</StyledDetailLabel>
-          <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
-          <StyledDetailLabel>Description</StyledDetailLabel>
-          <StyledExpandedLabel>{variable.description}</StyledExpandedLabel>
-          <StyledDetailLabel>Value</StyledDetailLabel>
-          <StyledExpandedLabel>
-            <StyledValueContainer>
-              {displayValue}
-              {variable.sensitive && variable.value !== '' && (
-                <LightIconButton
-                  Icon={showSensitiveValue ? IconEyeOff : IconEye}
-                  size="small"
-                  accent="secondary"
-                  onClick={handleToggleVisibility}
-                />
-              )}
-            </StyledValueContainer>
-          </StyledExpandedLabel>
-        </StyledExpandedDetails>
+        <StyledExpandableContainer>
+          <SettingsAdminTableCard
+            items={environmentVariablesDetails}
+            gridAutoColumns="1fr 4fr"
+          />
+        </StyledExpandableContainer>
       </AnimatedExpandableContainer>
     </>
   );

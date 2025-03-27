@@ -6,11 +6,9 @@ import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 
-import { useInlineCell } from '../hooks/useInlineCell';
-
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
@@ -18,12 +16,12 @@ import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinit
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useRecoilCallback } from 'recoil';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
@@ -31,7 +29,6 @@ import {
   RecordInlineCellContext,
   RecordInlineCellContextProps,
 } from './RecordInlineCellContext';
-
 type RecordInlineCellProps = {
   readonly?: boolean;
   loading?: boolean;
@@ -86,26 +83,18 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
     ({ snapshot }) =>
       (persistField, event) => {
-        const recordFieldDropdownId = getDropdownFocusIdForRecordField(
-          recordId,
-          fieldDefinition.fieldMetadataId,
-          'inline-cell',
-        );
-
-        const activeDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
+        const hotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
           .getValue();
-
-        if (recordFieldDropdownId !== activeDropdownFocusId) {
+        if (hotkeyScope.scope !== InlineCellHotkeyScope.InlineCell) {
           return;
         }
-
         event.stopImmediatePropagation();
 
         persistField();
         closeInlineCell();
       },
-    [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
+    [closeInlineCell],
   );
 
   const { getIcon } = useIcons();
@@ -152,10 +141,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isCentered,
     editModeContent: (
       <FieldInput
-        recordFieldInputdId={getRecordFieldInputId(
-          recordId,
-          fieldDefinition?.metadata?.fieldName,
-        )}
         onEnter={handleEnter}
         onCancel={handleCancel}
         onEscape={handleEscape}

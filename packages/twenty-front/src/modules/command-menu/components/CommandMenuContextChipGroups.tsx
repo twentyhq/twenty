@@ -3,7 +3,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui';
 import {
   CommandMenuContextChip,
@@ -24,9 +24,10 @@ export const CommandMenuContextChipGroups = ({
   if (contextChips.length < 3) {
     return (
       <>
-        {contextChips.map((chip) => (
+        {contextChips.map((chip, index) => (
           <CommandMenuContextChip
-            key={chip.text}
+            key={index}
+            maxWidth={'180px'}
             Icons={chip.Icons}
             text={chip.text}
             onClick={chip.onClick}
@@ -53,8 +54,9 @@ export const CommandMenuContextChipGroups = ({
           }
           dropdownComponents={
             <DropdownMenuItemsContainer>
-              {firstChips.map((chip) => (
+              {firstChips.map((chip, index) => (
                 <MenuItem
+                  key={index}
                   LeftComponent={chip.Icons}
                   text={chip.text}
                   onClick={() => {
@@ -78,6 +80,7 @@ export const CommandMenuContextChipGroups = ({
           Icons={lastChip.Icons}
           text={lastChip.text}
           onClick={lastChip.onClick}
+          maxWidth={'180px'}
         />
       )}
     </>

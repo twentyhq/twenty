@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { HealthController } from 'src/engine/core-modules/health/controllers/health.controller';
 import { MetricsController } from 'src/engine/core-modules/health/controllers/metrics.controller';
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
-import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 
 import { HealthCacheService } from './health-cache.service';
@@ -18,8 +19,8 @@ import { WorkerHealthIndicator } from './indicators/worker.health';
   imports: [
     TerminusModule,
     RedisClientModule,
-    ObjectMetadataModule,
     WorkspaceMigrationModule,
+    TypeOrmModule.forFeature([Workspace], 'core'),
   ],
   controllers: [HealthController, MetricsController],
   providers: [

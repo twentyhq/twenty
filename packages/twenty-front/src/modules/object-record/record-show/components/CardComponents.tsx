@@ -41,8 +41,11 @@ type CardComponentProps = {
 type CardComponentType = (props: CardComponentProps) => JSX.Element | null;
 
 export const CardComponents: Record<CardType, CardComponentType> = {
-  [CardType.TimelineCard]: ({ targetableObject }) => (
-    <TimelineActivities targetableObject={targetableObject} />
+  [CardType.TimelineCard]: ({ targetableObject, isInRightDrawer }) => (
+    <TimelineActivities
+      targetableObject={targetableObject}
+      isInRightDrawer={isInRightDrawer}
+    />
   ),
 
   [CardType.FieldCard]: ({ targetableObject, isInRightDrawer }) => (

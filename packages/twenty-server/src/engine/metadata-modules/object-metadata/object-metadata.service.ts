@@ -5,7 +5,7 @@ import { i18n } from '@lingui/core';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'class-validator';
-import { APP_LOCALES } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
@@ -34,7 +34,7 @@ import {
   validateObjectMetadataInputNamesOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
-import { SearchService } from 'src/engine/metadata-modules/search/search.service';
+import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -59,7 +59,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly searchService: SearchService,
+    private readonly searchVectorService: SearchVectorService,
     private readonly objectMetadataRelationService: ObjectMetadataRelationService,
     private readonly objectMetadataFieldRelationService: ObjectMetadataFieldRelationService,
     private readonly objectMetadataMigrationService: ObjectMetadataMigrationService,
@@ -208,7 +208,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         createdRelatedObjectMetadataCollection,
       );
 
-      await this.searchService.createSearchVectorFieldForObject(
+      await this.searchVectorService.createSearchVectorFieldForObject(
         objectMetadataInput,
         createdObjectMetadata,
       );
@@ -321,7 +321,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         });
 
       if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
-        await this.searchService.updateSearchVector(
+        await this.searchVectorService.updateSearchVector(
           input.id,
           [
             {
@@ -601,17 +601,31 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
   };
 
-  async resolveTranslatableString(
+  async resolveOverridableString(
     objectMetadata: ObjectMetadataDTO,
-    labelKey: 'labelPlural' | 'labelSingular' | 'description',
+    labelKey: 'labelPlural' | 'labelSingular' | 'description' | 'icon',
     locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<string> {
     if (objectMetadata.isCustom) {
       return objectMetadata[labelKey];
     }
 
-    if (!locale) {
+    if (!locale || locale === SOURCE_LOCALE) {
+      if (
+        objectMetadata.standardOverrides &&
+        isDefined(objectMetadata.standardOverrides[labelKey])
+      ) {
+        return objectMetadata.standardOverrides[labelKey] as string;
+      }
+
       return objectMetadata[labelKey];
+    }
+
+    const translationValue =
+      objectMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
+
+    if (isDefined(translationValue)) {
+      return translationValue;
     }
 
     const messageId = generateMessageId(objectMetadata[labelKey] ?? '');

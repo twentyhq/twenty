@@ -10,12 +10,14 @@ import { Card, H2Title, IconHeartRateMonitor, Section } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledGroupContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
-`;
+const StyledGroupContainer = styled.div``;
 
 const StyledInfoText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
+`;
+
+const StyledCard = styled(Card)`
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const SettingsAdminEnvVariables = () => {
@@ -38,22 +40,20 @@ export const SettingsAdminEnvVariables = () => {
     <>
       <Section>
         <StyledInfoText>
-          {t` These are only the server values. Ensure your worker environment has the
-        same variables and values, this is required for asynchronous tasks like
-        email sync.`}
+          {t`These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync.`}
         </StyledInfoText>
       </Section>
-      <Section>
-        {visibleGroups.map((group) => (
-          <StyledGroupContainer key={group.name}>
-            <H2Title title={group.name} description={group.description} />
-            {group.variables.length > 0 && (
-              <SettingsAdminEnvVariablesTable variables={group.variables} />
-            )}
-          </StyledGroupContainer>
-        ))}
+      {visibleGroups.map((group) => (
+        <StyledGroupContainer key={group.name}>
+          <H2Title title={group.name} description={group.description} />
+          {group.variables.length > 0 && (
+            <SettingsAdminEnvVariablesTable variables={group.variables} />
+          )}
+        </StyledGroupContainer>
+      ))}
 
-        <Card rounded>
+      <Section>
+        <StyledCard rounded>
           <SettingsListItemCardContent
             label={t`Other Variables`}
             to={getSettingsPath(SettingsPath.AdminPanelOtherEnvVariables)}
@@ -61,7 +61,7 @@ export const SettingsAdminEnvVariables = () => {
             LeftIcon={IconHeartRateMonitor}
             LeftIconColor={theme.font.color.tertiary}
           />
-        </Card>
+        </StyledCard>
       </Section>
     </>
   );

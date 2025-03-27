@@ -1,7 +1,6 @@
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
-import { useUpsertTableRecordNoGroup } from '@/object-record/record-table/hooks/internal/useUpsertTableRecordNoGroup';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { useMoveSoftFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCurrentCellOnHover';
@@ -22,20 +21,6 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
   children,
 }: RecordTableNoRecordGroupBodyContextProviderProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
-
-  const { upsertTableRecordNoGroup } = useUpsertTableRecordNoGroup();
-
-  const handleUpsertTableRecordNoRecordGroup = ({
-    persistField,
-    recordId,
-    fieldName,
-  }: {
-    persistField: () => void;
-    recordId: string;
-    fieldName: string;
-  }) => {
-    upsertTableRecordNoGroup(persistField, recordId, fieldName);
-  };
 
   const { openTableCell } = useOpenRecordTableCellV2(recordTableId);
 
@@ -82,7 +67,6 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
   return (
     <RecordTableBodyContextProvider
       value={{
-        onUpsertRecord: handleUpsertTableRecordNoRecordGroup,
         onOpenTableCell: handleOpenTableCell,
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handleCloseTableCell,

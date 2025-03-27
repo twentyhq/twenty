@@ -16,7 +16,7 @@ import {
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectFilterDropdownDateInput = () => {
@@ -114,7 +114,6 @@ export const ObjectFilterDropdownDateInput = () => {
       date={internalDate}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
-      onClose={handleAbsoluteDateChange}
       isDateTimeInput={isDateTimeInput}
     />
   );

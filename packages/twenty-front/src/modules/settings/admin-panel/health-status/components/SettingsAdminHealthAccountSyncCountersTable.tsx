@@ -1,55 +1,58 @@
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import styled from '@emotion/styled';
-import { H2Title } from 'twenty-ui';
+import { H2Title, Section } from 'twenty-ui';
 
-const StyledContainer = styled.div``;
+const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+`;
 
 export const SettingsAdminHealthAccountSyncCountersTable = ({
   details,
   title,
+  description,
 }: {
   details: Record<string, any> | null;
   title: string;
+  description: string;
 }) => {
   if (!details) {
     return null;
   }
 
+  const items = [
+    {
+      label: 'Not Synced',
+      value: details.counters.NOT_SYNCED,
+    },
+    {
+      label: 'Active Sync',
+      value: details.counters.ACTIVE,
+    },
+    {
+      label: 'Total Jobs',
+      value: details.totalJobs,
+    },
+    {
+      label: 'Failed Jobs',
+      value: details.failedJobs,
+    },
+    {
+      label: 'Failure Rate',
+      value: `${details.failureRate}%`,
+    },
+  ];
+
   return (
-    <StyledContainer>
-      <H2Title
-        title={title}
-        description={`How your ${title.toLowerCase()} is doing`}
+    <Section>
+      <H2Title title={title} description={description} />
+      <StyledSettingsAdminTableCard
+        items={items}
+        rounded
+        gridAutoColumns="1fr 1fr"
+        labelAlign="left"
+        valueAlign="right"
       />
-      <Table>
-        <TableRow>
-          <TableHeader>Status</TableHeader>
-          <TableHeader align="right">Count</TableHeader>
-        </TableRow>
-        <TableRow>
-          <TableCell>Not Synced</TableCell>
-          <TableCell align="right">{details.counters.NOT_SYNCED}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>Active Sync</TableCell>
-          <TableCell align="right">{details.counters.ACTIVE}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>Total Jobs</TableCell>
-          <TableCell align="right">{details.totalJobs}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>Failed Jobs</TableCell>
-          <TableCell align="right">{details.failedJobs}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>Failure Rate</TableCell>
-          <TableCell align="right">{details.failureRate}%</TableCell>
-        </TableRow>
-      </Table>
-    </StyledContainer>
+    </Section>
   );
 };

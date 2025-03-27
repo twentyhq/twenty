@@ -10,6 +10,12 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(8)};
+`;
+
 export const ConnectedAccountHealthStatus = () => {
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
   const details = indicatorHealth.details;
@@ -35,7 +41,7 @@ export const ConnectedAccountHealthStatus = () => {
   }
 
   return (
-    <>
+    <StyledContainer>
       {errorMessages.length > 0 && (
         <StyledErrorMessage>
           {`${errorMessages.join(' and ')} ${errorMessages.length > 1 ? 'are' : 'is'} not available because the service is down`}
@@ -45,16 +51,18 @@ export const ConnectedAccountHealthStatus = () => {
       {!isMessageSyncDown && serviceDetails.messageSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
           details={serviceDetails.messageSync.details}
-          title={t`Message Sync Status`}
+          title={t`Message Sync`}
+          description={t`Monitor the execution of your emails sync job`}
         />
       )}
 
       {!isCalendarSyncDown && serviceDetails.calendarSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
           details={serviceDetails.calendarSync.details}
-          title={t`Calendar Sync Status`}
+          title={t`Calendar Sync`}
+          description={t`Monitor the execution of your calendar events sync job`}
         />
       )}
-    </>
+    </StyledContainer>
   );
 };

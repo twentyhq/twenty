@@ -1,4 +1,5 @@
 import { CommandMenuContainer } from '@/command-menu/components/CommandMenuContainer';
+import { CommandMenuContextChipRecordSetterEffect } from '@/command-menu/components/CommandMenuContextChipRecordSetterEffect';
 import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuPagesConfig';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
@@ -8,7 +9,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledCommandMenuContent = styled.div`
   flex: 1;
@@ -30,6 +31,7 @@ export const CommandMenuRouter = () => {
 
   return (
     <CommandMenuContainer>
+      <CommandMenuContextChipRecordSetterEffect />
       <CommandMenuPageComponentInstanceContext.Provider
         value={{ instanceId: commandMenuPageInfo.instanceId }}
       >

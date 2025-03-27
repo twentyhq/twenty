@@ -2,22 +2,21 @@ import { Key } from 'ts-key-enum';
 import {
   AppTooltip,
   IconCopy,
-  IconLayout,
+  IconLayoutKanban,
   IconLayoutList,
-  IconList,
-  IconTag,
+  IconListDetails,
+  IconTable,
   IconTrash,
   MenuItem,
-  useIcons,
 } from 'twenty-ui';
 
+import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -27,26 +26,15 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewType } from '@/views/types/ViewType';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
+import { capitalize, isDefined } from 'twenty-shared/utils';
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    viewType,
-    onContentChange,
-    closeDropdown,
-  } = useOptionsDropdown();
+  const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
+    useOptionsDropdown();
 
-  const { getIcon } = useIcons();
   const { currentView } = useGetCurrentViewOnly();
-
-  const CurrentViewIcon = currentView?.icon ? getIcon(currentView.icon) : null;
 
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
@@ -70,10 +58,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
     viewBarId: recordIndexId,
   });
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
   const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
     viewPickerReferenceViewIdComponentState,
@@ -86,33 +70,33 @@ export const ObjectOptionsDropdownMenuContent = () => {
     deleteViewFromCurrentState();
     closeDropdown();
   };
+
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={CurrentViewIcon ?? IconList}>
-        {currentView?.name}
-      </DropdownMenuHeader>
-
-      {(isCommandMenuV2Enabled || viewType === ViewType.Kanban) && (
-        <>
-          <DropdownMenuItemsContainer scrollable={false}>
-            <MenuItem
-              onClick={() => onContentChange('viewSettings')}
-              LeftIcon={IconLayout}
-              text={t`View settings`}
-              hasSubMenu
-            />
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-        </>
+      {currentView && (
+        <ObjectOptionsDropdownMenuViewName currentView={currentView} />
       )}
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer scrollable={false}>
+        <MenuItem
+          onClick={() => onContentChange('layout')}
+          LeftIcon={
+            currentView?.type === ViewType.Table ? IconTable : IconLayoutKanban
+          }
+          text={t`Layout`}
+          contextualText={`${capitalize(currentView?.type ?? '')}`}
+          hasSubMenu
+        />
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
 
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
           onClick={() => onContentChange('fields')}
-          LeftIcon={IconTag}
+          LeftIcon={IconListDetails}
           text={t`Fields`}
           contextualText={`${visibleBoardFields.length} shown`}
           hasSubMenu

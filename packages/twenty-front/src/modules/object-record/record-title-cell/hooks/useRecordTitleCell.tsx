@@ -1,10 +1,11 @@
 import { isInlineCellInEditModeScopedState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeScopedState';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { getRecordTitleCellId } from '@/object-record/record-title-cell/utils/getRecordTitleCellId';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordTitleCell = () => {
   const { goBackToPreviousDropdownFocusId } =
@@ -25,7 +26,9 @@ export const useRecordTitleCell = () => {
         fieldMetadataId: string;
       }) => {
         set(
-          isInlineCellInEditModeScopedState(recordId + fieldMetadataId),
+          isInlineCellInEditModeScopedState(
+            getRecordTitleCellId(recordId, fieldMetadataId),
+          ),
           false,
         );
 
@@ -48,7 +51,9 @@ export const useRecordTitleCell = () => {
         customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
         set(
-          isInlineCellInEditModeScopedState(recordId + fieldMetadataId),
+          isInlineCellInEditModeScopedState(
+            getRecordTitleCellId(recordId, fieldMetadataId),
+          ),
           true,
         );
 

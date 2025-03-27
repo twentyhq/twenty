@@ -1,6 +1,6 @@
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -9,16 +9,14 @@ import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/v
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordFilterGroupEffect = () => {
   const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
-  );
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const currentView = useRecoilValue(
     prefetchViewFromViewIdFamilySelector({
@@ -42,10 +40,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
 
   useEffect(() => {
     if (isDefined(currentView) && !hasInitializedCurrentRecordFilterGroups) {
-      if (
-        currentView.objectMetadataId !==
-        contextStoreCurrentObjectMetadataItem?.id
-      ) {
+      if (currentView.objectMetadataId !== objectMetadataItem.id) {
         return;
       }
 
@@ -64,7 +59,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
     setCurrentRecordFilterGroups,
     hasInitializedCurrentRecordFilterGroups,
     setHasInitializedCurrentRecordFilterGroups,
-    contextStoreCurrentObjectMetadataItem?.id,
+    objectMetadataItem,
     currentView,
   ]);
 

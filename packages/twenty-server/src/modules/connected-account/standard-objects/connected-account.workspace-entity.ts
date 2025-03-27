@@ -1,5 +1,8 @@
 import { msg } from '@lingui/core/macro';
-import { ConnectedAccountProvider, FieldMetadataType } from 'twenty-shared';
+import {
+  ConnectedAccountProvider,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';

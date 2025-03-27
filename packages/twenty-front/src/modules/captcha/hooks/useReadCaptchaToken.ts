@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useReadCaptchaToken = () => {
   const readCaptchaToken = useRecoilCallback(

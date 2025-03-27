@@ -11,17 +11,17 @@ import {
   IconEye,
   IconHierarchy,
   IconKey,
-  IconLock,
+  IconLockOpen,
   IconPencil,
+  IconServer,
   IconSettings,
   IconTrash,
   IconTrashX,
-  IconUserCog,
   IconUsers,
   Section,
 } from 'twenty-ui';
 import { Role } from '~/generated-metadata/graphql';
-import { SettingsPermissions } from '~/generated/graphql';
+import { SettingPermissionType } from '~/generated/graphql';
 import { RolePermissionsObjectsTableRow } from './RolePermissionsObjectsTableRow';
 
 const StyledRolePermissionsContainer = styled.div`
@@ -32,7 +32,11 @@ const StyledRolePermissionsContainer = styled.div`
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+`;
+
+const StyledTableRows = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 type RolePermissionsProps = {
@@ -77,51 +81,51 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
 
   const settingsPermissionsConfig: RolePermissionsSettingPermission[] = [
     {
-      key: SettingsPermissions.API_KEYS_AND_WEBHOOKS,
-      label: 'Manage API Keys & Webhooks',
-      type: 'Developer',
+      key: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
+      name: 'API Keys & Webhooks',
+      description: 'Manage API keys and webhooks',
       value: role.canUpdateAllSettings,
       Icon: IconCode,
     },
     {
-      key: SettingsPermissions.WORKSPACE,
-      label: 'Manage Workspace Settings',
-      type: 'General',
+      key: SettingPermissionType.WORKSPACE,
+      name: 'Workspace',
+      description: 'Set global workspace preferences',
       value: role.canUpdateAllSettings,
       Icon: IconSettings,
     },
     {
-      key: SettingsPermissions.WORKSPACE_MEMBERS,
-      label: 'Manage Members',
-      type: 'Members',
+      key: SettingPermissionType.WORKSPACE_MEMBERS,
+      name: 'Users',
+      description: 'Add or remove users',
       value: role.canUpdateAllSettings,
       Icon: IconUsers,
     },
     {
-      key: SettingsPermissions.ROLES,
-      label: 'Manage Roles',
-      type: 'Members',
+      key: SettingPermissionType.ROLES,
+      name: 'Roles',
+      description: 'Define user roles and access levels',
       value: role.canUpdateAllSettings,
-      Icon: IconLock,
+      Icon: IconLockOpen,
     },
     {
-      key: SettingsPermissions.DATA_MODEL,
-      label: 'Manage Data Model',
-      type: 'Data Model',
+      key: SettingPermissionType.DATA_MODEL,
+      name: 'Data Model',
+      description: 'Edit CRM data structure and fields',
       value: role.canUpdateAllSettings,
       Icon: IconHierarchy,
     },
     {
-      key: SettingsPermissions.ADMIN_PANEL,
-      label: 'Manage Admin Panel',
-      type: 'Admin Panel',
+      key: SettingPermissionType.ADMIN_PANEL,
+      name: 'Admin Panel',
+      description: 'Admin settings and system tools',
       value: role.canUpdateAllSettings,
-      Icon: IconUserCog,
+      Icon: IconServer,
     },
     {
-      key: SettingsPermissions.SECURITY,
-      label: 'Manage Security Settings',
-      type: 'Security',
+      key: SettingPermissionType.SECURITY,
+      name: 'Security',
+      description: 'Manage security policies',
       value: role.canUpdateAllSettings,
       Icon: IconKey,
     },
@@ -135,13 +139,19 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
           description={t`Ability to interact with each object`}
         />
         <StyledTable>
-          <RolePermissionsObjectsTableHeader allPermissions={true} />
-          {objectPermissionsConfig.map((permission) => (
-            <RolePermissionsObjectsTableRow
-              key={permission.key}
-              permission={permission}
-            />
-          ))}
+          <RolePermissionsObjectsTableHeader
+            allPermissions={objectPermissionsConfig.every(
+              (permission) => permission.value,
+            )}
+          />
+          <StyledTableRows>
+            {objectPermissionsConfig.map((permission) => (
+              <RolePermissionsObjectsTableRow
+                key={permission.key}
+                permission={permission}
+              />
+            ))}
+          </StyledTableRows>
         </StyledTable>
       </Section>
       <Section>
@@ -150,12 +160,14 @@ export const RolePermissions = ({ role }: RolePermissionsProps) => {
           <RolePermissionsSettingsTableHeader
             allPermissions={role.canUpdateAllSettings}
           />
-          {settingsPermissionsConfig.map((permission) => (
-            <RolePermissionsSettingsTableRow
-              key={permission.key}
-              permission={permission}
-            />
-          ))}
+          <StyledTableRows>
+            {settingsPermissionsConfig.map((permission) => (
+              <RolePermissionsSettingsTableRow
+                key={permission.key}
+                permission={permission}
+              />
+            ))}
+          </StyledTableRows>
         </StyledTable>
       </Section>
     </StyledRolePermissionsContainer>

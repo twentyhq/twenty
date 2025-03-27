@@ -10,7 +10,8 @@ import { RoleSettings } from '@/settings/roles/role-settings/components/RoleSett
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetRolesQuery } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -33,7 +34,8 @@ export const SettingsRoleEdit = () => {
 
   const role = rolesData?.getRoles.find((r) => r.id === roleId);
 
-  const { activeTabId } = useTabList(
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
 
@@ -101,9 +103,11 @@ export const SettingsRoleEdit = () => {
       {!rolesLoading && role ? (
         <SettingsPageContainer>
           <TabList
-            tabListInstanceId={SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID}
             tabs={tabs}
             className="tab-list"
+            componentInstanceId={
+              SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID
+            }
           />
           {renderActiveTabContent()}
         </SettingsPageContainer>

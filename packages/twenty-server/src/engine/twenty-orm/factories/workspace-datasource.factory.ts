@@ -98,7 +98,7 @@ export class WorkspaceDatasourceFactory {
 
             if (!cachedObjectMetadataMaps) {
               throw new TwentyORMException(
-                `Workspace Schema not found for workspace ${workspaceId}`,
+                `Object metadata collection not found for workspace ${workspaceId}`,
                 TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
               );
             }

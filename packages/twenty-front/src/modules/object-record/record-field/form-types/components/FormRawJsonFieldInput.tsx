@@ -6,14 +6,14 @@ import { useTextVariableEditor } from '@/object-record/record-field/form-types/h
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useId } from 'react';
-import { isDefined } from 'twenty-shared';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { isDefined } from 'twenty-shared/utils';
 
 type FormRawJsonFieldInputProps = {
   label?: string;
   defaultValue: string | null | undefined;
   placeholder: string;
-  onPersist: (value: string | null) => void;
+  onChange: (value: string | null) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 };
@@ -22,7 +22,7 @@ export const FormRawJsonFieldInput = ({
   label,
   defaultValue,
   placeholder,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
 }: FormRawJsonFieldInputProps) => {
@@ -37,12 +37,12 @@ export const FormRawJsonFieldInput = ({
       const text = turnIntoEmptyStringIfWhitespacesOnly(editor.getText());
 
       if (text === '') {
-        onPersist(null);
+        onChange(null);
 
         return;
       }
 
-      onPersist(text);
+      onChange(text);
     },
   });
 

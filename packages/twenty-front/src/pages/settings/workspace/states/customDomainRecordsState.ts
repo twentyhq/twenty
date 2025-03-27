@@ -3,8 +3,8 @@ import { CustomDomainValidRecords } from '~/generated/graphql';
 
 export const customDomainRecordsState = createState<{
   customDomainRecords: CustomDomainValidRecords | null;
-  loading: boolean;
+  isLoading: boolean;
 }>({
   key: 'customDomainRecordsState',
-  defaultValue: { loading: false, customDomainRecords: null },
+  defaultValue: { isLoading: false, customDomainRecords: null },
 });

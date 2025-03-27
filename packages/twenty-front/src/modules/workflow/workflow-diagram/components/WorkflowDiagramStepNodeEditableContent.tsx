@@ -30,7 +30,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           />
         ) : undefined
       }
-      isLeafNode={data.isLeafNode}
     />
   );
 };

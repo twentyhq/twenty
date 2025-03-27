@@ -1,9 +1,5 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useTabListStates } from '@/ui/layout/tab/hooks/internal/useTabListStates';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
@@ -15,61 +11,53 @@ import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWor
 import { WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/constants/WorkflowRunStepSidePanelTabListComponentId';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { useIcons } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowRunDiagramCanvasEffect = () => {
   const { getIcon } = useIcons();
-  const { openRightDrawer, closeRightDrawer } = useRightDrawer();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
-  const setHotkeyScope = useSetHotkeyScope();
-  const { openWorkflowViewRunStepInCommandMenu } = useCommandMenu();
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
+  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowId = useRecoilValue(workflowIdState);
-
-  const { activeTabIdState: workflowRunRightDrawerListActiveTabIdState } =
-    useTabListStates({
-      tabListScopeId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
-    });
 
   const goBackToFirstWorkflowRunRightDrawerTabIfNeeded = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
         const activeWorkflowRunRightDrawerTab = getSnapshotValue(
           snapshot,
-          workflowRunRightDrawerListActiveTabIdState,
+          activeTabIdComponentState.atomFamily({
+            instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+          }),
         ) as WorkflowRunTabId | null;
 
         if (
           activeWorkflowRunRightDrawerTab === 'input' ||
           activeWorkflowRunRightDrawerTab === 'output'
         ) {
-          set(workflowRunRightDrawerListActiveTabIdState, 'node');
+          set(
+            activeTabIdComponentState.atomFamily({
+              instanceId: WORKFLOW_RUN_STEP_SIDE_PANEL_TAB_LIST_COMPONENT_ID,
+            }),
+            'node',
+          );
         }
       },
-    [workflowRunRightDrawerListActiveTabIdState],
+    [],
   );
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0] as WorkflowDiagramNode;
-      const isClosingStep = isDefined(selectedNode) === false;
+      const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
 
-      if (isClosingStep) {
-        closeRightDrawer();
+      if (!isDefined(selectedNode)) {
         return;
       }
 
       setWorkflowSelectedNode(selectedNode.id);
-      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
@@ -81,31 +69,20 @@ export const WorkflowRunDiagramCanvasEffect = () => {
         goBackToFirstWorkflowRunRightDrawerTabIfNeeded();
       }
 
-      if (isCommandMenuV2Enabled && isDefined(workflowId)) {
-        openWorkflowViewRunStepInCommandMenu(
+      if (isDefined(workflowId)) {
+        openWorkflowRunViewStepInCommandMenu(
           workflowId,
           selectedNodeData.name,
           getIcon(getWorkflowNodeIconKey(selectedNodeData)),
         );
-
-        return;
       }
-
-      openRightDrawer(RightDrawerPages.WorkflowRunStepView, {
-        title: selectedNodeData.name,
-        Icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
-      });
     },
     [
       setWorkflowSelectedNode,
-      setHotkeyScope,
-      isCommandMenuV2Enabled,
       workflowId,
-      openRightDrawer,
       getIcon,
-      closeRightDrawer,
       goBackToFirstWorkflowRunRightDrawerTabIfNeeded,
-      openWorkflowViewRunStepInCommandMenu,
+      openWorkflowRunViewStepInCommandMenu,
     ],
   );
 

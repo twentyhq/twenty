@@ -38,10 +38,19 @@ const StyledMainContainer = styled.div`
   }
 `;
 
+const StyledRightDrawerAnimatedPlaceholderEmptyContainer = styled(
+  AnimatedPlaceholderEmptyContainer,
+)`
+  height: auto;
+  padding-top: ${({ theme }) => theme.spacing(8)};
+`;
+
 export const TimelineActivities = ({
   targetableObject,
+  isInRightDrawer,
 }: {
   targetableObject: ActivityTargetableObject;
+  isInRightDrawer?: boolean;
 }) => {
   const { timelineActivities, loading, fetchMoreRecords } =
     useTimelineActivities(targetableObject);
@@ -54,8 +63,12 @@ export const TimelineActivities = ({
   }
 
   if (isTimelineActivitiesEmpty) {
+    const EmptyContainer = isInRightDrawer
+      ? StyledRightDrawerAnimatedPlaceholderEmptyContainer
+      : AnimatedPlaceholderEmptyContainer;
+
     return (
-      <AnimatedPlaceholderEmptyContainer
+      <EmptyContainer
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
@@ -68,7 +81,7 @@ export const TimelineActivities = ({
             There is no activity associated with this record.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      </EmptyContainer>
     );
   }
 

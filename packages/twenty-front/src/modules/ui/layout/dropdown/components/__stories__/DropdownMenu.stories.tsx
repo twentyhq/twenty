@@ -7,6 +7,7 @@ import {
   Avatar,
   Button,
   ComponentDecorator,
+  IconChevronLeft,
   MenuItem,
   MenuItemMultiSelectAvatar,
   MenuItemSelectAvatar,
@@ -15,12 +16,13 @@ import {
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
 import { Dropdown } from '../Dropdown';
-import { DropdownMenuHeader } from '../DropdownMenuHeader';
+import { DropdownMenuHeader } from '../DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '../DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
@@ -218,8 +220,13 @@ export const WithHeaders: Story = {
   args: {
     dropdownComponents: (
       <>
-        <DropdownMenuHeader>Header</DropdownMenuHeader>
-        <DropdownMenuSeparator />
+        <DropdownMenuHeader
+          StartComponent={
+            <DropdownMenuHeaderLeftComponent Icon={IconChevronLeft} />
+          }
+        >
+          Header
+        </DropdownMenuHeader>
         <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
         <DropdownMenuItemsContainer hasMaxHeight>
           <>

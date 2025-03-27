@@ -114,12 +114,10 @@ const StyledInput = styled.input<InputProps>`
       disabled,
     }) => {
       switch (true) {
-        case isChecked:
+        case indeterminate || isChecked:
           return disabled ? theme.adaptiveColors.blue3 : theme.color.blue;
         case disabled:
           return theme.border.color.strong;
-        case indeterminate || isChecked:
-          return theme.color.blue;
         case variant === CheckboxVariant.Primary:
           return theme.border.color.inverted;
         case variant === CheckboxVariant.Tertiary:

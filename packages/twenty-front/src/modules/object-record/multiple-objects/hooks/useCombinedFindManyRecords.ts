@@ -3,9 +3,9 @@ import { useQuery } from '@apollo/client';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
-import { useCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecordsQueryVariables';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
+import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 
 export const useCombinedFindManyRecords = ({
   operationSignatures,
@@ -18,7 +18,7 @@ export const useCombinedFindManyRecords = ({
     operationSignatures,
   });
 
-  const queryVariables = useCombinedFindManyRecordsQueryVariables({
+  const queryVariables = generateCombinedFindManyRecordsQueryVariables({
     operationSignatures,
   });
 

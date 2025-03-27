@@ -42,7 +42,6 @@ const StyledInput = styled.input`
   flex: 1;
   border: none;
   outline: none;
-  font-family: Arial, sans-serif;
   font-size: 14px;
 
   &::placeholder {

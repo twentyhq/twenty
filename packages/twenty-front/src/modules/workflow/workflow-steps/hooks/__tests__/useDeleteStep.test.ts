@@ -3,7 +3,6 @@ import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
-const mockCloseRightDrawer = jest.fn();
 const mockDeleteWorkflowVersionStep = jest.fn();
 const updateOneRecordMock = jest.fn();
 const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
@@ -11,12 +10,6 @@ const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: () => ({
     updateOneRecord: updateOneRecordMock,
-  }),
-}));
-
-jest.mock('@/ui/layout/right-drawer/hooks/useRightDrawer', () => ({
-  useRightDrawer: () => ({
-    closeRightDrawer: mockCloseRightDrawer,
   }),
 }));
 

@@ -1,8 +1,11 @@
-import { WorkflowStepType } from '@/workflow/types/Workflow';
+import { WorkflowActionType } from '@/workflow/types/Workflow';
 
 export const OTHER_ACTIONS: Array<{
   label: string;
-  type: WorkflowStepType;
+  type: Exclude<
+    WorkflowActionType,
+    'CREATE_RECORD' | 'UPDATE_RECORD' | 'DELETE_RECORD' | 'FIND_RECORDS'
+  >;
   icon: string;
 }> = [
   {
@@ -14,5 +17,10 @@ export const OTHER_ACTIONS: Array<{
     label: 'Code',
     type: 'CODE',
     icon: 'IconCode',
+  },
+  {
+    label: 'Form',
+    type: 'FORM',
+    icon: 'IconForms',
   },
 ];

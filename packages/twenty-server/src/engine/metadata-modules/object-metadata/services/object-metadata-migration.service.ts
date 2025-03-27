@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FieldMetadataType } from 'twenty-shared';
 import { In, Repository } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -22,6 +22,7 @@ import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { RELATION_MIGRATION_PRIORITY_PREFIX } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 @Injectable()
 export class ObjectMetadataMigrationService {
@@ -274,7 +275,7 @@ export class ObjectMetadataMigrationService {
       if (relationToDelete.direction === 'from') {
         await this.workspaceMigrationService.createCustomMigration(
           generateMigrationName(
-            `delete-${relationToDelete.fromObjectName}-${relationToDelete.toObjectName}`,
+            `delete-${RELATION_MIGRATION_PRIORITY_PREFIX}-${relationToDelete.fromObjectName}-${relationToDelete.toObjectName}`,
           ),
           workspaceId,
           [

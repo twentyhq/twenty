@@ -1,7 +1,6 @@
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
-import { useUpsertTableRecordInGroup } from '@/object-record/record-table/hooks/internal/useUpsertTableRecordInGroup';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
 import { useMoveSoftFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCurrentCellOnHover';
@@ -20,25 +19,9 @@ type RecordTableRecordGroupBodyContextProviderProps = {
 };
 
 export const RecordTableRecordGroupBodyContextProvider = ({
-  recordGroupId,
   children,
 }: RecordTableRecordGroupBodyContextProviderProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
-
-  const { upsertTableRecordInGroup } =
-    useUpsertTableRecordInGroup(recordGroupId);
-
-  const handleupsertTableRecordInGroup = ({
-    persistField,
-    recordId,
-    fieldName,
-  }: {
-    persistField: () => void;
-    recordId: string;
-    fieldName: string;
-  }) => {
-    upsertTableRecordInGroup(persistField, recordId, fieldName);
-  };
 
   const { openTableCell } = useOpenRecordTableCellV2(recordTableId);
 
@@ -52,8 +35,7 @@ export const RecordTableRecordGroupBodyContextProvider = ({
     moveFocus(direction);
   };
 
-  const { closeTableCellInGroup } =
-    useCloseRecordTableCellInGroup(recordGroupId);
+  const { closeTableCellInGroup } = useCloseRecordTableCellInGroup();
 
   const handlecloseTableCellInGroup = () => {
     closeTableCellInGroup();
@@ -86,7 +68,6 @@ export const RecordTableRecordGroupBodyContextProvider = ({
   return (
     <RecordTableBodyContextProvider
       value={{
-        onUpsertRecord: handleupsertTableRecordInGroup,
         onOpenTableCell: handleOpenTableCell,
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handlecloseTableCellInGroup,

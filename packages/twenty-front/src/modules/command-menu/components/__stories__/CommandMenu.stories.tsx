@@ -26,26 +26,11 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
 
 const openTimeout = 50;
-
-// Mock workspace with feature flag enabled
-const mockWorkspaceWithFeatureFlag = {
-  ...mockCurrentWorkspace,
-  featureFlags: [
-    ...(mockCurrentWorkspace.featureFlags || []),
-    {
-      id: 'mock-id',
-      key: FeatureFlagKey.IsCommandMenuV2Enabled,
-      value: true,
-      workspaceId: mockCurrentWorkspace.id,
-    },
-  ],
-};
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
@@ -92,7 +77,7 @@ const meta: Meta<typeof CommandMenu> = {
         commandMenuNavigationStackState,
       );
 
-      setCurrentWorkspace(mockWorkspaceWithFeatureFlag);
+      setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setIsCommandMenuOpened(true);
       setCommandMenuNavigationStack([
@@ -179,10 +164,10 @@ export const NoResultsSearchFallback: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('GlobalSearch', () => {
+        graphql.query('Search', () => {
           return HttpResponse.json({
             data: {
-              globalSearch: [],
+              search: [],
             },
           });
         }),

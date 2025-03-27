@@ -1,11 +1,11 @@
 {
   "name": "twenty-front",
-  "version": "0.44.0-canary",
+  "version": "0.50.0-canary",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=4000 npx vite build && sh ./scripts/inject-runtime-env.sh",
-    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=6000 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=4500 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=7000 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "start:prod": "NODE_ENV=production npx vite --host",
     "tsup": "npx tsup"
   },
@@ -33,7 +33,9 @@
     "@blocknote/xl-docx-exporter": "^0.22.0",
     "@blocknote/xl-pdf-exporter": "^0.22.0",
     "@cyntler/react-doc-viewer": "^1.17.0",
+    "@lingui/core": "^5.1.2",
     "@lingui/detect-locale": "^5.2.0",
+    "@lingui/react": "^5.1.2",
     "@nivo/calendar": "^0.87.0",
     "@nivo/core": "^0.87.0",
     "@nivo/line": "^0.87.0",
@@ -57,6 +59,9 @@
     "twenty-shared": "workspace:*"
   },
   "devDependencies": {
+    "@lingui/cli": "^5.1.2",
+    "@lingui/swc-plugin": "^5.1.0",
+    "@lingui/vite-plugin": "^5.1.2",
     "@types/file-saver": "^2"
   }
 }

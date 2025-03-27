@@ -1,17 +1,15 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { AppPath } from '@/types/AppPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
@@ -35,8 +33,6 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const { closeRightDrawer } = useRightDrawer();
-
   const handleDeleteClick = useCallback(async () => {
     resetTableRowSelection();
 
@@ -53,8 +49,6 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
   ]);
 
   const isRemoteObject = objectMetadataItem.isRemote;
-
-  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const shouldBeRegistered =
     !hasObjectReadOnlyPermission &&
@@ -82,9 +76,6 @@ export const useDestroySingleRecordAction: ActionHookWithObjectMetadataItem = ({
         }
         onConfirmClick={async () => {
           await handleDeleteClick();
-          if (isInRightDrawer) {
-            closeRightDrawer();
-          }
         }}
         confirmButtonText={'Permanently Destroy Record'}
       />

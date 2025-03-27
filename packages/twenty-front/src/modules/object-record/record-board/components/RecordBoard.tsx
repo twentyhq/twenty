@@ -4,7 +4,6 @@ import { useContext, useRef } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
@@ -24,6 +23,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
@@ -76,10 +76,11 @@ export const RecordBoard = () => {
   );
 
   const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
-  const { closeActionMenuDropdown } = useActionMenu(actionMenuId);
+
+  const { closeDropdown } = useDropdownV2();
 
   const handleDragSelectionStart = () => {
-    closeActionMenuDropdown();
+    closeDropdown(actionMenuId);
 
     toggleClickOutsideListener(false);
   };

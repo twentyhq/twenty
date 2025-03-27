@@ -33,6 +33,8 @@ import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migr
 
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 
+export const RELATION_MIGRATION_PRIORITY_PREFIX = '1000';
+
 @Injectable()
 export class WorkspaceMigrationRunnerService {
   private readonly logger = new Logger(WorkspaceMigrationRunnerService.name);

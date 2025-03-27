@@ -11,7 +11,6 @@ import { billingState } from '@/client-config/states/billingState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   ActionLink,
   CAL_LINK,
@@ -25,6 +24,7 @@ import {
   SubscriptionInterval,
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
@@ -88,20 +88,43 @@ export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
   const { t } = useLingui();
 
-  const benefits = [
-    t`Full access`,
-    t`Unlimited contacts`,
-    t`Email integration`,
-    t`Custom objects`,
-    t`API & Webhooks`,
-    t`1 000 workflow node executions`,
-  ];
+  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
+    billingCheckoutSessionState,
+  );
 
   const { data: plans } = useBillingBaseProductPricesQuery();
 
+  const currentPlan = billingCheckoutSession.plan || BillingPlanKey.PRO;
+
+  const getPlanBenefits = (planKey: BillingPlanKey) => {
+    if (planKey === BillingPlanKey.ENTERPRISE) {
+      return [
+        t`Full access`,
+        t`Unlimited contacts`,
+        t`Email integration`,
+        t`Custom objects`,
+        t`API & Webhooks`,
+        t`20 000 workflow node executions`,
+        t`SSO (SAML / OIDC)`,
+      ];
+    }
+
+    return [
+      t`Full access`,
+      t`Unlimited contacts`,
+      t`Email integration`,
+      t`Custom objects`,
+      t`API & Webhooks`,
+      t`10 000 workflow node executions`,
+    ];
+  };
+
+  const benefits = getPlanBenefits(currentPlan);
+
   const baseProduct = plans?.plans.find(
-    (plan) => plan.planKey === BillingPlanKey.PRO,
+    (plan) => plan.planKey === currentPlan,
   )?.baseProduct;
+
   const baseProductPrice = baseProduct?.prices.find(
     (price): price is BillingPriceLicensedDto =>
       isBillingPriceLicensed(price) &&
@@ -114,10 +137,6 @@ export const ChooseYourPlan = () => {
   );
   const withCreditCardTrialPeriod = billing?.trialPeriods.find(
     (trialPeriod) => trialPeriod.isCreditCardRequired,
-  );
-
-  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
-    billingCheckoutSessionState,
   );
 
   const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({
@@ -133,9 +152,21 @@ export const ChooseYourPlan = () => {
         billingCheckoutSession.requirePaymentMethod !== withCreditCard
       ) {
         setBillingCheckoutSession({
-          plan: billingCheckoutSession.plan,
+          plan: currentPlan,
           interval: baseProductPrice.recurringInterval,
           requirePaymentMethod: withCreditCard,
+        });
+      }
+    };
+  };
+
+  const handleSwitchPlan = (planKey: BillingPlanKey) => {
+    return () => {
+      if (isDefined(baseProductPrice)) {
+        setBillingCheckoutSession({
+          plan: planKey,
+          interval: baseProductPrice.recurringInterval,
+          requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
         });
       }
     };
@@ -144,6 +175,15 @@ export const ChooseYourPlan = () => {
   const { signOut } = useAuth();
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
+
+  const alternatePlan =
+    currentPlan === BillingPlanKey.PRO
+      ? BillingPlanKey.ENTERPRISE
+      : BillingPlanKey.PRO;
+
+  const alternatePlanName = plans?.plans.find(
+    (plan) => plan.planKey === alternatePlan,
+  )?.baseProduct.name;
 
   return (
     isDefined(baseProductPrice) &&
@@ -211,6 +251,10 @@ export const ChooseYourPlan = () => {
         <StyledLinkGroup>
           <ActionLink onClick={signOut}>
             <Trans>Log out</Trans>
+          </ActionLink>
+          <span />
+          <ActionLink onClick={handleSwitchPlan(alternatePlan)}>
+            <Trans>Switch to {alternatePlanName}</Trans>
           </ActionLink>
           <span />
           <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">

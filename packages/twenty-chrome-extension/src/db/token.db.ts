@@ -1,8 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
-
-import { isDefined } from 'twenty-shared';
 import { Tokens } from '~/db/types/auth.types';
 import { RENEW_TOKEN } from '~/graphql/auth/mutations';
+import { isDefined } from 'twenty-shared/utils';
 
 export const renewToken = async (
   appToken: string,

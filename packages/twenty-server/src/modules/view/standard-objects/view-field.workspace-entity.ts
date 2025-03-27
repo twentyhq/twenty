@@ -1,8 +1,8 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
 import { Relation } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -157,6 +157,18 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
         label: 'Percent not empty',
         position: 9,
         color: 'yellow',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countTrue,
+        label: 'Count true',
+        position: 10,
+        color: 'red',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.countFalse,
+        label: 'Count false',
+        position: 11,
+        color: 'purple',
       },
     ],
     defaultValue: null,

@@ -16,6 +16,9 @@ export class RoleDTO {
   @Field({ nullable: true })
   description: string;
 
+  @Field({ nullable: true })
+  icon: string;
+
   @Field({ nullable: false })
   isEditable: boolean;
 

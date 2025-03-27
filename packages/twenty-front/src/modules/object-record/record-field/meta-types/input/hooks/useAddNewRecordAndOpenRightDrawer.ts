@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -9,16 +9,11 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from 'twenty-shared';
-import { IconEye } from 'twenty-ui';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;
@@ -47,11 +42,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
         .nameSingular ?? 'workspaceMember',
   });
 
-  const { openRightDrawer } = useRightDrawer();
-  const { openRecordInCommandMenu } = useCommandMenu();
-  const isCommandMenuEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   if (
     relationObjectMetadataNameSingular === 'workspaceMember' ||
@@ -118,17 +109,10 @@ export const useAddNewRecordAndOpenRightDrawer = ({
       setViewableRecordId(newRecordId);
       setViewableRecordNameSingular(relationObjectMetadataNameSingular);
 
-      if (isCommandMenuEnabled) {
-        openRecordInCommandMenu({
-          recordId: newRecordId,
-          objectNameSingular: relationObjectMetadataNameSingular,
-        });
-      } else {
-        openRightDrawer(RightDrawerPages.ViewRecord, {
-          title: 'View Record',
-          Icon: IconEye,
-        });
-      }
+      openRecordInCommandMenu({
+        recordId: newRecordId,
+        objectNameSingular: relationObjectMetadataNameSingular,
+      });
     },
   };
 };

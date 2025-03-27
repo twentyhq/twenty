@@ -5,8 +5,6 @@ import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-pic
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
-import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilCallback } from 'recoil';
 
 type OpenActivityTargetInlineCellEditModeProps = {
@@ -15,9 +13,6 @@ type OpenActivityTargetInlineCellEditModeProps = {
 };
 
 export const useOpenActivityTargetInlineCellEditMode = () => {
-  const { toggleClickOutsideListener: toggleRightDrawerClickOustideListener } =
-    useClickOutsideListener(RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID);
-
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
 
@@ -33,8 +28,11 @@ export const useOpenActivityTargetInlineCellEditMode = () => {
           .filter(
             (objectMetadataItem) =>
               objectMetadataItem.isSearchable &&
+              objectMetadataItem.isActive &&
               objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task &&
-              objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note,
+              objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
+              objectMetadataItem.nameSingular !==
+                CoreObjectNameSingular.WorkspaceMember,
           );
 
         set(
@@ -66,8 +64,6 @@ export const useOpenActivityTargetInlineCellEditMode = () => {
           '',
         );
 
-        toggleRightDrawerClickOustideListener(false);
-
         multipleRecordPickerPerformSearch({
           multipleRecordPickerInstanceId: recordPickerInstanceId,
           forceSearchFilter: '',
@@ -83,7 +79,7 @@ export const useOpenActivityTargetInlineCellEditMode = () => {
           ),
         });
       },
-    [multipleRecordPickerPerformSearch, toggleRightDrawerClickOustideListener],
+    [multipleRecordPickerPerformSearch],
   );
 
   return { openActivityTargetInlineCellEditMode };

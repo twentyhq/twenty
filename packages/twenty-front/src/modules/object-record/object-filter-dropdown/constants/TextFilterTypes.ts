@@ -6,7 +6,6 @@ export const TEXT_FILTER_TYPES = [
   'LINK',
   'LINKS',
   'ADDRESS',
-  'ACTOR',
   'ARRAY',
   'RAW_JSON',
 ];

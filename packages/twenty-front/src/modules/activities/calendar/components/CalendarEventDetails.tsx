@@ -14,8 +14,10 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -101,7 +103,6 @@ export const CalendarEventDetails = ({
         value={{
           recordId: calendarEvent.id,
           hotkeyScope: 'calendar-event-details',
-          recoilScopeId: `${calendarEvent.id}-${fieldName}`,
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
             field: fieldsByName[fieldName],
@@ -113,7 +114,13 @@ export const CalendarEventDetails = ({
           maxWidth: 300,
         }}
       >
-        <RecordInlineCell readonly />
+        <RecordFieldComponentInstanceContext.Provider
+          value={{
+            instanceId: getRecordFieldInputId(calendarEvent.id, fieldName),
+          }}
+        >
+          <RecordInlineCell readonly />
+        </RecordFieldComponentInstanceContext.Provider>
       </FieldContext.Provider>
     </StyledPropertyBox>
   ));

@@ -1,7 +1,9 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useChildRecordFiltersAndRecordFilterGroups = ({
   recordFilterGroupId,
@@ -23,9 +25,11 @@ export const useChildRecordFiltersAndRecordFilterGroups = ({
   if (!isDefined(currentRecordFilterGroup)) {
     return {
       currentRecordFilterGroup: undefined,
-      childRecordFiltersAndRecordFilterGroups: [],
-      childRecordFilters: [],
-      childRecordFilterGroups: [],
+      childRecordFiltersAndRecordFilterGroups: [] as Array<
+        RecordFilter | RecordFilterGroup
+      >,
+      childRecordFilters: [] as RecordFilter[],
+      childRecordFilterGroups: [] as RecordFilterGroup[],
       lastChildPosition: 0,
     };
   }

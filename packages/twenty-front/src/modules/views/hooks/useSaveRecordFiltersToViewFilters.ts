@@ -8,7 +8,7 @@ import { getViewFiltersToDelete } from '@/views/utils/getViewFiltersToDelete';
 import { getViewFiltersToUpdate } from '@/views/utils/getViewFiltersToUpdate';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFiltersToViewFilters = () => {
   const {

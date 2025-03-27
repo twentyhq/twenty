@@ -1,8 +1,11 @@
-import { WorkflowStepType } from '@/workflow/types/Workflow';
+import { WorkflowActionType } from '@/workflow/types/Workflow';
 
 export const RECORD_ACTIONS: Array<{
   label: string;
-  type: WorkflowStepType;
+  type: Extract<
+    WorkflowActionType,
+    'CREATE_RECORD' | 'UPDATE_RECORD' | 'DELETE_RECORD' | 'FIND_RECORDS'
+  >;
   icon: string;
 }> = [
   {
@@ -20,9 +23,10 @@ export const RECORD_ACTIONS: Array<{
     type: 'DELETE_RECORD',
     icon: 'IconTrash',
   },
-  {
-    label: 'Search Records',
-    type: 'FIND_RECORDS',
-    icon: 'IconSearch',
-  },
+  // TODO: Add search records action
+  // {
+  //   label: 'Search Records',
+  //   type: 'FIND_RECORDS',
+  //   icon: 'IconSearch',
+  // },
 ];

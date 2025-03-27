@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
 import {
   DataSource,
   FindOptionsRelations,
   ObjectLiteral,
   SelectQueryBuilder,
 } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';

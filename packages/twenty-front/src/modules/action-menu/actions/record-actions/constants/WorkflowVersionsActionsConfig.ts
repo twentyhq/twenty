@@ -1,6 +1,9 @@
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { useHideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useHideDeletedRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
+import { useSeeRunsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeRunsNoSelectionRecordAction';
+import { useSeeWorkflowsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeWorkflowsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
@@ -9,6 +12,7 @@ import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { useSeeRunsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeRunsWorkflowVersionSingleRecordAction';
 import { useSeeVersionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeVersionsWorkflowVersionSingleRecordAction';
+import { useSeeWorkflowWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowWorkflowVersionSingleRecordAction';
 import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
 import { WorkflowVersionSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/types/WorkflowVersionSingleRecordActionsKeys';
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
@@ -23,12 +27,14 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconDatabaseExport,
+  IconEyeOff,
   IconHeart,
   IconHeartOff,
   IconHistory,
   IconHistoryToggle,
   IconPencil,
   IconRotate2,
+  IconSettingsAutomation,
 } from 'twenty-ui';
 
 export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
@@ -52,11 +58,27 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     ],
     useAction: useUseAsDraftWorkflowVersionSingleRecordAction,
   },
+  seeWorkflowSingleRecord: {
+    key: WorkflowVersionSingleRecordActionKeys.SEE_WORKFLOW,
+    label: msg`See workflow`,
+    shortLabel: msg`See workflow`,
+    position: 2,
+    isPinned: true,
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    Icon: IconSettingsAutomation,
+    availableOn: [
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+    ],
+    useAction: useSeeWorkflowWorkflowVersionSingleRecordAction,
+  },
   seeWorkflowRunsSingleRecord: {
     key: WorkflowVersionSingleRecordActionKeys.SEE_RUNS,
     label: msg`See runs`,
     shortLabel: msg`See runs`,
-    position: 2,
+    position: 3,
+    isPinned: true,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     Icon: IconHistoryToggle,
@@ -70,7 +92,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     key: WorkflowVersionSingleRecordActionKeys.SEE_VERSIONS,
     label: msg`See versions history`,
     shortLabel: msg`See versions`,
-    position: 3,
+    position: 4,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     Icon: IconHistory,
@@ -85,7 +107,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: msg`Navigate to previous version`,
-    position: 4,
+    position: 5,
     Icon: IconChevronUp,
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useNavigateToPreviousRecordSingleRecordAction,
@@ -95,7 +117,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: msg`Navigate to next version`,
-    position: 5,
+    position: 6,
     Icon: IconChevronDown,
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useNavigateToNextRecordSingleRecordAction,
@@ -106,7 +128,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
-    position: 6,
+    position: 7,
     isPinned: false,
     Icon: IconHeart,
     availableOn: [
@@ -122,7 +144,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     label: msg`Remove from favorites`,
     shortLabel: msg`Remove from favorites`,
     isPinned: false,
-    position: 7,
+    position: 8,
     Icon: IconHeartOff,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -130,13 +152,29 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     ],
     useAction: useRemoveFromFavoritesSingleRecordAction,
   },
+  exportSingleRecord: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.RecordSelection,
+    key: SingleRecordActionKeys.EXPORT,
+    label: msg`Export version`,
+    shortLabel: msg`Export`,
+    position: 9,
+    Icon: IconDatabaseExport,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [
+      ActionViewType.SHOW_PAGE,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+    ],
+    useAction: useExportMultipleRecordsAction,
+  },
   exportMultipleRecords: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.EXPORT,
     label: msg`Export versions`,
     shortLabel: msg`Export`,
-    position: 8,
+    position: 10,
     Icon: IconDatabaseExport,
     accent: 'default',
     isPinned: false,
@@ -149,7 +187,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: msg`Export view`,
     shortLabel: msg`Export`,
-    position: 9,
+    position: 11,
     Icon: IconDatabaseExport,
     accent: 'default',
     isPinned: false,
@@ -162,11 +200,51 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
     label: msg`See deleted versions`,
     shortLabel: msg`Deleted versions`,
-    position: 10,
+    position: 12,
     Icon: IconRotate2,
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeDeletedRecordsNoSelectionRecordAction,
+  },
+  hideDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
+    label: msg`Hide deleted versions`,
+    shortLabel: msg`Hide deleted`,
+    position: 13,
+    Icon: IconEyeOff,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useHideDeletedRecordsNoSelectionRecordAction,
+  },
+  seeAllWorkflows: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.SEE_WORKFLOWS,
+    label: msg`Go to workflows`,
+    shortLabel: msg`See workflows`,
+    position: 14,
+    Icon: IconSettingsAutomation,
+    accent: 'default',
+    isPinned: true,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeWorkflowsNoSelectionRecordAction,
+    hotKeys: ['G', 'W'],
+  },
+  seeAllRuns: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.SEE_RUNS,
+    label: msg`Go to runs`,
+    shortLabel: msg`See runs`,
+    position: 15,
+    Icon: IconHistoryToggle,
+    accent: 'default',
+    isPinned: true,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeRunsNoSelectionRecordAction,
   },
 };

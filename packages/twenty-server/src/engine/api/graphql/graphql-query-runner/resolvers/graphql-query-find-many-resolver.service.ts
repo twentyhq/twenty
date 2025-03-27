@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -152,7 +152,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         parentObjectRecordsAggregatedValues,
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         aggregate: executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
-        limit,
+        limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
         isNewRelationEnabled:

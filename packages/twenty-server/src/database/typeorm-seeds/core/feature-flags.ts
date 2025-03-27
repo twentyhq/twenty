@@ -66,12 +66,12 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsCommandMenuV2Enabled,
+        key: FeatureFlagKey.IsNewRelationEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IsNewRelationEnabled,
+        key: FeatureFlagKey.IsWorkflowFormActionEnabled,
         workspaceId: workspaceId,
         value: true,
       },

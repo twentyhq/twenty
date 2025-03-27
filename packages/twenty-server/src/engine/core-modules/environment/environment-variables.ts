@@ -10,8 +10,10 @@ import {
   IsString,
   IsUrl,
   ValidateIf,
+  ValidationError,
   validateSync,
 } from 'class-validator';
+import { isDefined } from 'twenty-shared/utils';
 
 import { EmailDriver } from 'src/engine/core-modules/email/interfaces/email.interface';
 import { AwsRegion } from 'src/engine/core-modules/environment/interfaces/aws-region.interface';
@@ -27,13 +29,14 @@ import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decora
 import { EnvironmentVariablesMetadata } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/environment/decorators/is-duration.decorator';
+import { IsOptionalOrEmptyString } from 'src/engine/core-modules/environment/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/environment/decorators/is-strictly-lower-than.decorator';
+import { IsTwentySemVer } from 'src/engine/core-modules/environment/decorators/is-twenty-semver.decorator';
 import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
-import { assert } from 'src/utils/assert';
 
 export class EnvironmentVariables {
   @EnvironmentVariablesMetadata({
@@ -450,7 +453,7 @@ export class EnvironmentVariables {
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
+    group: EnvironmentVariablesGroup.AnalyticsConfig,
     description: 'Enable or disable analytics for telemetry',
   })
   @CastToBoolean()
@@ -466,33 +469,6 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   TELEMETRY_ENABLED = true;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
-    sensitive: true,
-    description: 'Ingest token for Tinybird analytics',
-  })
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_INGEST_TOKEN: string;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
-    sensitive: true,
-    description: 'Workspace UUID for Tinybird analytics',
-  })
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_WORKSPACE_UUID: string;
-
-  @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.TinybirdConfig,
-    sensitive: true,
-    description: 'JWT token for Tinybird analytics',
-  })
-  @IsString()
-  @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_GENERATE_JWT_TOKEN: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.BillingConfig,
@@ -692,7 +668,7 @@ export class EnvironmentVariables {
   })
   @IsDefined()
   @IsUrl({
-    protocols: ['postgres'],
+    protocols: ['postgres', 'postgresql'],
     require_tld: false,
     allow_underscores: true,
     require_host: false,
@@ -723,7 +699,7 @@ export class EnvironmentVariables {
   })
   @IsOptional()
   @IsUrl({
-    protocols: ['redis'],
+    protocols: ['redis', 'rediss'],
     require_tld: false,
     allow_underscores: true,
   })
@@ -978,6 +954,14 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_ATTACHMENT_PREVIEW_ENABLED = true;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.ServerConfig,
+    description: 'Twenty server version',
+  })
+  @IsOptionalOrEmptyString()
+  @IsTwentySemVer()
+  APP_VERSION?: string;
 }
 
 export const validate = (
@@ -985,21 +969,32 @@ export const validate = (
 ): EnvironmentVariables => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 
-  const errors = validateSync(validatedConfig, { strictGroups: true });
+  const validationErrors = validateSync(validatedConfig, {
+    strictGroups: true,
+  });
 
-  const warnings = validateSync(validatedConfig, { groups: ['warning'] });
-
-  if (warnings.length > 0) {
-    warnings.forEach((warning) => {
-      if (warning.constraints && warning.property) {
-        Object.values(warning.constraints).forEach((message) => {
-          Logger.warn(message);
-        });
+  const validationWarnings = validateSync(validatedConfig, {
+    groups: ['warning'],
+  });
+  const logValidatonErrors = (
+    errorCollection: ValidationError[],
+    type: 'error' | 'warn',
+  ) =>
+    errorCollection.forEach((error) => {
+      if (!isDefined(error.constraints) || !isDefined(error.property)) {
+        return;
       }
+      Logger[type](Object.values(error.constraints).join('\n'));
     });
+
+  if (validationWarnings.length > 0) {
+    logValidatonErrors(validationWarnings, 'warn');
   }
 
-  assert(!errors.length, errors.toString());
+  if (validationErrors.length > 0) {
+    logValidatonErrors(validationErrors, 'error');
+    throw new Error('Environment variables validation failed');
+  }
 
   return validatedConfig;
 };
