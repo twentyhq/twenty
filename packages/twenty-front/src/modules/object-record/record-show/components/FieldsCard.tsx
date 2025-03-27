@@ -17,7 +17,12 @@ import { RecordDetailDuplicatesSection } from '@/object-record/record-show/recor
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import styled from '@emotion/styled';
 import { FieldMetadataType } from '~/generated/graphql';
+
+const StyledInlineCellContainer = styled.div`
+  height: 24px;
+`;
 
 type FieldsCardProps = {
   objectNameSingular: string;
@@ -155,7 +160,9 @@ export const FieldsCard = ({
                     ),
                   }}
                 >
-                  <RecordInlineCell loading={recordLoading} />
+                  <StyledInlineCellContainer>
+                    <RecordInlineCell loading={recordLoading} />
+                  </StyledInlineCellContainer>
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>
             ))}
