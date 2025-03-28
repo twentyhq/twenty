@@ -2,7 +2,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
-import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/RoleSettings';
+import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
 import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/SettingsRoleLabelContainer';
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';

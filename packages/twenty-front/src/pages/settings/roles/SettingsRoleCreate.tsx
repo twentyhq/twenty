@@ -2,9 +2,9 @@ import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRo
 import { SettingsRole } from '@/settings/roles/role/components/SettingsRole';
 import { SettingsRoleCreateEffect } from '@/settings/roles/role/components/SettingsRoleCreateEffect';
 
-export const SettingsRoleCreate = () => {
-  const PENDING_ROLE_ID = 'pending-role-id';
+export const PENDING_ROLE_ID = 'pending-role-id';
 
+export const SettingsRoleCreate = () => {
   return (
     <>
       <SettingsRolesQueryEffect />
