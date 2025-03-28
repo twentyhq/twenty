@@ -7,7 +7,6 @@ import { ResendEmailVerificationTokenInput } from 'src/engine/core-modules/email
 import { ResendEmailVerificationTokenOutput } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.output';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 
 @Resolver()
@@ -28,8 +27,6 @@ export class EmailVerificationResolver {
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     return await this.emailVerificationService.resendEmailVerificationToken(
       resendEmailVerificationTokenInput.email,

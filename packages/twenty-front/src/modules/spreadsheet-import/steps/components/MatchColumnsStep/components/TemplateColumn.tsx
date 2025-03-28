@@ -3,9 +3,10 @@ import { IconForbid } from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { Columns, ColumnType } from '../MatchColumnsStep';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -15,7 +16,7 @@ const StyledContainer = styled.div`
 `;
 
 type TemplateColumnProps<T extends string> = {
-  columns: Columns<string>;
+  columns: SpreadsheetColumns<string>;
   columnIndex: number;
   onChange: (val: T, index: number) => void;
 };
@@ -27,13 +28,13 @@ export const TemplateColumn = <T extends string>({
 }: TemplateColumnProps<T>) => {
   const { fields } = useSpreadsheetImportInternal<T>();
   const column = columns[columnIndex];
-  const isIgnored = column.type === ColumnType.ignored;
+  const isIgnored = column.type === SpreadsheetColumnType.ignored;
 
   const { t } = useLingui();
 
   const fieldOptions = fields
     .filter((field) => field.fieldMetadataType !== FieldMetadataType.RICH_TEXT)
-    .map(({ icon, label, key }) => {
+    .map(({ Icon, label, key }) => {
       const isSelected =
         columns.findIndex((column) => {
           if ('value' in column) {
@@ -43,7 +44,7 @@ export const TemplateColumn = <T extends string>({
         }) !== -1;
 
       return {
-        icon: icon,
+        Icon: Icon,
         value: key,
         label: label,
         disabled: isSelected,
@@ -52,7 +53,7 @@ export const TemplateColumn = <T extends string>({
 
   const selectOptions = [
     {
-      icon: IconForbid,
+      Icon: IconForbid,
       value: 'do-not-import',
       label: t`Do not import`,
     },
