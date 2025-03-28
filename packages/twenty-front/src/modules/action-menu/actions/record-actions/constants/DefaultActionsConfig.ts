@@ -78,7 +78,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
-    label: msg`Add to Favorites`,
+    label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
     position: 2,
     isPinned: true,
