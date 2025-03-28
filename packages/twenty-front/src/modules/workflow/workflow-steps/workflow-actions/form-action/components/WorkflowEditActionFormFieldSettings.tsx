@@ -44,12 +44,14 @@ const StyledSettingsHeader = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: grid;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding-inline: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
   grid-template-columns: 1fr 24px;
   padding-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledTitleContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};

@@ -39,7 +39,6 @@ import {
   IconFileImport,
   IconHeart,
   IconHeartOff,
-  IconHistory,
   IconHistoryToggle,
   IconNoteOff,
   IconPlayerPause,
@@ -49,6 +48,7 @@ import {
   IconRotate2,
   IconTrash,
   IconTrashX,
+  IconVersions,
 } from 'twenty-ui';
 
 export const WORKFLOW_ACTIONS_CONFIG: Record<
@@ -120,7 +120,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     shortLabel: msg`See active version`,
     isPinned: false,
     position: 4,
-    Icon: IconHistory,
+    Icon: IconVersions,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
@@ -150,7 +150,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     shortLabel: msg`See versions`,
     isPinned: false,
     position: 6,
-    Icon: IconHistory,
+    Icon: IconVersions,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
