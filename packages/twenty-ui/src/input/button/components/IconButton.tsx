@@ -125,9 +125,11 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.accent.tertiary}`
                 : 'none'};
-              color: ${!disabled
-                ? theme.font.color.secondary
-                : theme.font.color.extraLight};
+              color: ${disabled
+                ? theme.font.color.extraLight
+                : variant === 'secondary'
+                  ? theme.font.color.secondary
+                  : theme.font.color.tertiary};
               &:hover {
                 background: ${!disabled
                   ? theme.background.transparent.light
