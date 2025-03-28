@@ -139,7 +139,7 @@ export const MatchColumnSelect = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {options?.map((option) => {
-                    const id = `${uuidV4()}-${option.value}`;
+                    const id = `${uuidV4()}`;
                     return (
                       <React.Fragment key={id}>
                         <div id={id}>
