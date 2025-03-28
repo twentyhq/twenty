@@ -1296,6 +1296,7 @@ msgstr "Definiți ce va fi vizibil pentru alți utilizatori în spațiul dvs. de
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete"
 msgstr "Șterge"
 
@@ -1319,8 +1320,8 @@ msgstr "Șterge cheia API"
 
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Delete record"
-msgstr "Șterge înregistrare"
+#~ msgid "Delete record"
+#~ msgstr "Șterge înregistrare"
 
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
@@ -1862,13 +1863,14 @@ msgstr "Expiră în"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export"
 msgstr "Export"
 
 #. js-lingui-id: G5DJkP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Export record"
-msgstr "Exportă înregistrarea"
+#~ msgid "Export record"
+#~ msgstr "Exportă înregistrarea"
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts

@@ -1296,6 +1296,7 @@ msgstr "Ορίστε τι θα είναι ορατό στους άλλους χ�
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -1319,8 +1320,8 @@ msgstr "Διαγραφή κλειδιού API"
 
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Delete record"
-msgstr "Διαγραφή εγγραφής"
+#~ msgid "Delete record"
+#~ msgstr "Διαγραφή εγγραφής"
 
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
@@ -1862,13 +1863,14 @@ msgstr "Λήγει σε"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export"
 msgstr "Εξαγωγή"
 
 #. js-lingui-id: G5DJkP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Export record"
-msgstr "Εξαγωγή εγγραφής"
+#~ msgid "Export record"
+#~ msgstr "Εξαγωγή εγγραφής"
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts

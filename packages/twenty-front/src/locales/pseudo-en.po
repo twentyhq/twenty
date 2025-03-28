@@ -1288,6 +1288,7 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete"
 msgstr ""
 
@@ -1311,8 +1312,8 @@ msgstr ""
 
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Delete record"
-msgstr ""
+#~ msgid "Delete record"
+#~ msgstr ""
 
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
@@ -1854,13 +1855,14 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export"
 msgstr ""
 
 #. js-lingui-id: G5DJkP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Export record"
-msgstr ""
+#~ msgid "Export record"
+#~ msgstr ""
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts

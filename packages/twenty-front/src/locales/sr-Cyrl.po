@@ -1296,6 +1296,7 @@ msgstr "Дефинишите шта ће бити видљиво другим к
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete"
 msgstr "Обриши"
 
@@ -1319,8 +1320,8 @@ msgstr "Обриши API кључ"
 
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Delete record"
-msgstr "Обриши запис"
+#~ msgid "Delete record"
+#~ msgstr "Обриши запис"
 
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
@@ -1862,13 +1863,14 @@ msgstr "Истиче за"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export"
 msgstr "Извоз"
 
 #. js-lingui-id: G5DJkP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Export record"
-msgstr "Извези запис"
+#~ msgid "Export record"
+#~ msgstr "Извези запис"
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts

@@ -319,11 +319,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         softDelete,
       );
     }
+    this.logger.log(`workspace ${id} user workspaces deleted`);
 
     await this.workspaceCacheStorageService.flush(
       workspace.id,
       workspace.metadataVersion,
     );
+    this.logger.log(`workspace ${id} cache flushed`);
 
     if (softDelete) {
       if (this.billingService.isBillingEnabled()) {
@@ -348,6 +350,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.customDomainService.deleteCustomHostnameByHostnameSilently(
         workspace.customDomain,
       );
+      this.logger.log(`workspace ${id} custom domain deleted`);
     }
 
     await this.workspaceRepository.delete(id);
