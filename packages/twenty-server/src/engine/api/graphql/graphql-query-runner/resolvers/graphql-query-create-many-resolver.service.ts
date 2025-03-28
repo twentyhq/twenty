@@ -15,6 +15,7 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -67,10 +68,95 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       return await executionArgs.repository.insert(executionArgs.args.data);
     }
 
-    return await executionArgs.repository.upsert(executionArgs.args.data, {
-      conflictPaths: ['id'],
-      skipUpdateIfNoValuesChanged: true,
+    return this.performUpsertOperation(executionArgs);
+  }
+
+  private async performUpsertOperation(
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
+  ): Promise<InsertResult> {
+    const conflictingFields = ['id'];
+    const result: InsertResult = {
+      identifiers: [],
+      generatedMaps: [],
+      raw: [],
+    };
+
+    const whereConditions = {};
+
+    for (const field of conflictingFields) {
+      const fieldValues = executionArgs.args.data
+        .map((record) => record[field])
+        .filter(Boolean);
+
+      if (fieldValues.length > 0) {
+        whereConditions[field] = In(fieldValues);
+      }
+    }
+
+    const existingRecords = await executionArgs.repository.find({
+      where: whereConditions,
     });
+
+    const existingRecordMaps = conflictingFields.reduce((maps, field) => {
+      maps[field] = new Map();
+      existingRecords.forEach((record) => {
+        if (record[field]) {
+          maps[field].set(record[field], record);
+        }
+      });
+
+      return maps;
+    }, {});
+
+    const recordsToUpdate: Partial<ObjectRecord>[] = [];
+    const recordsToInsert: Partial<ObjectRecord>[] = [];
+
+    for (const record of executionArgs.args.data) {
+      let existingRecord: ObjectRecord | null = null;
+
+      for (const field of conflictingFields) {
+        if (record[field] && existingRecordMaps[field].has(record[field])) {
+          existingRecord = existingRecordMaps[field].get(record[field]);
+          break;
+        }
+      }
+
+      if (existingRecord) {
+        recordsToUpdate.push({ ...record, id: existingRecord.id });
+      } else {
+        recordsToInsert.push(record);
+      }
+    }
+
+    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+
+    for (const record of recordsToUpdate) {
+      const recordId = record.id as string;
+
+      // TODO: we should align update and insert
+      // For insert, formating is done in the server
+      // While for update, formatting is done at the resolver level
+
+      const formattedRecord = formatData(
+        record,
+        objectMetadataItemWithFieldMaps,
+      );
+
+      await executionArgs.repository.update(recordId, formattedRecord);
+      result.identifiers.push({ id: recordId });
+      result.generatedMaps.push({ id: recordId });
+    }
+
+    if (recordsToInsert.length > 0) {
+      const insertResult =
+        await executionArgs.repository.insert(recordsToInsert);
+
+      result.identifiers.push(...insertResult.identifiers);
+      result.generatedMaps.push(...insertResult.generatedMaps);
+      result.raw.push(...insertResult.raw);
+    }
+
+    return result;
   }
 
   private async fetchUpsertedRecords(
