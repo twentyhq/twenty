@@ -56,7 +56,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   isEditable,
 }: SettingsRolePermissionsObjectsTableRowProps) => {
   return (
-    <StyledTableRow key={permission.key}>
+    <StyledTableRow>
       <StyledPermissionCell>
         <StyledIconWrapper>
           <StyledIcon>

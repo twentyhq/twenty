@@ -49,6 +49,7 @@ export const SettingsRolePermissionsObjectsTableHeader = ({
           checked={allPermissionsEnabled}
           indeterminate={somePermissionsEnabled && !allPermissionsEnabled}
           disabled={!isEditable}
+          aria-label={t`Toggle all object permissions`}
           onChange={() => {
             const newValue = !allPermissionsEnabled;
 

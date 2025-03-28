@@ -42,6 +42,6 @@ export enum SettingsPath {
   AdminPanelOtherEnvVariables = 'admin-panel/other-env-variables',
   Lab = 'lab',
   Roles = 'roles',
-  RoleDetail = 'roles/:roleId',
   RoleCreate = 'roles/create',
+  RoleDetail = 'roles/:roleId',
 }

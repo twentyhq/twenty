@@ -22,7 +22,6 @@ export const SettingsRoleCreateEffect = ({ roleId }: { roleId: string }) => {
     }
 
     setActiveTabId(SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS);
-    setIsInitialized(true);
 
     const newRole = {
       id: roleId,
@@ -39,6 +38,7 @@ export const SettingsRoleCreateEffect = ({ roleId }: { roleId: string }) => {
     };
 
     setSettingsDraftRole(newRole);
+    setIsInitialized(true);
   }, [isInitialized, roleId, setActiveTabId, setSettingsDraftRole]);
 
   return null;

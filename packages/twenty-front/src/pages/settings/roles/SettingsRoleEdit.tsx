@@ -15,7 +15,7 @@ export const SettingsRoleEdit = () => {
     <>
       <SettingsRolesQueryEffect />
       <SettingsRoleEditEffect roleId={roleId} />
-      <SettingsRole roleId={roleId ?? ''} isCreateMode={false} />
+      <SettingsRole roleId={roleId} isCreateMode={false} />
     </>
   );
 };

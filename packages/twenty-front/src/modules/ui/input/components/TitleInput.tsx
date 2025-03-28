@@ -6,9 +6,7 @@ import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { titleInputIsOpenedComponentState } from '@/ui/input/states/titleInputIsOpenedComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui';
 
@@ -145,9 +143,7 @@ export const TitleInput = ({
   onTab,
   onShiftTab,
 }: TitleInputProps) => {
-  const [isOpened, setIsOpened] = useRecoilComponentStateV2(
-    titleInputIsOpenedComponentState,
-  );
+  const [isOpened, setIsOpened] = useState(false);
 
   const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 

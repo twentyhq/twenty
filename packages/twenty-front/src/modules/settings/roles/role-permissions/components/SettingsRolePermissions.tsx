@@ -56,7 +56,7 @@ export const SettingsRolePermissions = ({
   const objectPermissionsConfig: SettingsRolePermissionsObjectPermission[] = [
     {
       key: 'seeRecords',
-      label: 'See Records on All Objects',
+      label: t`See Records on All Objects`,
       Icon: IconEye,
       value: settingsDraftRole.canReadAllObjectRecords,
       setValue: (value: boolean) => {
@@ -68,7 +68,7 @@ export const SettingsRolePermissions = ({
     },
     {
       key: 'editRecords',
-      label: 'Edit Records on All Objects',
+      label: t`Edit Records on All Objects`,
       Icon: IconPencil,
       value: settingsDraftRole.canUpdateAllObjectRecords,
       setValue: (value: boolean) => {
@@ -80,7 +80,7 @@ export const SettingsRolePermissions = ({
     },
     {
       key: 'deleteRecords',
-      label: 'Delete Records on All Objects',
+      label: t`Delete Records on All Objects`,
       Icon: IconTrash,
       value: settingsDraftRole.canSoftDeleteAllObjectRecords,
       setValue: (value: boolean) => {
@@ -92,7 +92,7 @@ export const SettingsRolePermissions = ({
     },
     {
       key: 'destroyRecords',
-      label: 'Destroy Records on All Objects',
+      label: t`Destroy Records on All Objects`,
       Icon: IconTrashX,
       value: settingsDraftRole.canDestroyAllObjectRecords,
       setValue: (value: boolean) => {
@@ -108,50 +108,50 @@ export const SettingsRolePermissions = ({
     [
       {
         key: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
-        name: 'API Keys & Webhooks',
-        description: 'Manage API keys and webhooks',
+        name: t`API Keys & Webhooks`,
+        description: t`Manage API keys and webhooks`,
         value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconCode,
       },
       {
         key: SettingPermissionType.WORKSPACE,
-        name: 'Workspace',
-        description: 'Set global workspace preferences',
+        name: t`Workspace`,
+        description: t`Set global workspace preferences`,
         value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconSettings,
       },
       {
         key: SettingPermissionType.WORKSPACE_MEMBERS,
-        name: 'Users',
-        description: 'Add or remove users',
+        name: t`Users`,
+        description: t`Add or remove users`,
         value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconUsers,
       },
       {
         key: SettingPermissionType.ROLES,
-        name: 'Roles',
-        description: 'Define user roles and access levels',
+        name: t`Roles`,
+        description: t`Define user roles and access levels`,
         value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconLockOpen,
       },
       {
         key: SettingPermissionType.DATA_MODEL,
-        name: 'Data Model',
-        description: 'Edit CRM data structure and fields',
+        name: t`Data Model`,
+        description: t`Edit CRM data structure and fields`,
         value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconHierarchy,
       },
       {
         key: SettingPermissionType.ADMIN_PANEL,
-        name: 'Admin Panel',
-        description: 'Admin settings and system tools',
+        name: t`Admin Panel`,
+        description: t`Admin settings and system tools`,
         value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconServer,
       },
       {
         key: SettingPermissionType.SECURITY,
-        name: 'Security',
-        description: 'Manage security policies',
+        name: t`Security`,
+        description: t`Manage security policies`,
         value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconKey,
       },

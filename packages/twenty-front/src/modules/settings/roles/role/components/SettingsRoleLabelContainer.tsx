@@ -2,19 +2,13 @@ import { useRecoilState } from 'recoil';
 
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { TitleInputComponentInstanceContext } from '@/ui/input/states/contexts/TitleInputComponentInstanceContext';
-import { titleInputIsOpenedComponentState } from '@/ui/input/states/titleInputIsOpenedComponentState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 
 type SettingsRoleLabelContainerProps = {
   roleId: string;
-  isCreateMode: boolean;
 };
 
 const ROLE_LABEL_EDIT_HOTKEY_SCOPE = 'role-label-edit';
-const ROLE_LABEL_TITLE_INPUT_COMPONENT_INSTANCE_ID = 'role-label-title-input';
 
 const StyledHeaderTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
@@ -29,7 +23,6 @@ const StyledHeaderTitle = styled.div`
 
 export const SettingsRoleLabelContainer = ({
   roleId,
-  isCreateMode,
 }: SettingsRoleLabelContainerProps) => {
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
@@ -42,32 +35,16 @@ export const SettingsRoleLabelContainer = ({
     });
   };
 
-  const setIsOpened = useSetRecoilComponentStateV2(
-    titleInputIsOpenedComponentState,
-    ROLE_LABEL_TITLE_INPUT_COMPONENT_INSTANCE_ID,
-  );
-
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
-
-  if (isCreateMode) {
-    setIsOpened(true);
-    setHotkeyScopeAndMemorizePreviousScope(ROLE_LABEL_EDIT_HOTKEY_SCOPE);
-  }
-
   return (
     <StyledHeaderTitle>
-      <TitleInputComponentInstanceContext.Provider
-        value={{ instanceId: ROLE_LABEL_TITLE_INPUT_COMPONENT_INSTANCE_ID }}
-      >
-        <TitleInput
-          disabled={!settingsDraftRole.isEditable}
-          sizeVariant="md"
-          value={settingsDraftRole.label}
-          onChange={handleChange}
-          placeholder="Role name"
-          hotkeyScope={ROLE_LABEL_EDIT_HOTKEY_SCOPE}
-        />
-      </TitleInputComponentInstanceContext.Provider>
+      <TitleInput
+        disabled={!settingsDraftRole.isEditable}
+        sizeVariant="md"
+        value={settingsDraftRole.label}
+        onChange={handleChange}
+        placeholder="Role name"
+        hotkeyScope={ROLE_LABEL_EDIT_HOTKEY_SCOPE}
+      />
     </StyledHeaderTitle>
   );
 };

@@ -18,13 +18,13 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AppTooltip,
-  Button,
-  H2Title,
-  IconPlus,
-  IconSearch,
-  Section,
-  TooltipDelay,
+    AppTooltip,
+    Button,
+    H2Title,
+    IconPlus,
+    IconSearch,
+    Section,
+    TooltipDelay,
 } from 'twenty-ui';
 import { SearchRecord } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -76,7 +76,7 @@ export const SettingsRoleAssignment = ({
   );
 
   const navigateSettings = useNavigateSettings();
-  const { addWorkspaceMemberRole, updateWorkspaceMemberRoleState } =
+  const { addWorkspaceMemberToRoleAndUpdateState: addWorkspaceMemberRole, updateWorkspaceMemberRoleDraftState: updateWorkspaceMemberRoleState } =
     useUpdateWorkspaceMemberRole(roleId);
 
   const [confirmationModalIsOpen, setConfirmationModalIsOpen] =

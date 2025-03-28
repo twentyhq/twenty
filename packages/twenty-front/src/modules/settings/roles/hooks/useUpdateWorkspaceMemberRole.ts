@@ -6,11 +6,11 @@ import {
   WorkspaceMember,
 } from '~/generated/graphql';
 
-type AddWorkspaceMemberRoleParams = {
+type AddWorkspaceMemberToRoleAndUpdateStateParams = {
   workspaceMemberId: string;
 };
 
-type UpdateWorkspaceMemberRoleStateParams = {
+type UpdateWorkspaceMemberRoleDraftStateParams = {
   workspaceMember: WorkspaceMember;
 };
 
@@ -30,9 +30,9 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
   const [updateWorkspaceMemberRoleMutation] =
     useUpdateWorkspaceMemberRoleMutation();
 
-  const updateWorkspaceMemberRoleState = ({
+  const updateWorkspaceMemberRoleDraftState = ({
     workspaceMember,
-  }: UpdateWorkspaceMemberRoleStateParams) => {
+  }: UpdateWorkspaceMemberRoleDraftStateParams) => {
     setSettingsDraftRole({
       ...settingsDraftRole,
       workspaceMembers: [
@@ -47,9 +47,9 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
     });
   };
 
-  const addWorkspaceMemberRole = async ({
+  const addWorkspaceMemberToRoleAndUpdateState = async ({
     workspaceMemberId,
-  }: AddWorkspaceMemberRoleParams) => {
+  }: AddWorkspaceMemberToRoleAndUpdateStateParams) => {
     const { data } = await updateWorkspaceMemberRoleMutation({
       variables: {
         workspaceMemberId,
@@ -85,19 +85,21 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
     roleId,
     workspaceMemberIds,
   }: AddWorkspaceMembersToRoleParams) => {
-    for (const workspaceMemberId of workspaceMemberIds) {
-      await updateWorkspaceMemberRoleMutation({
-        variables: {
-          roleId,
-          workspaceMemberId,
-        },
-      });
-    }
+    await Promise.all(
+      workspaceMemberIds.map((workspaceMemberId) =>
+        updateWorkspaceMemberRoleMutation({
+          variables: {
+            roleId,
+            workspaceMemberId,
+          },
+        }),
+      ),
+    );
   };
 
   return {
-    addWorkspaceMemberRole,
-    updateWorkspaceMemberRoleState,
+    addWorkspaceMemberToRoleAndUpdateState,
+    updateWorkspaceMemberRoleDraftState,
     addWorkspaceMembersToRole,
   };
 };

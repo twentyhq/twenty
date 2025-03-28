@@ -1,6 +1,5 @@
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { TitleInputComponentInstanceContext } from '@/ui/input/states/contexts/TitleInputComponentInstanceContext';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -63,8 +62,6 @@ type WorkflowStepHeaderProps = {
     }
 );
 
-const WORKFLOW_STEP_TITLE_INPUT_COMPONENT_INSTANCE_ID = 'workflow-step-title';
-
 export const WorkflowStepHeader = ({
   Icon,
   iconColor,
@@ -102,27 +99,21 @@ export const WorkflowStepHeader = ({
       </StyledHeaderIconContainer>
       <StyledHeaderInfo>
         <StyledHeaderTitle>
-          <TitleInputComponentInstanceContext.Provider
-            value={{
-              instanceId: WORKFLOW_STEP_TITLE_INPUT_COMPONENT_INSTANCE_ID,
+          <TitleInput
+            disabled={disabled}
+            sizeVariant="md"
+            value={title}
+            onChange={handleChange}
+            placeholder={headerType}
+            hotkeyScope="workflow-step-title"
+            onEnter={saveTitle}
+            onEscape={() => {
+              setTitle(initialTitle);
             }}
-          >
-            <TitleInput
-              disabled={disabled}
-              sizeVariant="md"
-              value={title}
-              onChange={handleChange}
-              placeholder={headerType}
-              hotkeyScope="workflow-step-title"
-              onEnter={saveTitle}
-              onEscape={() => {
-                setTitle(initialTitle);
-              }}
-              onClickOutside={saveTitle}
-              onTab={saveTitle}
-              onShiftTab={saveTitle}
-            />
-          </TitleInputComponentInstanceContext.Provider>
+            onClickOutside={saveTitle}
+            onTab={saveTitle}
+            onShiftTab={saveTitle}
+          />
         </StyledHeaderTitle>
         <StyledHeaderType>{headerType}</StyledHeaderType>
       </StyledHeaderInfo>
