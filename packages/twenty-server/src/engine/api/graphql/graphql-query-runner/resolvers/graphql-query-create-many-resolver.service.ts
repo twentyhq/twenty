@@ -29,13 +29,56 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
-    const objectRecords: InsertResult = !executionArgs.args.upsert
-      ? await executionArgs.repository.insert(executionArgs.args.data)
-      : await executionArgs.repository.upsert(executionArgs.args.data, {
-          conflictPaths: ['id'],
-          skipUpdateIfNoValuesChanged: true,
-        });
+    const objectRecords = await this.insertOrUpsertRecords(executionArgs);
 
+    const upsertedRecords = await this.fetchUpsertedRecords(
+      executionArgs,
+      objectRecords,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    );
+
+    this.apiEventEmitterService.emitCreateEvents(
+      upsertedRecords,
+      authContext,
+      objectMetadataItemWithFieldMaps,
+    );
+
+    await this.processNestedRelationsIfNeeded(
+      executionArgs,
+      upsertedRecords,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+      featureFlagsMap,
+    );
+
+    return this.formatRecordsForResponse(
+      upsertedRecords,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+      featureFlagsMap,
+    );
+  }
+
+  private async insertOrUpsertRecords(
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
+  ): Promise<InsertResult> {
+    if (!executionArgs.args.upsert) {
+      return await executionArgs.repository.insert(executionArgs.args.data);
+    }
+
+    return await executionArgs.repository.upsert(executionArgs.args.data, {
+      conflictPaths: ['id'],
+      skipUpdateIfNoValuesChanged: true,
+    });
+  }
+
+  private async fetchUpsertedRecords(
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
+    objectRecords: InsertResult,
+    objectMetadataItemWithFieldMaps: any,
+    objectMetadataMaps: any,
+  ): Promise<ObjectRecord[]> {
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
@@ -47,32 +90,43 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       .take(QUERY_MAX_RECORDS)
       .getMany();
 
-    const upsertedRecords = formatResult<ObjectRecord[]>(
+    return formatResult<ObjectRecord[]>(
       nonFormattedUpsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
+  }
 
-    this.apiEventEmitterService.emitCreateEvents(
-      upsertedRecords,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
-
-    if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        objectMetadataMaps,
-        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: upsertedRecords,
-        relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
-        limit: QUERY_MAX_RECORDS,
-        authContext,
-        dataSource: executionArgs.dataSource,
-        isNewRelationEnabled:
-          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
-      });
+  private async processNestedRelationsIfNeeded(
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
+    upsertedRecords: ObjectRecord[],
+    objectMetadataItemWithFieldMaps: any,
+    objectMetadataMaps: any,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
+  ): Promise<void> {
+    if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
+      return;
     }
 
+    await this.processNestedRelationsHelper.processNestedRelations({
+      objectMetadataMaps,
+      parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+      parentObjectRecords: upsertedRecords,
+      relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+      limit: QUERY_MAX_RECORDS,
+      authContext: executionArgs.options.authContext,
+      dataSource: executionArgs.dataSource,
+      isNewRelationEnabled:
+        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+    });
+  }
+
+  private formatRecordsForResponse(
+    upsertedRecords: ObjectRecord[],
+    objectMetadataItemWithFieldMaps: any,
+    objectMetadataMaps: any,
+    featureFlagsMap: Record<FeatureFlagKey, boolean>,
+  ): ObjectRecord[] {
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(
         objectMetadataMaps,
