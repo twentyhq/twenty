@@ -23,7 +23,6 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
-import { IconVersions } from '@tabler/icons-react';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -35,6 +34,7 @@ import {
   IconPencil,
   IconRotate2,
   IconSettingsAutomation,
+  IconVersions,
 } from 'twenty-ui';
 
 export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
