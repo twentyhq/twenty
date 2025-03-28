@@ -1,15 +1,27 @@
-import { AnimatedButton, getOsControlSymbol, useIsMobile } from 'twenty-ui';
+import {
+  AnimatedButton,
+  AppTooltip,
+  getOsControlSymbol,
+  TooltipDelay,
+  TooltipPosition,
+  useIsMobile,
+} from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
 const StyledButtonWrapper = styled.div`
   z-index: 30;
+`;
+
+const StyledTooltipWrapper = styled.div`
+  font-size: ${({ theme }) => theme.font.size.md};
 `;
 
 const xPaths = {
@@ -98,7 +110,7 @@ const AnimatedIcon = ({
   );
 };
 
-export const PageHeaderOpenCommandMenuButton = () => {
+export const PageHeaderToggleCommandMenuButton = () => {
   const { toggleCommandMenu } = useCommandMenu();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
@@ -112,24 +124,38 @@ export const PageHeaderOpenCommandMenuButton = () => {
 
   return (
     <StyledButtonWrapper>
-      <AnimatedButton
-        animatedSvg={<AnimatedIcon isCommandMenuOpened={isCommandMenuOpened} />}
-        className="page-header-command-menu-button"
-        dataTestId="page-header-command-menu-button"
-        size={isMobile ? 'medium' : 'small'}
-        variant="secondary"
-        accent="default"
-        hotkeys={[getOsControlSymbol(), 'K']}
-        ariaLabel={ariaLabel}
-        onClick={toggleCommandMenu}
-        animate={{
-          rotate: isCommandMenuOpened ? 90 : 0,
-        }}
-        transition={{
-          duration: theme.animation.duration.normal,
-          ease: 'easeInOut',
-        }}
-      />
+      <div id="toggle-command-menu-button">
+        <AnimatedButton
+          animatedSvg={
+            <AnimatedIcon isCommandMenuOpened={isCommandMenuOpened} />
+          }
+          className="page-header-command-menu-button"
+          dataTestId="page-header-command-menu-button"
+          size={isMobile ? 'medium' : 'small'}
+          variant="secondary"
+          accent="default"
+          hotkeys={[getOsControlSymbol(), 'K']}
+          ariaLabel={ariaLabel}
+          onClick={toggleCommandMenu}
+          animate={{
+            rotate: isCommandMenuOpened ? 90 : 0,
+          }}
+          transition={{
+            duration: theme.animation.duration.normal,
+            ease: 'easeInOut',
+          }}
+        />
+      </div>
+      <StyledTooltipWrapper>
+        <AppTooltip
+          anchorSelect="#toggle-command-menu-button"
+          content={i18n._(ariaLabel)}
+          delay={TooltipDelay.longDelay}
+          place={TooltipPosition.Bottom}
+          offset={5}
+          noArrow
+        />
+      </StyledTooltipWrapper>
     </StyledButtonWrapper>
   );
 };

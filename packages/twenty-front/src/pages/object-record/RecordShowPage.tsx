@@ -13,7 +13,7 @@ import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordSh
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
+import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
@@ -58,7 +58,7 @@ export const RecordShowPage = () => {
                     objectRecordId={objectRecordId}
                   >
                     <RecordShowActionMenu />
-                    <PageHeaderOpenCommandMenuButton />
+                    <PageHeaderToggleCommandMenuButton />
                   </RecordShowPageHeader>
                   <PageBody>
                     <TimelineActivityContext.Provider
