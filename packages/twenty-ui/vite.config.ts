@@ -12,7 +12,9 @@ import { UserPluginConfig } from 'vite-plugin-checker/dist/esm/types';
 
 import packageJson from './package.json';
 
-const exports = Object.keys(packageJson.exports).filter(el => el !== './style.css');
+const exports = Object.keys(packageJson.exports).filter(
+  (el) => el !== './style.css',
+);
 // TODO prastoin
 const entries = exports.map((module) => `src/${module}/index.ts`);
 
@@ -68,7 +70,10 @@ export default defineConfig(({ command }) => {
     cacheDir: '../../node_modules/.vite/packages/twenty-ui',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({
+        jsxImportSource: '@emotion/react',
+        plugins: [['@swc/plugin-emotion', {}]],
+      }),
       tsconfigPaths({
         projects: ['tsconfig.json'],
       }),
@@ -95,10 +100,14 @@ export default defineConfig(({ command }) => {
     build: {
       cssCodeSplit: false,
       minify: false,
+      sourcemap: false,
       outDir: './dist',
       reportCompressedSize: true,
       commonjsOptions: {
         transformMixedEsModules: true,
+        interopDefault: true, // Add this line
+        defaultIsModuleExports: true, // Treat default export as module.exports
+        requireReturnsDefault: 'auto', // Handle require() calls appropriately
       },
       lib: {
         entry: ['src/index.ts', ...entries],
@@ -119,11 +128,20 @@ export default defineConfig(({ command }) => {
           },
           {
             assetFileNames: 'style.css',
+            format: 'cjs',
             globals: {
               react: 'React',
               'react-dom': 'ReactDOM',
+              // '@emotion/styled': 'styled.default',
+              // '@emotion/react': {
+              //   css: 'emotionReact.css',
+              //   useTheme: 'emotionReact.useTheme',
+              //   ThemeProvider: 'emotionReact.ThemeProvider',
+              // },
             },
-            format: 'cjs',
+            interop: 'auto',
+            esModule: true,
+            exports: 'named',
             entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),
           },
         ],

@@ -1,6 +1,6 @@
-import { useDropzone } from 'react-dropzone';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useDropzone } from 'react-dropzone';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { IconUpload } from 'twenty-ui/display';

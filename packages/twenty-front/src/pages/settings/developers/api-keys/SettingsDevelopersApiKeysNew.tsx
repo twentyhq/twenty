@@ -15,12 +15,12 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/layout';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();

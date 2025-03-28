@@ -1,6 +1,6 @@
 import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
-import { RemoteTableStatus } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { RemoteTableStatus } from '~/generated-metadata/graphql';
 import { Status } from 'twenty-ui/display';
 
 type SettingsIntegrationDatabaseConnectionSyncStatusProps = {

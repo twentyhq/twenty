@@ -34,10 +34,10 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
+import { LightIconButton } from 'twenty-ui/input';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 import { IconForbid, IconPencil, IconPlus } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 
 type RecordDetailRelationSectionProps = {
   loading: boolean;

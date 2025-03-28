@@ -10,6 +10,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
   IconCalendarEvent,
@@ -18,8 +20,6 @@ import {
   IconRefresh,
   IconTrash,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;

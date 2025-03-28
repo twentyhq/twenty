@@ -19,9 +19,9 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { LightIconButton } from 'twenty-ui/input';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { IconPlus } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 
 const COLUMN_MIN_WIDTH = 104;
 

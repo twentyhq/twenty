@@ -5,12 +5,12 @@ import { Select } from '@/ui/input/components/Select';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
+import { LightIconButton } from 'twenty-ui/input';
 import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from './InternalDatePicker';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 
 const StyledCustomDatePickerHeader = styled.div`
   align-items: center;

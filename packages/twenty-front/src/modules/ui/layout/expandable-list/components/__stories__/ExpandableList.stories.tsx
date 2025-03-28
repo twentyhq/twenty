@@ -7,7 +7,7 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
-import { Tag } from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/components';
 
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};

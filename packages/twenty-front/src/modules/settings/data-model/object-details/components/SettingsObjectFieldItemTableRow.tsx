@@ -19,16 +19,16 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
-import { isDefined } from 'twenty-shared/utils';
 import { IconMinus, IconPlus, useIcons } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;

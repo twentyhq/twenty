@@ -18,8 +18,8 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { IconChevronDown, IconForbid } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { IconChevronDown, IconForbid } from 'twenty-ui/display';
 
 const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`
   justify-content: space-between;

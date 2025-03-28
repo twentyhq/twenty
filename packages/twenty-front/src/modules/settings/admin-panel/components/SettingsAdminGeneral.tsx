@@ -22,6 +22,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdCom
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import {
   H2Title,
   IconId,
@@ -29,7 +30,6 @@ import {
   IconSearch,
   IconUser,
 } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
   align-items: center;

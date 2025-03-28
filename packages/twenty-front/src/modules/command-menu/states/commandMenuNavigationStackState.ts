@@ -1,6 +1,6 @@
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { IconComponent } from 'twenty-ui/display';
 import { createState } from 'twenty-ui/utilities';
+import { IconComponent } from 'twenty-ui/display';
 
 export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;

@@ -6,11 +6,11 @@ import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverl
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 const StyledInputsContainer = styled.div`
   display: flex;

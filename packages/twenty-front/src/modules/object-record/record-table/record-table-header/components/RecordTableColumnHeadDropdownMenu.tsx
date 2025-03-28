@@ -8,6 +8,7 @@ import { onToggleColumnSortComponentState } from '@/object-record/record-table/s
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
+import { MenuItem } from 'twenty-ui/navigation';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 import {
@@ -17,7 +18,6 @@ import {
   IconFilter,
   IconSortDescending,
 } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;

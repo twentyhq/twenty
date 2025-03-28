@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { ServerlessFunction } from '~/generated-metadata/graphql';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { ServerlessFunction } from '~/generated-metadata/graphql';
 import { IconChevronRight } from 'twenty-ui/display';
 
 export const StyledApisFieldTableRow = styled(TableRow)`

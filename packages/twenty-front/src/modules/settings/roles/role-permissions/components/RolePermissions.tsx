@@ -5,6 +5,7 @@ import { RolePermissionsObjectPermission } from '@/settings/roles/types/RolePerm
 import { RolePermissionsSettingPermission } from '@/settings/roles/types/RolePermissionsSettingPermission';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/layout';
 import { Role } from '~/generated-metadata/graphql';
 import { SettingPermissionType } from '~/generated/graphql';
 import { RolePermissionsObjectsTableRow } from './RolePermissionsObjectsTableRow';
@@ -22,7 +23,6 @@ import {
   IconTrashX,
   IconUsers,
 } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 const StyledRolePermissionsContainer = styled.div`
   display: flex;

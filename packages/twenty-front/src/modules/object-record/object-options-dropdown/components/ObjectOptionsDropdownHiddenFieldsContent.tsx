@@ -8,16 +8,16 @@ import { useObjectOptionsForTable } from '@/object-record/object-options-dropdow
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const { t } = useLingui();

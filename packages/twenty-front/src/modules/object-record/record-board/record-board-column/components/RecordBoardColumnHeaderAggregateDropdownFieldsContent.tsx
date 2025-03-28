@@ -5,19 +5,19 @@ import { availableFieldIdsForAggregateOperationComponentState } from '@/object-r
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { useRecoilValue } from 'recoil';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/navigation';
 import {
   Icon123,
   IconCheck,
   IconChevronLeft,
   useIcons,
 } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
   const {

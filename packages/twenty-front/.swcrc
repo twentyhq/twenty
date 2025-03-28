@@ -30,7 +30,8 @@
               "trans": ["@lingui/react", "Trans"]
             }
           }
-        ]
+        ],
+        ["@swc/plugin-emotion", {}]
       ]
     }
   },

@@ -9,8 +9,8 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { IconHeartOff } from 'twenty-ui/display';
 
 const StyledEmptyContainer = styled.div`
   width: 100%;

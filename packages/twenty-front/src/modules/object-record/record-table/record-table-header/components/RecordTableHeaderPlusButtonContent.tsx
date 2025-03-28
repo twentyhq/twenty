@@ -13,10 +13,10 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { useLingui } from '@lingui/react/macro';
-import { IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { IconSettings, useIcons } from 'twenty-ui/display';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();

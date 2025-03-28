@@ -16,11 +16,11 @@ import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLog
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter } from 'twenty-ui/display';
-import { MenuItemLeftContent, StyledMenuItemBase } from 'twenty-ui/navigation';
 import { Pill } from 'twenty-ui/components';
+import { MenuItemLeftContent, StyledMenuItemBase } from 'twenty-ui/navigation';
+import { v4 } from 'uuid';
+import { IconFilter } from 'twenty-ui/display';
 
 export const StyledContainer = styled.div`
   align-items: center;

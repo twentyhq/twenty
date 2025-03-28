@@ -19,8 +19,9 @@ import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarChipVariant, IconEye, IconEyeOff } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
+import { AvatarChipVariant } from 'twenty-ui/components';
+import { IconEye, IconEyeOff } from 'twenty-ui/display';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;

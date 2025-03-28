@@ -1,12 +1,12 @@
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useLingui } from '@lingui/react/macro';
-import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
-import { useSetRecoilState } from 'recoil';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { IconCheck, IconChevronLeft } from 'twenty-ui/display';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
+import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { useLingui } from '@lingui/react/macro';
+import { useSetRecoilState } from 'recoil';
 import { MenuItem } from 'twenty-ui/navigation';
+import { IconCheck, IconChevronLeft } from 'twenty-ui/display';
 
 export const MultiWorkspaceDropdownThemesComponents = () => {
   const { t } = useLingui();

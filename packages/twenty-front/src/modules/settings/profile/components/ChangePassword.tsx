@@ -1,5 +1,5 @@
-import { useLingui } from '@lingui/react/macro';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/display';
 

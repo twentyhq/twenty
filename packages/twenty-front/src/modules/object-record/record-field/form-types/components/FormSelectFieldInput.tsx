@@ -19,8 +19,8 @@ import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown } from 'twenty-ui/display';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
+import { IconChevronDown } from 'twenty-ui/display';
 
 type FormSelectFieldInputProps = {
   label?: string;

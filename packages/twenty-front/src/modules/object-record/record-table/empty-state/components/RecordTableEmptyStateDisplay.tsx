@@ -1,5 +1,6 @@
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -8,7 +9,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
   AnimatedPlaceholderType,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
 import { IconComponent } from 'twenty-ui/display';
 
 type RecordTableEmptyStateDisplayButtonComponentProps = {

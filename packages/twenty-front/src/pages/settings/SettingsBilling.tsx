@@ -12,6 +12,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
@@ -19,15 +22,12 @@ import {
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import {
   H2Title,
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
 } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;

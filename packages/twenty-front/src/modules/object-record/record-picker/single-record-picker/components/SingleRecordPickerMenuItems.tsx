@@ -19,8 +19,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import { IconComponent } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { IconComponent } from 'twenty-ui/display';
 
 export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;

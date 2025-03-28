@@ -5,12 +5,12 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { Button } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { CustomDomainValidRecords } from '~/generated/graphql';
-import { useTheme } from '@emotion/react';
-import { Button } from 'twenty-ui/input';
 import { IconCopy } from 'twenty-ui/display';
 
 const StyledTable = styled(Table)`

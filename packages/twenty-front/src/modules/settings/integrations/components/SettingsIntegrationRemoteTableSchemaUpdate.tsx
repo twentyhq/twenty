@@ -1,8 +1,7 @@
 import { FetchResult } from '@apollo/client';
 import styled from '@emotion/styled';
-
-import { SyncRemoteTableSchemaChangesMutation } from '~/generated-metadata/graphql';
 import { Button } from 'twenty-ui/input';
+import { SyncRemoteTableSchemaChangesMutation } from '~/generated-metadata/graphql';
 import { IconReload } from 'twenty-ui/display';
 
 const StyledText = styled.h3`

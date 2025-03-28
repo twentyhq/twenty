@@ -10,8 +10,8 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
 import { useState } from 'react';
-import { IconMinus, IconPlus } from 'twenty-ui/display';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
+import { IconMinus, IconPlus } from 'twenty-ui/display';
 
 export const MESSAGE_THREAD_SUBSCRIBER_DROPDOWN_ID =
   'message-thread-subscriber';

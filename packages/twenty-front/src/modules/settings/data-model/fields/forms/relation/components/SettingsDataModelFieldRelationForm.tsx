@@ -15,8 +15,8 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { useIcons } from 'twenty-ui/display';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({

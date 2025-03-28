@@ -8,11 +8,11 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,

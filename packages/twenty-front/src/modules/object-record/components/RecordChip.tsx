@@ -5,13 +5,13 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilValue } from 'recoil';
+import { isModifiedEvent } from 'twenty-ui/utilities';
 import {
   AvatarChip,
   AvatarChipVariant,
   ChipSize,
   LinkAvatarChip,
-} from 'twenty-ui/display';
-import { isModifiedEvent } from 'twenty-ui/utilities';
+} from 'twenty-ui/components';
 
 export type RecordChipProps = {
   objectNameSingular: string;

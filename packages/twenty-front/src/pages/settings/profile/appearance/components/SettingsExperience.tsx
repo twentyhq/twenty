@@ -4,12 +4,12 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 
 import { Trans, useLingui } from '@lingui/react/macro';
+import { ColorSchemePicker } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { ColorSchemePicker } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();

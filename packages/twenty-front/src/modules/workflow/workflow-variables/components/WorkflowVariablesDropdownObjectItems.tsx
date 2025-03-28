@@ -8,14 +8,14 @@ import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepH
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 
-import { useState } from 'react';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { useState } from 'react';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownObjectItemsProps = {
   step: StepOutputSchema;

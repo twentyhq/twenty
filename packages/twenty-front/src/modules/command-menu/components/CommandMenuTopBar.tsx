@@ -22,8 +22,8 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
-import { IconChevronLeft, IconX } from 'twenty-ui/display';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
+import { IconChevronLeft, IconX } from 'twenty-ui/display';
 
 const StyledInputContainer = styled.div`
   align-items: center;

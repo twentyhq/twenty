@@ -3,14 +3,14 @@ import styled from '@emotion/styled';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { ServerlessFunctionTestData } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { useTheme } from '@emotion/react';
-import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
 import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
+import { AnimatedCircleLoading } from 'twenty-ui/utilities';
+import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
 import {
+  IconLoader,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
-  IconLoader,
 } from 'twenty-ui/display';
-import { AnimatedCircleLoading } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   display: flex;

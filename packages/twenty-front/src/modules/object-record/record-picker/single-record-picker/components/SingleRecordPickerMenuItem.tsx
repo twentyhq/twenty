@@ -7,8 +7,8 @@ import { getSingleRecordPickerSelectableListId } from '@/object-record/record-pi
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui/display';
 
 type SingleRecordPickerMenuItemProps = {
   record: SingleRecordPickerRecord;

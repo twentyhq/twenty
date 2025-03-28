@@ -1,20 +1,20 @@
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces, workspacesState } from '@/auth/states/workspaces';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useLingui } from '@lingui/react/macro';
-import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
-import { useState } from 'react';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { Avatar, IconChevronLeft } from 'twenty-ui/display';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MenuItemSelectAvatar, UndecoratedLink } from 'twenty-ui/navigation';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { Avatar, IconChevronLeft } from 'twenty-ui/display';
 
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);

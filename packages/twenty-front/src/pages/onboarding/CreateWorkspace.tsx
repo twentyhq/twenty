@@ -15,14 +15,14 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
+import { MainButton } from 'twenty-ui/input';
 import {
   OnboardingStatus,
   useActivateWorkspaceMutation,
 } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
-import { Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
 
 const StyledContentContainer = styled.div`
   width: 100%;

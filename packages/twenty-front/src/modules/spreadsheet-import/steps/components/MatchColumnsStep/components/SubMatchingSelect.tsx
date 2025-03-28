@@ -10,12 +10,13 @@ import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectField
 import { SelectInput } from '@/ui/input/components/SelectInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useEffect, useState } from 'react';
+import { Tag, TagColor } from 'twenty-ui/components';
 import {
   MatchedOptions,
   MatchedSelectColumn,
   MatchedSelectOptionsColumn,
 } from '../MatchColumnsStep';
-import { IconChevronDown, Tag, TagColor } from 'twenty-ui/display';
+import { IconChevronDown } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   align-items: center;

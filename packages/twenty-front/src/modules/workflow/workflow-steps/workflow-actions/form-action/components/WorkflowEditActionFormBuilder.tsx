@@ -17,9 +17,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { v4 } from 'uuid';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import {
   IconChevronDown,
   IconPlus,

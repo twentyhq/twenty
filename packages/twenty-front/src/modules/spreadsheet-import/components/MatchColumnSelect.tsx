@@ -19,9 +19,9 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { AppTooltip } from 'twenty-ui/display';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};

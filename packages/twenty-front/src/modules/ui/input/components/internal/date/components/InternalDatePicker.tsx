@@ -17,11 +17,11 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCalendarX } from 'twenty-ui/display';
 import {
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';
+import { IconCalendarX } from 'twenty-ui/display';
 
 export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =

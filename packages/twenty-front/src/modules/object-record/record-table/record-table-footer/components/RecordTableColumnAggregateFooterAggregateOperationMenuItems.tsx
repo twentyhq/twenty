@@ -5,8 +5,8 @@ import { ExtendedAggregateOperations } from '@/object-record/record-table/types/
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { IconCheck } from 'twenty-ui/display';
 
 export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   aggregateOperations,

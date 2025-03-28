@@ -13,10 +13,10 @@ import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-a
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { isDefined } from 'twenty-shared/utils';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 
 type WorkflowEditActionUpdateRecordProps = {

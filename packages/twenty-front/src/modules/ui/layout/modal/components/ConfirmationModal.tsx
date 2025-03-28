@@ -8,8 +8,8 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal, ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { Button, ButtonAccent } from 'twenty-ui/input';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 
 export type ConfirmationModalProps = {
   isOpen: boolean;

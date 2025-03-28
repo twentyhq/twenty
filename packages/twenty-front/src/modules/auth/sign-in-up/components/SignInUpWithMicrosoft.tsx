@@ -6,8 +6,8 @@ import {
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 
 export const SignInUpWithMicrosoft = () => {
   const theme = useTheme();

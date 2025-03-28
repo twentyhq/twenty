@@ -17,10 +17,10 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
+import { IconPlus } from 'twenty-ui/display';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};

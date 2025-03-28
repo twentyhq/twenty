@@ -8,14 +8,14 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import {
   IconArchive,
   IconDotsVertical,
   IconPencil,
   useIcons,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type SettingsObjectSummaryCardProps = {
   objectMetadataItem: ObjectMetadataItem;

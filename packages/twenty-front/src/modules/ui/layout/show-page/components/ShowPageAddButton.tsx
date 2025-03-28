@@ -10,10 +10,10 @@ import { SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID } from '@/ui/layout/show-page/constant
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
-import { Dropdown } from '../../dropdown/components/Dropdown';
 import { Button } from 'twenty-ui/input';
-import { IconCheckbox, IconNotes, IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { Dropdown } from '../../dropdown/components/Dropdown';
+import { IconCheckbox, IconNotes, IconPlus } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   z-index: 1;

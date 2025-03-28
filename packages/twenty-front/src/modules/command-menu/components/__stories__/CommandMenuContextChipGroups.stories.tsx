@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import styled from '@emotion/styled';
-import { CommandMenuContextChipGroups } from '../CommandMenuContextChipGroups';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { CommandMenuContextChipGroups } from '../CommandMenuContextChipGroups';
 import {
   IconBuildingSkyscraper,
   IconSearch,

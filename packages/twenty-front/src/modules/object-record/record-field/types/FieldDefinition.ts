@@ -1,5 +1,4 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
 import { FieldMetadata } from './FieldMetadata';
 import { IconComponent } from 'twenty-ui/display';
 

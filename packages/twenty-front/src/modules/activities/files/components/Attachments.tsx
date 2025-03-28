@@ -9,6 +9,7 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -17,7 +18,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
 import { IconPlus } from 'twenty-ui/display';
 
 const StyledAttachmentsContainer = styled.div`

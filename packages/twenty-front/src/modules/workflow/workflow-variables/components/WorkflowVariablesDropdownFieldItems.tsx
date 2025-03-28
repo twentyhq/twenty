@@ -21,12 +21,12 @@ import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOu
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownFieldItemsProps = {
   step: StepOutputSchema;

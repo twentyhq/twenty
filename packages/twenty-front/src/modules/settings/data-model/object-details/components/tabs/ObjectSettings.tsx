@@ -7,10 +7,10 @@ import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/o
 import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { Button } from 'twenty-ui/input';
-import { H2Title, IconArchive } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { H2Title, IconArchive } from 'twenty-ui/display';
 
 type ObjectSettingsProps = {
   objectMetadataItem: ObjectMetadataItem;

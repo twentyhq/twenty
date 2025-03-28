@@ -6,6 +6,14 @@ import { useState } from 'react';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { Button } from 'twenty-ui/input';
+import {
+  MenuItem,
+  MenuItemMultiSelectAvatar,
+  MenuItemSelectAvatar,
+} from 'twenty-ui/navigation';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
@@ -13,15 +21,7 @@ import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '../DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { Avatar, IconChevronLeft } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { ComponentDecorator } from 'twenty-ui/testing';
-import {
-  MenuItem,
-  MenuItemMultiSelectAvatar,
-  MenuItemSelectAvatar,
-} from 'twenty-ui/navigation';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',

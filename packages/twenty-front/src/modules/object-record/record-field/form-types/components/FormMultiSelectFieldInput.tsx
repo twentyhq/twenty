@@ -18,8 +18,8 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown } from 'twenty-ui/display';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
+import { IconChevronDown } from 'twenty-ui/display';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;

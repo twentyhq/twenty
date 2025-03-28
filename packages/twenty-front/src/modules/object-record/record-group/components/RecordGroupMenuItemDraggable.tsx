@@ -5,8 +5,9 @@ import {
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconEye, IconEyeOff, Tag } from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/components';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { IconEye, IconEyeOff } from 'twenty-ui/display';
 
 type RecordGroupMenuItemDraggableProps = {
   recordGroupId: string;

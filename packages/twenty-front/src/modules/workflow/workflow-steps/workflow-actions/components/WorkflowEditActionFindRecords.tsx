@@ -9,8 +9,8 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { useDebouncedCallback } from 'use-debounce';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 
 type WorkflowEditActionFindRecordsProps = {

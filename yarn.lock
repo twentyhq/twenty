@@ -16418,6 +16418,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rollup/pluginutils@npm:^5.1.3":
+  version: 5.1.4
+  resolution: "@rollup/pluginutils@npm:5.1.4"
+  dependencies:
+    "@types/estree": "npm:^1.0.0"
+    estree-walker: "npm:^2.0.2"
+    picomatch: "npm:^4.0.2"
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: 10c0/6d58fbc6f1024eb4b087bc9bf59a1d655a8056a60c0b4021d3beaeec3f0743503f52467fd89d2cf0e7eccf2831feb40a05ad541a17637ea21ba10b21c2004deb
+  languageName: node
+  linkType: hard
+
 "@rollup/rollup-android-arm-eabi@npm:4.20.0":
   version: 4.20.0
   resolution: "@rollup/rollup-android-arm-eabi@npm:4.20.0"
@@ -20556,6 +20572,15 @@ __metadata:
   peerDependencies:
     "@swc/core": "*"
   checksum: 10c0/7f1993f9201420bb499c92ab28797352bcbf9e3a6c7b5a1806fdc34c9c3b46ea9e5b2f070c0e13fcf7f3c3fadbbc38777840baabb178f589bf1f67543763adb6
+  languageName: node
+  linkType: hard
+
+"@swc/plugin-emotion@npm:4.0.2":
+  version: 4.0.2
+  resolution: "@swc/plugin-emotion@npm:4.0.2"
+  dependencies:
+    "@swc/counter": "npm:^0.1.3"
+  checksum: 10c0/78e72728a6395051b71e0b5cf8aa140131bcdee1e96ddc0cd7a67a1d988eb4813fee7395e684c96947b6130a0995792db904ba3f59ae351efc3cd8916af8315f
   languageName: node
   linkType: hard
 
@@ -54270,6 +54295,7 @@ __metadata:
     "@nivo/line": "npm:^0.87.0"
     "@react-pdf/renderer": "npm:^4.1.6"
     "@scalar/api-reference-react": "npm:^0.4.36"
+    "@swc/plugin-emotion": "npm:4.0.2"
     "@tiptap/core": "npm:^2.10.4"
     "@tiptap/extension-document": "npm:^2.10.4"
     "@tiptap/extension-hard-break": "npm:^2.10.4"
@@ -54413,6 +54439,7 @@ __metadata:
     recoil: "npm:^0.7.7"
     tsx: "npm:^4.19.3"
     twenty-shared: "workspace:*"
+    vite-plugin-svgr: "npm:^4.3.0"
     zod: "npm:3.23.8"
   languageName: unknown
   linkType: soft
@@ -56556,6 +56583,19 @@ __metadata:
   peerDependencies:
     vite: ^2.6.0 || 3 || 4 || 5
   checksum: 10c0/0a6400f20905f53d08f1ce7d1f22d9a57db403e110e790f80c2e0411a0064a071a36b781f56f6823654f98052219171003f9ea023d4a31d930b4a4fc01776d1f
+  languageName: node
+  linkType: hard
+
+"vite-plugin-svgr@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "vite-plugin-svgr@npm:4.3.0"
+  dependencies:
+    "@rollup/pluginutils": "npm:^5.1.3"
+    "@svgr/core": "npm:^8.1.0"
+    "@svgr/plugin-jsx": "npm:^8.1.0"
+  peerDependencies:
+    vite: ">=2.6.0"
+  checksum: 10c0/a73f10d319f72cd8c16bf9701cf18170f2300f98c72c6bf939565de0b1e93916bd70c6f5a446dc034b4405c72d382655c7c16be4bd1cbf35bbcde5febf7aeffc
   languageName: node
   linkType: hard
 

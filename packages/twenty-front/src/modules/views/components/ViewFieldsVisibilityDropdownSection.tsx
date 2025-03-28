@@ -12,8 +12,9 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import {
   AppTooltip,
   IconEye,
@@ -21,7 +22,6 @@ import {
   IconInfoCircle,
   useIcons,
 } from 'twenty-ui/display';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
 
 type ViewFieldsVisibilityDropdownSectionProps = {
   fields: Omit<ColumnDefinition<FieldMetadata>, 'size'>[];

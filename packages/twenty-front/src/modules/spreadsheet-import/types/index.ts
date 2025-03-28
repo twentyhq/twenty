@@ -4,8 +4,8 @@ import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/
 import { ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { IconComponent } from 'twenty-ui/display';
 import { ThemeColor } from 'twenty-ui/theme';
+import { IconComponent } from 'twenty-ui/display';
 
 export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   // Is modal visible.

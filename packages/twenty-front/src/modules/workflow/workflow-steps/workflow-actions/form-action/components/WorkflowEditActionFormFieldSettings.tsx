@@ -9,13 +9,13 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { LightIconButton } from 'twenty-ui/input';
 import {
   IconSettingsAutomation,
   IconX,
   IllustrationIconNumbers,
   IllustrationIconText,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;

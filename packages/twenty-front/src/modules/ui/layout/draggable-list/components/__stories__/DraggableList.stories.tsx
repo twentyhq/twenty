@@ -2,9 +2,9 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
+import { MenuItemDraggable } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { IconBell } from 'twenty-ui/display';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
 
 const meta: Meta<typeof DraggableList> = {
   title: 'UI/Layout/DraggableList/DraggableList',

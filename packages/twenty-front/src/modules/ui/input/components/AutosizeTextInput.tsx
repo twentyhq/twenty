@@ -6,9 +6,8 @@ import { Key } from 'ts-key-enum';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-
-import { InputHotkeyScope } from '../types/InputHotkeyScope';
 import { Button, RoundedIconButton } from 'twenty-ui/input';
+import { InputHotkeyScope } from '../types/InputHotkeyScope';
 import { IconArrowRight } from 'twenty-ui/display';
 
 const MAX_ROWS = 5;

@@ -6,8 +6,8 @@ import { IMaskInput, IMaskInputProps } from 'react-imask';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
-import { IconComponent } from 'twenty-ui/display';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { IconComponent } from 'twenty-ui/display';
 
 type StyledInputProps = React.ComponentProps<'input'> &
   IMaskInputProps<HTMLInputElement>;

@@ -5,8 +5,8 @@ import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { MenuItemCommand } from 'twenty-ui/navigation';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useIcons } from 'twenty-ui/display';
 
 export const CommandMenuWorkflowSelectActionContent = ({

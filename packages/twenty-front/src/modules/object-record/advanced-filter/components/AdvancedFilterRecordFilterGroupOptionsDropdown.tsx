@@ -7,8 +7,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { IconButton } from 'twenty-ui/input';
-import { IconDotsVertical } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { IconDotsVertical } from 'twenty-ui/display';
 
 type AdvancedFilterRecordFilterGroupOptionsDropdownProps = {
   recordFilterGroupId: string;

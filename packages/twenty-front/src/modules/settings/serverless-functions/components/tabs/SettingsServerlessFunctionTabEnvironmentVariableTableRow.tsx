@@ -7,6 +7,8 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import {
   IconCheck,
   IconDotsVertical,
@@ -15,8 +17,6 @@ import {
   IconX,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledEditModeTableRow = styled(TableRow)`
   grid-template-columns: 180px auto 56px;

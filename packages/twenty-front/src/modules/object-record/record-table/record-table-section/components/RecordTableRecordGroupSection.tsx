@@ -16,8 +16,9 @@ import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/components';
 import { AnimatedLightIconButton } from 'twenty-ui/input';
-import { IconChevronDown, Tag } from 'twenty-ui/display';
+import { IconChevronDown } from 'twenty-ui/display';
 
 const StyledTrContainer = styled.tr`
   cursor: pointer;

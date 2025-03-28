@@ -2,6 +2,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { t } from '@lingui/core/macro';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   IconArchiveOff,
@@ -10,8 +12,6 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;

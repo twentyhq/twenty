@@ -7,12 +7,12 @@ import { SettingsSSOSAMLForm } from '@/settings/security/components/SSO/Settings
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { IdentityProviderType } from '~/generated/graphql';
-import { t } from '@lingui/core/macro';
-import { H2Title, IconComponent, IconKey } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { IdentityProviderType } from '~/generated/graphql';
+import { H2Title, IconComponent, IconKey } from 'twenty-ui/display';
 
 const StyledInputsContainer = styled.div`
   display: grid;

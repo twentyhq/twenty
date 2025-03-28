@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { AvatarChip } from 'twenty-ui/display';
+import { AvatarChip } from 'twenty-ui/components';
 
 export const StyledMultipleSelectDropdownAvatarChip = styled(AvatarChip)`
   &.avatar-icon-container {

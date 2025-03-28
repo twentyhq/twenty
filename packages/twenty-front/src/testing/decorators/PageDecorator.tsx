@@ -29,9 +29,9 @@ import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { IconsProvider } from 'twenty-ui/display';
 
 export type PageDecoratorArgs = {

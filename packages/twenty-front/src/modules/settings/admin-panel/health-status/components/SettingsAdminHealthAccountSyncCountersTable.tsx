@@ -1,7 +1,7 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import styled from '@emotion/styled';
-import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/display';
 
 const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
   padding-left: ${({ theme }) => theme.spacing(2)};

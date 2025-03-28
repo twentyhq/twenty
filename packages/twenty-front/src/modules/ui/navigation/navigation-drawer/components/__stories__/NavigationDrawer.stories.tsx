@@ -17,6 +17,8 @@ import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import { GithubVersionLink } from 'twenty-ui/navigation';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import jsonPage from '../../../../../../../package.json';
@@ -25,7 +27,6 @@ import { NavigationDrawerItem } from '../NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '../NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
-import { GithubVersionLink } from 'twenty-ui/navigation';
 import {
   IconAt,
   IconBell,
@@ -42,7 +43,6 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/display';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',

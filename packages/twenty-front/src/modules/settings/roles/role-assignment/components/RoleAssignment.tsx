@@ -1,5 +1,5 @@
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { RoleAssignmentTableHeader } from '@/settings/roles/role-assignment/components/RoleAssignmentTableHeader';
 import { RoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown';
 import { RoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/RoleAssignmentConfirmationModalSelectedWorkspaceMember';
@@ -12,6 +12,8 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import {
   Role,
   SearchRecord,
@@ -32,8 +34,6 @@ import {
   IconSearch,
   TooltipDelay,
 } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 
 const StyledAssignToMemberContainer = styled.div`
   display: flex;

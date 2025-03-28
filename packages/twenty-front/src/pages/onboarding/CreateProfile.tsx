@@ -21,10 +21,10 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { OnboardingStatus } from '~/generated/graphql';
+import { H2Title } from 'twenty-ui/display';
 
 const StyledContentContainer = styled.div`
   width: 100%;

@@ -12,8 +12,8 @@ import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 import { isDefined } from 'twenty-shared/utils';
+import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 import { IconArrowUpRight } from 'twenty-ui/display';
 
 type RecordTableCellSoftFocusModeProps = {

@@ -10,7 +10,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
-import { TagColor } from 'twenty-ui/display';
+import { TagColor } from 'twenty-ui/components';
 
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;

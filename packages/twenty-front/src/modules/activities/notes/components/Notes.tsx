@@ -6,6 +6,7 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import styled from '@emotion/styled';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -14,7 +15,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
 import { IconPlus } from 'twenty-ui/display';
 
 const StyledNotesContainer = styled.div`

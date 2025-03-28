@@ -10,8 +10,7 @@ import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObj
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import groupBy from 'lodash.groupby';
-import { AddTaskButton } from './AddTaskButton';
-import { TaskList } from './TaskList';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -20,7 +19,8 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
+import { AddTaskButton } from './AddTaskButton';
+import { TaskList } from './TaskList';
 import { IconPlus } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`

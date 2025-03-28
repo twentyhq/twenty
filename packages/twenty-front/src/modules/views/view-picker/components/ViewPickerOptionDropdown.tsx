@@ -10,6 +10,7 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { MenuItem } from 'twenty-ui/navigation';
 import {
   IconHeart,
   IconLock,
@@ -17,7 +18,6 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
-import { Tag } from 'twenty-ui/display';
+import { Tag } from 'twenty-ui/components';
 
 const StyledMenuItem = styled(MenuItem)`
   width: calc(100% - 2 * var(--horizontal-padding));

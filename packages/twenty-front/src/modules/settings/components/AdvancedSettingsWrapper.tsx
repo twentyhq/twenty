@@ -3,8 +3,8 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { IconPoint } from 'twenty-ui/display';
 import { MAIN_COLORS } from 'twenty-ui/theme';
+import { IconPoint } from 'twenty-ui/display';
 
 type DotPosition = 'top' | 'centered';
 

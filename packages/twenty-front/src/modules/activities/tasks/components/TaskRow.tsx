@@ -10,8 +10,8 @@ import { Task } from '@/activities/types/Task';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
-import { useCompleteTask } from '../hooks/useCompleteTask';
 import { Checkbox, CheckboxShape } from 'twenty-ui/input';
+import { useCompleteTask } from '../hooks/useCompleteTask';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledTaskBody = styled.div`

@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { Pill } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
 import {
   IconArrowUpRight,
@@ -11,7 +12,6 @@ import {
   IconPlus,
   Status,
 } from 'twenty-ui/display';
-import { Pill } from 'twenty-ui/components';
 
 interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;

@@ -24,11 +24,11 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
-import { CardContent, CardFooter } from 'twenty-ui/layout';
-import { IconPlus, IconPoint } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
+import { CardContent, CardFooter } from 'twenty-ui/layout';
 import { MAIN_COLORS } from 'twenty-ui/theme';
+import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
+import { IconPlus, IconPoint } from 'twenty-ui/display';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),

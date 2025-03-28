@@ -1,5 +1,5 @@
-import { getDisplayValueByUrlType } from '~/utils/getDisplayValueByUrlType';
 import { LinkType } from 'twenty-ui/navigation';
+import { getDisplayValueByUrlType } from '~/utils/getDisplayValueByUrlType';
 
 describe('getDisplayValueByUrlType', () => {
   it('should return the linkedin username from the url', () => {

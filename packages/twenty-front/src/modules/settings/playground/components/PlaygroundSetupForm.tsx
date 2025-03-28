@@ -9,10 +9,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
+import { Button } from 'twenty-ui/input';
 import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button } from 'twenty-ui/input';
 import {
   IconApi,
   IconBracketsAngle,

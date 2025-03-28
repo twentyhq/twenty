@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { WorkflowStepHeader } from '../WorkflowStepHeader';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { IconPlus } from 'twenty-ui/display';
 import { THEME_LIGHT } from 'twenty-ui/theme';
+import { WorkflowStepHeader } from '../WorkflowStepHeader';
+import { IconPlus } from 'twenty-ui/display';
 
 const meta: Meta<typeof WorkflowStepHeader> = {
   title: 'Modules/Workflow/WorkflowStepHeader',

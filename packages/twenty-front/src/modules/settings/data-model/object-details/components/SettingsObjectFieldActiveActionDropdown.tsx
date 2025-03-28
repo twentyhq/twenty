@@ -1,6 +1,8 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import {
   IconArchive,
   IconDotsVertical,
@@ -8,8 +10,6 @@ import {
   IconPencil,
   IconTextSize,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type SettingsObjectFieldActiveActionDropdownProps = {
   isCustomField?: boolean;

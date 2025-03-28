@@ -28,12 +28,12 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useTheme } from '@emotion/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { v4 } from 'uuid';
-import { useTheme } from '@emotion/react';
-import { IconChevronDown, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { v4 } from 'uuid';
+import { IconChevronDown, useIcons } from 'twenty-ui/display';
 
 export const StyledInput = styled.input`
   background: transparent;

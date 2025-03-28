@@ -6,8 +6,8 @@ import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/co
 import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
-import { IconPlus } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
+import { IconPlus } from 'twenty-ui/display';
 
 const StyledPlusIconHeaderCell = styled.th<{
   theme: Theme;

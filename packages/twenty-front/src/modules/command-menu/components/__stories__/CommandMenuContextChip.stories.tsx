@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { CommandMenuContextChip } from '../CommandMenuContextChip';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { CommandMenuContextChip } from '../CommandMenuContextChip';
 import { IconBuildingSkyscraper, IconUser } from 'twenty-ui/display';
 
 const meta: Meta<typeof CommandMenuContextChip> = {

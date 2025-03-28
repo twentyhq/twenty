@@ -9,8 +9,8 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { useLingui } from '@lingui/react/macro';
-import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/display';
 
 export const SettingsAccountsBlocklistSection = () => {
   const { t } = useLingui();

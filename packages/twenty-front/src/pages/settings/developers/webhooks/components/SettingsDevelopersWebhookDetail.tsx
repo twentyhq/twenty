@@ -19,10 +19,11 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isDefined } from 'twenty-shared/utils';
 import { Button, IconButton } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import {
   H2Title,
   IconBox,
@@ -32,7 +33,6 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;

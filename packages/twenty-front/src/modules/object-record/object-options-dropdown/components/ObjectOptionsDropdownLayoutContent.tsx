@@ -2,20 +2,20 @@ import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdow
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { MenuItem, MenuItemToggle } from 'twenty-ui/navigation';
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
   IconLayoutNavbar,
   IconLayoutSidebarRight,
 } from 'twenty-ui/display';
-import { MenuItem, MenuItemToggle } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();

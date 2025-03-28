@@ -7,10 +7,10 @@ import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSe
 import { Fields, ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-import { ImportedStructuredRowMetadata } from '../types';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
+import { ImportedStructuredRowMetadata } from '../types';
+import { AppTooltip } from 'twenty-ui/display';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;

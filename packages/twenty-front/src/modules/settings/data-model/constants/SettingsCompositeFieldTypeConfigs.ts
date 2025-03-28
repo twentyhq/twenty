@@ -11,8 +11,8 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   IllustrationIconCurrency,
   IllustrationIconLink,

@@ -4,8 +4,8 @@ import { fetchLatestTwentyRelease } from '@/settings/admin-panel/utils/fetchLate
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import packageJson from '../../../../../package.json';
 import { GITHUB_LINK } from 'twenty-ui/navigation';
+import packageJson from '../../../../../package.json';
 import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
 
 const StyledActionLink = styled.a`

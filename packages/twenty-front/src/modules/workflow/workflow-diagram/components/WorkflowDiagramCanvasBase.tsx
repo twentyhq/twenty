@@ -29,7 +29,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { THEME_COMMON } from 'twenty-ui/theme';
-import { Tag, TagColor } from 'twenty-ui/display';
+import { Tag, TagColor } from 'twenty-ui/components';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;

@@ -2,8 +2,8 @@ import { MessageThreadSubscriber } from '@/activities/emails/types/MessageThread
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { IconPlus } from 'twenty-ui/display';
 import { MenuItemAvatar } from 'twenty-ui/navigation';
+import { IconPlus } from 'twenty-ui/display';
 
 export const MessageThreadSubscriberDropdownAddSubscriberMenuItem = ({
   workspaceMember,

@@ -9,9 +9,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { useLingui } from '@lingui/react/macro';
-import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
+import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { IconSend } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`

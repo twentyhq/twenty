@@ -2,13 +2,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import React, { useState } from 'react';
+import { MenuItem } from 'twenty-ui/navigation';
 import {
   IconBookmark,
   IconBookmarkPlus,
   IconPencil,
   IconTrash,
 } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;

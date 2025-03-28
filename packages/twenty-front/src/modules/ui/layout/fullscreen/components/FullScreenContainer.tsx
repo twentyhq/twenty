@@ -9,8 +9,8 @@ import {
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconButton } from 'twenty-ui/input';
-import { IconX } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { IconX } from 'twenty-ui/display';
 
 type FullScreenContainerProps = {
   children: JSX.Element | JSX.Element[];

@@ -1,4 +1,5 @@
 import { AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -6,7 +7,6 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
 import { IconRefresh } from 'twenty-ui/display';
 
 export const AppErrorDisplay = ({

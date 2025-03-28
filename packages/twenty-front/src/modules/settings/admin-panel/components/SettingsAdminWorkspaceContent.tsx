@@ -20,23 +20,23 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { Button, Toggle } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   FeatureFlagKey,
   useImpersonateMutation,
   useUpdateWorkspaceFeatureFlagMutation,
 } from '~/generated/graphql';
-import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { AvatarChip } from 'twenty-ui/components';
 import {
-  AvatarChip,
   H2Title,
   IconEyeShare,
   IconHome,
   IconId,
   IconUser,
 } from 'twenty-ui/display';
-import { Button, Toggle } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;

@@ -14,8 +14,8 @@ import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overv
 import { SettingsPath } from '@/types/SettingsPath';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { capitalize } from 'twenty-shared/utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/display';
 
 type SettingsDataModelOverviewObjectNode = Node<ObjectMetadataItem, 'object'>;

@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { IconChevronRight } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { IconChevronRight } from 'twenty-ui/display';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   grid-template-columns: 312px auto 28px;

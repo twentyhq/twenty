@@ -8,8 +8,8 @@ import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 
 export const SignInUpWithSSO = () => {
   const theme = useTheme();

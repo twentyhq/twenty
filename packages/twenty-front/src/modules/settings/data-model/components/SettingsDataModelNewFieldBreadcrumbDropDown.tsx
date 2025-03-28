@@ -6,13 +6,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { t } from '@lingui/core/macro';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
-import { IconChevronDown } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { IconChevronDown } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   align-items: center;

@@ -5,6 +5,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { MenuItem } from 'twenty-ui/navigation';
 import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
 import {
   Avatar,
@@ -12,7 +13,6 @@ import {
   IconChevronRight,
   IconPlus,
 } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 const meta: Meta<typeof DropdownMenuHeader> = {
   title: 'UI/Layout/Dropdown/DropdownMenuHeader',

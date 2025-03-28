@@ -27,6 +27,7 @@ import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -36,7 +37,6 @@ import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>

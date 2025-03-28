@@ -5,8 +5,8 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useLingui } from '@lingui/react/macro';
-import { useDeleteUserAccountMutation } from '~/generated/graphql';
 import { Button } from 'twenty-ui/input';
+import { useDeleteUserAccountMutation } from '~/generated/graphql';
 import { H2Title } from 'twenty-ui/display';
 
 export const DeleteAccount = () => {

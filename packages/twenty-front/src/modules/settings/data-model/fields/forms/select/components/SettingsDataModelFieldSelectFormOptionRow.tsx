@@ -9,6 +9,9 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem, MenuItemSelectColor } from 'twenty-ui/navigation';
+import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 import {
   ColorSample,
@@ -18,9 +21,6 @@ import {
   IconTrash,
   IconX,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
-import { MenuItem, MenuItemSelectColor } from 'twenty-ui/navigation';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;

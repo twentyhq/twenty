@@ -63,6 +63,7 @@
     "@lingui/cli": "^5.1.2",
     "@lingui/swc-plugin": "^5.1.0",
     "@lingui/vite-plugin": "^5.1.2",
+    "@swc/plugin-emotion": "5.0.1",
     "@types/file-saver": "^2"
   }
 }

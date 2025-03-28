@@ -1,8 +1,8 @@
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
-import { IconPlus } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { IconPlus } from 'twenty-ui/display';
 
 type PageAddButtonProps = {
   onClick?: () => void;

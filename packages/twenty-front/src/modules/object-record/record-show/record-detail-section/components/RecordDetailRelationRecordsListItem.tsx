@@ -35,8 +35,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { createPortal } from 'react-dom';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import {
   IconChevronDown,
   IconComponent,
@@ -44,8 +46,6 @@ import {
   IconTrash,
   IconUnlink,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;

@@ -12,6 +12,7 @@ import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
+import { Card } from 'twenty-ui/layout';
 import { StringKeyOf } from 'type-fest';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import {
@@ -20,7 +21,6 @@ import {
   IconRefresh,
   TooltipDelay,
 } from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;

@@ -21,13 +21,13 @@ import {
 } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
+import { LightButton, MainButton } from 'twenty-ui/input';
+import { ActionLink } from 'twenty-ui/navigation';
 import { z } from 'zod';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
-import { isDefined } from 'twenty-shared/utils';
-import { ActionLink } from 'twenty-ui/navigation';
 import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
-import { LightButton, MainButton } from 'twenty-ui/input';
 
 const StyledAnimatedContainer = styled.div`
   display: flex;

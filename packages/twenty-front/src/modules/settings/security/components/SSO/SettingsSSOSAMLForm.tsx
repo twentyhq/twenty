@@ -9,9 +9,10 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   H2Title,
   HorizontalSeparator,
@@ -20,7 +21,6 @@ import {
   IconDownload,
   IconUpload,
 } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;

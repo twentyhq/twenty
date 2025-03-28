@@ -5,7 +5,8 @@ import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/Exp
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedContainer } from 'twenty-ui/utilities';
-import { ChipSize, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { ChipSize } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   align-items: center;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';

@@ -1,19 +1,19 @@
-import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
-import { useTheme } from '@emotion/react';
-import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useDebouncedCallback } from 'use-debounce';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
+import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
+import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons, IconCopy } from 'twenty-ui/display';
+import { useDebouncedCallback } from 'use-debounce';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { IconCopy, useIcons } from 'twenty-ui/display';
 
 type WorkflowEditTriggerWebhookFormProps = {
   trigger: WorkflowWebhookTrigger;

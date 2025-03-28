@@ -1,6 +1,6 @@
 import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -9,7 +9,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { IconPlus } from 'twenty-ui/display';
 
 const StyledEmptyFunctionsContainer = styled.div`

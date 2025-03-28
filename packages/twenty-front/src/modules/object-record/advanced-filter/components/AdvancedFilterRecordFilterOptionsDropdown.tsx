@@ -11,8 +11,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/input';
-import { IconDotsVertical } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { IconDotsVertical } from 'twenty-ui/display';
 
 type AdvancedFilterRecordFilterOptionsDropdownProps = {
   recordFilterId: string;

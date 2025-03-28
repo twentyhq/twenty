@@ -1,9 +1,9 @@
 import {
+  IconBrandDaysCounter,
   IconClockPlay,
   IconComponent,
   IconHours24,
   IconTimeDuration60,
-  IconBrandDaysCounter,
 } from 'twenty-ui/display';
 export type CronTriggerInterval = 'DAYS' | 'HOURS' | 'MINUTES' | 'CUSTOM';
 

@@ -5,8 +5,8 @@ import { useRecoilValue } from 'recoil';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 import { Button } from 'twenty-ui/input';
+import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 
 export const DeleteWorkspace = () => {

@@ -1,11 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
-
-import { Tab } from '../Tab';
 import {
   CatalogDecorator,
   CatalogStory,
   ComponentDecorator,
 } from 'twenty-ui/testing';
+import { Tab } from '../Tab';
 import { IconCheckbox } from 'twenty-ui/display';
 
 const meta: Meta<typeof Tab> = {

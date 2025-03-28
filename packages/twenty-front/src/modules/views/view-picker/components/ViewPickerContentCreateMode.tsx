@@ -6,6 +6,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -14,8 +15,8 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
-import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewType } from '@/views/types/ViewType';
+import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
@@ -31,9 +32,8 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { useMemo, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { useMemo, useState } from 'react';
 import { IconLayoutKanban, IconTable, IconX } from 'twenty-ui/display';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`

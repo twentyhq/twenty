@@ -16,11 +16,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
+import { isModifiedEvent } from 'twenty-ui/utilities';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { isModifiedEvent } from 'twenty-ui/utilities';
 
 const StyledLeftContent = styled.div`
   align-items: center;

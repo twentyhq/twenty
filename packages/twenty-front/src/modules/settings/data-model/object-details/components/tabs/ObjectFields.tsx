@@ -4,9 +4,9 @@ import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsOb
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
-import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { H2Title, IconPlus } from 'twenty-ui/display';
 
 const StyledDiv = styled.div`
   display: flex;

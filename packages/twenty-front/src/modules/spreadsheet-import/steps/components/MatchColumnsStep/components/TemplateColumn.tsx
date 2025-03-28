@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { Columns, ColumnType } from '../MatchColumnsStep';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { Columns, ColumnType } from '../MatchColumnsStep';
 import { IconForbid } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`

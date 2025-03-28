@@ -25,10 +25,10 @@ import {
 } from 'react';
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
-import { generateColumns } from './components/columns';
-import { ImportedStructuredRowMetadata } from './types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button, Toggle } from 'twenty-ui/input';
+import { generateColumns } from './components/columns';
+import { ImportedStructuredRowMetadata } from './types';
 import { IconTrash } from 'twenty-ui/display';
 
 const StyledContent = styled(Modal.Content)`

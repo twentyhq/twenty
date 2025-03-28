@@ -4,11 +4,11 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useHandleResendEmailVerificationToken } from '@/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken';
 import { useTheme } from '@emotion/react';
-import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { IconMail } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { RGBA } from 'twenty-ui/theme';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { IconMail } from 'twenty-ui/display';
 
 const StyledMailContainer = styled.div`
   align-items: center;

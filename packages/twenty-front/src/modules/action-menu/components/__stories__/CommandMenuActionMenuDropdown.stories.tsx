@@ -14,13 +14,13 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { msg } from '@lingui/core/macro';
 import { userEvent, waitFor, within } from '@storybook/test';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { MenuItemAccent } from 'twenty-ui/navigation';
 import {
   ComponentDecorator,
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconFileExport, IconHeart, IconTrash } from 'twenty-ui/display';
-import { MenuItemAccent } from 'twenty-ui/navigation';
 
 const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();

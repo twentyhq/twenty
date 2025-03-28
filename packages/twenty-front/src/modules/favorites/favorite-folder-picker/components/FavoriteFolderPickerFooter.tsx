@@ -5,8 +5,8 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useTheme } from '@emotion/react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { IconPlus } from 'twenty-ui/display';
 
 export const FavoriteFolderPickerFooter = ({
   dropdownId,

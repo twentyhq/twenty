@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
 import { SettingsRadioCard } from '@/settings/components/SettingsRadioCard';
+import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui/display';
 
 const StyledRadioCardContainer = styled.div`

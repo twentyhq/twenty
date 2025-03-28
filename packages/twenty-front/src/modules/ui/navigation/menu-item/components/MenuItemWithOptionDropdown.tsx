@@ -3,11 +3,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useTheme } from '@emotion/react';
 import { Placement } from '@floating-ui/react';
 import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
-import {
-  IconChevronRight,
-  IconComponent,
-  IconDotsVertical,
-} from 'twenty-ui/display';
 import { LightIconButton, LightIconButtonProps } from 'twenty-ui/input';
 import {
   MenuItemAccent,
@@ -15,6 +10,11 @@ import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
 } from 'twenty-ui/navigation';
+import {
+  IconChevronRight,
+  IconComponent,
+  IconDotsVertical,
+} from 'twenty-ui/display';
 
 export type MenuItemIconButton = {
   Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;

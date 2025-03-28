@@ -27,6 +27,7 @@
     "start": {
       "executor": "@nx/vite:dev-server",
       "options": {
+        "nodeOptions": "--max-old-space-size=4096",
         "buildTarget": "twenty-front:build",
         "hmr": true
       }

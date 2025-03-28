@@ -1,5 +1,5 @@
-import { IconComponent } from 'twenty-ui/display';
 import { createState } from 'twenty-ui/utilities';
+import { IconComponent } from 'twenty-ui/display';
 
 export const commandMenuPageInfoState = createState<{
   title?: string;

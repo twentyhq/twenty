@@ -8,10 +8,11 @@ import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/compo
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { Tag } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/layout';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { H2Title, IconLock, Tag } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title, IconLock } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   width: 100%;

@@ -11,9 +11,9 @@ import {
   useRef,
   useState,
 } from 'react';
+import { AutogrowWrapper } from 'twenty-ui/utilities';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { AutogrowWrapper } from 'twenty-ui/utilities';
 import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui/display';
 
 const StyledContainer = styled.div<

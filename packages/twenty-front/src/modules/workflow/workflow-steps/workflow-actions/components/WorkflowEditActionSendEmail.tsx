@@ -18,11 +18,11 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconPlus, useIcons } from 'twenty-ui/display';
 
 type WorkflowEditActionSendEmailProps = {

@@ -7,13 +7,13 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { LightIconButton } from 'twenty-ui/input';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import {
   IconComponent,
   IconX,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 

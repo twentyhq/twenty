@@ -8,11 +8,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { UnwrapRecoilValue } from 'recoil';
-import { SsoIdentityProviderStatus } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { SsoIdentityProviderStatus } from '~/generated/graphql';
+import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/display';
 
 type SettingsSecuritySSORowDropdownMenuProps = {
   SSOIdp: UnwrapRecoilValue<typeof SSOIdentitiesProvidersState>[0];

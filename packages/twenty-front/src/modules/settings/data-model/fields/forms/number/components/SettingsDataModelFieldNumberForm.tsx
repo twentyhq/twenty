@@ -7,8 +7,8 @@ import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 import { t } from '@lingui/core/macro';
+import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 import {
   IconDecimal,
   IconEye,

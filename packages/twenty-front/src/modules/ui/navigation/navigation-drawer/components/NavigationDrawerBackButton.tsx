@@ -7,8 +7,8 @@ import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/n
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { IconX } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { IconX } from 'twenty-ui/display';
 
 type NavigationDrawerBackButtonProps = {
   title: string;

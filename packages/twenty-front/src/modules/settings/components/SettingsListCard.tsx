@@ -3,9 +3,8 @@ import styled from '@emotion/styled';
 import { ComponentType } from 'react';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
-
-import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 import { Card, CardFooter } from 'twenty-ui/layout';
+import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 import { IconComponent, IconPlus } from 'twenty-ui/display';
 
 const StyledFooter = styled(CardFooter)`

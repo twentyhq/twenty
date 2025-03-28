@@ -14,14 +14,14 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { t } from '@lingui/core/macro';
-import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
-import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
 import {
   IconButton,
   IconButtonSize,
   IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
+import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
+import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
 
 export type IconPickerProps = {
   disabled?: boolean;

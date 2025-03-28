@@ -8,12 +8,12 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   IconChevronLeft,
   IconLayoutNavbar,
   IconLayoutSidebarRight,
 } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const { onContentChange } = useOptionsDropdown();

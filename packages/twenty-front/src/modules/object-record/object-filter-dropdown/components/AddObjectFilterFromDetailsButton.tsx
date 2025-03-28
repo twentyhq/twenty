@@ -3,8 +3,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui/display';
 
 type AddObjectFilterFromDetailsButtonProps = {
   filterDropdownId?: string;

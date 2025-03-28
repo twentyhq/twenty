@@ -19,6 +19,7 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/navigation';
 import {
   AppTooltip,
   IconCopy,
@@ -28,7 +29,6 @@ import {
   IconTable,
   IconTrash,
 } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();

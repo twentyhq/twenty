@@ -10,7 +10,6 @@ import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/quer
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { TimelineThread, TimelineThreadsWithTotal } from '~/generated/graphql';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -20,6 +19,7 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   Section,
 } from 'twenty-ui/layout';
+import { TimelineThread, TimelineThreadsWithTotal } from '~/generated/graphql';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`

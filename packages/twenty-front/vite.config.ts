@@ -99,7 +99,7 @@ export default defineConfig(({ command, mode }) => {
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
-        projects: ['tsconfig.json', '../twenty-ui/tsconfig.json'],
+        projects: ['tsconfig.json'],
       }),
       svgr(),
       lingui({
@@ -110,6 +110,7 @@ export default defineConfig(({ command, mode }) => {
       // Otherwise the build will fail because wyw tries to include emotion styled components
       wyw({
         include: [
+          // TODO prastoin update
           '**/CurrencyDisplay.tsx',
           '**/EllipsisDisplay.tsx',
           '**/ContactLink.tsx',
@@ -139,15 +140,16 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
+      exclude: ['../../node_modules/.vite', '../../node_modules/.cache', 'twenty-ui`'],
     },
 
     build: {
+      minify: true,
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
         output: {
-          manualChunks: (id: string) => {
+          manualChunks: (id, chunk) => {
             if (id.includes('@scalar')) {
               return 'scalar';
             }
