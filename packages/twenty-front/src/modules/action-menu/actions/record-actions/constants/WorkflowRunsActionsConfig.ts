@@ -27,9 +27,9 @@ import {
   IconEyeOff,
   IconHeart,
   IconHeartOff,
-  IconHistory,
   IconRotate2,
   IconSettingsAutomation,
+  IconVersions,
 } from 'twenty-ui';
 
 export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
@@ -61,7 +61,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     isPinned: true,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    Icon: IconHistory,
+    Icon: IconVersions,
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,

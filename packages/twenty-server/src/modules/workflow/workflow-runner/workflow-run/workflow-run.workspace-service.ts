@@ -8,6 +8,7 @@ import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
@@ -39,12 +40,36 @@ export class WorkflowRunWorkspaceService {
         workflowVersionId,
       );
 
+    const workflowRepository =
+      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+        'workflow',
+      );
+
+    const workflow = await workflowRepository.findOne({
+      where: {
+        id: workflowVersion.workflowId,
+      },
+    });
+
+    if (!workflow) {
+      throw new WorkflowRunException(
+        'Workflow id is invalid',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    const workflowRunCount = await workflowRunRepository.count({
+      where: {
+        workflowId: workflow.id,
+      },
+    });
+
     return (
       await workflowRunRepository.save({
-        name: `Execution of ${workflowVersion.name}`,
+        name: `#${workflowRunCount + 1} - ${workflow.name}`,
         workflowVersionId,
         createdBy,
-        workflowId: workflowVersion.workflowId,
+        workflowId: workflow.id,
         status: WorkflowRunStatus.NOT_STARTED,
       })
     ).id;
