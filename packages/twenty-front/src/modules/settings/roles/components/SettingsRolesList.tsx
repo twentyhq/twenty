@@ -4,10 +4,12 @@ import { t } from '@lingui/core/macro';
 
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
+import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
 import { SettingsPath } from '@/types/SettingsPath';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useRecoilValue } from 'recoil';
 import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
-import { Role } from '~/generated-metadata/graphql';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -24,11 +26,17 @@ const StyledTableRows = styled.div`
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const SettingsRolesList = ({ roles }: { roles: Role[] }) => {
+const StyledNoRoles = styled(TableCell)`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
+export const SettingsRolesList = () => {
   const navigateSettings = useNavigateSettings();
   const isPermissionsV2Enabled = useIsFeatureEnabled(
     FeatureFlagKey.IsPermissionsV2Enabled,
   );
+
+  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
 
   return (
     <Section>
@@ -39,9 +47,13 @@ export const SettingsRolesList = ({ roles }: { roles: Role[] }) => {
       <Table>
         <SettingsRolesTableHeader />
         <StyledTableRows>
-          {roles.map((role) => (
-            <SettingsRolesTableRow key={role.id} role={role} />
-          ))}
+          {settingsAllRoles.length === 0 ? (
+            <StyledNoRoles>{t`No roles found`}</StyledNoRoles>
+          ) : (
+            settingsAllRoles.map((role) => (
+              <SettingsRolesTableRow key={role.id} role={role} />
+            ))
+          )}
         </StyledTableRows>
       </Table>
       <StyledCreateRoleSection>

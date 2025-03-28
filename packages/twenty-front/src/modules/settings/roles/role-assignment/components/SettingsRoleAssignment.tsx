@@ -18,13 +18,13 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    AppTooltip,
-    Button,
-    H2Title,
-    IconPlus,
-    IconSearch,
-    Section,
-    TooltipDelay,
+  AppTooltip,
+  Button,
+  H2Title,
+  IconPlus,
+  IconSearch,
+  Section,
+  TooltipDelay,
 } from 'twenty-ui';
 import { SearchRecord } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -76,8 +76,10 @@ export const SettingsRoleAssignment = ({
   );
 
   const navigateSettings = useNavigateSettings();
-  const { addWorkspaceMemberToRoleAndUpdateState: addWorkspaceMemberRole, updateWorkspaceMemberRoleDraftState: updateWorkspaceMemberRoleState } =
-    useUpdateWorkspaceMemberRole(roleId);
+  const {
+    addWorkspaceMemberToRoleAndUpdateState,
+    updateWorkspaceMemberRoleDraftState,
+  } = useUpdateWorkspaceMemberRole(roleId);
 
   const [confirmationModalIsOpen, setConfirmationModalIsOpen] =
     useState<boolean>(false);
@@ -159,7 +161,7 @@ export const SettingsRoleAssignment = ({
     if (!selectedWorkspaceMember || !confirmationModalIsOpen) return;
 
     if (!isCreateMode) {
-      await addWorkspaceMemberRole({
+      await addWorkspaceMemberToRoleAndUpdateState({
         workspaceMemberId: selectedWorkspaceMember.id,
       });
     } else {
@@ -169,7 +171,7 @@ export const SettingsRoleAssignment = ({
 
       if (!workspaceMember) return;
 
-      updateWorkspaceMemberRoleState({
+      updateWorkspaceMemberRoleDraftState({
         workspaceMember: {
           id: workspaceMember.id,
           name: workspaceMember.name,

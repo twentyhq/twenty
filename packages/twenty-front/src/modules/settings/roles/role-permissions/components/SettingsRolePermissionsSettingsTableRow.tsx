@@ -47,7 +47,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
       <StyledPermissionCell>
         <StyledIconContainer>
           <permission.Icon
-            size={16}
+            size={theme.icon.size.md}
             color={theme.font.color.primary}
             stroke={theme.icon.stroke.sm}
           />

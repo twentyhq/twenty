@@ -1,6 +1,7 @@
 import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/types/SettingsRolePermissionsObjectPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Checkbox } from 'twenty-ui';
 
@@ -55,12 +56,14 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   permission,
   isEditable,
 }: SettingsRolePermissionsObjectsTableRowProps) => {
+  const theme = useTheme();
+
   return (
     <StyledTableRow>
       <StyledPermissionCell>
         <StyledIconWrapper>
           <StyledIcon>
-            <permission.Icon size={14} />
+            <permission.Icon size={theme.icon.size.sm} />
           </StyledIcon>
         </StyledIconWrapper>
         <StyledLabel>{permission.label}</StyledLabel>

@@ -9,17 +9,18 @@ import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRol
 
 import { SettingsRolesList } from '@/settings/roles/components/SettingsRolesList';
 import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
+import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 
 export const SettingsRolesContainer = () => {
   const { t } = useLingui();
 
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
+  const settingsRolesIsLoading = useRecoilValue(settingsRolesIsLoadingState);
 
-  if (!isDefined(settingsAllRoles) || settingsAllRoles.length === 0) {
+  if (settingsRolesIsLoading) {
     return null;
   }
 
@@ -35,8 +36,10 @@ export const SettingsRolesContainer = () => {
       ]}
     >
       <SettingsPageContainer>
-        <SettingsRolesList roles={settingsAllRoles} />
-        <SettingsRoleDefaultRole roles={settingsAllRoles} />
+        <SettingsRolesList />
+        {settingsAllRoles.length > 0 && (
+          <SettingsRoleDefaultRole roles={settingsAllRoles} />
+        )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
