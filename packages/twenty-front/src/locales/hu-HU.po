@@ -835,7 +835,7 @@ msgid "Close"
 msgstr "Bezár"
 
 #. js-lingui-id: qYsAlX
-#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Close command menu"
 msgstr "Parancsmenü bezárása"
 
@@ -3086,7 +3086,7 @@ msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Csak az időbélyeg és résztvevők lesznek megosztva a csapatával."
 
 #. js-lingui-id: 69b7aE
-#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Open command menu"
 msgstr "Parancsmenü megnyitása"
 

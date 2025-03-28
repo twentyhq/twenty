@@ -835,7 +835,7 @@ msgid "Close"
 msgstr "Zavřít"
 
 #. js-lingui-id: qYsAlX
-#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Close command menu"
 msgstr "Zavřít příkazové menu"
 
@@ -3086,7 +3086,7 @@ msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Pouze časová značka a účastníci budou sdíleni s vaším týmem."
 
 #. js-lingui-id: 69b7aE
-#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Open command menu"
 msgstr "Otevřít příkazové menu"
 
