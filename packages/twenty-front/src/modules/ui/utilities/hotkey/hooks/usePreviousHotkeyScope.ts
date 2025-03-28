@@ -9,14 +9,14 @@ import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
 
 import { useSetHotkeyScope } from './useSetHotkeyScope';
 
-export const usePreviousHotkeyScope = () => {
+export const usePreviousHotkeyScope = (memoizeKey = 'global') => {
   const setHotkeyScope = useSetHotkeyScope();
 
   const goBackToPreviousHotkeyScope = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
         const previousHotkeyScope = snapshot
-          .getLoadable(previousHotkeyScopeState)
+          .getLoadable(previousHotkeyScopeState(memoizeKey))
           .getValue();
 
         if (!previousHotkeyScope) {
@@ -32,9 +32,9 @@ export const usePreviousHotkeyScope = () => {
           previousHotkeyScope.customScopes,
         );
 
-        set(previousHotkeyScopeState, null);
+        set(previousHotkeyScopeState(memoizeKey), null);
       },
-    [setHotkeyScope],
+    [setHotkeyScope, memoizeKey],
   );
 
   const setHotkeyScopeAndMemorizePreviousScope = useRecoilCallback(
@@ -53,9 +53,10 @@ export const usePreviousHotkeyScope = () => {
         }
 
         setHotkeyScope(scope, customScopes);
-        set(previousHotkeyScopeState, currentHotkeyScope);
+
+        set(previousHotkeyScopeState(memoizeKey), currentHotkeyScope);
       },
-    [setHotkeyScope],
+    [setHotkeyScope, memoizeKey],
   );
 
   return {
