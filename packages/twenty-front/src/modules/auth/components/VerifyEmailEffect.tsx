@@ -9,6 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const VerifyEmailEffect = () => {
@@ -23,6 +24,7 @@ export const VerifyEmailEffect = () => {
 
   const navigate = useNavigateApp();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { verifyLoginToken } = useVerifyLogin();
 
   const { t } = useLingui();
   useEffect(() => {
@@ -45,15 +47,15 @@ export const VerifyEmailEffect = () => {
         });
 
         const workspaceUrl = getWorkspaceUrl(workspaceUrls);
-        if (workspaceUrl !== window.location.origin) {
+        if (workspaceUrl.slice(0, -1) !== window.location.origin) {
           return redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
             loginToken: loginToken.token,
           });
         }
-        navigate(AppPath.Verify, undefined, { loginToken: loginToken.token });
+        verifyLoginToken(loginToken.token);
       } catch (error) {
         enqueueSnackBar(t`Email verification failed.`, {
-          dedupeKey: 'email-verification-dedupe-key',
+          dedupeKey: 'email-verification-error-dedupe-key',
           variant: SnackBarVariant.Error,
         });
         setIsError(true);
