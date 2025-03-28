@@ -556,7 +556,7 @@ describe('UserWorkspaceService', () => {
       } as unknown as Workspace;
       const user = {
         id: userId,
-        workspaces: [workspace1, workspace2],
+        workspaces: [{ workspace: workspace1 }, { workspace: workspace2 }],
       } as unknown as User;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
