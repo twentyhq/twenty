@@ -43,7 +43,7 @@ export class MicrosoftHandleErrorService {
     );
   }
 
-  public handleMicrosoftBatchResponseError(error: any): void {
+  public throwMicrosoftBatchError(error: any): void {
     throw new MicrosoftImportDriverException(
       error.message,
       error.code,
