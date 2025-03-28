@@ -39,11 +39,9 @@ export class GraphqlQueryParser {
     this.featureFlagsMap = featureFlagsMap;
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.fieldMetadataMapByName,
-      featureFlagsMap,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.fieldMetadataMapByName,
-      featureFlagsMap,
     );
   }
 
