@@ -5,12 +5,13 @@ import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-fi
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { IconButton, IconDotsVertical, MenuItem } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconButton, IconDotsVertical, IconTrash, MenuItem } from 'twenty-ui';
 
 type AdvancedFilterRecordFilterOptionsDropdownProps = {
   recordFilterId: string;
@@ -71,11 +72,16 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
       }
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          <MenuItem text="Remove rule" onClick={handleRemove} />
+          <MenuItem
+            text="Remove rule"
+            onClick={handleRemove}
+            LeftIcon={IconTrash}
+            accent="danger"
+          />
         </DropdownMenuItemsContainer>
       }
       dropdownHotkeyScope={{ scope: dropdownId }}
-      dropdownOffset={{ y: 8, x: 0 }}
+      dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
       dropdownPlacement="bottom-start"
     />
   );

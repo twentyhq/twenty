@@ -11,10 +11,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   align-items: start;
-  background-color: ${({ theme, isGrayBackground }) =>
-    isGrayBackground ? theme.background.transparent.lighter : 'transparent'};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex: 1;
   flex-direction: column;

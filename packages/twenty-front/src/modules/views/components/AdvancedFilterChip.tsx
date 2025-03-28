@@ -1,4 +1,4 @@
-import { IconFilterCog } from 'twenty-ui';
+import { IconFilter } from 'twenty-ui';
 
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
@@ -61,7 +61,7 @@ export const AdvancedFilterChip = () => {
       testId={ADVANCED_FILTER_DROPDOWN_ID}
       labelKey={chipLabel}
       labelValue=""
-      Icon={IconFilterCog}
+      Icon={IconFilter}
       onRemove={handleRemoveClick}
     />
   );

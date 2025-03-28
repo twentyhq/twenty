@@ -1,3 +1,4 @@
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
@@ -81,9 +82,9 @@ export const AdvancedFilterValueInputDropdownButton = ({
             <ObjectFilterDropdownFilterInput recordFilterId={filter.id} />
           }
           dropdownHotkeyScope={{ scope: dropdownId }}
-          dropdownOffset={{ y: 8, x: 0 }}
+          dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
           dropdownPlacement="bottom-start"
-          dropdownMenuWidth={200}
+          dropdownMenuWidth={280}
         />
       )}
     </StyledValueDropdownContainer>
