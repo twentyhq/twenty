@@ -153,53 +153,53 @@ export const SettingsDataModelFieldIconLabelForm = ({
       </StyledInputsContainer>
       {canToggleSyncLabelWithName && (
         <StyledAdvancedSettingsOuterContainer>
-          <AdvancedSettingsWrapper>
-            <StyledAdvancedSettingsContainer>
-              <StyledAdvancedSettingsSectionInputWrapper>
-                <StyledInputsContainer>
-                  <Controller
-                    name="name"
-                    control={control}
-                    defaultValue={fieldMetadataItem?.name}
-                    render={({ field: { onChange, value } }) => (
-                      <>
-                        <TextInput
-                          label={t`API Name`}
-                          placeholder={t`employees`}
-                          value={value}
-                          onChange={onChange}
-                          disabled={
-                            (isLabelSyncedWithName ?? false) ||
-                            !fieldMetadataItem?.isCustom
-                          }
-                          fullWidth
-                          maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
-                          RightIcon={() =>
-                            apiNameTooltipText && (
-                              <>
-                                <IconInfoCircle
-                                  id="info-circle-id-name"
-                                  size={theme.icon.size.md}
-                                  color={theme.font.color.tertiary}
-                                  style={{ outline: 'none' }}
-                                />
-                                <AppTooltip
-                                  anchorSelect="#info-circle-id-name"
-                                  content={apiNameTooltipText}
-                                  offset={5}
-                                  noArrow
-                                  place="bottom"
-                                  positionStrategy="fixed"
-                                  delay={TooltipDelay.shortDelay}
-                                />
-                              </>
-                            )
-                          }
-                        />
-                      </>
-                    )}
-                  />
-                </StyledInputsContainer>
+          <StyledAdvancedSettingsContainer>
+            <StyledAdvancedSettingsSectionInputWrapper>
+              <StyledInputsContainer>
+                <Controller
+                  name="name"
+                  control={control}
+                  defaultValue={fieldMetadataItem?.name}
+                  render={({ field: { onChange, value } }) => (
+                    <>
+                      <TextInput
+                        label={t`API Name`}
+                        placeholder={t`employees`}
+                        value={value}
+                        onChange={onChange}
+                        disabled={
+                          (isLabelSyncedWithName ?? false) ||
+                          !fieldMetadataItem?.isCustom
+                        }
+                        fullWidth
+                        maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
+                        RightIcon={() =>
+                          apiNameTooltipText && (
+                            <>
+                              <IconInfoCircle
+                                id="info-circle-id-name"
+                                size={theme.icon.size.md}
+                                color={theme.font.color.tertiary}
+                                style={{ outline: 'none' }}
+                              />
+                              <AppTooltip
+                                anchorSelect="#info-circle-id-name"
+                                content={apiNameTooltipText}
+                                offset={5}
+                                noArrow
+                                place="bottom"
+                                positionStrategy="fixed"
+                                delay={TooltipDelay.shortDelay}
+                              />
+                            </>
+                          )
+                        }
+                      />
+                    </>
+                  )}
+                />
+              </StyledInputsContainer>
+              <AdvancedSettingsWrapper>
                 <Controller
                   name="isLabelSyncedWithName"
                   control={control}
@@ -224,9 +224,9 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     </Card>
                   )}
                 />
-              </StyledAdvancedSettingsSectionInputWrapper>
-            </StyledAdvancedSettingsContainer>
-          </AdvancedSettingsWrapper>
+              </AdvancedSettingsWrapper>
+            </StyledAdvancedSettingsSectionInputWrapper>
+          </StyledAdvancedSettingsContainer>
         </StyledAdvancedSettingsOuterContainer>
       )}
     </>
