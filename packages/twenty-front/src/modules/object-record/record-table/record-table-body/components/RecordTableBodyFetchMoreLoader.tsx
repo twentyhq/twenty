@@ -53,9 +53,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
     onChange: onLastRowVisible,
     delay: 1000,
     rootMargin: '1000px',
-    root: scrollWrapperRef?.ref.current?.querySelector(
-      '[data-overlayscrollbars-viewport]',
-    ),
+    root: scrollWrapperRef?.ref.current,
   });
 
   if (!showLoadingMoreRow) {

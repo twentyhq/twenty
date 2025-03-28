@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { OverlayScrollbars } from 'overlayscrollbars';
-import { useOverlayScrollbars } from 'overlayscrollbars-react';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import {
   ContextProviderName,
@@ -10,31 +9,24 @@ import {
 
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrappeScrollBottomComponentState';
-import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { css } from '@emotion/react';
 import 'overlayscrollbars/overlayscrollbars.css';
 
-type HeightMode = 'full' | 'fit-content';
+type HeightMode = 'full';
 
 const StyledScrollWrapper = styled.div<{
   heightMode: HeightMode;
   scrollbarVariant: 'with-padding' | 'no-padding';
 }>`
   display: flex;
-  height: ${({ heightMode }) => {
-    switch (heightMode) {
-      case 'full':
-        return '100%';
-      case 'fit-content':
-        return 'fit-content';
-    }
-  }};
   width: 100%;
+  height: 100%;
+  overflow: scroll;
 
-  .os-scrollbar-handle {
+  /* .os-scrollbar-handle {
     background-color: ${({ theme }) => theme.border.color.strong};
   }
 
@@ -57,16 +49,16 @@ const StyledScrollWrapper = styled.div<{
       right 300ms,
       bottom 300ms,
       left 300ms;
-  }
+  } */
 
-  ${({ scrollbarVariant }) =>
+  /* ${({ scrollbarVariant }) =>
     scrollbarVariant === 'no-padding' &&
     css`
       .os-scrollbar {
         --os-size: 6px;
         padding: 0px;
       }
-    `}
+    `} */
 `;
 
 const StyledInnerContainer = styled.div`
@@ -120,84 +112,6 @@ export const ScrollWrapper = ({
       target.scrollHeight - target.clientHeight - target.scrollTop,
     );
   };
-
-  const setOverlayScrollbars = useSetRecoilComponentStateV2(
-    scrollWrapperInstanceComponentState,
-    componentInstanceId,
-  );
-
-  const [initialize, instance] = useOverlayScrollbars({
-    options: {
-      scrollbars: {
-        autoHide: 'scroll',
-        autoHideDelay: 500,
-      },
-      overflow: {
-        x: defaultEnableXScroll ? undefined : 'hidden',
-        y: defaultEnableYScroll ? undefined : 'hidden',
-      },
-    },
-    events: {
-      updated: (osInstance) => {
-        const {
-          scrollOffsetElement: target,
-          scrollbarVertical,
-          scrollbarHorizontal,
-        } = osInstance.elements();
-
-        if (scrollbarVertical !== null) {
-          scrollbarVertical.track.dataset.selectDisable = 'true';
-        }
-        if (scrollbarHorizontal !== null) {
-          scrollbarHorizontal.track.dataset.selectDisable = 'true';
-        }
-        setScrollBottom(
-          target.scrollHeight - target.clientHeight - target.scrollTop,
-        );
-      },
-      scroll: (osInstance) => {
-        const { scrollOffsetElement: target, scrollbarVertical } =
-          osInstance.elements();
-        // Hide vertical scrollbar by default
-        if (scrollbarVertical !== null) {
-          scrollbarVertical.track.style.visibility = 'hidden';
-        }
-
-        // Show vertical scrollbar based on scroll direction
-        const isVerticalScroll =
-          target.scrollTop !== Number(target.dataset.lastScrollTop || '0');
-
-        if (
-          isVerticalScroll === true &&
-          scrollbarVertical !== null &&
-          target.scrollHeight > target.clientHeight
-        ) {
-          scrollbarVertical.track.style.visibility = 'visible';
-        }
-        // Update vertical scroll positions
-        target.dataset.lastScrollTop = target.scrollTop.toString();
-
-        handleScroll(osInstance);
-      },
-    },
-  });
-
-  useEffect(() => {
-    const currentRef = scrollableRef.current;
-    if (currentRef !== null) {
-      initialize(currentRef);
-    }
-    return () => {
-      // Reset vertical scroll component-specific Recoil state
-      setScrollTop(0);
-      setOverlayScrollbars(null);
-      instance()?.destroy();
-    };
-  }, [initialize, instance, setScrollTop, setOverlayScrollbars]);
-
-  useEffect(() => {
-    setOverlayScrollbars(instance());
-  }, [instance, setOverlayScrollbars]);
 
   return (
     <ScrollWrapperComponentInstanceContext.Provider

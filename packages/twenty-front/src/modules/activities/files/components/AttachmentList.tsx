@@ -198,7 +198,6 @@ export const AttachmentList = ({
             contextProviderName="modalContent"
             componentInstanceId={`preview-modal-${previewedAttachment.id}`}
             scrollbarVariant="no-padding"
-            heightMode="fit-content"
           >
             <StyledModalContent>
               <Suspense

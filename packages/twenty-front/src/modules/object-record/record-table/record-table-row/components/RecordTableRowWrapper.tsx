@@ -39,9 +39,7 @@ export const RecordTableRowWrapper = ({
   );
 
   const { ref: elementRef, inView } = useInView({
-    root: scrollWrapperRef.ref.current?.querySelector(
-      '[data-overlayscrollbars-viewport]',
-    ),
+    root: scrollWrapperRef.ref.current,
     rootMargin: '1000px',
   });
 
