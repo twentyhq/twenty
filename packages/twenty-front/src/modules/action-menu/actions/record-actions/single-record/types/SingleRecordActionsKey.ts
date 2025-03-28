@@ -1,5 +1,4 @@
 export enum SingleRecordActionKeys {
-  OPEN = 'open-single-record',
   DELETE = 'delete-single-record',
   DESTROY = 'destroy-single-record',
   ADD_TO_FAVORITES = 'add-to-favorites-single-record',

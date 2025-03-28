@@ -15,7 +15,6 @@ import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actio
 import { useExportNoteAction } from '@/action-menu/actions/record-actions/single-record/hooks/useExportNoteAction';
 import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
 import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
-import { useOpenSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useOpenSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { useRestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRestoreSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
@@ -35,7 +34,6 @@ import {
   IconFileImport,
   IconHeart,
   IconHeartOff,
-  IconLayoutSidebarRightExpand,
   IconPlus,
   IconRefresh,
   IconRotate2,
@@ -307,20 +305,5 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeWorkflowsNoSelectionRecordAction,
     hotKeys: ['G', 'W'],
-  },
-  openSingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.OPEN,
-    label: msg`More Actions`,
-    shortLabel: msg`More Actions`,
-    position: 7,
-    isPinned: false,
-    Icon: IconLayoutSidebarRightExpand,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    useAction: useOpenSingleRecordAction,
   },
 };
