@@ -5,8 +5,9 @@ import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 @InputType()
 export class CreateRoleInput {
   @IsUUID()
-  @Field()
-  id: string;
+  @IsOptional()
+  @Field({ nullable: true })
+  id?: string;
 
   @IsString()
   @Field({ nullable: false })
