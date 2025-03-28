@@ -326,28 +326,32 @@ export class CleanerWorkspaceService {
 
     for (const workspace of workspaces) {
       try {
+        if (workspace.deletedAt) {
+          const daysSinceSoftDeleted = workspace.deletedAt
+            ? differenceInDays(new Date(), workspace.deletedAt)
+            : 0;
+
+          if (
+            daysSinceSoftDeleted >
+              this.inactiveDaysBeforeDelete -
+                this.inactiveDaysBeforeSoftDelete &&
+            deletedWorkspacesCount <
+              this.maxNumberOfWorkspacesDeletedPerExecution
+          ) {
+            this.logger.log(
+              `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
+            );
+            if (!dryRun) {
+              await this.workspaceService.deleteWorkspace(workspace.id);
+            }
+            deletedWorkspacesCount++;
+          }
+          continue;
+        }
+
         const workspaceInactivity =
           await this.computeWorkspaceBillingInactivity(workspace);
 
-        const daysSinceSoftDeleted = workspace.deletedAt
-          ? differenceInDays(new Date(), workspace.deletedAt)
-          : 0;
-
-        if (
-          daysSinceSoftDeleted >
-            this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete &&
-          deletedWorkspacesCount < this.maxNumberOfWorkspacesDeletedPerExecution
-        ) {
-          this.logger.log(
-            `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
-          );
-          if (!dryRun) {
-            await this.workspaceService.deleteWorkspace(workspace.id);
-          }
-          deletedWorkspacesCount++;
-
-          continue;
-        }
         if (
           workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
           !isDefined(workspace.deletedAt)
