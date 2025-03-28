@@ -6,15 +6,17 @@ import {
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { METRICS_FAILURE_RATE_THRESHOLD } from 'src/engine/core-modules/health/constants/metrics-failure-rate-threshold.const';
-import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
-import { HealthCounterCacheKeys } from 'src/engine/core-modules/health/types/health-counter-cache-keys.type';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
-
+import {
+  CALENDAR_SYNC_METRICS_BY_STATUS,
+  MESSAGE_SYNC_METRICS_BY_STATUS,
+} from 'src/engine/core-modules/metrics/constants/account-sync-metrics-by-status.constant';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 @Injectable()
 export class ConnectedAccountHealth {
   constructor(
     private readonly healthIndicatorService: HealthIndicatorService,
-    private readonly healthCacheService: HealthCacheService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   private async checkMessageSyncHealth(): Promise<HealthIndicatorResult> {
@@ -22,9 +24,7 @@ export class ConnectedAccountHealth {
 
     try {
       const counters = await withHealthCheckTimeout(
-        this.healthCacheService.countChannelSyncJobByStatus(
-          HealthCounterCacheKeys.MessageChannelSyncJobByStatus,
-        ),
+        this.metricsService.groupMetrics(MESSAGE_SYNC_METRICS_BY_STATUS),
         HEALTH_ERROR_MESSAGES.MESSAGE_SYNC_TIMEOUT,
       );
 
@@ -73,9 +73,7 @@ export class ConnectedAccountHealth {
 
     try {
       const counters = await withHealthCheckTimeout(
-        this.healthCacheService.countChannelSyncJobByStatus(
-          HealthCounterCacheKeys.CalendarEventSyncJobByStatus,
-        ),
+        this.metricsService.groupMetrics(CALENDAR_SYNC_METRICS_BY_STATUS),
         HEALTH_ERROR_MESSAGES.CALENDAR_SYNC_TIMEOUT,
       );
 

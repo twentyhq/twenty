@@ -7,6 +7,7 @@ type FormDateFieldInputProps = {
   onChange: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  placeholder?: string;
 };
 
 export const FormDateFieldInput = ({
@@ -15,6 +16,7 @@ export const FormDateFieldInput = ({
   onChange,
   VariablePicker,
   readonly,
+  placeholder,
 }: FormDateFieldInputProps) => {
   return (
     <FormDateTimeFieldInput
@@ -24,6 +26,7 @@ export const FormDateFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   );
 };

@@ -1,49 +1,52 @@
-import {
-  Column,
-  ColumnType,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Field } from '@/spreadsheet-import/types';
+import { SpreadsheetImportField } from '@/spreadsheet-import/types';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { getMatchedColumns } from '@/spreadsheet-import/utils/getMatchedColumns';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('getMatchedColumns', () => {
-  const columns: Column<string>[] = [
-    { index: 0, header: 'Name', type: ColumnType.matched, value: 'Name' },
+  const columns: SpreadsheetColumn<string>[] = [
+    {
+      index: 0,
+      header: 'Name',
+      type: SpreadsheetColumnType.matched,
+      value: 'Name',
+    },
     {
       index: 1,
       header: 'Location',
-      type: ColumnType.matched,
+      type: SpreadsheetColumnType.matched,
       value: 'Location',
     },
     {
       index: 2,
       header: 'Age',
-      type: ColumnType.matched,
+      type: SpreadsheetColumnType.matched,
       value: 'Age',
     },
   ];
 
-  const fields: Field<string>[] = [
+  const fields: SpreadsheetImportField<string>[] = [
     {
       key: 'Name',
       label: 'Name',
       fieldType: { type: 'input' },
       fieldMetadataType: FieldMetadataType.TEXT,
-      icon: null,
+      Icon: null,
     },
     {
       key: 'Location',
       label: 'Location',
       fieldType: { type: 'select', options: [] },
       fieldMetadataType: FieldMetadataType.POSITION,
-      icon: null,
+      Icon: null,
     },
     {
       key: 'Age',
       label: 'Age',
       fieldType: { type: 'input' },
       fieldMetadataType: FieldMetadataType.NUMBER,
-      icon: null,
+      Icon: null,
     },
   ];
 
@@ -57,11 +60,16 @@ describe('getMatchedColumns', () => {
   it('should return matched columns for each field', () => {
     const result = getMatchedColumns(columns, fields, data, autoMapDistance);
     expect(result).toEqual([
-      { index: 0, header: 'Name', type: ColumnType.matched, value: 'Name' },
+      {
+        index: 0,
+        header: 'Name',
+        type: SpreadsheetColumnType.matched,
+        value: 'Name',
+      },
       {
         index: 1,
         header: 'Location',
-        type: ColumnType.matchedSelect,
+        type: SpreadsheetColumnType.matchedSelect,
         value: 'Location',
         matchedOptions: [
           {
@@ -72,18 +80,33 @@ describe('getMatchedColumns', () => {
           },
         ],
       },
-      { index: 2, header: 'Age', type: ColumnType.matched, value: 'Age' },
+      {
+        index: 2,
+        header: 'Age',
+        type: SpreadsheetColumnType.matched,
+        value: 'Age',
+      },
     ]);
   });
 
   it('should handle columns with duplicate values by choosing the closest match', () => {
-    const columnsWithDuplicates: Column<string>[] = [
-      { index: 0, header: 'Name', type: ColumnType.matched, value: 'Name' },
-      { index: 1, header: 'Name', type: ColumnType.matched, value: 'Name' },
+    const columnsWithDuplicates: SpreadsheetColumn<string>[] = [
+      {
+        index: 0,
+        header: 'Name',
+        type: SpreadsheetColumnType.matched,
+        value: 'Name',
+      },
+      {
+        index: 1,
+        header: 'Name',
+        type: SpreadsheetColumnType.matched,
+        value: 'Name',
+      },
       {
         index: 2,
         header: 'Location',
-        type: ColumnType.matched,
+        type: SpreadsheetColumnType.matched,
         value: 'Location',
       },
     ];
@@ -98,12 +121,12 @@ describe('getMatchedColumns', () => {
     expect(result[0]).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.empty,
+      type: SpreadsheetColumnType.empty,
     });
     expect(result[1]).toEqual({
       index: 1,
       header: 'Name',
-      type: ColumnType.matched,
+      type: SpreadsheetColumnType.matched,
       value: 'Name',
     });
   });
@@ -114,20 +137,20 @@ describe('getMatchedColumns', () => {
       ['Alice', 'Los Angeles', '25'],
     ];
 
-    const unmatchedFields: Field<string>[] = [
+    const unmatchedFields: SpreadsheetImportField<string>[] = [
       {
         key: 'Hobby',
         label: 'Hobby',
         fieldType: { type: 'input' },
         fieldMetadataType: FieldMetadataType.TEXT,
-        icon: null,
+        Icon: null,
       },
       {
         key: 'Interest',
         label: 'Interest',
         fieldType: { type: 'input' },
         fieldMetadataType: FieldMetadataType.TEXT,
-        icon: null,
+        Icon: null,
       },
     ];
 

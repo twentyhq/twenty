@@ -1,8 +1,9 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type WorkflowFormFieldSettingsNumberProps = {
   label?: string;
@@ -29,8 +30,10 @@ export const WorkflowFormFieldSettingsNumber = ({
           onChange={(newLabel: string | null) => {
             onChange('label', newLabel);
           }}
-          defaultValue={label ?? t`Number`}
-          placeholder={t`Text`}
+          defaultValue={label}
+          placeholder={
+            getDefaultFormFieldSettings(FieldMetadataType.NUMBER).label
+          }
         />
       </FormFieldInputContainer>
       <FormFieldInputContainer>
@@ -39,8 +42,10 @@ export const WorkflowFormFieldSettingsNumber = ({
           onChange={(newPlaceholder: string | null) => {
             onChange('placeholder', newPlaceholder);
           }}
-          defaultValue={placeholder ?? '1000'}
-          placeholder={'1000'}
+          defaultValue={placeholder}
+          placeholder={
+            getDefaultFormFieldSettings(FieldMetadataType.NUMBER).placeholder
+          }
         />
       </FormFieldInputContainer>
     </StyledContainer>

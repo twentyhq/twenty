@@ -17,10 +17,10 @@ const StyledInput = styled(TextInput)`
 type FormUuidFieldInputProps = {
   label?: string;
   defaultValue: string | null | undefined;
-  placeholder: string;
   onChange: (value: string | null) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
+  placeholder?: string;
 };
 
 export const FormUuidFieldInput = ({
@@ -100,7 +100,7 @@ export const FormUuidFieldInput = ({
           {draftValue.type === 'static' ? (
             <StyledInput
               inputId={inputId}
-              placeholder={placeholder}
+              placeholder={placeholder ?? 'Enter a UUID'}
               value={draftValue.value}
               copyButton={false}
               hotkeyScope="record-create"

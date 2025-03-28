@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { MigrateRelationsToFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-50/0-50-migrate-relations-to-field-metadata.command';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -27,7 +26,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceMigrationRunnerModule,
     WorkspaceMetadataVersionModule,
   ],
-  providers: [MigrateRelationsToFieldMetadataCommand],
-  exports: [MigrateRelationsToFieldMetadataCommand],
+  providers: [],
+  exports: [],
 })
 export class V0_50_UpgradeVersionCommandModule {}

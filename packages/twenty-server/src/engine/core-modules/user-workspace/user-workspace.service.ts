@@ -186,6 +186,22 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     });
   }
 
+  async findFirstRandomWorkspaceByUserId(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: ['workspaces', 'workspaces.workspace'],
+    });
+
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
+
+    return user.workspaces[0].workspace;
+  }
+
   async findAvailableWorkspacesByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: {

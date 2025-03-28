@@ -233,6 +233,8 @@ export const ObjectFilterDropdownRecordSelect = ({
           value: newFilterValue,
           recordFilterGroupId:
             duplicateFilterInCurrentRecordFilters.recordFilterGroupId,
+          positionInRecordFilterGroup:
+            duplicateFilterInCurrentRecordFilters.positionInRecordFilterGroup,
         });
       } else {
         applyRecordFilter({
@@ -246,6 +248,8 @@ export const ObjectFilterDropdownRecordSelect = ({
           fieldMetadataId: fieldMetadataItemUsedInFilterDropdown.id,
           value: newFilterValue,
           recordFilterGroupId: selectedFilter?.recordFilterGroupId,
+          positionInRecordFilterGroup:
+            selectedFilter?.positionInRecordFilterGroup,
         });
       }
     }

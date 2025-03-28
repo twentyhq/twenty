@@ -9,11 +9,10 @@ import {
 } from '@floating-ui/react';
 import React, { useCallback, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AppTooltip, MenuItem, MenuItemSelect } from 'twenty-ui';
+import { AppTooltip, MenuItem, MenuItemSelect, SelectOption } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { SelectOption } from '@/spreadsheet-import/types';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -21,6 +20,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useLingui } from '@lingui/react/macro';
+import { v4 as uuidV4 } from 'uuid';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 const StyledFloatingDropdown = styled.div`
@@ -116,7 +116,7 @@ export const MatchColumnSelect = ({
     <>
       <div ref={refs.setReference}>
         <MenuItem
-          LeftIcon={value?.icon}
+          LeftIcon={value?.Icon}
           onClick={handleDropdownItemClick}
           text={value?.label ?? placeholder ?? ''}
           accent={value?.label ? 'default' : 'placeholder'}
@@ -138,31 +138,36 @@ export const MatchColumnSelect = ({
                 />
                 <DropdownMenuSeparator />
                 <DropdownMenuItemsContainer hasMaxHeight>
-                  {options?.map((option) => (
-                    <React.Fragment key={option.label}>
-                      <MenuItemSelect
-                        selected={value?.label === option.label}
-                        onClick={() => handleChange(option)}
-                        disabled={
-                          option.disabled && value?.value !== option.value
-                        }
-                        LeftIcon={option?.icon}
-                        text={option.label}
-                      />
-                      {option.disabled &&
-                        value?.value !== option.value &&
-                        createPortal(
-                          <AppTooltip
-                            key={option.value}
-                            anchorSelect={`#${option.value}`}
-                            content={t`You are already importing this column.`}
-                            place="right"
-                            offset={-20}
-                          />,
-                          document.body,
-                        )}
-                    </React.Fragment>
-                  ))}
+                  {options?.map((option) => {
+                    const id = `${uuidV4()}-${option.value}`;
+                    return (
+                      <React.Fragment key={id}>
+                        <div id={id}>
+                          <MenuItemSelect
+                            selected={value?.label === option.label}
+                            onClick={() => handleChange(option)}
+                            disabled={
+                              option.disabled && value?.value !== option.value
+                            }
+                            LeftIcon={option?.Icon}
+                            text={option.label}
+                          />
+                        </div>
+                        {option.disabled &&
+                          value?.value !== option.value &&
+                          createPortal(
+                            <AppTooltip
+                              key={id}
+                              anchorSelect={`#${id}`}
+                              content={t`You are already importing this column.`}
+                              place="right"
+                              offset={-20}
+                            />,
+                            document.body,
+                          )}
+                      </React.Fragment>
+                    );
+                  })}
                   {options?.length === 0 && (
                     <MenuItem key="No results" text={t`No results`} />
                   )}
