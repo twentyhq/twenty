@@ -35,7 +35,7 @@ import {
   PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
-import { workspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -251,7 +251,7 @@ export class WorkspaceResolver {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 
-  @ResolveField(() => workspaceUrls)
+  @ResolveField(() => WorkspaceUrls)
   workspaceUrls(@Parent() workspace: Workspace) {
     return this.domainManagerService.getWorkspaceUrls(workspace);
   }

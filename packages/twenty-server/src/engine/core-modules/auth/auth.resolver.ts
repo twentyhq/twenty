@@ -52,6 +52,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -155,7 +156,7 @@ export class AuthResolver {
     return { loginToken };
   }
 
-  @Mutation(() => LoginToken)
+  @Mutation(() => GetLoginTokenFromEmailVerificationTokenOutput)
   async getLoginTokenFromEmailVerificationToken(
     @Args()
     getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
@@ -179,7 +180,9 @@ export class AuthResolver {
       workspace.id,
     );
 
-    return { loginToken };
+    const workspaceUrls = this.domainManagerService.getWorkspaceUrls(workspace);
+
+    return { loginToken, workspaceUrls };
   }
 
   @UseGuards(CaptchaGuard)
