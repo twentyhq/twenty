@@ -86,8 +86,8 @@ export const RecordIndexActionMenuDropdown = () => {
                 key={item.key}
                 LeftIcon={item.Icon}
                 onClick={() => {
-                  item.onClick?.();
                   closeDropdown();
+                  item.onClick?.();
                 }}
                 accent={item.accent}
                 text={i18n._(item.label)}
@@ -97,8 +97,8 @@ export const RecordIndexActionMenuDropdown = () => {
               key="more-actions"
               LeftIcon={IconLayoutSidebarRightExpand}
               onClick={() => {
-                openCommandMenu();
                 closeDropdown();
+                openCommandMenu();
               }}
               text="More actions"
             />
