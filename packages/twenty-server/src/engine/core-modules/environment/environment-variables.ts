@@ -25,6 +25,7 @@ import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/cast-to-boolean.decorator';
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
+import { CastToMeterDriverArray } from 'src/engine/core-modules/environment/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
 import { EnvironmentVariablesMetadata } from 'src/engine/core-modules/environment/decorators/environment-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
@@ -36,6 +37,7 @@ import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/e
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
+import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 
 export class EnvironmentVariables {
@@ -584,6 +586,22 @@ export class EnvironmentVariables {
   @CastToLogLevelArray()
   @IsOptional()
   LOG_LEVELS: LogLevel[] = ['log', 'error', 'warn'];
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Metering,
+    description: 'Driver used for collect metrics (OpenTelemetry or Console)',
+  })
+  @CastToMeterDriverArray()
+  @IsOptional()
+  METER_DRIVER: MeterDriver[] = [MeterDriver.Console];
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.Metering,
+    description: 'Endpoint URL for the OpenTelemetry collector',
+  })
+  @ValidateIf((env) => env.METER_DRIVER.includes(MeterDriver.OpenTelemetry))
+  @IsOptional()
+  OTLP_COLLECTOR_ENDPOINT_URL: string;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ExceptionHandler,

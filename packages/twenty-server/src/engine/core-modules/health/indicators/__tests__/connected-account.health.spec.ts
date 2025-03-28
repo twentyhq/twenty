@@ -4,19 +4,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
 import { METRICS_FAILURE_RATE_THRESHOLD } from 'src/engine/core-modules/health/constants/metrics-failure-rate-threshold.const';
-import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 describe('ConnectedAccountHealth', () => {
   let service: ConnectedAccountHealth;
-  let healthCacheService: jest.Mocked<HealthCacheService>;
+  let metricsService: jest.Mocked<MetricsService>;
   let healthIndicatorService: jest.Mocked<HealthIndicatorService>;
 
   beforeEach(async () => {
-    healthCacheService = {
-      countChannelSyncJobByStatus: jest.fn(),
+    metricsService = {
+      groupMetrics: jest.fn(),
     } as any;
 
     healthIndicatorService = {
@@ -41,8 +41,8 @@ describe('ConnectedAccountHealth', () => {
       providers: [
         ConnectedAccountHealth,
         {
-          provide: HealthCacheService,
-          useValue: healthCacheService,
+          provide: MetricsService,
+          useValue: metricsService,
         },
         {
           provide: HealthIndicatorService,
@@ -64,7 +64,7 @@ describe('ConnectedAccountHealth', () => {
 
   describe('message sync health', () => {
     it('should return up status when no message sync jobs are present', async () => {
-      healthCacheService.countChannelSyncJobByStatus
+      metricsService.groupMetrics
         .mockResolvedValueOnce({
           [MessageChannelSyncStatus.NOT_SYNCED]: 0,
           [MessageChannelSyncStatus.ACTIVE]: 0,
@@ -92,7 +92,7 @@ describe('ConnectedAccountHealth', () => {
     });
 
     it(`should return down status when message sync failure rate is above ${METRICS_FAILURE_RATE_THRESHOLD}%`, async () => {
-      healthCacheService.countChannelSyncJobByStatus
+      metricsService.groupMetrics
         .mockResolvedValueOnce({
           [MessageChannelSyncStatus.NOT_SYNCED]: 0,
           [MessageChannelSyncStatus.ACTIVE]: 1,
@@ -122,7 +122,7 @@ describe('ConnectedAccountHealth', () => {
 
   describe('calendar sync health', () => {
     it('should return up status when no calendar sync jobs are present', async () => {
-      healthCacheService.countChannelSyncJobByStatus
+      metricsService.groupMetrics
         .mockResolvedValueOnce({
           [MessageChannelSyncStatus.NOT_SYNCED]: 0,
           [MessageChannelSyncStatus.ACTIVE]: 0,
@@ -150,7 +150,7 @@ describe('ConnectedAccountHealth', () => {
     });
 
     it(`should return down status when calendar sync failure rate is above ${METRICS_FAILURE_RATE_THRESHOLD}%`, async () => {
-      healthCacheService.countChannelSyncJobByStatus
+      metricsService.groupMetrics
         .mockResolvedValueOnce({
           [MessageChannelSyncStatus.NOT_SYNCED]: 0,
           [MessageChannelSyncStatus.ACTIVE]: 1,
@@ -180,7 +180,7 @@ describe('ConnectedAccountHealth', () => {
 
   describe('timeout handling', () => {
     it('should handle message sync timeout', async () => {
-      healthCacheService.countChannelSyncJobByStatus
+      metricsService.groupMetrics
         .mockResolvedValueOnce(
           new Promise((resolve) =>
             setTimeout(resolve, HEALTH_INDICATORS_TIMEOUT + 100),
@@ -207,7 +207,7 @@ describe('ConnectedAccountHealth', () => {
     });
 
     it('should handle calendar sync timeout', async () => {
-      healthCacheService.countChannelSyncJobByStatus
+      metricsService.groupMetrics
         .mockResolvedValueOnce({
           [MessageChannelSyncStatus.NOT_SYNCED]: 0,
           [MessageChannelSyncStatus.ACTIVE]: 1,
@@ -236,7 +236,7 @@ describe('ConnectedAccountHealth', () => {
 
   describe('combined health check', () => {
     it('should return combined status with both checks healthy', async () => {
-      healthCacheService.countChannelSyncJobByStatus
+      metricsService.groupMetrics
         .mockResolvedValueOnce({
           [MessageChannelSyncStatus.NOT_SYNCED]: 0,
           [MessageChannelSyncStatus.ACTIVE]: 8,
@@ -256,7 +256,7 @@ describe('ConnectedAccountHealth', () => {
     });
 
     it('should return down status when both syncs fail', async () => {
-      healthCacheService.countChannelSyncJobByStatus
+      metricsService.groupMetrics
         .mockResolvedValueOnce({
           [MessageChannelSyncStatus.NOT_SYNCED]: 0,
           [MessageChannelSyncStatus.ACTIVE]: 1,
