@@ -155,30 +155,24 @@ export class AuthResolver {
     return { loginToken };
   }
 
-  @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async getLoginTokenFromEmailVerificationToken(
     @Args()
     getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
     @OriginHeader() origin: string,
   ) {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(
-      workspace,
-      new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
-
     const user =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
         getLoginTokenFromEmailVerificationTokenInput.emailVerificationToken,
       );
+
+    const workspace =
+      (await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      )) ??
+      (await this.userWorkspaceService.findFirstRandomWorkspaceByUserId(
+        user.id,
+      ));
 
     await this.userService.markEmailAsVerified(user.id);
 
