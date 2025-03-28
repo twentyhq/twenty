@@ -7,9 +7,9 @@ import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
+import { NavigationDrawerContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerContent';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
@@ -52,25 +52,6 @@ const StyledContainer = styled.div<{
     padding-left: ${({ theme }) => theme.spacing(5)};
     padding-right: ${({ theme }) => theme.spacing(5)};
   }
-`;
-
-const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: auto;
-  overflow: hidden;
-  flex: 1;
-`;
-
-const StyledScrollableInnerContainer = styled.div<{ isSettings?: boolean }>`
-  height: 100%;
-  ${({ isSettings, theme }) =>
-    isSettings
-      ? `
-    padding-left: ${theme.spacing(5)};
-    padding-right: ${theme.spacing(8)};
-  `
-      : ''}
 `;
 
 const StyledFixedContainer = styled.div<{ isSettings?: boolean }>`
@@ -120,50 +101,6 @@ export const NavigationDrawer = ({
     opacity: isNavigationDrawerExpanded || !isSettingsDrawer ? 1 : 0,
   };
 
-  const renderContent = () => {
-    if (children !== undefined) {
-      return (
-        <StyledItemsContainer isSettings={isSettingsDrawer}>
-          {children}
-        </StyledItemsContainer>
-      );
-    }
-
-    return (
-      <>
-        {fixedTopItems && (
-          <StyledFixedContainer isSettings={isSettingsDrawer}>
-            <NavigationDrawerSection>{fixedTopItems}</NavigationDrawerSection>
-          </StyledFixedContainer>
-        )}
-        {scrollableItems && (
-          <StyledItemsContainer isSettings={isSettingsDrawer}>
-            <ScrollWrapper
-              contextProviderName="navigationDrawer"
-              componentInstanceId={`scroll-wrapper-${
-                isSettingsDrawer ? 'settings-' : ''
-              }navigation-drawer`}
-              scrollbarVariant="no-padding"
-              heightMode="fit-content"
-              defaultEnableXScroll={false}
-            >
-              <StyledScrollableInnerContainer isSettings={isSettingsDrawer}>
-                {scrollableItems}
-              </StyledScrollableInnerContainer>
-            </ScrollWrapper>
-          </StyledItemsContainer>
-        )}
-        {fixedBottomItems && (
-          <StyledFixedContainer isSettings={isSettingsDrawer}>
-            <NavigationDrawerSection>
-              {fixedBottomItems}
-            </NavigationDrawerSection>
-          </StyledFixedContainer>
-        )}
-      </>
-    );
-  };
-
   return (
     <StyledAnimatedContainer
       className={className}
@@ -184,7 +121,15 @@ export const NavigationDrawer = ({
             <NavigationDrawerHeader showCollapseButton={isHovered} />
           )}
         </StyledFixedContainer>
-        {renderContent()}
+
+        <NavigationDrawerContent
+          legacyChildren={children}
+          isSettingsDrawer={isSettingsDrawer}
+          fixedTopItems={fixedTopItems}
+          scrollableItems={scrollableItems}
+          fixedBottomItems={fixedBottomItems}
+        />
+
         {footer && (
           <StyledFixedContainer isSettings={isSettingsDrawer}>
             <NavigationDrawerSection>{footer}</NavigationDrawerSection>
