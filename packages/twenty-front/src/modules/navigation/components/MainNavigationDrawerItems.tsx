@@ -14,16 +14,12 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
-`;
-const StyledInnerContainer = styled.div`
-  height: 100%;
 `;
 
 export const MainNavigationDrawerItems = () => {
@@ -43,41 +39,35 @@ export const MainNavigationDrawerItems = () => {
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
 
-  return (
+  const fixedTopItems = !isMobile ? (
+    <StyledMainSection>
+      <NavigationDrawerItem
+        label={t`Search`}
+        Icon={IconSearch}
+        onClick={openRecordsSearchPage}
+        keyboard={['/']}
+      />
+      <NavigationDrawerItem
+        label={t`Settings`}
+        to={getSettingsPath(SettingsPath.ProfilePage)}
+        onClick={() => {
+          setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
+          setIsNavigationDrawerExpanded(true);
+          setNavigationMemorizedUrl(location.pathname + location.search);
+        }}
+        Icon={IconSettings}
+      />
+    </StyledMainSection>
+  ) : null;
+
+  const scrollableItems = (
     <>
-      {!isMobile && (
-        <StyledMainSection>
-          <NavigationDrawerItem
-            label={t`Search`}
-            Icon={IconSearch}
-            onClick={openRecordsSearchPage}
-            keyboard={['/']}
-          />
-          <NavigationDrawerItem
-            label={t`Settings`}
-            to={getSettingsPath(SettingsPath.ProfilePage)}
-            onClick={() => {
-              setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
-              setIsNavigationDrawerExpanded(true);
-              setNavigationMemorizedUrl(location.pathname + location.search);
-            }}
-            Icon={IconSettings}
-          />
-        </StyledMainSection>
-      )}
-      <ScrollWrapper
-        contextProviderName="navigationDrawer"
-        componentInstanceId={`scroll-wrapper-navigation-drawer`}
-        defaultEnableXScroll={false}
-        scrollbarVariant="no-padding"
-      >
-        <StyledInnerContainer>
-          <NavigationDrawerOpenedSection />
-          <CurrentWorkspaceMemberFavoritesFolders />
-          <WorkspaceFavorites />
-          <RemoteNavigationDrawerSection />
-        </StyledInnerContainer>
-      </ScrollWrapper>
+      <NavigationDrawerOpenedSection />
+      <CurrentWorkspaceMemberFavoritesFolders />
+      <WorkspaceFavorites />
+      <RemoteNavigationDrawerSection />
     </>
   );
+
+  return { fixedTopItems, scrollableItems };
 };

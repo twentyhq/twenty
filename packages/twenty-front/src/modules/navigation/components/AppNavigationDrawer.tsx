@@ -31,31 +31,40 @@ export const AppNavigationDrawer = ({
 
   const { t } = useLingui();
 
-  const drawerProps: NavigationDrawerProps = isSettingsDrawer
+  const {
+    fixedTopItems: mainFixedTopItems,
+    scrollableItems: mainScrollableItems,
+  } = MainNavigationDrawerItems();
+
+  const { scrollableItems: settingsScrollableItems } =
+    SettingsNavigationDrawerItems();
+
+  const drawerBaseProps: NavigationDrawerProps = isSettingsDrawer
     ? {
         title: t`Exit Settings`,
-        children: <SettingsNavigationDrawerItems />,
-        footer: (
+        fixedBottomItems: (
           <AdvancedSettingsToggle
             isAdvancedModeEnabled={isAdvancedModeEnabled}
             setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
             label={t`Advanced:`}
           />
         ),
+        scrollableItems: settingsScrollableItems,
       }
     : {
         title: currentWorkspace?.displayName ?? '',
-        children: <MainNavigationDrawerItems />,
-        footer: <SupportDropdown />,
+        fixedTopItems: mainFixedTopItems,
+        scrollableItems: mainScrollableItems,
+        fixedBottomItems: <SupportDropdown />,
       };
 
   return (
     <NavigationDrawer
       className={className}
-      title={drawerProps.title}
-      footer={drawerProps.footer}
-    >
-      {drawerProps.children}
-    </NavigationDrawer>
+      title={drawerBaseProps.title}
+      fixedTopItems={drawerBaseProps.fixedTopItems}
+      scrollableItems={drawerBaseProps.scrollableItems}
+      fixedBottomItems={drawerBaseProps.fixedBottomItems}
+    />
   );
 };

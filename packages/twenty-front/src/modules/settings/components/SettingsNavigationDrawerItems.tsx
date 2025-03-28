@@ -9,14 +9,8 @@ import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/com
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import styled from '@emotion/styled';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
-const StyledInnerContainer = styled.div`
-  height: 100%;
-`;
 
 export const SettingsNavigationDrawerItems = () => {
   const settingsNavigationItems: SettingsNavigationSection[] =
@@ -39,90 +33,84 @@ export const SettingsNavigationDrawerItems = () => {
     });
   };
 
-  return (
-    <ScrollWrapper
-      contextProviderName="navigationDrawer"
-      componentInstanceId={`scroll-wrapper-settings-navigation-drawer`}
-      scrollbarVariant="no-padding"
-      heightMode="fit-content"
-      defaultEnableXScroll={false}
-    >
-      <StyledInnerContainer>
-        {settingsNavigationItems.map((section) => {
-          const allItemsHidden = section.items.every((item) => item.isHidden);
-          if (allItemsHidden) {
-            return null;
-          }
+  const scrollableItems = (
+    <>
+      {settingsNavigationItems.map((section) => {
+        const allItemsHidden = section.items.every((item) => item.isHidden);
+        if (allItemsHidden) {
+          return null;
+        }
 
-          return (
-            <NavigationDrawerSection key={section.label}>
-              {section.isAdvanced ? (
-                <AdvancedSettingsWrapper hideDot>
-                  <NavigationDrawerSectionTitle label={section.label} />
-                </AdvancedSettingsWrapper>
-              ) : (
+        return (
+          <NavigationDrawerSection key={section.label}>
+            {section.isAdvanced ? (
+              <AdvancedSettingsWrapper hideDot>
                 <NavigationDrawerSectionTitle label={section.label} />
-              )}
-              {section.items.map((item, index) => {
-                const subItems = item.subItems;
-                if (Array.isArray(subItems) && subItems.length > 0) {
-                  const selectedSubItemIndex =
-                    getSelectedIndexForSubItems(subItems);
+              </AdvancedSettingsWrapper>
+            ) : (
+              <NavigationDrawerSectionTitle label={section.label} />
+            )}
+            {section.items.map((item, index) => {
+              const subItems = item.subItems;
+              if (Array.isArray(subItems) && subItems.length > 0) {
+                const selectedSubItemIndex =
+                  getSelectedIndexForSubItems(subItems);
 
-                  return (
-                    <NavigationDrawerItemGroup
-                      key={item.path || `group-${index}`}
-                    >
+                return (
+                  <NavigationDrawerItemGroup
+                    key={item.path || `group-${index}`}
+                  >
+                    <SettingsNavigationDrawerItem
+                      item={item}
+                      subItemState={
+                        item.indentationLevel
+                          ? getNavigationSubItemLeftAdornment({
+                              arrayLength: section.items.length,
+                              index,
+                              selectedIndex: selectedSubItemIndex,
+                            })
+                          : undefined
+                      }
+                    />
+                    {subItems.map((subItem, subIndex) => (
                       <SettingsNavigationDrawerItem
-                        item={item}
+                        key={subItem.path || `subitem-${subIndex}`}
+                        item={subItem}
                         subItemState={
-                          item.indentationLevel
+                          subItem.indentationLevel
                             ? getNavigationSubItemLeftAdornment({
-                                arrayLength: section.items.length,
-                                index,
+                                arrayLength: subItems.length,
+                                index: subIndex,
                                 selectedIndex: selectedSubItemIndex,
                               })
                             : undefined
                         }
                       />
-                      {subItems.map((subItem, subIndex) => (
-                        <SettingsNavigationDrawerItem
-                          key={subItem.path || `subitem-${subIndex}`}
-                          item={subItem}
-                          subItemState={
-                            subItem.indentationLevel
-                              ? getNavigationSubItemLeftAdornment({
-                                  arrayLength: subItems.length,
-                                  index: subIndex,
-                                  selectedIndex: selectedSubItemIndex,
-                                })
-                              : undefined
-                          }
-                        />
-                      ))}
-                    </NavigationDrawerItemGroup>
-                  );
-                }
-                return (
-                  <SettingsNavigationDrawerItem
-                    key={item.path || `item-${index}`}
-                    item={item}
-                    subItemState={
-                      item.indentationLevel
-                        ? getNavigationSubItemLeftAdornment({
-                            arrayLength: section.items.length,
-                            index,
-                            selectedIndex: index,
-                          })
-                        : undefined
-                    }
-                  />
+                    ))}
+                  </NavigationDrawerItemGroup>
                 );
-              })}
-            </NavigationDrawerSection>
-          );
-        })}
-      </StyledInnerContainer>
-    </ScrollWrapper>
+              }
+              return (
+                <SettingsNavigationDrawerItem
+                  key={item.path || `item-${index}`}
+                  item={item}
+                  subItemState={
+                    item.indentationLevel
+                      ? getNavigationSubItemLeftAdornment({
+                          arrayLength: section.items.length,
+                          index,
+                          selectedIndex: index,
+                        })
+                      : undefined
+                  }
+                />
+              );
+            })}
+          </NavigationDrawerSection>
+        );
+      })}
+    </>
   );
+
+  return { scrollableItems };
 };
