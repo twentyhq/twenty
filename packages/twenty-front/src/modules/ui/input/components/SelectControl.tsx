@@ -8,10 +8,13 @@ import {
   SelectOption,
 } from 'twenty-ui';
 
+export type SelectControlTextAccent = 'default' | 'placeholder';
+
 const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;
   selectSizeVariant?: SelectSizeVariant;
+  textAccent: SelectControlTextAccent;
 }>`
   display: grid;
   grid-template-columns: ${({ hasIcon }) =>
@@ -26,8 +29,12 @@ const StyledControlContainer = styled.div<{
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.tertiary : theme.font.color.primary};
+  color: ${({ disabled, theme, textAccent }) =>
+    disabled
+      ? theme.font.color.tertiary
+      : textAccent === 'default'
+        ? theme.font.color.primary
+        : theme.font.color.secondary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   text-align: left;
 `;
@@ -43,12 +50,14 @@ type SelectControlProps = {
   selectedOption: SelectOption<string | number | boolean | null>;
   isDisabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
+  textAccent?: SelectControlTextAccent;
 };
 
 export const SelectControl = ({
   selectedOption,
   isDisabled,
   selectSizeVariant,
+  textAccent = 'default',
 }: SelectControlProps) => {
   const theme = useTheme();
 
@@ -57,6 +66,7 @@ export const SelectControl = ({
       disabled={isDisabled}
       hasIcon={isDefined(selectedOption.Icon)}
       selectSizeVariant={selectSizeVariant}
+      textAccent={textAccent}
     >
       {isDefined(selectedOption.Icon) ? (
         <selectedOption.Icon
