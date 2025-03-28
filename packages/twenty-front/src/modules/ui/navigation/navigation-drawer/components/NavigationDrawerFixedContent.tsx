@@ -9,18 +9,21 @@ const StyledFixedContainer = styled.div<{ isSettings?: boolean }>`
     isSettings
       ? `
   padding-left: ${theme.spacing(5)};
+  padding-right: ${theme.spacing(8)};
 `
       : ''}
 `;
 export const NavigationDrawerFixedContent = ({
   children,
+  className,
 }: {
   children: ReactNode;
+  className?: string;
 }) => {
   const isSettingsDrawer = useIsSettingsDrawer();
 
   return (
-    <StyledFixedContainer isSettings={isSettingsDrawer}>
+    <StyledFixedContainer isSettings={isSettingsDrawer} className={className}>
       <NavigationDrawerSection>{children}</NavigationDrawerSection>
     </StyledFixedContainer>
   );
