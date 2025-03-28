@@ -5,6 +5,8 @@ import { MainNavigationDrawerFixedItems } from '@/navigation/components/MainNavi
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
 import { SupportDropdown } from '@/support/components/SupportDropdown';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
+import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
+import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -14,9 +16,17 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       className={className}
       title={currentWorkspace?.displayName ?? ''}
     >
-      <MainNavigationDrawerFixedItems />
-      <MainNavigationDrawerScrollableItems />
-      <SupportDropdown />
+      <NavigationDrawerFixedContent>
+        <MainNavigationDrawerFixedItems />
+      </NavigationDrawerFixedContent>
+
+      <NavigationDrawerScrollableContent>
+        <MainNavigationDrawerScrollableItems />
+      </NavigationDrawerScrollableContent>
+
+      <NavigationDrawerFixedContent>
+        <SupportDropdown />
+      </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
 };

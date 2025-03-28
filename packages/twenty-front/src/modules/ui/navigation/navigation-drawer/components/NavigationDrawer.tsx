@@ -9,8 +9,6 @@ import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/N
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import { NavigationDrawerContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerContent';
-import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
@@ -18,11 +16,7 @@ import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 export type NavigationDrawerProps = {
   children?: ReactNode;
   className?: string;
-  footer?: ReactNode;
   title: string;
-  fixedTopItems?: ReactNode;
-  scrollableItems?: ReactNode;
-  fixedBottomItems?: ReactNode;
 };
 
 const StyledAnimatedContainer = styled(motion.div)`
@@ -54,23 +48,10 @@ const StyledContainer = styled.div<{
   }
 `;
 
-const StyledFixedContainer = styled.div<{ isSettings?: boolean }>`
-  ${({ isSettings, theme }) =>
-    isSettings
-      ? `
-    padding-left: ${theme.spacing(5)};
-  `
-      : ''}
-`;
-
 export const NavigationDrawer = ({
   children,
   className,
-  footer,
   title,
-  fixedTopItems,
-  scrollableItems,
-  fixedBottomItems,
 }: NavigationDrawerProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
@@ -114,27 +95,13 @@ export const NavigationDrawer = ({
         onMouseEnter={handleHover}
         onMouseLeave={handleMouseLeave}
       >
-        <StyledFixedContainer isSettings={isSettingsDrawer}>
-          {isSettingsDrawer && title ? (
-            !isMobile && <NavigationDrawerBackButton title={title} />
-          ) : (
-            <NavigationDrawerHeader showCollapseButton={isHovered} />
-          )}
-        </StyledFixedContainer>
-
-        <NavigationDrawerContent
-          legacyChildren={children}
-          isSettingsDrawer={isSettingsDrawer}
-          fixedTopItems={fixedTopItems}
-          scrollableItems={scrollableItems}
-          fixedBottomItems={fixedBottomItems}
-        />
-
-        {footer && (
-          <StyledFixedContainer isSettings={isSettingsDrawer}>
-            <NavigationDrawerSection>{footer}</NavigationDrawerSection>
-          </StyledFixedContainer>
+        {isSettingsDrawer && title ? (
+          !isMobile && <NavigationDrawerBackButton title={title} />
+        ) : (
+          <NavigationDrawerHeader showCollapseButton={isHovered} />
         )}
+
+        {children}
       </StyledContainer>
     </StyledAnimatedContainer>
   );
