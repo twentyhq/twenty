@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { capitalize } from 'twenty-shared/utils';
 import { In, InsertResult } from 'typeorm';
 
 import {
@@ -14,6 +15,7 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -74,7 +76,33 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   private async performUpsertOperation(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
-    const conflictingFields = ['id'];
+    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+
+    const uniqueFields = [
+      ...objectMetadataItemWithFieldMaps.fields.filter(
+        (field) => field.isUnique || field.name === 'id',
+      ),
+    ];
+
+    const conflictingFields: string[] = [];
+
+    uniqueFields.forEach((field) => {
+      const compositeType = compositeTypeDefinitions.get(field.type);
+
+      if (compositeType) {
+        conflictingFields.push(
+          compositeType.properties
+            .filter((property) => property.isIncludedInUniqueConstraint)
+            .map((property) => `${field.name}${capitalize(property.name)}`)
+            .join(),
+          // For now we assume that there is only one unique field per composite type
+          // I believe this assumption has already been taken elsewhere in the codebase
+        );
+      } else {
+        conflictingFields.push(field.name);
+      }
+    });
+
     const result: InsertResult = {
       identifiers: [],
       generatedMaps: [],
@@ -127,8 +155,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         recordsToInsert.push(record);
       }
     }
-
-    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
 
     for (const record of recordsToUpdate) {
       const recordId = record.id as string;
