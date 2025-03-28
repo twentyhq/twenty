@@ -6,6 +6,9 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { AdvancedWrapper as StyledAdvancedWrapper } from '@/settings/components/StyledAdvancedWrapper';
+import { DotContainer as StyledDotContainer } from '@/settings/components/StyledDotContainer';
+import { IconPoint as StyledIconPoint } from '@/settings/components/StyledIconPoint';
 import { DATABASE_IDENTIFIER_MAXIMUM_LENGTH } from '@/settings/data-model/constants/DatabaseIdentifierMaximumLength';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -18,6 +21,7 @@ import {
   Card,
   IconInfoCircle,
   IconRefresh,
+  MAIN_COLORS,
   TooltipDelay,
 } from 'twenty-ui';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
@@ -47,7 +51,7 @@ type SettingsDataModelFieldIconLabelFormValues = z.infer<
 const StyledInputsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 
@@ -86,6 +90,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
     setValue,
     watch,
     formState: { errors },
+    trigger,
   } = useFormContext<SettingsDataModelFieldIconLabelFormValues>();
 
   const theme = useTheme();
@@ -135,6 +140,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
               value={value}
               onChange={(value) => {
                 onChange(value);
+                trigger('label');
                 if (isLabelSyncedWithName === true) {
                   fillNameFromLabel(value);
                 }
@@ -152,8 +158,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
         />
       </StyledInputsContainer>
       {canToggleSyncLabelWithName && (
-        <StyledAdvancedSettingsOuterContainer>
-          <AdvancedSettingsWrapper>
+        <AdvancedSettingsWrapper hideDot>
+          <StyledAdvancedSettingsOuterContainer>
             <StyledAdvancedSettingsContainer>
               <StyledAdvancedSettingsSectionInputWrapper>
                 <StyledInputsContainer>
@@ -207,27 +213,36 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     fieldMetadataItem?.isLabelSyncedWithName ?? true
                   }
                   render={({ field: { onChange, value } }) => (
-                    <Card rounded>
-                      <SettingsOptionCardContentToggle
-                        Icon={IconRefresh}
-                        title={t`Synchronize Field Label and API Name`}
-                        description={t`Should changing a field's label also change the API name?`}
-                        checked={value ?? true}
-                        advancedMode
-                        onChange={(value) => {
-                          onChange(value);
-                          if (value === true) {
-                            fillNameFromLabel(label);
-                          }
-                        }}
-                      />
-                    </Card>
+                    <StyledAdvancedWrapper>
+                      <StyledDotContainer dotPosition="centered">
+                        <StyledIconPoint
+                          size={12}
+                          color={MAIN_COLORS.yellow}
+                          fill={MAIN_COLORS.yellow}
+                        />
+                      </StyledDotContainer>
+                      <Card rounded>
+                        <SettingsOptionCardContentToggle
+                          Icon={IconRefresh}
+                          title={t`Synchronize Field Label and API Name`}
+                          description={t`Should changing a field's label also change the API name?`}
+                          checked={value ?? true}
+                          advancedMode
+                          onChange={(value) => {
+                            onChange(value);
+                            if (value === true) {
+                              fillNameFromLabel(label);
+                            }
+                          }}
+                        />
+                      </Card>
+                    </StyledAdvancedWrapper>
                   )}
                 />
               </StyledAdvancedSettingsSectionInputWrapper>
             </StyledAdvancedSettingsContainer>
-          </AdvancedSettingsWrapper>
-        </StyledAdvancedSettingsOuterContainer>
+          </StyledAdvancedSettingsOuterContainer>
+        </AdvancedSettingsWrapper>
       )}
     </>
   );
