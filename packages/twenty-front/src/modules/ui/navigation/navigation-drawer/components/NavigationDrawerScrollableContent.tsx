@@ -2,6 +2,7 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
+import { useIsMobile } from 'twenty-ui';
 
 const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
   display: flex;
@@ -11,10 +12,11 @@ const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
   flex: 1;
 `;
 
-const StyledScrollableInnerContainer = styled.div<{ isSettings?: boolean }>`
+const StyledScrollableInnerContainer = styled.div<{ isMobile?: boolean }>`
   height: 100%;
   padding-left: ${({ theme }) => theme.spacing(5)};
-  padding-right: ${({ theme }) => theme.spacing(8)};
+  padding-right: ${({ theme, isMobile }) =>
+    isMobile ? theme.spacing(5) : theme.spacing(8)};
 `;
 
 export const NavigationDrawerScrollableContent = ({
@@ -23,6 +25,7 @@ export const NavigationDrawerScrollableContent = ({
   children: ReactNode;
 }) => {
   const isSettingsDrawer = useIsSettingsDrawer();
+  const isMobile = useIsMobile();
 
   return (
     <StyledItemsContainer isSettings={isSettingsDrawer}>
@@ -36,7 +39,7 @@ export const NavigationDrawerScrollableContent = ({
         defaultEnableXScroll={false}
       >
         {isSettingsDrawer ? (
-          <StyledScrollableInnerContainer>
+          <StyledScrollableInnerContainer isMobile={isMobile}>
             {children}
           </StyledScrollableInnerContainer>
         ) : (

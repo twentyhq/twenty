@@ -4,7 +4,7 @@ import { useIsMobile } from 'twenty-ui';
 
 const StyledSection = styled.div<{ isSettingsDrawer?: boolean }>`
   margin-bottom: ${({ theme, isSettingsDrawer }) =>
-    isSettingsDrawer ? theme.spacing(3) : '0'};
+    isSettingsDrawer ? theme.spacing(3) : 0};
   width: 100%;
 `;
 

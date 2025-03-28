@@ -3,27 +3,30 @@ import { ReactNode } from 'react';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import styled from '@emotion/styled';
+import { useIsMobile } from 'twenty-ui';
 
-const StyledFixedContainer = styled.div<{ isSettings?: boolean }>`
-  ${({ isSettings, theme }) =>
+const StyledFixedContainer = styled.div<{
+  isSettings?: boolean;
+  isMobile?: boolean;
+}>`
+  ${({ isSettings, theme, isMobile }) =>
     isSettings
       ? `
   padding-left: ${theme.spacing(5)};
-  padding-right: ${theme.spacing(8)};
+  padding-right: ${isMobile ? theme.spacing(5) : theme.spacing(8)};
 `
       : ''}
 `;
 export const NavigationDrawerFixedContent = ({
   children,
-  className,
 }: {
   children: ReactNode;
-  className?: string;
 }) => {
   const isSettingsDrawer = useIsSettingsDrawer();
+  const isMobile = useIsMobile();
 
   return (
-    <StyledFixedContainer isSettings={isSettingsDrawer} className={className}>
+    <StyledFixedContainer isSettings={isSettingsDrawer} isMobile={isMobile}>
       <NavigationDrawerSection>{children}</NavigationDrawerSection>
     </StyledFixedContainer>
   );
