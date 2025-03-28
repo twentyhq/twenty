@@ -835,7 +835,7 @@ msgid "Close"
 msgstr "關閉"
 
 #. js-lingui-id: qYsAlX
-#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Close command menu"
 msgstr "關閉指令選單"
 
@@ -3086,7 +3086,7 @@ msgid "Only the timestamp & participants will be shared with your team."
 msgstr "僅時間戳和參與者將與您的團隊共享。"
 
 #. js-lingui-id: 69b7aE
-#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Open command menu"
 msgstr "打開指令選單"
 
