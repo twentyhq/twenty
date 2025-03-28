@@ -5,14 +5,12 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
-import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -23,10 +21,6 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
-
-  const setViewPickerKanbanFieldMetadataId = useSetRecoilComponentStateV2(
-    viewPickerKanbanFieldMetadataIdComponentState,
-  );
 
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
@@ -126,7 +120,6 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
                 { ...currentView, viewGroups },
                 objectMetadataItem,
               );
-              setViewPickerKanbanFieldMetadataId(kanbanField.id);
             }
             setRecordIndexViewType(viewType);
             await updateCurrentView(updateCurrentViewParams);
@@ -147,7 +140,6 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       updateCurrentView,
       setRecordIndexViewType,
       createViewGroupAssociatedWithKanbanField,
-      setViewPickerKanbanFieldMetadataId,
       loadRecordIndexStates,
     ],
   );
