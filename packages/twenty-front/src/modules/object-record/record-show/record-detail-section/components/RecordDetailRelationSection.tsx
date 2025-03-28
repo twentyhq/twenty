@@ -7,6 +7,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
@@ -188,7 +189,14 @@ export const RecordDetailRelationSection = ({
       recordId,
     });
 
-  const isReadOnly = useIsFieldValueReadOnly();
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId,
+  });
+
+  const isFieldReadOnly = useIsFieldValueReadOnly({
+    fieldDefinition,
+    isRecordReadOnly,
+  });
 
   if (loading) return null;
 
@@ -248,7 +256,7 @@ export const RecordDetailRelationSection = ({
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
         areRecordsAvailable={relationRecords.length > 0}
         rightAdornment={
-          !isReadOnly && (
+          !isFieldReadOnly && (
             <DropdownScope dropdownScopeId={dropdownId}>
               <StyledAddDropdown
                 dropdownId={dropdownId}

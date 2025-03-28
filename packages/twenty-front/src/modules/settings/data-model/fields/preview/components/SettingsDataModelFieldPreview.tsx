@@ -146,6 +146,7 @@ export const SettingsDataModelFieldPreview = ({
                 defaultValue: fieldMetadataItem.defaultValue,
               },
               hotkeyScope: 'field-preview',
+              isReadOnly: false,
             }}
           >
             {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (

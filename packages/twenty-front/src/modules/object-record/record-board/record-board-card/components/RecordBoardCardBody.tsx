@@ -45,6 +45,7 @@ export const RecordBoardCardBody = ({
               recordId,
               maxWidth: 156,
               isLabelIdentifier: false,
+              isReadOnly: false,
               fieldDefinition: {
                 disableTooltip: false,
                 fieldMetadataId: fieldDefinition.fieldMetadataId,

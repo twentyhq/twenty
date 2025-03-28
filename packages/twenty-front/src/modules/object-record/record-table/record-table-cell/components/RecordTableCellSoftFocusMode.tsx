@@ -11,10 +11,9 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 import { isDefined } from 'twenty-shared/utils';
+import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 type RecordTableCellSoftFocusModeProps = {
   editModeContent: ReactElement;
@@ -26,11 +25,9 @@ export const RecordTableCellSoftFocusMode = ({
   nonEditModeContent,
 }: RecordTableCellSoftFocusModeProps) => {
   const { columnIndex, columnDefinition } = useContext(RecordTableCellContext);
-  const { recordId } = useContext(FieldContext);
+  const { recordId, isReadOnly } = useContext(FieldContext);
 
   const { onActionMenuDropdownOpened } = useRecordTableBodyContextOrThrow();
-
-  const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
 
@@ -51,7 +48,7 @@ export const RecordTableCellSoftFocusMode = ({
   }, [isSoftFocusUsingMouse]);
 
   const handleClick = () => {
-    if (!isFieldInputOnly && !isFieldReadOnly) {
+    if (!isFieldInputOnly && !isReadOnly) {
       openTableCell();
     }
   };
@@ -81,12 +78,12 @@ export const RecordTableCellSoftFocusMode = ({
     : customButtonIcon;
 
   const showButton =
-    isDefined(buttonIcon) && !editModeContentOnly && !isFieldReadOnly;
+    isDefined(buttonIcon) && !editModeContentOnly && !isReadOnly;
 
-  const dontShowContent = isEmpty && isFieldReadOnly;
+  const dontShowContent = isEmpty && isReadOnly;
 
   const showPlaceholder =
-    !editModeContentOnly && !isFieldReadOnly && isFirstColumn && isEmpty;
+    !editModeContentOnly && !isReadOnly && isFirstColumn && isEmpty;
 
   return (
     <>
