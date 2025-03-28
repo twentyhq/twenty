@@ -1,5 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
 import {
   WorkflowManualTrigger,
   WorkflowManualTriggerAvailability,
@@ -10,8 +10,8 @@ import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/workflow-trigger
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { useTheme } from '@emotion/react';
-import { useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { SelectOption, useIcons } from 'twenty-ui';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
