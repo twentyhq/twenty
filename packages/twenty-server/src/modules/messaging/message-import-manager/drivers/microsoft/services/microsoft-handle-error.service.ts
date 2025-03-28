@@ -4,6 +4,7 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 
 @Injectable()
 export class MicrosoftHandleErrorService {
@@ -29,9 +30,24 @@ export class MicrosoftHandleErrorService {
       );
     }
 
+    if (error.statusCode === 429) {
+      throw new MessageImportDriverException(
+        `Microsoft Graph API ${error.code} ${error.statusCode} error: ${error.message}`,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
+    }
+
     throw new MessageImportDriverException(
       `Microsoft driver error: ${error.message}`,
       MessageImportDriverExceptionCode.UNKNOWN,
+    );
+  }
+
+  public handleMicrosoftBatchResponseError(error: any): void {
+    throw new MicrosoftImportDriverException(
+      error.message,
+      error.code,
+      error.statusCode,
     );
   }
 }

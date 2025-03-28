@@ -18,7 +18,8 @@ export enum MessageImportSyncStep {
   FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH',
   PARTIAL_MESSAGE_LIST_FETCH = 'PARTIAL_MESSAGE_LIST_FETCH',
   FULL_OR_PARTIAL_MESSAGE_LIST_FETCH = 'FULL_OR_PARTIAL_MESSAGE_LIST_FETCH',
-  MESSAGES_IMPORT = 'MESSAGES_IMPORT',
+  MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
+  MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
 }
 
 @Injectable()
@@ -94,7 +95,7 @@ export class MessageImportExceptionHandlerService {
         workspaceId,
       );
       throw new MessageImportException(
-        `Unknown error occurred multiple times while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}`,
+        `Unknown temporary error occurred multiple times while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}`,
         MessageImportExceptionCode.UNKNOWN,
       );
     }
@@ -122,8 +123,8 @@ export class MessageImportExceptionHandlerService {
           [messageChannel.id],
         );
         break;
-
-      case MessageImportSyncStep.MESSAGES_IMPORT:
+      case MessageImportSyncStep.MESSAGES_IMPORT_PENDING:
+      case MessageImportSyncStep.MESSAGES_IMPORT_ONGOING:
         await this.messageChannelSyncStatusService.scheduleMessagesImport([
           messageChannel.id,
         ]);
