@@ -1,8 +1,9 @@
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SubMatchingSelect } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelect';
 import { UnmatchColumnBanner } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumnBanner';
-import { Column } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -11,7 +12,7 @@ import { AnimatedExpandableContainer } from 'twenty-ui';
 
 const getExpandableContainerTitle = <T extends string>(
   fields: SpreadsheetImportFields<T>,
-  column: Column<T>,
+  column: SpreadsheetColumn<T>,
 ) => {
   const fieldLabel = fields.find(
     (field) => 'value' in column && field.key === column.value,
@@ -24,7 +25,7 @@ const getExpandableContainerTitle = <T extends string>(
 };
 
 type UnmatchColumnProps<T extends string> = {
-  columns: Column<T>[];
+  columns: SpreadsheetColumns<T>;
   columnIndex: number;
   onSubChange: (val: T, index: number, option: string) => void;
 };

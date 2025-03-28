@@ -1,19 +1,28 @@
-import {
-  Column,
-  ColumnType,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { SpreadsheetImportField } from '@/spreadsheet-import/types';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableData';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('normalizeTableData', () => {
-  const columns: Column<string>[] = [
-    { index: 0, header: 'Name', type: ColumnType.matched, value: 'name' },
-    { index: 1, header: 'Age', type: ColumnType.matched, value: 'age' },
+  const columns: SpreadsheetColumn<string>[] = [
+    {
+      index: 0,
+      header: 'Name',
+      type: SpreadsheetColumnType.matched,
+      value: 'name',
+    },
+    {
+      index: 1,
+      header: 'Age',
+      type: SpreadsheetColumnType.matched,
+      value: 'age',
+    },
     {
       index: 2,
       header: 'Active',
-      type: ColumnType.matchedCheckbox,
+      type: SpreadsheetColumnType.matchedCheckbox,
       value: 'active',
     },
   ];
@@ -61,11 +70,11 @@ describe('normalizeTableData', () => {
   });
 
   it('should normalize matchedCheckbox values and handle booleanMatches', () => {
-    const columns: Column<string>[] = [
+    const columns: SpreadsheetColumn<string>[] = [
       {
         index: 0,
         header: 'Active',
-        type: ColumnType.matchedCheckbox,
+        type: SpreadsheetColumnType.matchedCheckbox,
         value: 'active',
       },
     ];
@@ -91,11 +100,11 @@ describe('normalizeTableData', () => {
   });
 
   it('should map matchedSelect and matchedSelectOptions values correctly', () => {
-    const columns: Column<string>[] = [
+    const columns: SpreadsheetColumn<string>[] = [
       {
         index: 0,
         header: 'Number',
-        type: ColumnType.matchedSelect,
+        type: SpreadsheetColumnType.matchedSelect,
         value: 'number',
         matchedOptions: [
           { entry: 'One', value: '1' },
@@ -132,9 +141,9 @@ describe('normalizeTableData', () => {
   });
 
   it('should handle empty and ignored columns', () => {
-    const columns: Column<string>[] = [
-      { index: 0, header: 'Empty', type: ColumnType.empty },
-      { index: 1, header: 'Ignored', type: ColumnType.ignored },
+    const columns: SpreadsheetColumn<string>[] = [
+      { index: 0, header: 'Empty', type: SpreadsheetColumnType.empty },
+      { index: 1, header: 'Ignored', type: SpreadsheetColumnType.ignored },
     ];
 
     const rawData = [['Value1', 'Value2']];
@@ -145,11 +154,11 @@ describe('normalizeTableData', () => {
   });
 
   it('should handle unrecognized column types and return empty object', () => {
-    const columns: Column<string>[] = [
+    const columns: SpreadsheetColumns<string> = [
       {
         index: 0,
         header: 'Unrecognized',
-        type: 'Unknown' as unknown as ColumnType.matched,
+        type: 'Unknown' as unknown as SpreadsheetColumnType.matched,
         value: '',
       },
     ];

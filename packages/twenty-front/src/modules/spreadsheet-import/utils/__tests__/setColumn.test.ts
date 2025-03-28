@@ -1,8 +1,6 @@
-import {
-  Column,
-  ColumnType,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { SpreadsheetImportField } from '@/spreadsheet-import/types';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -15,10 +13,10 @@ describe('setColumn', () => {
     fieldMetadataType: FieldMetadataType.TEXT,
   };
 
-  const oldColumn: Column<'oldValue'> = {
+  const oldColumn: SpreadsheetColumn<'oldValue'> = {
     index: 0,
     header: 'Name',
-    type: ColumnType.matched,
+    type: SpreadsheetColumnType.matched,
     value: 'oldValue',
   };
 
@@ -37,7 +35,7 @@ describe('setColumn', () => {
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.matchedSelectOptions,
+      type: SpreadsheetColumnType.matchedSelectOptions,
       value: 'Name',
       matchedOptions: [
         {
@@ -63,7 +61,7 @@ describe('setColumn', () => {
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.matchedCheckbox,
+      type: SpreadsheetColumnType.matchedCheckbox,
       value: 'Name',
     });
   });
@@ -79,7 +77,7 @@ describe('setColumn', () => {
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.matched,
+      type: SpreadsheetColumnType.matched,
       value: 'Name',
     });
   });
@@ -95,7 +93,7 @@ describe('setColumn', () => {
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.empty,
+      type: SpreadsheetColumnType.empty,
     });
   });
 });

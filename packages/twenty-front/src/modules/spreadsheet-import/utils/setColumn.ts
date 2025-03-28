@@ -1,25 +1,23 @@
-import {
-  Column,
-  ColumnType,
-  MatchColumnsStepProps,
-  MatchedOptions,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
+import { MatchColumnsStepProps } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 
 import { SpreadsheetImportField } from '@/spreadsheet-import/types';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { z } from 'zod';
 import { uniqueEntries } from './uniqueEntries';
 
 export const setColumn = <T extends string>(
-  oldColumn: Column<T>,
+  oldColumn: SpreadsheetColumn<T>,
   field?: SpreadsheetImportField<T>,
   data?: MatchColumnsStepProps['data'],
-): Column<T> => {
+): SpreadsheetColumn<T> => {
   if (field?.fieldType.type === 'select') {
     const fieldOptions = field.fieldType.options;
     const uniqueData = uniqueEntries(
       data || [],
       oldColumn.index,
-    ) as MatchedOptions<T>[];
+    ) as SpreadsheetMatchedOptions<T>[];
 
     const matchedOptions = uniqueData.map((record) => {
       const value = fieldOptions.find(
@@ -28,8 +26,8 @@ export const setColumn = <T extends string>(
           fieldOption.label === record.entry,
       )?.value;
       return value
-        ? ({ ...record, value } as MatchedOptions<T>)
-        : (record as MatchedOptions<T>);
+        ? ({ ...record, value } as SpreadsheetMatchedOptions<T>)
+        : (record as SpreadsheetMatchedOptions<T>);
     });
     const allMatched =
       matchedOptions.filter((o) => o.value).length === uniqueData?.length;
@@ -37,8 +35,8 @@ export const setColumn = <T extends string>(
     return {
       ...oldColumn,
       type: allMatched
-        ? ColumnType.matchedSelectOptions
-        : ColumnType.matchedSelect,
+        ? SpreadsheetColumnType.matchedSelectOptions
+        : SpreadsheetColumnType.matchedSelect,
       value: field.key,
       matchedOptions,
     };
@@ -69,8 +67,8 @@ export const setColumn = <T extends string>(
           fieldOption.value === entry || fieldOption.label === entry,
       )?.value;
       return value
-        ? ({ entry, value } as MatchedOptions<T>)
-        : ({ entry } as MatchedOptions<T>);
+        ? ({ entry, value } as SpreadsheetMatchedOptions<T>)
+        : ({ entry } as SpreadsheetMatchedOptions<T>);
     });
     const areAllMatched =
       matchedOptions.filter((option) => option.value).length ===
@@ -79,8 +77,8 @@ export const setColumn = <T extends string>(
     return {
       ...oldColumn,
       type: areAllMatched
-        ? ColumnType.matchedSelectOptions
-        : ColumnType.matchedSelect,
+        ? SpreadsheetColumnType.matchedSelectOptions
+        : SpreadsheetColumnType.matchedSelect,
       value: field.key,
       matchedOptions,
     };
@@ -89,7 +87,7 @@ export const setColumn = <T extends string>(
   if (field?.fieldType.type === 'checkbox') {
     return {
       index: oldColumn.index,
-      type: ColumnType.matchedCheckbox,
+      type: SpreadsheetColumnType.matchedCheckbox,
       value: field.key,
       header: oldColumn.header,
     };
@@ -98,7 +96,7 @@ export const setColumn = <T extends string>(
   if (field?.fieldType.type === 'input') {
     return {
       index: oldColumn.index,
-      type: ColumnType.matched,
+      type: SpreadsheetColumnType.matched,
       value: field.key,
       header: oldColumn.header,
     };
@@ -107,6 +105,6 @@ export const setColumn = <T extends string>(
   return {
     index: oldColumn.index,
     header: oldColumn.header,
-    type: ColumnType.empty,
+    type: SpreadsheetColumnType.empty,
   };
 };

@@ -1,10 +1,10 @@
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetImportFields } from '@/spreadsheet-import/types/SpreadsheetImportFields';
 import { ImportedRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedRow';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedStructuredRow';
 import { SpreadsheetImportImportValidationResult } from '@/spreadsheet-import/types/SpreadsheetImportImportValidationResult';
 import { SpreadsheetImportRowHook } from '@/spreadsheet-import/types/SpreadsheetImportRowHook';
 import { SpreadsheetImportTableHook } from '@/spreadsheet-import/types/SpreadsheetImportTableHook';
-import { Columns } from '../steps/components/MatchColumnsStep/MatchColumnsStep';
 import { SpreadsheetImportStep } from '../steps/types/SpreadsheetImportStep';
 
 export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
@@ -25,7 +25,7 @@ export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   matchColumnsStepHook?: (
     importedStructuredRows: ImportedStructuredRow<FieldNames>[],
     importedRows: ImportedRow[],
-    columns: Columns<FieldNames>,
+    columns: SpreadsheetColumns<FieldNames>,
   ) => Promise<ImportedStructuredRow<FieldNames>[]>;
   // Runs after column matching and on entry change
   rowHook?: SpreadsheetImportRowHook<FieldNames>;

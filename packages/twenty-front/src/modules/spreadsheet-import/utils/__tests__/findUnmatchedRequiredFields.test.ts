@@ -1,11 +1,9 @@
 import {
-  Column,
-  ColumnType,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import {
   SpreadsheetImportField,
   SpreadsheetImportFieldValidationDefinition,
 } from '@/spreadsheet-import/types';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -43,22 +41,22 @@ const ageFieldWithValidations: SpreadsheetImportField<'Age'> = {
 
 type ColumnValues = 'Name' | 'Age';
 
-const nameColumn: Column<ColumnValues> = {
-  type: ColumnType.matched,
+const nameColumn: SpreadsheetColumn<ColumnValues> = {
+  type: SpreadsheetColumnType.matched,
   index: 0,
   header: '',
   value: 'Name',
 };
 
-const ageColumn: Column<ColumnValues> = {
-  type: ColumnType.matched,
+const ageColumn: SpreadsheetColumn<ColumnValues> = {
+  type: SpreadsheetColumnType.matched,
   index: 0,
   header: '',
   value: 'Age',
 };
 
-const extraColumn: Column<ColumnValues> = {
-  type: ColumnType.matched,
+const extraColumn: SpreadsheetColumn<ColumnValues> = {
+  type: SpreadsheetColumnType.matched,
   index: 0,
   header: '',
   value: 'Age',
