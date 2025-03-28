@@ -82,7 +82,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
-    const commands_050: VersionCommands = {
+    const _commands_050: VersionCommands = {
       beforeSyncMetadata: [],
       afterSyncMetadata: [],
     };
