@@ -170,9 +170,7 @@ export class AuthResolver {
       (await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       )) ??
-      (await this.userWorkspaceService.findFirstRandomWorkspaceByUserId(
-        user.id,
-      ));
+      (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
 
     await this.userService.markEmailAsVerified(user.id);
 
