@@ -27,7 +27,9 @@ export type CommandMenuNavigationStackItem = {
 };
 
 export const useNavigateCommandMenu = () => {
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope(
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  );
 
   const { copyContextStoreStates } = useCopyContextStoreStates();
 

@@ -4,19 +4,19 @@ import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyC
 import { logDebug } from '~/utils/logDebug';
 
 import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
-import { previousHotkeyScopeState } from '../states/internal/previousHotkeyScopeState';
+import { previousHotkeyScopeFamilyState } from '../states/internal/previousHotkeyScopeFamilyState';
 import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
 
 import { useSetHotkeyScope } from './useSetHotkeyScope';
 
-export const usePreviousHotkeyScope = () => {
+export const usePreviousHotkeyScope = (memoizeKey = 'global') => {
   const setHotkeyScope = useSetHotkeyScope();
 
   const goBackToPreviousHotkeyScope = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
         const previousHotkeyScope = snapshot
-          .getLoadable(previousHotkeyScopeState)
+          .getLoadable(previousHotkeyScopeFamilyState(memoizeKey))
           .getValue();
 
         if (!previousHotkeyScope) {
@@ -32,9 +32,9 @@ export const usePreviousHotkeyScope = () => {
           previousHotkeyScope.customScopes,
         );
 
-        set(previousHotkeyScopeState, null);
+        set(previousHotkeyScopeFamilyState(memoizeKey), null);
       },
-    [setHotkeyScope],
+    [setHotkeyScope, memoizeKey],
   );
 
   const setHotkeyScopeAndMemorizePreviousScope = useRecoilCallback(
@@ -53,9 +53,10 @@ export const usePreviousHotkeyScope = () => {
         }
 
         setHotkeyScope(scope, customScopes);
-        set(previousHotkeyScopeState, currentHotkeyScope);
+
+        set(previousHotkeyScopeFamilyState(memoizeKey), currentHotkeyScope);
       },
-    [setHotkeyScope],
+    [setHotkeyScope, memoizeKey],
   );
 
   return {
