@@ -29,8 +29,8 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
 
 const StyledInputContainer = styled(FormFieldInputInputContainer)`
   display: grid;
@@ -77,9 +77,9 @@ type DraftValue =
 type FormDateTimeFieldInputProps = {
   dateOnly?: boolean;
   label?: string;
-  placeholder?: string;
   defaultValue: string | undefined;
   onChange: (value: string | null) => void;
+  placeholder?: string;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -91,6 +91,7 @@ export const FormDateTimeFieldInput = ({
   onChange,
   VariablePicker,
   readonly,
+  placeholder,
 }: FormDateTimeFieldInputProps) => {
   const { timeZone } = useContext(UserContext);
 
@@ -149,7 +150,8 @@ export const FormDateTimeFieldInput = ({
   const displayDatePicker =
     draftValue.type === 'static' && draftValue.mode === 'edit';
 
-  const placeholder = dateOnly ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm';
+  const placeholderToDisplay =
+    placeholder ?? (dateOnly ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm');
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
@@ -340,7 +342,7 @@ export const FormDateTimeFieldInput = ({
             <>
               <StyledDateInput
                 type="text"
-                placeholder={placeholder}
+                placeholder={placeholderToDisplay}
                 value={inputDateTime}
                 onFocus={handleInputFocus}
                 onChange={handleInputChange}

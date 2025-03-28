@@ -157,26 +157,19 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    const permissionsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsPermissionsEnabled,
-      workspace.id,
-    );
+    await this.validateSecurityPermissions({
+      payload,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      apiKey,
+    });
 
-    if (permissionsEnabled) {
-      await this.validateSecurityPermissions({
-        payload,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-        apiKey,
-      });
-
-      await this.validateWorkspacePermissions({
-        payload,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-        apiKey,
-      });
-    }
+    await this.validateWorkspacePermissions({
+      payload,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      apiKey,
+    });
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
       await this.validateSubdomainUpdate(payload.subdomain);
@@ -339,11 +332,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         softDelete,
       );
     }
+    this.logger.log(`workspace ${id} user workspaces deleted`);
 
     await this.workspaceCacheStorageService.flush(
       workspace.id,
       workspace.metadataVersion,
     );
+    this.logger.log(`workspace ${id} cache flushed`);
 
     if (softDelete) {
       if (this.billingService.isBillingEnabled()) {
@@ -368,6 +363,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.customDomainService.deleteCustomHostnameByHostnameSilently(
         workspace.customDomain,
       );
+      this.logger.log(`workspace ${id} custom domain deleted`);
     }
 
     await this.workspaceRepository.delete(id);

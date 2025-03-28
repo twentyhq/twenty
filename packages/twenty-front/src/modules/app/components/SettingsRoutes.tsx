@@ -4,7 +4,6 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingPermissionType } from '~/generated/graphql';
 import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/SettingsIntegrationWhatsappDatabase';
 import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
@@ -463,7 +462,6 @@ export const SettingsRoutes = ({
         element={
           <SettingsProtectedRouteWrapper
             settingsPermission={SettingPermissionType.ROLES}
-            requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
           />
         }
       >

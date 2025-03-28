@@ -7,6 +7,7 @@ import { V0_50_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { UpgradeCommand } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
+import { V0_51_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-51/0-51-upgrade-version-command.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     V0_43_UpgradeVersionCommandModule,
     V0_44_UpgradeVersionCommandModule,
     V0_50_UpgradeVersionCommandModule,
+    V0_51_UpgradeVersionCommandModule,
     WorkspaceSyncMetadataModule,
   ],
   providers: [UpgradeCommand],

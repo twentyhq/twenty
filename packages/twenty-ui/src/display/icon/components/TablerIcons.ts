@@ -292,6 +292,7 @@ export {
   IconUsers,
   IconVariable,
   IconVariablePlus,
+  IconVersions,
   IconVideo,
   IconWand,
   IconWebhook,

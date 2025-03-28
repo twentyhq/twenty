@@ -94,7 +94,7 @@ export const ReadonlyMode: Story = {
     const textField = await canvas.findByText('Text Field');
     expect(textField).toBeVisible();
 
-    const numberInput = await canvas.findByPlaceholderText('Number Field');
+    const numberInput = await canvas.findByPlaceholderText('Enter number');
     expect(numberInput).toBeDisabled();
 
     const submitButton = await canvas.queryByText('Submit');

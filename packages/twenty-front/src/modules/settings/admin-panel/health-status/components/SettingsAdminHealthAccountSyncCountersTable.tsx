@@ -22,10 +22,6 @@ export const SettingsAdminHealthAccountSyncCountersTable = ({
 
   const items = [
     {
-      label: 'Not Synced',
-      value: details.counters.NOT_SYNCED,
-    },
-    {
       label: 'Active Sync',
       value: details.counters.ACTIVE,
     },

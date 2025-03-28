@@ -13,6 +13,7 @@ import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordSh
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
@@ -24,7 +25,7 @@ export const RecordShowPage = () => {
     objectRecordId: string;
   }>();
 
-  const { objectNameSingular, objectRecordId, headerIcon } = useRecordShowPage(
+  const { objectNameSingular, objectRecordId } = useRecordShowPage(
     parameters.objectNameSingular ?? '',
     parameters.objectRecordId ?? '',
   );
@@ -55,9 +56,9 @@ export const RecordShowPage = () => {
                   <RecordShowPageHeader
                     objectNameSingular={objectNameSingular}
                     objectRecordId={objectRecordId}
-                    headerIcon={headerIcon}
                   >
                     <RecordShowActionMenu />
+                    <PageHeaderToggleCommandMenuButton />
                   </RecordShowPageHeader>
                   <PageBody>
                     <TimelineActivityContext.Provider

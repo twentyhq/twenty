@@ -2,10 +2,10 @@
 /* eslint-disable @nx/workspace-max-consts-per-file */
 import { IANA_TIME_ZONES } from '@/localization/constants/IanaTimeZones';
 import { formatTimeZoneLabel } from '@/settings/accounts/utils/formatTimeZoneLabel';
-import { SelectOption } from '@/ui/input/components/Select';
+import { SelectOption } from 'twenty-ui';
 
 export const AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL = IANA_TIME_ZONES.reduce<
-  Record<string, SelectOption<string>>
+  Record<string, SelectOption>
 >((result, ianaTimeZone) => {
   const timeZoneLabel = formatTimeZoneLabel(ianaTimeZone);
 

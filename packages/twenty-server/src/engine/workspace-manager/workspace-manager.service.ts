@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { DEV_SEED_USER_WORKSPACE_IDS } from 'src/database/typeorm-seeds/core/user-workspaces';
@@ -9,7 +10,6 @@ import {
   SEED_ACME_WORKSPACE_ID,
   SEED_APPLE_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -319,21 +319,16 @@ export class WorkspaceManagerService {
       roleId: adminRole.id,
     });
 
-    await this.roleService.createMemberRole({
+    const memberRole = await this.roleService.createMemberRole({
       workspaceId,
     });
 
-    // Temporary - after permissions are rolled-out we will set member role as the default role
     await this.workspaceRepository.update(workspaceId, {
-      defaultRoleId: adminRole.id,
+      defaultRoleId: memberRole.id,
     });
   }
 
   private async initPermissionsDev(workspaceId: string) {
-    await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IsPermissionsEnabled],
-      workspaceId,
-    );
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
@@ -373,6 +368,7 @@ export class WorkspaceManagerService {
 
     await this.workspaceRepository.update(workspaceId, {
       defaultRoleId: memberRole.id,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
     if (memberUserWorkspaceId) {

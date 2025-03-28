@@ -6,9 +6,7 @@ import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delet
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
@@ -17,14 +15,6 @@ describe('restoreManyObjectRecordsPermissions', () => {
   const personId2 = randomUUID();
 
   beforeAll(async () => {
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
-
     // Create people
     const createGraphqlOperation = createManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -55,16 +45,6 @@ describe('restoreManyObjectRecordsPermissions', () => {
     });
 
     await makeGraphqlAPIRequest(deleteGraphqlOperation);
-  });
-
-  afterAll(async () => {
-    const disablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      false,
-    );
-
-    await makeGraphqlAPIRequest(disablePermissionsQuery);
   });
 
   it('should throw a permission error when user does not have permission (guest role)', async () => {

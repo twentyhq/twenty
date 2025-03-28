@@ -2,20 +2,19 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { SelectOption } from '@/spreadsheet-import/types';
 
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
+import {
+  SpreadsheetMatchedSelectColumn,
+  SpreadsheetMatchedSelectOptionsColumn,
+} from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { SelectInput } from '@/ui/input/components/SelectInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useEffect, useState } from 'react';
-import { IconChevronDown, Tag, TagColor } from 'twenty-ui';
-import {
-  MatchedOptions,
-  MatchedSelectColumn,
-  MatchedSelectOptionsColumn,
-} from '../MatchColumnsStep';
+import { IconChevronDown, SelectOption, Tag, TagColor } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -58,11 +57,15 @@ const StyledIconChevronDown = styled(IconChevronDown)`
 `;
 
 interface SubMatchingSelectProps<T> {
-  option: MatchedOptions<T> | Partial<MatchedOptions<T>>;
-  column: MatchedSelectColumn<T> | MatchedSelectOptionsColumn<T>;
+  option: SpreadsheetMatchedOptions<T> | Partial<SpreadsheetMatchedOptions<T>>;
+  column:
+    | SpreadsheetMatchedSelectColumn<T>
+    | SpreadsheetMatchedSelectOptionsColumn<T>;
   onSubChange: (val: T, index: number, option: string) => void;
   placeholder: string;
-  selectedOption?: MatchedOptions<T> | Partial<MatchedOptions<T>>;
+  selectedOption?:
+    | SpreadsheetMatchedOptions<T>
+    | Partial<SpreadsheetMatchedOptions<T>>;
 }
 
 export const SubMatchingSelect = <T extends string>({

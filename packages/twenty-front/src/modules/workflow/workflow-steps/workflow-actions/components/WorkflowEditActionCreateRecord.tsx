@@ -2,7 +2,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
 import { WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -12,11 +12,11 @@ import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect, useState } from 'react';
-import { HorizontalSeparator, useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { HorizontalSeparator, SelectOption, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;
