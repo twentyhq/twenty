@@ -3,12 +3,13 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const VerifyEmailEffect = () => {
   const { getLoginTokenFromEmailVerificationToken } = useAuth();
@@ -21,7 +22,8 @@ export const VerifyEmailEffect = () => {
   const emailVerificationToken = searchParams.get('emailVerificationToken');
 
   const navigate = useNavigateApp();
-  const { readCaptchaToken } = useReadCaptchaToken();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+
   const { t } = useLingui();
   useEffect(() => {
     const verifyEmailToken = async () => {
@@ -33,19 +35,21 @@ export const VerifyEmailEffect = () => {
         return navigate(AppPath.SignInUp);
       }
 
-      const captchaToken = await readCaptchaToken();
-
       try {
-        const { loginToken } = await getLoginTokenFromEmailVerificationToken(
-          emailVerificationToken,
-          captchaToken,
-        );
+        const { loginToken, workspaceUrls } =
+          await getLoginTokenFromEmailVerificationToken(emailVerificationToken);
 
         enqueueSnackBar(t`Email verified.`, {
           dedupeKey: 'email-verification-dedupe-key',
           variant: SnackBarVariant.Success,
         });
 
+        const workspaceUrl = getWorkspaceUrl(workspaceUrls);
+        if (workspaceUrl !== window.location.origin) {
+          return redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
+            loginToken: loginToken.token,
+          });
+        }
         navigate(AppPath.Verify, undefined, { loginToken: loginToken.token });
       } catch (error) {
         enqueueSnackBar(t`Email verification failed.`, {
