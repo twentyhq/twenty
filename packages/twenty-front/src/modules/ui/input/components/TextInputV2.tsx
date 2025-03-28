@@ -30,6 +30,8 @@ const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   position: relative;
+  margin-bottom: ${({ theme }) =>
+    theme.spacing(1)}; // provision for error helper
 `;
 
 type StyledAdornmentContainerProps = {

@@ -2,40 +2,15 @@ import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/Advan
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { AnimatedExpandableContainer, IconPoint, MAIN_COLORS } from 'twenty-ui';
-
-type DotPosition = 'top' | 'centered';
-
-const StyledAdvancedWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const StyledDotContainer = styled.div<{ dotPosition: DotPosition }>`
-  display: flex;
-  position: absolute;
-  height: 100%;
-  left: ${({ theme }) => theme.spacing(-5)};
-
-  ${({ dotPosition }) => {
-    if (dotPosition === 'top') {
-      return `
-        top: 0;
-      `;
-    }
-    return `
-      align-items: center;
-    `;
-  }}
-`;
-
+import { AnimatedExpandableContainer, MAIN_COLORS } from 'twenty-ui';
+import { AdvancedWrapper as StyledAdvancedWrapper } from './StyledAdvancedWrapper';
+import { DotContainer as StyledDotContainer } from './StyledDotContainer';
+import { IconPoint as StyledIconPoint } from './StyledIconPoint';
 const StyledContent = styled.div`
   width: 100%;
 `;
 
-const StyledIconPoint = styled(IconPoint)`
-  margin-right: 0;
-`;
+type DotPosition = 'top' | 'centered';
 
 type AdvancedSettingsWrapperProps = {
   children: React.ReactNode;

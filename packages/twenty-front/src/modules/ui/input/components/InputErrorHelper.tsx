@@ -7,20 +7,16 @@ const StyledInputErrorHelper = styled.div`
   position: absolute;
 `;
 
-const StyledErrorContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(1)};
-`;
-
 export const InputErrorHelper = ({
   children,
 }: {
   children?: React.ReactNode;
 }) => (
-  <StyledErrorContainer>
+  <div>
     {children && (
       <StyledInputErrorHelper aria-live="polite">
         {children}
       </StyledInputErrorHelper>
     )}
-  </StyledErrorContainer>
+  </div>
 );
