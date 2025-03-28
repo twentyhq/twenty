@@ -2477,7 +2477,6 @@ export type WorkspaceMember = {
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']['output']>;
   userEmail: Scalars['String']['output'];
-  userId: Scalars['UUID']['output'];
   userWorkspaceId?: Maybe<Scalars['String']['output']>;
 };
 
