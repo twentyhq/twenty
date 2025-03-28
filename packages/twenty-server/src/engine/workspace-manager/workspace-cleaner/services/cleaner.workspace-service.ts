@@ -326,7 +326,9 @@ export class CleanerWorkspaceService {
 
     for (const workspace of workspaces) {
       try {
-        if (isDefined(workspace.deletedAt)) {
+        const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
+
+        if (isSoftDeletedWorkspace) {
           const daysSinceSoftDeleted = workspace.deletedAt
             ? differenceInDays(new Date(), workspace.deletedAt)
             : 0;
