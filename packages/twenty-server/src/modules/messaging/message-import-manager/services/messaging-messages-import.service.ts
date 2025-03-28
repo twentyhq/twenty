@@ -192,7 +192,7 @@ export class MessagingMessagesImportService {
 
       await this.messageImportErrorHandlerService.handleDriverException(
         error,
-        MessageImportSyncStep.MESSAGES_IMPORT,
+        MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
         messageChannel,
         workspaceId,
       );
