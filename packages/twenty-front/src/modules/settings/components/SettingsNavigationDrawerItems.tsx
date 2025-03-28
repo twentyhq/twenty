@@ -33,7 +33,7 @@ export const SettingsNavigationDrawerItems = () => {
     });
   };
 
-  const scrollableItems = (
+  return (
     <>
       {settingsNavigationItems.map((section) => {
         const allItemsHidden = section.items.every((item) => item.isHidden);
@@ -111,6 +111,4 @@ export const SettingsNavigationDrawerItems = () => {
       })}
     </>
   );
-
-  return { scrollableItems };
 };

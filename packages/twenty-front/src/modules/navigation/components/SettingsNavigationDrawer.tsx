@@ -1,0 +1,28 @@
+import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
+import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilState } from 'recoil';
+import { AdvancedSettingsToggle } from 'twenty-ui';
+
+export const SettingsNavigationDrawer = ({
+  className,
+}: {
+  className?: string;
+}) => {
+  const { t } = useLingui();
+  const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useRecoilState(
+    isAdvancedModeEnabledState,
+  );
+
+  return (
+    <NavigationDrawer className={className} title={t`Exit Settings`}>
+      <SettingsNavigationDrawerItems />
+      <AdvancedSettingsToggle
+        isAdvancedModeEnabled={isAdvancedModeEnabled}
+        setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
+        label={t`Advanced:`}
+      />
+    </NavigationDrawer>
+  );
+};

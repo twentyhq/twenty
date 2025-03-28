@@ -11,7 +11,8 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
-import { MainNavigationDrawerItems } from '@/navigation/components/MainNavigationDrawerItems';
+import { MainNavigationDrawerFixedItems } from '@/navigation/components/MainNavigationDrawerFixedItems';
+import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
 import { useLingui } from '@lingui/react/macro';
 import { AdvancedSettingsToggle } from 'twenty-ui';
 
@@ -31,14 +32,6 @@ export const AppNavigationDrawer = ({
 
   const { t } = useLingui();
 
-  const {
-    fixedTopItems: mainFixedTopItems,
-    scrollableItems: mainScrollableItems,
-  } = MainNavigationDrawerItems();
-
-  const { scrollableItems: settingsScrollableItems } =
-    SettingsNavigationDrawerItems();
-
   const drawerBaseProps: NavigationDrawerProps = isSettingsDrawer
     ? {
         title: t`Exit Settings`,
@@ -49,12 +42,12 @@ export const AppNavigationDrawer = ({
             label={t`Advanced:`}
           />
         ),
-        scrollableItems: settingsScrollableItems,
+        scrollableItems: <SettingsNavigationDrawerItems />,
       }
     : {
         title: currentWorkspace?.displayName ?? '',
-        fixedTopItems: mainFixedTopItems,
-        scrollableItems: mainScrollableItems,
+        fixedTopItems: <MainNavigationDrawerFixedItems />,
+        scrollableItems: <MainNavigationDrawerScrollableItems />,
         fixedBottomItems: <SupportDropdown />,
       };
 

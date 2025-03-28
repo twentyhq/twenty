@@ -57,7 +57,7 @@ export const NavigationDrawerContent = ({
   return (
     <>
       {fixedTopItems && (
-        <StyledFixedContainer isSettings={isSettingsDrawer}>
+        <StyledFixedContainer isSettings={isSettingsDrawer} className="awdawd">
           <NavigationDrawerSection>{fixedTopItems}</NavigationDrawerSection>
         </StyledFixedContainer>
       )}
