@@ -39,7 +39,7 @@ export const useInlineCell = (
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope(recordFieldComponentInstanceId);
+  } = usePreviousHotkeyScope('inline-cell');
 
   const initFieldInputDraftValue = useInitDraftValueV2();
 

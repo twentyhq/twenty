@@ -14,7 +14,7 @@ export const useRecordTitleCell = () => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
+  } = usePreviousHotkeyScope('inline-cell');
 
   const closeRecordTitleCell = useRecoilCallback(
     ({ set }) =>
