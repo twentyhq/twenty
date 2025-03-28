@@ -33,7 +33,6 @@ const StyledContainer = styled.div<{
   flex-direction: column;
   width: ${({ isSettings }) =>
     isSettings ? '100%' : NAV_DRAWER_WIDTHS.menu.desktop.expanded + 'px'};
-  gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
   padding: ${({ theme, isSettings, isMobile }) =>
     isSettings

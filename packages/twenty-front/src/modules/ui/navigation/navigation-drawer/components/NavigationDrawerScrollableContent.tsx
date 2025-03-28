@@ -13,13 +13,8 @@ const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
 
 const StyledScrollableInnerContainer = styled.div<{ isSettings?: boolean }>`
   height: 100%;
-  ${({ isSettings, theme }) =>
-    isSettings
-      ? `
-  padding-left: ${theme.spacing(5)};
-  padding-right: ${theme.spacing(8)};
-`
-      : ''}
+  padding-left: ${({ theme }) => theme.spacing(5)};
+  padding-right: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const NavigationDrawerScrollableContent = ({
@@ -40,9 +35,13 @@ export const NavigationDrawerScrollableContent = ({
         heightMode="fit-content"
         defaultEnableXScroll={false}
       >
-        <StyledScrollableInnerContainer isSettings={isSettingsDrawer}>
-          {children}
-        </StyledScrollableInnerContainer>
+        {isSettingsDrawer ? (
+          <StyledScrollableInnerContainer>
+            {children}
+          </StyledScrollableInnerContainer>
+        ) : (
+          <>{children}</>
+        )}
       </ScrollWrapper>
     </StyledItemsContainer>
   );
