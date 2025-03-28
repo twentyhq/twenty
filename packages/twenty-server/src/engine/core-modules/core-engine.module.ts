@@ -26,6 +26,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { GoogleStorageModule } from 'src/engine/core-modules/google-cloud/google-storage.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { InboxModule } from 'src/engine/core-modules/inbox/inbox.module';
+import { InterModule } from 'src/engine/core-modules/inter/inter.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
 import { LLMChatModelModule } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module';
 import { llmChatModelModuleFactory } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module-factory';
@@ -88,6 +89,7 @@ import { StripeModule } from './stripe/stripe.module';
     LabModule,
     RoleModule,
     StripeModule,
+    InterModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,
     MetaModule,
@@ -150,6 +152,7 @@ import { StripeModule } from './stripe/stripe.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     StripeModule,
+    InterModule,
   ],
 })
 export class CoreEngineModule {}
