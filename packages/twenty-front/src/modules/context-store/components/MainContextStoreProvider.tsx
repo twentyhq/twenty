@@ -35,12 +35,6 @@ export const MainContextStoreProvider = () => {
   const isRecordShowPage = isMatchingLocation(AppPath.RecordShowPage);
   const isSettingsPage = useIsSettingsPage();
 
-  const pageName = isRecordIndexPage
-    ? 'record-index'
-    : isRecordShowPage
-      ? 'record-show'
-      : undefined;
-
   const objectNamePlural = useParams().objectNamePlural ?? '';
   const objectNameSingular = useParams().objectNameSingular ?? '';
 
@@ -69,10 +63,10 @@ export const MainContextStoreProvider = () => {
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
 
-  if (
-    !isSettingsPage &&
-    (!isDefined(pageName) || !isDefined(objectMetadataItem))
-  ) {
+  const shouldComputeContextStore =
+    isRecordIndexPage || isRecordShowPage || isSettingsPage;
+
+  if (!shouldComputeContextStore) {
     return null;
   }
 
@@ -80,7 +74,9 @@ export const MainContextStoreProvider = () => {
     <MainContextStoreProviderEffect
       viewId={viewId}
       objectMetadataItem={objectMetadataItem}
-      pageName={pageName}
+      isRecordIndexPage={isRecordIndexPage}
+      isRecordShowPage={isRecordShowPage}
+      isSettingsPage={isSettingsPage}
     />
   );
 };
