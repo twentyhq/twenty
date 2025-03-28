@@ -352,10 +352,7 @@ export class CleanerWorkspaceService {
         const workspaceInactivity =
           await this.computeWorkspaceBillingInactivity(workspace);
 
-        if (
-          workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
-          !isDefined(workspace.deletedAt)
-        ) {
+        if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
             workspaceInactivity,
