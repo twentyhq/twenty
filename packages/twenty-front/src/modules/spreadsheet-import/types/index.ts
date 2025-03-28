@@ -9,7 +9,7 @@ export type {
   SpreadsheetImportFieldType,
   SpreadsheetImportInput,
   SpreadsheetImportMultiSelect,
-  SpreadsheetImportSelect
+  SpreadsheetImportSelect,
 } from './SpreadsheetImportFieldType';
 export type {
   SpreadsheetImportFieldValidationDefinition,
@@ -17,7 +17,7 @@ export type {
   SpreadsheetImportObjectValidation,
   SpreadsheetImportRegexValidation,
   SpreadsheetImportRequiredValidation,
-  SpreadsheetImportUniqueValidation
+  SpreadsheetImportUniqueValidation,
 } from './SpreadsheetImportFieldValidationDefinition';
 export type { ImportedRow } from './SpreadsheetImportImportedRow';
 export type { ImportedStructuredRow } from './SpreadsheetImportImportedStructuredRow';
@@ -25,4 +25,3 @@ export type { SpreadsheetImportImportValidationResult } from './SpreadsheetImpor
 export type { SpreadsheetImportInfo } from './SpreadsheetImportInfo';
 export type { SpreadsheetImportRowHook } from './SpreadsheetImportRowHook';
 export type { SpreadsheetImportTableHook } from './SpreadsheetImportTableHook';
-
