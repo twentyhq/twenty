@@ -195,9 +195,7 @@ export const AttachmentList = ({
             </StyledHeader>
           </StyledModalHeader>
           <ScrollWrapper
-            contextProviderName="modalContent"
             componentInstanceId={`preview-modal-${previewedAttachment.id}`}
-            scrollbarVariant="no-padding"
           >
             <StyledModalContent>
               <Suspense

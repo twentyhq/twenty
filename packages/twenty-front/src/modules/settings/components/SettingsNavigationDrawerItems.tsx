@@ -41,9 +41,7 @@ export const SettingsNavigationDrawerItems = () => {
 
   return (
     <ScrollWrapper
-      contextProviderName="navigationDrawer"
       componentInstanceId={`scroll-wrapper-settings-navigation-drawer`}
-      scrollbarVariant="no-padding"
       defaultEnableXScroll={false}
     >
       <StyledInnerContainer>

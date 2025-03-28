@@ -24,6 +24,7 @@ const StyledMainSection = styled(NavigationDrawerSection)`
 `;
 const StyledInnerContainer = styled.div`
   height: 100%;
+  width: 100%;
 `;
 
 export const MainNavigationDrawerItems = () => {
@@ -66,10 +67,8 @@ export const MainNavigationDrawerItems = () => {
         </StyledMainSection>
       )}
       <ScrollWrapper
-        contextProviderName="navigationDrawer"
         componentInstanceId={`scroll-wrapper-navigation-drawer`}
         defaultEnableXScroll={false}
-        scrollbarVariant="no-padding"
       >
         <StyledInnerContainer>
           <NavigationDrawerOpenedSection />

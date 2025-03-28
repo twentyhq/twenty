@@ -60,6 +60,7 @@ export const RecordBoardCardBody = ({
               },
               useUpdateRecord: useUpdateOneRecordHook,
               hotkeyScope: InlineCellHotkeyScope.InlineCell,
+              isDisplayModeFixHeight: true,
             }}
           >
             <RecordFieldComponentInstanceContext.Provider

@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilCallback } from 'recoil';
 import { GRAY_SCALE } from 'twenty-ui';
@@ -7,7 +6,7 @@ import { GRAY_SCALE } from 'twenty-ui';
 import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
-import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const StyledText = styled.div`
@@ -38,9 +37,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
     [setRecordTableLastRowVisible, isRecordTableLoadMoreLocked],
   );
 
-  const scrollWrapperRef = useContext(
-    RecordTableWithWrappersScrollWrapperContext,
-  );
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const hasRecordTableFetchedAllRecordsComponents = useRecoilComponentValueV2(
     hasRecordTableFetchedAllRecordsComponentStateV2,
@@ -53,7 +50,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
     onChange: onLastRowVisible,
     delay: 1000,
     rootMargin: '1000px',
-    root: scrollWrapperRef?.ref.current,
+    root: scrollWrapperHTMLElement,
   });
 
   if (!showLoadingMoreRow) {
