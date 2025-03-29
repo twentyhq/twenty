@@ -47,9 +47,7 @@ export class DomainManagerService {
     searchParams: Record<string, string | number>,
   ) {
     Object.entries(searchParams).forEach(([key, value]) => {
-      if (isDefined(value)) {
-        url.searchParams.set(key, value.toString());
-      }
+      url.searchParams.set(key, value.toString());
     });
   }
 
