@@ -91,6 +91,8 @@ const StyledItemTitleDate = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-end;
   margin-left: auto;
+  position: absolute;
+  right: 0;
 `;
 
 type EventRowProps = {

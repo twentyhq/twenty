@@ -26,7 +26,7 @@ const StyledCard = styled(Card)`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
-
+  box-sizing: border-box;
   display: flex;
   padding: ${({ theme }) => theme.spacing(2)};
   flex-direction: column;

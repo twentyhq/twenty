@@ -3,10 +3,7 @@ import { useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
-import {
-  StyledEventRowItemAction,
-  StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { StyledEventRowItemColumn } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -19,15 +16,16 @@ type EventRowMainObjectUpdatedProps = {
   event: TimelineActivity;
 };
 
-const StyledRowContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledEventRowMainObjectUpdatedContainer = styled.div`
   display: flex;
   flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledRow = styled.div`
+  align-items: center;
+  display: flex;
+  width: 270px;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -55,29 +53,27 @@ export const EventRowMainObjectUpdated = ({
 
   return (
     <StyledEventRowMainObjectUpdatedContainer>
-      <StyledRowContainer>
+      <StyledRow>
         <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-        <StyledEventRowItemAction>
-          updated
-          {diffEntries.length === 1 && (
-            <EventFieldDiffContainer
-              mainObjectMetadataItem={mainObjectMetadataItem}
-              diffKey={diffEntries[0][0]}
-              diffValue={diffEntries[0][1].after}
-              eventId={event.id}
-              fieldMetadataItemMap={fieldMetadataItemMap}
-            />
-          )}
-          {diffEntries.length > 1 && (
-            <>
-              <span>
-                {diffEntries.length} fields on {labelIdentifierValue}
-              </span>
-              <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
-            </>
-          )}
-        </StyledEventRowItemAction>
-      </StyledRowContainer>
+        updated
+        {diffEntries.length === 1 && (
+          <EventFieldDiffContainer
+            mainObjectMetadataItem={mainObjectMetadataItem}
+            diffKey={diffEntries[0][0]}
+            diffValue={diffEntries[0][1].after}
+            eventId={event.id}
+            fieldMetadataItemMap={fieldMetadataItemMap}
+          />
+        )}
+        {diffEntries.length > 1 && (
+          <>
+            <span>
+              {diffEntries.length} fields on {labelIdentifierValue}
+            </span>
+            <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
+          </>
+        )}
+      </StyledRow>
       {diffEntries.length > 1 && (
         <EventCard isOpen={isOpen}>
           {diffEntries.map(([diffKey, diffValue]) => (
