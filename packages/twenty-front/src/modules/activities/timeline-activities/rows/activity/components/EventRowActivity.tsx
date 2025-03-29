@@ -9,6 +9,7 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
+import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
@@ -20,6 +21,13 @@ const StyledLinkedActivity = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledRow = styled.div`
+  align-items: center;
+  display: flex;
+  width: 270px;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const StyledEventRowItemText = styled.span`
@@ -58,7 +66,7 @@ export const EventRowActivity = ({
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   return (
-    <>
+    <StyledRow>
       <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
       <StyledEventRowItemAction>
         {`${eventAction} a related ${eventObject}`}
@@ -71,8 +79,8 @@ export const EventRowActivity = ({
           })
         }
       >
-        {activityTitle}
+        <OverflowingTextWithTooltip text={activityTitle} />
       </StyledLinkedActivity>
-    </>
+    </StyledRow>
   );
 };
