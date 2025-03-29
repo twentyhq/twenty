@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { SemVer } from 'semver';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -109,15 +109,6 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   private async retrieveWorkspaceVersionAndCompareToWorkspaceFromVersion(
     workspaceId: string,
   ): Promise<CompareVersionMajorAndMinorReturnType> {
-    // TODO remove after first release has been done using workspace_version
-    if (!isDefined(this.VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG)) {
-      this.logger.warn(
-        'VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG set to true ignoring workspace versions validation step',
-      );
-
-      return 'equal';
-    }
-
     const workspace = await this.workspaceRepository.findOneByOrFail({
       id: workspaceId,
     });

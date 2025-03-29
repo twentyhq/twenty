@@ -29,9 +29,7 @@ export const useDateTimeField = () => {
     }),
   );
 
-  const { setDraftValue } = useRecordFieldInput<FieldDateTimeValue>(
-    `${recordId}-${fieldName}`,
-  );
+  const { setDraftValue } = useRecordFieldInput<FieldDateTimeValue>();
 
   return {
     fieldDefinition,

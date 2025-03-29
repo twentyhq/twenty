@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
@@ -42,20 +42,35 @@ export class DomainManagerService {
     return baseUrl;
   }
 
-  buildEmailVerificationURL({
-    emailVerificationToken,
-    email,
-    workspace,
-  }: {
-    emailVerificationToken: string;
-    email: string;
-    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
-  }) {
-    return this.buildWorkspaceURL({
-      workspace,
-      pathname: 'verify-email',
-      searchParams: { emailVerificationToken, email },
+  private appendSearchParams(
+    url: URL,
+    searchParams: Record<string, string | number>,
+  ) {
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (isDefined(value)) {
+        url.searchParams.set(key, value.toString());
+      }
     });
+  }
+
+  buildBaseUrl({
+    pathname,
+    searchParams,
+  }: {
+    pathname?: string;
+    searchParams?: Record<string, string | number>;
+  }) {
+    const url = this.getBaseUrl();
+
+    if (pathname) {
+      url.pathname = pathname;
+    }
+
+    if (searchParams) {
+      this.appendSearchParams(url, searchParams);
+    }
+
+    return url;
   }
 
   buildWorkspaceURL({
@@ -76,11 +91,7 @@ export class DomainManagerService {
     }
 
     if (searchParams) {
-      Object.entries(searchParams).forEach(([key, value]) => {
-        if (isDefined(value)) {
-          url.searchParams.set(key, value.toString());
-        }
-      });
+      this.appendSearchParams(url, searchParams);
     }
 
     return url;

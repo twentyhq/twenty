@@ -1,7 +1,5 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
@@ -12,23 +10,17 @@ import { ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSetRecordGroups = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-
   const setRecordGroups = useRecoilCallback(
     ({ snapshot, set }) =>
-      (recordGroups: RecordGroupDefinition[], recordIndexId: string) => {
-        const objectMetadataItemId = snapshot
-          .getLoadable(
-            contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-              instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-            }),
-          )
-          .getValue();
-
+      (
+        recordGroups: RecordGroupDefinition[],
+        recordIndexId: string,
+        objectMetadataItemId: string,
+      ) => {
         const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)
           .getValue();
@@ -113,7 +105,11 @@ export const useSetRecordGroups = () => {
   );
 
   const setRecordGroupsFromViewGroups = useCallback(
-    (viewId: string, viewGroups: ViewGroup[]) => {
+    (
+      viewId: string,
+      viewGroups: ViewGroup[],
+      objectMetadataItem: ObjectMetadataItem,
+    ) => {
       const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
         objectMetadataItem.namePlural,
         viewId,
@@ -124,9 +120,13 @@ export const useSetRecordGroups = () => {
         viewGroups,
       });
 
-      setRecordGroups(newGroupDefinitions, recordIndexId);
+      setRecordGroups(
+        newGroupDefinitions,
+        recordIndexId,
+        objectMetadataItem.id,
+      );
     },
-    [objectMetadataItem, setRecordGroups],
+    [setRecordGroups],
   );
 
   return {

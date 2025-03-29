@@ -7,6 +7,7 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -16,7 +17,7 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
 import { useRecoilValue } from 'recoil';
-import { MenuItem } from 'twenty-ui';
+import { IconLayoutSidebarRightExpand, MenuItem } from 'twenty-ui';
 
 const StyledDropdownMenuContainer = styled.div`
   width: 100%;
@@ -53,6 +54,8 @@ export const RecordIndexActionMenuDropdown = () => {
     ),
   );
 
+  const { openCommandMenu } = useCommandMenu();
+
   //TODO: remove this
   const width = recordIndexActions.some(
     (actionMenuEntry) =>
@@ -83,13 +86,22 @@ export const RecordIndexActionMenuDropdown = () => {
                 key={item.key}
                 LeftIcon={item.Icon}
                 onClick={() => {
-                  item.onClick?.();
                   closeDropdown();
+                  item.onClick?.();
                 }}
                 accent={item.accent}
                 text={i18n._(item.label)}
               />
             ))}
+            <MenuItem
+              key="more-actions"
+              LeftIcon={IconLayoutSidebarRightExpand}
+              onClick={() => {
+                closeDropdown();
+                openCommandMenu();
+              }}
+              text="More actions"
+            />
           </DropdownMenuItemsContainer>
         </StyledDropdownMenuContainer>
       }

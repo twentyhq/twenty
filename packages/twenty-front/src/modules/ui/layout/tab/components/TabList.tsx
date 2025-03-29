@@ -1,8 +1,9 @@
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab/states/contexts/TabListComponentInstanceContext';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import * as React from 'react';
 import { useEffect } from 'react';
@@ -21,12 +22,12 @@ export type SingleTabProps<T extends string = string> = {
 };
 
 type TabListProps = {
-  tabListInstanceId: string;
   tabs: SingleTabProps[];
   loading?: boolean;
   behaveAsLinks?: boolean;
   className?: string;
   isInRightDrawer?: boolean;
+  componentInstanceId: string;
 };
 
 const StyledContainer = styled.div`
@@ -38,17 +39,24 @@ const StyledContainer = styled.div`
   user-select: none;
 `;
 
+const StyledOuterContainer = styled.div`
+  width: 100%;
+`;
+
 export const TabList = ({
   tabs,
-  tabListInstanceId,
   loading,
   behaveAsLinks = true,
   isInRightDrawer,
   className,
+  componentInstanceId,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
-  const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
+  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+    activeTabIdComponentState,
+    componentInstanceId,
+  );
 
   const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
 
@@ -61,17 +69,18 @@ export const TabList = ({
   }
 
   return (
-    <div>
-      <TabListScope tabListScopeId={tabListInstanceId}>
+    <TabListComponentInstanceContext.Provider
+      value={{ instanceId: componentInstanceId }}
+    >
+      <StyledOuterContainer>
         <TabListFromUrlOptionalEffect
           isInRightDrawer={!!isInRightDrawer}
-          componentInstanceId={tabListInstanceId}
           tabListIds={tabs.map((tab) => tab.id)}
         />
         <ScrollWrapper
           defaultEnableYScroll={false}
           contextProviderName="tabList"
-          componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
+          componentInstanceId={`scroll-wrapper-tab-list-${componentInstanceId}`}
         >
           <StyledContainer className={className}>
             {visibleTabs.map((tab) => (
@@ -94,7 +103,7 @@ export const TabList = ({
             ))}
           </StyledContainer>
         </ScrollWrapper>
-      </TabListScope>
-    </div>
+      </StyledOuterContainer>
+    </TabListComponentInstanceContext.Provider>
   );
 };

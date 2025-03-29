@@ -47,6 +47,8 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   transition-property: none;
   user-select: none;
   width: calc(100% - 2 * var(--horizontal-padding));
+  box-sizing: border-box;
+  height: 40px;
   &:hover {
     background: ${({ theme }) => theme.background.transparent.lighter};
   }

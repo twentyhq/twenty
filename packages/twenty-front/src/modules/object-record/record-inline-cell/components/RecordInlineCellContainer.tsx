@@ -54,18 +54,14 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
-const StyledInlineCellBaseContainer = styled.div<{
-  isDisplayModeFixHeight?: boolean;
-}>`
-  align-items: flex-start;
+const StyledInlineCellBaseContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
   display: flex;
   height: fit-content;
-  line-height: ${({ isDisplayModeFixHeight }) =>
-    isDisplayModeFixHeight ? `24px` : `18px`};
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
+  align-items: center;
   justify-content: center;
 `;
 
@@ -74,14 +70,8 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const {
-    readonly,
-    IconLabel,
-    label,
-    labelWidth,
-    showLabel,
-    isDisplayModeFixHeight,
-  } = useRecordInlineCellContext();
+  const { readonly, IconLabel, label, labelWidth, showLabel } =
+    useRecordInlineCellContext();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
@@ -111,7 +101,6 @@ export const RecordInlineCellContainer = () => {
 
   return (
     <StyledInlineCellBaseContainer
-      isDisplayModeFixHeight={isDisplayModeFixHeight}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >

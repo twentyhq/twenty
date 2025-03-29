@@ -1,17 +1,17 @@
-import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { FieldMetadataType } from '~/generated/graphql';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { FieldMetadataType } from '~/generated/graphql';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { FieldContextProvider } from '../../../components/FieldContextProvider';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { useTextField } from '../../../hooks/useTextField';
 import { TextFieldInput, TextFieldInputProps } from '../TextFieldInput';
-
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useTextField();
 
@@ -43,20 +43,27 @@ const TextFieldInputWithContext = ({
   }, [setHotKeyScope]);
 
   return (
-    <div>
-      <FieldContextProvider
-        fieldDefinition={{
-          fieldMetadataId: 'text',
-          label: 'Text',
-          type: FieldMetadataType.TEXT,
-          iconName: 'IconTag',
-          metadata: {
-            fieldName: 'Text',
-            placeHolder: 'Enter text',
-            objectMetadataNameSingular: 'person',
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: 'record-field-component-instance-id',
+      }}
+    >
+      <FieldContext.Provider
+        value={{
+          recordId: recordId ?? '123',
+          fieldDefinition: {
+            fieldMetadataId: 'text',
+            label: 'Text',
+            type: FieldMetadataType.TEXT,
+            iconName: 'IconText',
+            metadata: {
+              fieldName: 'text',
+              objectMetadataNameSingular: 'person',
+            },
           },
+          hotkeyScope: 'hotkey-scope',
+          isLabelIdentifier: false,
         }}
-        recordId={recordId}
       >
         <StorybookFieldInputDropdownFocusIdSetterEffect />
         <TextFieldValueSetterEffect value={value} />
@@ -67,9 +74,9 @@ const TextFieldInputWithContext = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      </FieldContextProvider>
+      </FieldContext.Provider>
       <div data-testid="data-field-input-click-outside-div" />
-    </div>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
 

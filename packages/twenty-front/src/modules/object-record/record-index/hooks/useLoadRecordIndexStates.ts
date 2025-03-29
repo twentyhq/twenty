@@ -23,8 +23,8 @@ import { ViewField } from '@/views/types/ViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useLoadRecordIndexStates = () => {
   const setContextStoreTargetedRecordsRuleComponentState =
@@ -176,7 +176,12 @@ export const useLoadRecordIndexStates = () => {
           .getValue();
 
         onViewFieldsChange(view.viewFields, objectMetadataItem, recordIndexId);
-        setRecordGroupsFromViewGroups(view.id, view.viewGroups);
+
+        setRecordGroupsFromViewGroups(
+          view.id,
+          view.viewGroups,
+          objectMetadataItem,
+        );
 
         setContextStoreTargetedRecordsRuleComponentState((prev) => ({
           ...prev,

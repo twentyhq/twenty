@@ -56,8 +56,6 @@ const jestConfig: JestConfigWithTsJest = {
       prefix: '<rootDir>/../..',
     }),
     '^test/(.*)$': '<rootDir>/test/$1',
-    'twenty-emails': '<rootDir>/../twenty-emails/dist/index.js',
-    'twenty-shared': '<rootDir>/../twenty-shared/dist/index.js',
   },
   fakeTimers: {
     enableGlobally: true,

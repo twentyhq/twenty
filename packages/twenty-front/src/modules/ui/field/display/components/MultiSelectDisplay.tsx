@@ -1,9 +1,7 @@
-import { Tag, THEME_COMMON } from 'twenty-ui';
+import { SelectOption, Tag, THEME_COMMON } from 'twenty-ui';
 
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { SelectOption } from '@/spreadsheet-import/types';
 import styled from '@emotion/styled';
-
 const spacing1 = THEME_COMMON.spacing(1);
 
 const StyledContainer = styled.div`
@@ -40,7 +38,7 @@ export const MultiSelectDisplay = ({
           key={index}
           color={selectedOption.color ?? 'transparent'}
           text={selectedOption.label}
-          Icon={selectedOption.icon ?? undefined}
+          Icon={selectedOption.Icon ?? undefined}
         />
       ))}
     </StyledContainer>

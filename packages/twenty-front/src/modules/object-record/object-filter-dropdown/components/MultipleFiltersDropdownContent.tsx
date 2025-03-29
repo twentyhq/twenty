@@ -27,11 +27,11 @@ export const MultipleFiltersDropdownContent = ({
   const shouldShowCompositeSelectionSubMenu =
     objectFilterDropdownIsSelectingCompositeField;
 
-  const shoudShowFilterInput = objectFilterDropdownFilterIsSelected;
+  const shouldShowFilterInput = objectFilterDropdownFilterIsSelected;
 
   return (
     <>
-      {shoudShowFilterInput ? (
+      {shouldShowFilterInput ? (
         <ObjectFilterOperandSelectAndInput
           filterDropdownId={filterDropdownId}
         />

@@ -1,11 +1,12 @@
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowState } from '@/workflow/states/flowState';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowVersionVisualizerEffect = ({
   workflowVersionId,
@@ -16,6 +17,7 @@ export const WorkflowVersionVisualizerEffect = ({
 
   const setFlow = useSetRecoilState(flowState);
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
+  const setWorkflowId = useSetRecoilState(workflowIdState);
   const { populateStepsOutputSchema } = useStepsOutputSchema();
   useEffect(() => {
     if (!isDefined(workflowVersion)) {
@@ -29,7 +31,9 @@ export const WorkflowVersionVisualizerEffect = ({
       trigger: workflowVersion.trigger,
       steps: workflowVersion.steps,
     });
-  }, [setFlow, workflowVersion]);
+
+    setWorkflowId(workflowVersion.workflowId);
+  }, [setFlow, setWorkflowId, workflowVersion]);
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {

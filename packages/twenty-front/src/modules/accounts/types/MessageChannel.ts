@@ -1,5 +1,5 @@
-import { ConnectedAccountProvider } from 'twenty-shared';
 import { MessageChannelVisibility } from '~/generated/graphql';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 export enum MessageChannelContactAutoCreationPolicy {
   SENT_AND_RECEIVED = 'SENT_AND_RECEIVED',

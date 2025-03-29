@@ -48,13 +48,14 @@ export const AdvancedSettingsWrapper = ({
   children,
   hideDot = false,
   dotPosition = 'centered',
+  animationDimension = 'height',
 }: AdvancedSettingsWrapperProps) => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   return (
     <AnimatedExpandableContainer
       isExpanded={isAdvancedModeEnabled}
-      dimension="height"
+      dimension={animationDimension}
       animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
       mode="scroll-height"
       containAnimation={false}

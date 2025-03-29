@@ -1,34 +1,18 @@
 import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionServerlessFunction';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFindRecords';
-import { WorkflowEditActionForm } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionForm';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
+import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
-import { Suspense, lazy } from 'react';
-import { isDefined } from 'twenty-shared';
-import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
-
-const WorkflowEditActionServerlessFunction = lazy(() =>
-  import(
-    '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionServerlessFunction'
-  ).then((module) => ({
-    default: module.WorkflowEditActionServerlessFunction,
-  })),
-);
-
-const WorkflowReadonlyActionServerlessFunction = lazy(() =>
-  import(
-    '@/workflow/workflow-steps/workflow-actions/components/WorkflowReadonlyActionServerlessFunction'
-  ).then((module) => ({
-    default: module.WorkflowReadonlyActionServerlessFunction,
-  })),
-);
+import { WorkflowEditTriggerWebhookForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowStepDetailProps = {
   stepId: string;
@@ -85,6 +69,15 @@ export const WorkflowStepDetail = ({
             />
           );
         }
+        case 'WEBHOOK': {
+          return (
+            <WorkflowEditTriggerWebhookForm
+              key={stepId}
+              trigger={stepDefinition.definition}
+              triggerOptions={props}
+            />
+          );
+        }
         case 'CRON': {
           return (
             <WorkflowEditTriggerCronForm
@@ -105,20 +98,11 @@ export const WorkflowStepDetail = ({
       switch (stepDefinition.definition.type) {
         case 'CODE': {
           return (
-            <Suspense fallback={<RightDrawerSkeletonLoader />}>
-              {props.readonly ? (
-                <WorkflowReadonlyActionServerlessFunction
-                  key={stepId}
-                  action={stepDefinition.definition}
-                />
-              ) : (
-                <WorkflowEditActionServerlessFunction
-                  key={stepId}
-                  action={stepDefinition.definition}
-                  actionOptions={props}
-                />
-              )}
-            </Suspense>
+            <WorkflowActionServerlessFunction
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
           );
         }
         case 'SEND_EMAIL': {
@@ -172,7 +156,7 @@ export const WorkflowStepDetail = ({
 
         case 'FORM': {
           return (
-            <WorkflowEditActionForm
+            <WorkflowEditActionFormBuilder
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}

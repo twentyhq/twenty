@@ -61,7 +61,7 @@ export const Disabled: Story = {
       primaryEmail: 'tim@twenty.com',
       additionalEmails: [],
     },
-    onPersist: fn(),
+    onChange: fn(),
     VariablePicker: () => <div>VariablePicker</div>,
     readonly: true,
   },
@@ -79,7 +79,7 @@ export const Disabled: Story = {
 
     await userEvent.type(editor, 'hello@gmail.com');
 
-    expect(args.onPersist).not.toHaveBeenCalled();
+    expect(args.onChange).not.toHaveBeenCalled();
     expect(canvas.queryByText('hello@gmail.com')).not.toBeInTheDocument();
     expect(defaultValue).toBeVisible();
 

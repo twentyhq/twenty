@@ -11,7 +11,7 @@ import {
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { getTriggerStepName } from '@/workflow/workflow-variables/utils/getTriggerStepName';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useStepsOutputSchema = () => {
   const populateStepsOutputSchema = useRecoilCallback(

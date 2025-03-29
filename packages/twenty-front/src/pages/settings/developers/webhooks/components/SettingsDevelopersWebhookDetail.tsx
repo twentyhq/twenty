@@ -12,27 +12,21 @@ import {
   IconRefresh,
   IconTrash,
   Section,
+  SelectOption,
   useIcons,
 } from 'twenty-ui';
 
-import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
-import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
-import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/AnalyticsGraphDataInstanceContext';
-import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const OBJECT_DROPDOWN_WIDTH = 340;
@@ -61,8 +55,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
-
   const isMobile = useIsMobile();
 
   const { getIcon } = useIcons();
@@ -89,10 +81,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
     useState(false);
-
-  const isAnalyticsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAnalyticsV2Enabled,
-  );
 
   const fieldTypeOptions: SelectOption<string>[] = useMemo(
     () => [
@@ -223,20 +211,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
             fullWidth
           />
         </Section>
-        {!isCreationMode && isAnalyticsEnabled && isAnalyticsV2Enabled && (
-          <AnalyticsGraphDataInstanceContext.Provider
-            value={{ instanceId: `webhook-${webhookId}-analytics` }}
-          >
-            <AnalyticsGraphEffect
-              recordId={webhookId}
-              endpointName="getWebhookAnalytics"
-            />
-            <AnalyticsActivityGraph
-              recordId={webhookId}
-              endpointName="getWebhookAnalytics"
-            />
-          </AnalyticsGraphDataInstanceContext.Provider>
-        )}
         <Section>
           <H2Title
             title={t`Danger zone`}

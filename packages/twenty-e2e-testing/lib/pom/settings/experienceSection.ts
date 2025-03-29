@@ -7,11 +7,12 @@ export class ExperienceSection {
   private readonly dateFormatDropdown: Locator;
   private readonly timeFormatDropdown: Locator;
   private readonly searchInput: Locator;
+  private readonly languageDropdown: Locator;
 
   constructor(public readonly page: Page) {
     this.page = page;
-    this.lightThemeButton = page.getByText('AaLight'); // it works
-    this.darkThemeButton = page.getByText('AaDark');
+    this.lightThemeButton = page.locator('div[variant="Light"]').first();
+    this.darkThemeButton = page.locator('div[variant="Dark"]').first();
     this.timezoneDropdown = page.locator(
       '//span[contains(., "Time zone")]/../div/div/div',
     );
@@ -22,6 +23,9 @@ export class ExperienceSection {
       '//span[contains(., "Time format")]/../div/div/div',
     );
     this.searchInput = page.getByPlaceholder('Search');
+    this.languageDropdown = page.locator(
+      '//h2[contains(., "Language")]/../../../div/div/div',
+    );
   }
 
   async changeThemeToLight() {
@@ -51,5 +55,10 @@ export class ExperienceSection {
   async selectTimeFormat(timeFormat: string) {
     await this.timeFormatDropdown.click();
     await this.page.getByText(timeFormat, { exact: true }).click();
+  }
+
+  async selectLanguage(language: string) {
+    await this.languageDropdown.click();
+    await this.page.getByText(language, { exact: true }).click();
   }
 }

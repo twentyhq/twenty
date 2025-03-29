@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphError } from '@microsoft/microsoft-graph-client';
-
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 
 @Injectable()
 export class MicrosoftHandleErrorService {
-  public handleMicrosoftMessageFetchError(error: GraphError): void {
+  public handleMicrosoftMessageFetchError(error: any): void {
     if (!error.statusCode) {
       throw new MessageImportDriverException(
         `Microsoft Graph API unknown error: ${error}`,
@@ -31,9 +30,24 @@ export class MicrosoftHandleErrorService {
       );
     }
 
+    if (error.statusCode === 429) {
+      throw new MessageImportDriverException(
+        `Microsoft Graph API ${error.code} ${error.statusCode} error: ${error.message}`,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
+    }
+
     throw new MessageImportDriverException(
-      `Microsoft Graph API error: ${error.message}`,
+      `Microsoft driver error: ${error.message}`,
       MessageImportDriverExceptionCode.UNKNOWN,
+    );
+  }
+
+  public throwMicrosoftBatchError(error: any): void {
+    throw new MicrosoftImportDriverException(
+      error.message,
+      error.code,
+      error.statusCode,
     );
   }
 }

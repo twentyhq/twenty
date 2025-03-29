@@ -62,8 +62,6 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
       );
     }
 
-    this.logger.log(
-      `Finished synchronizing all active workspaces (${total} workspaces).`,
-    );
+    this.logger.log(`Finished synchronizing workspace.`);
   }
 }

@@ -2,16 +2,17 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor } from '@storybook/test';
 import { useEffect } from 'react';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   AddressInput,
   AddressInputProps,
 } from '@/ui/field/input/components/AddressInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 
 const AddressValueSetterEffect = ({
   value,
@@ -49,32 +50,46 @@ const AddressInputWithContext = ({
 
   return (
     <div>
-      <FieldContextProvider
-        fieldDefinition={{
-          fieldMetadataId: 'text',
-          label: 'Address',
-          type: FieldMetadataType.ADDRESS,
-          iconName: 'IconTag',
-          metadata: {
-            fieldName: 'Address',
-            placeHolder: 'Enter text',
-            objectMetadataNameSingular: 'person',
-          },
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: getRecordFieldInputId(
+            recordId ?? '',
+            'Address',
+            'record-table-cell',
+          ),
         }}
-        recordId={recordId}
       >
-        <AddressValueSetterEffect value={value} />
-        <AddressInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          value={value}
-          hotkeyScope="hotkey-scope"
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      </FieldContextProvider>
-      <div data-testid="data-field-input-click-outside-div" />
+        <FieldContext.Provider
+          value={{
+            fieldDefinition: {
+              fieldMetadataId: 'text',
+              label: 'Address',
+              type: FieldMetadataType.ADDRESS,
+              iconName: 'IconTag',
+              metadata: {
+                fieldName: 'Address',
+                placeHolder: 'Enter text',
+                objectMetadataNameSingular: 'person',
+              },
+            },
+            recordId: recordId ?? '123',
+            hotkeyScope: 'hotkey-scope',
+            isLabelIdentifier: false,
+          }}
+        >
+          <AddressValueSetterEffect value={value} />
+          <AddressInput
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClickOutside={onClickOutside}
+            value={value}
+            hotkeyScope="hotkey-scope"
+            onTab={onTab}
+            onShiftTab={onShiftTab}
+          />
+        </FieldContext.Provider>
+        <div data-testid="data-field-input-click-outside-div" />
+      </RecordFieldComponentInstanceContext.Provider>
     </div>
   );
 };

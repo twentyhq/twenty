@@ -1,6 +1,11 @@
 import styled from '@emotion/styled';
 import { MouseEvent, useMemo, useRef, useState } from 'react';
-import { IconComponent, MenuItem, MenuItemSelect } from 'twenty-ui';
+import {
+  IconComponent,
+  MenuItem,
+  MenuItemSelect,
+  SelectOption,
+} from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -9,14 +14,8 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
-
-export type SelectOption<Value extends string | number | boolean | null> = {
-  value: Value;
-  label: string;
-  Icon?: IconComponent;
-};
 
 export type SelectSizeVariant = 'small' | 'default';
 

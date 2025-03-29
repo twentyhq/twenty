@@ -7,22 +7,20 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { Select } from '@/ui/input/components/Select';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
+import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  assertUnreachable,
-  ConnectedAccountProvider,
-  isDefined,
-} from 'twenty-shared';
-import { IconPlus, useIcons } from 'twenty-ui';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { IconPlus, SelectOption, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -50,7 +48,6 @@ export const WorkflowEditActionSendEmail = ({
   action,
   actionOptions,
 }: WorkflowEditActionSendEmailProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
@@ -191,6 +188,9 @@ export const WorkflowEditActionSendEmail = ({
 
   const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
   const headerIcon = getActionIcon(action.type);
+  const headerIconColor = useActionIconColorOrThrow(action.type);
+  const headerType = useActionHeaderTypeOrThrow(action.type);
+
   const navigate = useNavigateSettings();
 
   const { closeCommandMenu } = useCommandMenu();
@@ -209,9 +209,9 @@ export const WorkflowEditActionSendEmail = ({
             });
           }}
           Icon={getIcon(headerIcon)}
-          iconColor={theme.color.blue}
+          iconColor={headerIconColor}
           initialTitle={headerTitle}
-          headerType="Email"
+          headerType={headerType}
           disabled={actionOptions.readonly}
         />
         <WorkflowStepBody>
@@ -240,7 +240,7 @@ export const WorkflowEditActionSendEmail = ({
             placeholder="Enter receiver email"
             readonly={actionOptions.readonly}
             defaultValue={formData.email}
-            onPersist={(email) => {
+            onChange={(email) => {
               handleFieldChange('email', email);
             }}
             VariablePicker={WorkflowVariablePicker}
@@ -250,7 +250,7 @@ export const WorkflowEditActionSendEmail = ({
             placeholder="Enter email subject"
             readonly={actionOptions.readonly}
             defaultValue={formData.subject}
-            onPersist={(subject) => {
+            onChange={(subject) => {
               handleFieldChange('subject', subject);
             }}
             VariablePicker={WorkflowVariablePicker}
@@ -260,7 +260,7 @@ export const WorkflowEditActionSendEmail = ({
             placeholder="Enter email body"
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
-            onPersist={(body) => {
+            onChange={(body) => {
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}

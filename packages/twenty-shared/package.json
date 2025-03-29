@@ -1,21 +1,49 @@
 {
   "name": "twenty-shared",
-  "version": "0.44.0-canary",
+  "version": "0.50.0-canary",
+  "main": "dist/twenty-shared.cjs.js",
+  "module": "dist/twenty-shared.esm.js",
   "license": "AGPL-3.0",
-  "main": "./dist/index.js",
   "scripts": {
-    "build": "npx vite build"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
+    "build": "preconstruct build"
   },
   "engines": {
     "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
-  }
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
+    "@preconstruct/cli": "^2.8.12",
+    "@prettier/sync": "^0.5.2",
+    "@types/babel__preset-env": "^7",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "glob": "^11.0.1",
+    "tsx": "^4.19.3"
+  },
+  "dependencies": {
+    "@sniptt/guards": "^0.2.0",
+    "zod": "3.23.8"
+  },
+  "preconstruct": {
+    "tsconfig": "tsconfig.lib.json",
+    "entrypoints": [
+      "./index.ts",
+      "./constants/index.ts",
+      "./testing/index.ts",
+      "./translations/index.ts",
+      "./types/index.ts",
+      "./utils/index.ts",
+      "./workspace/index.ts"
+    ]
+  },
+  "files": [
+    "dist",
+    "constants",
+    "testing",
+    "translations",
+    "types",
+    "utils",
+    "workspace"
+  ]
 }

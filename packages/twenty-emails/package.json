@@ -1,6 +1,6 @@
 {
   "name": "twenty-emails",
-  "version": "0.44.0-canary",
+  "version": "0.50.0-canary",
   "description": "",
   "author": "",
   "private": true,
@@ -10,7 +10,14 @@
     "build": "npx vite build"
   },
   "dependencies": {
+    "@lingui/core": "^5.1.2",
+    "@lingui/react": "^5.1.2",
     "twenty-shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@lingui/cli": "^5.1.2",
+    "@lingui/swc-plugin": "^5.1.0",
+    "@lingui/vite-plugin": "^5.1.2"
   },
   "exports": {
     ".": {

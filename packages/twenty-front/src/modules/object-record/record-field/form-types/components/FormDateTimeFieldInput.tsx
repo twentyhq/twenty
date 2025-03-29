@@ -29,7 +29,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
 
 const StyledInputContainer = styled(FormFieldInputInputContainer)`
@@ -77,9 +77,9 @@ type DraftValue =
 type FormDateTimeFieldInputProps = {
   dateOnly?: boolean;
   label?: string;
-  placeholder?: string;
   defaultValue: string | undefined;
-  onPersist: (value: string | null) => void;
+  onChange: (value: string | null) => void;
+  placeholder?: string;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -88,9 +88,10 @@ export const FormDateTimeFieldInput = ({
   dateOnly,
   label,
   defaultValue,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
+  placeholder,
 }: FormDateTimeFieldInputProps) => {
   const { timeZone } = useContext(UserContext);
 
@@ -130,11 +131,11 @@ export const FormDateTimeFieldInput = ({
 
   const persistDate = (newDate: Nullable<Date>) => {
     if (!isDefined(newDate)) {
-      onPersist(null);
+      onChange(null);
     } else {
       const newDateISO = newDate.toISOString();
 
-      onPersist(newDateISO);
+      onChange(newDateISO);
     }
   };
 
@@ -149,7 +150,8 @@ export const FormDateTimeFieldInput = ({
   const displayDatePicker =
     draftValue.type === 'static' && draftValue.mode === 'edit';
 
-  const placeholder = dateOnly ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm';
+  const placeholderToDisplay =
+    placeholder ?? (dateOnly ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm');
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
@@ -312,7 +314,7 @@ export const FormDateTimeFieldInput = ({
 
     setInputDateTime('');
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   const handleUnlinkVariable = () => {
@@ -324,7 +326,7 @@ export const FormDateTimeFieldInput = ({
 
     setPickerDate(null);
 
-    onPersist(null);
+    onChange(null);
   };
 
   return (
@@ -340,7 +342,7 @@ export const FormDateTimeFieldInput = ({
             <>
               <StyledDateInput
                 type="text"
-                placeholder={placeholder}
+                placeholder={placeholderToDisplay}
                 value={inputDateTime}
                 onFocus={handleInputFocus}
                 onChange={handleInputChange}

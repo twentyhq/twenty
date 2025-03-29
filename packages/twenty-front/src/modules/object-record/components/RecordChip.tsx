@@ -6,7 +6,7 @@ import {
   isModifiedEvent,
 } from 'twenty-ui';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -39,7 +39,7 @@ export const RecordChip = ({
     record,
   });
 
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
@@ -77,7 +77,12 @@ export const RecordChip = ({
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       className={className}
-      variant={variant}
+      variant={
+        variant ??
+        (!forceDisableClick
+          ? AvatarChipVariant.Regular
+          : AvatarChipVariant.Transparent)
+      }
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={(clickEvent) => {
         // TODO refactor wrapper event listener to avoid colliding events

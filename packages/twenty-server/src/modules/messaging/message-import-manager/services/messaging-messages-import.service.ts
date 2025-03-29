@@ -146,7 +146,7 @@ export class MessagingMessagesImportService {
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
 
-      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreationJob(
+      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
         messagesToSave,
         messageChannel,
         connectedAccount,
@@ -192,7 +192,7 @@ export class MessagingMessagesImportService {
 
       await this.messageImportErrorHandlerService.handleDriverException(
         error,
-        MessageImportSyncStep.MESSAGES_IMPORT,
+        MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
         messageChannel,
         workspaceId,
       );

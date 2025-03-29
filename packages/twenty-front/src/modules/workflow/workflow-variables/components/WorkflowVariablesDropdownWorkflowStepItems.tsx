@@ -1,4 +1,4 @@
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -12,6 +12,7 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 type WorkflowVariablesDropdownWorkflowStepItemsProps = {
   dropdownId: string;
@@ -37,7 +38,14 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconX} onClick={closeDropdown}>
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={closeDropdown}
+            Icon={IconX}
+          />
+        }
+      >
         <OverflowingTextWithTooltip text={'Select Step'} />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput

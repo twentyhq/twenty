@@ -14,7 +14,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui';
 import { getOperandLabel } from '../utils/getOperandLabel';
 
@@ -66,7 +66,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
 
     if (isValuelessOperand && isDefined(fieldMetadataItemUsedInDropdown)) {
       applyRecordFilter({
-        id: v4(),
+        id: selectedFilter?.id ? selectedFilter.id : v4(),
         fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
         displayValue: '',
         operand: newOperand,

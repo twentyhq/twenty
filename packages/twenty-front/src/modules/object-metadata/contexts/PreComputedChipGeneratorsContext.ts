@@ -8,9 +8,8 @@ export type ChipGeneratorPerObjectNameSingularPerFieldName = Record<
   Record<string, (record: ObjectRecord) => RecordChipData>
 >;
 
-export type IdentifierChipGeneratorPerObject = Record<
-  string,
-  (record: ObjectRecord) => RecordChipData
+export type IdentifierChipGeneratorPerObject = Partial<
+  Record<string, (record: ObjectRecord) => RecordChipData>
 >;
 
 export type PreComputedChipGeneratorsContextProps = {

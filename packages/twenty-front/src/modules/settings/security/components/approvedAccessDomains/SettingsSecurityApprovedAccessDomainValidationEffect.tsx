@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared';
 import { useValidateApprovedAccessDomainMutation } from '~/generated/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSearchParams } from 'react-router-dom';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [validateApprovedAccessDomainMutation] =
