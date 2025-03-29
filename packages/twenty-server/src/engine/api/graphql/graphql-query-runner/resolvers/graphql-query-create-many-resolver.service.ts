@@ -86,14 +86,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       executionArgs,
       conflictingFields,
     );
-    const existingRecordMaps = this.buildExistingRecordMaps(
-      existingRecords,
-      conflictingFields,
-    );
+
     const { recordsToUpdate, recordsToInsert } = this.categorizeRecords(
       executionArgs.args.data,
       conflictingFields,
-      existingRecordMaps,
+      existingRecords,
     );
 
     const result: InsertResult = {
@@ -210,26 +207,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     return whereConditions;
   }
 
-  private buildExistingRecordMaps(
-    existingRecords: Partial<ObjectRecord>[],
-    conflictingFields: {
-      baseField: string;
-      fullPath: string;
-      column: string;
-    }[],
-  ): Record<string, Map<any, ObjectRecord>> {
-    return conflictingFields.reduce((maps, field) => {
-      maps[field.fullPath] = new Map();
-      existingRecords.forEach((record) => {
-        if (record[field.fullPath]) {
-          maps[field.fullPath].set(record[field.fullPath], record);
-        }
-      });
-
-      return maps;
-    }, {});
-  }
-
   private categorizeRecords(
     records: Partial<ObjectRecord>[],
     conflictingFields: {
@@ -237,7 +214,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       fullPath: string;
       column: string;
     }[],
-    existingRecordMaps: Record<string, Map<any, ObjectRecord>>,
+    existingRecords: Partial<ObjectRecord>[],
   ): {
     recordsToUpdate: Partial<ObjectRecord>[];
     recordsToInsert: Partial<ObjectRecord>[];
@@ -246,25 +223,37 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const recordsToInsert: Partial<ObjectRecord>[] = [];
 
     for (const record of records) {
-      let existingRecord: ObjectRecord | null = null;
+      let existingRecord: Partial<ObjectRecord> | null = null;
 
       for (const field of conflictingFields) {
-        let fieldValue;
+        let requestFieldValue;
+
         const pathParts = field.fullPath.split('.');
 
         if (pathParts.length === 1) {
-          fieldValue = record[field.fullPath];
+          requestFieldValue = record[field.fullPath];
+          const existingRec = existingRecords.find(
+            (existingRecord) =>
+              existingRecord[field.column] === requestFieldValue,
+          );
+
+          if (existingRec) {
+            existingRecord = { ...record, id: existingRec.id };
+            break;
+          }
         } else {
           const [parentField, childField] = pathParts;
 
-          fieldValue = record[parentField]?.[childField];
-        }
+          requestFieldValue = record[parentField]?.[childField];
+          const existingRec = existingRecords.find(
+            (existingRecord) =>
+              existingRecord[field.column] === requestFieldValue,
+          );
 
-        if (fieldValue && existingRecordMaps[field.fullPath].has(fieldValue)) {
-          existingRecord = existingRecordMaps[field.fullPath].get(
-            fieldValue,
-          ) as ObjectRecord;
-          break;
+          if (existingRec) {
+            existingRecord = { ...record, id: existingRec.id };
+            break;
+          }
         }
       }
 
