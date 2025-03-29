@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { capitalize } from 'twenty-shared/utils';
-import { In, InsertResult } from 'typeorm';
+import { In, InsertResult, ObjectLiteral } from 'typeorm';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -17,6 +17,8 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -77,31 +79,22 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
     const { objectMetadataItemWithFieldMaps } = executionArgs.options;
-
-    const uniqueFields = [
-      ...objectMetadataItemWithFieldMaps.fields.filter(
-        (field) => field.isUnique || field.name === 'id',
-      ),
-    ];
-
-    const conflictingFields: string[] = [];
-
-    uniqueFields.forEach((field) => {
-      const compositeType = compositeTypeDefinitions.get(field.type);
-
-      if (compositeType) {
-        conflictingFields.push(
-          compositeType.properties
-            .filter((property) => property.isIncludedInUniqueConstraint)
-            .map((property) => `${field.name}${capitalize(property.name)}`)
-            .join(),
-          // For now we assume that there is only one unique field per composite type
-          // I believe this assumption has already been taken elsewhere in the codebase
-        );
-      } else {
-        conflictingFields.push(field.name);
-      }
-    });
+    const conflictingFields = this.getConflictingFields(
+      objectMetadataItemWithFieldMaps,
+    );
+    const existingRecords = await this.findExistingRecords(
+      executionArgs,
+      conflictingFields,
+    );
+    const existingRecordMaps = this.buildExistingRecordMaps(
+      existingRecords,
+      conflictingFields,
+    );
+    const { recordsToUpdate, recordsToInsert } = this.categorizeRecords(
+      executionArgs.args.data,
+      conflictingFields,
+      existingRecordMaps,
+    );
 
     const result: InsertResult = {
       identifiers: [],
@@ -109,42 +102,168 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       raw: [],
     };
 
+    await this.processRecordsToUpdate(
+      recordsToUpdate,
+      executionArgs.repository,
+      objectMetadataItemWithFieldMaps,
+      result,
+    );
+
+    await this.processRecordsToInsert(
+      recordsToInsert,
+      executionArgs.repository,
+      result,
+    );
+
+    return result;
+  }
+
+  private getConflictingFields(
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  ): {
+    baseField: string;
+    fullPath: string;
+    column: string;
+  }[] {
+    return objectMetadataItemWithFieldMaps.fields
+      .filter((field) => field.isUnique || field.name === 'id')
+      .flatMap((field) => {
+        const compositeType = compositeTypeDefinitions.get(field.type);
+
+        if (!compositeType) {
+          return [
+            {
+              baseField: field.name,
+              fullPath: field.name,
+              column: field.name,
+            },
+          ];
+        }
+
+        const property = compositeType.properties.find(
+          (prop) => prop.isIncludedInUniqueConstraint,
+        );
+
+        return property
+          ? [
+              {
+                baseField: field.name,
+                fullPath: `${field.name}.${property.name}`,
+                column: `${field.name}${capitalize(property.name)}`,
+              },
+            ]
+          : [];
+      });
+  }
+
+  private async findExistingRecords(
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
+    conflictingFields: {
+      baseField: string;
+      fullPath: string;
+      column: string;
+    }[],
+  ): Promise<Partial<ObjectRecord>[]> {
+    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+    const queryBuilder = executionArgs.repository.createQueryBuilder(
+      objectMetadataItemWithFieldMaps.nameSingular,
+    );
+
+    const whereConditions = this.buildWhereConditions(
+      executionArgs.args.data,
+      conflictingFields,
+    );
+
+    return queryBuilder.where(whereConditions).getMany();
+  }
+
+  private buildWhereConditions(
+    records: Partial<ObjectRecord>[],
+    conflictingFields: {
+      baseField: string;
+      fullPath: string;
+      column: string;
+    }[],
+  ): Record<string, any> {
     const whereConditions = {};
 
     for (const field of conflictingFields) {
-      const fieldValues = executionArgs.args.data
-        .map((record) => record[field])
+      const fieldValues = records
+        .map((record) => {
+          const pathParts = field.fullPath.split('.');
+
+          if (pathParts.length === 1) {
+            return record[field.fullPath];
+          }
+
+          const [parentField, childField] = pathParts;
+
+          return record[parentField]?.[childField];
+        })
         .filter(Boolean);
 
       if (fieldValues.length > 0) {
-        whereConditions[field] = In(fieldValues);
+        whereConditions[field.column] = In(fieldValues);
       }
     }
 
-    const existingRecords = await executionArgs.repository.find({
-      where: whereConditions,
-    });
+    return whereConditions;
+  }
 
-    const existingRecordMaps = conflictingFields.reduce((maps, field) => {
-      maps[field] = new Map();
+  private buildExistingRecordMaps(
+    existingRecords: Partial<ObjectRecord>[],
+    conflictingFields: {
+      baseField: string;
+      fullPath: string;
+      column: string;
+    }[],
+  ): Record<string, Map<any, ObjectRecord>> {
+    return conflictingFields.reduce((maps, field) => {
+      maps[field.fullPath] = new Map();
       existingRecords.forEach((record) => {
-        if (record[field]) {
-          maps[field].set(record[field], record);
+        if (record[field.fullPath]) {
+          maps[field.fullPath].set(record[field.fullPath], record);
         }
       });
 
       return maps;
     }, {});
+  }
 
+  private categorizeRecords(
+    records: Partial<ObjectRecord>[],
+    conflictingFields: {
+      baseField: string;
+      fullPath: string;
+      column: string;
+    }[],
+    existingRecordMaps: Record<string, Map<any, ObjectRecord>>,
+  ): {
+    recordsToUpdate: Partial<ObjectRecord>[];
+    recordsToInsert: Partial<ObjectRecord>[];
+  } {
     const recordsToUpdate: Partial<ObjectRecord>[] = [];
     const recordsToInsert: Partial<ObjectRecord>[] = [];
 
-    for (const record of executionArgs.args.data) {
+    for (const record of records) {
       let existingRecord: ObjectRecord | null = null;
 
       for (const field of conflictingFields) {
-        if (record[field] && existingRecordMaps[field].has(record[field])) {
-          existingRecord = existingRecordMaps[field].get(record[field]);
+        let fieldValue;
+        const pathParts = field.fullPath.split('.');
+
+        if (pathParts.length === 1) {
+          fieldValue = record[field.fullPath];
+        } else {
+          const [parentField, childField] = pathParts;
+
+          fieldValue = record[parentField]?.[childField];
+        }
+
+        if (fieldValue && existingRecordMaps[field.fullPath].has(fieldValue)) {
+          existingRecord = existingRecordMaps[field.fullPath].get(
+            fieldValue,
+          ) as ObjectRecord;
           break;
         }
       }
@@ -156,6 +275,15 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       }
     }
 
+    return { recordsToUpdate, recordsToInsert };
+  }
+
+  private async processRecordsToUpdate(
+    recordsToUpdate: Partial<ObjectRecord>[],
+    repository: WorkspaceRepository<ObjectLiteral>,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    result: InsertResult,
+  ): Promise<void> {
     for (const record of recordsToUpdate) {
       const recordId = record.id as string;
 
@@ -168,21 +296,24 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         objectMetadataItemWithFieldMaps,
       );
 
-      await executionArgs.repository.update(recordId, formattedRecord);
+      await repository.update(recordId, formattedRecord);
       result.identifiers.push({ id: recordId });
       result.generatedMaps.push({ id: recordId });
     }
+  }
 
+  private async processRecordsToInsert(
+    recordsToInsert: Partial<ObjectRecord>[],
+    repository: WorkspaceRepository<ObjectLiteral>,
+    result: InsertResult,
+  ): Promise<void> {
     if (recordsToInsert.length > 0) {
-      const insertResult =
-        await executionArgs.repository.insert(recordsToInsert);
+      const insertResult = await repository.insert(recordsToInsert);
 
       result.identifiers.push(...insertResult.identifiers);
       result.generatedMaps.push(...insertResult.generatedMaps);
       result.raw.push(...insertResult.raw);
     }
-
-    return result;
   }
 
   private async fetchUpsertedRecords(
