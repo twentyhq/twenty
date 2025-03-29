@@ -95,6 +95,7 @@ const RelationManyFieldInputWithContext = () => {
             recordId: 'recordId',
             hotkeyScope: 'hotkey-scope',
             isLabelIdentifier: false,
+            isReadOnly: false,
           }}
         >
           <RelationWorkspaceSetterEffect />

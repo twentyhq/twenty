@@ -93,6 +93,7 @@ const DateFieldInputWithContext = ({
           recordId: '123',
           hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
+          isReadOnly: false,
         }}
       >
         <StorybookFieldInputDropdownFocusIdSetterEffect />

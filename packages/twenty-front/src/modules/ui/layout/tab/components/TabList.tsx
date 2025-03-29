@@ -79,7 +79,6 @@ export const TabList = ({
         />
         <ScrollWrapper
           defaultEnableYScroll={false}
-          contextProviderName="tabList"
           componentInstanceId={`scroll-wrapper-tab-list-${componentInstanceId}`}
         >
           <StyledContainer className={className}>

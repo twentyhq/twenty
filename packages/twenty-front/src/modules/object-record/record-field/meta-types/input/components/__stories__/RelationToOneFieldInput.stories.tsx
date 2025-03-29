@@ -88,6 +88,7 @@ const RelationToOneFieldInputWithContext = ({
           recordId: recordId,
           hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
+          isReadOnly: false,
         }}
       >
         <RecordFieldComponentInstanceContext.Provider

@@ -79,10 +79,7 @@ export const CommandMenuList = ({
       <CommandMenuDefaultSelectionEffect
         selectableItemIds={selectableItemIds}
       />
-      <ScrollWrapper
-        contextProviderName="commandMenu"
-        componentInstanceId={`scroll-wrapper-command-menu`}
-      >
+      <ScrollWrapper componentInstanceId={`scroll-wrapper-command-menu`}>
         <StyledInnerList>
           <SelectableList
             selectableListId="command-menu-list"

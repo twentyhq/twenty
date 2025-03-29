@@ -70,6 +70,7 @@ const meta: Meta = {
               ...relationFromManyFieldDisplayMock.fieldDefinition,
             } as unknown as FieldDefinition<FieldMetadata>,
             hotkeyScope: 'hotkey-scope',
+            isReadOnly: false,
           }}
         >
           <RelationFieldValueSetterEffect />

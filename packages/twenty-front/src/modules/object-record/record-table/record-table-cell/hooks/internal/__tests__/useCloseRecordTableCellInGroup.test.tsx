@@ -54,6 +54,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
             recordId: 'recordId',
             hotkeyScope: TableHotkeyScope.Table,
             isLabelIdentifier: false,
+            isReadOnly: false,
           }}
         >
           <RecordTableRowContextProvider value={recordTableRowContextValue}>

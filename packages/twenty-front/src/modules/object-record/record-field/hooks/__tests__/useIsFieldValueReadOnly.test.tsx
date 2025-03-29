@@ -3,10 +3,7 @@ import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import {
-  actorFieldDefinition,
-  phonesFieldDefinition,
-} from '@/object-record/record-field/__mocks__/fieldDefinitions';
+import { phonesFieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -44,6 +41,7 @@ const getWrapper =
                   recordId,
                   hotkeyScope: 'hotkeyScope',
                   isLabelIdentifier: false,
+                  isReadOnly: false,
                 }}
               >
                 {children}
@@ -56,24 +54,35 @@ const getWrapper =
   };
 
 describe('useIsFieldValueReadOnly', () => {
-  it('should take fieldDefinition into account', () => {
-    const { result } = renderHook(() => useIsFieldValueReadOnly(), {
-      wrapper: getWrapper(phonesFieldDefinition, false),
-    });
+  it('should return true if the field is read only', () => {
+    const { result } = renderHook(() =>
+      useIsFieldValueReadOnly({
+        fieldDefinition: phonesFieldDefinition,
+        isRecordReadOnly: false,
+      }),
+    );
 
     expect(result.current).toBe(false);
-
-    const { result: result2 } = renderHook(() => useIsFieldValueReadOnly(), {
-      wrapper: getWrapper(actorFieldDefinition, false),
-    });
-
-    expect(result2.current).toBe(true);
   });
 
-  it('should take isRecordDeleted into account', () => {
-    const { result } = renderHook(() => useIsFieldValueReadOnly(), {
-      wrapper: getWrapper(phonesFieldDefinition, true),
-    });
+  it('should return false if the field is not read only', () => {
+    const { result } = renderHook(() =>
+      useIsFieldValueReadOnly({
+        fieldDefinition: phonesFieldDefinition,
+        isRecordReadOnly: false,
+      }),
+    );
+
+    expect(result.current).toBe(false);
+  });
+
+  it('should return true if the record is read only', () => {
+    const { result } = renderHook(() =>
+      useIsFieldValueReadOnly({
+        fieldDefinition: phonesFieldDefinition,
+        isRecordReadOnly: true,
+      }),
+    );
 
     expect(result.current).toBe(true);
   });

@@ -341,6 +341,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
           hotkeyScope: 'hotkeyScope',
           isLabelIdentifier: false,
           useUpdateRecord: useUpdateOneRecordMutation,
+          isReadOnly: false,
         }}
       >
         {children}

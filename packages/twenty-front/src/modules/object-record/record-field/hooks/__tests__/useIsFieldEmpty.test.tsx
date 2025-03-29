@@ -16,6 +16,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
       recordId,
       hotkeyScope: 'hotkeyScope',
       isLabelIdentifier: false,
+      isReadOnly: false,
     }}
   >
     <RecoilRoot>{children}</RecoilRoot>

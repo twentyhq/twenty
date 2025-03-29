@@ -46,6 +46,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
               objectMetadataItem: mockedCompanyObjectMetadataItem,
             }),
             hotkeyScope: 'hotkey-scope',
+            isReadOnly: false,
           }}
         >
           <Story />

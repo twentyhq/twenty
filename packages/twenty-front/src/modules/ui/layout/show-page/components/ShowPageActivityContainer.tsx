@@ -70,7 +70,6 @@ export const ShowPageActivityContainer = ({
 
   return (
     <ScrollWrapper
-      contextProviderName="showPageActivityContainer"
       componentInstanceId={`scroll-wrapper-tab-list-${targetableObject.id}`}
     >
       <StyledShowPageActivityContainer>

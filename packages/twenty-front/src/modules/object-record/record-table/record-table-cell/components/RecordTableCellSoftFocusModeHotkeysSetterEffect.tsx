@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -11,14 +11,12 @@ import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-
 export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
-  const isFieldReadOnly = useIsFieldValueReadOnly();
-
   const { openTableCell } = useOpenRecordTableCellFromCell();
+  const { isReadOnly } = useContext(FieldContext);
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
@@ -50,7 +48,7 @@ export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
   useScopedHotkeys(
     Key.Enter,
     () => {
-      if (isFieldReadOnly) {
+      if (isReadOnly) {
         return;
       }
 
@@ -67,7 +65,7 @@ export const RecordTableCellSoftFocusModeHotkeysSetterEffect = () => {
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
-      if (isFieldReadOnly) {
+      if (isReadOnly) {
         return;
       }
 

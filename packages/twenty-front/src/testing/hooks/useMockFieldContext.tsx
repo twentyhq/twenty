@@ -56,6 +56,7 @@ export const useMockFieldContext = ({
               hotkeyScope:
                 customHotkeyScope ?? InlineCellHotkeyScope.InlineCell,
               clearable,
+              isReadOnly: false,
             }}
           >
             {children}

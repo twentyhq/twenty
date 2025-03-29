@@ -112,6 +112,7 @@ export const CalendarEventDetails = ({
           }),
           useUpdateRecord: () => [() => undefined, { loading: false }],
           maxWidth: 300,
+          isReadOnly: false,
         }}
       >
         <RecordFieldComponentInstanceContext.Provider

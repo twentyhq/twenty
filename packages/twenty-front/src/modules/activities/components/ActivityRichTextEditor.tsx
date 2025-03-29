@@ -8,17 +8,14 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
-import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -26,6 +23,7 @@ import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/com
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { PartialBlock } from '@blocknote/core';
 import '@blocknote/core/fonts/inter.css';
@@ -56,17 +54,11 @@ export const ActivityRichTextEditor = ({
       objectNameSingular: activityObjectNameSingular,
     });
 
-  const contextStoreCurrentViewType = useRecoilComponentValueV2(
-    contextStoreCurrentViewTypeComponentState,
-  );
-
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+  const isRecordReadOnly = useIsRecordReadOnly({ recordId: activityId });
 
   const isReadOnly = isFieldValueReadOnly({
     objectNameSingular: activityObjectNameSingular,
-    hasObjectReadOnlyPermission,
-    contextStoreCurrentViewType,
-    isRecordDeleted: activityInStore?.deletedAt !== null,
+    isRecordReadOnly,
   });
 
   const {

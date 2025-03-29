@@ -27,6 +27,7 @@ import {
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -209,7 +210,14 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
-  const isReadOnly = useIsFieldValueReadOnly();
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: relationRecord.id,
+  });
+
+  const isFieldReadOnly = useIsFieldValueReadOnly({
+    fieldDefinition,
+    isRecordReadOnly,
+  });
 
   return (
     <>
@@ -226,7 +234,7 @@ export const RecordDetailRelationRecordsListItem = ({
             accent="tertiary"
           />
         </StyledClickableZone>
-        {!isReadOnly && (
+        {!isFieldReadOnly && (
           <DropdownScope dropdownScopeId={dropdownScopeId}>
             <Dropdown
               dropdownId={dropdownScopeId}
@@ -279,6 +287,7 @@ export const RecordDetailRelationRecordsListItem = ({
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                  isReadOnly: false,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider

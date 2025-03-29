@@ -17,10 +17,6 @@ form {
   display: contents;
 }
 
-html, body {
-  overscroll-behavior: none;
-}
-
 /* https://stackoverflow.com/questions/44543157/how-to-hide-the-google-invisible-recaptcha-badge */
 .grecaptcha-badge {
   visibility: hidden !important;

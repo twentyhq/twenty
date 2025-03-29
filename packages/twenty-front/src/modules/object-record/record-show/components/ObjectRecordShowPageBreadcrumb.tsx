@@ -1,6 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
@@ -55,6 +56,10 @@ export const ObjectRecordShowPageBreadcrumb = ({
     objectRecordId,
   });
 
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: objectRecordId,
+  });
+
   if (loading) {
     return null;
   }
@@ -87,6 +92,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
             hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isCentered: false,
             isDisplayModeFixHeight: true,
+            isReadOnly: isRecordReadOnly,
           }}
         >
           <RecordTitleCell sizeVariant="xs" />

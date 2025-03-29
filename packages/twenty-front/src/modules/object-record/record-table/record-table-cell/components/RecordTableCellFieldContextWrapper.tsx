@@ -2,6 +2,7 @@ import { ReactNode, useContext } from 'react';
 
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
@@ -31,7 +32,13 @@ export const RecordTableCellFieldContextWrapper = ({
 
   const { columnDefinition } = useContext(RecordTableCellContext);
 
-  const { recordId } = useRecordTableRowContextOrThrow();
+  const { recordId, isReadOnly: isTableRowReadOnly } =
+    useRecordTableRowContextOrThrow();
+
+  const isFieldReadOnly = useIsFieldValueReadOnly({
+    fieldDefinition: columnDefinition,
+    isRecordReadOnly: isTableRowReadOnly ?? false,
+  });
 
   const updateRecord = useContext(RecordUpdateContext);
 
@@ -86,6 +93,7 @@ export const RecordTableCellFieldContextWrapper = ({
           objectMetadataItem,
         }),
         displayedMaxRows: 1,
+        isReadOnly: isFieldReadOnly,
       }}
     >
       <RecordFieldComponentInstanceContext.Provider

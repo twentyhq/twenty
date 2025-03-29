@@ -6,7 +6,7 @@ import { IconPlus, ThemeContext } from 'twenty-ui';
 import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/constants/HiddenTableColumnDropdownId';
 import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 
 const StyledPlusIconHeaderCell = styled.th<{
   theme: Theme;
@@ -55,11 +55,11 @@ const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
 export const RecordTableHeaderLastColumn = () => {
   const { theme } = useContext(ThemeContext);
 
-  const scrollWrapper = useScrollWrapperScopedRef('recordTableWithWrappers');
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const isTableWiderThanScreen =
-    (scrollWrapper.ref.current?.clientWidth ?? 0) <
-    (scrollWrapper.ref.current?.scrollWidth ?? 0);
+    (scrollWrapperHTMLElement?.clientWidth ?? 0) <
+    (scrollWrapperHTMLElement?.scrollWidth ?? 0);
 
   return (
     <>

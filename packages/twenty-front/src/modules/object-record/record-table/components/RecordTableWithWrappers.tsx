@@ -102,7 +102,6 @@ export const RecordTableWithWrappers = ({
       >
         <EntityDeleteContext.Provider value={deleteOneRecord}>
           <ScrollWrapper
-            contextProviderName="recordTableWithWrappers"
             componentInstanceId={`record-table-scroll-${recordTableId}`}
           >
             <RecordUpdateContext.Provider value={updateRecordMutation}>
