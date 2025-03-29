@@ -26,6 +26,7 @@ export type ChipProps = {
   disabled?: boolean;
   clickable?: boolean;
   label: string;
+  isLabelHidden?: boolean;
   maxWidth?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
@@ -124,6 +125,7 @@ const StyledContainer = withTheme(styled.div<
 export const Chip = ({
   size = ChipSize.Small,
   label,
+  isLabelHidden = false,
   disabled = false,
   clickable = true,
   variant = ChipVariant.Regular,
@@ -145,7 +147,9 @@ export const Chip = ({
       maxWidth={maxWidth}
     >
       {leftComponent?.()}
-      <OverflowingTextWithTooltip size={size} text={label} />
+      {!isLabelHidden && (
+        <OverflowingTextWithTooltip size={size} text={label} />
+      )}
       {rightComponent?.()}
     </StyledContainer>
   );
