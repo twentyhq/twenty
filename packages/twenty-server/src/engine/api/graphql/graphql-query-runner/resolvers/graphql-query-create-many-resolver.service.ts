@@ -227,33 +227,24 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 
       for (const field of conflictingFields) {
         let requestFieldValue;
-
         const pathParts = field.fullPath.split('.');
 
         if (pathParts.length === 1) {
           requestFieldValue = record[field.fullPath];
-          const existingRec = existingRecords.find(
-            (existingRecord) =>
-              existingRecord[field.column] === requestFieldValue,
-          );
-
-          if (existingRec) {
-            existingRecord = { ...record, id: existingRec.id };
-            break;
-          }
         } else {
           const [parentField, childField] = pathParts;
 
           requestFieldValue = record[parentField]?.[childField];
-          const existingRec = existingRecords.find(
-            (existingRecord) =>
-              existingRecord[field.column] === requestFieldValue,
-          );
+        }
 
-          if (existingRec) {
-            existingRecord = { ...record, id: existingRec.id };
-            break;
-          }
+        const existingRec = existingRecords.find(
+          (existingRecord) =>
+            existingRecord[field.column] === requestFieldValue,
+        );
+
+        if (existingRec) {
+          existingRecord = { ...record, id: existingRec.id };
+          break;
         }
       }
 
