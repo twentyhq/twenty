@@ -175,6 +175,21 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     return queryBuilder.orWhere(whereConditions).getMany();
   }
 
+  private getValueFromPath(
+    record: Partial<ObjectRecord>,
+    path: string,
+  ): unknown {
+    const pathParts = path.split('.');
+
+    if (pathParts.length === 1) {
+      return record[path];
+    }
+
+    const [parentField, childField] = pathParts;
+
+    return record[parentField]?.[childField];
+  }
+
   private buildWhereConditions(
     records: Partial<ObjectRecord>[],
     conflictingFields: {
@@ -187,17 +202,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 
     for (const field of conflictingFields) {
       const fieldValues = records
-        .map((record) => {
-          const pathParts = field.fullPath.split('.');
-
-          if (pathParts.length === 1) {
-            return record[field.fullPath];
-          }
-
-          const [parentField, childField] = pathParts;
-
-          return record[parentField]?.[childField];
-        })
+        .map((record) => this.getValueFromPath(record, field.fullPath))
         .filter(Boolean);
 
       if (fieldValues.length > 0) {
@@ -227,16 +232,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       let existingRecord: Partial<ObjectRecord> | null = null;
 
       for (const field of conflictingFields) {
-        let requestFieldValue;
-        const pathParts = field.fullPath.split('.');
-
-        if (pathParts.length === 1) {
-          requestFieldValue = record[field.fullPath];
-        } else {
-          const [parentField, childField] = pathParts;
-
-          requestFieldValue = record[parentField]?.[childField];
-        }
+        const requestFieldValue = this.getValueFromPath(record, field.fullPath);
 
         const existingRec = existingRecords.find(
           (existingRecord) =>
