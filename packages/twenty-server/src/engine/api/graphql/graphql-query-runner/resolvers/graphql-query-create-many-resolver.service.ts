@@ -171,7 +171,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       conflictingFields,
     );
 
-    return queryBuilder.where(whereConditions).getMany();
+    return queryBuilder.orWhere(whereConditions).getMany();
   }
 
   private buildWhereConditions(
