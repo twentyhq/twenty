@@ -14,6 +14,7 @@ import { RestApiMetadataController } from 'src/engine/api/rest/metadata/rest-api
 import { RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-metadata.service';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { RecordTransformerModule } from 'src/engine/services/record-transformer/record-transformer.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
@@ -25,6 +26,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     AuthModule,
     HttpModule,
     TwentyORMModule,
+    RecordTransformerModule,
   ],
   controllers: [
     RestApiMetadataController,

@@ -22,7 +22,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-import { overrideFieldValue } from 'src/utils/override-field-value.util';
+import { RecordInputTransformerService } from 'src/engine/services/record-transformer/record-input-transformer.service';
 
 import { RecordPositionFactory } from './record-position.factory';
 
@@ -33,7 +33,10 @@ type ArgPositionBackfillInput = {
 
 @Injectable()
 export class QueryRunnerArgsFactory {
-  constructor(private readonly recordPositionFactory: RecordPositionFactory) {}
+  constructor(
+    private readonly recordPositionFactory: RecordPositionFactory,
+    private readonly recordInputTransformerService: RecordInputTransformerService,
+  ) {}
 
   async create(
     args: ResolverArgs,
@@ -200,75 +203,16 @@ export class QueryRunnerArgsFactory {
           return [key, newValue];
         }
         case FieldMetadataType.NUMBER:
-          return [key, value === null ? null : Number(value)];
         case FieldMetadataType.RICH_TEXT:
-          throw new Error(
-            'Rich text is not supported, please use RICH_TEXT_V2 instead',
-          );
-        case FieldMetadataType.RICH_TEXT_V2: {
-          const overriddenValue = await overrideFieldValue(
+        case FieldMetadataType.RICH_TEXT_V2:
+        case FieldMetadataType.LINKS:
+        case FieldMetadataType.EMAILS: {
+          const transformedValue = await this.recordInputTransformerService.transformFieldValue(
             fieldMetadata.type,
             value,
           );
 
-          return [key, overriddenValue];
-        }
-        case FieldMetadataType.LINKS: {
-          const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
-
-          let secondaryLinks = value?.secondaryLinks;
-
-          if (secondaryLinks) {
-            try {
-              const secondaryLinksArray = JSON.parse(secondaryLinks);
-
-              secondaryLinks = JSON.stringify(
-                secondaryLinksArray.map((link) => {
-                  return {
-                    ...link,
-                    url: lowercaseDomain(link.url),
-                  };
-                }),
-              );
-            } catch {
-              /* empty */
-            }
-          }
-
-          return [
-            key,
-            {
-              ...value,
-              primaryLinkUrl: newPrimaryLinkUrl,
-              secondaryLinks,
-            },
-          ];
-        }
-        case FieldMetadataType.EMAILS: {
-          let additionalEmails = value?.additionalEmails;
-          const primaryEmail = value?.primaryEmail
-            ? value.primaryEmail.toLowerCase()
-            : '';
-
-          if (additionalEmails) {
-            try {
-              const emailArray = JSON.parse(additionalEmails) as string[];
-
-              additionalEmails = JSON.stringify(
-                emailArray.map((email) => email.toLowerCase()),
-              );
-            } catch {
-              /* empty */
-            }
-          }
-
-          return [
-            key,
-            {
-              primaryEmail,
-              additionalEmails,
-            },
-          ];
+          return [key, transformedValue];
         }
         default:
           return [key, value];
@@ -344,8 +288,9 @@ export class QueryRunnerArgsFactory {
       return value;
     }
 
+    // Special handling for filter values, which have a specific structure
     switch (fieldMetadata.type) {
-      case 'NUMBER': {
+      case FieldMetadataType.NUMBER: {
         if (value?.is === 'NULL') {
           return value;
         } else {
@@ -373,11 +318,9 @@ export class QueryRunnerArgsFactory {
       return value;
     }
 
-    switch (fieldMetadata.type) {
-      case FieldMetadataType.NUMBER:
-        return Number(value);
-      default:
-        return value;
-    }
+    return this.recordInputTransformerService.transformFieldValue(
+      fieldMetadata.type,
+      value,
+    );
   }
 }

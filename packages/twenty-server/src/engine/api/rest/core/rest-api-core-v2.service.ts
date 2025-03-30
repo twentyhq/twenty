@@ -1,20 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
 import { capitalize } from 'twenty-shared/utils';
+import { Request } from 'express';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { overrideFieldValue } from 'src/utils/override-field-value.util';
+import { RecordInputTransformerService } from 'src/engine/services/record-transformer/record-input-transformer.service';
 
 @Injectable()
 export class RestApiCoreServiceV2 {
   constructor(
     private readonly coreQueryBuilderFactory: CoreQueryBuilderFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly recordInputTransformerService: RecordInputTransformerService,
   ) {}
 
   async delete(request: Request) {
@@ -97,15 +98,10 @@ export class RestApiCoreServiceV2 {
       return data;
     }
 
-    const result = {};
-
-    for (const [key, value] of Object.entries(data)) {
-      const fieldMetadata = fieldMetadataByFieldName[key];
-
-      result[key] = await overrideFieldValue(fieldMetadata?.type, value);
-    }
-
-    return result;
+    return this.recordInputTransformerService.process({
+      recordInput: data,
+      fieldMetadataByName: fieldMetadataByFieldName,
+    });
   }
 
   private formatResult<T>(

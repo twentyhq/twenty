@@ -12,6 +12,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { RecordTransformerModule } from 'src/engine/services/record-transformer/record-transformer.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -29,6 +30,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     TelemetryModule,
     FileModule,
     FeatureFlagModule,
+    RecordTransformerModule,
   ],
   providers: [
     ...workspaceQueryRunnerFactories,
