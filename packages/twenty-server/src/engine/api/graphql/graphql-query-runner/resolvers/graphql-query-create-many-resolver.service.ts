@@ -18,6 +18,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -299,8 +300,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   private async fetchUpsertedRecords(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
     objectRecords: InsertResult,
-    objectMetadataItemWithFieldMaps: any,
-    objectMetadataMaps: any,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<ObjectRecord[]> {
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -323,8 +324,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   private async processNestedRelationsIfNeeded(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
     upsertedRecords: ObjectRecord[],
-    objectMetadataItemWithFieldMaps: any,
-    objectMetadataMaps: any,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
@@ -346,8 +347,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
 
   private formatRecordsForResponse(
     upsertedRecords: ObjectRecord[],
-    objectMetadataItemWithFieldMaps: any,
-    objectMetadataMaps: any,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): ObjectRecord[] {
     const typeORMObjectRecordsParser =
