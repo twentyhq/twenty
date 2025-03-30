@@ -20,7 +20,6 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { RecordInputTransformerService } from 'src/engine/services/record-transformer/record-input-transformer.service';
 
@@ -101,7 +100,7 @@ export class QueryRunnerArgsFactory {
       case ResolverArgsType.UpdateMany:
         return {
           ...args,
-          filter: await this.overrideFilterByFieldMetadata(
+          filter: this.overrideFilterByFieldMetadata(
             (args as UpdateManyResolverArgs).filter,
             fieldMetadataMapByNameByName,
           ),
@@ -118,7 +117,7 @@ export class QueryRunnerArgsFactory {
       case ResolverArgsType.FindOne:
         return {
           ...args,
-          filter: await this.overrideFilterByFieldMetadata(
+          filter: this.overrideFilterByFieldMetadata(
             (args as FindOneResolverArgs).filter,
             fieldMetadataMapByNameByName,
           ),
@@ -126,7 +125,7 @@ export class QueryRunnerArgsFactory {
       case ResolverArgsType.FindMany:
         return {
           ...args,
-          filter: await this.overrideFilterByFieldMetadata(
+          filter: this.overrideFilterByFieldMetadata(
             (args as FindManyResolverArgs).filter,
             fieldMetadataMapByNameByName,
           ),
@@ -207,10 +206,11 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.RICH_TEXT_V2:
         case FieldMetadataType.LINKS:
         case FieldMetadataType.EMAILS: {
-          const transformedValue = await this.recordInputTransformerService.transformFieldValue(
-            fieldMetadata.type,
-            value,
-          );
+          const transformedValue =
+            await this.recordInputTransformerService.transformFieldValue(
+              fieldMetadata.type,
+              value,
+            );
 
           return [key, transformedValue];
         }
