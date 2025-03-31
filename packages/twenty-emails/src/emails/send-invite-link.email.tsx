@@ -58,7 +58,6 @@ export const SendInviteLinkEmail = ({
         <CallToAction href={link} value={<Trans>Accept invite</Trans>} />
       </HighlightedContainer>
       <WhatIsTwenty />
-      <Footer />
     </BaseEmail>
   );
 };

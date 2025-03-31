@@ -1,4 +1,4 @@
-import { Column, Row, Section } from '@react-email/components';
+import { Column, Container, Row } from '@react-email/components';
 import { Link } from 'src/components/Link';
 import { ShadowText } from 'src/components/ShadowText';
 
@@ -8,7 +8,7 @@ const footerContainerStyle = {
 
 export const Footer = () => {
   return (
-    <Section style={footerContainerStyle}>
+    <Container style={footerContainerStyle}>
       <Row>
         <Column>
           <ShadowText>
@@ -54,6 +54,6 @@ export const Footer = () => {
         <br />
         San Francisco, CA 94114
       </ShadowText>
-    </Section>
+    </Container>
   );
 };

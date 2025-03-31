@@ -4,6 +4,7 @@ import { Container, Html } from '@react-email/components';
 import { PropsWithChildren } from 'react';
 
 import { BaseHead } from 'src/components/BaseHead';
+import { Footer } from 'src/components/Footer';
 import { Logo } from 'src/components/Logo';
 import { messages as afMessages } from '../locales/generated/af-ZA';
 import { messages as arMessages } from '../locales/generated/ar-SA';
@@ -37,6 +38,7 @@ import { messages as viMessages } from '../locales/generated/vi-VN';
 import { messages as zhHansMessages } from '../locales/generated/zh-CN';
 import { messages as zhHantMessages } from '../locales/generated/zh-TW';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+
 
 type BaseEmailProps = PropsWithChildren<{
   width?: number;
@@ -95,6 +97,7 @@ export const BaseEmail = ({ children, width, locale }: BaseEmailProps) => {
         <Container width={width || 290}>
           <Logo />
           {children}
+          <Footer />
         </Container>
       </Html>
     </I18nProvider>

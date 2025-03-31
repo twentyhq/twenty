@@ -29,7 +29,6 @@ export const SendEmailVerificationLinkEmail = ({
           verify your email address.
         </Trans>
       </MainText>
-      <Footer />
     </BaseEmail>
   );
 };

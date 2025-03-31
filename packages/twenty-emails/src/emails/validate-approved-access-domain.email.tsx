@@ -65,7 +65,6 @@ export const SendApprovedAccessDomainValidation = ({
         <CallToAction href={link} value={t`Validate domain`} />
       </HighlightedContainer>
       <WhatIsTwenty />
-      <Footer />
     </BaseEmail>
   );
 };
