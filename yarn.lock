@@ -54543,6 +54543,7 @@ __metadata:
     gray-matter: "npm:^4.0.3"
     next-runtime-env: "npm:^3.2.2"
     postgres: "npm:^3.4.3"
+    twenty-ui: "workspace:*"
   languageName: unknown
   linkType: soft
 
