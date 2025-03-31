@@ -109,7 +109,7 @@ export const CatalogDecorator: Decorator = (Story, context) => {
   ] = dimensions as CatalogDimension[];
 
   return (
-    <StyledContainer>a
+    <StyledContainer>
       {dimension4.values.map((value4: any) => (
         <StyledColumnContainer key={value4}>
           <StyledColumnTitle>
