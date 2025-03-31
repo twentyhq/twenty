@@ -52,10 +52,8 @@ const ContextStoreDecorator: Decorator = (Story) => {
             >
               <JestContextStoreSetter
                 contextStoreCurrentObjectMetadataNameSingular="company"
-                contextStoreNumberOfSelectedRecords={1}
                 contextStoreCurrentViewId="1"
                 contextStoreCurrentViewType={ContextStoreViewType.Table}
-                contextStoreFilters={[]}
               >
                 <Story />
               </JestContextStoreSetter>
