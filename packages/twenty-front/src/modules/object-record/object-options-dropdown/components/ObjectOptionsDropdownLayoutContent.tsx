@@ -1,7 +1,6 @@
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
-  IconLayoutKanban,
   IconLayoutList,
   IconLayoutNavbar,
   IconLayoutSidebarRight,
@@ -25,7 +24,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ViewType } from '@/views/types/ViewType';
+import { viewIcon, ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -102,7 +101,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             }}
           />
           <MenuItemSelect
-            LeftIcon={IconLayoutKanban}
+            LeftIcon={viewIcon(ViewType.Kanban)}
             text={t`Kanban`}
             disabled={isDefaultView}
             contextualText={

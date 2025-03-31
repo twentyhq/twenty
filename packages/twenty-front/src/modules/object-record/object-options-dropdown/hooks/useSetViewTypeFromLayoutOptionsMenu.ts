@@ -9,11 +9,12 @@ import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistVie
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewGroup } from '@/views/types/ViewGroup';
-import { ViewType } from '@/views/types/ViewType';
+import { viewIcon, ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { IconComponent } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
@@ -143,6 +144,19 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       loadRecordIndexStates,
     ],
   );
+
+  const shouldChangeIcon = (
+    icon: IconComponent,
+    oldViewType: ViewType,
+  ): boolean => {
+    if (icon === viewIcon(ViewType.Kanban) && oldViewType === ViewType.Kanban) {
+      return true;
+    }
+    if (icon === viewIcon(ViewType.Table) && oldViewType === ViewType.Table) {
+      return true;
+    }
+    return false;
+  };
 
   return {
     setAndPersistViewType,
