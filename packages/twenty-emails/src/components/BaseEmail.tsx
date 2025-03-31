@@ -39,7 +39,6 @@ import { messages as zhHansMessages } from '../locales/generated/zh-CN';
 import { messages as zhHantMessages } from '../locales/generated/zh-TW';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
-
 type BaseEmailProps = PropsWithChildren<{
   width?: number;
   locale: keyof typeof APP_LOCALES;
