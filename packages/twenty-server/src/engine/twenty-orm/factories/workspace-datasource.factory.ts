@@ -60,7 +60,11 @@ export class WorkspaceDatasourceFactory {
     const cacheKey: CacheKey = `${workspaceId}-${cachedWorkspaceMetadataVersion}`;
 
     if (cacheKey in this.cachedDataSourcePromise) {
-      return this.cachedDataSourcePromise[cacheKey];
+      try {
+        return await this.cachedDataSourcePromise[cacheKey];
+      } catch (error) {
+        delete this.cachedDataSourcePromise[cacheKey];
+      }
     }
 
     const creationPromise = (async (): Promise<WorkspaceDataSource> => {
