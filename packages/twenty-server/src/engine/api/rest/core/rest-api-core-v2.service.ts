@@ -90,16 +90,16 @@ export class RestApiCoreServiceV2 {
   }
 
   private async overrideDataByFieldMetadata(
-    data: any,
+    recordInput: any,
     fieldMetadataByFieldName: Record<string, FieldMetadataInterface>,
   ): Promise<any> {
-    if (!data) {
-      return data;
+    if (!recordInput) {
+      return recordInput;
     }
 
     return this.recordInputTransformerService.process({
-      recordInput: data,
-      fieldMetadataByName: fieldMetadataByFieldName,
+      recordInput,
+      fieldMetadataByFieldName,
     });
   }
 

@@ -11,15 +11,16 @@ import {
   richTextV2ValueSchema,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
+import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 @Injectable()
 export class RecordInputTransformerService {
   async process({
     recordInput,
-    fieldMetadataByName,
+    fieldMetadataByFieldName,
   }: {
     recordInput: Record<string, any>;
-    fieldMetadataByName: Record<string, FieldMetadataInterface>;
+    fieldMetadataByFieldName: Record<string, FieldMetadataInterface>;
   }): Promise<Record<string, any>> {
     if (!recordInput) {
       return {};
@@ -27,7 +28,7 @@ export class RecordInputTransformerService {
 
     const transformedEntries = await Promise.all(
       Object.entries(recordInput).map(async ([key, value]) => {
-        const fieldMetadata = fieldMetadataByName[key];
+        const fieldMetadata = fieldMetadataByFieldName[key];
 
         if (!fieldMetadata) {
           return [key, value];
@@ -107,7 +108,7 @@ export class RecordInputTransformerService {
         const secondaryLinksArray = JSON.parse(secondaryLinks);
 
         secondaryLinks = JSON.stringify(
-          secondaryLinksArray.map((link) => {
+          secondaryLinksArray.map((link: LinkMetadata) => {
             return {
               ...link,
               url: lowercaseDomain(link.url),
