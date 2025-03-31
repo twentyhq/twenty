@@ -12,7 +12,7 @@ export const IconsProvider = ({ children }: IconsProviderProps) => {
 
   useEffect(() => {
     import('./internal/AllIcons').then((lazyLoadedIcons) => {
-      setIcons(lazyLoadedIcons.ALL_ICONS);
+      setIcons(lazyLoadedIcons);
     });
   }, [setIcons]);
 
