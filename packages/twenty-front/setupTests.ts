@@ -14,6 +14,3 @@ import '@testing-library/jest-dom';
 global.structuredClone = (val) => {
   return JSON.parse(JSON.stringify(val));
 };
-
-// Required to allow generating AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL correctly
-jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'))
