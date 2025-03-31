@@ -4,7 +4,6 @@ import { Trans } from '@lingui/react/macro';
 
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
-import { Footer } from 'src/components/Footer';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { APP_LOCALES } from 'twenty-shared/translations';
