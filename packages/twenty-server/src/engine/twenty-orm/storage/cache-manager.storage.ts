@@ -31,15 +31,21 @@ export class CacheManager<T> {
       }
     }
 
-    const value = await factory();
+    try {
+      const value = await factory();
 
-    if (!value) {
-      return null;
+      if (!value) {
+        return null;
+      }
+
+      this.cache.set(cacheKey, value);
+
+      return value;
+    } catch (error) {
+      this.cache.delete(cacheKey);
+
+      throw error;
     }
-
-    this.cache.set(cacheKey, value);
-
-    return value;
   }
 
   async clearKey(
