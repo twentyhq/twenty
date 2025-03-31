@@ -17,35 +17,18 @@ const jestConfig: JestConfigWithTsJest = {
   testEnvironment: 'jsdom',
 
   transformIgnorePatterns: [
-    '/node_modules/(?!(@emotion|twenty-ui)/.*)', // This will include all @emotion packages
-    '../../node_modules/(?!(@emotion|twenty-ui)/.*)', // This will include all @emotion packages
+    '/node_modules/(?!(twenty-ui)/.*)',
+    '../../node_modules/(?!(twenty-ui)/.*)',
     '../../twenty-ui/',
   ],
   transform: {
-    // react: {
-    //   runtime: 'automatic',
-    //   emotion: {
-    //     // Enable emotion support
-    //     enabled: true,
-    //     autoLabel: 'dev-only',
-    //     labelFormat: '[local]',
-    //     importMap: {
-    //       '@emotion/react': {
-    //         styled: {
-    //           canonicalImport: ['@emotion/styled', 'default'],
-    //           styledBaseImport: ['@emotion/styled', 'default']
-    //         }
-    //       }
-    //     }
-    //   }
-    // } as any,
-    '"\\.[jt]sx?$"': [
+    '^.+\\.(ts|js|tsx|jsx)$': [
       '@swc/jest',
       {
         jsc: {
           parser: {
-            syntax: 'typescript', // or 'ecmascript' if you're using JavaScript
-            tsx: true, // or jsx: true for JavaScript
+            syntax: 'typescript',
+            tsx: true,
           },
           transform: {
             react: {
@@ -54,7 +37,19 @@ const jestConfig: JestConfigWithTsJest = {
           },
           experimental: {
             plugins: [
-              ['@swc/plugin-emotion', {}],
+              [
+                '@swc/plugin-emotion',
+                {
+                  importMap: {
+                    '@emotion/styled': {
+                      styled: {
+                        canonicalImport: ['@emotion/styled', 'default'],
+                        styledBaseImport: ['@emotion/styled', 'default'],
+                      },
+                    },
+                  },
+                },
+              ],
               ['@lingui/swc-plugin', {}],
             ],
           },
@@ -66,8 +61,6 @@ const jestConfig: JestConfigWithTsJest = {
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMock.js',
     '\\.css$': '<rootDir>/__mocks__/styleMock.js',
-    '@emotion/styled': '<rootDir>/../../node_modules/@emotion/styled',
-    '@emotion/react': '<rootDir>/../../node_modules/@emotion/react',
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
       prefix: '<rootDir>/../../',
     }),

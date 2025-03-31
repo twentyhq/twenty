@@ -31,7 +31,19 @@
             }
           }
         ],
-        ["@swc/plugin-emotion", {}]
+        [
+          "@swc/plugin-emotion",
+          {
+            "importMap": {
+              "@emotion/styled": {
+                "styled": {
+                  "canonicalImport": ["@emotion/styled", "default"],
+                  "styledBaseImport": ["@emotion/styled", "default"]
+                }
+              }
+            }
+          }
+        ]
       ]
     }
   },

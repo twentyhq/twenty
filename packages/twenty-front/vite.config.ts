@@ -140,7 +140,11 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      exclude: ['../../node_modules/.vite', '../../node_modules/.cache', 'twenty-ui`'],
+      exclude: [
+        '../../node_modules/.vite',
+        '../../node_modules/.cache',
+        '../../node_modules/twenty-ui',
+      ],
     },
 
     build: {
