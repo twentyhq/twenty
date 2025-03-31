@@ -23,7 +23,7 @@ export class RecordInputTransformerService {
     fieldMetadataByFieldName: Record<string, FieldMetadataInterface>;
   }): Promise<Record<string, any>> {
     if (!recordInput) {
-      return {};
+      return recordInput;
     }
 
     const transformedEntries = await Promise.all(

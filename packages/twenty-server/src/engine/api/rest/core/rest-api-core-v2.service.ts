@@ -39,15 +39,13 @@ export class RestApiCoreServiceV2 {
   }
 
   async createOne(request: Request) {
-    const { body } = request;
-
     const { fieldMetadataByFieldName, objectMetadataNameSingular, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
 
-    const overriddenBody = await this.overrideDataByFieldMetadata(
-      body,
+    const overriddenBody = await this.recordInputTransformerService.process({
+      recordInput: request.body,
       fieldMetadataByFieldName,
-    );
+    });
 
     const createdRecord = await repository.save(overriddenBody);
 
@@ -72,10 +70,10 @@ export class RestApiCoreServiceV2 {
       where: { id: recordId },
     });
 
-    const overriddenBody = await this.overrideDataByFieldMetadata(
-      request.body,
+    const overriddenBody = await this.recordInputTransformerService.process({
+      recordInput: request.body,
       fieldMetadataByFieldName,
-    );
+    });
 
     const updatedRecord = await repository.save({
       ...recordToUpdate,
@@ -87,20 +85,6 @@ export class RestApiCoreServiceV2 {
       objectMetadataNameSingular,
       updatedRecord,
     );
-  }
-
-  private async overrideDataByFieldMetadata(
-    recordInput: any,
-    fieldMetadataByFieldName: Record<string, FieldMetadataInterface>,
-  ): Promise<any> {
-    if (!recordInput) {
-      return recordInput;
-    }
-
-    return this.recordInputTransformerService.process({
-      recordInput,
-      fieldMetadataByFieldName,
-    });
   }
 
   private formatResult<T>(
