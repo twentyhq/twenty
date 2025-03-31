@@ -1,6 +1,6 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Pill } from '@ui/components/Pill/Pill';
+import { Pill } from '@ui/components/pill/Pill';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { MotionProps, motion } from 'framer-motion';

@@ -1,13 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { AVATAR_URL_MOCK, ComponentDecorator } from '@ui/testing';
+import { AVATAR_URL_MOCK, ComponentDecorator, RecoilRootDecorator } from '@ui/testing';
 
 import { Avatar } from '../Avatar';
 
 const meta: Meta<typeof Avatar> = {
   title: 'Modules/Users/Avatar',
   component: Avatar,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, RecoilRootDecorator],
   args: {
     avatarUrl: AVATAR_URL_MOCK,
     size: 'md',
