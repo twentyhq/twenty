@@ -3,9 +3,8 @@ import { checkTwentyVersionExists } from '@/settings/admin-panel/utils/checkTwen
 import { fetchLatestTwentyRelease } from '@/settings/admin-panel/utils/fetchLatestTwentyRelease';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { GITHUB_LINK } from '@ui/navigation/link/constants/GithubLink';
 import { useEffect, useState } from 'react';
-import { IconCircleDot, IconStatusChange } from 'twenty-ui';
+import { GITHUB_LINK, IconCircleDot, IconStatusChange } from "twenty-ui";
 import packageJson from '../../../../../package.json';
 
 const StyledActionLink = styled.a`

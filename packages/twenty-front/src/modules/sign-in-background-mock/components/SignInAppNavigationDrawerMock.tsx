@@ -8,8 +8,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { getOsControlSymbol } from '@ui/utilities/device/getOsControlSymbol';
-import { IconSearch, IconSettings, useIsMobile } from 'twenty-ui';
+import { IconSearch, IconSettings, getOsControlSymbol, useIsMobile } from "twenty-ui";
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
