@@ -21,6 +21,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
@@ -49,7 +50,13 @@ const ContextStoreDecorator: Decorator = (Story) => {
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
-              <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
+              <JestContextStoreSetter
+                contextStoreCurrentObjectMetadataNameSingular="company"
+                contextStoreNumberOfSelectedRecords={1}
+                contextStoreCurrentViewId="1"
+                contextStoreCurrentViewType={ContextStoreViewType.Table}
+                contextStoreFilters={[]}
+              >
                 <Story />
               </JestContextStoreSetter>
             </ActionMenuComponentInstanceContext.Provider>
