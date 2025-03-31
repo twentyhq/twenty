@@ -14,6 +14,7 @@ export enum TooltipDelay {
   noDelay = '0ms',
   shortDelay = '300ms',
   mediumDelay = '500ms',
+  longDelay = '1000ms',
 }
 
 const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`

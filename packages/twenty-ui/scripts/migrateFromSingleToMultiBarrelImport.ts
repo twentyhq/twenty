@@ -81,7 +81,7 @@ function getTypeScriptFiles(
   directoryPath: string,
   includeIndex: boolean = false,
 ): string[] {
-  const pattern = path.join(directoryPath, '**/*.{ts,tsx,d.ts,mdx}');
+  const pattern = path.join(directoryPath, '**/*.{ts,tsx,d.ts}');
   const files = globSync(pattern);
 
   return files.filter(
@@ -225,7 +225,7 @@ function extractImports(sourceFile: ts.SourceFile): string[] {
 
     const modulePath = node.moduleSpecifier.getText(sourceFile);
     // Quite static
-    if (modulePath !== `'twenty-ui'`) {
+    if (modulePath !== `'twenty-ui'` && modulePath !== '"twenty-ui"') {
       return ts.forEachChild(node, visit);
     }
 
