@@ -33,6 +33,7 @@ const StyledTag = styled.h3<{
       const themeColor = theme.tag.background[color];
 
       if (!isDefined(themeColor)) {
+        // eslint-disable-next-line no-console
         console.warn(`Tag color ${color} is not defined in the theme`);
         return theme.tag.background.gray;
       } else {
