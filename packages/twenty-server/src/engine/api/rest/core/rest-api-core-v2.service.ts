@@ -72,7 +72,6 @@ export class RestApiCoreServiceV2 {
       where: { id: recordId },
     });
 
-    // Override field values based on their metadata types
     const overriddenBody = await this.overrideDataByFieldMetadata(
       request.body,
       fieldMetadataByFieldName,
