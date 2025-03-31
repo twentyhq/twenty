@@ -14,3 +14,5 @@ import '@testing-library/jest-dom';
 global.structuredClone = (val) => {
   return JSON.parse(JSON.stringify(val));
 };
+
+jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
