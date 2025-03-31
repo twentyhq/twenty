@@ -1,4 +1,5 @@
 import { AdvancedFilterFieldSelectDropdownContent } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownContent';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -49,7 +50,7 @@ export const AdvancedFilterFieldSelectDropdownButton = ({
           />
         }
         dropdownHotkeyScope={{ scope: advancedFilterFieldSelectDropdownId }}
-        dropdownOffset={{ y: 8, x: 0 }}
+        dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
         dropdownPlacement="bottom-start"
       />
     </StyledContainer>

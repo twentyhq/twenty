@@ -1,5 +1,6 @@
 import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
@@ -17,7 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui';
 
 const StyledContainer = styled.div`
-  flex: 1;
+  width: 100px;
 `;
 
 type AdvancedFilterRecordFilterOperandSelectProps = {
@@ -126,7 +127,7 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
           </DropdownMenuItemsContainer>
         }
         dropdownHotkeyScope={{ scope: dropdownId }}
-        dropdownOffset={{ y: 8, x: 0 }}
+        dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
         dropdownPlacement="bottom-start"
       />
     </StyledContainer>

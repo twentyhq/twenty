@@ -14,6 +14,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { isDefined } from 'twenty-shared/utils';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
@@ -44,6 +45,7 @@ export type SelectProps<Value extends SelectValue> = {
   withSearchInput?: boolean;
   needIconCheck?: boolean;
   callToActionButton?: CallToActionButton;
+  dropdownOffset?: DropdownOffset;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -75,6 +77,7 @@ export const Select = <Value extends SelectValue>({
   withSearchInput,
   needIconCheck,
   callToActionButton,
+  dropdownOffset,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -127,6 +130,7 @@ export const Select = <Value extends SelectValue>({
           dropdownId={dropdownId}
           dropdownMenuWidth={dropDownMenuWidth}
           dropdownPlacement="bottom-start"
+          dropdownOffset={dropdownOffset}
           clickableComponent={
             <SelectControl
               selectedOption={selectedOption}
