@@ -192,7 +192,7 @@ type ExportOccurence = {
   import: string;
   require: string;
 };
-type ExportsConfig = Record<string, ExportOccurence>;
+type ExportsConfig = Record<string, ExportOccurence | string>;
 const generateModulePackageExports = (moduleDirectories: string[]) => {
   return moduleDirectories.reduce<ExportsConfig>(
     (acc, moduleDirectory) => {
@@ -213,8 +213,7 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
       };
     },
     {
-      // TODO prastoin
-      './style.css': './dist/style.css' as any,
+      './style.css': './dist/style.css',
     },
   );
 };
