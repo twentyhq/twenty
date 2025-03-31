@@ -7,6 +7,7 @@ import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/Set
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -57,7 +58,9 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
 
-  if (!isDefined(settingsDraftRole)) {
+  const settingsRolesIsLoading = useRecoilValue(settingsRolesIsLoadingState);
+
+  if (!isDefined(settingsRolesIsLoading)) {
     return <></>;
   }
 

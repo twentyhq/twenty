@@ -62,6 +62,7 @@ export const SettingsRolesList = () => {
           title={t`Create Role`}
           variant="secondary"
           size="small"
+          soon={!isPermissionsV2Enabled}
           disabled={!isPermissionsV2Enabled}
           onClick={() => navigateSettings(SettingsPath.RoleCreate)}
         />

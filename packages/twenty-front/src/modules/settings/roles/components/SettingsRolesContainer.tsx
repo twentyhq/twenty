@@ -37,9 +37,7 @@ export const SettingsRolesContainer = () => {
     >
       <SettingsPageContainer>
         <SettingsRolesList />
-        {settingsAllRoles.length > 0 && (
-          <SettingsRoleDefaultRole roles={settingsAllRoles} />
-        )}
+        <SettingsRoleDefaultRole roles={settingsAllRoles} />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

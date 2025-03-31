@@ -16,7 +16,6 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   Button,
@@ -26,7 +25,11 @@ import {
   Section,
   TooltipDelay,
 } from 'twenty-ui';
-import { SearchRecord } from '~/generated-metadata/graphql';
+import {
+  Role,
+  SearchRecord,
+  WorkspaceMember,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsRoleAssignmentTableRow } from './SettingsRoleAssignmentTableRow';
 
@@ -98,12 +101,8 @@ export const SettingsRoleAssignment = ({
     string,
     { id: string; label: string }
   >();
-  settingsAllRoles.forEach((role) => {
-    if (!isDefined(role)) {
-      return;
-    }
-
-    role.workspaceMembers.forEach((member) => {
+  settingsAllRoles.forEach((role: Role) => {
+    role.workspaceMembers.forEach((member: WorkspaceMember) => {
       workspaceMemberRoleMap.set(member.id, { id: role.id, label: role.label });
     });
   });
@@ -169,7 +168,9 @@ export const SettingsRoleAssignment = ({
         (member) => member.id === selectedWorkspaceMember.id,
       );
 
-      if (!workspaceMember) return;
+      if (!workspaceMember) {
+        throw new Error('Workspace member not found');
+      }
 
       updateWorkspaceMemberRoleDraftState({
         workspaceMember: {
