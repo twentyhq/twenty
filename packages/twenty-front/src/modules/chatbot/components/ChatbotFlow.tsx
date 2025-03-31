@@ -1,14 +1,11 @@
-/* eslint-disable @nx/workspace-component-props-naming */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
   Background,
-  Controls,
   Edge,
   Node,
   OnConnect,
@@ -18,6 +15,14 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useCallback, useEffect, useState } from 'react';
+import { Button } from 'twenty-ui';
+
+const StyledStatusTagContainer = styled.div`
+  left: 0;
+  top: 0;
+  position: absolute;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
 
 const initialNodes: any[] = [
   {
@@ -33,6 +38,13 @@ const initialEdges: Edge[] = [];
 const flowKey = 'flow';
 
 export const ChatbotFlow = (targetableObject: any) => {
+  const theme = useTheme();
+
+  // const { objectRecordId } = useParams<{ objectRecordId?: string }>();
+
+  // const { chatbotFlow } = useValidateChatbotFlow();
+  // const { updateFlow } = useUpdateChatbotFlow();
+
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance<
@@ -89,11 +101,14 @@ export const ChatbotFlow = (targetableObject: any) => {
         colorMode="light"
         fitView
       >
-        <Background />
+        <Background color={theme.border.color.medium} size={2} />
         <Panel>
-          <button onClick={onSave}>save</button>
+          <Button accent="blue" title="Save" onClick={onSave} />
         </Panel>
-        <Controls />
+
+        <StyledStatusTagContainer data-testid={'workflow-visualizer-status'}>
+          {/* <Tag color={tagColor} text={tagText} /> */}
+        </StyledStatusTagContainer>
       </ReactFlow>
     </div>
   );

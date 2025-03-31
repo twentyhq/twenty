@@ -107,8 +107,6 @@ export const CardComponents: Record<CardType, CardComponentType> = {
   ),
 
   [CardType.ChatbotCard]: ({ targetableObject }) => (
-    <>
-      <ChatbotFlow targetableObject={targetableObject} />
-    </>
+    <ChatbotFlow targetableObject={targetableObject} />
   ),
 };

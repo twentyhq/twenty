@@ -22,11 +22,11 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { CHATBOT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 export enum ChatbotStatus {
@@ -84,7 +84,7 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.statuses,
-    type: FieldMetadataType.MULTI_SELECT,
+    type: FieldMetadataType.SELECT,
     label: msg`Statuses`,
     description: msg`The current statuses of the chatbot flow`,
     icon: 'IconStatusChange',
