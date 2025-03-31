@@ -4181,6 +4181,5 @@ export {
   IconZoomReplace,
   IconZoomReset,
   IconZzz,
-  IconZzzOff
+  IconZzzOff,
 } from '@tabler/icons-react';
-

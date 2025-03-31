@@ -1,8 +1,7 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconCheck, IconChevronRight } from '@tabler/icons-react';
-import { IconComponent } from '@ui/display';
+import { IconCheck, IconChevronRight, IconComponent } from '@ui/display';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 

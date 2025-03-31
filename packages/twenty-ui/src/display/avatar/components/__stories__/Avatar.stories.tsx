@@ -1,6 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { AVATAR_URL_MOCK, ComponentDecorator, RecoilRootDecorator } from '@ui/testing';
+import {
+  AVATAR_URL_MOCK,
+  ComponentDecorator,
+  RecoilRootDecorator,
+} from '@ui/testing';
 
 import { Avatar } from '../Avatar';
 

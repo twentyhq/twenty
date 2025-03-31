@@ -5,7 +5,7 @@ import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSepara
 import { MotionProps, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-import { Pill } from '@ui/components/pill';
+import { Pill } from '@ui/components/Pill/Pill';
 import {
   ButtonAccent,
   ButtonProps,

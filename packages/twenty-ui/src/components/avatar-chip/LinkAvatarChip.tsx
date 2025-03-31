@@ -2,10 +2,7 @@ import { AvatarChipsLeftComponent } from '@ui/components/avatar-chip/AvatarChipL
 import { AvatarChipsCommonProps } from '@ui/components/avatar-chip/types/AvatarChipsCommonProps.type';
 import { AvatarChipVariant } from '@ui/components/avatar-chip/types/AvatarChipsVariant.type';
 import { ChipVariant } from '@ui/components/chip/Chip';
-import {
-  LinkChip,
-  LinkChipProps,
-} from '@ui/components/chip/LinkChip';
+import { LinkChip, LinkChipProps } from '@ui/components/chip/LinkChip';
 
 export type LinkAvatarChipProps = Omit<AvatarChipsCommonProps, 'clickable'> & {
   to: string;
