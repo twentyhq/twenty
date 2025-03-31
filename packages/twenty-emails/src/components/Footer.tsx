@@ -1,10 +1,14 @@
-import { Column, Row } from '@react-email/components';
+import { Column, Row, Section } from '@react-email/components';
 import { Link } from 'src/components/Link';
 import { ShadowText } from 'src/components/ShadowText';
 
+const footerContainerStyle = {
+  marginTop: '12px',
+};
+
 export const Footer = () => {
   return (
-    <>
+    <Section style={footerContainerStyle}>
       <Row>
         <Column>
           <ShadowText>
@@ -50,6 +54,6 @@ export const Footer = () => {
         <br />
         San Francisco, CA 94114
       </ShadowText>
-    </>
+    </Section>
   );
 };

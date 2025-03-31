@@ -8,7 +8,6 @@ const mainTextStyle = {
   fontSize: emailTheme.font.size.md,
   fontWeight: emailTheme.font.weight.regular,
   color: emailTheme.font.colors.primary,
-  margin: '0 0 12px 0',
   lineHeight: emailTheme.font.lineHeight,
 };
 

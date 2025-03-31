@@ -4,6 +4,7 @@ import { emailTheme } from 'src/common-style';
 
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
+import { Footer } from 'src/components/Footer';
 import { HighlightedContainer } from 'src/components/HighlightedContainer';
 import { HighlightedText } from 'src/components/HighlightedText';
 import { Link } from 'src/components/Link';
@@ -57,6 +58,7 @@ export const SendInviteLinkEmail = ({
         <CallToAction href={link} value={<Trans>Accept invite</Trans>} />
       </HighlightedContainer>
       <WhatIsTwenty />
+      <Footer />
     </BaseEmail>
   );
 };
