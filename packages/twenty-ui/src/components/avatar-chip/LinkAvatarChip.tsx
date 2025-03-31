@@ -1,11 +1,11 @@
-import { AvatarChipsLeftComponent } from '@ui/components/avatar-chip/components/AvatarChipLeftComponent';
+import { AvatarChipsLeftComponent } from '@ui/components/avatar-chip/AvatarChipLeftComponent';
 import { AvatarChipsCommonProps } from '@ui/components/avatar-chip/types/AvatarChipsCommonProps.type';
 import { AvatarChipVariant } from '@ui/components/avatar-chip/types/AvatarChipsVariant.type';
-import { ChipVariant } from '@ui/components/chip/components/Chip';
+import { ChipVariant } from '@ui/components/chip/Chip';
 import {
   LinkChip,
   LinkChipProps,
-} from '@ui/components/chip/components/LinkChip';
+} from '@ui/components/chip/LinkChip';
 
 export type LinkAvatarChipProps = Omit<AvatarChipsCommonProps, 'clickable'> & {
   to: string;
