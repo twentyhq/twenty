@@ -305,7 +305,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
   seeAllWorkflows: {
     type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.SEE_WORKFLOWS,
+    key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
     label: msg`Go to workflows`,
     shortLabel: msg`See workflows`,
     position: 18,
