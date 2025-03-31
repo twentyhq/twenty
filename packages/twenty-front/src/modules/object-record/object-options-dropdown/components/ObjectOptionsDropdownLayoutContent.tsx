@@ -9,6 +9,7 @@ import {
   MenuItem,
   MenuItemSelect,
   MenuItemToggle,
+  OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -105,11 +106,16 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             text={t`Kanban`}
             disabled={isDefaultView}
             contextualText={
-              isDefaultView
-                ? t`Not available for default view`
-                : availableFieldsForKanban.length === 0
-                  ? t`Create Select...`
-                  : undefined
+              isDefaultView ? (
+                <>
+                  {'\u00A0·\u00A0'}
+                  <OverflowingTextWithTooltip
+                    text={t`Not available for default view`}
+                  />
+                </>
+              ) : availableFieldsForKanban.length === 0 ? (
+                t`Create Select...`
+              ) : undefined
             }
             selected={currentView?.type === ViewType.Kanban}
             onClick={handleSelectKanbanViewType}
