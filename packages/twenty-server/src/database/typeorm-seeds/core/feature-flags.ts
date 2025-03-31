@@ -18,12 +18,12 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsAirtableIntegrationEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKey.IsEventObjectEnabled,
