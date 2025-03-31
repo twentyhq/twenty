@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
-import IllustrationIconOneToManyRaw from '@ui/display/icon/assets/illustration-one-to-many.svg?react';
+import IllustrationIconOneToManyRaw from '@assets/icons/illustration-one-to-many.svg?react';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
 type IllustrationIconOneToManyProps = Pick<IconComponentProps, 'size'>;
