@@ -22,6 +22,7 @@ const StyledContainer = styled.div<
   display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
+  position: relative;
 `;
 
 const StyledInputContainer = styled.div`
@@ -30,8 +31,6 @@ const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   position: relative;
-  margin-bottom: ${({ theme }) =>
-    theme.spacing(1)}; // provision for error helper
 `;
 
 type StyledAdornmentContainerProps = {
