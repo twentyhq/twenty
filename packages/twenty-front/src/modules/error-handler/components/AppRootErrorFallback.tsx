@@ -6,7 +6,7 @@ import LightNoise, { GRAY_SCALE, IconReload } from "twenty-ui";
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
 
 const StyledContainer = styled.div`
-  background: url(${LightNoise.toString()});
+  background: ${THEME_DARK.background.noisy};
   box-sizing: border-box;
   display: flex;
   height: 100vh;
