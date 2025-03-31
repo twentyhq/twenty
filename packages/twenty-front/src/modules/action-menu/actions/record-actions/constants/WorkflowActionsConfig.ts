@@ -49,7 +49,7 @@ import {
   IconTrash,
   IconTrashX,
   IconVersions,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 export const WORKFLOW_ACTIONS_CONFIG: Record<
   string,

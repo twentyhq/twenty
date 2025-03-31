@@ -16,11 +16,11 @@ import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdCom
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isDefined } from 'twenty-shared/utils';
+import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui/display';
 
 const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 

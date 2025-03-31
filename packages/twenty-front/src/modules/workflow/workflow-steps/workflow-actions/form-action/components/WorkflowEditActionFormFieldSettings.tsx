@@ -14,8 +14,8 @@ import {
   IconX,
   IllustrationIconNumbers,
   IllustrationIconText,
-  LightIconButton,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;

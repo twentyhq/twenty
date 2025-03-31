@@ -11,14 +11,13 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { IconBrackets, useIcons } from 'twenty-ui/display';
 import {
-  IconBrackets,
   JsonNestedNode,
   JsonTreeContextProvider,
   ShouldExpandNodeInitiallyProps,
-  useIcons,
-} from 'twenty-ui';
-import { isDefined } from 'twenty-shared/utils';
+} from 'twenty-ui/json-visualizer';
 
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();

@@ -11,8 +11,9 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { AnimatedExpandableContainer, useIcons } from 'twenty-ui';
 import { getAppPath } from '~/utils/navigation/getAppPath';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { useIcons } from 'twenty-ui/display';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;

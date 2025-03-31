@@ -1,9 +1,8 @@
-import { Nullable } from 'twenty-ui';
-
 import { DateInput } from '@/ui/field/input/components/DateInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDateTimeField } from '../../hooks/useDateTimeField';
+import { Nullable } from 'twenty-ui/utilities';
 
 export type FieldInputEvent = (persist: () => void) => void;
 export type FieldInputClickOutsideEvent = (

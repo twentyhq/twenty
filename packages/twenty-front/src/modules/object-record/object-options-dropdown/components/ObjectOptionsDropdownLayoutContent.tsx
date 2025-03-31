@@ -1,16 +1,3 @@
-import {
-  IconBaselineDensitySmall,
-  IconChevronLeft,
-  IconLayoutKanban,
-  IconLayoutList,
-  IconLayoutNavbar,
-  IconLayoutSidebarRight,
-  IconTable,
-  MenuItem,
-  MenuItemSelect,
-  MenuItemToggle,
-} from 'twenty-ui';
-
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
@@ -29,6 +16,16 @@ import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGet
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  IconBaselineDensitySmall,
+  IconChevronLeft,
+  IconLayoutKanban,
+  IconLayoutList,
+  IconLayoutNavbar,
+  IconLayoutSidebarRight,
+  IconTable,
+} from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();

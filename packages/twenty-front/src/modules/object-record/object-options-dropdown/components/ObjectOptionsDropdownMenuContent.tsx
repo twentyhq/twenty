@@ -1,14 +1,4 @@
 import { Key } from 'ts-key-enum';
-import {
-  AppTooltip,
-  IconCopy,
-  IconLayoutKanban,
-  IconLayoutList,
-  IconListDetails,
-  IconTable,
-  IconTrash,
-  MenuItem,
-} from 'twenty-ui';
 
 import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -29,6 +19,17 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  AppTooltip,
+  IconCopy,
+  IconLayoutKanban,
+  IconLayoutList,
+  IconListDetails,
+  IconTable,
+  IconTrash,
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
+
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
   const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =

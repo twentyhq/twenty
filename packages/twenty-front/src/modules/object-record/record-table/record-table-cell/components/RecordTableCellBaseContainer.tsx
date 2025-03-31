@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { ReactNode, useContext } from 'react';
-import { BORDER_COMMON, ThemeContext } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
@@ -12,6 +11,7 @@ import {
   DEFAULT_CELL_SCOPE,
   useOpenRecordTableCellFromCell,
 } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import { BORDER_COMMON, ThemeContext } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
   hasSoftFocus: boolean;

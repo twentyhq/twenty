@@ -1,15 +1,6 @@
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  IconApps,
-  IconButton,
-  IconButtonSize,
-  IconButtonVariant,
-  IconComponent,
-  LightIconButton,
-  useIcons,
-} from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -24,6 +15,13 @@ import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { t } from '@lingui/core/macro';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
+import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
+import {
+  IconButton,
+  IconButtonSize,
+  IconButtonVariant,
+  LightIconButton,
+} from 'twenty-ui/input';
 
 export type IconPickerProps = {
   disabled?: boolean;

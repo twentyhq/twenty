@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -10,6 +9,7 @@ import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/ChipFieldDisplay',

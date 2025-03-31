@@ -1,5 +1,4 @@
-import { createState } from "twenty-ui";
-
+import { createState } from 'twenty-ui/utilities';
 type ClientConfigApiStatus = {
   isLoaded: boolean;
   isErrored: boolean;

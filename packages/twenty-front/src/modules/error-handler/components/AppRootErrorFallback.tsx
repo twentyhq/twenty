@@ -1,7 +1,8 @@
 import { AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import LightNoise, { GRAY_SCALE, IconReload } from "twenty-ui";
+import { IconReload } from 'twenty-ui/display';
+import { GRAY_SCALE, THEME_DARK } from 'twenty-ui/theme';
 
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
 

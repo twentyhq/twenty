@@ -1,8 +1,8 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { SettingsObjectInactiveMenuDropDown } from '../SettingsObjectInactiveMenuDropDown';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const handleActivateMockFunction = fn();
 const handleDeleteMockFunction = fn();

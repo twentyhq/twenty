@@ -1,6 +1,5 @@
-import { createState } from "twenty-ui";
-
 import { AuthProviders } from '~/generated/graphql';
+import { createState } from 'twenty-ui/utilities';
 
 export const authProvidersState = createState<AuthProviders>({
   key: 'authProvidersState',

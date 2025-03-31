@@ -29,7 +29,7 @@ import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpande
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui';
+import { LightButton } from 'twenty-ui/input';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;

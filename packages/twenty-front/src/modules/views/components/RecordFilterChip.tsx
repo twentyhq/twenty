@@ -1,9 +1,8 @@
-import { useIcons } from 'twenty-ui';
-
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
+import { useIcons } from 'twenty-ui/display';
 
 type RecordFilterChipProps = {
   recordFilter: RecordFilter;

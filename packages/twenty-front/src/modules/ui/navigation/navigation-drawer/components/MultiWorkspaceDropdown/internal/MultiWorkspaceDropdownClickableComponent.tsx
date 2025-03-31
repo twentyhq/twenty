@@ -1,4 +1,3 @@
-import { Avatar } from 'twenty-ui';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import {
@@ -10,6 +9,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilValue } from 'recoil';
 import { useTheme } from '@emotion/react';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { Avatar } from 'twenty-ui/display';
 
 export const MultiWorkspaceDropdownClickableComponent = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);

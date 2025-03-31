@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
-import { useIcons } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -18,6 +17,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
+import { useIcons } from 'twenty-ui/display';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
   relation: z.object({

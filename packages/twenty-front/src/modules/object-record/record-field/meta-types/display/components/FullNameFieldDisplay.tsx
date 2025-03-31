@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 export const FullNameFieldDisplay = () => {
   const { fieldValue } = useFullNameFieldDisplay();

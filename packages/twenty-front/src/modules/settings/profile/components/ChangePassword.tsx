@@ -1,7 +1,7 @@
-import { Button, H2Title } from 'twenty-ui';
-
 import { useLingui } from '@lingui/react/macro';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { Button } from 'twenty-ui/input';
+import { H2Title } from 'twenty-ui/display';
 
 export const ChangePassword = () => {
   const { t } = useLingui();

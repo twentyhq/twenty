@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconCheck, IconPlus, LightIconButton, MenuItem } from 'twenty-ui';
 
 import {
   MultiItemBaseInput,
@@ -16,6 +15,9 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { IconCheck, IconPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type MultiItemFieldInputProps<T> = {
   items: T[];

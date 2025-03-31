@@ -6,12 +6,12 @@ import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useRecoilValue } from 'recoil';
-import { H2Title } from 'twenty-ui';
 import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,
 } from '~/generated/graphql';
 import { t } from '@lingui/core/macro';
+import { H2Title } from 'twenty-ui/display';
 
 const StyledGeneralContainer = styled.div`
   display: flex;

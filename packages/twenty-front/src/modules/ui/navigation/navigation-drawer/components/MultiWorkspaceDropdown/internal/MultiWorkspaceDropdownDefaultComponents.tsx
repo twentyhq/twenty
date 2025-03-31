@@ -1,15 +1,3 @@
-import {
-  Avatar,
-  IconDotsVertical,
-  IconLogout,
-  IconPlus,
-  IconSwitchHorizontal,
-  IconUserPlus,
-  LightIconButton,
-  MenuItem,
-  MenuItemSelectAvatar,
-  UndecoratedLink,
-} from 'twenty-ui';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -37,6 +25,20 @@ import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import styled from '@emotion/styled';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import {
+  Avatar,
+  IconDotsVertical,
+  IconLogout,
+  IconPlus,
+  IconSwitchHorizontal,
+  IconUserPlus,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import {
+  MenuItem,
+  MenuItemSelectAvatar,
+  UndecoratedLink,
+} from 'twenty-ui/navigation';
 
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.light};

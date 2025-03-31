@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui
+import { createState } from 'twenty-ui/utilities';
 
 export const workflowDiagramTriggerNodeSelectionState = createState<
   string | undefined

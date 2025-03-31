@@ -8,7 +8,8 @@ import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
-import { SelectOption, useIcons } from 'twenty-ui';
+import { SelectOption } from 'twenty-ui/input';
+import { useIcons } from 'twenty-ui/display';
 
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;
