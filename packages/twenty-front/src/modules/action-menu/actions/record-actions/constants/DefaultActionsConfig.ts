@@ -4,6 +4,11 @@ import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-act
 import { useRestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useRestoreMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
+import { useGoToCompaniesNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToCompaniesNoSelectionRecordAction';
+import { useGoToOpportunitiesNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToOpportunitiesNoSelectionRecordAction';
+import { useGoToPeopleNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToPeopleNoSelectionRecordAction';
+import { useGoToSettingsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToSettingsNoSelectionRecordAction';
+import { useGoToTasksNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToTasksNoSelectionRecordAction';
 import { useHideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useHideDeletedRecordsNoSelectionRecordAction';
 import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
@@ -27,6 +32,8 @@ import {
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
 import {
+  IconBuildingSkyscraper,
+  IconCheckbox,
   IconChevronDown,
   IconChevronUp,
   IconEyeOff,
@@ -37,9 +44,12 @@ import {
   IconPlus,
   IconRefresh,
   IconRotate2,
+  IconSettings,
   IconSettingsAutomation,
+  IconTargetArrow,
   IconTrash,
   IconTrashX,
+  IconUser,
 } from 'twenty-ui';
 
 export const DEFAULT_ACTIONS_CONFIG: Record<
@@ -305,5 +315,70 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeWorkflowsNoSelectionRecordAction,
     hotKeys: ['G', 'W'],
+  },
+  goToPeople: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
+    label: msg`Go to People`,
+    shortLabel: msg`People`,
+    position: 19,
+    Icon: IconUser,
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useGoToPeopleNoSelectionRecordAction,
+    hotKeys: ['G', 'P'],
+  },
+  goToCompanies: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
+    label: msg`Go to Companies`,
+    shortLabel: msg`Companies`,
+    position: 20,
+    Icon: IconBuildingSkyscraper,
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useGoToCompaniesNoSelectionRecordAction,
+    hotKeys: ['G', 'C'],
+  },
+  goToOpportunities: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
+    label: msg`Go to Opportunities`,
+    shortLabel: msg`Opportunities`,
+    position: 21,
+    Icon: IconTargetArrow,
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useGoToOpportunitiesNoSelectionRecordAction,
+    hotKeys: ['G', 'O'],
+  },
+  goToSettings: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
+    label: msg`Go to Settings`,
+    shortLabel: msg`Settings`,
+    position: 22,
+    Icon: IconSettings,
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useGoToSettingsNoSelectionRecordAction,
+    hotKeys: ['G', 'S'],
+  },
+  goToTasks: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_TASKS,
+    label: msg`Go to Tasks`,
+    shortLabel: msg`Tasks`,
+    position: 23,
+    Icon: IconCheckbox,
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useGoToTasksNoSelectionRecordAction,
+    hotKeys: ['G', 'T'],
   },
 };
