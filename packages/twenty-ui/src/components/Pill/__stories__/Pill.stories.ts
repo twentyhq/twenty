@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Pill } from '..';
+import { Pill } from '@ui/components/Pill/Pill';
 import { ComponentDecorator } from '../../../testing/decorators/ComponentDecorator';
 
 const meta: Meta<typeof Pill> = {

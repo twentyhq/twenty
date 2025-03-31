@@ -70,7 +70,7 @@ export const AppTooltip = ({
   isOpen,
 }: AppTooltipProps) => {
   const getDelayInMis = (delay: TooltipDelay) => {
-    switch(delay) {
+    switch (delay) {
       case TooltipDelay.noDelay:
         return 0;
       case TooltipDelay.shortDelay:
@@ -80,7 +80,7 @@ export const AppTooltip = ({
       case TooltipDelay.longDelay:
         return 1000;
     }
-  }
+  };
 
   return (
     <StyledAppTooltip

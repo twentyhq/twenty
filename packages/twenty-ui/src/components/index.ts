@@ -19,7 +19,6 @@ export { Chip, ChipAccent, ChipSize, ChipVariant } from './chip/Chip';
 export type { ChipProps } from './chip/Chip';
 export { LinkChip } from './chip/LinkChip';
 export type { LinkChipProps } from './chip/LinkChip';
-export { Pill } from './pill';
+export { Pill } from './Pill/Pill';
 export { Tag } from './tag/Tag';
 export type { TagColor } from './tag/Tag';
-
