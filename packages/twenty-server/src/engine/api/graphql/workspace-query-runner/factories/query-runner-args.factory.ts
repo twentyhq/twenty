@@ -21,7 +21,7 @@ import {
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-import { RecordInputTransformerService } from 'src/engine/services/record-transformer/record-input-transformer.service';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 
 import { RecordPositionFactory } from './record-position.factory';
 

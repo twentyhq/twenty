@@ -8,7 +8,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { RecordInputTransformerService } from 'src/engine/services/record-transformer/record-input-transformer.service';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 
 @Injectable()
 export class RestApiCoreServiceV2 {

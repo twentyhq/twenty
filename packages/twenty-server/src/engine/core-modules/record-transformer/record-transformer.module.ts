@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { RecordInputTransformerService } from './record-input-transformer.service';
+import { RecordInputTransformerService } from './services/record-input-transformer.service';
 
 @Module({
   providers: [RecordInputTransformerService],
