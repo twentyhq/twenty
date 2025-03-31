@@ -7,10 +7,9 @@ import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatching
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import styled from '@emotion/styled';
-import { LightIconButton } from '@ui/input/button/components/LightIconButton';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import { IconHeartOff } from 'twenty-ui';
+import { IconHeartOff, LightIconButton } from "twenty-ui";
 
 const StyledEmptyContainer = styled.div`
   width: 100%;

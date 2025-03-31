@@ -1,5 +1,5 @@
 import { MorphItem } from '@/object-record/multiple-objects/types/MorphItem';
-import { createState } from '@ui/utilities/state/utils/createState';
+import { createState } from "twenty-ui";
 
 export const commandMenuNavigationMorphItemByPageState = createState<
   Map<string, MorphItem>

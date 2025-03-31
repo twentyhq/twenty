@@ -1,4 +1,4 @@
-import { createState } from '@ui/utilities/state/utils/createState';
+import { createState } from "twenty-ui";
 import { UserWorkspace } from '~/generated/graphql';
 
 export type CurrentUserWorkspace = Pick<
