@@ -99,7 +99,7 @@ export default defineConfig(({ command, mode }) => {
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
-        projects: ['tsconfig.json', '../twenty-ui/tsconfig.json'],
+        projects: ['tsconfig.json'],
       }),
       svgr(),
       lingui({
@@ -139,15 +139,20 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
+      exclude: [
+        '../../node_modules/.vite',
+        '../../node_modules/.cache',
+        '../../node_modules/twenty-ui',
+      ],
     },
 
     build: {
+      minify: true,
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
         output: {
-          manualChunks: (id: string) => {
+          manualChunks: (id) => {
             if (id.includes('@scalar')) {
               return 'scalar';
             }
