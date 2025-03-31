@@ -21,7 +21,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { viewIcon, ViewType } from '@/views/types/ViewType';
+import { ViewType, viewTypeDefaultIcon } from '@/views/types/ViewType';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useTheme } from '@emotion/react';
@@ -83,7 +83,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
           onClick={() => onContentChange('layout')}
-          LeftIcon={viewIcon(currentView?.type ?? ViewType.Table)}
+          LeftIcon={viewTypeDefaultIcon(currentView?.type ?? ViewType.Table)}
           text={t`Layout`}
           contextualText={`${capitalize(currentView?.type ?? '')}`}
           hasSubMenu

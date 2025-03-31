@@ -24,7 +24,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { viewIcon, ViewType } from '@/views/types/ViewType';
+import { ViewType, viewTypeDefaultIcon } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -101,7 +101,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             }}
           />
           <MenuItemSelect
-            LeftIcon={viewIcon(ViewType.Kanban)}
+            LeftIcon={viewTypeDefaultIcon(ViewType.Kanban)}
             text={t`Kanban`}
             disabled={isDefaultView}
             contextualText={

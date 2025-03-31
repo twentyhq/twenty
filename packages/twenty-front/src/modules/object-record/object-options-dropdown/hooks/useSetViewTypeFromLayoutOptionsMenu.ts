@@ -9,12 +9,11 @@ import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistVie
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewGroup } from '@/views/types/ViewGroup';
-import { viewIcon, ViewType } from '@/views/types/ViewType';
+import { ViewType, viewTypeDefaultIcon } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { IconComponent } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
@@ -123,11 +122,20 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               );
             }
             setRecordIndexViewType(viewType);
+
+            if (shouldChangeIcon(currentView.icon, currentView.type)) {
+              updateCurrentViewParams.icon =
+                viewTypeDefaultIcon(viewType).displayName;
+            }
             await updateCurrentView(updateCurrentViewParams);
             break;
           }
           case ViewType.Table:
             setRecordIndexViewType(viewType);
+            if (shouldChangeIcon(currentView.icon, currentView.type)) {
+              updateCurrentViewParams.icon =
+                viewTypeDefaultIcon(viewType).displayName;
+            }
             await updateCurrentView(updateCurrentViewParams);
             break;
           default: {
@@ -146,13 +154,19 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
   );
 
   const shouldChangeIcon = (
-    icon: IconComponent,
+    oldIcon: string,
     oldViewType: ViewType,
   ): boolean => {
-    if (icon === viewIcon(ViewType.Kanban) && oldViewType === ViewType.Kanban) {
+    if (
+      oldViewType === ViewType.Kanban &&
+      oldIcon === viewTypeDefaultIcon(ViewType.Kanban).displayName
+    ) {
       return true;
     }
-    if (icon === viewIcon(ViewType.Table) && oldViewType === ViewType.Table) {
+    if (
+      oldViewType === ViewType.Table &&
+      oldIcon === viewTypeDefaultIcon(ViewType.Table).displayName
+    ) {
       return true;
     }
     return false;

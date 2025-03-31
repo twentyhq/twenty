@@ -17,7 +17,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
-import { viewIcon, ViewType } from '@/views/types/ViewType';
+import { ViewType, viewTypeDefaultIcon } from '@/views/types/ViewType';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
@@ -101,7 +101,7 @@ export const ViewPickerContentCreateMode = () => {
     ViewsHotkeyScope.ListDropdown,
   );
 
-  const defaultIcon = viewIcon(viewPickerType).name;
+  const defaultIcon = viewTypeDefaultIcon(viewPickerType).name;
 
   const selectedIcon = useMemo(() => {
     if (hasManuallySelectedIcon) {
@@ -167,12 +167,12 @@ export const ViewPickerContentCreateMode = () => {
               {
                 value: ViewType.Table,
                 label: t`Table`,
-                Icon: viewIcon(ViewType.Table),
+                Icon: viewTypeDefaultIcon(ViewType.Table),
               },
               {
                 value: ViewType.Kanban,
                 label: t`Kanban`,
-                Icon: viewIcon(ViewType.Kanban),
+                Icon: viewTypeDefaultIcon(ViewType.Kanban),
               },
             ]}
             dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
