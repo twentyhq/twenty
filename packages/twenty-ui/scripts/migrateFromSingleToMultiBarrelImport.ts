@@ -81,7 +81,7 @@ function getTypeScriptFiles(
   directoryPath: string,
   includeIndex: boolean = false,
 ): string[] {
-  const pattern = path.join(directoryPath, '**/*.{ts,tsx,d.ts}');
+  const pattern = path.join(directoryPath, '**/*.{ts,tsx,d.ts,mdx}');
   const files = globSync(pattern);
 
   return files.filter(
