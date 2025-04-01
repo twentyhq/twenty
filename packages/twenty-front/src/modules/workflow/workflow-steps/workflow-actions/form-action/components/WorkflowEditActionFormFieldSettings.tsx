@@ -3,6 +3,7 @@ import { FormSelectFieldInput } from '@/object-record/record-field/form-types/co
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
 import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -13,6 +14,7 @@ import {
   IconSettingsAutomation,
   IconX,
   IllustrationIconNumbers,
+  IllustrationIconOneToMany,
   IllustrationIconText,
   LightIconButton,
 } from 'twenty-ui';
@@ -106,35 +108,47 @@ export const WorkflowEditActionFormFieldSettings = ({
         <FormFieldInputContainer>
           <InputLabel>Type</InputLabel>
           <FormSelectFieldInput
-            options={[
-              {
-                label: getDefaultFormFieldSettings(FieldMetadataType.TEXT)
-                  .label,
-                value: FieldMetadataType.TEXT,
-                Icon: IllustrationIconText,
-              },
-              {
-                label: getDefaultFormFieldSettings(FieldMetadataType.NUMBER)
-                  .label,
-                value: FieldMetadataType.NUMBER,
-                Icon: IllustrationIconNumbers,
-              },
-            ]}
+            options={
+              [
+                {
+                  label: getDefaultFormFieldSettings(FieldMetadataType.TEXT)
+                    .label,
+                  value: FieldMetadataType.TEXT,
+                  Icon: IllustrationIconText,
+                },
+                {
+                  label: getDefaultFormFieldSettings(FieldMetadataType.NUMBER)
+                    .label,
+                  value: FieldMetadataType.NUMBER,
+                  Icon: IllustrationIconNumbers,
+                },
+                {
+                  label: 'Record Picker',
+                  value: 'RECORD',
+                  Icon: IllustrationIconOneToMany,
+                },
+              ] satisfies {
+                label: string;
+                value: WorkflowFormFieldType;
+                Icon: React.ElementType;
+              }[]
+            }
             onChange={(newType: string | null) => {
               if (newType === null) {
                 return;
               }
 
-              const type = newType as
-                | FieldMetadataType.TEXT
-                | FieldMetadataType.NUMBER;
-              const { label, placeholder } = getDefaultFormFieldSettings(type);
+              const type = newType as WorkflowFormFieldType;
+              const { name, label, placeholder, settings } =
+                getDefaultFormFieldSettings(type);
 
               onChange({
                 ...field,
                 type,
+                name,
                 label,
                 placeholder,
+                settings,
               });
             }}
             defaultValue={field.type}

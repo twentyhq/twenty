@@ -6,7 +6,7 @@ export type FormFieldMetadata = {
   id: string;
   name: string;
   label: string;
-  type: FieldMetadataType;
+  type: FieldMetadataType.TEXT | FieldMetadataType.NUMBER | 'RECORD';
   value?: any;
   placeholder?: string;
   settings?: Record<string, any>;

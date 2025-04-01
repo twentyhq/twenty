@@ -1,6 +1,7 @@
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
+import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
@@ -114,28 +115,54 @@ export const WorkflowEditActionFormFiller = ({
         disabled
       />
       <WorkflowStepBody>
-        {formData.map((field) => (
-          <FormFieldInput
-            key={field.id}
-            field={{
-              label: field.label,
-              type: field.type,
-              metadata: {} as FieldMetadata,
-            }}
-            onChange={(value) => {
-              onFieldUpdate({
-                fieldId: field.id,
-                value,
-              });
-            }}
-            defaultValue={field.value ?? ''}
-            readonly={actionOptions.readonly}
-            placeholder={
-              field.placeholder ??
-              getDefaultFormFieldSettings(field.type).placeholder
+        {formData.map((field) => {
+          if (field.type === 'RECORD') {
+            const objectNameSingular = field.settings?.objectName;
+
+            if (!isDefined(objectNameSingular)) {
+              return null;
             }
-          />
-        ))}
+
+            return (
+              <FormSingleRecordPicker
+                key={field.id}
+                label={field.label}
+                defaultValue={field.value}
+                onChange={(value) => {
+                  onFieldUpdate({
+                    fieldId: field.id,
+                    value,
+                  });
+                }}
+                objectNameSingular={objectNameSingular}
+                disabled={actionOptions.readonly}
+              />
+            );
+          }
+
+          return (
+            <FormFieldInput
+              key={field.id}
+              field={{
+                label: field.label,
+                type: field.type,
+                metadata: {} as FieldMetadata,
+              }}
+              onChange={(value) => {
+                onFieldUpdate({
+                  fieldId: field.id,
+                  value,
+                });
+              }}
+              defaultValue={field.value ?? ''}
+              readonly={actionOptions.readonly}
+              placeholder={
+                field.placeholder ??
+                getDefaultFormFieldSettings(field.type).placeholder
+              }
+            />
+          );
+        })}
       </WorkflowStepBody>
       {!actionOptions.readonly && (
         <RightDrawerFooter

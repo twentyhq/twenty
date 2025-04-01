@@ -1,15 +1,16 @@
+import { WorkflowFormFieldSettingsRecordPicker } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker';
 import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { WorkflowFormFieldSettingsNumber } from './WorkflowFormFieldSettingsNumber';
 import { WorkflowFormFieldSettingsText } from './WorkflowFormFieldSettingsText';
-import { assertUnreachable } from 'twenty-shared/utils';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export const WorkflowFormFieldSettingsByType = ({
   field,
   onChange,
 }: {
   field: WorkflowFormActionField;
-  onChange: (fieldName: string, value: string | null) => void;
+  onChange: (fieldName: string, value: unknown) => void;
 }) => {
   switch (field.type) {
     case FieldMetadataType.TEXT:
@@ -27,6 +28,16 @@ export const WorkflowFormFieldSettingsByType = ({
         <WorkflowFormFieldSettingsNumber
           label={field.label}
           placeholder={field.placeholder}
+          onChange={(fieldName, value) => {
+            onChange(fieldName, value);
+          }}
+        />
+      );
+    case 'RECORD':
+      return (
+        <WorkflowFormFieldSettingsRecordPicker
+          label={field.label}
+          settings={field.settings}
           onChange={(fieldName, value) => {
             onChange(fieldName, value);
           }}
