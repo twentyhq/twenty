@@ -62,10 +62,10 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useSearchParams } from 'react-router-dom';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
