@@ -10,7 +10,7 @@ A visual element that you can use as a clickable or non-clickable container with
 
 <ArticleTab>
 
-<SandpackEditor content={`import { Chip } from 'twenty-ui';
+<SandpackEditor content={`import { Chip } from 'twenty-ui/components';
 
 export const MyComponent = () => {
   return (
@@ -50,7 +50,7 @@ export const MyComponent = () => {
 
 ### Transparent Disabled Chip
 
-<SandpackEditor content={`import { Chip } from 'twenty-ui';
+<SandpackEditor content={`import { Chip } from 'twenty-ui/components';
 
 export const MyComponent = () => {
   return (
@@ -73,7 +73,7 @@ export const MyComponent = () => {
 
 ### Disabled Chip with Tooltip
 
-<SandpackEditor content={`import { Chip } from "twenty-ui";
+<SandpackEditor content={`import { Chip } from "twenty-ui/components";
   
 export const MyComponent = () => {
   return (
@@ -102,12 +102,13 @@ A Chip-like element to display information about an entity.
 <ArticleTab>
 
 <SandpackEditor content={`import { BrowserRouter as Router } from 'react-router-dom';
-import { EntityChip, IconTwentyStar } from 'twenty-ui';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
 
 export const MyComponent = () => {
   return (
     <Router>
-      <EntityChip
+      <Chip
         linkToEntity="/entity-link"
         entityId="entityTest"
         name="Entity name"
