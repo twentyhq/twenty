@@ -16,9 +16,9 @@ import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerLabel';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
+import { Trans } from '@lingui/react/macro';
+import { useCallback, useMemo, useState } from 'react';
+import { IconChevronLeft, IconSettings, MenuItem, useIcons } from 'twenty-ui';
 
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -32,17 +32,24 @@ const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
+const DEFAULT_SELECTED_OPTION = { label: 'Select an option', value: '' };
+
+const filterOptionsBySearch = <T extends { label: string }>(
+  options: T[],
+  searchValue: string,
+): T[] => {
+  if (!searchValue) return options;
+  return options.filter((option) =>
+    option.label.toLowerCase().includes(searchValue.toLowerCase()),
+  );
+};
+
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;
-  triggerOptions:
-    | {
-        readonly: true;
-        onTriggerUpdate?: undefined;
-      }
-    | {
-        readonly?: false;
-        onTriggerUpdate: (trigger: WorkflowDatabaseEventTrigger) => void;
-      };
+  triggerOptions: {
+    readonly?: boolean;
+    onTriggerUpdate: (trigger: WorkflowDatabaseEventTrigger) => void;
+  };
 };
 
 export const WorkflowEditTriggerDatabaseEventForm = ({
@@ -77,27 +84,18 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       Icon: getIcon(item.icon),
     }));
 
-  const selectedOption = [...regularObjects, ...systemObjects].find(
-    (option) => option.value === triggerEvent?.objectType,
-  ) || { label: 'Select an option', value: '' };
+  const selectedOption =
+    [...regularObjects, ...systemObjects].find(
+      (option) => option.value === triggerEvent?.objectType,
+    ) || DEFAULT_SELECTED_OPTION;
 
   const filteredRegularObjects = useMemo(
-    () =>
-      searchInputValue
-        ? regularObjects.filter((option) =>
-            option.label.toLowerCase().includes(searchInputValue.toLowerCase()),
-          )
-        : regularObjects,
+    () => filterOptionsBySearch(regularObjects, searchInputValue),
     [regularObjects, searchInputValue],
   );
 
   const filteredSystemObjects = useMemo(
-    () =>
-      searchInputValue
-        ? systemObjects.filter((option) =>
-            option.label.toLowerCase().includes(searchInputValue.toLowerCase()),
-          )
-        : systemObjects,
+    () => filterOptionsBySearch(systemObjects, searchInputValue),
     [systemObjects, searchInputValue],
   );
 
@@ -111,8 +109,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     type: 'DATABASE_EVENT',
     eventName: triggerEvent.event,
   });
-
-  const headerTitle = isDefined(trigger.name) ? trigger.name : defaultLabel;
 
   const headerType = `Trigger · ${defaultLabel}`;
 
@@ -141,6 +137,13 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     setSearchInputValue('');
   };
 
+  const handleSearchInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchInputValue(event.target.value);
+    },
+    [],
+  );
+
   return (
     <>
       <WorkflowStepHeader
@@ -156,7 +159,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         }}
         Icon={getIcon(headerIcon)}
         iconColor={theme.font.color.tertiary}
-        initialTitle={headerTitle}
+        initialTitle={defaultLabel}
         headerType={headerType}
         disabled={triggerOptions.readonly}
       />
@@ -185,14 +188,12 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                         />
                       }
                     >
-                      System Objects
+                      <Trans>Advanced</Trans>
                     </DropdownMenuHeader>
                     <DropdownMenuSearchInput
                       autoFocus
                       value={searchInputValue}
-                      onChange={(event) =>
-                        setSearchInputValue(event.target.value)
-                      }
+                      onChange={handleSearchInputChange}
                     />
                     <DropdownMenuSeparator />
                     <DropdownMenuItemsContainer hasMaxHeight>
@@ -211,9 +212,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                     <DropdownMenuSearchInput
                       autoFocus
                       value={searchInputValue}
-                      onChange={(event) =>
-                        setSearchInputValue(event.target.value)
-                      }
+                      onChange={handleSearchInputChange}
                     />
                     <DropdownMenuSeparator />
                     <DropdownMenuItemsContainer hasMaxHeight>
@@ -226,11 +225,12 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                         />
                       ))}
                       {(!searchInputValue ||
-                        'system objects'.includes(
+                        'advanced'.includes(
                           searchInputValue.toLowerCase(),
                         )) && (
                         <MenuItem
-                          text="System Objects"
+                          text="Advanced"
+                          LeftIcon={IconSettings}
                           onClick={handleSystemObjectsClick}
                           hasSubMenu
                         />
