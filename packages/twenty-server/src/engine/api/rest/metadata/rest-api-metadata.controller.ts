@@ -7,14 +7,17 @@ import {
   Res,
   Patch,
   Put,
+  UseFilters,
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
 
 import { RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-metadata.service';
 import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-response.utils';
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 
 @Controller('rest/metadata/*')
+@UseFilters(RestApiExceptionFilter)
 export class RestApiMetadataController {
   constructor(
     private readonly restApiMetadataService: RestApiMetadataService,
