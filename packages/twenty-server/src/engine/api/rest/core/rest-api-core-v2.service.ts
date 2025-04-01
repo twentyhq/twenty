@@ -14,7 +14,6 @@ import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-i
 import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
 import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -44,7 +43,6 @@ export class RestApiCoreServiceV2 {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly limitInputFactory: LimitInputFactory,
     private readonly filterInputFactory: FilterInputFactory,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly orderByInputFactory: OrderByInputFactory,
     private readonly startingAfterInputFactory: StartingAfterInputFactory,
     private readonly endingBeforeInputFactory: EndingBeforeInputFactory,
