@@ -5,6 +5,6 @@ export enum ViewType {
   Kanban = 'kanban',
 }
 
-export const viewTypeDefaultIcon = (viewType: ViewType): IconComponent => {
+export const viewTypeIconMapping = (viewType: ViewType): IconComponent => {
   return viewType === ViewType.Table ? IconTable : IconLayoutKanban;
 };

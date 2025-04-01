@@ -24,7 +24,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ViewType, viewTypeDefaultIcon } from '@/views/types/ViewType';
+import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -75,6 +75,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   };
 
   const isDefaultView = currentView?.key === 'INDEX';
+  const nbsp = '\u00A0';
 
   return (
     <>
@@ -101,13 +102,13 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             }}
           />
           <MenuItemSelect
-            LeftIcon={viewTypeDefaultIcon(ViewType.Kanban)}
+            LeftIcon={viewTypeIconMapping(ViewType.Kanban)}
             text={t`Kanban`}
             disabled={isDefaultView}
             contextualText={
               isDefaultView ? (
                 <>
-                  {'\u00A0·\u00A0'}
+                  {nbsp}·{nbsp}
                   <OverflowingTextWithTooltip
                     text={t`Not available for default view`}
                   />
