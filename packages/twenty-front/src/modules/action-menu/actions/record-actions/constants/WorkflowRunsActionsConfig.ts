@@ -1,4 +1,6 @@
 import { DEFAULT_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultActionsConfig';
+import { useSeeWorkflowsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeWorkflowsNoSelectionRecordAction';
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useSeeVersionWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/hooks/useSeeVersionWorkflowRunSingleRecordAction';
 import { useSeeWorkflowWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/hooks/useSeeWorkflowWorkflowRunSingleRecordAction';
 import { WorkflowRunSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/types/WorkflowRunSingleRecordActionsKeys';
@@ -96,8 +98,19 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     label: msg`Hide deleted runs`,
   },
   seeAllWorkflows: {
-    ...DEFAULT_ACTIONS_CONFIG.seeAllWorkflows,
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
+    label: msg`Go to workflows`,
+    shortLabel: msg`See workflows`,
     position: 11,
+    Icon: IconSettingsAutomation,
+    accent: 'default',
+    isPinned: true,
+    shouldBeRegistered: () => true,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeWorkflowsNoSelectionRecordAction,
+    hotKeys: ['G', 'W'],
   },
   goToPeople: {
     ...DEFAULT_ACTIONS_CONFIG.goToPeople,
