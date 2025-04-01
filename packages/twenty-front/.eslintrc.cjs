@@ -27,8 +27,8 @@ module.exports = {
   overrides: [
     {
       files: [
-        'packages/twenty-front/**/*.ts',
-        'packages/twenty-front/**/*.tsx',
+        '**/*.ts',
+        '**/*.tsx',
       ],
       extends: ['plugin:@nx/typescript'],
       parserOptions: {
@@ -54,27 +54,26 @@ module.exports = {
       },
     },
     {
-      files: ['packages/twenty-front/**/*.stories.@(ts|tsx|js|jsx)'],
-      rules: {
-        ...STORIES_RULES,
-      },
+      files: ['**/*.stories.@(ts|tsx|js|jsx)'],
+      rules: STORIES_RULES,
     },
     {
-      files: ['packages/twenty-front/**/.storybook/main.@(js|cjs|mjs|ts)'],
-      rules: {
-        ...STORYBOOK_RULES,
-      },
+      files: ['**/.storybook/main.@(js|cjs|mjs|ts)'],
+      rules: STORYBOOK_RULES,
     },
     {
-      files: ['packages/twenty-front/**/*.js', 'packages/twenty-front/**/*.jsx'],
+      files: [
+        '**/*.js',
+        '**/*.jsx',
+      ],
       extends: ['plugin:@nx/javascript'],
       rules: {},
     },
     {
       files: [
-        'packages/twenty-front/**/*.spec.@(ts|tsx|js|jsx)',
-        'packages/twenty-front/**/*.integration-spec.@(ts|tsx|js|jsx)',
-        'packages/twenty-front/**/*.test.@(ts|tsx|js|jsx)',
+        '**/*.spec.@(ts|tsx|js|jsx)',
+        '**/*.integration-spec.@(ts|tsx|js|jsx)',
+        '**/*.test.@(ts|tsx|js|jsx)',
       ],
       env: {
         jest: true,
@@ -84,7 +83,10 @@ module.exports = {
       },
     },
     {
-      files: ['packages/twenty-front/**/constants/*.ts', 'packages/twenty-front/**/*.constants.ts'],
+      files: [
+        '**/constants/*.ts',
+        '**/*.constants.ts',
+      ],
       rules: {
         '@typescript-eslint/naming-convention': [
           'error',
@@ -105,7 +107,7 @@ module.exports = {
       },
     },
     {
-      files: ['packages/twenty-front/**/*.json'],
+      files: ['**/*.json'],
       parser: 'jsonc-eslint-parser',
     },
   ],
