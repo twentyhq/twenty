@@ -34,6 +34,7 @@ export type GenericFieldContextType = {
   isDisplayModeFixHeight?: boolean;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
+  isLabelHidden?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(
