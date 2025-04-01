@@ -16,8 +16,17 @@ export const SettingsAccountsBlocklistSection = () => {
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
+  if (!currentWorkspaceMember) {
+    throw new Error('No workspace member found.');
+  }
+
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
     objectNameSingular: CoreObjectNameSingular.Blocklist,
+    filter: {
+      workspaceMemberId: {
+        in: [currentWorkspaceMember.id],
+      },
+    },
   });
 
   const { createOneRecord: createBlocklistItem } =
