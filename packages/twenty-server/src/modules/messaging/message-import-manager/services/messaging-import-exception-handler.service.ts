@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -17,7 +18,8 @@ export enum MessageImportSyncStep {
   FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH',
   PARTIAL_MESSAGE_LIST_FETCH = 'PARTIAL_MESSAGE_LIST_FETCH',
   FULL_OR_PARTIAL_MESSAGE_LIST_FETCH = 'FULL_OR_PARTIAL_MESSAGE_LIST_FETCH',
-  MESSAGES_IMPORT = 'MESSAGES_IMPORT',
+  MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
+  MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
 }
 
 @Injectable()
@@ -25,6 +27,7 @@ export class MessageImportExceptionHandlerService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   public async handleDriverException(
@@ -57,14 +60,6 @@ export class MessageImportExceptionHandlerService {
           workspaceId,
         );
         break;
-      case MessageImportDriverExceptionCode.UNKNOWN:
-      case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
-        await this.handleUnknownException(
-          exception,
-          messageChannel,
-          workspaceId,
-        );
-        break;
       case MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR:
         await this.handlePermanentException(
           exception,
@@ -72,8 +67,15 @@ export class MessageImportExceptionHandlerService {
           workspaceId,
         );
         break;
+      case MessageImportDriverExceptionCode.UNKNOWN:
+      case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
       default:
-        throw exception;
+        await this.handleUnknownException(
+          exception,
+          messageChannel,
+          workspaceId,
+        );
+        break;
     }
   }
 
@@ -93,7 +95,7 @@ export class MessageImportExceptionHandlerService {
         workspaceId,
       );
       throw new MessageImportException(
-        `Unknown error occurred multiple times while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}`,
+        `Unknown temporary error occurred multiple times while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}`,
         MessageImportExceptionCode.UNKNOWN,
       );
     }
@@ -121,8 +123,8 @@ export class MessageImportExceptionHandlerService {
           [messageChannel.id],
         );
         break;
-
-      case MessageImportSyncStep.MESSAGES_IMPORT:
+      case MessageImportSyncStep.MESSAGES_IMPORT_PENDING:
+      case MessageImportSyncStep.MESSAGES_IMPORT_ONGOING:
         await this.messageChannelSyncStatusService.scheduleMessagesImport([
           messageChannel.id,
         ]);
@@ -152,6 +154,10 @@ export class MessageImportExceptionHandlerService {
       [messageChannel.id],
       workspaceId,
     );
+
+    this.exceptionHandlerService.captureExceptions([
+      `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
+    ]);
 
     throw new MessageImportException(
       `Unknown error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,

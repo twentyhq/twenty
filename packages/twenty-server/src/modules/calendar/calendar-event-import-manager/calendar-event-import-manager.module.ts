@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { HealthModule } from 'src/engine/core-modules/health/health.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
@@ -50,7 +50,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     RefreshTokensManagerModule,
     ConnectedAccountModule,
     CalendarCommonModule,
-    HealthModule,
+    MetricsModule,
   ],
   providers: [
     CalendarChannelSyncStatusService,

@@ -117,14 +117,6 @@ export class MessagingMessagesImportService {
         MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
       );
 
-      if (connectedAccount.id === '74998005-0180-4d6a-9fa4-fe733c4707f8') {
-        this.logger.log(
-          '[TMP] Debugging messages import for account:',
-          messageChannel.connectedAccount.id,
-        );
-        this.logger.log('[TMP] messageIdsToFetch:', messageIdsToFetch);
-      }
-
       if (!messageIdsToFetch?.length) {
         await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
           [messageChannel.id],
@@ -200,7 +192,7 @@ export class MessagingMessagesImportService {
 
       await this.messageImportErrorHandlerService.handleDriverException(
         error,
-        MessageImportSyncStep.MESSAGES_IMPORT,
+        MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
         messageChannel,
         workspaceId,
       );

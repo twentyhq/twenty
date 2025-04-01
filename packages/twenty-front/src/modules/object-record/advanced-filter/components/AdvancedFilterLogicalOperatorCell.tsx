@@ -8,6 +8,8 @@ const StyledText = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   display: flex;
   align-items: center;
+
+  padding-left: ${({ theme }) => theme.spacing(2.25)};
 `;
 
 const StyledContainer = styled.div`

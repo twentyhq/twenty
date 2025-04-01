@@ -3,8 +3,10 @@ import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-ac
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
+import { useHideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useHideDeletedRecordsNoSelectionRecordAction';
 import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
+import { useSeeRunsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeRunsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
@@ -33,10 +35,10 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconDatabaseExport,
+  IconEyeOff,
   IconFileImport,
   IconHeart,
   IconHeartOff,
-  IconHistory,
   IconHistoryToggle,
   IconNoteOff,
   IconPlayerPause,
@@ -46,6 +48,7 @@ import {
   IconRotate2,
   IconTrash,
   IconTrashX,
+  IconVersions,
 } from 'twenty-ui';
 
 export const WORKFLOW_ACTIONS_CONFIG: Record<
@@ -117,7 +120,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     shortLabel: msg`See active version`,
     isPinned: false,
     position: 4,
-    Icon: IconHistory,
+    Icon: IconVersions,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
@@ -147,7 +150,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     shortLabel: msg`See versions`,
     isPinned: false,
     position: 6,
-    Icon: IconHistory,
+    Icon: IconVersions,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     availableOn: [
@@ -334,18 +337,44 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
+  hideDeletedRecords: {
+    type: ActionMenuEntryType.Standard,
+    scope: ActionMenuEntryScope.Object,
+    key: NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
+    label: msg`Hide deleted workflows`,
+    shortLabel: msg`Hide deleted`,
+    position: 20,
+    Icon: IconEyeOff,
+    accent: 'default',
+    isPinned: false,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useHideDeletedRecordsNoSelectionRecordAction,
+  },
   importRecords: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.IMPORT_RECORDS,
     label: msg`Import workflows`,
     shortLabel: msg`Import`,
-    position: 20,
+    position: 21,
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useImportRecordsNoSelectionRecordAction,
+  },
+  seeAllRuns: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.SEE_RUNS,
+    label: msg`Go to runs`,
+    shortLabel: msg`See runs`,
+    position: 22,
+    Icon: IconHistoryToggle,
+    accent: 'default',
+    isPinned: true,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    useAction: useSeeRunsNoSelectionRecordAction,
   },
   // TODO: uncomment when restore is implemented for workflows
   // restoreSingleRecord: {

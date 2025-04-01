@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { z } from 'zod';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
@@ -95,6 +95,7 @@ export const workflowFormActionSettingsSchema =
         ]),
         placeholder: z.string().optional(),
         settings: z.record(z.any()).optional(),
+        value: z.any().optional(),
       }),
     ),
   });

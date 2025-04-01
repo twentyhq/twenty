@@ -12,6 +12,7 @@ type FormLinksFieldInputProps = {
   onChange: (value: FieldLinksValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  placeholder?: string;
 };
 
 export const FormLinksFieldInput = ({
@@ -20,6 +21,7 @@ export const FormLinksFieldInput = ({
   onChange,
   readonly,
   VariablePicker,
+  placeholder,
 }: FormLinksFieldInputProps) => {
   const handleChange =
     (field: keyof FieldLinksDraftValue) => (updatedLinksPart: string) => {
@@ -40,7 +42,7 @@ export const FormLinksFieldInput = ({
           label="Primary Link Label"
           defaultValue={defaultValue?.primaryLinkLabel}
           onChange={handleChange('primaryLinkLabel')}
-          placeholder={'Primary Link Label'}
+          placeholder={placeholder ?? 'Primary Link Label'}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
@@ -48,7 +50,7 @@ export const FormLinksFieldInput = ({
           label="Primary Link URL"
           defaultValue={defaultValue?.primaryLinkUrl}
           onChange={handleChange('primaryLinkUrl')}
-          placeholder={'Primary Link URL'}
+          placeholder={placeholder ?? 'Primary Link URL'}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />

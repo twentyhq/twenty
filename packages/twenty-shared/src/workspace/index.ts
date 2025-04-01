@@ -7,5 +7,5 @@
  *                              |___/
  */
 
-export * from './types/WorkspaceActivationStatus';
-export * from './utils/isWorkspaceActiveOrSuspended';
+export { WorkspaceActivationStatus } from './types/WorkspaceActivationStatus';
+export { isWorkspaceActiveOrSuspended } from './utils/isWorkspaceActiveOrSuspended';

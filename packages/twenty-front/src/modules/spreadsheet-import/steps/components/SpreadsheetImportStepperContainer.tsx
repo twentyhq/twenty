@@ -8,6 +8,7 @@ import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useLingui } from '@lingui/react/macro';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
 const StyledHeader = styled(Modal.Header)`
@@ -23,13 +24,15 @@ const StyledHeader = styled(Modal.Header)`
   }
 `;
 
-const stepTitles = {
-  uploadStep: 'Upload file',
-  matchColumnsStep: 'Match columns',
-  validationStep: 'Validate data',
-} as const;
-
 export const SpreadsheetImportStepperContainer = () => {
+  const { t } = useLingui();
+
+  const stepTitles = {
+    uploadStep: t`Upload file`,
+    matchColumnsStep: t`Match columns`,
+    validationStep: t`Validate data`,
+  };
+
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const { steps, initialStep } = useSpreadsheetImportInitialStep(

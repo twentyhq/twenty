@@ -7,25 +7,22 @@ import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/Workflo
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
 import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useSubmitFormStep';
 import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { isDefined } from 'twenty-shared/utils';
 
 export type WorkflowEditActionFormFillerProps = {
   action: WorkflowFormAction;
-  actionOptions:
-    | {
-        readonly: true;
-      }
-    | {
-        readonly?: false;
-        onActionUpdate: (action: WorkflowFormAction) => void;
-      };
+  actionOptions: {
+    readonly: boolean;
+  };
 };
 
 type FormData = WorkflowFormActionField[];
@@ -40,6 +37,7 @@ export const WorkflowEditActionFormFiller = ({
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const { workflowRunId } = useWorkflowStepContextOrThrow();
   const { closeCommandMenu } = useCommandMenu();
+  const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
 
   if (!isDefined(workflowRunId)) {
     throw new Error('Form filler action must be used in a workflow run');
@@ -73,11 +71,11 @@ export const WorkflowEditActionFormFiller = ({
       return;
     }
 
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: updatedFormData,
+    await updateWorkflowRunStep({
+      workflowRunId,
+      step: {
+        ...action,
+        settings: { ...action.settings, input: updatedFormData },
       },
     });
   }, 1_000);
@@ -109,16 +107,6 @@ export const WorkflowEditActionFormFiller = ({
   return (
     <>
       <WorkflowStepHeader
-        onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-
-          actionOptions.onActionUpdate({
-            ...action,
-            name: newName,
-          });
-        }}
         Icon={getIcon(headerIcon)}
         iconColor={theme.font.color.tertiary}
         initialTitle={headerTitle}
@@ -142,6 +130,10 @@ export const WorkflowEditActionFormFiller = ({
             }}
             defaultValue={field.value ?? ''}
             readonly={actionOptions.readonly}
+            placeholder={
+              field.placeholder ??
+              getDefaultFormFieldSettings(field.type).placeholder
+            }
           />
         ))}
       </WorkflowStepBody>

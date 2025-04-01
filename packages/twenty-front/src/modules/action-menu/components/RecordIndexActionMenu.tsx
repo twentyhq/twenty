@@ -3,7 +3,7 @@ import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { RecordIndexActionMenuButtons } from '@/action-menu/components/RecordIndexActionMenuButtons';
+import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -48,7 +48,7 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
             },
           }}
         >
-          {!isMobile && <RecordIndexActionMenuButtons />}
+          {!isMobile && <PageHeaderActionMenuButtons />}
           <RecordIndexActionMenuDropdown />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
