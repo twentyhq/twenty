@@ -5,10 +5,13 @@ import { createPortal } from 'react-dom';
 import { AppTooltip, Checkbox, CheckboxVariant, Toggle } from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
-import { Fields, ImportedStructuredRow } from '@/spreadsheet-import/types';
+import {
+  ImportedStructuredRow,
+  SpreadsheetImportFields,
+} from '@/spreadsheet-import/types';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isDefined } from 'twenty-shared';
 
+import { isDefined } from 'twenty-shared/utils';
 import { ImportedStructuredRowMetadata } from '../types';
 
 const StyledHeaderContainer = styled.div`
@@ -60,7 +63,7 @@ const StyledDefaultContainer = styled.div`
 const SELECT_COLUMN_KEY = 'select-row';
 
 export const generateColumns = <T extends string>(
-  fields: Fields<T>,
+  fields: SpreadsheetImportFields<T>,
 ): Column<ImportedStructuredRow<T> & ImportedStructuredRowMetadata>[] => [
   {
     key: SELECT_COLUMN_KEY,
@@ -135,7 +138,7 @@ export const generateColumns = <T extends string>(
                 value={
                   value
                     ? ({
-                        icon: undefined,
+                        Icon: undefined,
                         ...value,
                       } as const)
                     : value

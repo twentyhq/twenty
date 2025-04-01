@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -57,7 +57,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Full Day`,
     description: msg`Is Full Day`,
-    icon: 'Icon24Hours',
+    icon: 'IconHours24',
     defaultValue: false,
   })
   isFullDay: boolean;

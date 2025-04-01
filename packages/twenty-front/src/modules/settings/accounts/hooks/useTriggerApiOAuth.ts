@@ -1,19 +1,20 @@
 import { AppPath } from '@/types/AppPath';
 import { useCallback } from 'react';
 
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
   useGenerateTransientTokenMutation,
 } from '~/generated/graphql';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-const getProviderUrl = (provider: string) => {
+const getProviderUrl = (provider: ConnectedAccountProvider) => {
   switch (provider) {
-    case 'google':
+    case ConnectedAccountProvider.GOOGLE:
       return 'google-apis';
-    case 'microsoft':
+    case ConnectedAccountProvider.MICROSOFT:
       return 'microsoft-apis';
     default:
       throw new Error(`Provider ${provider} is not supported`);
@@ -26,7 +27,7 @@ export const useTriggerApisOAuth = () => {
 
   const triggerApisOAuth = useCallback(
     async (
-      provider: string,
+      provider: ConnectedAccountProvider,
       {
         redirectLocation,
         messageVisibility,

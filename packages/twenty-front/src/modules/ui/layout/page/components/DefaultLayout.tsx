@@ -1,6 +1,8 @@
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
+import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
+import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
@@ -8,6 +10,7 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -69,6 +72,7 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
+  const useShowFullScreen = useShowFullscreen();
 
   return (
     <>
@@ -80,51 +84,52 @@ export const DefaultLayout = () => {
         `}
       />
       <StyledLayout>
-        {!showAuthModal && (
-          <>
-            <CommandMenuRouter />
-            <KeyboardShortcutMenu />
-          </>
-        )}
-
-        <StyledPageContainer
-          animate={{
-            marginLeft:
-              isSettingsPage && !isMobile
-                ? (windowsWidth -
-                    (OBJECT_SETTINGS_WIDTH +
-                      NAV_DRAWER_WIDTHS.menu.desktop.expanded +
-                      64)) /
-                  2
-                : 0,
-          }}
-          transition={{ duration: theme.animation.duration.normal }}
-        >
-          {showAuthModal ? (
-            <StyledAppNavigationDrawerMock />
-          ) : (
-            <StyledAppNavigationDrawer />
-          )}
-          {showAuthModal ? (
-            <>
-              <SignInBackgroundMockPage />
-              <AnimatePresence mode="wait">
-                <LayoutGroup>
-                  <AuthModal>
-                    <Outlet />
-                  </AuthModal>
-                </LayoutGroup>
-              </AnimatePresence>
-            </>
-          ) : (
-            <StyledMainContainer>
-              <AppErrorBoundary>
-                <Outlet />
-              </AppErrorBoundary>
-            </StyledMainContainer>
-          )}
-        </StyledPageContainer>
-        {isMobile && <MobileNavigationBar />}
+        <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
+          <StyledPageContainer
+            animate={{
+              marginLeft:
+                isSettingsPage && !isMobile && !useShowFullScreen
+                  ? (windowsWidth -
+                      (OBJECT_SETTINGS_WIDTH +
+                        NAV_DRAWER_WIDTHS.menu.desktop.expanded +
+                        64)) /
+                    2
+                  : 0,
+            }}
+            transition={{ duration: theme.animation.duration.normal }}
+          >
+            {!showAuthModal && (
+              <>
+                <CommandMenuRouter />
+                <KeyboardShortcutMenu />
+              </>
+            )}
+            {showAuthModal ? (
+              <StyledAppNavigationDrawerMock />
+            ) : useShowFullScreen ? null : (
+              <StyledAppNavigationDrawer />
+            )}
+            {showAuthModal ? (
+              <>
+                <SignInBackgroundMockPage />
+                <AnimatePresence mode="wait">
+                  <LayoutGroup>
+                    <AuthModal>
+                      <Outlet />
+                    </AuthModal>
+                  </LayoutGroup>
+                </AnimatePresence>
+              </>
+            ) : (
+              <StyledMainContainer>
+                <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
+                  <Outlet />
+                </AppErrorBoundary>
+              </StyledMainContainer>
+            )}
+          </StyledPageContainer>
+          {isMobile && <MobileNavigationBar />}
+        </AppErrorBoundary>
       </StyledLayout>
     </>
   );

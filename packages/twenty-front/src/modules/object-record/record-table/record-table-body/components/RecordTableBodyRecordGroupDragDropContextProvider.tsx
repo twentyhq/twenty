@@ -6,13 +6,13 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableBodyRecordGroupDragDropContextProvider = ({
   children,
@@ -34,6 +34,10 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     recordIndexRecordIdsByGroupComponentFamilyState,
   );
 
+  const currentRecordSortsCallbackState = useRecoilComponentCallbackStateV2(
+    currentRecordSortsComponentState,
+  );
+
   const handleDragEnd = useRecoilCallback(
     ({ snapshot }) =>
       (result: DropResult) => {
@@ -52,8 +56,8 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
           recordGroupDefinitionFamilyState(destinationRecordGroupId),
         );
 
-        const indexSorts = snapshot
-          .getLoadable(recordIndexSortsState)
+        const currentRecordSorts = snapshot
+          .getLoadable(currentRecordSortsCallbackState)
           .getValue();
 
         if (!isDefined(destinationRecordGroup)) {
@@ -68,7 +72,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
           throw new Error('Field metadata is not defined');
         }
 
-        if (indexSorts.length > 0) {
+        if (currentRecordSorts.length > 0) {
           setIsRemoveSortingModalOpen(true);
           return;
         }
@@ -130,6 +134,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
       recordIdsByGroupFamilyState,
       updateOneRow,
       setIsRemoveSortingModalOpen,
+      currentRecordSortsCallbackState,
     ],
   );
 

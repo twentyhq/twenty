@@ -12,7 +12,8 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
-import { APP_LOCALES, getImageAbsoluteURI } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
 type SendApprovedAccessDomainValidationProps = {
   link: string;
@@ -49,10 +50,11 @@ export const SendApprovedAccessDomainValidation = ({
           value={sender.email}
           color={emailTheme.font.colors.blue}
         />
-        )
+        ) <Trans>Please validate this domain to allow users with</Trans>{' '}
+        <b>@{domain}</b>{' '}
         <Trans>
-          Please validate this domain to allow users with <b>@{domain}</b> email
-          addresses to join your workspace without requiring an invitation.
+          email addresses to join your workspace without requiring an
+          invitation.
         </Trans>
         <br />
       </MainText>

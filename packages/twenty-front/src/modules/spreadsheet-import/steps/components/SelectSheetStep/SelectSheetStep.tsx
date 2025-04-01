@@ -11,6 +11,7 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { Radio, RadioGroup } from 'twenty-ui';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useLingui } from '@lingui/react/macro';
 import { WorkBook } from 'xlsx-ugnis';
 
 const StyledContent = styled(Modal.Content)`
@@ -100,10 +101,12 @@ export const SelectSheetStep = ({
     [handleContinue],
   );
 
+  const { t } = useLingui();
+
   return (
     <>
       <StyledContent>
-        <StyledHeading title="Select the sheet to use" />
+        <StyledHeading title={t`Select the sheet to use`} />
         <StyledRadioContainer>
           <RadioGroup onValueChange={(value) => setValue(value)} value={value}>
             {sheetNames.map((sheetName) => (
@@ -116,7 +119,7 @@ export const SelectSheetStep = ({
         onClick={() => handleOnContinue(value)}
         onBack={onBack}
         isLoading={isLoading}
-        title="Next Step"
+        title={t`Next Step`}
       />
     </>
   );

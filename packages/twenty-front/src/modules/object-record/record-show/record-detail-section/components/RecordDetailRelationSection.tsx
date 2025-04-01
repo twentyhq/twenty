@@ -8,15 +8,18 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
-import { SingleRecordPickerMenuItemsWithSearch } from '@/object-record/record-picker/components/SingleRecordPickerMenuItemsWithSearch';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
-import { recordPickerSearchFilterComponentState } from '@/object-record/record-picker/states/recordPickerSearchFilterComponentState';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
+import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
+import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
+import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
+import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
+import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
@@ -78,21 +81,44 @@ export const RecordDetailRelationSection = ({
       ? [fieldValue as ObjectRecord]
       : ((fieldValue as ObjectRecord[]) ?? []);
 
-  const relationRecordIds = relationRecords.map(({ id }) => id);
-
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.fieldMetadataId}-${recordId}`;
 
   const { closeDropdown, isDropdownOpen, dropdownPlacement } =
     useDropdown(dropdownId);
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
-    recordPickerSearchFilterComponentState,
+  const setMultipleRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+    multipleRecordPickerSearchFilterComponentState,
+    dropdownId,
+  );
+
+  const setMultipleRecordPickerPickableMorphItems =
+    useSetRecoilComponentStateV2(
+      multipleRecordPickerPickableMorphItemsComponentState,
+      dropdownId,
+    );
+
+  const setMultipleRecordPickerSearchableObjectMetadataItems =
+    useSetRecoilComponentStateV2(
+      multipleRecordPickerSearchableObjectMetadataItemsComponentState,
+      dropdownId,
+    );
+
+  const { performSearch: multipleRecordPickerPerformSearch } =
+    useMultipleRecordPickerPerformSearch();
+
+  const setSingleRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+    singleRecordPickerSearchFilterComponentState,
+    dropdownId,
+  );
+
+  const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
+    singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
 
   const handleCloseRelationPickerDropdown = useCallback(() => {
-    setRecordPickerSearchFilter('');
-  }, [setRecordPickerSearchFilter]);
+    setMultipleRecordPickerSearchFilter('');
+  }, [setMultipleRecordPickerSearchFilter]);
 
   const persistField = usePersistField();
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
@@ -119,9 +145,7 @@ export const RecordDetailRelationSection = ({
     });
   };
 
-  const { updateRelation } = useUpdateRelationFromManyFieldInput({
-    scopeId: dropdownId,
-  });
+  const { updateRelation } = useUpdateRelationFromManyFieldInput();
 
   const indexViewId = useRecoilValue(
     prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
@@ -170,6 +194,42 @@ export const RecordDetailRelationSection = ({
 
   const relationRecordsCount = relationRecords.length;
 
+  const handleOpenRelationPickerDropdown = () => {
+    if (isToOneObject) {
+      setSingleRecordPickerSearchFilter('');
+      if (relationRecords.length > 0) {
+        setSingleRecordPickerSelectedId(relationRecords[0].id);
+      }
+    }
+
+    if (isToManyObjects) {
+      setMultipleRecordPickerSearchableObjectMetadataItems([
+        relationObjectMetadataItem,
+      ]);
+      setMultipleRecordPickerSearchFilter('');
+      setMultipleRecordPickerPickableMorphItems(
+        relationRecords.map((record) => ({
+          recordId: record.id,
+          objectMetadataId: relationObjectMetadataItem.id,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        })),
+      );
+
+      multipleRecordPickerPerformSearch({
+        multipleRecordPickerInstanceId: dropdownId,
+        forceSearchFilter: '',
+        forceSearchableObjectMetadataItems: [relationObjectMetadataItem],
+        forcePickableMorphItems: relationRecords.map((record) => ({
+          recordId: record.id,
+          objectMetadataId: relationObjectMetadataItem.id,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        })),
+      });
+    }
+  };
+
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
@@ -194,6 +254,7 @@ export const RecordDetailRelationSection = ({
                 dropdownId={dropdownId}
                 dropdownPlacement="left-start"
                 onClose={handleCloseRelationPickerDropdown}
+                onOpen={handleOpenRelationPickerDropdown}
                 clickableComponent={
                   <LightIconButton
                     className="displayOnHover"
@@ -201,38 +262,41 @@ export const RecordDetailRelationSection = ({
                     accent="tertiary"
                   />
                 }
-                dropdownComponents={
-                  <RecordPickerComponentInstanceContext.Provider
-                    value={{ instanceId: dropdownId }}
-                  >
-                    {isToOneObject ? (
-                      <SingleRecordPickerMenuItemsWithSearch
-                        EmptyIcon={IconForbid}
-                        onRecordSelected={handleRelationPickerEntitySelected}
-                        selectedRecordIds={relationRecordIds}
-                        objectNameSingular={relationObjectMetadataNameSingular}
-                        recordPickerInstanceId={dropdownId}
-                        onCreate={createNewRecordAndOpenRightDrawer}
-                        dropdownPlacement={dropdownPlacement}
-                      />
-                    ) : (
-                      <>
-                        <RelationFromManyFieldInputMultiRecordsEffect />
-                        <MultipleRecordPicker
-                          componentInstanceId={dropdownId}
-                          onCreate={() => {
-                            closeDropdown();
-                            createNewRecordAndOpenRightDrawer?.();
-                          }}
-                          onChange={updateRelation}
-                          onSubmit={closeDropdown}
-                          dropdownPlacement={dropdownPlacement}
-                        />
-                      </>
-                    )}
-                  </RecordPickerComponentInstanceContext.Provider>
-                }
                 dropdownHotkeyScope={{ scope: dropdownId }}
+                dropdownComponents={
+                  isToOneObject ? (
+                    <SingleRecordPicker
+                      componentInstanceId={dropdownId}
+                      EmptyIcon={IconForbid}
+                      onRecordSelected={handleRelationPickerEntitySelected}
+                      objectNameSingular={relationObjectMetadataNameSingular}
+                      recordPickerInstanceId={dropdownId}
+                      onCreate={createNewRecordAndOpenRightDrawer}
+                      onCancel={closeDropdown}
+                      layoutDirection={
+                        dropdownPlacement?.includes('end')
+                          ? 'search-bar-on-bottom'
+                          : 'search-bar-on-top'
+                      }
+                    />
+                  ) : (
+                    <MultipleRecordPicker
+                      componentInstanceId={dropdownId}
+                      onCreate={() => {
+                        closeDropdown();
+                        createNewRecordAndOpenRightDrawer?.();
+                      }}
+                      onChange={updateRelation}
+                      onSubmit={closeDropdown}
+                      onClickOutside={closeDropdown}
+                      layoutDirection={
+                        dropdownPlacement?.includes('end')
+                          ? 'search-bar-on-bottom'
+                          : 'search-bar-on-top'
+                      }
+                    />
+                  )
+                }
               />
             </DropdownScope>
           )

@@ -10,6 +10,7 @@ import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-he
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
@@ -27,6 +28,7 @@ export class AdminPanelHealthService {
     private readonly redisHealth: RedisHealthIndicator,
     private readonly workerHealth: WorkerHealthIndicator,
     private readonly connectedAccountHealth: ConnectedAccountHealth,
+    private readonly appHealth: AppHealthIndicator,
     private readonly redisClient: RedisClientService,
   ) {}
 
@@ -35,6 +37,7 @@ export class AdminPanelHealthService {
     [HealthIndicatorId.redis]: this.redisHealth,
     [HealthIndicatorId.worker]: this.workerHealth,
     [HealthIndicatorId.connectedAccount]: this.connectedAccountHealth,
+    [HealthIndicatorId.app]: this.appHealth,
   };
 
   private transformStatus(status: HealthIndicatorStatus) {
@@ -46,15 +49,17 @@ export class AdminPanelHealthService {
   private transformServiceDetails(details: any) {
     if (!details) return details;
 
-    if (details.messageSync) {
-      details.messageSync.status = this.transformStatus(
-        details.messageSync.status,
-      );
-    }
-    if (details.calendarSync) {
-      details.calendarSync.status = this.transformStatus(
-        details.calendarSync.status,
-      );
+    if (details.details) {
+      if (details.details.messageSync) {
+        details.details.messageSync.status = this.transformStatus(
+          details.details.messageSync.status,
+        );
+      }
+      if (details.details.calendarSync) {
+        details.details.calendarSync.status = this.transformStatus(
+          details.details.calendarSync.status,
+        );
+      }
     }
 
     return details;
@@ -65,17 +70,33 @@ export class AdminPanelHealthService {
     indicatorId: HealthIndicatorId,
   ) {
     if (result.status === 'fulfilled') {
-      const key = Object.keys(result.value)[0];
+      const keys = Object.keys(result.value);
+
+      if (keys.length === 0) {
+        return {
+          ...HEALTH_INDICATORS[indicatorId],
+          status: AdminPanelHealthServiceStatus.OUTAGE,
+          errorMessage: 'No health check result available',
+        };
+      }
+      const key = keys[0];
       const serviceResult = result.value[key];
-      const details = this.transformServiceDetails(serviceResult.details);
+      const { status, message, ...detailsWithoutStatus } = serviceResult;
       const indicator = HEALTH_INDICATORS[indicatorId];
+
+      const transformedDetails =
+        this.transformServiceDetails(detailsWithoutStatus);
 
       return {
         id: indicatorId,
         label: indicator.label,
         description: indicator.description,
-        status: this.transformStatus(serviceResult.status),
-        details: details ? JSON.stringify(details) : undefined,
+        status: this.transformStatus(status),
+        errorMessage: message,
+        details:
+          Object.keys(transformedDetails).length > 0
+            ? JSON.stringify(transformedDetails)
+            : undefined,
         queues: serviceResult.queues,
       };
     }
@@ -83,7 +104,10 @@ export class AdminPanelHealthService {
     return {
       ...HEALTH_INDICATORS[indicatorId],
       status: AdminPanelHealthServiceStatus.OUTAGE,
-      details: result.reason?.message?.toString(),
+      errorMessage: result.reason?.message?.toString(),
+      details: result.reason?.details
+        ? JSON.stringify(result.reason.details)
+        : undefined,
     };
   }
 
@@ -117,13 +141,19 @@ export class AdminPanelHealthService {
   }
 
   async getSystemHealthStatus(): Promise<SystemHealth> {
-    const [databaseResult, redisResult, workerResult, accountSyncResult] =
-      await Promise.allSettled([
-        this.databaseHealth.isHealthy(),
-        this.redisHealth.isHealthy(),
-        this.workerHealth.isHealthy(),
-        this.connectedAccountHealth.isHealthy(),
-      ]);
+    const [
+      databaseResult,
+      redisResult,
+      workerResult,
+      accountSyncResult,
+      appResult,
+    ] = await Promise.allSettled([
+      this.databaseHealth.isHealthy(),
+      this.redisHealth.isHealthy(),
+      this.workerHealth.isHealthy(),
+      this.connectedAccountHealth.isHealthy(),
+      this.appHealth.isHealthy(),
+    ]);
 
     return {
       services: [
@@ -150,6 +180,11 @@ export class AdminPanelHealthService {
             accountSyncResult,
             HealthIndicatorId.connectedAccount,
           ).status,
+        },
+        {
+          ...HEALTH_INDICATORS[HealthIndicatorId.app],
+          status: this.getServiceStatus(appResult, HealthIndicatorId.app)
+            .status,
         },
       ],
     };

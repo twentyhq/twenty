@@ -7,8 +7,8 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared';
 import { Repository } from 'typeorm';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import {
   AppToken,
@@ -41,7 +41,9 @@ export class EmailVerificationService {
   async sendVerificationEmail(
     userId: string,
     email: string,
-    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
+    workspace:
+      | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
+      | undefined,
     locale: keyof typeof APP_LOCALES,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
@@ -51,12 +53,16 @@ export class EmailVerificationService {
     const { token: emailVerificationToken } =
       await this.emailVerificationTokenService.generateToken(userId, email);
 
-    const verificationLink =
-      this.domainManagerService.buildEmailVerificationURL({
-        emailVerificationToken,
-        email,
-        workspace,
-      });
+    const linkPathnameAndSearchParams = {
+      pathname: 'verify-email',
+      searchParams: { emailVerificationToken, email },
+    };
+    const verificationLink = workspace
+      ? this.domainManagerService.buildWorkspaceURL({
+          workspace,
+          ...linkPathnameAndSearchParams,
+        })
+      : this.domainManagerService.buildBaseUrl(linkPathnameAndSearchParams);
 
     const emailData = {
       link: verificationLink.toString(),
@@ -88,7 +94,9 @@ export class EmailVerificationService {
 
   async resendEmailVerificationToken(
     email: string,
-    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
+    workspace:
+      | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
+      | undefined,
     locale: keyof typeof APP_LOCALES,
   ) {
     if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {

@@ -16,8 +16,9 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
@@ -113,7 +114,7 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
         isOpen={isDeleteRecordsModalOpen}
         setIsOpen={setIsDeleteRecordsModalOpen}
         title={'Delete Records'}
-        subtitle={`Are you sure you want to delete these records? They can be recovered from the Options menu.`}
+        subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
         onConfirmClick={handleDeleteClick}
         confirmButtonText={'Delete Records'}
       />

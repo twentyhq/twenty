@@ -16,10 +16,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
@@ -86,8 +86,8 @@ export const SettingsDevelopersApiKeysNew = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`Developers`,
-          href: getSettingsPath(SettingsPath.Developers),
+          children: t`APIs`,
+          href: getSettingsPath(SettingsPath.APIs),
         },
         { children: t`New Key` },
       ]}
@@ -95,7 +95,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigateSettings(SettingsPath.Developers);
+            navigateSettings(SettingsPath.APIs);
           }}
           onSave={handleSave}
         />

@@ -32,7 +32,6 @@ export const CommandMenuContextRecordChipAvatars = ({
     objectNameSingular: objectMetadataItem.nameSingular,
     record,
   });
-
   const { Icon, IconColor } = useGetStandardObjectIcon(
     objectMetadataItem.nameSingular,
   );

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -492,6 +493,33 @@ export class WorkflowVersionStepWorkspaceService {
               objectName: activeObjectMetadataItem?.nameSingular || '',
               limit: 1,
             },
+          },
+        };
+      }
+      case WorkflowActionType.FORM: {
+        return {
+          id: newStepId,
+          name: 'Form',
+          type: WorkflowActionType.FORM,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: [
+              {
+                id: v4(),
+                name: 'company',
+                label: 'Company',
+                placeholder: 'Select a company',
+                type: FieldMetadataType.TEXT,
+              },
+              {
+                id: v4(),
+                name: 'number',
+                label: 'Number',
+                placeholder: '1000',
+                type: FieldMetadataType.NUMBER,
+              },
+            ],
           },
         };
       }

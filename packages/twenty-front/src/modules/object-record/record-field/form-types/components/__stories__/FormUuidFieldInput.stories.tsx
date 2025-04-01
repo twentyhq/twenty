@@ -1,12 +1,9 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import {
-  fn,
-  userEvent,
-  waitFor,
-  waitForElementToBeRemoved,
-  within,
-} from '@storybook/test';
+import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormUuidFieldInput } from '../FormUuidFieldInput';
 
 const meta: Meta<typeof FormUuidFieldInput> = {
@@ -14,8 +11,8 @@ const meta: Meta<typeof FormUuidFieldInput> = {
   component: FormUuidFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
-
 export default meta;
 
 type Story = StoryObj<typeof FormUuidFieldInput>;
@@ -36,7 +33,7 @@ export const SetUuidWithDashes: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -49,7 +46,7 @@ export const SetUuidWithDashes: Story = {
     await userEvent.type(input, uuid);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
   },
 };
@@ -58,7 +55,7 @@ export const SetUuidWithoutDashes: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -71,7 +68,7 @@ export const SetUuidWithoutDashes: Story = {
     await userEvent.type(input, uuid);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
   },
 };
@@ -80,7 +77,7 @@ export const SetInvalidUuidWithNoValidation: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -93,7 +90,7 @@ export const SetInvalidUuidWithNoValidation: Story = {
     await userEvent.type(input, uuid);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
   },
 };
@@ -102,7 +99,7 @@ export const TrimInputBeforePersisting: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -115,7 +112,7 @@ export const TrimInputBeforePersisting: Story = {
     await userEvent.type(input, `{Space>2}${uuid}{Space>3}`);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
   },
 };
@@ -124,7 +121,7 @@ export const ClearField: Story = {
   args: {
     label: 'UUID field',
     placeholder: 'Enter UUID',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -137,77 +134,14 @@ export const ClearField: Story = {
     await userEvent.type(input, uuid);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith(uuid);
+      expect(args.onChange).toHaveBeenCalledWith(uuid);
     });
 
     await Promise.all([
       userEvent.clear(input),
 
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(null);
-      }),
-    ]);
-  },
-};
-
-export const ReplaceStaticValueWithVariable: Story = {
-  args: {
-    label: 'UUID field',
-    placeholder: 'Enter UUID',
-    onPersist: fn(),
-    VariablePicker: ({ onVariableSelect }) => {
-      return (
-        <button
-          onClick={() => {
-            onVariableSelect('{{test}}');
-          }}
-        >
-          Add variable
-        </button>
-      );
-    },
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-
-    const input = await canvas.findByPlaceholderText('Enter UUID');
-
-    expect(input).toBeVisible();
-    expect(input).toHaveDisplayValue('');
-
-    const addVariableButton = await canvas.findByRole('button', {
-      name: 'Add variable',
-    });
-
-    const [, , variableTag] = await Promise.all([
-      userEvent.click(addVariableButton),
-
-      waitForElementToBeRemoved(input),
-      waitFor(() => {
-        const variableTag = canvas.getByText('test');
-        expect(variableTag).toBeVisible();
-
-        return variableTag;
-      }),
-      waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith('{{test}}');
-      }),
-    ]);
-
-    const removeVariableButton = canvasElement.querySelector(
-      'button .tabler-icon-x',
-    );
-
-    await Promise.all([
-      userEvent.click(removeVariableButton),
-
-      waitForElementToBeRemoved(variableTag),
-      waitFor(() => {
-        const input = canvas.getByPlaceholderText('Enter UUID');
-        expect(input).toBeVisible();
-      }),
-      waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(null);
+        expect(args.onChange).toHaveBeenCalledWith(null);
       }),
     ]);
   },
@@ -222,7 +156,7 @@ export const Disabled: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
           }}
         >
           Add variable

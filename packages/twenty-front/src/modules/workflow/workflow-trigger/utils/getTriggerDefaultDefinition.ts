@@ -26,6 +26,7 @@ export const getTriggerDefaultDefinition = ({
     case 'DATABASE_EVENT': {
       return {
         type,
+        name: defaultLabel,
         settings: {
           eventName: `${activeObjectMetadataItems[0].nameSingular}.${
             DATABASE_TRIGGER_TYPES.find(
@@ -39,6 +40,7 @@ export const getTriggerDefaultDefinition = ({
     case 'MANUAL': {
       return {
         type,
+        name: defaultLabel,
         settings: getManualTriggerDefaultSettings({
           availability: 'WHEN_RECORD_SELECTED',
           activeObjectMetadataItems,
@@ -48,9 +50,19 @@ export const getTriggerDefaultDefinition = ({
     case 'CRON': {
       return {
         type,
+        name: defaultLabel,
         settings: {
-          type: 'HOURS',
-          schedule: { hour: 1, minute: 0 },
+          type: 'DAYS',
+          schedule: { day: 1, hour: 0, minute: 0 },
+          outputSchema: {},
+        },
+      };
+    }
+    case 'WEBHOOK': {
+      return {
+        type,
+        name: defaultLabel,
+        settings: {
           outputSchema: {},
         },
       };

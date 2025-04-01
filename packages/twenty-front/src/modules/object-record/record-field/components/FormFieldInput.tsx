@@ -43,34 +43,36 @@ import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUu
 import { JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
-  field: FieldDefinition<FieldMetadata>;
+  field: Pick<FieldDefinition<FieldMetadata>, 'label' | 'metadata' | 'type'>;
   defaultValue: JsonValue;
-  onPersist: (value: JsonValue) => void;
+  onChange: (value: JsonValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  placeholder?: string;
 };
 
 export const FormFieldInput = ({
   field,
   defaultValue,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
+  placeholder,
 }: FormFieldInputProps) => {
   return isFieldNumber(field) ? (
     <FormNumberFieldInput
       label={field.label}
       defaultValue={defaultValue as string | number | undefined}
-      onPersist={onPersist}
-      placeholder={field.label}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldBoolean(field) ? (
     <FormBooleanFieldInput
       label={field.label}
       defaultValue={defaultValue as string | boolean | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -78,27 +80,27 @@ export const FormFieldInput = ({
     <FormTextFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
-      placeholder={field.label}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldSelect(field) ? (
     <FormSelectFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       options={field.metadata.options}
       clearLabel={field.label}
       readonly={readonly}
-      placeholder={field.label}
+      placeholder={placeholder}
     />
   ) : isFieldFullName(field) ? (
     <FormFullNameFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldFullNameValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -106,7 +108,7 @@ export const FormFieldInput = ({
     <FormAddressFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldAddressValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -114,7 +116,7 @@ export const FormFieldInput = ({
     <FormLinksFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldLinksValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -122,7 +124,7 @@ export const FormFieldInput = ({
     <FormEmailsFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldEmailsValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -130,7 +132,7 @@ export const FormFieldInput = ({
     <FormPhoneFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldPhonesValue | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -138,15 +140,16 @@ export const FormFieldInput = ({
     <FormDateFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldDateTime(field) ? (
     <FormDateTimeFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
@@ -154,35 +157,35 @@ export const FormFieldInput = ({
     <FormMultiSelectFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldMultiSelectValue | string | undefined}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       options={field.metadata.options}
       readonly={readonly}
-      placeholder={field.label}
+      placeholder={placeholder}
     />
   ) : isFieldRawJson(field) ? (
     <FormRawJsonFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
-      onPersist={onPersist}
-      placeholder={field.label}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldUuid(field) ? (
     <FormUuidFieldInput
       label={field.label}
       defaultValue={defaultValue as string | null | undefined}
-      onPersist={onPersist}
-      placeholder={field.label}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldCurrency(field) ? (
     <FormCurrencyFieldInput
       label={field.label}
       defaultValue={defaultValue as FormFieldCurrencyValue | null}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
     />

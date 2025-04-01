@@ -2,8 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandOptions,
@@ -62,36 +62,28 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
         });
       }
 
-      await this.assignAdminRole({
+      await this.assignAdminRoleToMembers({
         workspaceId,
         adminRoleId,
         options,
       });
 
-      let memberRoleId: string | undefined;
+      await this.setAdminRoleAsDefaultRole({
+        workspaceId,
+        adminRoleId,
+        options,
+      });
 
-      memberRoleId = workspaceRoles.find(
+      const memberRole = workspaceRoles.find(
         (role) => role.label === MEMBER_ROLE_LABEL,
-      )?.id;
+      );
 
-      if (!isDefined(memberRoleId)) {
-        memberRoleId = await this.createMemberRole({
+      if (!isDefined(memberRole)) {
+        await this.createMemberRole({
           workspaceId,
           options,
         });
       }
-
-      await this.setMemberRoleAsDefaultRole({
-        workspaceId,
-        memberRoleId,
-        options,
-      });
-
-      await this.assignMemberRoleToUserWorkspacesWithoutRole({
-        workspaceId,
-        memberRoleId,
-        options,
-      });
     } catch (error) {
       this.logger.log(
         chalk.red(`Error in workspace ${workspaceId} - ${error.message}`),
@@ -143,39 +135,7 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
     return memberRole.id;
   }
 
-  private async setMemberRoleAsDefaultRole({
-    workspaceId,
-    memberRoleId,
-    options,
-  }: {
-    workspaceId: string;
-    memberRoleId: string;
-    options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
-  }) {
-    const workspaceDefaultRole = await this.workspaceRepository.findOne({
-      where: {
-        id: workspaceId,
-      },
-    });
-
-    if (!isDefined(workspaceDefaultRole?.defaultRoleId)) {
-      this.logger.log(
-        chalk.green(
-          `Setting member role as default role ${options.dryRun ? '(dry run)' : ''}`,
-        ),
-      );
-
-      if (options.dryRun) {
-        return;
-      }
-
-      await this.workspaceRepository.update(workspaceId, {
-        defaultRoleId: memberRoleId,
-      });
-    }
-  }
-
-  private async assignAdminRole({
+  private async setAdminRoleAsDefaultRole({
     workspaceId,
     adminRoleId,
     options,
@@ -184,28 +144,25 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
     adminRoleId: string;
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
   }) {
-    const oldestUserWorkspace = await this.userWorkspaceRepository.findOne({
+    const workspaceDefaultRole = await this.workspaceRepository.findOne({
       where: {
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      relations: {
-        user: true,
-      },
-      order: {
-        user: {
-          createdAt: 'ASC',
-        },
+        id: workspaceId,
       },
     });
 
-    if (!oldestUserWorkspace) {
-      throw new Error('No user workspace found');
+    if (isDefined(workspaceDefaultRole?.defaultRoleId)) {
+      this.logger.log(
+        chalk.green(
+          'Workspace already has a default role. Skipping setting admin role as default role',
+        ),
+      );
+
+      return;
     }
 
     this.logger.log(
       chalk.green(
-        `Assigning admin role to user ${oldestUserWorkspace.id} ${options.dryRun ? '(dry run)' : ''}`,
+        `Setting admin role as default role ${options.dryRun ? '(dry run)' : ''}`,
       ),
     );
 
@@ -213,28 +170,23 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
       return;
     }
 
-    await this.userRoleService.assignRoleToUserWorkspace({
-      roleId: adminRoleId,
-      userWorkspaceId: oldestUserWorkspace.id,
-      workspaceId,
+    await this.workspaceRepository.update(workspaceId, {
+      defaultRoleId: adminRoleId,
     });
   }
 
-  private async assignMemberRoleToUserWorkspacesWithoutRole({
+  private async assignAdminRoleToMembers({
     workspaceId,
-    memberRoleId,
+    adminRoleId,
     options,
   }: {
     workspaceId: string;
-    memberRoleId: string;
+    adminRoleId: string;
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions;
   }) {
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         workspaceId,
-      },
-      relations: {
-        user: true,
       },
     });
 
@@ -247,7 +199,6 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
       });
 
     for (const userWorkspace of userWorkspaces) {
-      // If userWorkspace has a role, do nothing
       if (
         rolesByUserWorkspace
           .get(userWorkspace.id)
@@ -255,7 +206,7 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
       ) {
         this.logger.log(
           chalk.green(
-            `User workspace ${userWorkspace.id} already has a role. Skipping member role assignation`,
+            `User workspace ${userWorkspace.id} already has a role. Skipping role assignation`,
           ),
         );
         continue;
@@ -263,7 +214,7 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
 
       this.logger.log(
         chalk.green(
-          `Assigning member role to user workspace ${userWorkspace.id} ${options.dryRun ? '(dry run)' : ''}`,
+          `Assigning admin role to workspace member ${userWorkspace.id} ${options.dryRun ? '(dry run)' : ''}`,
         ),
       );
 
@@ -271,9 +222,8 @@ export class InitializePermissionsCommand extends ActiveOrSuspendedWorkspacesMig
         continue;
       }
 
-      // Otherwise, assign member role to userWorkspace
       await this.userRoleService.assignRoleToUserWorkspace({
-        roleId: memberRoleId,
+        roleId: adminRoleId,
         userWorkspaceId: userWorkspace.id,
         workspaceId,
       });

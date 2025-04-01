@@ -3,10 +3,9 @@ import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/Dropdown
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
-import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
+import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
   Placement,
@@ -17,12 +16,12 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { MouseEvent, ReactNode } from 'react';
+import { flushSync } from 'react-dom';
 import { Keys } from 'react-hotkeys-hook';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 import { useDropdown } from '../hooks/useDropdown';
-import { flushSync } from 'react-dom';
 
 const StyledDropdownFallbackAnchor = styled.div`
   left: 0;
@@ -30,7 +29,11 @@ const StyledDropdownFallbackAnchor = styled.div`
   top: 0;
 `;
 
-type DropdownProps = {
+const StyledClickableComponent = styled.div`
+  height: fit-content;
+`;
+
+export type DropdownProps = {
   className?: string;
   clickableComponent?: ReactNode;
   dropdownComponents: ReactNode;
@@ -42,7 +45,7 @@ type DropdownProps = {
   dropdownId: string;
   dropdownPlacement?: Placement;
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
-  dropdownOffset?: { x?: number; y?: number };
+  dropdownOffset?: DropdownOffset;
   dropdownStrategy?: 'fixed' | 'absolute';
   onClickOutside?: () => void;
   onClose?: () => void;
@@ -68,11 +71,6 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
 
-  const setDropdownMaxHeight = useSetRecoilComponentStateV2(
-    dropdownMaxHeightComponentStateV2,
-    dropdownId,
-  );
-
   const isUsingOffset =
     isDefined(dropdownOffset?.x) || isDefined(dropdownOffset?.y);
 
@@ -92,9 +90,10 @@ export const Dropdown = ({
       flip(),
       size({
         padding: 32,
-        apply: ({ availableHeight }) => {
+        apply: () => {
           flushSync(() => {
-            setDropdownMaxHeight(availableHeight);
+            // TODO: I think this is not needed anymore let's remove it if not used for a few weeks
+            // setDropdownMaxHeight(availableHeight);
           });
         },
         boundary: document.querySelector('#root') ?? undefined,
@@ -131,7 +130,7 @@ export const Dropdown = ({
       <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
         <>
           {isDefined(clickableComponent) ? (
-            <div
+            <StyledClickableComponent
               ref={refs.setReference}
               onClick={handleClickableComponentClick}
               aria-controls={`${dropdownId}-options`}
@@ -140,7 +139,7 @@ export const Dropdown = ({
               role="button"
             >
               {clickableComponent}
-            </div>
+            </StyledClickableComponent>
           ) : (
             <StyledDropdownFallbackAnchor ref={refs.setReference} />
           )}

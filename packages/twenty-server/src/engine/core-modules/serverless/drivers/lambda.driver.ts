@@ -17,9 +17,10 @@ import {
   PublishLayerVersionCommandInput,
   ResourceNotFoundException,
   waitUntilFunctionUpdatedV2,
+  LogType,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ServerlessDriver,
@@ -49,7 +50,7 @@ import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/cons
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
-const CREDENTIALS_DURATION_IN_SECONDS = 10 * 60 * 60; // 10h
+const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
 const LAMBDA_EXECUTOR_DESCRIPTION = 'User script executor';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
@@ -97,7 +98,7 @@ export class LambdaDriver implements ServerlessDriver {
     );
 
     const assumeRoleCommand = new AssumeRoleCommand({
-      RoleArn: 'arn:aws:iam::820242914089:role/LambdaDeploymentRole',
+      RoleArn: this.options.subhostingRole,
       RoleSessionName: 'LambdaSession',
       DurationSeconds: CREDENTIALS_DURATION_IN_SECONDS,
     });
@@ -262,6 +263,21 @@ export class LambdaDriver implements ServerlessDriver {
     await lambdaBuildDirectoryManager.clean();
   }
 
+  private extractLogs(logString: string): string {
+    const formattedLogString = Buffer.from(logString, 'base64')
+      .toString('utf8')
+      .split('\t')
+      .join(' ');
+
+    return formattedLogString
+      .replace(/^(START|END|REPORT).*\n?/gm, '')
+      .replace(
+        /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z) [a-f0-9-]+ INFO /gm,
+        '$1 INFO ',
+      )
+      .trim();
+  }
+
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object,
@@ -272,12 +288,9 @@ export class LambdaDriver implements ServerlessDriver {
 
     const startTime = Date.now();
 
-    const computedVersion =
-      version === 'latest' ? serverlessFunction.latestVersion : version;
-
     const folderPath = getServerlessFolder({
       serverlessFunction,
-      version: computedVersion,
+      version,
     });
 
     const tsCodeStream = await this.fileStorageService.read({
@@ -302,6 +315,7 @@ export class LambdaDriver implements ServerlessDriver {
     const params: InvokeCommandInput = {
       FunctionName: serverlessFunction.id,
       Payload: JSON.stringify(executorPayload),
+      LogType: LogType.Tail,
     };
 
     const command = new InvokeCommand(params);
@@ -313,6 +327,8 @@ export class LambdaDriver implements ServerlessDriver {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
+      const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
+
       const duration = Date.now() - startTime;
 
       if (result.FunctionError) {
@@ -321,11 +337,13 @@ export class LambdaDriver implements ServerlessDriver {
           duration,
           status: ServerlessFunctionExecutionStatus.ERROR,
           error: parsedResult,
+          logs,
         };
       }
 
       return {
         data: parsedResult,
+        logs,
         duration,
         status: ServerlessFunctionExecutionStatus.SUCCESS,
       };

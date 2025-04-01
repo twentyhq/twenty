@@ -2,15 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import { isDefined, isValidUuid } from 'twenty-shared';
 import { z } from 'zod';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
+import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -33,12 +33,12 @@ export type WorkflowSendEmailStepOutputSchema = {
 export class SendEmailWorkflowAction implements WorkflowExecutor {
   private readonly logger = new Logger(SendEmailWorkflowAction.name);
   constructor(
-    private readonly gmailClientProvider: GmailClientProvider,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly sendMessageService: MessagingSendMessageService,
   ) {}
 
-  private async getEmailClient(connectedAccountId: string) {
+  private async getConnectedAccount(connectedAccountId: string) {
     if (!isValidUuid(connectedAccountId)) {
       throw new SendEmailActionException(
         `Connected Account ID is not a valid UUID`,
@@ -71,15 +71,7 @@ export class SendEmailWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    switch (connectedAccount.provider) {
-      case 'google':
-        return await this.gmailClientProvider.getGmailClient(connectedAccount);
-      default:
-        throw new SendEmailActionException(
-          `Provider ${connectedAccount.provider} is not supported`,
-          SendEmailActionExceptionCode.PROVIDER_NOT_SUPPORTED,
-        );
-    }
+    return connectedAccount;
   }
 
   async execute({
@@ -96,7 +88,7 @@ export class SendEmailWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const emailProvider = await this.getEmailClient(
+    const connectedAccount = await this.getConnectedAccount(
       step.settings.input.connectedAccountId,
     );
 
@@ -123,23 +115,14 @@ export class SendEmailWorkflowAction implements WorkflowExecutor {
     const safeBody = purify.sanitize(body || '');
     const safeSubject = purify.sanitize(subject || '');
 
-    const message = [
-      `To: ${email}`,
-      `Subject: ${safeSubject || ''}`,
-      'MIME-Version: 1.0',
-      'Content-Type: text/plain; charset="UTF-8"',
-      '',
-      safeBody,
-    ].join('\n');
-
-    const encodedMessage = Buffer.from(message).toString('base64');
-
-    await emailProvider.users.messages.send({
-      userId: 'me',
-      requestBody: {
-        raw: encodedMessage,
+    await this.sendMessageService.sendMessage(
+      {
+        to: email,
+        subject: safeSubject,
+        body: safeBody,
       },
-    });
+      connectedAccount,
+    );
 
     this.logger.log(`Email sent successfully`);
 

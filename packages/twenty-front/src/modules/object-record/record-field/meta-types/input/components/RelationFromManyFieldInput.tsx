@@ -2,14 +2,14 @@ import { useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
+import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { MultipleRecordPicker } from '@/object-record/record-picker/components/MultipleRecordPicker';
-import { RecordPickerComponentInstanceContext } from '@/object-record/record-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type RelationFromManyFieldInputProps = {
   onSubmit?: FieldInputEvent;
@@ -19,10 +19,9 @@ export const RelationFromManyFieldInput = ({
   onSubmit,
 }: RelationFromManyFieldInputProps) => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
-  const recordPickerInstanceId = `record-picker-${fieldDefinition.fieldMetadataId}`;
-  const { updateRelation } = useUpdateRelationFromManyFieldInput({
-    scopeId: recordPickerInstanceId,
-  });
+  const recordPickerInstanceId = `relation-from-many-field-input-${recordId}`;
+
+  const { updateRelation } = useUpdateRelationFromManyFieldInput();
 
   const handleSubmit = () => {
     onSubmit?.(() => {});
@@ -50,19 +49,22 @@ export const RelationFromManyFieldInput = ({
       recordId,
     });
 
+  const layoutDirection = useRecoilComponentValueV2(
+    recordFieldInputLayoutDirectionComponentState,
+  );
+
   return (
-    <>
-      <RecordPickerComponentInstanceContext.Provider
-        value={{ instanceId: recordPickerInstanceId }}
-      >
-        <RelationFromManyFieldInputMultiRecordsEffect />
-        <MultipleRecordPicker
-          componentInstanceId={recordPickerInstanceId}
-          onSubmit={handleSubmit}
-          onChange={updateRelation}
-          onCreate={createNewRecordAndOpenRightDrawer}
-        />
-      </RecordPickerComponentInstanceContext.Provider>
-    </>
+    <MultipleRecordPicker
+      componentInstanceId={recordPickerInstanceId}
+      onSubmit={handleSubmit}
+      onChange={updateRelation}
+      onCreate={createNewRecordAndOpenRightDrawer}
+      onClickOutside={handleSubmit}
+      layoutDirection={
+        layoutDirection === 'downward'
+          ? 'search-bar-on-top'
+          : 'search-bar-on-bottom'
+      }
+    />
   );
 };

@@ -19,14 +19,16 @@ import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFiel
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
 import { ViewGroup } from '@/views/types/ViewGroup';
+import { ViewSort } from '@/views/types/ViewSort';
 import { ViewType } from '@/views/types/ViewType';
+import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicateViewFiltersAndViewFilterGroups';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
@@ -167,7 +169,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         if (shouldCopyFiltersAndSortsAndAggregate === true) {
-          const viewFilterGroupsToCreate = currentRecordFilterGroups.map(
+          const viewFilterGroupsToCopy = currentRecordFilterGroups.map(
             (recordFilterGroup) =>
               mapRecordFilterGroupToViewFilterGroup({
                 recordFilterGroup,
@@ -175,16 +177,31 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               }),
           );
 
-          const viewSortsToCreate = currentRecordSorts.map(
-            mapRecordSortToViewSort,
-          );
-          const viewFiltersToCreate = currentRecordFilters.map(
+          const viewFiltersToCopy = currentRecordFilters.map(
             mapRecordFilterToViewFilter,
           );
 
-          await createViewSortRecords(viewSortsToCreate, newView);
-          await createViewFilterRecords(viewFiltersToCreate, newView);
+          const {
+            duplicatedViewFilterGroups: viewFilterGroupsToCreate,
+            duplicatedViewFilters: viewFiltersToCreate,
+          } = duplicateViewFiltersAndViewFilterGroups({
+            viewFilterGroupsToDuplicate: viewFilterGroupsToCopy,
+            viewFiltersToDuplicate: viewFiltersToCopy,
+          });
+
+          const viewSortsToCreate = currentRecordSorts
+            .map(mapRecordSortToViewSort)
+            .map(
+              (viewSort) =>
+                ({
+                  ...viewSort,
+                  id: v4(),
+                }) satisfies ViewSort,
+            );
+
           await createViewFilterGroupRecords(viewFilterGroupsToCreate, newView);
+          await createViewFilterRecords(viewFiltersToCreate, newView);
+          await createViewSortRecords(viewSortsToCreate, newView);
         }
 
         await findManyRecords();

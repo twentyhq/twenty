@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { HealthModule } from 'src/engine/core-modules/health/health.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
@@ -30,7 +30,7 @@ import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/cale
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { RefreshAccessTokenManagerModule } from 'src/modules/connected-account/refresh-access-token-manager/refresh-access-token-manager.module';
+import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Module({
@@ -47,10 +47,10 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     GoogleCalendarDriverModule,
     MicrosoftCalendarDriverModule,
     BillingModule,
-    RefreshAccessTokenManagerModule,
+    RefreshTokensManagerModule,
     ConnectedAccountModule,
     CalendarCommonModule,
-    HealthModule,
+    MetricsModule,
   ],
   providers: [
     CalendarChannelSyncStatusService,

@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 
 import Cloudflare from 'cloudflare';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   DomainManagerException,
@@ -79,43 +79,43 @@ export class CustomDomainService {
           response.result[0].ownership_verification,
           ...(response.result[0].ssl?.validation_records ?? []),
         ]
-          .map<CustomDomainValidRecords['records'][0] | undefined>(
-            (record: Record<string, string>) => {
-              if (
-                'txt_name' in record &&
-                'txt_value' in record &&
-                record.txt_name &&
-                record.txt_value
-              ) {
-                return {
-                  validationType: 'ssl' as const,
-                  type: 'txt' as const,
-                  status:
-                    !response.result[0].ssl.status ||
-                    response.result[0].ssl.status.startsWith('pending')
-                      ? 'pending'
-                      : response.result[0].ssl.status,
-                  key: record.txt_name,
-                  value: record.txt_value,
-                };
-              }
+          .map<CustomDomainValidRecords['records'][0] | undefined>((record) => {
+            if (!record) return;
 
-              if (
-                'type' in record &&
-                record.type === 'txt' &&
-                record.value &&
-                record.name
-              ) {
-                return {
-                  validationType: 'ownership' as const,
-                  type: 'txt' as const,
-                  status: response.result[0].status ?? 'pending',
-                  key: record.name,
-                  value: record.value,
-                };
-              }
-            },
-          )
+            if (
+              'txt_name' in record &&
+              'txt_value' in record &&
+              record.txt_name &&
+              record.txt_value
+            ) {
+              return {
+                validationType: 'ssl' as const,
+                type: 'txt' as const,
+                status:
+                  !response.result[0].ssl.status ||
+                  response.result[0].ssl.status.startsWith('pending')
+                    ? 'pending'
+                    : response.result[0].ssl.status,
+                key: record.txt_name,
+                value: record.txt_value,
+              };
+            }
+
+            if (
+              'type' in record &&
+              record.type === 'txt' &&
+              record.value &&
+              record.name
+            ) {
+              return {
+                validationType: 'ownership' as const,
+                type: 'txt' as const,
+                status: response.result[0].status ?? 'pending',
+                key: record.name,
+                value: record.value,
+              };
+            }
+          })
           .filter(isDefined)
           .concat([
             {

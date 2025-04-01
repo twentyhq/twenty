@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
-import { IconCircleOff, IconComponentProps } from 'twenty-ui';
+import { IconCircleOff, IconComponentProps, SelectOption } from 'twenty-ui';
 
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { CountryCode } from 'libphonenumber-js';
 
@@ -11,12 +10,12 @@ export type FormCountryCodeSelectInputUpdatedValue = CountryCode | '';
 
 export const FormCountryCodeSelectInput = ({
   selectedCountryCode,
-  onPersist,
+  onChange,
   readonly = false,
   VariablePicker,
 }: {
   selectedCountryCode: string;
-  onPersist: (countryCode: FormCountryCodeSelectInputUpdatedValue) => void;
+  onChange: (countryCode: FormCountryCodeSelectInputUpdatedValue) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 }) => {
@@ -42,22 +41,22 @@ export const FormCountryCodeSelectInput = ({
     ];
   }, [countries]);
 
-  const onChange = (countryCode: string | null) => {
+  const onCountryCodeChange = (countryCode: string | null) => {
     if (readonly) {
       return;
     }
 
     if (countryCode === null) {
-      onPersist('');
+      onChange('');
     } else {
-      onPersist(countryCode as CountryCode);
+      onChange(countryCode as CountryCode);
     }
   };
 
   return (
     <FormSelectFieldInput
       label="Country Code"
-      onPersist={onChange}
+      onChange={onCountryCodeChange}
       options={options}
       defaultValue={selectedCountryCode}
       readonly={readonly}

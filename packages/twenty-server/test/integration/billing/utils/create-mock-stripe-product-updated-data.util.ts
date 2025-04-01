@@ -1,5 +1,7 @@
 import Stripe from 'stripe';
 
+import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
+
 export const createMockStripeProductUpdatedData = (
   overrides = {},
 ): Stripe.ProductUpdatedEvent.Data => ({
@@ -13,7 +15,11 @@ export const createMockStripeProductUpdatedData = (
     images: [],
     livemode: false,
     marketing_features: [],
-    metadata: {},
+    metadata: {
+      planKey: 'base',
+      isBaseProduct: 'true',
+      priceUsageBased: BillingUsageType.LICENSED,
+    },
     name: 'kjnnjkjknkjnjkn',
     package_dimensions: null,
     shippable: null,

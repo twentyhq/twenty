@@ -1,12 +1,5 @@
 import styled from '@emotion/styled';
-import {
-  Button,
-  IconButton,
-  IconCheckbox,
-  IconNotes,
-  IconPlus,
-  MenuItem,
-} from 'twenty-ui';
+import { Button, IconCheckbox, IconNotes, IconPlus, MenuItem } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -18,8 +11,6 @@ import { SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID } from '@/ui/layout/show-page/constant
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { Dropdown } from '../../dropdown/components/Dropdown';
 
 const StyledContainer = styled.div`
@@ -56,10 +47,6 @@ export const ShowPageAddButton = ({
     closeDropdown();
   };
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
   if (
     activityTargetObject.targetObjectNameSingular ===
       CoreObjectNameSingular.Task ||
@@ -79,25 +66,15 @@ export const ShowPageAddButton = ({
       <Dropdown
         dropdownId={SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID}
         clickableComponent={
-          isCommandMenuV2Enabled ? (
-            <Button
-              Icon={IconPlus}
-              dataTestId="add-button"
-              size="small"
-              variant="secondary"
-              accent="default"
-              title="New note/task"
-              ariaLabel="New note/task"
-            />
-          ) : (
-            <IconButton
-              Icon={IconPlus}
-              size="medium"
-              dataTestId="add-showpage-button"
-              accent="default"
-              variant="secondary"
-            />
-          )
+          <Button
+            Icon={IconPlus}
+            dataTestId="add-button"
+            size="small"
+            variant="secondary"
+            accent="default"
+            title="New note/task"
+            ariaLabel="New note/task"
+          />
         }
         dropdownComponents={
           <DropdownMenuItemsContainer>

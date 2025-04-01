@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
 
@@ -6,16 +6,19 @@ describe('generateFakeFormResponse', () => {
   it('should generate fake responses for a form schema', () => {
     const schema = [
       {
+        id: '96939213-49ac-4dee-949d-56e6c7be98e6',
         name: 'name',
         type: FieldMetadataType.TEXT,
         label: 'Name',
       },
       {
+        id: '96939213-49ac-4dee-949d-56e6c7be98e7',
         name: 'age',
         type: FieldMetadataType.NUMBER,
         label: 'Age',
       },
       {
+        id: '96939213-49ac-4dee-949d-56e6c7be98e8',
         name: 'email',
         type: FieldMetadataType.EMAILS,
         label: 'Email',

@@ -1,5 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const hasObjectMetadataItemFieldCreatedBy = (
   objectMetadataItem: ObjectMetadataItem,

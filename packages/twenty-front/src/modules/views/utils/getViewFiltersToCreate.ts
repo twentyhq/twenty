@@ -1,5 +1,6 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
-import { isDefined } from 'twenty-shared';
+import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getViewFiltersToCreate = (
   currentViewFilters: ViewFilter[],
@@ -8,8 +9,10 @@ export const getViewFiltersToCreate = (
   return newViewFilters.filter((newViewFilter) => {
     const correspondingViewFilter = currentViewFilters.find(
       (currentViewFilter) =>
-        currentViewFilter.fieldMetadataId === newViewFilter.fieldMetadataId &&
-        currentViewFilter.viewFilterGroupId === newViewFilter.viewFilterGroupId,
+        compareStrictlyExceptForNullAndUndefined(
+          currentViewFilter.id,
+          newViewFilter.id,
+        ),
     );
 
     const shouldCreateBecauseViewFilterIsNew = !isDefined(

@@ -7,14 +7,12 @@ import { FieldRelationValue } from '@/object-record/record-field/types/FieldMeta
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/types/SingleRecordPickerRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
 
-export const useRelationField = <
-  T extends SingleRecordPickerRecord | SingleRecordPickerRecord[],
->() => {
+export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
   const button = useGetButtonIcon();
 
@@ -30,9 +28,8 @@ export const useRelationField = <
     recordStoreFamilySelector({ recordId, fieldName }),
   );
 
-  const { getDraftValueSelector } = useRecordFieldInput<FieldRelationValue<T>>(
-    `${recordId}-${fieldName}`,
-  );
+  const { getDraftValueSelector } =
+    useRecordFieldInput<FieldRelationValue<T>>();
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   const initialSearchValue = draftValue;

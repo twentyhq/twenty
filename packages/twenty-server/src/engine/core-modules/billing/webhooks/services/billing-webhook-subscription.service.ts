@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -121,6 +121,7 @@ export class BillingWebhookSubscriptionService {
       BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
         WorkspaceActivationStatus.SUSPENDED
       ].includes(data.object.status as SubscriptionStatus) &&
+      workspace.activationStatus == WorkspaceActivationStatus.ACTIVE &&
       !hasActiveWorkspaceCompatibleSubscription
     ) {
       await this.workspaceRepository.update(workspaceId, {

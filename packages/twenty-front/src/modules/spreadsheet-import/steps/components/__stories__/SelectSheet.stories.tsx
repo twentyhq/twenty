@@ -6,6 +6,7 @@ import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/comp
 import { SelectSheetStep } from '@/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof SelectSheetStep> = {
   title: 'Modules/SpreadsheetImport/SelectSheetStep',
@@ -13,6 +14,7 @@ const meta: Meta<typeof SelectSheetStep> = {
   parameters: {
     layout: 'fullscreen',
   },
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;

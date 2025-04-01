@@ -1,6 +1,7 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { areViewFiltersEqual } from '@/views/utils/areViewFiltersEqual';
-import { isDefined } from 'twenty-shared';
+import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getViewFiltersToUpdate = (
   currentViewFilters: ViewFilter[],
@@ -9,8 +10,10 @@ export const getViewFiltersToUpdate = (
   return newViewFilters.filter((newViewFilter) => {
     const correspondingViewFilter = currentViewFilters.find(
       (currentViewFilter) =>
-        currentViewFilter.fieldMetadataId === newViewFilter.fieldMetadataId &&
-        currentViewFilter.viewFilterGroupId === newViewFilter.viewFilterGroupId,
+        compareStrictlyExceptForNullAndUndefined(
+          currentViewFilter.id,
+          newViewFilter.id,
+        ),
     );
 
     if (!isDefined(correspondingViewFilter)) {

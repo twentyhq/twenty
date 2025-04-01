@@ -14,6 +14,7 @@ import {
   IconGoogle,
   IconMicrosoft,
 } from 'twenty-ui';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
@@ -60,7 +61,7 @@ export const SettingsAccountsListEmptyStateCard = ({
             Icon={IconGoogle}
             title={t`Connect with Google`}
             variant="secondary"
-            onClick={() => triggerApisOAuth('google')}
+            onClick={() => triggerApisOAuth(ConnectedAccountProvider.GOOGLE)}
           />
         )}
 
@@ -69,7 +70,7 @@ export const SettingsAccountsListEmptyStateCard = ({
             Icon={IconMicrosoft}
             title={t`Connect with Microsoft`}
             variant="secondary"
-            onClick={() => triggerApisOAuth('microsoft')}
+            onClick={() => triggerApisOAuth(ConnectedAccountProvider.MICROSOFT)}
           />
         )}
       </StyledBody>

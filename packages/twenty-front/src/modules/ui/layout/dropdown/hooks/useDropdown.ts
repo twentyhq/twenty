@@ -5,10 +5,11 @@ import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/u
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDropdown = (dropdownId?: string) => {
   const {
@@ -55,7 +56,7 @@ export const useDropdown = (dropdownId?: string) => {
 
   const openDropdown = useRecoilCallback(
     ({ snapshot }) =>
-      () => {
+      (dropdownHotkeyScopeFromProps?: HotkeyScope) => {
         if (!isDropdownOpen) {
           setIsDropdownOpen(true);
           setActiveDropdownFocusIdAndMemorizePrevious(dropdownId ?? scopeId);
@@ -67,21 +68,24 @@ export const useDropdown = (dropdownId?: string) => {
             }),
           );
 
-          if (isDefined(dropdownHotkeyScope)) {
+          const dropdownHotkeyScopeForOpening =
+            dropdownHotkeyScopeFromProps ?? dropdownHotkeyScope;
+
+          if (isDefined(dropdownHotkeyScopeForOpening)) {
             setHotkeyScopeAndMemorizePreviousScope(
-              dropdownHotkeyScope.scope,
-              dropdownHotkeyScope.customScopes,
+              dropdownHotkeyScopeForOpening.scope,
+              dropdownHotkeyScopeForOpening.customScopes,
             );
           }
         }
       },
     [
-      dropdownId,
       isDropdownOpen,
+      setIsDropdownOpen,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      dropdownId,
       scopeId,
       setHotkeyScopeAndMemorizePreviousScope,
-      setActiveDropdownFocusIdAndMemorizePrevious,
-      setIsDropdownOpen,
     ],
   );
 

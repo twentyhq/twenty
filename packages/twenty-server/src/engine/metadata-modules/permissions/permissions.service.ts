@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined, PermissionsOnAllObjectRecords } from 'twenty-shared';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -30,7 +31,7 @@ export class PermissionsService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<{
-    settingsPermissions: Record<SettingsPermissions, boolean>;
+    settingsPermissions: Record<SettingPermissionType, boolean>;
     objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
   }> {
     const [roleOfUserWorkspace] = await this.userRoleService
@@ -46,12 +47,12 @@ export class PermissionsService {
       hasPermissionOnSettingFeature = true;
     }
 
-    const settingsPermissionsMap = Object.keys(SettingsPermissions).reduce(
+    const settingsPermissionsMap = Object.keys(SettingPermissionType).reduce(
       (acc, feature) => ({
         ...acc,
         [feature]: hasPermissionOnSettingFeature,
       }),
-      {} as Record<SettingsPermissions, boolean>,
+      {} as Record<SettingPermissionType, boolean>,
     );
 
     const objectRecordsPermissionsMap: Record<
@@ -82,7 +83,7 @@ export class PermissionsService {
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
-    _setting: SettingsPermissions;
+    _setting: SettingPermissionType;
     isExecutedByApiKey: boolean;
   }): Promise<boolean> {
     if (isExecutedByApiKey) {
@@ -143,10 +144,6 @@ export class PermissionsService {
       this.getRoleColumnForRequiredPermission(requiredPermission);
 
     return roleOfUserWorkspace?.[roleColumn] === true;
-  }
-
-  public async isPermissionsEnabled(): Promise<boolean> {
-    return this.environmentService.get('PERMISSIONS_ENABLED') === true;
   }
 
   private getRoleColumnForRequiredPermission(

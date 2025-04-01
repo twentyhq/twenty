@@ -18,6 +18,7 @@ type SettingsOptionCardContentSelectProps = {
 
 const StyledSelectContainer = styled.div`
   margin-left: auto;
+  width: 120px;
 `;
 
 export const SettingsOptionCardContentSelect = ({

@@ -17,8 +17,6 @@ import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/se
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
@@ -30,7 +28,6 @@ export class BillingPortalWorkspaceService {
     private readonly stripeCheckoutService: StripeCheckoutService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(UserWorkspace, 'core')
@@ -43,7 +40,6 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan,
     successUrlPath,
     plan,
-    priceId,
     requirePaymentMethod,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
@@ -65,18 +61,11 @@ export class BillingPortalWorkspaceService {
     });
 
     const stripeCustomerId = subscription?.stripeCustomerId;
-    const isBillingPlansEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsBillingPlansEnabled,
-        workspace.id,
-      );
 
     const stripeSubscriptionLineItems =
       await this.getStripeSubscriptionLineItems({
         quantity,
-        isBillingPlansEnabled,
         billingPricesPerPlan,
-        priceId,
       });
 
     const checkoutSession =
@@ -90,7 +79,6 @@ export class BillingPortalWorkspaceService {
         plan,
         requirePaymentMethod,
         withTrialPeriod: !isDefined(subscription),
-        isBillingPlansEnabled,
       });
 
     assert(checkoutSession.url, 'Error: missing checkout.session.url');
@@ -139,16 +127,12 @@ export class BillingPortalWorkspaceService {
 
   private getStripeSubscriptionLineItems({
     quantity,
-    isBillingPlansEnabled,
     billingPricesPerPlan,
-    priceId,
   }: {
     quantity: number;
-    isBillingPlansEnabled: boolean;
     billingPricesPerPlan?: BillingGetPricesPerPlanResult;
-    priceId?: string;
   }): Stripe.Checkout.SessionCreateParams.LineItem[] {
-    if (isBillingPlansEnabled && billingPricesPerPlan) {
+    if (billingPricesPerPlan) {
       return [
         {
           price: billingPricesPerPlan.baseProductPrice.stripePriceId,
@@ -160,14 +144,8 @@ export class BillingPortalWorkspaceService {
       ];
     }
 
-    if (priceId && !isBillingPlansEnabled) {
-      return [{ price: priceId, quantity }];
-    }
-
     throw new BillingException(
-      isBillingPlansEnabled
-        ? 'Missing Billing prices per plan'
-        : 'Missing price id',
+      'Missing Billing prices per plan',
       BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
     );
   }

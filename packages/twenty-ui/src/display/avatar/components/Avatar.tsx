@@ -11,7 +11,7 @@ import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
 import { Nullable, stringToHslColor } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
-import { getImageAbsoluteURI } from 'twenty-shared';
+import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
 const StyledAvatar = styled.div<{
   size: AvatarSize;

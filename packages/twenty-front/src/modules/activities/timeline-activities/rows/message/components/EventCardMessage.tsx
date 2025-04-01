@@ -2,13 +2,12 @@ import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from 'twenty-ui';
 
-import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { EventCardMessageNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageNotShared';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledEventCardMessageContainer = styled.div`
   display: flex;
@@ -80,8 +79,6 @@ export const EventCardMessage = ({
     },
   });
 
-  const { openEmailThread } = useEmailThread();
-
   if (isDefined(error)) {
     const shouldHideMessageContent = error.graphQLErrors.some(
       (e) => e.extensions?.code === 'FORBIDDEN',
@@ -120,11 +117,7 @@ export const EventCardMessage = ({
             <OverflowingTextWithTooltip text={messageParticipantHandles} />
           </StyledEmailParticipants>
         </StyledEmailTop>
-        <StyledEmailBody
-          onClick={() => openEmailThread(message.messageThreadId)}
-        >
-          {message.text}
-        </StyledEmailBody>
+        <StyledEmailBody>{message.text}</StyledEmailBody>
       </StyledEmailContent>
     </StyledEventCardMessageContainer>
   );

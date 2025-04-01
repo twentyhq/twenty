@@ -13,7 +13,9 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
@@ -30,6 +32,8 @@ describe('WorkspaceManagerService', () => {
   let workspaceRelationMetadataRepository: Repository<RelationMetadataEntity>;
   let workspaceFieldMetadataRepository: Repository<FieldMetadataEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
+  let userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>;
+  let roleRepository: Repository<RoleEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -71,6 +75,18 @@ describe('WorkspaceManagerService', () => {
         },
         {
           provide: getRepositoryToken(DataSourceEntity, 'metadata'),
+          useValue: {
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(UserWorkspaceRoleEntity, 'metadata'),
+          useValue: {
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(RoleEntity, 'metadata'),
           useValue: {
             delete: jest.fn(),
           },
@@ -133,6 +149,12 @@ describe('WorkspaceManagerService', () => {
     workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
       WorkspaceDataSourceService,
     );
+    userWorkspaceRoleRepository = module.get<
+      Repository<UserWorkspaceRoleEntity>
+    >(getRepositoryToken(UserWorkspaceRoleEntity, 'metadata'));
+    roleRepository = module.get<Repository<RoleEntity>>(
+      getRepositoryToken(RoleEntity, 'metadata'),
+    );
   });
 
   it('should be defined', () => {
@@ -153,6 +175,12 @@ describe('WorkspaceManagerService', () => {
         workspaceId: 'workspace-id',
       });
       expect(dataSourceRepository.delete).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+      });
+      expect(userWorkspaceRoleRepository.delete).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+      });
+      expect(roleRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
       expect(

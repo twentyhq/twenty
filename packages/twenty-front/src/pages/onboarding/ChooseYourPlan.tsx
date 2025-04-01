@@ -6,11 +6,11 @@ import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
+import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   ActionLink,
   CAL_LINK,
@@ -18,8 +18,13 @@ import {
   Loader,
   MainButton,
 } from 'twenty-ui';
-import { SubscriptionInterval } from '~/generated-metadata/graphql';
-import { useGetProductPricesQuery } from '~/generated/graphql';
+import {
+  BillingPlanKey,
+  BillingPriceLicensedDto,
+  SubscriptionInterval,
+  useBillingBaseProductPricesQuery,
+} from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
@@ -83,22 +88,47 @@ export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
   const { t } = useLingui();
 
-  const benefits = [
-    t`Full access`,
-    t`Unlimited contacts`,
-    t`Email integration`,
-    t`Custom objects`,
-    t`API & Webhooks`,
-    t`1 000 workflow node executions`,
-  ];
+  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
+    billingCheckoutSessionState,
+  );
 
-  const { data: prices } = useGetProductPricesQuery({
-    variables: { product: 'base-plan' },
-  });
+  const { data: plans } = useBillingBaseProductPricesQuery();
 
-  const price = prices?.getProductPrices?.productPrices.find(
-    (productPrice) =>
-      productPrice.recurringInterval === SubscriptionInterval.Month,
+  const currentPlan = billingCheckoutSession.plan || BillingPlanKey.PRO;
+
+  const getPlanBenefits = (planKey: BillingPlanKey) => {
+    if (planKey === BillingPlanKey.ENTERPRISE) {
+      return [
+        t`Full access`,
+        t`Unlimited contacts`,
+        t`Email integration`,
+        t`Custom objects`,
+        t`API & Webhooks`,
+        t`20 000 workflow node executions`,
+        t`SSO (SAML / OIDC)`,
+      ];
+    }
+
+    return [
+      t`Full access`,
+      t`Unlimited contacts`,
+      t`Email integration`,
+      t`Custom objects`,
+      t`API & Webhooks`,
+      t`10 000 workflow node executions`,
+    ];
+  };
+
+  const benefits = getPlanBenefits(currentPlan);
+
+  const baseProduct = plans?.plans.find(
+    (plan) => plan.planKey === currentPlan,
+  )?.baseProduct;
+
+  const baseProductPrice = baseProduct?.prices.find(
+    (price): price is BillingPriceLicensedDto =>
+      isBillingPriceLicensed(price) &&
+      price.recurringInterval === SubscriptionInterval.Month,
   );
 
   const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
@@ -107,10 +137,6 @@ export const ChooseYourPlan = () => {
   );
   const withCreditCardTrialPeriod = billing?.trialPeriods.find(
     (trialPeriod) => trialPeriod.isCreditCardRequired,
-  );
-
-  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
-    billingCheckoutSessionState,
   );
 
   const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({
@@ -122,13 +148,25 @@ export const ChooseYourPlan = () => {
   const handleTrialPeriodChange = (withCreditCard: boolean) => {
     return () => {
       if (
-        isDefined(price) &&
+        isDefined(baseProductPrice) &&
         billingCheckoutSession.requirePaymentMethod !== withCreditCard
       ) {
         setBillingCheckoutSession({
-          plan: billingCheckoutSession.plan,
-          interval: price.recurringInterval,
+          plan: currentPlan,
+          interval: baseProductPrice.recurringInterval,
           requirePaymentMethod: withCreditCard,
+        });
+      }
+    };
+  };
+
+  const handleSwitchPlan = (planKey: BillingPlanKey) => {
+    return () => {
+      if (isDefined(baseProductPrice)) {
+        setBillingCheckoutSession({
+          plan: planKey,
+          interval: baseProductPrice.recurringInterval,
+          requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
         });
       }
     };
@@ -138,8 +176,17 @@ export const ChooseYourPlan = () => {
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
 
+  const alternatePlan =
+    currentPlan === BillingPlanKey.PRO
+      ? BillingPlanKey.ENTERPRISE
+      : BillingPlanKey.PRO;
+
+  const alternatePlanName = plans?.plans.find(
+    (plan) => plan.planKey === alternatePlan,
+  )?.baseProduct.name;
+
   return (
-    isDefined(price) &&
+    isDefined(baseProductPrice) &&
     isDefined(billing) && (
       <>
         <Title noMarginTop>
@@ -163,8 +210,8 @@ export const ChooseYourPlan = () => {
         >
           <StyledSubscriptionPriceContainer>
             <SubscriptionPrice
-              type={price.recurringInterval}
-              price={price.unitAmount / 100}
+              type={baseProductPrice.recurringInterval}
+              price={baseProductPrice.unitAmount / 100}
             />
           </StyledSubscriptionPriceContainer>
           <StyledBenefitsContainer>
@@ -204,6 +251,10 @@ export const ChooseYourPlan = () => {
         <StyledLinkGroup>
           <ActionLink onClick={signOut}>
             <Trans>Log out</Trans>
+          </ActionLink>
+          <span />
+          <ActionLink onClick={handleSwitchPlan(alternatePlan)}>
+            <Trans>Switch to {alternatePlanName}</Trans>
           </ActionLink>
           <span />
           <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">

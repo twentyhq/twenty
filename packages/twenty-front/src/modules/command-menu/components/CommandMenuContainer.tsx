@@ -9,32 +9,34 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCommandMenu = styled(motion.div)`
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${({ theme }) => theme.background.primary};
   border-left: 1px solid ${({ theme }) => theme.border.color.medium};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   font-family: ${({ theme }) => theme.font.family};
@@ -54,28 +56,35 @@ export const CommandMenuContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const {
-    toggleCommandMenu,
-    closeCommandMenu,
-    onCommandMenuCloseAnimationComplete,
-  } = useCommandMenu();
+  const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
+
+  const { commandMenuCloseAnimationCompleteCleanup } =
+    useCommandMenuCloseAnimationCompleteCleanup();
 
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
 
-  const workflowReactFlowRef = useRecoilValue(workflowReactFlowRefState);
-
   useCommandMenuHotKeys();
 
+  const handleClickOutside = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const hotkeyScope = snapshot
+          .getLoadable(currentHotkeyScopeState)
+          .getValue();
+
+        if (hotkeyScope?.scope === CommandMenuHotkeyScope.CommandMenuFocused) {
+          closeCommandMenu();
+        }
+      },
+    [closeCommandMenu],
+  );
+
   useListenClickOutside({
-    refs: [
-      commandMenuRef,
-      ...(workflowReactFlowRef ? [workflowReactFlowRef] : []),
-    ],
-    callback: closeCommandMenu,
+    refs: [commandMenuRef],
+    callback: handleClickOutside,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
-    hotkeyScope: AppHotkeyScope.CommandMenuOpen,
     excludeClassNames: ['page-header-command-menu-button'],
   });
 
@@ -93,9 +102,15 @@ export const CommandMenuContainer = ({
 
   const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
 
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const objectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  );
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
   );
 
   const currentViewId = useRecoilComponentValueV2(
@@ -104,9 +119,10 @@ export const CommandMenuContainer = ({
   );
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
-    contextStoreCurrentObjectMetadataItem?.namePlural ?? '',
+    objectMetadataItem?.namePlural ?? '',
     currentViewId ?? '',
   );
+
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
       value={{ instanceId: recordIndexId }}
@@ -152,7 +168,7 @@ export const CommandMenuContainer = ({
                 <ActionMenuConfirmationModals />
                 <AnimatePresence
                   mode="wait"
-                  onExitComplete={onCommandMenuCloseAnimationComplete}
+                  onExitComplete={commandMenuCloseAnimationCompleteCleanup}
                 >
                   {isCommandMenuOpened && (
                     <StyledCommandMenu

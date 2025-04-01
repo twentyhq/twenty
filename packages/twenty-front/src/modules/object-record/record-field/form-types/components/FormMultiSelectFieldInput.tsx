@@ -8,7 +8,6 @@ import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-fie
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -17,14 +16,14 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
-import { isDefined } from 'twenty-shared';
-import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronDown, SelectOption, VisibilityHidden } from 'twenty-ui';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
   defaultValue: FieldMultiSelectValue | string | undefined;
   options: SelectOption[];
-  onPersist: (value: FieldMultiSelectValue | string) => void;
+  onChange: (value: FieldMultiSelectValue | string) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
@@ -66,7 +65,7 @@ export const FormMultiSelectFieldInput = ({
   label,
   defaultValue,
   options,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
   placeholder,
@@ -132,7 +131,7 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'edit',
     });
 
-    onPersist(value);
+    onChange(value);
   };
 
   const onCancel = () => {
@@ -154,7 +153,7 @@ export const FormMultiSelectFieldInput = ({
       value: variableName,
     });
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   const handleUnlinkVariable = () => {
@@ -164,7 +163,7 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'view',
     });
 
-    onPersist([]);
+    onChange([]);
   };
 
   const selectedNames =

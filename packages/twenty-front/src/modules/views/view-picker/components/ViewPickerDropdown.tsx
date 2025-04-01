@@ -7,11 +7,10 @@ import {
   useIcons,
 } from 'twenty-ui';
 
-import { recordIndexEntityCountComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexEntityCountComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useGetRecordIndexTotalCount } from '@/views/hooks/internal/useGetRecordIndexTotalCount';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
@@ -22,7 +21,7 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
@@ -55,9 +54,7 @@ export const ViewPickerDropdown = () => {
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
 
-  const entityCount = useRecoilComponentValueV2(
-    recordIndexEntityCountComponentSelector,
-  );
+  const { totalCount } = useGetRecordIndexTotalCount();
 
   const { isDropdownOpen: isViewsListDropdownOpen } = useDropdown(
     VIEW_PICKER_DROPDOWN_ID,
@@ -92,7 +89,7 @@ export const ViewPickerDropdown = () => {
           )}
           <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
           <StyledDropdownLabelAdornments>
-            {isDefined(entityCount) && <>· {entityCount} </>}
+            {isDefined(totalCount) && <>· {totalCount} </>}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>

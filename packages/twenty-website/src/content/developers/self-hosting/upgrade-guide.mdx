@@ -26,6 +26,24 @@ If you want to upgrade your instance by few versions, e.g. from 0.33.0 to 0.35.0
 
 ## Version-specific upgrade steps
 
+### v0.44.0 to v0.50.0
+
+Upgrade your Twenty instance to use v0.50.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.43.0 to v0.44.0
+
+Upgrade your Twenty instance to use v0.44.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
 ### v0.42.0 to v0.43.0
 
 Upgrade your Twenty instance to use v0.43.0 image
@@ -51,7 +69,7 @@ If you want to migrate your database to the new postgres:16 image, please follow
 docker exec -it twenty-db-1 sh 
 pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
 exit
-docker cp twenty-db-1:/databases_backup.sql .
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
 ```
 
 Make sure your dump file is not empty.

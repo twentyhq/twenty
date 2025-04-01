@@ -1,8 +1,8 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useIsChipFieldDisplayLabelHidden } from '@/object-record/record-field/meta-types/display/hooks/useIsChipFieldDisplayLabelHidden';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
-import { isDefined } from 'twenty-shared';
 import { ChipSize } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ChipFieldDisplay = () => {
   const { recordValue, objectNameSingular, labelIdentifierLink } =

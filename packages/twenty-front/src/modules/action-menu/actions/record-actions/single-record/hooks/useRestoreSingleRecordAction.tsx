@@ -1,6 +1,5 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
@@ -9,11 +8,10 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   objectMetadataItem,
@@ -35,8 +33,6 @@ export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const { closeRightDrawer } = useRightDrawer();
-
   const handleRestoreClick = useCallback(async () => {
     resetTableRowSelection();
 
@@ -55,8 +51,6 @@ export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
     useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
-
   const shouldBeRegistered =
     !isRemoteObject &&
     isDefined(selectedRecord?.deletedAt) &&
@@ -73,9 +67,6 @@ export const useRestoreSingleRecordAction: ActionHookWithObjectMetadataItem = ({
 
   const handleConfirmClick = () => {
     handleRestoreClick();
-    if (isInRightDrawer) {
-      closeRightDrawer({ emitCloseEvent: false });
-    }
   };
 
   return {

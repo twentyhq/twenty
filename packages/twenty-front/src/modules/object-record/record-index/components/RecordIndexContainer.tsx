@@ -14,13 +14,10 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
-import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewType } from '@/views/types/ViewType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -46,10 +43,6 @@ export const RecordIndexContainer = () => {
     objectMetadataItem,
     objectNameSingular,
   } = useRecordIndexContextOrThrow();
-
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
 
   return (
     <>
@@ -95,9 +88,6 @@ export const RecordIndexContainer = () => {
               />
               <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
             </StyledContainerWithPadding>
-          )}
-          {!isCommandMenuV2Enabled && (
-            <RecordIndexActionMenu indexId={recordIndexId} />
           )}
         </RecordFieldValueSelectorContextProvider>
       </StyledContainer>

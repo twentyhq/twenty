@@ -1,4 +1,5 @@
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { flowState } from '@/workflow/states/flowState';
 import { workflowLastCreatedStepIdState } from '@/workflow/states/workflowLastCreatedStepIdState';
 import {
@@ -9,11 +10,10 @@ import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflo
 
 import { addCreateStepNodes } from '@/workflow/workflow-diagram/utils/addCreateStepNodes';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
-import { markLeafNodes } from '@/workflow/workflow-diagram/utils/markLeafNodes';
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
 import { useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramEffect = ({
   workflowWithCurrentVersion,
@@ -22,6 +22,7 @@ export const WorkflowDiagramEffect = ({
 }) => {
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
   const setFlow = useSetRecoilState(flowState);
+  const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {
@@ -31,8 +32,8 @@ export const WorkflowDiagramEffect = ({
           workflowDiagramState,
         );
 
-        const nextWorkflowDiagram = markLeafNodes(
-          addCreateStepNodes(getWorkflowVersionDiagram(currentVersion)),
+        const nextWorkflowDiagram = addCreateStepNodes(
+          getWorkflowVersionDiagram(currentVersion),
         );
 
         let mergedWorkflowDiagram = nextWorkflowDiagram;
@@ -66,8 +67,8 @@ export const WorkflowDiagramEffect = ({
     [],
   );
 
+  const currentVersion = workflowWithCurrentVersion?.currentVersion;
   useEffect(() => {
-    const currentVersion = workflowWithCurrentVersion?.currentVersion;
     if (!isDefined(currentVersion)) {
       setFlow(undefined);
       setWorkflowDiagram(undefined);
@@ -76,6 +77,7 @@ export const WorkflowDiagramEffect = ({
     }
 
     setFlow({
+      workflowVersionId: currentVersion.id,
       trigger: currentVersion.trigger,
       steps: currentVersion.steps,
     });
@@ -85,8 +87,16 @@ export const WorkflowDiagramEffect = ({
     computeAndMergeNewWorkflowDiagram,
     setFlow,
     setWorkflowDiagram,
-    workflowWithCurrentVersion?.currentVersion,
+    currentVersion,
   ]);
+
+  useEffect(() => {
+    if (!isDefined(currentVersion)) {
+      return;
+    }
+
+    populateStepsOutputSchema(currentVersion);
+  }, [currentVersion, populateStepsOutputSchema]);
 
   return null;
 };

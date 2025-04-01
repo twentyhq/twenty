@@ -15,4 +15,9 @@ export const OTHER_TRIGGER_TYPES: Array<{
     type: 'CRON',
     icon: 'IconClock',
   },
+  {
+    defaultLabel: 'Webhook',
+    type: 'WEBHOOK',
+    icon: 'IconWebhook',
+  },
 ];

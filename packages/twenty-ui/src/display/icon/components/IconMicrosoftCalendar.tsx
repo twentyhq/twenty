@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import IconMicrosoftCalendarRaw from '../assets/microsoft-calendar.svg?react';
 
 interface IconMicrosoftCalendarProps {
-  size?: number;
+  size?: number | string;
 }
 
 export const IconMicrosoftCalendar = (props: IconMicrosoftCalendarProps) => {

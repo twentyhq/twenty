@@ -10,6 +10,7 @@ export type ServerlessExecuteError = {
 export type ServerlessExecuteResult = {
   data: object | null;
   duration: number;
+  logs: string;
   status: ServerlessFunctionExecutionStatus;
   error?: ServerlessExecuteError;
 };

@@ -1,8 +1,5 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
-import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
-import { WorkflowVersionStatusTag } from '@/workflow/workflow-diagram/components/WorkflowVersionStatusTag';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramState } from '@/workflow/workflow-diagram/states/workflowDiagramState';
 import { workflowReactFlowRefState } from '@/workflow/workflow-diagram/states/workflowReactFlowRefState';
@@ -30,8 +27,8 @@ import {
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { THEME_COMMON } from 'twenty-ui';
+import { THEME_COMMON, Tag, TagColor } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -83,12 +80,13 @@ const defaultFitViewOptions = {
 } satisfies FitViewOptions;
 
 export const WorkflowDiagramCanvasBase = ({
-  status,
   nodeTypes,
   edgeTypes,
   children,
+  tagContainerTestId,
+  tagColor,
+  tagText,
 }: {
-  status: WorkflowVersionStatus;
   nodeTypes: Partial<
     Record<
       WorkflowDiagramNodeType,
@@ -112,6 +110,9 @@ export const WorkflowDiagramCanvasBase = ({
     >
   >;
   children?: React.ReactNode;
+  tagContainerTestId: string;
+  tagColor: TagColor;
+  tagText: string;
 }) => {
   const theme = useTheme();
 
@@ -207,8 +208,6 @@ export const WorkflowDiagramCanvasBase = ({
     );
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
-  const { closeCommandMenu } = useCommandMenu();
-
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
@@ -249,7 +248,6 @@ export const WorkflowDiagramCanvasBase = ({
         nodesFocusable={false}
         edgesFocusable={false}
         nodesDraggable={false}
-        onPaneClick={closeCommandMenu}
         nodesConnectable={false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
       >
@@ -258,8 +256,8 @@ export const WorkflowDiagramCanvasBase = ({
         {children}
       </ReactFlow>
 
-      <StyledStatusTagContainer data-testid="workflow-visualizer-status">
-        <WorkflowVersionStatusTag versionStatus={status} />
+      <StyledStatusTagContainer data-testid={tagContainerTestId}>
+        <Tag color={tagColor} text={tagText} />
       </StyledStatusTagContainer>
     </StyledResetReactflowStyles>
   );

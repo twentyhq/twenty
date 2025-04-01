@@ -22,6 +22,7 @@ export const graphqlQueryRunnerExceptionHandler = (
     case GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT:
     case GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND:
     case GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
+    case GraphqlQueryRunnerExceptionCode.NOT_IMPLEMENTED:
       throw new UserInputError(error.message);
     case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundError(error.message);

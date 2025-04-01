@@ -9,28 +9,11 @@ import {
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const UserFindOneMock = jest.fn();
-const WorkspaceFindOneMock = jest.fn();
-const FeatureFlagUpdateMock = jest.fn();
-const FeatureFlagSaveMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
 const EnvironmentServiceGetAllMock = jest.fn();
-
-jest.mock(
-  'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum',
-  () => {
-    return {
-      FeatureFlagKey: {
-        IsFlagEnabled: 'IS_FLAG_ENABLED',
-      },
-    };
-  },
-);
 
 jest.mock(
   '../../environment/constants/environment-variables-group-metadata',
@@ -63,22 +46,9 @@ describe('AdminPanelService', () => {
       providers: [
         AdminPanelService,
         {
-          provide: getRepositoryToken(Workspace, 'core'),
-          useValue: {
-            findOne: WorkspaceFindOneMock,
-          },
-        },
-        {
           provide: getRepositoryToken(User, 'core'),
           useValue: {
             findOne: UserFindOneMock,
-          },
-        },
-        {
-          provide: getRepositoryToken(FeatureFlag, 'core'),
-          useValue: {
-            update: FeatureFlagUpdateMock,
-            save: FeatureFlagSaveMock,
           },
         },
         {
@@ -110,80 +80,6 @@ describe('AdminPanelService', () => {
 
   it('should be defined', async () => {
     expect(service).toBeDefined();
-  });
-
-  it('should update an existing feature flag if it exists', async () => {
-    const workspaceId = 'workspace-id';
-    const featureFlag = 'IsFlagEnabled' as FeatureFlagKey;
-    const value = true;
-    const existingFlag = {
-      id: 'flag-id',
-      key: 'IS_FLAG_ENABLED',
-      value: false,
-    };
-
-    WorkspaceFindOneMock.mockReturnValueOnce({
-      id: workspaceId,
-      featureFlags: [existingFlag],
-    });
-
-    await service.updateWorkspaceFeatureFlags(workspaceId, featureFlag, value);
-
-    expect(FeatureFlagUpdateMock).toHaveBeenCalledWith(existingFlag.id, {
-      value,
-    });
-    expect(FeatureFlagSaveMock).not.toHaveBeenCalled();
-  });
-
-  it('should create a new feature flag if it does not exist', async () => {
-    const workspaceId = 'workspace-id';
-    const featureFlag = 'IsFlagEnabled' as FeatureFlagKey;
-    const value = true;
-
-    WorkspaceFindOneMock.mockReturnValueOnce({
-      id: workspaceId,
-      featureFlags: [],
-    });
-
-    await service.updateWorkspaceFeatureFlags(workspaceId, featureFlag, value);
-
-    expect(FeatureFlagSaveMock).toHaveBeenCalledWith({
-      key: 'IS_FLAG_ENABLED',
-      value,
-      workspaceId,
-    });
-    expect(FeatureFlagUpdateMock).not.toHaveBeenCalled();
-  });
-
-  it('should throw an exception if the workspace is not found', async () => {
-    const workspaceId = 'non-existent-workspace';
-    const featureFlag = 'IsFlagEnabled' as FeatureFlagKey;
-    const value = true;
-
-    WorkspaceFindOneMock.mockReturnValueOnce(null);
-
-    await expect(
-      service.updateWorkspaceFeatureFlags(workspaceId, featureFlag, value),
-    ).rejects.toThrowError(
-      new AuthException('Workspace not found', AuthExceptionCode.INVALID_INPUT),
-    );
-  });
-
-  it('should throw an exception if the flag is not found', async () => {
-    const workspaceId = 'non-existent-workspace';
-    const featureFlag = 'IsUnknownFlagEnabled' as FeatureFlagKey;
-    const value = true;
-
-    WorkspaceFindOneMock.mockReturnValueOnce(null);
-
-    await expect(
-      service.updateWorkspaceFeatureFlags(workspaceId, featureFlag, value),
-    ).rejects.toThrowError(
-      new AuthException(
-        'Invalid feature flag key',
-        AuthExceptionCode.INVALID_INPUT,
-      ),
-    );
   });
 
   it('should impersonate a user and return workspace and loginToken on success', async () => {

@@ -1,68 +1,36 @@
 import { SettingsAdminEnvVariablesTable } from '@/settings/admin-panel/components/SettingsAdminEnvVariablesTable';
 import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
+import { SettingsListItemCardContent } from '@/settings/components/SettingsListItemCardContent';
+import { SettingsPath } from '@/types/SettingsPath';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
-import { Button, H1Title, H1TitleFontColor, Section } from 'twenty-ui';
+import { t } from '@lingui/core/macro';
+
+import { Card, H2Title, IconHeartRateMonitor, Section } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-const StyledGroupContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+const StyledGroupContainer = styled.div``;
+
+const StyledInfoText = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
-const StyledGroupVariablesContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(4)};
-  padding-right: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledGroupDescription = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledButtonsRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledShowMoreButton = styled(Button)<{ isSelected?: boolean }>`
-  ${({ isSelected, theme }) =>
-    isSelected &&
-    `
-    background-color: ${theme.background.transparent.light};
-  `}
+const StyledCard = styled(Card)`
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const SettingsAdminEnvVariables = () => {
+  const theme = useTheme();
   const { data: environmentVariables, loading: environmentVariablesLoading } =
     useGetEnvironmentVariablesGroupedQuery({
       fetchPolicy: 'network-only',
     });
 
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-
-  const toggleGroupVisibility = (groupName: string) => {
-    setSelectedGroup(selectedGroup === groupName ? null : groupName);
-  };
-
-  const hiddenGroups =
-    environmentVariables?.getEnvironmentVariablesGrouped.groups.filter(
-      (group) => group.isHiddenOnLoad,
-    ) ?? [];
-
   const visibleGroups =
     environmentVariables?.getEnvironmentVariablesGrouped.groups.filter(
       (group) => !group.isHiddenOnLoad,
     ) ?? [];
-
-  const selectedGroupData =
-    environmentVariables?.getEnvironmentVariablesGrouped.groups.find(
-      (group) => group.name === selectedGroup,
-    );
 
   if (environmentVariablesLoading) {
     return <SettingsAdminTabSkeletonLoader />;
@@ -71,65 +39,29 @@ export const SettingsAdminEnvVariables = () => {
   return (
     <>
       <Section>
-        These are only the server values. Ensure your worker environment has the
-        same variables and values, this is required for asynchronous tasks like
-        email sync.
+        <StyledInfoText>
+          {t`These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync.`}
+        </StyledInfoText>
       </Section>
+      {visibleGroups.map((group) => (
+        <StyledGroupContainer key={group.name}>
+          <H2Title title={group.name} description={group.description} />
+          {group.variables.length > 0 && (
+            <SettingsAdminEnvVariablesTable variables={group.variables} />
+          )}
+        </StyledGroupContainer>
+      ))}
+
       <Section>
-        {visibleGroups.map((group) => (
-          <StyledGroupContainer key={group.name}>
-            <H1Title title={group.name} fontColor={H1TitleFontColor.Primary} />
-            {group.description !== '' && (
-              <StyledGroupDescription>
-                {group.description}
-              </StyledGroupDescription>
-            )}
-            {group.variables.length > 0 && (
-              <StyledGroupVariablesContainer>
-                <SettingsAdminEnvVariablesTable variables={group.variables} />
-              </StyledGroupVariablesContainer>
-            )}
-          </StyledGroupContainer>
-        ))}
-
-        {hiddenGroups.length > 0 && (
-          <>
-            <StyledButtonsRow>
-              {hiddenGroups.map((group) => (
-                <StyledShowMoreButton
-                  key={group.name}
-                  onClick={() => toggleGroupVisibility(group.name)}
-                  title={group.name}
-                  variant="secondary"
-                  isSelected={selectedGroup === group.name}
-                >
-                  {group.name} variables
-                </StyledShowMoreButton>
-              ))}
-            </StyledButtonsRow>
-
-            {selectedGroupData && (
-              <StyledGroupContainer>
-                <H1Title
-                  title={selectedGroupData.name}
-                  fontColor={H1TitleFontColor.Primary}
-                />
-                {selectedGroupData.description !== '' && (
-                  <StyledGroupDescription>
-                    {selectedGroupData.description}
-                  </StyledGroupDescription>
-                )}
-                {selectedGroupData.variables.length > 0 && (
-                  <StyledGroupVariablesContainer>
-                    <SettingsAdminEnvVariablesTable
-                      variables={selectedGroupData.variables}
-                    />
-                  </StyledGroupVariablesContainer>
-                )}
-              </StyledGroupContainer>
-            )}
-          </>
-        )}
+        <StyledCard rounded>
+          <SettingsListItemCardContent
+            label={t`Other Variables`}
+            to={getSettingsPath(SettingsPath.AdminPanelOtherEnvVariables)}
+            rightComponent={null}
+            LeftIcon={IconHeartRateMonitor}
+            LeftIconColor={theme.font.color.tertiary}
+          />
+        </StyledCard>
       </Section>
     </>
   );

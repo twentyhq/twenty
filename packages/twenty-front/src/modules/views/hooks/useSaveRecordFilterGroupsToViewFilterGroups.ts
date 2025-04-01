@@ -8,7 +8,7 @@ import { getViewFilterGroupsToDelete } from '@/views/utils/getViewFilterGroupsTo
 import { getViewFilterGroupsToUpdate } from '@/views/utils/getViewFilterGroupsToUpdate';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
   const {
@@ -59,8 +59,8 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
           newViewFilterGroups,
         );
 
-        const viewFilterIdsToDelete = viewFilterGroupsToDelete.map(
-          (viewFilter) => viewFilter.id,
+        const viewFilterGroupIdsToDelete = viewFilterGroupsToDelete.map(
+          (viewFilterGroup) => viewFilterGroup.id,
         );
 
         await createViewFilterGroupRecords(
@@ -68,7 +68,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
           currentView,
         );
         await updateViewFilterGroupRecords(viewFilterGroupsToUpdate);
-        await deleteViewFilterGroupRecords(viewFilterIdsToDelete);
+        await deleteViewFilterGroupRecords(viewFilterGroupIdsToDelete);
       },
     [
       createViewFilterGroupRecords,

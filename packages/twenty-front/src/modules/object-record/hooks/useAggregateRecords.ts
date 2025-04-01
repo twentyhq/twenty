@@ -7,7 +7,7 @@ import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export type AggregateRecordsData = {
   [fieldName: string]: {
@@ -15,7 +15,7 @@ export type AggregateRecordsData = {
   };
 };
 
-export const useAggregateRecords = ({
+export const useAggregateRecords = <T extends AggregateRecordsData>({
   objectNameSingular,
   filter,
   recordGqlFieldsAggregate,
@@ -63,7 +63,7 @@ export const useAggregateRecords = ({
 
   return {
     objectMetadataItem,
-    data: formattedData,
+    data: formattedData as T,
     loading,
     error,
   };

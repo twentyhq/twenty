@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { DEV_SEED_USER_WORKSPACE_IDS } from 'src/database/typeorm-seeds/core/user-workspaces';
@@ -8,7 +9,6 @@ import {
   SEED_ACME_WORKSPACE_ID,
   SEED_APPLE_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -18,7 +18,9 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
@@ -54,6 +56,10 @@ export class WorkspaceManagerService {
     private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
+    @InjectRepository(RoleEntity, 'metadata')
+    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
   /**
@@ -99,12 +105,8 @@ export class WorkspaceManagerService {
     );
 
     const permissionsEnabledStart = performance.now();
-    const permissionsEnabled =
-      await this.permissionsService.isPermissionsEnabled();
 
-    if (permissionsEnabled === true) {
-      await this.initPermissions({ workspaceId, userId });
-    }
+    await this.initPermissions({ workspaceId, userId });
 
     const permissionsEnabledEnd = performance.now();
 
@@ -168,12 +170,7 @@ export class WorkspaceManagerService {
       dataSourceId: dataSourceMetadata.id,
     });
 
-    const permissionsEnabled =
-      await this.permissionsService.isPermissionsEnabled();
-
-    if (permissionsEnabled === true) {
-      await this.initPermissionsDev(workspaceId);
-    }
+    await this.initPermissionsDev(workspaceId);
   }
 
   /**
@@ -257,19 +254,41 @@ export class WorkspaceManagerService {
    * @param workspaceId
    */
   public async delete(workspaceId: string): Promise<void> {
+    //TODO: delete all logs when #611 closed
+    this.logger.log(`Deleting workspace ${workspaceId} ...`);
+
     // Delete data from metadata tables
     await this.relationMetadataRepository.delete({
       workspaceId,
     });
+    this.logger.log(`workspace ${workspaceId} relation metadata deleted`);
+
     await this.fieldMetadataRepository.delete({
       workspaceId,
     });
+    this.logger.log(`workspace ${workspaceId} field metadata deleted`);
+
+    await this.userWorkspaceRoleRepository.delete({
+      workspaceId,
+    });
+    this.logger.log(`workspace ${workspaceId} user workspace role deleted`);
+
+    await this.roleRepository.delete({
+      workspaceId,
+    });
+    this.logger.log(`workspace ${workspaceId} role deleted`);
 
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
+    this.logger.log(`workspace ${workspaceId} object metadata deleted`);
+
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
+    this.logger.log(`workspace ${workspaceId} migration deleted`);
+
     await this.dataSourceService.delete(workspaceId);
+    this.logger.log(`workspace ${workspaceId} data source deleted`);
     // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
+    this.logger.log(`workspace ${workspaceId} schema deleted`);
   }
 
   private async initPermissions({
@@ -306,10 +325,6 @@ export class WorkspaceManagerService {
   }
 
   private async initPermissionsDev(workspaceId: string) {
-    await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IsPermissionsEnabled],
-      workspaceId,
-    );
     const adminRole = await this.roleService.createAdminRole({
       workspaceId,
     });
@@ -349,6 +364,7 @@ export class WorkspaceManagerService {
 
     await this.workspaceRepository.update(workspaceId, {
       defaultRoleId: memberRole.id,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
     if (memberUserWorkspaceId) {

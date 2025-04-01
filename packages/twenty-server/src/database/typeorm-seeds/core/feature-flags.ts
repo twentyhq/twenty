@@ -56,29 +56,19 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IsBillingPlansEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsUniqueIndexesEnabled,
         workspaceId: workspaceId,
         value: false,
       },
       {
-        key: FeatureFlagKey.IsAdvancedFiltersEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IsCommandMenuV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsNewRelationEnabled,
         workspaceId: workspaceId,
         value: false,
+      },
+      {
+        key: FeatureFlagKey.IsWorkflowFormActionEnabled,
+        workspaceId: workspaceId,
+        value: true,
       },
     ])
     .execute();

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { assertUnreachable } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/google-email-alias-manager.service';
 import { MicrosoftEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/microsoft-email-alias-manager.service';
@@ -19,20 +22,21 @@ export class EmailAliasManagerService {
     let handleAliases: string[];
 
     switch (connectedAccount.provider) {
-      case 'microsoft':
+      case ConnectedAccountProvider.MICROSOFT:
         handleAliases =
           await this.microsoftEmailAliasManagerService.getHandleAliases(
             connectedAccount,
           );
         break;
-      case 'google':
+      case ConnectedAccountProvider.GOOGLE:
         handleAliases =
           await this.googleEmailAliasManagerService.getHandleAliases(
             connectedAccount,
           );
         break;
       default:
-        throw new Error(
+        assertUnreachable(
+          connectedAccount.provider,
           `Email alias manager for provider ${connectedAccount.provider} is not implemented`,
         );
     }

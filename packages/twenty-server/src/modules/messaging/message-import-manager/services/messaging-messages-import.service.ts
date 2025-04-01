@@ -8,8 +8,8 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
-import { RefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-access-token-manager/exceptions/refresh-access-token.exception';
-import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
+import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
+import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -19,11 +19,11 @@ import {
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessageImportExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
+import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
-} from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
-import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
+} from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
@@ -37,7 +37,7 @@ export class MessagingMessagesImportService {
     private readonly cacheStorage: CacheStorageService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
-    private readonly refreshAccessTokenService: RefreshAccessTokenService,
+    private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
@@ -79,14 +79,14 @@ export class MessagingMessagesImportService {
 
       try {
         connectedAccount.accessToken =
-          await this.refreshAccessTokenService.refreshAndSaveAccessToken(
+          await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
             connectedAccount,
             workspaceId,
           );
       } catch (error) {
         switch (error.code) {
-          case RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
-          case RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
             await this.messagingTelemetryService.track({
               eventName: `refresh_token.error.insufficient_permissions`,
               workspaceId,
@@ -98,7 +98,7 @@ export class MessagingMessagesImportService {
               code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
               message: error.message,
             };
-          case RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
             throw {
               code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
               message: error.message,
@@ -146,7 +146,7 @@ export class MessagingMessagesImportService {
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
 
-      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreationJob(
+      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
         messagesToSave,
         messageChannel,
         connectedAccount,
@@ -192,7 +192,7 @@ export class MessagingMessagesImportService {
 
       await this.messageImportErrorHandlerService.handleDriverException(
         error,
-        MessageImportSyncStep.MESSAGES_IMPORT,
+        MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
         messageChannel,
         workspaceId,
       );

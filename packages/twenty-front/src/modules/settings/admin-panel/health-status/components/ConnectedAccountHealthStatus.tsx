@@ -1,12 +1,19 @@
 import { SettingsAdminHealthAccountSyncCountersTable } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
 
 const StyledErrorMessage = styled.div`
   color: ${({ theme }) => theme.color.red};
   margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const ConnectedAccountHealthStatus = () => {
@@ -17,11 +24,13 @@ export const ConnectedAccountHealthStatus = () => {
   }
 
   const parsedDetails = JSON.parse(details);
+  const serviceDetails = parsedDetails.details;
 
   const isMessageSyncDown =
-    parsedDetails.messageSync?.status === AdminPanelHealthServiceStatus.OUTAGE;
+    serviceDetails.messageSync?.status === AdminPanelHealthServiceStatus.OUTAGE;
   const isCalendarSyncDown =
-    parsedDetails.calendarSync?.status === AdminPanelHealthServiceStatus.OUTAGE;
+    serviceDetails.calendarSync?.status ===
+    AdminPanelHealthServiceStatus.OUTAGE;
 
   const errorMessages = [];
   if (isMessageSyncDown) {
@@ -32,26 +41,28 @@ export const ConnectedAccountHealthStatus = () => {
   }
 
   return (
-    <>
+    <StyledContainer>
       {errorMessages.length > 0 && (
         <StyledErrorMessage>
           {`${errorMessages.join(' and ')} ${errorMessages.length > 1 ? 'are' : 'is'} not available because the service is down`}
         </StyledErrorMessage>
       )}
 
-      {!isMessageSyncDown && parsedDetails.messageSync?.details && (
+      {!isMessageSyncDown && serviceDetails.messageSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
-          details={parsedDetails.messageSync.details}
-          title="Message Sync Status"
+          details={serviceDetails.messageSync.details}
+          title={t`Message Sync`}
+          description={t`Monitor the execution of your emails sync job`}
         />
       )}
 
-      {!isCalendarSyncDown && parsedDetails.calendarSync?.details && (
+      {!isCalendarSyncDown && serviceDetails.calendarSync?.details && (
         <SettingsAdminHealthAccountSyncCountersTable
-          details={parsedDetails.calendarSync.details}
-          title="Calendar Sync Status"
+          details={serviceDetails.calendarSync.details}
+          title={t`Calendar Sync`}
+          description={t`Monitor the execution of your calendar events sync job`}
         />
       )}
-    </>
+    </StyledContainer>
   );
 };

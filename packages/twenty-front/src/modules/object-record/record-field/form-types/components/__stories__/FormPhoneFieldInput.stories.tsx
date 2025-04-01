@@ -2,6 +2,9 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormPhoneFieldInput } from '../FormPhoneFieldInput';
 
 const meta: Meta<typeof FormPhoneFieldInput> = {
@@ -9,6 +12,7 @@ const meta: Meta<typeof FormPhoneFieldInput> = {
   component: FormPhoneFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -36,7 +40,7 @@ export const Default: Story = {
 export const SelectCountryCode: Story = {
   args: {
     label: 'Phone',
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -56,21 +60,21 @@ export const SelectCountryCode: Story = {
     await userEvent.click(franceOption);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith({
+      expect(args.onChange).toHaveBeenCalledWith({
         primaryPhoneNumber: '',
         primaryPhoneCountryCode: 'FR',
         primaryPhoneCallingCode: '33',
       });
     });
 
-    expect(args.onPersist).toHaveBeenCalledTimes(1);
+    expect(args.onChange).toHaveBeenCalledTimes(1);
   },
 };
 
 export const SelectEmptyCountryCode: Story = {
   args: {
     label: 'Phone',
-    onPersist: fn(),
+    onChange: fn(),
     defaultValue: {
       primaryPhoneNumber: '',
       primaryPhoneCountryCode: 'FR',
@@ -93,14 +97,14 @@ export const SelectEmptyCountryCode: Story = {
     await userEvent.click(emptyOption);
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith({
+      expect(args.onChange).toHaveBeenCalledWith({
         primaryPhoneNumber: '',
         primaryPhoneCountryCode: '',
         primaryPhoneCallingCode: '',
       });
     });
 
-    expect(args.onPersist).toHaveBeenCalledTimes(1);
+    expect(args.onChange).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -108,19 +112,16 @@ export const WithVariablesAsDefaultValues: Story = {
   args: {
     label: 'Phone',
     defaultValue: {
-      primaryPhoneCountryCode: '{{a.countryCode}}',
-      primaryPhoneNumber: '{{a.phoneNumber}}',
+      primaryPhoneCountryCode: `{{${MOCKED_STEP_ID}.name}}`,
+      primaryPhoneNumber: `{{${MOCKED_STEP_ID}.amount.amountMicros}}`,
     },
     VariablePicker: () => <div>VariablePicker</div>,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const countryCodeVariable = await canvas.findByText('countryCode');
+    const countryCodeVariable = await canvas.findByText('Name');
     expect(countryCodeVariable).toBeVisible();
-
-    const phoneNumberVariable = await canvas.findByText('phoneNumber');
-    expect(phoneNumberVariable).toBeVisible();
 
     const variablePickers = await canvas.findAllByText('VariablePicker');
 
@@ -139,14 +140,14 @@ export const SelectingVariables: Story = {
       return (
         <button
           onClick={() => {
-            onVariableSelect('{{test}}');
+            onVariableSelect(`{{${MOCKED_STEP_ID}.phone.number}}`);
           }}
         >
           Add variable
         </button>
       );
     },
-    onPersist: fn(),
+    onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -162,12 +163,12 @@ export const SelectingVariables: Story = {
 
     await userEvent.click(phoneNumberVariablePicker);
 
-    const phoneNumberVariable = await canvas.findByText('test');
+    const phoneNumberVariable = await canvas.findByText('My Number');
     expect(phoneNumberVariable).toBeVisible();
 
     await waitFor(() => {
-      expect(args.onPersist).toHaveBeenCalledWith({
-        primaryPhoneNumber: '{{test}}',
+      expect(args.onChange).toHaveBeenCalledWith({
+        primaryPhoneNumber: `{{${MOCKED_STEP_ID}.phone.number}}`,
         primaryPhoneCountryCode: '',
         primaryPhoneCallingCode: '',
       });

@@ -1,5 +1,5 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
@@ -8,19 +8,26 @@ import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/h
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
+type MainContextStoreProviderEffectProps = {
+  viewId?: string;
+  objectMetadataItem?: ObjectMetadataItem;
+  isRecordIndexPage: boolean;
+  isRecordShowPage: boolean;
+  isSettingsPage: boolean;
+};
+
 export const MainContextStoreProviderEffect = ({
   viewId,
   objectMetadataItem,
-  pageName,
-}: {
-  viewId?: string;
-  objectMetadataItem: ObjectMetadataItem;
-  pageName: string;
-}) => {
+  isRecordIndexPage,
+  isRecordShowPage,
+  isSettingsPage,
+}: MainContextStoreProviderEffectProps) => {
   const { setLastVisitedViewForObjectMetadataNamePlural } =
     useSetLastVisitedViewForObjectMetadataNamePlural();
 
@@ -40,10 +47,10 @@ export const MainContextStoreProviderEffect = ({
     );
 
   const [
-    contextStoreCurrentObjectMetadataItem,
-    setContextStoreCurrentObjectMetadataItem,
+    contextStoreCurrentObjectMetadataItemId,
+    setContextStoreCurrentObjectMetadataItemId,
   ] = useRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
@@ -54,8 +61,13 @@ export const MainContextStoreProviderEffect = ({
   );
 
   useEffect(() => {
-    if (contextStoreCurrentObjectMetadataItem?.id !== objectMetadataItem.id) {
-      setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
+    if (!objectMetadataItem) {
+      setContextStoreCurrentObjectMetadataItemId(undefined);
+      return;
+    }
+
+    if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {
+      setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     }
 
     setLastVisitedViewForObjectMetadataNamePlural({
@@ -66,39 +78,78 @@ export const MainContextStoreProviderEffect = ({
     setLastVisitedObjectMetadataId({
       objectMetadataItemId: objectMetadataItem.id,
     });
-
-    if (contextStoreCurrentViewId !== viewId) {
-      setContextStoreCurrentViewId(viewId);
-    }
   }, [
-    contextStoreCurrentObjectMetadataItem,
-    contextStoreCurrentViewId,
+    contextStoreCurrentObjectMetadataItemId,
     objectMetadataItem,
-    objectMetadataItem.namePlural,
-    setContextStoreCurrentObjectMetadataItem,
-    setContextStoreCurrentViewId,
+    setContextStoreCurrentObjectMetadataItemId,
     setLastVisitedObjectMetadataId,
     setLastVisitedViewForObjectMetadataNamePlural,
     viewId,
   ]);
 
   useEffect(() => {
-    const viewType =
-      pageName === 'record-show'
-        ? ContextStoreViewType.ShowPage
-        : view && view.type === ViewType.Kanban
-          ? ContextStoreViewType.Kanban
-          : ContextStoreViewType.Table;
+    if (isSettingsPage) {
+      setContextStoreCurrentViewId(undefined);
+      return;
+    }
+
+    if (contextStoreCurrentViewId !== viewId) {
+      setContextStoreCurrentViewId(viewId);
+    }
+  }, [
+    contextStoreCurrentViewId,
+    isSettingsPage,
+    setContextStoreCurrentViewId,
+    viewId,
+  ]);
+
+  useEffect(() => {
+    const viewType = getViewType({
+      isSettingsPage,
+      isRecordShowPage,
+      isRecordIndexPage,
+      view,
+    });
 
     if (contextStoreCurrentViewType !== viewType) {
       setContextStoreCurrentViewType(viewType);
     }
   }, [
     contextStoreCurrentViewType,
-    pageName,
     setContextStoreCurrentViewType,
     view,
+    isSettingsPage,
+    isRecordShowPage,
+    isRecordIndexPage,
   ]);
+
+  return null;
+};
+
+const getViewType = ({
+  isSettingsPage,
+  isRecordShowPage,
+  isRecordIndexPage,
+  view,
+}: {
+  isSettingsPage: boolean;
+  isRecordShowPage: boolean;
+  isRecordIndexPage: boolean;
+  view?: View;
+}) => {
+  if (isSettingsPage) {
+    return null;
+  }
+
+  if (isRecordIndexPage) {
+    return view?.type === ViewType.Kanban
+      ? ContextStoreViewType.Kanban
+      : ContextStoreViewType.Table;
+  }
+
+  if (isRecordShowPage) {
+    return ContextStoreViewType.ShowPage;
+  }
 
   return null;
 };

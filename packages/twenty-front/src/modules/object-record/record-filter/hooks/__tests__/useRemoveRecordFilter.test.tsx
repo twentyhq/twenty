@@ -54,7 +54,9 @@ describe('useRemoveRecordFilter', () => {
     expect(result.current.currentRecordFilters[0]).toEqual(mockRecordFilter);
 
     act(() => {
-      result.current.removeRecordFilter(mockRecordFilter.fieldMetadataId);
+      result.current.removeRecordFilter({
+        recordFilterId: mockRecordFilter.id,
+      });
     });
 
     expect(result.current.currentRecordFilters).toHaveLength(0);
@@ -96,7 +98,9 @@ describe('useRemoveRecordFilter', () => {
     expect(result.current.currentRecordFilters).toHaveLength(1);
 
     act(() => {
-      result.current.removeRecordFilter('non-existent-field-metadata-id');
+      result.current.removeRecordFilter({
+        recordFilterId: 'non-existent-field-metadata-id',
+      });
     });
 
     expect(result.current.currentRecordFilters).toHaveLength(1);

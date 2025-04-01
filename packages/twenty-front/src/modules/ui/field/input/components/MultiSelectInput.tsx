@@ -3,7 +3,6 @@ import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -13,8 +12,8 @@ import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/inter
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from 'twenty-shared';
-import { MenuItemMultiSelectTag } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { MenuItemMultiSelectTag, SelectOption } from 'twenty-ui';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
@@ -128,7 +127,7 @@ export const MultiSelectInput = ({
                 selected={values?.includes(option.value) || false}
                 text={option.label}
                 color={option.color ?? 'transparent'}
-                Icon={option.icon ?? undefined}
+                Icon={option.Icon ?? undefined}
                 onClick={() =>
                   onOptionSelected(formatNewSelectedOptions(option.value))
                 }

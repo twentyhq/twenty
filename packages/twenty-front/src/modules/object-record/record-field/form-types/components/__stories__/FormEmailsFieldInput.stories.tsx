@@ -1,5 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormEmailsFieldInput } from '../FormEmailsFieldInput';
 
 const meta: Meta<typeof FormEmailsFieldInput> = {
@@ -7,6 +10,7 @@ const meta: Meta<typeof FormEmailsFieldInput> = {
   component: FormEmailsFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -34,7 +38,7 @@ export const WithVariable: Story = {
   args: {
     label: 'Emails',
     defaultValue: {
-      primaryEmail: '{{a.b.c}}',
+      primaryEmail: `{{${MOCKED_STEP_ID}.name}}`,
       additionalEmails: [],
     },
     VariablePicker: () => <div>VariablePicker</div>,
@@ -42,7 +46,7 @@ export const WithVariable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const primaryEmailVariable = await canvas.findByText('c');
+    const primaryEmailVariable = await canvas.findByText('Name');
     expect(primaryEmailVariable).toBeVisible();
 
     const variablePicker = await canvas.findByText('VariablePicker');
@@ -57,22 +61,25 @@ export const Disabled: Story = {
       primaryEmail: 'tim@twenty.com',
       additionalEmails: [],
     },
-    onPersist: fn(),
+    onChange: fn(),
     VariablePicker: () => <div>VariablePicker</div>,
     readonly: true,
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const editor = canvasElement.querySelector('.ProseMirror > p');
-    expect(editor).toBeVisible();
+    const editor = await waitFor(() => {
+      const editor = canvasElement.querySelector('.ProseMirror > p');
+      expect(editor).toBeVisible();
+      return editor;
+    });
 
     const defaultValue = await canvas.findByText('tim@twenty.com');
     expect(defaultValue).toBeVisible();
 
     await userEvent.type(editor, 'hello@gmail.com');
 
-    expect(args.onPersist).not.toHaveBeenCalled();
+    expect(args.onChange).not.toHaveBeenCalled();
     expect(canvas.queryByText('hello@gmail.com')).not.toBeInTheDocument();
     expect(defaultValue).toBeVisible();
 

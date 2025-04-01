@@ -85,7 +85,7 @@ export class BillingPlanService {
 
       if (!baseProduct) {
         throw new BillingException(
-          'Base product not found',
+          'Base product not found, did you run the billing:sync-plans-data command?',
           BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
         );
       }

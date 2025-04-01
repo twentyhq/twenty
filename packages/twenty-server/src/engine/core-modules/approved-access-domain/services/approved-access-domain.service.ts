@@ -5,8 +5,8 @@ import crypto from 'crypto';
 
 import { render } from '@react-email/render';
 import { Repository } from 'typeorm';
-import { APP_LOCALES } from 'twenty-shared';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -19,6 +19,7 @@ import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
+import { isWorkDomain } from 'src/utils/is-work-email';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -142,6 +143,25 @@ export class ApprovedAccessDomainService {
     fromUser: User,
     emailToValidateDomain: string,
   ): Promise<ApprovedAccessDomainEntity> {
+    if (!isWorkDomain(domain)) {
+      throw new ApprovedAccessDomainException(
+        'Approved access domain must be a company domain',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN,
+      );
+    }
+
+    if (
+      await this.approvedAccessDomainRepository.findOneBy({
+        domain,
+        workspaceId: inWorkspace.id,
+      })
+    ) {
+      throw new ApprovedAccessDomainException(
+        'Approved access domain already registered.',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED,
+      );
+    }
+
     const approvedAccessDomain = await this.approvedAccessDomainRepository.save(
       {
         workspaceId: inWorkspace.id,
@@ -171,7 +191,9 @@ export class ApprovedAccessDomainService {
 
     approvedAccessDomainValidator.assertIsDefinedOrThrow(approvedAccessDomain);
 
-    await this.approvedAccessDomainRepository.delete(approvedAccessDomain);
+    await this.approvedAccessDomainRepository.delete({
+      id: approvedAccessDomain.id,
+    });
   }
 
   async getApprovedAccessDomains(workspace: Workspace) {

@@ -1,14 +1,18 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
-import { IconCircleOff, useIcons } from 'twenty-ui';
-import { z } from 'zod';
+import { Controller, useForm } from 'react-hook-form';
+import { IconCircleOff, SelectOption, useIcons } from 'twenty-ui';
+import { ZodError, isDirty, z } from 'zod';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
-import { Select, SelectOption } from '@/ui/input/components/Select';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Select } from '@/ui/input/components/Select';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
@@ -24,7 +28,6 @@ export type SettingsDataModelObjectIdentifiers =
   keyof SettingsDataModelObjectIdentifiersFormValues;
 type SettingsDataModelObjectIdentifiersFormProps = {
   objectMetadataItem: ObjectMetadataItem;
-  onBlur: () => void;
 };
 const LABEL_IDENTIFIER_FIELD_METADATA_ID: SettingsDataModelObjectIdentifiers =
   'labelIdentifierFieldMetadataId';
@@ -38,10 +41,41 @@ const StyledContainer = styled.div`
 
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
-  onBlur,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
-  const { control } =
-    useFormContext<SettingsDataModelObjectIdentifiersFormValues>();
+  const formConfig = useForm<SettingsDataModelObjectIdentifiersFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(settingsDataModelObjectIdentifiersFormSchema),
+  });
+  const { enqueueSnackBar } = useSnackBar();
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+
+  const handleSave = async (
+    formValues: SettingsDataModelObjectIdentifiersFormValues,
+  ) => {
+    if (!isDirty) {
+      return;
+    }
+
+    try {
+      await updateOneObjectMetadataItem({
+        idToUpdate: objectMetadataItem.id,
+        updatePayload: formValues,
+      });
+
+      formConfig.reset(undefined, { keepValues: true });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        enqueueSnackBar(error.issues[0].message, {
+          variant: SnackBarVariant.Error,
+        });
+      } else {
+        enqueueSnackBar((error as Error).message, {
+          variant: SnackBarVariant.Error,
+        });
+      }
+    }
+  };
+
   const { getIcon } = useIcons();
   const labelIdentifierFieldOptions = useMemo(
     () =>
@@ -84,7 +118,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
         <Controller
           key={fieldName}
           name={fieldName}
-          control={control}
+          control={formConfig.control}
           defaultValue={defaultValue}
           render={({ field: { onChange, value } }) => (
             <Select
@@ -97,7 +131,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               value={value}
               onChange={(value) => {
                 onChange(value);
-                onBlur();
+                formConfig.handleSubmit(handleSave)();
               }}
             />
           )}

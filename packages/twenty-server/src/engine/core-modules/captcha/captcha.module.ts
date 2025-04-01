@@ -1,6 +1,6 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
-import { CAPTCHA_DRIVER } from 'src/engine/core-modules/captcha/captcha.constants';
+import { CAPTCHA_DRIVER } from 'src/engine/core-modules/captcha/constants/captcha-driver.constants';
 import { CaptchaService } from 'src/engine/core-modules/captcha/captcha.service';
 import { GoogleRecaptchaDriver } from 'src/engine/core-modules/captcha/drivers/google-recaptcha.driver';
 import { TurnstileDriver } from 'src/engine/core-modules/captcha/drivers/turnstile.driver';

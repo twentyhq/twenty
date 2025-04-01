@@ -6,9 +6,6 @@ export class AccountSyncJobByStatusCounter {
   NOT_SYNCED?: number;
 
   @Field(() => Number, { nullable: true })
-  ONGOING?: number;
-
-  @Field(() => Number, { nullable: true })
   ACTIVE?: number;
 
   @Field(() => Number, { nullable: true })

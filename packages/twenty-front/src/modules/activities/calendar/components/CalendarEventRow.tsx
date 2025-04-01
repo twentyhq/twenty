@@ -6,12 +6,11 @@ import { useRecoilValue } from 'recoil';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { useOpenCalendarEventRightDrawer } from '@/activities/calendar/right-drawer/hooks/useOpenCalendarEventRightDrawer';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { isDefined } from 'twenty-shared';
+import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
 import {
   Avatar,
   AvatarGroup,
@@ -24,6 +23,7 @@ import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,
 } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -114,7 +114,8 @@ export const CalendarEventRow = ({
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { displayCurrentEventCursor = false } = useContext(CalendarContext);
-  const { openCalendarEventRightDrawer } = useOpenCalendarEventRightDrawer();
+  const { openCalendarEventInCommandMenu } =
+    useOpenCalendarEventInCommandMenu();
 
   const startsAt = getCalendarEventStartDate(calendarEvent);
   const endsAt = getCalendarEventEndDate(calendarEvent);
@@ -137,7 +138,9 @@ export const CalendarEventRow = ({
       showTitle={showTitle}
       onClick={
         showTitle
-          ? () => openCalendarEventRightDrawer(calendarEvent.id)
+          ? () => {
+              openCalendarEventInCommandMenu(calendarEvent.id);
+            }
           : undefined
       }
     >

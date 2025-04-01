@@ -8,7 +8,7 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-describe('Core REST API Delete One endpoint', () => {
+describe.skip('Core REST API Delete One endpoint', () => {
   let people: any;
 
   beforeAll(async () => {

@@ -2,33 +2,32 @@ import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuCon
 import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
 import { CommandMenuContextChipGroupsWithRecordSelection } from '@/command-menu/components/CommandMenuContextChipGroupsWithRecordSelection';
 import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/CommandMenuTopBarInputFocusEffect';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
+import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
 import {
   Button,
   IconChevronLeft,
   IconX,
-  LightIconButton,
   getOsControlSymbol,
   useIsMobile,
 } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -75,13 +74,6 @@ const StyledContentContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledCloseButtonContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 32px;
-  justify-content: center;
-`;
-
 const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
   visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
 `;
@@ -100,49 +92,20 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const {
-    closeCommandMenu,
-    goBackFromCommandMenu,
-    navigateCommandMenuHistory,
-  } = useCommandMenu();
+  const { closeCommandMenu } = useCommandMenu();
 
-  const contextStoreCurrentObjectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const { goBackFromCommandMenu } = useCommandMenuHistory();
+
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
-  const commandMenuNavigationStack = useRecoilValue(
-    commandMenuNavigationStackState,
-  );
-
   const theme = useTheme();
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
-  const contextChips = useMemo(() => {
-    const filteredCommandMenuNavigationStack =
-      commandMenuNavigationStack.filter(
-        (page) => page.page !== CommandMenuPages.Root,
-      );
-
-    return filteredCommandMenuNavigationStack.map((page, index) => ({
-      Icons: [<page.pageIcon size={theme.icon.size.sm} />],
-      text: page.pageTitle,
-      onClick:
-        index === filteredCommandMenuNavigationStack.length - 1
-          ? undefined
-          : () => {
-              navigateCommandMenuHistory(index);
-            },
-    }));
-  }, [
-    commandMenuNavigationStack,
-    navigateCommandMenuHistory,
-    theme.icon.size.sm,
-  ]);
+  const { contextChips } = useCommandMenuContextChips();
 
   const location = useLocation();
   const isButtonVisible =
@@ -155,34 +118,30 @@ export const CommandMenuTopBar = () => {
   return (
     <StyledInputContainer>
       <StyledContentContainer>
-        {isCommandMenuV2Enabled && (
-          <>
-            <AnimatePresence>
-              {commandMenuPage !== CommandMenuPages.Root && (
-                <motion.div
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{
-                    duration: backButtonAnimationDuration,
-                  }}
-                >
-                  <CommandMenuContextChip
-                    Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-                    onClick={goBackFromCommandMenu}
-                    testId="command-menu-go-back-button"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-            {isDefined(contextStoreCurrentObjectMetadataItem) &&
-            commandMenuPage !== CommandMenuPages.SearchRecords ? (
-              <CommandMenuContextChipGroupsWithRecordSelection
-                contextChips={contextChips}
-                objectMetadataItemId={contextStoreCurrentObjectMetadataItem.id}
+        <AnimatePresence>
+          {commandMenuPage !== CommandMenuPages.Root && (
+            <motion.div
+              exit={{ opacity: 0, width: 0 }}
+              transition={{
+                duration: backButtonAnimationDuration,
+              }}
+            >
+              <CommandMenuContextChip
+                Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
+                onClick={goBackFromCommandMenu}
+                testId="command-menu-go-back-button"
               />
-            ) : (
-              <CommandMenuContextChipGroups contextChips={contextChips} />
-            )}
-          </>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {isDefined(contextStoreCurrentObjectMetadataItemId) &&
+        commandMenuPage !== CommandMenuPages.SearchRecords ? (
+          <CommandMenuContextChipGroupsWithRecordSelection
+            contextChips={contextChips}
+            objectMetadataItemId={contextStoreCurrentObjectMetadataItemId}
+          />
+        ) : (
+          <CommandMenuContextChipGroups contextChips={contextChips} />
         )}
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (
@@ -199,27 +158,16 @@ export const CommandMenuTopBar = () => {
       </StyledContentContainer>
       {!isMobile && (
         <StyledCloseButtonWrapper isVisible={isButtonVisible}>
-          {isCommandMenuV2Enabled ? (
-            <Button
-              Icon={IconX}
-              dataTestId="page-header-close-command-menu-button"
-              size={'small'}
-              variant="secondary"
-              accent="default"
-              hotkeys={[getOsControlSymbol(), 'K']}
-              ariaLabel="Close command menu"
-              onClick={closeCommandMenu}
-            />
-          ) : (
-            <StyledCloseButtonContainer>
-              <LightIconButton
-                accent={'tertiary'}
-                size={'medium'}
-                Icon={IconX}
-                onClick={closeCommandMenu}
-              />
-            </StyledCloseButtonContainer>
-          )}
+          <Button
+            Icon={IconX}
+            dataTestId="page-header-close-command-menu-button"
+            size={'small'}
+            variant="secondary"
+            accent="default"
+            hotkeys={[getOsControlSymbol(), 'K']}
+            ariaLabel="Close command menu"
+            onClick={closeCommandMenu}
+          />
         </StyledCloseButtonWrapper>
       )}
     </StyledInputContainer>

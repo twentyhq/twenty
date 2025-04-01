@@ -51,7 +51,7 @@ export class WorkflowVisualizerPage {
     'record-created': 'Record is Created',
     'record-updated': 'Record is Updated',
     'record-deleted': 'Record is Deleted',
-    manual: 'Manual Trigger',
+    manual: 'Launch manually',
   };
 
   constructor({ page, workflowName }: { page: Page; workflowName: string }) {
@@ -104,11 +104,19 @@ export class WorkflowVisualizerPage {
   }
 
   async goToWorkflowVisualizerPage() {
-    await Promise.all([
-      this.#page.goto(`/object/workflow/${this.workflowId}`),
+    await this.#page.goto(`/`);
 
-      this.waitForWorkflowVisualizerLoad(),
-    ]);
+    const workflowsLink = this.#page.getByRole('link', { name: 'Workflows' });
+
+    await workflowsLink.click();
+
+    const workflowLink = this.#page
+      .getByTestId(`row-id-${this.workflowId}`)
+      .getByRole('link', { name: this.workflowName });
+
+    await workflowLink.click();
+
+    await this.waitForWorkflowVisualizerLoad();
   }
 
   async createInitialTrigger(trigger: WorkflowTriggerType) {

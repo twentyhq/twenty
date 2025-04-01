@@ -14,6 +14,7 @@ export type TextAreaProps = {
   label?: string;
   disabled?: boolean;
   minRows?: number;
+  maxRows?: number;
   onChange?: (value: string) => void;
   placeholder?: string;
   value?: string;
@@ -73,12 +74,13 @@ export const TextArea = ({
   disabled,
   placeholder,
   minRows = 1,
+  maxRows = MAX_ROWS,
   value = '',
   className,
   onChange,
   onBlur,
 }: TextAreaProps) => {
-  const computedMinRows = Math.min(minRows, MAX_ROWS);
+  const computedMinRows = Math.min(minRows, maxRows);
 
   const inputId = useId();
 
@@ -103,7 +105,7 @@ export const TextArea = ({
       <StyledTextArea
         id={inputId}
         placeholder={placeholder}
-        maxRows={MAX_ROWS}
+        maxRows={maxRows}
         minRows={computedMinRows}
         value={value}
         onChange={(event) =>

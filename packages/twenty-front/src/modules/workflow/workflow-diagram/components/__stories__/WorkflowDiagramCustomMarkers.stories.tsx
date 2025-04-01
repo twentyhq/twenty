@@ -41,7 +41,6 @@ type Story = StoryObj<typeof WorkflowDiagramCanvasBase>;
 
 export const DefaultEdge: Story = {
   args: {
-    status: 'DRAFT',
     nodeTypes: {
       default: WorkflowDiagramStepNodeReadonly,
       'create-step': WorkflowDiagramCreateStepNode,
@@ -65,7 +64,6 @@ export const DefaultEdge: Story = {
                   nodeType: 'trigger',
                   triggerType: 'DATABASE_EVENT',
                   name: 'When record is created',
-                  isLeafNode: false,
                 },
               },
               {
@@ -76,7 +74,6 @@ export const DefaultEdge: Story = {
                   nodeType: 'action',
                   actionType: 'CREATE_RECORD',
                   name: 'Create record',
-                  isLeafNode: false,
                 },
               },
               {
@@ -116,7 +113,6 @@ export const DefaultEdge: Story = {
 
 export const SuccessEdge: Story = {
   args: {
-    status: 'DRAFT',
     nodeTypes: {
       default: WorkflowDiagramStepNodeReadonly,
       'create-step': WorkflowDiagramCreateStepNode,
@@ -141,7 +137,6 @@ export const SuccessEdge: Story = {
                   nodeType: 'trigger',
                   triggerType: 'DATABASE_EVENT',
                   name: 'When record is created',
-                  isLeafNode: false,
                 },
               },
               {
@@ -152,7 +147,6 @@ export const SuccessEdge: Story = {
                   nodeType: 'action',
                   actionType: 'CREATE_RECORD',
                   name: 'Create record',
-                  isLeafNode: false,
                 },
               },
             ],

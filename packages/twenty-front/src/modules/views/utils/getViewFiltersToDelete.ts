@@ -1,4 +1,5 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
 export const getViewFiltersToDelete = (
   currentViewFilters: ViewFilter[],
@@ -6,11 +7,11 @@ export const getViewFiltersToDelete = (
 ) => {
   return currentViewFilters.filter(
     (currentViewFilter) =>
-      !newViewFilters.some(
-        (newViewFilter) =>
-          newViewFilter.fieldMetadataId === currentViewFilter.fieldMetadataId &&
-          newViewFilter.viewFilterGroupId ===
-            currentViewFilter.viewFilterGroupId,
+      !newViewFilters.some((newViewFilter) =>
+        compareStrictlyExceptForNullAndUndefined(
+          currentViewFilter.id,
+          newViewFilter.id,
+        ),
       ),
   );
 };

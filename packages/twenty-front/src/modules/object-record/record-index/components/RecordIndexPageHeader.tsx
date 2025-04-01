@@ -1,24 +1,38 @@
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
-import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
-import { RecordIndexPageTableAddButton } from '@/object-record/record-index/components/RecordIndexPageTableAddButton';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
+import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewType } from '@/views/types/ViewType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useRecoilValue } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { capitalize } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
+
+const StyledTitleWithSelectedRecords = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  padding-right: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const StyledSelectedRecordsCount = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding-left: ${({ theme }) => theme.spacing(0.5)};
+`;
 
 export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
+
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
 
   const { objectNamePlural } = useRecordIndexContextOrThrow();
 
@@ -28,49 +42,27 @@ export const RecordIndexPageHeader = () => {
   const { getIcon } = useIcons();
   const Icon = getIcon(objectMetadataItem?.icon);
 
-  const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
-
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const numberOfSelectedRecords = useRecoilComponentValueV2(
-    contextStoreNumberOfSelectedRecordsComponentState,
-  );
-
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
-  const isObjectMetadataItemReadOnly =
-    isDefined(objectMetadataItem) &&
-    isObjectMetadataReadOnly(objectMetadataItem);
-
-  const shouldDisplayAddButton =
-    (numberOfSelectedRecords === 0 || !isCommandMenuV2Enabled) &&
-    !isObjectMetadataItemReadOnly &&
-    !isCommandMenuV2Enabled;
-
-  const isTable = recordIndexViewType === ViewType.Table;
+  const label = objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
 
   const pageHeaderTitle =
-    objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
+    contextStoreNumberOfSelectedRecords > 0 ? (
+      <StyledTitleWithSelectedRecords>
+        <StyledTitle>{label}</StyledTitle>
+        <>{'->'}</>
+        <StyledSelectedRecordsCount>
+          {t`${contextStoreNumberOfSelectedRecords} selected`}
+        </StyledSelectedRecordsCount>
+      </StyledTitleWithSelectedRecords>
+    ) : (
+      label
+    );
 
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
-      {shouldDisplayAddButton &&
-        /**
-         * TODO: Logic between Table and Kanban should be merged here when we move some states to record-index
-         */
-        (isTable ? (
-          <RecordIndexPageTableAddButton />
-        ) : (
-          <RecordIndexPageKanbanAddButton />
-        ))}
-
-      {isCommandMenuV2Enabled && (
-        <RecordIndexActionMenu indexId={recordIndexId} />
-      )}
-
-      <PageHeaderOpenCommandMenuButton />
+      <RecordIndexActionMenu indexId={recordIndexId} />
+      <PageHeaderToggleCommandMenuButton />
     </PageHeader>
   );
 };

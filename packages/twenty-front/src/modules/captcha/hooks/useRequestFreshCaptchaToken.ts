@@ -2,9 +2,11 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
+import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { captchaState } from '@/client-config/states/captchaState';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { useLocation } from 'react-router-dom';
 
 declare global {
   interface Window {
@@ -19,9 +21,15 @@ export const useRequestFreshCaptchaToken = () => {
     isRequestingCaptchaTokenState,
   );
 
+  const location = useLocation();
+
   const requestFreshCaptchaToken = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
+        if (!isCaptchaRequiredForPath(location.pathname)) {
+          return;
+        }
+
         const captcha = snapshot.getLoadable(captchaState).getValue();
 
         if (isUndefinedOrNull(captcha?.provider)) {
@@ -57,7 +65,7 @@ export const useRequestFreshCaptchaToken = () => {
             });
         }
       },
-    [setCaptchaToken, setIsRequestingCaptchaToken],
+    [location.pathname, setCaptchaToken, setIsRequestingCaptchaToken],
   );
 
   return { requestFreshCaptchaToken };

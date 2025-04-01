@@ -1,6 +1,9 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormMultiSelectFieldInput } from '../FormMultiSelectFieldInput';
 
 const meta: Meta<typeof FormMultiSelectFieldInput> = {
@@ -8,6 +11,7 @@ const meta: Meta<typeof FormMultiSelectFieldInput> = {
   component: FormMultiSelectFieldInput,
   args: {},
   argTypes: {},
+  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
 };
 
 export default meta;
@@ -61,7 +65,7 @@ export const WithVariablePicker: Story = {
         color: 'blue',
       },
     ],
-    onPersist: fn(),
+    onChange: fn(),
     VariablePicker: () => <div>VariablePicker</div>,
   },
   play: async ({ canvasElement }) => {
@@ -98,7 +102,7 @@ export const Disabled: Story = {
         color: 'yellow',
       },
     ],
-    onPersist: fn(),
+    onChange: fn(),
     readonly: true,
   },
   play: async ({ canvasElement }) => {
@@ -117,14 +121,14 @@ export const Disabled: Story = {
 export const DisabledWithVariable: Story = {
   args: {
     label: 'Created At',
-    defaultValue: `{{a.b.c}}`,
-    onPersist: fn(),
+    defaultValue: `{{${MOCKED_STEP_ID}.stage}}`,
+    onChange: fn(),
     readonly: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const variableChip = await canvas.findByText('c');
+    const variableChip = await canvas.findByText('Stage');
     expect(variableChip).toBeVisible();
 
     await userEvent.click(variableChip);

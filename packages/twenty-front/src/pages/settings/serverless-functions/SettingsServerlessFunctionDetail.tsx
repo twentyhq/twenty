@@ -1,8 +1,6 @@
-import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
-import { SettingsServerlessFunctionMonitoringTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionMonitoringTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
@@ -14,24 +12,25 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { IconCode, IconGauge, IconSettings, IconTestPipe } from 'twenty-ui';
+import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { isDefined } from 'twenty-shared/utils';
 
-const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
+const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
-  const { activeTabId, setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+    activeTabIdComponentState,
+    SERVERLESS_FUNCTION_DETAIL_ID,
+  );
   const [isCodeValid, setIsCodeValid] = useState(true);
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
@@ -122,19 +121,10 @@ export const SettingsServerlessFunctionDetail = () => {
     setActiveTabId('test');
   };
 
-  const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
-
-  const isAnalyticsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAnalyticsV2Enabled,
-  );
-
   const tabs = [
     { id: 'editor', title: 'Editor', Icon: IconCode },
     { id: 'test', title: 'Test', Icon: IconTestPipe },
     { id: 'settings', title: 'Settings', Icon: IconSettings },
-    ...(isAnalyticsEnabled && isAnalyticsV2Enabled
-      ? [{ id: 'monitoring', title: 'Monitoring', Icon: IconGauge }]
-      : []),
   ];
 
   const files = formValues.code
@@ -180,12 +170,6 @@ export const SettingsServerlessFunctionDetail = () => {
             onCodeChange={onCodeChange}
           />
         );
-      case 'monitoring':
-        return (
-          <SettingsServerlessFunctionMonitoringTab
-            serverlessFunctionId={serverlessFunctionId}
-          />
-        );
       default:
         return <></>;
     }
@@ -209,9 +193,9 @@ export const SettingsServerlessFunctionDetail = () => {
       >
         <SettingsPageContainer>
           <TabList
-            tabListInstanceId={TAB_LIST_COMPONENT_ID}
             tabs={tabs}
             behaveAsLinks={false}
+            componentInstanceId={SERVERLESS_FUNCTION_DETAIL_ID}
           />
           {renderActiveTabContent()}
         </SettingsPageContainer>

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -24,9 +26,9 @@ export class MessagingCursorService {
       );
 
     switch (connectedAccount.provider) {
-      case 'google':
+      case ConnectedAccountProvider.GOOGLE:
         return messageChannel.syncCursor;
-      case 'microsoft': {
+      case ConnectedAccountProvider.MICROSOFT: {
         const folder = await folderRepository.findOne({
           where: {
             id: folderId,

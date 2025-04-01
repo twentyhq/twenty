@@ -1,55 +1,25 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { ResponsiveLine } from '@nivo/line';
-
+import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
+import { WorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/WorkerMetricsTooltip';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Select } from '@/ui/input/components/Select';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { ResponsiveLine } from '@nivo/line';
+import { isNumber } from '@tiptap/core';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
 } from '~/generated/graphql';
 
-const StyledTableRow = styled(TableRow)`
-  height: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledQueueMetricsTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
-`;
-
 const StyledGraphContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  height: 230px;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(4)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
-
-const StyledQueueMetricsContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  height: 240px;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledGraphControls = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: flex-end;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  padding-top: ${({ theme }) => theme.spacing(2.5)};
+  width: 100%;
 `;
 
 const StyledNoDataMessage = styled.div`
@@ -60,31 +30,9 @@ const StyledNoDataMessage = styled.div`
   justify-content: center;
 `;
 
-const StyledTooltipContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: ${({ theme }) => theme.spacing(2)};
-  font-size: ${({ theme }) => theme.font.size.sm};
-`;
-
-const StyledTooltipItem = styled.div<{ color: string }>`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  padding: ${({ theme }) => theme.spacing(0.5)} 0;
-`;
-
-const StyledTooltipColorSquare = styled.div<{ color: string }>`
-  width: 12px;
-  height: 12px;
-  background-color: ${({ color }) => color};
-  margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledTooltipValue = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 type WorkerMetricsGraphProps = {
@@ -96,7 +44,6 @@ type WorkerMetricsGraphProps = {
 export const WorkerMetricsGraph = ({
   queueName,
   timeRange,
-  onTimeRangeChange,
 }: WorkerMetricsGraphProps) => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
@@ -142,50 +89,31 @@ export const WorkerMetricsGraph = ({
   const getAxisLabel = () => {
     switch (timeRange) {
       case QueueMetricsTimeRange.OneHour:
-        return 'Last 1 Hour (oldest → newest)';
+        return t`Last 1 Hour (oldest → newest)`;
       case QueueMetricsTimeRange.FourHours:
-        return 'Last 4 Hours (oldest → newest)';
+        return t`Last 4 Hours (oldest → newest)`;
       case QueueMetricsTimeRange.TwelveHours:
-        return 'Last 12 Hours (oldest → newest)';
+        return t`Last 12 Hours (oldest → newest)`;
       case QueueMetricsTimeRange.OneDay:
-        return 'Last 24 Hours (oldest → newest)';
+        return t`Last 24 Hours (oldest → newest)`;
       case QueueMetricsTimeRange.SevenDays:
-        return 'Last 7 Days (oldest → newest)';
+        return t`Last 7 Days (oldest → newest)`;
       default:
-        return 'Recent Events (oldest → newest)';
+        return t`Recent Events (oldest → newest)`;
     }
   };
 
   return (
     <>
-      <StyledGraphControls>
-        <Select
-          dropdownId={`timerange-${queueName}`}
-          value={timeRange}
-          options={[
-            { value: QueueMetricsTimeRange.SevenDays, label: 'This week' },
-            { value: QueueMetricsTimeRange.OneDay, label: 'Today' },
-            {
-              value: QueueMetricsTimeRange.TwelveHours,
-              label: 'Last 12 hours',
-            },
-            { value: QueueMetricsTimeRange.FourHours, label: 'Last 4 hours' },
-            { value: QueueMetricsTimeRange.OneHour, label: 'Last 1 hour' },
-          ]}
-          onChange={onTimeRangeChange}
-          needIconCheck
-        />
-      </StyledGraphControls>
-
       <StyledGraphContainer>
         {loading ? (
-          <StyledNoDataMessage>Loading metrics data...</StyledNoDataMessage>
+          <StyledNoDataMessage>{t`Loading metrics data...`}</StyledNoDataMessage>
         ) : hasData ? (
           <ResponsiveLine
             data={metricsData}
             curve="monotoneX"
             enableArea={true}
-            colors={[theme.color.green, theme.color.red]}
+            colors={[theme.color.blue, theme.color.red]}
             theme={{
               text: {
                 fill: theme.font.color.light,
@@ -216,7 +144,7 @@ export const WorkerMetricsGraph = ({
                 },
               },
             }}
-            margin={{ top: 40, right: 30, bottom: 40, left: 50 }}
+            margin={{ top: 40, right: 30, bottom: 40, left: 40 }}
             xScale={{
               type: 'linear',
               min: 0,
@@ -230,7 +158,7 @@ export const WorkerMetricsGraph = ({
             }}
             axisBottom={{
               legend: getAxisLabel(),
-              legendOffset: 30,
+              legendOffset: 20,
               legendPosition: 'middle',
               tickSize: 5,
               tickPadding: 5,
@@ -241,29 +169,12 @@ export const WorkerMetricsGraph = ({
               tickSize: 6,
               tickPadding: 5,
               tickValues: 4,
-              legend: 'Count',
-              legendOffset: -40,
-              legendPosition: 'middle',
             }}
             enableGridX={false}
             gridYValues={4}
             pointSize={0}
             enableSlices="x"
-            sliceTooltip={({ slice }) => (
-              <StyledTooltipContainer>
-                {slice.points.map((point) => (
-                  <StyledTooltipItem key={point.id} color={point.serieColor}>
-                    <StyledTooltipColorSquare color={point.serieColor} />
-                    <span>
-                      {point.serieId}:{' '}
-                      <StyledTooltipValue>
-                        {String(point.data.y)}
-                      </StyledTooltipValue>
-                    </span>
-                  </StyledTooltipItem>
-                ))}
-              </StyledTooltipContainer>
-            )}
+            sliceTooltip={({ slice }) => <WorkerMetricsTooltip slice={slice} />}
             useMesh={true}
             legends={[
               {
@@ -276,39 +187,33 @@ export const WorkerMetricsGraph = ({
                 itemDirection: 'left-to-right',
                 itemWidth: 100,
                 itemHeight: 20,
-                symbolSize: 12,
-                symbolShape: 'square',
+                itemTextColor: theme.font.color.secondary,
+                symbolSize: 4,
+                symbolShape: 'circle',
               },
             ]}
           />
         ) : (
-          <StyledNoDataMessage>No metrics data available</StyledNoDataMessage>
+          <StyledNoDataMessage>{t`No metrics data available`}</StyledNoDataMessage>
         )}
       </StyledGraphContainer>
       {metricsDetails && (
-        <>
-          <StyledQueueMetricsTitle>Metrics:</StyledQueueMetricsTitle>
-          <StyledQueueMetricsContainer>
-            <Table>
-              {Object.entries(metricsDetails)
-                .filter(([key]) => key !== '__typename')
-                .map(([key, value]) => (
-                  <StyledTableRow key={key}>
-                    <TableCell align="left">
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </TableCell>
-                    <TableCell align="right">
-                      {typeof value === 'number'
-                        ? value
-                        : Array.isArray(value)
-                          ? value.length
-                          : String(value)}
-                    </TableCell>
-                  </StyledTableRow>
-                ))}
-            </Table>
-          </StyledQueueMetricsContainer>
-        </>
+        <StyledSettingsAdminTableCard
+          rounded
+          items={Object.entries(metricsDetails)
+            .filter(([key]) => key !== '__typename')
+            .map(([key, value]) => ({
+              label: key.charAt(0).toUpperCase() + key.slice(1),
+              value: isNumber(value)
+                ? value
+                : Array.isArray(value)
+                  ? value.length
+                  : String(value),
+            }))}
+          gridAutoColumns="1fr 1fr"
+          labelAlign="left"
+          valueAlign="right"
+        />
       )}
     </>
   );

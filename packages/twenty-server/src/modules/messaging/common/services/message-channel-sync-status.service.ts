@@ -5,7 +5,8 @@ import { Any } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { HealthCacheService } from 'src/engine/core-modules/health/health-cache.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -23,7 +24,7 @@ export class MessageChannelSyncStatusService {
     private readonly cacheStorage: CacheStorageService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
-    private readonly healthCacheService: HealthCacheService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   public async scheduleFullMessageListFetch(messageChannelIds: string[]) {
@@ -129,11 +130,6 @@ export class MessageChannelSyncStatusService {
       syncStatus: MessageChannelSyncStatus.ONGOING,
       syncStageStartedAt: new Date().toISOString(),
     });
-
-    await this.healthCacheService.incrementMessageChannelSyncJobByStatusCounter(
-      MessageChannelSyncStatus.ONGOING,
-      messageChannelIds.length,
-    );
   }
 
   public async markAsCompletedAndSchedulePartialMessageListFetch(
@@ -156,10 +152,10 @@ export class MessageChannelSyncStatusService {
       syncedAt: new Date().toISOString(),
     });
 
-    await this.healthCacheService.incrementMessageChannelSyncJobByStatusCounter(
-      MessageChannelSyncStatus.ACTIVE,
-      messageChannelIds.length,
-    );
+    await this.metricsService.batchIncrementCounter({
+      key: MetricsKeys.MessageChannelSyncJobActive,
+      eventIds: messageChannelIds,
+    });
   }
 
   public async markAsMessagesImportOngoing(messageChannelIds: string[]) {
@@ -202,10 +198,10 @@ export class MessageChannelSyncStatusService {
       syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
     });
 
-    await this.healthCacheService.incrementMessageChannelSyncJobByStatusCounter(
-      MessageChannelSyncStatus.FAILED_UNKNOWN,
-      messageChannelIds.length,
-    );
+    await this.metricsService.batchIncrementCounter({
+      key: MetricsKeys.MessageChannelSyncJobFailedUnknown,
+      eventIds: messageChannelIds,
+    });
   }
 
   public async markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
@@ -232,10 +228,10 @@ export class MessageChannelSyncStatusService {
       syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
     });
 
-    await this.healthCacheService.incrementMessageChannelSyncJobByStatusCounter(
-      MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-      messageChannelIds.length,
-    );
+    await this.metricsService.batchIncrementCounter({
+      key: MetricsKeys.MessageChannelSyncJobFailedInsufficientPermissions,
+      eventIds: messageChannelIds,
+    });
 
     const connectedAccountRepository =
       await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(

@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { FindDuplicatesResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/find-duplicates-resolver.factory';
-import { SearchResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/search-resolver-factory';
 
 @Injectable()
 export class WorkspaceResolverBuilderService {
@@ -19,8 +18,6 @@ export class WorkspaceResolverBuilderService {
     switch (methodName) {
       case FindDuplicatesResolverFactory.methodName:
         return isDefined(objectMetadata.duplicateCriteria);
-      case SearchResolverFactory.methodName:
-        return objectMetadata.isSearchable;
       default:
         return true;
     }

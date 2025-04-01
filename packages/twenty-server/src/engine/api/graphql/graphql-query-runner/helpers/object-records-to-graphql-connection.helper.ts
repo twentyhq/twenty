@@ -1,4 +1,5 @@
-import { FieldMetadataType, isDefined } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ObjectRecord,

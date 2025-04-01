@@ -11,7 +11,8 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
-import { APP_LOCALES, getImageAbsoluteURI } from 'twenty-shared';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
 type SendInviteLinkEmailProps = {
   link: string;
@@ -46,7 +47,7 @@ export const SendInviteLinkEmail = ({
           value={sender.email}
           color={emailTheme.font.colors.blue}
         />
-        )<Trans>has invited you to join a workspace called </Trans>
+        ) <Trans>has invited you to join a workspace called </Trans>
         <b>{workspace.name}</b>
         <br />
       </MainText>

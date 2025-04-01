@@ -6,18 +6,17 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
-import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-import { isDefined } from 'twenty-shared';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableEmptyStateSoftDelete = () => {
   const { objectMetadataItem, objectNameSingular, recordTableId } =
     useRecordTableContextOrThrow();
 
-  const tableFilters = useRecoilComponentValueV2(
-    tableFiltersComponentState,
-    recordTableId,
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
   );
 
   const { toggleSoftDeleteFilterState } = useHandleToggleTrashColumnFilter({
@@ -30,13 +29,13 @@ export const RecordTableEmptyStateSoftDelete = () => {
   const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
 
   const handleButtonClick = async () => {
-    const deletedFilter = tableFilters.find(checkIsSoftDeleteFilter);
+    const deletedFilter = currentRecordFilters.find(checkIsSoftDeleteFilter);
 
     if (!isDefined(deletedFilter)) {
       throw new Error('Deleted filter not found');
     }
 
-    removeRecordFilter(deletedFilter.fieldMetadataId);
+    removeRecordFilter({ recordFilterId: deletedFilter.id });
 
     toggleSoftDeleteFilterState(false);
   };

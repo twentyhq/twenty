@@ -20,6 +20,13 @@ const StyledInput = styled.input<{
       border-radius: 4px;
       border: 1px solid ${theme.border.color.medium};
     `}
+  
+  ${({ hasError, hasItem, theme }) =>
+    hasError &&
+    hasItem &&
+    css`
+      border: 1px solid ${theme.border.color.danger};
+    `}
 
   box-sizing: border-box;
   font-weight: ${({ theme }) => theme.font.weight.medium};

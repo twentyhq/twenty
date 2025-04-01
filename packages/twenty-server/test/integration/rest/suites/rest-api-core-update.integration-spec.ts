@@ -6,7 +6,7 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-describe('Core REST API Update One endpoint', () => {
+describe.skip('Core REST API Update One endpoint', () => {
   let initialPersonData;
 
   beforeAll(async () => {

@@ -5,6 +5,7 @@ import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useS
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledCloseButtonContainer = styled.div`
   align-items: center;
@@ -34,17 +35,24 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
 
   const { enqueueDialog } = useDialogManager();
 
+  const { t } = useLingui();
+
   const handleClose = () => {
     if (activeStep === -1) {
       onClose();
       return;
     }
     enqueueDialog({
-      title: 'Exit import flow',
-      message: 'Are you sure? Your current information will not be saved.',
+      title: t`Exit import flow`,
+      message: t`Are you sure? Your current information will not be saved.`,
       buttons: [
-        { title: 'Cancel' },
-        { title: 'Exit', onClick: onClose, accent: 'danger', role: 'confirm' },
+        { title: t`Cancel` },
+        {
+          title: t`Exit`,
+          onClick: onClose,
+          accent: 'danger',
+          role: 'confirm',
+        },
       ],
     });
   };

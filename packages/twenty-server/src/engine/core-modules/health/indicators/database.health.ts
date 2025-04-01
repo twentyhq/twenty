@@ -9,9 +9,12 @@ import { DataSource } from 'typeorm';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
+import { HealthStateManager } from 'src/engine/core-modules/health/utils/health-state-manager.util';
 
 @Injectable()
 export class DatabaseHealthIndicator {
+  private stateManager = new HealthStateManager();
+
   constructor(
     @InjectDataSource('core')
     private readonly dataSource: DataSource,
@@ -69,35 +72,50 @@ export class DatabaseHealthIndicator {
         HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT,
       );
 
-      return indicator.up({
-        details: {
+      const details = {
+        system: {
+          timestamp: new Date().toISOString(),
           version: versionResult.version,
-          connections: {
-            active: parseInt(activeConnections.count),
-            max: parseInt(maxConnections.max_connections),
-            utilizationPercent: Math.round(
-              (parseInt(activeConnections.count) /
-                parseInt(maxConnections.max_connections)) *
-                100,
-            ),
-          },
           uptime: Math.round(uptime.uptime / 3600) + ' hours',
-          databaseSize: databaseSize.size,
-          performance: {
-            cacheHitRatio: Math.round(parseFloat(cacheHitRatio.ratio)) + '%',
-            deadlocks: parseInt(deadlocks.deadlocks),
-            slowQueries: parseInt(slowQueries.count),
-          },
-          top10Tables: tableStats,
         },
-      });
+        connections: {
+          active: parseInt(activeConnections.count),
+          max: parseInt(maxConnections.max_connections),
+          utilizationPercent: Math.round(
+            (parseInt(activeConnections.count) /
+              parseInt(maxConnections.max_connections)) *
+              100,
+          ),
+        },
+        databaseSize: databaseSize.size,
+        performance: {
+          cacheHitRatio: Math.round(parseFloat(cacheHitRatio.ratio)) + '%',
+          deadlocks: parseInt(deadlocks.deadlocks),
+          slowQueries: parseInt(slowQueries.count),
+        },
+        top10Tables: tableStats,
+      };
+
+      this.stateManager.updateState(details);
+
+      return indicator.up({ details });
     } catch (error) {
-      const errorMessage =
+      const message =
         error.message === HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT
           ? HEALTH_ERROR_MESSAGES.DATABASE_TIMEOUT
           : HEALTH_ERROR_MESSAGES.DATABASE_CONNECTION_FAILED;
 
-      return indicator.down(errorMessage);
+      const stateWithAge = this.stateManager.getStateWithAge();
+
+      return indicator.down({
+        message,
+        details: {
+          system: {
+            timestamp: new Date().toISOString(),
+          },
+          stateHistory: stateWithAge,
+        },
+      });
     }
   }
 }
