@@ -9,7 +9,7 @@ import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistVie
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewGroup } from '@/views/types/ViewGroup';
-import { ViewType } from '@/views/types/ViewType';
+import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
@@ -122,13 +122,20 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               );
             }
             setRecordIndexViewType(viewType);
-            await updateCurrentView(updateCurrentViewParams);
-            break;
+
+            if (shouldChangeIcon(currentView.icon, currentView.type)) {
+              updateCurrentViewParams.icon =
+                viewTypeIconMapping(viewType).displayName;
+            }
+            return await updateCurrentView(updateCurrentViewParams);
           }
           case ViewType.Table:
             setRecordIndexViewType(viewType);
-            await updateCurrentView(updateCurrentViewParams);
-            break;
+            if (shouldChangeIcon(currentView.icon, currentView.type)) {
+              updateCurrentViewParams.icon =
+                viewTypeIconMapping(viewType).displayName;
+            }
+            return await updateCurrentView(updateCurrentViewParams);
           default: {
             return assertUnreachable(viewType);
           }
@@ -143,6 +150,25 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       loadRecordIndexStates,
     ],
   );
+
+  const shouldChangeIcon = (
+    oldIcon: string,
+    oldViewType: ViewType,
+  ): boolean => {
+    if (
+      oldViewType === ViewType.Kanban &&
+      oldIcon === viewTypeIconMapping(ViewType.Kanban).displayName
+    ) {
+      return true;
+    }
+    if (
+      oldViewType === ViewType.Table &&
+      oldIcon === viewTypeIconMapping(ViewType.Table).displayName
+    ) {
+      return true;
+    }
+    return false;
+  };
 
   return {
     setAndPersistViewType,
