@@ -7,17 +7,18 @@ import {
   Res,
   Patch,
   Put,
-  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
 
 import { RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-metadata.service';
 import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-response.utils';
-import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller('rest/metadata/*')
-@UseFilters(RestApiExceptionFilter)
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 export class RestApiMetadataController {
   constructor(
     private readonly restApiMetadataService: RestApiMetadataService,
