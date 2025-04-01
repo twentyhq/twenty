@@ -123,7 +123,7 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    const wasTrialSubscription = [
+    const wasTrialOrPausedSubscription = [
       SubscriptionStatus.Trialing,
       SubscriptionStatus.Paused,
     ].includes(data.previous_attributes?.status as SubscriptionStatus);
@@ -135,7 +135,7 @@ export class BillingWebhookSubscriptionService {
         value: true,
       });
 
-    if (wasTrialSubscription && isMeteredProductBillingEnabled) {
+    if (wasTrialOrPausedSubscription && isMeteredProductBillingEnabled) {
       await this.billingSubscriptionService.convertTrialSubscriptionToSubscriptionWithMeteredProducts(
         updatedBillingSubscription,
       );
