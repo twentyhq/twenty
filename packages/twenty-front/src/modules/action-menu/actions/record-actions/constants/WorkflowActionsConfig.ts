@@ -18,6 +18,7 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconHistoryToggle,
   IconNoteOff,
@@ -47,6 +48,14 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     Icon: IconPower,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
+    shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
+      isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
+      workflowWithCurrentVersion.currentVersion.steps.length > 0 &&
+      (workflowWithCurrentVersion.currentVersion.status === 'DRAFT' ||
+        !workflowWithCurrentVersion.versions?.some(
+          (version) => version.status === 'ACTIVE',
+        )),
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -62,6 +71,9 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     Icon: IconPlayerPause,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
+    shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      isDefined(workflowWithCurrentVersion) &&
+      workflowWithCurrentVersion.currentVersion.status === 'ACTIVE',
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -77,6 +89,10 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     Icon: IconNoteOff,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
+    shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      isDefined(workflowWithCurrentVersion) &&
+      workflowWithCurrentVersion.versions.length > 1 &&
+      workflowWithCurrentVersion.currentVersion.status === 'DRAFT',
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -92,6 +108,9 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     Icon: IconVersions,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
+    shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      (workflowWithCurrentVersion?.statuses?.includes('ACTIVE') || false) &&
+      (workflowWithCurrentVersion?.statuses?.includes('DRAFT') || false),
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -107,6 +126,8 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     Icon: IconHistoryToggle,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
+    shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      isDefined(workflowWithCurrentVersion),
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -122,6 +143,8 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     Icon: IconVersions,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
+    shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      isDefined(workflowWithCurrentVersion),
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -137,6 +160,13 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     Icon: IconPlayerPlay,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
+    shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
+      ((workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
+        !isDefined(
+          workflowWithCurrentVersion.currentVersion.trigger.settings.objectType,
+        )) ||
+        workflowWithCurrentVersion.currentVersion.trigger.type === 'WEBHOOK'),
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -220,6 +250,7 @@ export const WORKFLOW_ACTIONS_CONFIG: Record<
     Icon: IconHistoryToggle,
     accent: 'default',
     isPinned: true,
+    shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeRunsNoSelectionRecordAction,
   },
