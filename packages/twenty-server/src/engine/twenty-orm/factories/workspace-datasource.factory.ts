@@ -13,14 +13,14 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { CacheManager } from 'src/engine/twenty-orm/storage/cache-manager.storage';
+import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class WorkspaceDatasourceFactory {
   private readonly logger = new Logger(WorkspaceDatasourceFactory.name);
-  private cacheManager = new CacheManager<WorkspaceDataSource>();
+  private promiseMemoizer = new PromiseMemoizer<WorkspaceDataSource>();
 
   constructor(
     private readonly dataSourceService: DataSourceService,
@@ -54,7 +54,7 @@ export class WorkspaceDatasourceFactory {
     const cacheKey: CacheKey = `${workspaceId}-${cachedWorkspaceMetadataVersion}`;
 
     const workspaceDataSource =
-      await this.cacheManager.memoizePromiseAndExecute(
+      await this.promiseMemoizer.memoizePromiseAndExecute(
         cacheKey,
         async () => {
           const dataSourceMetadata =
@@ -202,7 +202,7 @@ export class WorkspaceDatasourceFactory {
   }
 
   public async destroy(workspaceId: string) {
-    await this.cacheManager.clearKeys(`${workspaceId}-`, (dataSource) => {
+    await this.promiseMemoizer.clearKeys(`${workspaceId}-`, (dataSource) => {
       dataSource.destroy();
     });
   }

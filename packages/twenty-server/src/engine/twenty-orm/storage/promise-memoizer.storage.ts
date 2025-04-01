@@ -5,12 +5,14 @@ import { CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
 
-export class CacheManager<T> {
+const ONE_HOUR_IN_MS = 3600_000;
+
+export class PromiseMemoizer<T> {
   private cache = new Map<CacheKey, { value: T; ttl: number }>();
   private pending = new Map<CacheKey, Promise<T | null>>();
   private ttlMs: number;
 
-  constructor(ttlMs: Milliseconds = 300_000) {
+  constructor(ttlMs: Milliseconds = ONE_HOUR_IN_MS) {
     this.ttlMs = ttlMs;
   }
 
