@@ -17,8 +17,8 @@ export class BlocklistFindManyPreQueryHook
     objectName: string,
     payload: FindManyResolverArgs,
   ): Promise<FindManyResolverArgs> {
-    if (authContext.apiKey?.id) {
-      return payload;
+    if (!payload?.filter?.workspaceMemberId?.eq) {
+      throw new BadRequestException('WorkspaceMemberId filter is required.');
     }
 
     if (
