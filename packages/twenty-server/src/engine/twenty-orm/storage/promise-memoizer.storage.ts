@@ -22,14 +22,13 @@ export class PromiseMemoizer<T> {
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<T | null> {
     const now = Date.now();
+
+    await this.clearExpiredKeys(onDelete);
+
     const cachedEntry = this.cache.get(cacheKey);
 
     if (cachedEntry) {
-      if (cachedEntry.ttl > now) {
-        return cachedEntry.value;
-      }
-      this.cache.delete(cacheKey);
-      await onDelete?.(cachedEntry.value);
+      return cachedEntry.value;
     }
 
     const existingPromise = this.pending.get(cacheKey);
@@ -37,6 +36,11 @@ export class PromiseMemoizer<T> {
     if (existingPromise) {
       return existingPromise;
     }
+
+    // eslint-disable-next-line no-console
+    console.log(
+      `Computing new Datasource for cacheKey: ${cacheKey} out of ${this.cache.size}`,
+    );
 
     const newPromise = (async () => {
       try {
@@ -55,6 +59,16 @@ export class PromiseMemoizer<T> {
     this.pending.set(cacheKey, newPromise);
 
     return newPromise;
+  }
+
+  async clearExpiredKeys(onDelete?: (value: T) => Promise<void> | void) {
+    const now = Date.now();
+
+    for (const [cacheKey, cachedEntry] of this.cache.entries()) {
+      if (cachedEntry.ttl < now) {
+        await this.clearKey(cacheKey, onDelete);
+      }
+    }
   }
 
   async clearKey(
