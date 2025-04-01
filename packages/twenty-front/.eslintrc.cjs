@@ -1,6 +1,13 @@
 const path = require('path');
+const { REACT_RULES, STORIES_RULES, STORYBOOK_RULES } = require(
+  path.resolve(__dirname, '../../eslint-react.cjs'),
+);
+const { TYPESCRIPT_RULES } = require(
+  path.resolve(__dirname, '../../eslint-basic.cjs'),
+);
 
 module.exports = {
+  root: true, // To check
   extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
   ignorePatterns: [
     '!**/*',
@@ -19,9 +26,19 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: [
+        'packages/twenty-front/**/*.ts',
+        'packages/twenty-front/**/*.tsx',
+      ],
+      extends: ['plugin:@nx/typescript'],
       parserOptions: {
-        project: ['packages/twenty-front/tsconfig.{json,*.json}'],
+        project: [
+          'packages/twenty-front/tsconfig.dev.json',
+          'packages/twenty-front/tsconfig.json',
+          'packages/twenty-front/tsconfig.storybook.json',
+          'packages/twenty-front/tsconfig.spec.json',
+          'packages/twenty-front/tsconfig.build.json',
+        ],
       },
       plugins: ['project-structure'],
       settings: {
@@ -31,58 +48,65 @@ module.exports = {
         ),
       },
       rules: {
+        ...REACT_RULES,
+        ...TYPESCRIPT_RULES,
         'project-structure/folder-structure': 'error',
-        /* 
-        Uncomment this rule when we have a way to work on 
-        'lingui/no-unlocalized-strings': [
+      },
+    },
+    {
+      files: ['packages/twenty-front/**/*.stories.@(ts|tsx|js|jsx)'],
+      rules: {
+        ...STORIES_RULES,
+      },
+    },
+    {
+      files: ['packages/twenty-front/**/.storybook/main.@(js|cjs|mjs|ts)'],
+      rules: {
+        ...STORYBOOK_RULES,
+      },
+    },
+    {
+      files: ['packages/twenty-front/**/*.js', 'packages/twenty-front/**/*.jsx'],
+      extends: ['plugin:@nx/javascript'],
+      rules: {},
+    },
+    {
+      files: [
+        'packages/twenty-front/**/*.spec.@(ts|tsx|js|jsx)',
+        'packages/twenty-front/**/*.integration-spec.@(ts|tsx|js|jsx)',
+        'packages/twenty-front/**/*.test.@(ts|tsx|js|jsx)',
+      ],
+      env: {
+        jest: true,
+      },
+      rules: {
+        '@typescript-eslint/no-non-null-assertion': 'off',
+      },
+    },
+    {
+      files: ['packages/twenty-front/**/constants/*.ts', 'packages/twenty-front/**/*.constants.ts'],
+      rules: {
+        '@typescript-eslint/naming-convention': [
           'error',
           {
-            ignore: [
-              '^(?![A-Z])\\S+$',
-              '^[A-Z0-9_-]+$'
-            ],
-            ignoreNames: [
-              { regex: { pattern: 'className', flags: 'i' } },
-              { regex: { pattern: '^[A-Z0-9_-]+$' } },
-              'styleName',
-              'src',
-              'srcSet', 
-              'type',
-              'id',
-              'width',
-              'height',
-              'displayName',
-              'Authorization'
-            ],
-            ignoreFunctions: [
-              'cva',
-              'cn',
-              'track',
-              'Error',
-              'console.*',
-              '*headers.set',
-              '*.addEventListener',
-              '*.removeEventListener',
-              '*.postMessage',
-              '*.getElementById',
-              '*.dispatch',
-              '*.commit',
-              '*.includes',
-              '*.indexOf',
-              '*.endsWith',
-              '*.startsWith',
-              'require'
-            ],
-            useTsTypes: true,
-            ignoreMethodsOnTypes: [
-              'Map.get',
-              'Map.has',
-              'Set.has'
-            ]
-          }
-        ]
-          */
+            selector: 'variable',
+            format: ['UPPER_CASE'],
+          },
+        ],
+        'unicorn/filename-case': [
+          'warn',
+          {
+            cases: {
+              pascalCase: true,
+            },
+          },
+        ],
+        '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
       },
+    },
+    {
+      files: ['packages/twenty-front/**/*.json'],
+      parser: 'jsonc-eslint-parser',
     },
   ],
 };

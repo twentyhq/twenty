@@ -69,80 +69,49 @@ module.exports = {
       },
     ],
   },
-  overrides: [
-    {
-      files: ['**/*.ts', '**/*.tsx'],
-      extends: ['plugin:@nx/typescript'],
-      rules: {
-        '@typescript-eslint/ban-ts-comment': 'error',
-        '@typescript-eslint/consistent-type-imports': [
-          'error',
-          { prefer: 'no-type-imports' },
-        ],
-        '@typescript-eslint/explicit-function-return-type': 'off',
-        '@typescript-eslint/explicit-module-boundary-types': 'off',
-        '@typescript-eslint/interface-name-prefix': 'off',
-        '@typescript-eslint/no-empty-interface': [
-          'error',
-          {
-            allowSingleExtends: true,
-          },
-        ],
-        '@typescript-eslint/no-explicit-any': 'off',
-        '@typescript-eslint/no-empty-function': 'off',
-        '@typescript-eslint/no-unused-vars': [
-          'warn',
-          {
-            vars: 'all',
-            varsIgnorePattern: '^_',
-            args: 'after-used',
-            argsIgnorePattern: '^_',
-          },
-        ],
-      },
-    },
-    {
-      files: ['*.js', '*.jsx'],
-      extends: ['plugin:@nx/javascript'],
-      rules: {},
-    },
-    {
-      files: [
-        '*.spec.@(ts|tsx|js|jsx)',
-        '*.integration-spec.@(ts|tsx|js|jsx)',
-        '*.test.@(ts|tsx|js|jsx)',
-      ],
-      env: {
-        jest: true,
-      },
-      rules: {
-        '@typescript-eslint/no-non-null-assertion': 'off',
-      },
-    },
-    {
-      files: ['**/constants/*.ts', '**/*.constants.ts'],
-      rules: {
-        '@typescript-eslint/naming-convention': [
-          'error',
-          {
-            selector: 'variable',
-            format: ['UPPER_CASE'],
-          },
-        ],
-        'unicorn/filename-case': [
-          'warn',
-          {
-            cases: {
-              pascalCase: true,
-            },
-          },
-        ],
-        '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
-      },
-    },
-    {
-      files: ['*.json'],
-      parser: 'jsonc-eslint-parser',
-    },
-  ],
+  // overrides: [
+  //   {
+  //     files: ['*.js', '*.jsx'],
+  //     extends: ['plugin:@nx/javascript'],
+  //     rules: {},
+  //   },
+  //   {
+  //     files: [
+  //       '*.spec.@(ts|tsx|js|jsx)',
+  //       '*.integration-spec.@(ts|tsx|js|jsx)',
+  //       '*.test.@(ts|tsx|js|jsx)',
+  //     ],
+  //     env: {
+  //       jest: true,
+  //     },
+  //     rules: {
+  //       '@typescript-eslint/no-non-null-assertion': 'off',
+  //     },
+  //   },
+  //   {
+  //     files: ['**/constants/*.ts', '**/*.constants.ts'],
+  //     rules: {
+  //       '@typescript-eslint/naming-convention': [
+  //         'error',
+  //         {
+  //           selector: 'variable',
+  //           format: ['UPPER_CASE'],
+  //         },
+  //       ],
+  //       'unicorn/filename-case': [
+  //         'warn',
+  //         {
+  //           cases: {
+  //             pascalCase: true,
+  //           },
+  //         },
+  //       ],
+  //       '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
+  //     },
+  //   },
+  //   {
+  //     files: ['*.json'],
+  //     parser: 'jsonc-eslint-parser',
+  //   },
+  // ],
 };
