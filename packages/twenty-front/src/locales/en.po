@@ -352,6 +352,11 @@ msgstr "Admin Panel"
 msgid "Admin settings and system tools"
 msgstr "Admin settings and system tools"
 
+#. js-lingui-id: sxkWRg
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+msgid "Advanced"
+msgstr "Advanced"
+
 #. js-lingui-id: tMFFwF
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
 msgid "Advanced filter"

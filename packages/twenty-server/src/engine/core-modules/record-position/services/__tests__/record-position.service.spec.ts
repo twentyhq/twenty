@@ -1,17 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { RecordPositionQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
-import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
-describe('RecordPositionFactory', () => {
-  const recordPositionQueryFactory = {
-    create: jest.fn().mockReturnValue(['query', []]),
-  };
-
+describe('RecordPositionService', () => {
   let workspaceDataSourceService;
 
-  let factory: RecordPositionFactory;
+  let service: RecordPositionService;
 
   beforeEach(async () => {
     workspaceDataSourceService = {
@@ -20,11 +15,7 @@ describe('RecordPositionFactory', () => {
     };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        RecordPositionFactory,
-        {
-          provide: RecordPositionQueryFactory,
-          useValue: recordPositionQueryFactory,
-        },
+        RecordPositionService,
         {
           provide: WorkspaceDataSourceService,
           useValue: workspaceDataSourceService,
@@ -32,11 +23,11 @@ describe('RecordPositionFactory', () => {
       ],
     }).compile();
 
-    factory = module.get<RecordPositionFactory>(RecordPositionFactory);
+    service = module.get<RecordPositionService>(RecordPositionService);
   });
 
   it('should be defined', () => {
-    expect(factory).toBeDefined();
+    expect(service).toBeDefined();
   });
 
   describe('create', () => {
@@ -46,7 +37,7 @@ describe('RecordPositionFactory', () => {
     it('should return the value when value is a number', async () => {
       const value = 1;
 
-      const result = await factory.create({
+      const result = await service.buildRecordPosition({
         value,
         objectMetadata,
         workspaceId,
@@ -57,7 +48,7 @@ describe('RecordPositionFactory', () => {
 
     it('should return the existing position -1 when value is first', async () => {
       const value = 'first';
-      const result = await factory.create({
+      const result = await service.buildRecordPosition({
         value,
         objectMetadata,
         workspaceId,
@@ -68,7 +59,7 @@ describe('RecordPositionFactory', () => {
 
     it('should return the existing position + 1 when value is last', async () => {
       const value = 'last';
-      const result = await factory.create({
+      const result = await service.buildRecordPosition({
         value,
         objectMetadata,
         workspaceId,
