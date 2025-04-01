@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { CreateInterIntegrationInput } from 'src/engine/core-modules/inter/dtos/create-inter-integration.input';
-import { UpdateInterIntegrationInput } from 'src/engine/core-modules/inter/dtos/update-inter-integration.input';
+import { CreateInterIntegrationInput } from 'src/engine/core-modules/inter/integration/dtos/create-inter-integration.input';
+import { UpdateInterIntegrationInput } from 'src/engine/core-modules/inter/integration/dtos/update-inter-integration.input';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 
 import { InterIntegrationService } from './inter-integration.service';

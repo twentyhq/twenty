@@ -22,12 +22,12 @@ export class CreateInterIntegrationInput {
   @Field()
   @IsString()
   @IsNotEmpty()
-  privateKey: string; // Conteúdo do arquivo
+  privateKey: string;
 
   @Field()
   @IsString()
   @IsNotEmpty()
-  certificate: string; // Conteúdo do arquivo
+  certificate: string;
 
   @Field(() => ID)
   @IsString()

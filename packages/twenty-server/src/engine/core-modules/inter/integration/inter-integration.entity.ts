@@ -32,11 +32,11 @@ export class InterIntegration {
 
   @Field()
   @Column({ type: 'text', nullable: false })
-  privateKey: string; // Armazenaremos o conteúdo do arquivo
+  privateKey: string;
 
   @Field()
   @Column({ type: 'text', nullable: false })
-  certificate: string; // Armazenaremos o conteúdo do arquivo
+  certificate: string;
 
   @Field({ defaultValue: 'active' })
   @Column({ default: 'active' })

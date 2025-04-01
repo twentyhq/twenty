@@ -368,6 +368,15 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
+export type CreateInterIntegrationInput = {
+  certificate: Scalars['String'];
+  clientId: Scalars['String'];
+  clientSecret: Scalars['String'];
+  integrationName: Scalars['String'];
+  privateKey: Scalars['String'];
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateOneFieldMetadataInput = {
   /** The record to create */
   field: CreateFieldInput;
@@ -913,6 +922,19 @@ export enum IntegrationType {
   WHATSAPP = 'WHATSAPP'
 }
 
+export type InterIntegration = {
+  __typename?: 'InterIntegration';
+  certificate: Scalars['String'];
+  clientId: Scalars['String'];
+  clientSecret: Scalars['String'];
+  expirationDate?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  integrationName: Scalars['String'];
+  privateKey: Scalars['String'];
+  status: Scalars['String'];
+  workspace: Workspace;
+};
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -977,6 +999,7 @@ export type Mutation = {
   createAgent: Agent;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createInterIntegration: InterIntegration;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneField: Field;
@@ -1031,11 +1054,14 @@ export type Mutation = {
   signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
+  syncInterData: Scalars['Boolean'];
   toggleAgentStatus: Scalars['Boolean'];
+  toggleInterIntegrationStatus: InterIntegration;
   toggleWhatsappIntegrationStatus: Scalars['Boolean'];
   track: Analytics;
   updateAgent: Agent;
   updateBillingSubscription: BillingUpdateOutput;
+  updateInterIntegration: InterIntegration;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
@@ -1106,6 +1132,11 @@ export type MutationCreateApprovedAccessDomainArgs = {
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
+};
+
+
+export type MutationCreateInterIntegrationArgs = {
+  createInput: CreateInterIntegrationInput;
 };
 
 
@@ -1342,8 +1373,18 @@ export type MutationSubmitFormStepArgs = {
 };
 
 
+export type MutationSyncInterDataArgs = {
+  integrationId: Scalars['String'];
+};
+
+
 export type MutationToggleAgentStatusArgs = {
   agentId: Scalars['String'];
+};
+
+
+export type MutationToggleInterIntegrationStatusArgs = {
+  integrationId: Scalars['String'];
 };
 
 
@@ -1360,6 +1401,11 @@ export type MutationTrackArgs = {
 
 export type MutationUpdateAgentArgs = {
   updateInput: UpdateAgentInput;
+};
+
+
+export type MutationUpdateInterIntegrationArgs = {
+  updateInput: UpdateInterIntegrationInput;
 };
 
 
@@ -1713,6 +1759,7 @@ export type Query = {
   getDashboardLinklogs: Array<LinkLogsWorkspaceEntity>;
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getInterAccountInfo: Scalars['String'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getQueueMetrics: QueueMetricsData;
@@ -1734,6 +1781,8 @@ export type Query = {
   inboxesByWorkspace: Array<Inbox>;
   index: Index;
   indexMetadatas: IndexConnection;
+  interIntegrationById?: Maybe<InterIntegration>;
+  interIntegrationsByWorkspace: Array<InterIntegration>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
@@ -1803,6 +1852,11 @@ export type QueryGetIndicatorHealthStatusArgs = {
 };
 
 
+export type QueryGetInterAccountInfoArgs = {
+  integrationId: Scalars['String'];
+};
+
+
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
@@ -1858,6 +1912,16 @@ export type QueryGetWhatsappTemplatesArgs = {
 
 
 export type QueryInboxesByWorkspaceArgs = {
+  workspaceId: Scalars['String'];
+};
+
+
+export type QueryInterIntegrationByIdArgs = {
+  integrationId: Scalars['String'];
+};
+
+
+export type QueryInterIntegrationsByWorkspaceArgs = {
   workspaceId: Scalars['String'];
 };
 
@@ -2523,6 +2587,16 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateInterIntegrationInput = {
+  certificate?: InputMaybe<Scalars['String']>;
+  clientId?: InputMaybe<Scalars['String']>;
+  clientSecret?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  integrationName?: InputMaybe<Scalars['String']>;
+  privateKey?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {

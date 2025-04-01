@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { CreateInterIntegrationInput } from 'src/engine/core-modules/inter/dtos/create-inter-integration.input';
-import { UpdateInterIntegrationInput } from 'src/engine/core-modules/inter/dtos/update-inter-integration.input';
+import { CreateInterIntegrationInput } from 'src/engine/core-modules/inter/integration/dtos/create-inter-integration.input';
+import { UpdateInterIntegrationInput } from 'src/engine/core-modules/inter/integration/dtos/update-inter-integration.input';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { InterIntegration } from './inter-integration.entity';
