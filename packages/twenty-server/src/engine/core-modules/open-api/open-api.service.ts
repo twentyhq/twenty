@@ -174,16 +174,6 @@ export class OpenApiService {
         },
       } as OpenAPIV3_1.PathItemObject;
       path[`/${item.namePlural}/{id}`] = {
-        get: {
-          tags: [item.namePlural],
-          summary: `Find One ${item.nameSingular}`,
-          parameters: [{ $ref: '#/components/parameters/idPath' }],
-          responses: {
-            '200': getFindOneResponse200(item),
-            '400': { $ref: '#/components/responses/400' },
-            '401': { $ref: '#/components/responses/401' },
-          },
-        },
         delete: {
           tags: [item.namePlural],
           summary: `Delete One ${item.nameSingular}`,
@@ -196,6 +186,16 @@ export class OpenApiService {
           },
         },
         ...(item.nameSingular !== 'relation' && {
+          get: {
+            tags: [item.namePlural],
+            summary: `Find One ${item.nameSingular}`,
+            parameters: [{ $ref: '#/components/parameters/idPath' }],
+            responses: {
+              '200': getFindOneResponse200(item),
+              '400': { $ref: '#/components/responses/400' },
+              '401': { $ref: '#/components/responses/401' },
+            },
+          },
           patch: {
             tags: [item.namePlural],
             summary: `Update One ${item.nameSingular}`,
