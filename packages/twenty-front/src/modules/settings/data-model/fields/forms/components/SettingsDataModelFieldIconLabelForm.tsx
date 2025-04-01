@@ -4,11 +4,9 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
+import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { AdvancedWrapper as StyledAdvancedWrapper } from '@/settings/components/StyledAdvancedWrapper';
-import { DotContainer as StyledDotContainer } from '@/settings/components/StyledDotContainer';
-import { IconPoint as StyledIconPoint } from '@/settings/components/StyledIconPoint';
 import { DATABASE_IDENTIFIER_MAXIMUM_LENGTH } from '@/settings/data-model/constants/DatabaseIdentifierMaximumLength';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -21,7 +19,6 @@ import {
   Card,
   IconInfoCircle,
   IconRefresh,
-  MAIN_COLORS,
   TooltipDelay,
 } from 'twenty-ui';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
@@ -213,14 +210,10 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     fieldMetadataItem?.isLabelSyncedWithName ?? true
                   }
                   render={({ field: { onChange, value } }) => (
-                    <StyledAdvancedWrapper>
-                      <StyledDotContainer dotPosition="centered">
-                        <StyledIconPoint
-                          size={12}
-                          color={MAIN_COLORS.yellow}
-                          fill={MAIN_COLORS.yellow}
-                        />
-                      </StyledDotContainer>
+                    <AdvancedSettingsContentWrapperWithDot
+                      hideDot={false}
+                      dotPosition="centered"
+                    >
                       <Card rounded>
                         <SettingsOptionCardContentToggle
                           Icon={IconRefresh}
@@ -236,7 +229,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           }}
                         />
                       </Card>
-                    </StyledAdvancedWrapper>
+                    </AdvancedSettingsContentWrapperWithDot>
                   )}
                 />
               </StyledAdvancedSettingsSectionInputWrapper>

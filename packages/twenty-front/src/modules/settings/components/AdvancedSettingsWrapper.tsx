@@ -1,11 +1,9 @@
+import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { AnimatedExpandableContainer, MAIN_COLORS } from 'twenty-ui';
-import { AdvancedWrapper as StyledAdvancedWrapper } from './StyledAdvancedWrapper';
-import { DotContainer as StyledDotContainer } from './StyledDotContainer';
-import { IconPoint as StyledIconPoint } from './StyledIconPoint';
+import { AnimatedExpandableContainer } from 'twenty-ui';
 const StyledContent = styled.div`
   width: 100%;
 `;
@@ -35,18 +33,12 @@ export const AdvancedSettingsWrapper = ({
       mode="scroll-height"
       containAnimation={false}
     >
-      <StyledAdvancedWrapper>
-        {!hideDot && (
-          <StyledDotContainer dotPosition={dotPosition}>
-            <StyledIconPoint
-              size={12}
-              color={MAIN_COLORS.yellow}
-              fill={MAIN_COLORS.yellow}
-            />
-          </StyledDotContainer>
-        )}
+      <AdvancedSettingsContentWrapperWithDot
+        hideDot={hideDot}
+        dotPosition={dotPosition}
+      >
         <StyledContent>{children}</StyledContent>
-      </StyledAdvancedWrapper>
+      </AdvancedSettingsContentWrapperWithDot>
     </AnimatedExpandableContainer>
   );
 };
