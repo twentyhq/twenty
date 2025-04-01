@@ -83,12 +83,16 @@ export const RecordInlineCellDisplayMode = ({
 
   const emptyPlaceHolder = showLabel ? t`Empty` : label;
 
+  const isPerformanceRating = label === 'Performance Rating';
+
   return (
     <>
       <StyledRecordInlineCellNormalModeOuterContainer isHovered={isFocused}>
         <StyledRecordInlineCellNormalModeInnerContainer>
-          {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
-          !children ? (
+          {isPerformanceRating ? (
+            children
+          ) : (isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
+            !children ? (
             <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
           ) : (
             children
