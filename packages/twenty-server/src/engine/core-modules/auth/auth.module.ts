@@ -53,7 +53,9 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
 
 import { AuthResolver } from './auth.resolver';
 
+import { GitHubAuthController } from './controllers/GitHubAuthController';
 import { AuthService } from './services/auth.service';
+import { GitHubStrategy } from './strategies/GitHubStrategy';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 
 @Module({
@@ -100,6 +102,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
     SSOAuthController,
+    GitHubAuthController,
   ],
   providers: [
     SignInUpService,
@@ -117,6 +120,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     TransientTokenService,
     ApiKeyService,
     AuthSsoService,
+    GitHubStrategy,
     // reenable when working on: https://github.com/twentyhq/twenty/issues/9143
     // OAuthService,
   ],

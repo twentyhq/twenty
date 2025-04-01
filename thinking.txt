@@ -1,0 +1,9 @@
+1. Followed the existing OAuth patterns for Google and Microsoft to ensure consistency.
+2. Created a new GitHubAuthController to handle GitHub-specific routes.
+3. Implemented GitHubStrategy using passport-github2 to manage OAuth flow.
+4. Updated auth.module.ts to include the new controller and strategy.
+5. Added a GitHub login method to the useAuth hook for frontend integration.
+6. Created a reusable SignInUpWithGitHub component for the login button.
+7. Updated the SignInUp component to display the GitHub login option.
+8. Ensured environment variables are configurable for GitHub OAuth credentials.
+9. Tested the flow end-to-end to verify successful login and error handling.
