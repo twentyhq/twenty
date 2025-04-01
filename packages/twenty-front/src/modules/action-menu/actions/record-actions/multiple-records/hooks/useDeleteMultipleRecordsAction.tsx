@@ -5,11 +5,9 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
-import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
@@ -18,7 +16,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
@@ -67,12 +64,6 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       filterValueDependencies,
     );
 
-    const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
-
-    const isDeletedFilterActive = contextStoreFilters.some(
-      checkIsSoftDeleteFilter,
-    );
-
     const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
       filter: graphqlFilter,
@@ -91,21 +82,7 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       });
     }, [deleteManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
-    const isRemoteObject = objectMetadataItem.isRemote;
-
-    const shouldBeRegistered =
-      !hasObjectReadOnlyPermission &&
-      !isRemoteObject &&
-      !isDeletedFilterActive &&
-      isDefined(contextStoreNumberOfSelectedRecords) &&
-      contextStoreNumberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
-      contextStoreNumberOfSelectedRecords > 0;
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
-        return;
-      }
-
       setIsDeleteRecordsModalOpen(true);
     };
 
@@ -121,7 +98,6 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     );
 
     return {
-      shouldBeRegistered,
       onClick,
       ConfirmationModal: confirmationModal,
     };

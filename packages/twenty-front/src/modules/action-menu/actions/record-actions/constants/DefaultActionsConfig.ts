@@ -25,12 +25,16 @@ import { useRestoreSingleRecordAction } from '@/action-menu/actions/record-actio
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconBuildingSkyscraper,
   IconCheckbox,
@@ -56,6 +60,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
     useAction: ActionHook;
+    shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
   }
 > = {
   createNewRecord: {
@@ -67,6 +72,8 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 0,
     isPinned: true,
     Icon: IconPlus,
+    shouldBeRegistered: ({ hasObjectReadOnlyPermission }) =>
+      !hasObjectReadOnlyPermission,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useCreateNewTableRecordNoSelectionRecordAction,
   },
@@ -79,6 +86,8 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 1,
     isPinned: false,
     Icon: IconFileExport,
+    shouldBeRegistered: ({ selectedRecord, isNoteOrTask }) =>
+      isNoteOrTask && isNonEmptyString(selectedRecord?.bodyV2?.blocknote),
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useExportNoteAction,
   },
@@ -91,6 +100,8 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 2,
     isPinned: true,
     Icon: IconHeart,
+    shouldBeRegistered: ({ selectedRecord, isFavorite }) =>
+      !selectedRecord?.isRemote && !isFavorite,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -106,6 +117,8 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     isPinned: true,
     position: 3,
     Icon: IconHeartOff,
+    shouldBeRegistered: ({ selectedRecord, isFavorite }) =>
+      !selectedRecord?.isRemote && isFavorite,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -122,6 +135,8 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconFileExport,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: ({ selectedRecord }) =>
+      isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -138,6 +153,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconFileExport,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useExportMultipleRecordsAction,
   },
@@ -151,6 +167,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconFileExport,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useExportMultipleRecordsAction,
   },
@@ -164,6 +181,8 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconTrash,
     accent: 'default',
     isPinned: true,
+    shouldBeRegistered: ({ selectedRecord }) =>
+      isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -180,6 +199,16 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconTrash,
     accent: 'default',
     isPinned: true,
+    shouldBeRegistered: ({
+      hasObjectReadOnlyPermission,
+      isRemote,
+      isSoftDeleteFilterActive,
+      numberOfSelectedRecords,
+    }) =>
+      !hasObjectReadOnlyPermission &&
+      !isRemote &&
+      !isSoftDeleteFilterActive &&
+      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useDeleteMultipleRecordsAction,
   },
@@ -193,6 +222,8 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconRotate2,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
+      !isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
@@ -206,6 +237,8 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconEyeOff,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
+      isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useHideDeletedRecordsNoSelectionRecordAction,
   },
@@ -219,6 +252,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useImportRecordsNoSelectionRecordAction,
   },
@@ -232,6 +266,14 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
+    shouldBeRegistered: ({
+      selectedRecord,
+      hasObjectReadOnlyPermission,
+      isRemote,
+    }) =>
+      !hasObjectReadOnlyPermission &&
+      !isRemote &&
+      isDefined(selectedRecord?.deletedAt),
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -246,6 +288,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 13,
     isPinned: true,
     Icon: IconChevronUp,
+    shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useNavigateToPreviousRecordSingleRecordAction,
   },
@@ -257,6 +300,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 14,
     isPinned: true,
     Icon: IconChevronDown,
+    shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useNavigateToNextRecordSingleRecordAction,
   },
@@ -270,6 +314,16 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
+    shouldBeRegistered: ({
+      hasObjectReadOnlyPermission,
+      isRemote,
+      isSoftDeleteFilterActive,
+      numberOfSelectedRecords,
+    }) =>
+      !hasObjectReadOnlyPermission &&
+      !isRemote &&
+      isSoftDeleteFilterActive &&
+      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useDestroyMultipleRecordsAction,
   },
@@ -283,6 +337,17 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconRefresh,
     accent: 'default',
     isPinned: true,
+    shouldBeRegistered: ({
+      selectedRecord,
+      hasObjectReadOnlyPermission,
+      isRemote,
+      isShowPage,
+      isSoftDeleteFilterActive,
+    }) =>
+      !isRemote &&
+      isDefined(selectedRecord?.deletedAt) &&
+      !hasObjectReadOnlyPermission &&
+      (isShowPage || isSoftDeleteFilterActive),
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -299,6 +364,17 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconRefresh,
     accent: 'default',
     isPinned: true,
+    shouldBeRegistered: ({
+      hasObjectReadOnlyPermission,
+      isRemote,
+      isSoftDeleteFilterActive,
+      numberOfSelectedRecords,
+    }) =>
+      !hasObjectReadOnlyPermission &&
+      !isRemote &&
+      isSoftDeleteFilterActive &&
+      isDefined(numberOfSelectedRecords) &&
+      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useRestoreMultipleRecordsAction,
   },
@@ -312,6 +388,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconSettingsAutomation,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeWorkflowsNoSelectionRecordAction,
     hotKeys: ['G', 'W'],
@@ -331,6 +408,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToPeopleNoSelectionRecordAction,
     hotKeys: ['G', 'P'],
   },
@@ -349,6 +427,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToCompaniesNoSelectionRecordAction,
     hotKeys: ['G', 'C'],
   },
@@ -367,6 +446,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToOpportunitiesNoSelectionRecordAction,
     hotKeys: ['G', 'O'],
   },
@@ -385,6 +465,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToSettingsNoSelectionRecordAction,
     hotKeys: ['G', 'S'],
   },
@@ -403,6 +484,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToTasksNoSelectionRecordAction,
     hotKeys: ['G', 'T'],
   },

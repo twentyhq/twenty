@@ -33,7 +33,6 @@ export const useExportMultipleRecordsAction = ({
   };
 
   return {
-    shouldBeRegistered: true,
     onClick,
   };
 };
