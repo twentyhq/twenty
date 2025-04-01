@@ -4,16 +4,9 @@ import { useJsonField } from '../../hooks/useJsonField';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
-import {
-  CodeEditor,
-  FloatingIconButton,
-  IconEye,
-  IconPencil,
-  isTwoFirstDepths,
-  JsonTree,
-} from 'twenty-ui';
+import { CodeEditor } from 'twenty-ui';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
@@ -28,18 +21,12 @@ type RawJsonFieldInputProps = {
 };
 
 const StyledJsonTreeContainer = styled.div`
+  box-sizing: border-box;
   height: 300px;
   width: 400px;
   max-width: 100vw;
   padding: ${({ theme }) => theme.spacing(2)};
-  overflow: auto;
   position: relative;
-`;
-
-const StyledSwitchModeButtonContainer = styled.div`
-  position: fixed;
-  top: ${({ theme }) => theme.spacing(2)};
-  right: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const RawJsonFieldInput = ({
@@ -52,12 +39,10 @@ export const RawJsonFieldInput = ({
   const { draftValue, hotkeyScope, setDraftValue, persistJsonField } =
     useJsonField();
 
-  const [isEditing, setIsEditing] = useState(false);
-
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleEnter = (newText: string) => {
-    onEnter?.(() => persistJsonField(newText));
+    // onEnter?.(() => persistJsonField(newText));
   };
 
   const handleEscape = (newText: string) => {
@@ -83,10 +68,6 @@ export const RawJsonFieldInput = ({
     setDraftValue(newText);
   };
 
-  const handleSwitchMode = () => {
-    setIsEditing(!isEditing);
-  };
-
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
@@ -95,14 +76,14 @@ export const RawJsonFieldInput = ({
     listenerId: hotkeyScope,
   });
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      handleEnter(draftValue ?? '');
-    },
-    hotkeyScope,
-    [handleEnter, draftValue],
-  );
+  // useScopedHotkeys(
+  //   Key.Enter,
+  //   () => {
+  //     handleEnter(draftValue ?? '');
+  //   },
+  //   hotkeyScope,
+  //   [handleEnter, draftValue],
+  // );
 
   useScopedHotkeys(
     [Key.Escape],
@@ -133,34 +114,15 @@ export const RawJsonFieldInput = ({
 
   return (
     <StyledJsonTreeContainer ref={containerRef}>
-      {isEditing ? (
-        <CodeEditor
-          value={draftValue}
-          language="application/json"
-          height={292}
-          options={{
-            lineNumbers: 'off',
-          }}
-          onChange={handleChange}
-        />
-      ) : (
-        <JsonTree
-          value={JSON.parse(draftValue ?? '')}
-          arrowButtonCollapsedLabel=""
-          arrowButtonExpandedLabel=""
-          emptyArrayLabel=""
-          emptyObjectLabel=""
-          emptyStringLabel=""
-          shouldExpandNodeInitially={isTwoFirstDepths}
-        />
-      )}
-
-      <StyledSwitchModeButtonContainer>
-        <FloatingIconButton
-          Icon={isEditing ? IconEye : IconPencil}
-          onClick={handleSwitchMode}
-        />
-      </StyledSwitchModeButtonContainer>
+      <CodeEditor
+        value={draftValue}
+        language="application/json"
+        height={284}
+        options={{
+          lineNumbers: 'off',
+        }}
+        onChange={handleChange}
+      />
     </StyledJsonTreeContainer>
   );
 };

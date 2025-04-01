@@ -35,6 +35,7 @@ export const RecordTableBodyUnselectEffect = ({
 
   useListenClickOutside({
     excludeClassNames: [
+      'expanded-cell',
       'bottom-bar',
       'action-menu-dropdown',
       'command-menu',
