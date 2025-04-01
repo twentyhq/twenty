@@ -87,7 +87,9 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     isPinned: false,
     Icon: IconFileExport,
     shouldBeRegistered: ({ selectedRecord, isNoteOrTask }) =>
-      isNoteOrTask && isNonEmptyString(selectedRecord?.bodyV2?.blocknote),
+      isDefined(isNoteOrTask) &&
+      isNoteOrTask &&
+      isNonEmptyString(selectedRecord?.bodyV2?.blocknote),
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useExportNoteAction,
   },
@@ -118,7 +120,10 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 3,
     Icon: IconHeartOff,
     shouldBeRegistered: ({ selectedRecord, isFavorite }) =>
-      !selectedRecord?.isRemote && isFavorite,
+      isDefined(selectedRecord) &&
+      !selectedRecord?.isRemote &&
+      isDefined(isFavorite) &&
+      isFavorite,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -208,6 +213,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       !hasObjectReadOnlyPermission &&
       !isRemote &&
       !isSoftDeleteFilterActive &&
+      isDefined(numberOfSelectedRecords) &&
       numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useDeleteMultipleRecordsAction,
@@ -238,7 +244,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
-      isSoftDeleteFilterActive,
+      isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useHideDeletedRecordsNoSelectionRecordAction,
   },
@@ -322,7 +328,9 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     }) =>
       !hasObjectReadOnlyPermission &&
       !isRemote &&
+      isDefined(isSoftDeleteFilterActive) &&
       isSoftDeleteFilterActive &&
+      isDefined(numberOfSelectedRecords) &&
       numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useDestroyMultipleRecordsAction,
@@ -347,7 +355,8 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       !isRemote &&
       isDefined(selectedRecord?.deletedAt) &&
       !hasObjectReadOnlyPermission &&
-      (isShowPage || isSoftDeleteFilterActive),
+      ((isDefined(isShowPage) && isShowPage) ||
+        (isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive)),
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -372,6 +381,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     }) =>
       !hasObjectReadOnlyPermission &&
       !isRemote &&
+      isDefined(isSoftDeleteFilterActive) &&
       isSoftDeleteFilterActive &&
       isDefined(numberOfSelectedRecords) &&
       numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,

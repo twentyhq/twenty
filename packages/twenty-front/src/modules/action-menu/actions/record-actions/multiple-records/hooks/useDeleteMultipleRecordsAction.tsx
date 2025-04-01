@@ -2,7 +2,6 @@ import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/Ac
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
@@ -11,7 +10,6 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
@@ -30,8 +28,6 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       throw new Error('Current view ID is not defined');
     }
 
-    const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
     const { resetTableRowSelection } = useRecordTable({
       recordTableId: getRecordIndexIdFromObjectNamePluralAndViewId(
         objectMetadataItem.namePlural,
@@ -42,10 +38,6 @@ export const useDeleteMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     const { deleteManyRecords } = useDeleteManyRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
-
-    const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
-      contextStoreNumberOfSelectedRecordsComponentState,
-    );
 
     const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
       contextStoreTargetedRecordsRuleComponentState,

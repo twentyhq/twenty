@@ -1,6 +1,7 @@
-import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -9,19 +10,26 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const useShouldActionBeRegisteredByKeySingleRecord = ({
+export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
-  recordId,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  recordId: string;
 }) => {
   const { sortedFavorites: favorites } = useFavorites();
+
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const recordId =
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
+      : undefined;
 
   const foundFavorite = favorites?.find(
     (favorite) => favorite.recordId === recordId,
@@ -29,7 +37,8 @@ export const useShouldActionBeRegisteredByKeySingleRecord = ({
 
   const isFavorite = !!foundFavorite;
 
-  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
+  const selectedRecord =
+    useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
@@ -39,7 +48,7 @@ export const useShouldActionBeRegisteredByKeySingleRecord = ({
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
 
-  const isInRightDrawer = useContext(ActionMenuContext);
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const isSoftDeleteFilterActive = useRecoilComponentValueV2(
     isSoftDeleteFilterActiveComponentState,
@@ -49,49 +58,24 @@ export const useShouldActionBeRegisteredByKeySingleRecord = ({
     useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const shouldBeRegisteredByKey = (key: string) => {
-    if (!isDefined(selectedRecord)) {
-      return false;
-    }
+  const isWorkflowsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsWorkflowEnabled,
+  );
 
-    switch (key) {
-      case SingleRecordActionKeys.ADD_TO_FAVORITES:
-        return (
-          !objectMetadataItem.isRemote &&
-          !isFavorite &&
-          isNull(selectedRecord.deletedAt)
-        );
-      case SingleRecordActionKeys.REMOVE_FROM_FAVORITES:
-        return !objectMetadataItem.isRemote && isFavorite;
-      case SingleRecordActionKeys.DELETE:
-        return !hasObjectReadOnlyPermission;
-      case SingleRecordActionKeys.DESTROY:
-        return (
-          !hasObjectReadOnlyPermission &&
-          !isRemoteObject &&
-          isDefined(selectedRecord?.deletedAt)
-        );
-      case SingleRecordActionKeys.EXPORT_NOTE_TO_PDF:
-        return (
-          isNoteOrTask && isNonEmptyString(selectedRecord.bodyV2?.blocknote)
-        );
-      case SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD:
-      case SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD:
-        return !isInRightDrawer;
-
-      case SingleRecordActionKeys.RESTORE:
-        return (
-          !isRemoteObject &&
-          isDefined(selectedRecord?.deletedAt) &&
-          !hasObjectReadOnlyPermission &&
-          (isShowPage || isSoftDeleteFilterActive)
-        );
-      default:
-        return false;
-    }
-  };
+  const numberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
 
   return {
-    shouldBeRegisteredByKey,
+    isFavorite,
+    isRemoteObject,
+    hasObjectReadOnlyPermission,
+    isNoteOrTask,
+    isInRightDrawer,
+    isSoftDeleteFilterActive,
+    isShowPage,
+    selectedRecord,
+    isWorkflowsEnabled,
+    numberOfSelectedRecords,
   };
 };

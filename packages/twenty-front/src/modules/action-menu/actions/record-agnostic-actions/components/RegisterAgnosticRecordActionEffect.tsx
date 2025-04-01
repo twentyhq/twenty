@@ -1,14 +1,15 @@
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { wrapActionInCallbacks } from '@/action-menu/actions/utils/wrapActionInCallbacks';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { useShouldActionBeRegisteredByKeyNoSelection } from '@/action-menu/hooks/useShouldActionBeRegisteredByKeySingleRecord';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { useContext, useEffect } from 'react';
 
 type RegisterAgnosticRecordActionEffectProps = {
   action: ActionMenuEntry & {
     useAction: ActionHookWithoutObjectMetadataItem;
+    shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
   };
 };
 
@@ -17,10 +18,7 @@ export const RegisterAgnosticRecordActionEffect = ({
 }: RegisterAgnosticRecordActionEffectProps) => {
   const { onClick, ConfirmationModal } = action.useAction();
 
-  const { shouldBeRegisteredByKey } =
-    useShouldActionBeRegisteredByKeyNoSelection();
-
-  const shouldBeRegistered = shouldBeRegisteredByKey(action.key);
+  const shouldBeRegistered = action.shouldBeRegistered({});
 
   const { onActionStartedCallback, onActionExecutedCallback } =
     useContext(ActionMenuContext);

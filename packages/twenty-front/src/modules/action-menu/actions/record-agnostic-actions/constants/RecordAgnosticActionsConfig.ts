@@ -2,6 +2,7 @@ import { useSearchRecordsRecordAgnosticAction } from '@/action-menu/actions/reco
 import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
@@ -14,6 +15,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
     useAction: ActionHookWithoutObjectMetadataItem;
+    shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
   }
 > = {
   searchRecords: {
@@ -28,6 +30,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.GLOBAL],
     useAction: useSearchRecordsRecordAgnosticAction,
     hotKeys: ['/'],
+    shouldBeRegistered: () => true,
   },
   searchRecordsFallback: {
     type: ActionMenuEntryType.Fallback,
@@ -41,5 +44,6 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.GLOBAL],
     useAction: useSearchRecordsRecordAgnosticAction,
     hotKeys: ['/'],
+    shouldBeRegistered: () => true,
   },
 };
