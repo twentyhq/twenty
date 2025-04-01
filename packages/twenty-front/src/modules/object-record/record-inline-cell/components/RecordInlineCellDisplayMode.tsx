@@ -1,15 +1,18 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import {
   RecordInlineCellContextProps,
   useRecordInlineCellContext,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
@@ -64,6 +67,7 @@ export const RecordInlineCellDisplayMode = ({
   children,
 }: React.PropsWithChildren<unknown>) => {
   const { isFocused } = useFieldFocus();
+  const { fieldDefinition } = useContext(FieldContext);
 
   const { t } = useLingui();
 
@@ -83,7 +87,7 @@ export const RecordInlineCellDisplayMode = ({
 
   const emptyPlaceHolder = showLabel ? t`Empty` : label;
 
-  const isPerformanceRating = label === 'Performance Rating';
+  const isPerformanceRating = isFieldRating(fieldDefinition);
 
   return (
     <>
