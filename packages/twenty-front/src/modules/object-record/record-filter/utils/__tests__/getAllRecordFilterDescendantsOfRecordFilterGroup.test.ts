@@ -129,7 +129,7 @@ describe('getAllRecordFilterDescendantsOfRecordFilterGroup', () => {
       },
       {
         ...MOCK_RECORD_FILTER_FIELDS,
-        id: 'filter-6',
+        id: 'filter-7',
         recordFilterGroupId: 'grand-child-group-2',
       },
     ];

@@ -29,14 +29,14 @@ export const getAllRecordFilterDescendantsOfRecordFilterGroup = ({
   );
 
   for (const childRecordFilterGroup of childRecordFilterGroups) {
-    const childRecordFilterGroupDecsendants =
+    const childRecordFilterGroupDescendants =
       getAllRecordFilterDescendantsOfRecordFilterGroup({
         recordFilterGroupId: childRecordFilterGroup.id,
         recordFilterGroups,
         recordFilters,
       });
 
-    childRecordFilters.push(...childRecordFilterGroupDecsendants);
+    childRecordFilters.push(...childRecordFilterGroupDescendants);
   }
 
   return childRecordFilters;
