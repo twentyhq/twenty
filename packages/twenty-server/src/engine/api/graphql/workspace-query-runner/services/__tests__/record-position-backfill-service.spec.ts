@@ -3,27 +3,21 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { RecordPositionQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
-import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
 import { RecordPositionBackfillService } from 'src/engine/api/graphql/workspace-query-runner/services/record-position-backfill-service';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 describe('RecordPositionBackfillService', () => {
-  let recordPositionQueryFactory;
-  let recordPositionFactory;
+  let recordPositionService;
   let objectMetadataRepository;
   let workspaceDataSourceService;
 
   let service: RecordPositionBackfillService;
 
   beforeEach(async () => {
-    recordPositionQueryFactory = {
-      create: jest.fn().mockReturnValue(['query', []]),
-    };
-
-    recordPositionFactory = {
-      create: jest.fn().mockResolvedValue([
+    recordPositionService = {
+      buildRecordPosition: jest.fn().mockResolvedValue([
         {
           position: 1,
         },
@@ -42,12 +36,8 @@ describe('RecordPositionBackfillService', () => {
       providers: [
         RecordPositionBackfillService,
         {
-          provide: RecordPositionQueryFactory,
-          useValue: recordPositionQueryFactory,
-        },
-        {
-          provide: RecordPositionFactory,
-          useValue: recordPositionFactory,
+          provide: RecordPositionService,
+          useValue: recordPositionService,
         },
         {
           provide: WorkspaceDataSourceService,
@@ -123,8 +113,7 @@ describe('RecordPositionBackfillService', () => {
     ]);
     await service.backfill('workspaceId', false);
     expect(workspaceDataSourceService.executeRawQuery).toHaveBeenCalledTimes(2);
-    expect(recordPositionFactory.create).toHaveBeenCalledTimes(1);
-    expect(recordPositionQueryFactory.create).toHaveBeenCalledTimes(2);
+    expect(recordPositionService.buildRecordPosition).toHaveBeenCalledTimes(1);
   });
 
   it('when dryRun is true, should not update position', async () => {
@@ -148,7 +137,6 @@ describe('RecordPositionBackfillService', () => {
     ]);
     await service.backfill('workspaceId', true);
     expect(workspaceDataSourceService.executeRawQuery).toHaveBeenCalledTimes(1);
-    expect(recordPositionFactory.create).toHaveBeenCalledTimes(1);
-    expect(recordPositionQueryFactory.create).toHaveBeenCalledTimes(1);
+    expect(recordPositionService.buildRecordPosition).toHaveBeenCalledTimes(1);
   });
 });
