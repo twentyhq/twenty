@@ -1,6 +1,6 @@
 import BaseNode from '@/chatbot/components/ui/BaseNode';
 import styled from '@emotion/styled';
-import { Handle, Node, NodeProps, Position, useReactFlow } from '@xyflow/react';
+import { Node, NodeProps, useReactFlow } from '@xyflow/react';
 import { memo, useEffect, useRef } from 'react';
 
 const StyledDiv = styled.div`
@@ -33,7 +33,7 @@ function TextNode({
   id,
   data,
   isConnectable,
-}: NodeProps<Node<{ text: string }>>) {
+}: NodeProps<Node<{ text: string; nodeStart: boolean }>>) {
   const { updateNodeData } = useReactFlow();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -56,12 +56,12 @@ function TextNode({
   }, [data.text]);
 
   return (
-    <BaseNode icon={'IconTextSize'} title={'Mensagem Inicial'}>
-      {/* <Handle
-        type="target"
-        position={Position.Top}
-        isConnectable={isConnectable}
-      /> */}
+    <BaseNode
+      icon={'IconTextSize'}
+      title={'Mensagem Inicial'}
+      nodeStart={data.nodeStart}
+      isConnectable={isConnectable}
+    >
       <StyledDiv>
         <textarea
           id="text"
@@ -70,11 +70,6 @@ function TextNode({
           value={data.text}
         />
       </StyledDiv>
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-      />
     </BaseNode>
   );
 }

@@ -29,7 +29,7 @@ const initialNodes: Node[] = [
   {
     id: '1',
     type: 'textInput',
-    data: { text: '' },
+    data: { nodeStart: true, text: '' },
     position: { x: 0, y: 0 },
   },
 ];
@@ -54,7 +54,7 @@ export const BotDiagramBase = ({ nodeTypes }: BotDiagramBaseProps) => {
 
       // change in future versions
       console.log('dataFlow: ', { flow });
-      localStorage.setItem(flowKey, JSON.stringify(flow));
+      // localStorage.setItem(flowKey, JSON.stringify(flow));
     }
   }, [rfInstance]);
 
