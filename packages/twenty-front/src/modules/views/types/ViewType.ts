@@ -1,30 +1,21 @@
-import { t } from '@lingui/core/macro';
-import { IconLayoutKanban, IconTable, SelectOption } from 'twenty-ui';
+import { IconComponent, IconLayoutKanban, IconTable } from 'twenty-ui';
 
 export enum ViewType {
   Table = 'table',
   Kanban = 'kanban',
 }
 
-type AllViewTypeIcons = Record<ViewType, SelectOption<ViewType>>;
-
-export const VIEW_ICONS = {
-  kanban: {
-    value: ViewType.Kanban,
-    label: t`Table`,
-    Icon: IconLayoutKanban,
-  },
-  table: {
-    value: ViewType.Table,
-    label: t`Kanban`,
-    Icon: IconTable,
-  },
-} as const satisfies AllViewTypeIcons;
+const VIEW_TYPE_ICON_MAPPING = [
+  { icon: IconLayoutKanban, value: ViewType.Kanban },
+  { icon: IconTable, value: ViewType.Table },
+] as const satisfies {
+  icon: IconComponent;
+  value: ViewType;
+}[];
 
 export const viewTypeIconMapping = (viewType?: ViewType) => {
-  if (viewType === undefined) {
-    return IconTable;
-  }
-
-  return VIEW_ICONS[viewType].Icon;
+  return (
+    VIEW_TYPE_ICON_MAPPING.find((type) => type.value === viewType)?.icon ??
+    IconTable
+  );
 };
