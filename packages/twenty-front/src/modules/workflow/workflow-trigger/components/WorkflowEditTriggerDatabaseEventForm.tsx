@@ -46,10 +46,15 @@ const filterOptionsBySearch = <T extends { label: string }>(
 
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;
-  triggerOptions: {
-    readonly?: boolean;
-    onTriggerUpdate: (trigger: WorkflowDatabaseEventTrigger) => void;
-  };
+  triggerOptions:
+    | {
+        readonly: true;
+        onTriggerUpdate?: undefined;
+      }
+    | {
+        readonly?: false;
+        onTriggerUpdate: (trigger: WorkflowDatabaseEventTrigger) => void;
+      };
 };
 
 export const WorkflowEditTriggerDatabaseEventForm = ({
