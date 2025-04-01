@@ -24,7 +24,7 @@ export const SettingsAccountsBlocklistSection = () => {
     objectNameSingular: CoreObjectNameSingular.Blocklist,
     filter: {
       workspaceMemberId: {
-        eq: currentWorkspaceMember.id,
+        in: [currentWorkspaceMember.id],
       },
     },
   });
