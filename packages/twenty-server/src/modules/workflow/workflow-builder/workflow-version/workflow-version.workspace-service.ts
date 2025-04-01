@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -30,6 +31,7 @@ export class WorkflowVersionWorkspaceService {
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly recordPositionService: RecordPositionService,
   ) {}
 
   async createDraftFromWorkflowVersion({
@@ -77,10 +79,20 @@ export class WorkflowVersionWorkspaceService {
         },
       });
 
+      const position = await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflowVersion',
+        },
+        workspaceId,
+      });
+
       draftWorkflowVersion = await workflowVersionRepository.save({
         workflowId,
         name: `v${workflowVersionsCount + 1}`,
         status: WorkflowVersionStatus.DRAFT,
+        position,
       });
 
       await this.emitWorkflowVersionCreationEvent({
