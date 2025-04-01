@@ -15,6 +15,5 @@ export const useSearchRecordsRecordAgnosticAction = () => {
 
   return {
     onClick,
-    shouldBeRegistered: true,
   };
 };
