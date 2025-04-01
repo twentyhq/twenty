@@ -154,6 +154,10 @@ export class Workspace {
   isMicrosoftAuthEnabled: boolean;
 
   @Field()
+  @Column({ default: true })
+  isGitHubAuthEnabled: boolean;
+
+  @Field()
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 

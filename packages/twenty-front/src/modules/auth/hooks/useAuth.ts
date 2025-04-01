@@ -508,6 +508,17 @@ export const useAuth = () => {
     },
     [buildRedirectUrl, redirect],
   );
+  
+  const handleGitHubLogin = useCallback(
+    (params: {
+      workspacePersonalInviteToken?: string;
+      workspaceInviteHash?: string;
+      billingCheckoutSession?: BillingCheckoutSession;
+    }) => {
+      redirect(buildRedirectUrl('/auth/github', params));
+    },
+    [buildRedirectUrl, redirect],
+  );
 
   return {
     getLoginTokenFromCredentials: handleGetLoginTokenFromCredentials,
@@ -524,5 +535,6 @@ export const useAuth = () => {
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
+    signInWithGitHub: handleGitHubLogin,
   };
 };

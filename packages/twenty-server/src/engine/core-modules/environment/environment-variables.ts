@@ -202,6 +202,42 @@ export class EnvironmentVariables {
   CALENDAR_PROVIDER_MICROSOFT_ENABLED = false;
 
   @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.GitHubAuth,
+    description: 'Enable or disable GitHub Single Sign-On (SSO)',
+  })
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_GITHUB_ENABLED = false;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.GitHubAuth,
+    sensitive: true,
+    description: 'Client ID for GitHub authentication',
+  })
+  @IsString()
+  @ValidateIf((env) => env.AUTH_GITHUB_ENABLED)
+  AUTH_GITHUB_CLIENT_ID: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.GitHubAuth,
+    sensitive: true,
+    description: 'Client secret for GitHub authentication',
+  })
+  @IsString()
+  @ValidateIf((env) => env.AUTH_GITHUB_ENABLED)
+  AUTH_GITHUB_CLIENT_SECRET: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.GitHubAuth,
+    sensitive: true,
+    description: 'Callback URL for GitHub authentication',
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.AUTH_GITHUB_ENABLED)
+  AUTH_GITHUB_CALLBACK_URL: string;
+
+  @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Other,
     sensitive: true,
     description:

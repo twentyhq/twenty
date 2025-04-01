@@ -4,6 +4,7 @@ export enum EnvironmentVariablesGroup {
   StorageConfig = 'storage-config',
   GoogleAuth = 'google-auth',
   MicrosoftAuth = 'microsoft-auth',
+  GitHubAuth = 'github-auth',
   EmailSettings = 'email-settings',
   Logging = 'logging',
   Metering = 'metering',

@@ -1,4 +1,5 @@
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/SignInUpWithCredentials';
+import { SignInUpWithGitHub } from '@/auth/sign-in-up/components/SignInUpWithGitHub';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
 import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
@@ -37,11 +38,14 @@ export const SignInUpWorkspaceScopeForm = () => {
         {workspaceAuthProviders.google && <SignInUpWithGoogle />}
 
         {workspaceAuthProviders.microsoft && <SignInUpWithMicrosoft />}
+        
+        {workspaceAuthProviders.github && <SignInUpWithGitHub />}
 
         {workspaceAuthProviders.sso.length > 0 && <SignInUpWithSSO />}
 
         {(workspaceAuthProviders.google ||
           workspaceAuthProviders.microsoft ||
+          workspaceAuthProviders.github ||
           workspaceAuthProviders.sso.length > 0) &&
         workspaceAuthProviders.password ? (
           <HorizontalSeparator />

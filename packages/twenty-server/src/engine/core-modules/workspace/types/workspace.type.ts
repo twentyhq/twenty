@@ -1,1 +1,1 @@
-export type WorkspaceAuthProvider = 'google' | 'microsoft' | 'password' | 'sso';
+export type WorkspaceAuthProvider = 'google' | 'microsoft' | 'password' | 'sso' | 'github';

@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
+import { GitHubAuthController } from 'src/engine/core-modules/auth/controllers/github-auth.controller';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
@@ -18,6 +19,7 @@ import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/micr
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { GitHubStrategy } from 'src/engine/core-modules/auth/strategies/github.auth.strategy';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -97,6 +99,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
   controllers: [
     GoogleAuthController,
     MicrosoftAuthController,
+    GitHubAuthController,
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
     SSOAuthController,
@@ -106,6 +109,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     AuthService,
     JwtAuthStrategy,
     SamlAuthStrategy,
+    GitHubStrategy,
     AuthResolver,
     GoogleAPIsService,
     MicrosoftAPIsService,
