@@ -6,7 +6,7 @@ declare module 'express-serve-static-core' {
   interface Request {
     user?: User | null;
     apiKey?: ApiKeyWorkspaceEntity | null;
-    workspace?: Workspace;
+    workspace: Workspace;
     workspaceId?: string;
     workspaceMetadataVersion?: number;
     workspaceMemberId?: string;

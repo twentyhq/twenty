@@ -4,6 +4,8 @@ import { Request } from 'express';
 import { capitalize } from 'twenty-shared/utils';
 import { ObjectLiteral, OrderByCondition, SelectQueryBuilder } from 'typeorm';
 
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
@@ -20,6 +22,8 @@ import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modu
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 interface FindManyMeta {
   hasNextPage: boolean;
@@ -46,6 +50,7 @@ export class RestApiCoreServiceV2 {
     private readonly orderByInputFactory: OrderByInputFactory,
     private readonly startingAfterInputFactory: StartingAfterInputFactory,
     private readonly endingBeforeInputFactory: EndingBeforeInputFactory,
+    protected readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
   async delete(request: Request) {
@@ -55,13 +60,19 @@ export class RestApiCoreServiceV2 {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadataNameSingular, repository } =
+    const { objectMetadataNameSingular, objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
     const recordToDelete = await repository.findOneOrFail({
       where: { id: recordId },
     });
 
     await repository.delete(recordId);
+
+    this.apiEventEmitterService.emitDeletedEvents(
+      [recordToDelete],
+      this.getAuthContextFromRequest(request),
+      objectMetadata.objectMetadataMapItem,
+    );
 
     return this.formatResult({
       operation: 'delete',
@@ -75,9 +86,15 @@ export class RestApiCoreServiceV2 {
   async createOne(request: Request) {
     const { body } = request;
 
-    const { objectMetadataNameSingular, repository } =
+    const { objectMetadataNameSingular, objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
     const createdRecord = await repository.save(body);
+
+    this.apiEventEmitterService.emitCreateEvents(
+      [createdRecord],
+      this.getAuthContextFromRequest(request),
+      objectMetadata.objectMetadataMapItem,
+    );
 
     return this.formatResult({
       operation: 'create',
@@ -93,7 +110,7 @@ export class RestApiCoreServiceV2 {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadataNameSingular, repository } =
+    const { objectMetadataNameSingular, objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const recordToUpdate = await repository.findOneOrFail({
@@ -104,6 +121,14 @@ export class RestApiCoreServiceV2 {
       ...recordToUpdate,
       ...request.body,
     });
+
+    this.apiEventEmitterService.emitUpdateEvents(
+      [recordToUpdate],
+      [updatedRecord],
+      Object.keys(request.body),
+      this.getAuthContextFromRequest(request),
+      objectMetadata.objectMetadataMapItem,
+    );
 
     return this.formatResult({
       operation: 'update',
@@ -439,7 +464,7 @@ export class RestApiCoreServiceV2 {
       );
 
     const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ObjectRecord>(
         workspace.id,
         objectMetadataNameSingular,
       );
@@ -461,6 +486,16 @@ export class RestApiCoreServiceV2 {
   ): Promise<any> {
     return {
       id: isForwardPagination ? { gt: cursorData.id } : { lt: cursorData.id },
+    };
+  }
+
+  private getAuthContextFromRequest(request: Request): AuthContext {
+    return {
+      user: request.user,
+      workspace: request.workspace,
+      apiKey: request.apiKey,
+      workspaceMemberId: request.workspaceMemberId,
+      userWorkspaceId: request.userWorkspaceId,
     };
   }
 }
