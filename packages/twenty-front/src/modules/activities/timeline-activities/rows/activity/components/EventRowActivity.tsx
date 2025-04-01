@@ -9,7 +9,7 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
+import { MOBILE_VIEWPORT, OverflowingTextWithTooltip } from 'twenty-ui';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
@@ -23,11 +23,33 @@ const StyledLinkedActivity = styled.span`
   white-space: nowrap;
 `;
 
+const StyledRowContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: space-between;
+`;
+
+const StyledEventRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+`;
+
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  width: 270px;
   gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
+`;
+
+const StyledItemTitleDate = styled.div`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
 export const StyledEventRowItemText = styled.span`
@@ -38,6 +60,7 @@ export const EventRowActivity = ({
   event,
   authorFullName,
   objectNameSingular,
+  createdAt,
 }: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
   const [eventLinkedObject, eventAction] = event.name.split('.');
 
@@ -66,21 +89,26 @@ export const EventRowActivity = ({
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   return (
-    <StyledRow>
-      <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-      <StyledEventRowItemAction>
-        {`${eventAction} a related ${eventObject}`}
-      </StyledEventRowItemAction>
-      <StyledLinkedActivity
-        onClick={() =>
-          openRecordInCommandMenu({
-            recordId: event.linkedRecordId,
-            objectNameSingular,
-          })
-        }
-      >
-        <OverflowingTextWithTooltip text={activityTitle} />
-      </StyledLinkedActivity>
-    </StyledRow>
+    <StyledEventRow>
+      <StyledRowContainer>
+        <StyledRow>
+          <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
+          <StyledEventRowItemAction>
+            {`${eventAction} a related ${eventObject}`}
+          </StyledEventRowItemAction>
+          <StyledLinkedActivity
+            onClick={() =>
+              openRecordInCommandMenu({
+                recordId: event.linkedRecordId,
+                objectNameSingular,
+              })
+            }
+          >
+            <OverflowingTextWithTooltip text={activityTitle} />
+          </StyledLinkedActivity>
+        </StyledRow>
+        <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
+      </StyledRowContainer>
+    </StyledEventRow>
   );
 };

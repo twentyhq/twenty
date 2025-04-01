@@ -13,7 +13,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -78,21 +77,6 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
   margin-bottom: ${({ isMarginBottom, theme }) =>
     isMarginBottom ? theme.spacing(3) : 0};
   min-height: 26px;
-`;
-
-const StyledItemTitleDate = styled.div`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    display: none;
-  }
-  align-items: flex-start;
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  justify-content: flex-end;
-  margin-left: auto;
-  position: absolute;
-  right: 0;
 `;
 
 type EventRowProps = {
@@ -166,12 +150,10 @@ export const EventRow = ({
               event={event}
               mainObjectMetadataItem={mainObjectMetadataItem}
               linkedObjectMetadataItem={linkedObjectMetadataItem}
+              createdAt={beautifiedCreatedAt}
             />
           </StyledSummary>
         </StyledItemContainer>
-        <StyledItemTitleDate id={`id-${event.id}`}>
-          {beautifiedCreatedAt}
-        </StyledItemTitleDate>
       </StyledTimelineItemContainer>
     </>
   );

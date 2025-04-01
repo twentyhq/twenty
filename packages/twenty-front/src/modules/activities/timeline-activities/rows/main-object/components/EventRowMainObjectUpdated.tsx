@@ -8,25 +8,43 @@ import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/m
 import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: ObjectMetadataItem;
   authorFullName: string;
   labelIdentifierValue: string;
   event: TimelineActivity;
+  createdAt?: string;
 };
 
-const StyledEventRowMainObjectUpdatedContainer = styled.div`
+const StyledRowContainer = styled.div`
+  align-items: center;
   display: flex;
-  flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: space-between;
+`;
+
+const StyledItemTitleDate = styled.div`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  width: 270px;
   gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
+`;
+
+const StyledEventRowMainObjectUpdatedContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 export const EventRowMainObjectUpdated = ({
@@ -34,6 +52,7 @@ export const EventRowMainObjectUpdated = ({
   labelIdentifierValue,
   event,
   mainObjectMetadataItem,
+  createdAt,
 }: EventRowMainObjectUpdatedProps) => {
   const diff: Record<string, { before: any; after: any }> =
     event.properties?.diff;
@@ -53,27 +72,30 @@ export const EventRowMainObjectUpdated = ({
 
   return (
     <StyledEventRowMainObjectUpdatedContainer>
-      <StyledRow>
-        <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-        updated
-        {diffEntries.length === 1 && (
-          <EventFieldDiffContainer
-            mainObjectMetadataItem={mainObjectMetadataItem}
-            diffKey={diffEntries[0][0]}
-            diffValue={diffEntries[0][1].after}
-            eventId={event.id}
-            fieldMetadataItemMap={fieldMetadataItemMap}
-          />
-        )}
-        {diffEntries.length > 1 && (
-          <>
-            <span>
-              {diffEntries.length} fields on {labelIdentifierValue}
-            </span>
-            <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
-          </>
-        )}
-      </StyledRow>
+      <StyledRowContainer>
+        <StyledRow>
+          <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
+          updated
+          {diffEntries.length === 1 && (
+            <EventFieldDiffContainer
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              diffKey={diffEntries[0][0]}
+              diffValue={diffEntries[0][1].after}
+              eventId={event.id}
+              fieldMetadataItemMap={fieldMetadataItemMap}
+            />
+          )}
+          {diffEntries.length > 1 && (
+            <>
+              <span>
+                {diffEntries.length} fields on {labelIdentifierValue}
+              </span>
+              <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
+            </>
+          )}
+        </StyledRow>
+        <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
+      </StyledRowContainer>
       {diffEntries.length > 1 && (
         <EventCard isOpen={isOpen}>
           {diffEntries.map(([diffKey, diffValue]) => (
