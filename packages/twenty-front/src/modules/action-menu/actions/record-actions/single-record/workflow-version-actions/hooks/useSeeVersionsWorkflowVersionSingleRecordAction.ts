@@ -7,7 +7,6 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useRecoilValue } from 'recoil';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useSeeVersionsWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -21,10 +20,10 @@ export const useSeeVersionsWorkflowVersionSingleRecordAction: ActionHookWithoutO
 
     const navigateApp = useNavigateApp();
 
-    const shouldBeRegistered = isDefined(workflowWithCurrentVersion);
-
     const onClick = () => {
-      if (!shouldBeRegistered) return;
+      if (!workflowWithCurrentVersion) {
+        return;
+      }
 
       navigateApp(
         AppPath.RecordIndexPage,
@@ -44,7 +43,6 @@ export const useSeeVersionsWorkflowVersionSingleRecordAction: ActionHookWithoutO
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

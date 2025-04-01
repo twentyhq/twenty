@@ -1,51 +1,23 @@
-import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
-import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { useGoToCompaniesNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToCompaniesNoSelectionRecordAction';
-import { useGoToOpportunitiesNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToOpportunitiesNoSelectionRecordAction';
-import { useGoToPeopleNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToPeopleNoSelectionRecordAction';
-import { useGoToSettingsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToSettingsNoSelectionRecordAction';
-import { useGoToTasksNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToTasksNoSelectionRecordAction';
-import { useHideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useHideDeletedRecordsNoSelectionRecordAction';
-import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
-import { useSeeWorkflowsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeWorkflowsNoSelectionRecordAction';
-import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
-import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
-import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
-import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
-import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
-import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
+import { DEFAULT_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultActionsConfig';
 import { useSeeVersionWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/hooks/useSeeVersionWorkflowRunSingleRecordAction';
 import { useSeeWorkflowWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/hooks/useSeeWorkflowWorkflowRunSingleRecordAction';
 import { WorkflowRunSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/types/WorkflowRunSingleRecordActionsKeys';
 import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
-import {
-  IconBuildingSkyscraper,
-  IconCheckbox,
-  IconChevronDown,
-  IconChevronUp,
-  IconDatabaseExport,
-  IconEyeOff,
-  IconHeart,
-  IconHeartOff,
-  IconRotate2,
-  IconSettings,
-  IconSettingsAutomation,
-  IconTargetArrow,
-  IconUser,
-  IconVersions,
-} from 'twenty-ui';
+import { IconSettingsAutomation, IconVersions } from 'twenty-ui';
 
 export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
   string,
   ActionMenuEntry & {
     useAction: ActionHook;
+    shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
   }
 > = {
   seeWorkflowSingleRecord: {
@@ -57,6 +29,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     Icon: IconSettingsAutomation,
+    shouldBeRegistered: () => true,
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -72,6 +45,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     Icon: IconVersions,
+    shouldBeRegistered: () => true,
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -79,227 +53,70 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG: Record<
     useAction: useSeeVersionWorkflowRunSingleRecordAction,
   },
   addToFavoritesSingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.ADD_TO_FAVORITES,
-    label: msg`Add to favorites`,
-    shortLabel: msg`Add to favorites`,
-    position: 2,
+    ...DEFAULT_ACTIONS_CONFIG.addToFavoritesSingleRecord,
     isPinned: false,
-    Icon: IconHeart,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    useAction: useAddToFavoritesSingleRecordAction,
+    position: 2,
   },
   removeFromFavoritesSingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
-    label: msg`Remove from favorites`,
-    shortLabel: msg`Remove from favorites`,
+    ...DEFAULT_ACTIONS_CONFIG.removeFromFavoritesSingleRecord,
     isPinned: false,
     position: 3,
-    Icon: IconHeartOff,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    useAction: useRemoveFromFavoritesSingleRecordAction,
   },
   navigateToPreviousRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
-    label: msg`Navigate to previous run`,
+    ...DEFAULT_ACTIONS_CONFIG.navigateToPreviousRecord,
     position: 4,
-    isPinned: true,
-    Icon: IconChevronUp,
-    availableOn: [ActionViewType.SHOW_PAGE],
-    useAction: useNavigateToPreviousRecordSingleRecordAction,
   },
   navigateToNextRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
-    label: msg`Navigate to next run`,
+    ...DEFAULT_ACTIONS_CONFIG.navigateToNextRecord,
     position: 5,
-    isPinned: true,
-    Icon: IconChevronDown,
-    availableOn: [ActionViewType.SHOW_PAGE],
-    useAction: useNavigateToNextRecordSingleRecordAction,
   },
   exportSingleRecord: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: SingleRecordActionKeys.EXPORT,
-    label: msg`Export run`,
-    shortLabel: msg`Export`,
+    ...DEFAULT_ACTIONS_CONFIG.exportSingleRecord,
     position: 6,
-    Icon: IconDatabaseExport,
-    accent: 'default',
-    isPinned: false,
-    availableOn: [
-      ActionViewType.SHOW_PAGE,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-    ],
-    useAction: useExportMultipleRecordsAction,
+    label: msg`Export run`,
   },
   exportMultipleRecords: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
-    key: MultipleRecordsActionKeys.EXPORT,
-    label: msg`Export runs`,
-    shortLabel: msg`Export`,
+    ...DEFAULT_ACTIONS_CONFIG.exportMultipleRecords,
     position: 7,
-    Icon: IconDatabaseExport,
-    accent: 'default',
-    isPinned: false,
-    availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    useAction: useExportMultipleRecordsAction,
+    label: msg`Export runs`,
   },
   exportView: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.Object,
-    key: NoSelectionRecordActionKeys.EXPORT_VIEW,
-    label: msg`Export view`,
-    shortLabel: msg`Export`,
+    ...DEFAULT_ACTIONS_CONFIG.exportView,
     position: 8,
-    Icon: IconDatabaseExport,
-    accent: 'default',
-    isPinned: false,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useExportMultipleRecordsAction,
+    label: msg`Export view`,
   },
   seeDeletedRecords: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.Object,
-    key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
-    label: msg`See deleted runs`,
-    shortLabel: msg`Deleted runs`,
+    ...DEFAULT_ACTIONS_CONFIG.seeDeletedRecords,
     position: 9,
-    Icon: IconRotate2,
-    accent: 'default',
-    isPinned: false,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useSeeDeletedRecordsNoSelectionRecordAction,
+    label: msg`See deleted runs`,
   },
   hideDeletedRecords: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.Object,
-    key: NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
-    label: msg`Hide deleted runs`,
-    shortLabel: msg`Hide deleted`,
+    ...DEFAULT_ACTIONS_CONFIG.hideDeletedRecords,
     position: 10,
-    Icon: IconEyeOff,
-    accent: 'default',
-    isPinned: false,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useHideDeletedRecordsNoSelectionRecordAction,
+    label: msg`Hide deleted runs`,
   },
   seeAllWorkflows: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
-    label: msg`Go to workflows`,
-    shortLabel: msg`See workflows`,
+    ...DEFAULT_ACTIONS_CONFIG.seeAllWorkflows,
     position: 11,
-    Icon: IconSettingsAutomation,
-    accent: 'default',
-    isPinned: true,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useSeeWorkflowsNoSelectionRecordAction,
-    hotKeys: ['G', 'W'],
   },
   goToPeople: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
-    label: msg`Go to People`,
-    shortLabel: msg`People`,
+    ...DEFAULT_ACTIONS_CONFIG.goToPeople,
     position: 12,
-    Icon: IconUser,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    useAction: useGoToPeopleNoSelectionRecordAction,
-    hotKeys: ['G', 'P'],
   },
   goToCompanies: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
-    label: msg`Go to Companies`,
-    shortLabel: msg`Companies`,
+    ...DEFAULT_ACTIONS_CONFIG.goToCompanies,
     position: 13,
-    Icon: IconBuildingSkyscraper,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    useAction: useGoToCompaniesNoSelectionRecordAction,
-    hotKeys: ['G', 'C'],
   },
   goToOpportunities: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
-    label: msg`Go to Opportunities`,
-    shortLabel: msg`Opportunities`,
+    ...DEFAULT_ACTIONS_CONFIG.goToOpportunities,
     position: 14,
-    Icon: IconTargetArrow,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    useAction: useGoToOpportunitiesNoSelectionRecordAction,
-    hotKeys: ['G', 'O'],
   },
   goToSettings: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
-    label: msg`Go to Settings`,
-    shortLabel: msg`Settings`,
+    ...DEFAULT_ACTIONS_CONFIG.goToSettings,
     position: 15,
-    Icon: IconSettings,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    useAction: useGoToSettingsNoSelectionRecordAction,
-    hotKeys: ['G', 'S'],
   },
   goToTasks: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_TASKS,
-    label: msg`Go to Tasks`,
-    shortLabel: msg`Tasks`,
+    ...DEFAULT_ACTIONS_CONFIG.goToTasks,
     position: 16,
-    Icon: IconCheckbox,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    useAction: useGoToTasksNoSelectionRecordAction,
-    hotKeys: ['G', 'T'],
   },
 };
