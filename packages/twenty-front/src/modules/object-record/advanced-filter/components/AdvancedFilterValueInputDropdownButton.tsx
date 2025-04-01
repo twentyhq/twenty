@@ -2,6 +2,7 @@ import { AdvancedFilterValueInputDropdownButtonClickableSelect } from '@/object-
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
+import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
@@ -35,6 +36,10 @@ export const AdvancedFilterValueInputDropdownButton = ({
 
   const isDisabled = !filter?.fieldMetadataId || !filter.operand;
 
+  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
+    objectFilterDropdownSearchInputComponentState,
+  );
+
   const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
@@ -49,6 +54,10 @@ export const AdvancedFilterValueInputDropdownButton = ({
 
   const operandHasNoInput =
     filter && !configurableViewFilterOperands.has(filter.operand);
+
+  const handleFilterValueDropdownClose = () => {
+    setObjectFilterDropdownSearchInput('');
+  };
 
   return (
     <StyledValueDropdownContainer>
@@ -78,6 +87,7 @@ export const AdvancedFilterValueInputDropdownButton = ({
           dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
           dropdownPlacement="bottom-start"
           dropdownMenuWidth={280}
+          onClose={handleFilterValueDropdownClose}
         />
       )}
     </StyledValueDropdownContainer>
