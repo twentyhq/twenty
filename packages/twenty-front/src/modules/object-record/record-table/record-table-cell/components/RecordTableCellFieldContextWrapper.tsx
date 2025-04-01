@@ -19,27 +19,27 @@ import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectField
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { useIsMobile } from 'twenty-ui';
+import { isRecordTableScrolledLeftComponentState } from '../../states/isRecordTableScrolledLeftComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const RecordTableCellFieldContextWrapper = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+const RecordTableCellFieldContext = ({ children }: { children: ReactNode }) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-
   const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
-
   const { columnDefinition } = useContext(RecordTableCellContext);
-
   const { recordId } = useRecordTableRowContextOrThrow();
-
   const updateRecord = useContext(RecordUpdateContext);
+  const isMobile = useIsMobile();
 
-  if (isUndefinedOrNull(columnDefinition)) {
-    return null;
-  }
+  const isRecordTableScrolledLeft = useRecoilComponentValueV2(
+    isRecordTableScrolledLeftComponentState,
+  );
 
-  // TODO: deprecate this and use useOpenFieldInput hooks to set the hotkey scope
+  const isLabelHidden =
+    isMobile &&
+    columnDefinition?.isLabelIdentifier &&
+    !isRecordTableScrolledLeft;
+
   const computedHotkeyScope = (
     columnDefinition: ColumnDefinition<FieldMetadata>,
   ) => {
@@ -86,19 +86,35 @@ export const RecordTableCellFieldContextWrapper = ({
           objectMetadataItem,
         }),
         displayedMaxRows: 1,
+        isLabelHidden,
       }}
     >
-      <RecordFieldComponentInstanceContext.Provider
-        value={{
-          instanceId: getRecordFieldInputId(
-            recordId,
-            columnDefinition.metadata.fieldName,
-            'record-table-cell',
-          ),
-        }}
-      >
-        {children}
-      </RecordFieldComponentInstanceContext.Provider>
+      {children}
     </FieldContext.Provider>
+  );
+};
+
+export const RecordTableCellFieldContextWrapper = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const { columnDefinition } = useContext(RecordTableCellContext);
+  const { recordId } = useRecordTableRowContextOrThrow();
+
+  if (isUndefinedOrNull(columnDefinition)) {
+    return null;
+  }
+
+  const instanceId = getRecordFieldInputId(
+    recordId,
+    columnDefinition.metadata.fieldName,
+    'record-table-cell',
+  );
+
+  return (
+    <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
+      <RecordTableCellFieldContext>{children}</RecordTableCellFieldContext>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
