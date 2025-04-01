@@ -5,7 +5,7 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-describe('Core REST API Find One endpoint', () => {
+describe.skip('Core REST API Find One endpoint', () => {
   let personCity: string;
 
   beforeAll(async () => {

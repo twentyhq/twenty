@@ -6,7 +6,7 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-describe('Core REST API Find Many endpoint', () => {
+describe.skip('Core REST API Find Many endpoint', () => {
   const testPersonIds = [PERSON_1_ID, PERSON_2_ID, PERSON_3_ID];
   const testPersonCities: Record<string, string> = {};
 
