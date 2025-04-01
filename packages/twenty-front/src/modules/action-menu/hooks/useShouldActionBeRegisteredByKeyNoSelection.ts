@@ -1,5 +1,4 @@
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
-import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
@@ -10,7 +9,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const useShouldActionBeRegisteredByKey = ({
+export const useShouldActionBeRegisteredByKeyNoSelection = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
@@ -62,8 +61,6 @@ export const useShouldActionBeRegisteredByKey = ({
       case NoSelectionRecordActionKeys.GO_TO_PEOPLE:
       case NoSelectionRecordActionKeys.GO_TO_SETTINGS:
       case NoSelectionRecordActionKeys.GO_TO_TASKS:
-      case RecordAgnosticActionsKey.SEARCH_RECORDS:
-      case RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK:
         return true;
       default:
         return false;
