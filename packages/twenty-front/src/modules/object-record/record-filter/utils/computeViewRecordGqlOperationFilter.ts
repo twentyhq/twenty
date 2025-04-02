@@ -584,8 +584,8 @@ export const computeFilterRecordGqlOperationFilter = ({
 
       if (options.length === 0) return;
 
-      const noValueOptions = options.filter((opt) => opt === '');
-      const nonEmptyOptions = options.filter((opt) => opt !== '');
+      const emptyOptions = options.filter((option: string) => option === '');
+      const nonEmptyOptions = options.filter((option: string) => option !== '');
 
       switch (filter.operand) {
         case RecordFilterOperand.Contains: {
@@ -599,7 +599,7 @@ export const computeFilterRecordGqlOperationFilter = ({
             });
           }
 
-          if (noValueOptions.length > 0) {
+          if (emptyOptions.length > 0) {
             conditions.push({
               [correspondingField.name]: {
                 isEmptyArray: true,
@@ -642,8 +642,8 @@ export const computeFilterRecordGqlOperationFilter = ({
 
       if (options.length === 0) return;
 
-      const noValueOptions = options.filter((opt) => opt === '');
-      const nonEmptyOptions = options.filter((opt) => opt !== '');
+      const emptyOptions = options.filter((option: string) => option === '');
+      const nonEmptyOptions = options.filter((option: string) => option !== '');
 
       switch (filter.operand) {
         case RecordFilterOperand.Is: {
@@ -657,7 +657,7 @@ export const computeFilterRecordGqlOperationFilter = ({
             });
           }
 
-          if (noValueOptions.length > 0) {
+          if (emptyOptions.length > 0) {
             conditions.push({
               [correspondingField.name]: {
                 is: 'NULL',
@@ -680,7 +680,7 @@ export const computeFilterRecordGqlOperationFilter = ({
             });
           }
 
-          if (noValueOptions.length > 0) {
+          if (emptyOptions.length > 0) {
             conditions.push({
               not: {
                 [correspondingField.name]: {
