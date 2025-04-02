@@ -16,11 +16,11 @@ import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/co
 import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
 import { InitializePermissionsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-initialize-permissions.command';
 import { UpdateViewAggregateOperationsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-update-view-aggregate-operations.command';
+import { UpgradeCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/0-51/0-51-update-workflow-trigger-type-enum.command';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { UpgradeCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/0-51/0-51-update-workflow-trigger-type-enum.command';
 
 type VersionCommands = {
   beforeSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
@@ -82,17 +82,17 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
-    const _commands_050: VersionCommands = {
+    const commands_050: VersionCommands = {
       beforeSyncMetadata: [],
       afterSyncMetadata: [],
     };
 
-    const commands_051: VersionCommands = {
+    const _commands_051: VersionCommands = {
       beforeSyncMetadata: [this.upgradeCreatedByEnumCommand],
       afterSyncMetadata: [],
     };
 
-    this.commands = commands_051;
+    this.commands = commands_050;
   }
 
   override async runBeforeSyncMetadata(args: RunOnWorkspaceArgs) {
