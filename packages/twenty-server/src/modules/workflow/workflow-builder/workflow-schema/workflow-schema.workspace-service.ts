@@ -83,6 +83,7 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowActionType.FORM:
         return this.computeFormActionOutputSchema({
           formMetadata: step.settings.input,
+          workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
         });
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
@@ -185,13 +186,16 @@ export class WorkflowSchemaWorkspaceService {
 
   private async computeFormActionOutputSchema({
     formMetadata,
+    workspaceId,
     objectMetadataRepository,
   }: {
     formMetadata: FormFieldMetadata[];
+    workspaceId: string;
     objectMetadataRepository: Repository<ObjectMetadataEntity>;
   }): Promise<OutputSchema> {
     return generateFakeFormResponse({
       formMetadata,
+      workspaceId,
       objectMetadataRepository,
     });
   }

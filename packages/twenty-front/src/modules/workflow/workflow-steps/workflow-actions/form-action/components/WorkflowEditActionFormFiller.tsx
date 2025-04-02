@@ -123,15 +123,19 @@ export const WorkflowEditActionFormFiller = ({
               return null;
             }
 
+            const recordId = field.value?.id;
+
             return (
               <FormSingleRecordPicker
                 key={field.id}
                 label={field.label}
-                defaultValue={field.value}
-                onChange={(value) => {
+                defaultValue={recordId}
+                onChange={(recordId) => {
                   onFieldUpdate({
                     fieldId: field.id,
-                    value,
+                    value: {
+                      id: recordId,
+                    },
                   });
                 }}
                 objectNameSingular={objectNameSingular}

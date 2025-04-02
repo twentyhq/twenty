@@ -44,6 +44,7 @@ describe('generateFakeFormResponse', () => {
 
     const result = await generateFakeFormResponse({
       formMetadata: schema,
+      workspaceId: '1',
       objectMetadataRepository,
     });
 

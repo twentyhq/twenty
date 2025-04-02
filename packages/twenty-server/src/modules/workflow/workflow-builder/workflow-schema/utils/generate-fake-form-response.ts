@@ -12,9 +12,11 @@ import { FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workfl
 
 export const generateFakeFormResponse = async ({
   formMetadata,
+  workspaceId,
   objectMetadataRepository,
 }: {
   formMetadata: FormFieldMetadata[];
+  workspaceId: string;
   objectMetadataRepository: Repository<ObjectMetadataEntity>;
 }): Promise<Record<string, Leaf | Node>> => {
   const result = await Promise.all(
@@ -27,7 +29,9 @@ export const generateFakeFormResponse = async ({
         const objectMetadata = await objectMetadataRepository.findOneOrFail({
           where: {
             nameSingular: formFieldMetadata?.settings?.objectName,
+            workspaceId,
           },
+          relations: ['fields'],
         });
 
         return {

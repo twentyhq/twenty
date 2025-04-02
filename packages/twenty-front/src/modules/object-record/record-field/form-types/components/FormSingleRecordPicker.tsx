@@ -14,7 +14,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -24,23 +23,6 @@ const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`
   justify-content: space-between;
   align-items: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledSearchVariablesDropdownContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  ${({ theme }) => css`
-    :hover {
-      background-color: ${theme.background.transparent.light};
-    }
-  `}
-  ${({ theme }) => css`
-    background-color: ${theme.background.transparent.lighter};
-    border-top-right-radius: ${theme.border.radius.sm};
-    border-bottom-right-radius: ${theme.border.radius.sm};
-    border: 1px solid ${theme.border.color.medium};
-  `}
 `;
 
 export type RecordId = string;
