@@ -20,33 +20,27 @@ export class AnalyticsService {
     userId: string | null | undefined,
     workspaceId: string | null | undefined,
   ) {
-    console.log('>>>>>>>>>>>>>> EVENT');
     if (!this.environmentService.get('ANALYTICS_ENABLED')) {
       return { success: true };
     }
 
-    console.trace('>>>>>>>>>>>>>> userId:', userId);
-    console.log('>>>>>>>>>>>>>> createEventInput:', createEventInput);
-    switch (createEventInput.action) {
-      case 'pageview':
-        await this.clickhouseService.insert({
-          timestamp: new Date().toISOString(),
-          version: '1',
-          userId: userId,
-          workspaceId: workspaceId,
-          ...createEventInput.payload,
-        });
-        break;
-      default:
-        await this.clickhouseService.insert({
-          action: createEventInput.action,
-          timestamp: new Date().toISOString(),
-          version: '1',
-          userId: userId,
-          workspaceId: workspaceId,
-          payload: JSON.stringify(createEventInput.payload),
-        });
-        break;
-    }
+    return this.clickhouseService.insert(
+      createEventInput.action === 'pageview'
+        ? {
+            timestamp: new Date().toISOString(),
+            version: '1',
+            userId: userId,
+            workspaceId: workspaceId,
+            ...createEventInput.payload,
+          }
+        : {
+            action: createEventInput.action,
+            timestamp: new Date().toISOString(),
+            version: '1',
+            userId: userId,
+            workspaceId: workspaceId,
+            payload: JSON.stringify(createEventInput.payload),
+          },
+    );
   }
 }

@@ -9,7 +9,6 @@ config({
 
 const client = createClient({
   url: process.env.CLICKHOUSE_URL,
-  database: process.env.CLICKHOUSE_DB,
 });
 
 async function seedEvents() {
