@@ -1,6 +1,11 @@
 module.exports = {
+  root: true,
   extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
-  ignorePatterns: ['!**/*', 'node_modules', 'dist', '**/generated/*'],
+  ignorePatterns: [
+    'node_modules',
+    'dist',
+    '**/generated/*',
+  ],
   overrides: [
     {
       files: ['**/*.ts', '**/*.tsx'],
