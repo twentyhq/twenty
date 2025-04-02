@@ -149,8 +149,9 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionCreatedEvent.Data
       | Stripe.CustomerSubscriptionDeletedEvent.Data,
   ) {
-    const isTrialEnding =
-      Date.now() / 1000 - (data.object.trial_end || 0) < 60 * 60 * 24;
+    const timeSinceTrialEnd = Date.now() / 1000 - (data.object.trial_end || 0);
+    const hasTrialJustEnded =
+      timeSinceTrialEnd < 60 * 60 * 24 && timeSinceTrialEnd > 0;
 
     if (
       [
@@ -158,7 +159,7 @@ export class BillingWebhookSubscriptionService {
         SubscriptionStatus.Unpaid,
         SubscriptionStatus.Paused, // TODO: remove this once paused subscriptions are deprecated
       ].includes(data.object.status as SubscriptionStatus) ||
-      (isTrialEnding && data.object.status === SubscriptionStatus.PastDue)
+      (hasTrialJustEnded && data.object.status === SubscriptionStatus.PastDue)
     ) {
       return true;
     }
