@@ -2,20 +2,19 @@ import { Heading } from '@/spreadsheet-import/components/Heading';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import {
-  ColumnType,
-  Columns,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import {
-  ImportValidationResult,
   ImportedStructuredRow,
+  SpreadsheetImportImportValidationResult,
 } from '@/spreadsheet-import/types';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   Dispatch,
   SetStateAction,
@@ -25,10 +24,10 @@ import {
 } from 'react';
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
+import { isDefined } from 'twenty-shared/utils';
 import { Button, IconTrash, Toggle } from 'twenty-ui';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledContent = styled(Modal.Content)`
   padding-left: ${({ theme }) => theme.spacing(6)};
@@ -73,7 +72,7 @@ const StyledNoRowsContainer = styled.div`
 
 type ValidationStepProps<T extends string> = {
   initialData: ImportedStructuredRow<T>[];
-  importedColumns: Columns<string>;
+  importedColumns: SpreadsheetColumns<string>;
   file: File;
   onBack: () => void;
   setCurrentStepState: Dispatch<SetStateAction<SpreadsheetImportStep>>;
@@ -120,6 +119,8 @@ export const ValidationStep = <T extends string>({
     }
   };
 
+  const { t } = useLingui();
+
   const updateRow = useCallback(
     (
       rows: typeof data,
@@ -150,13 +151,14 @@ export const ValidationStep = <T extends string>({
           const hasBeenImported =
             importedColumns.filter(
               (importColumn) =>
-                (importColumn.type === ColumnType.matched &&
+                (importColumn.type === SpreadsheetColumnType.matched &&
                   importColumn.value === column.key) ||
-                (importColumn.type === ColumnType.matchedSelect &&
+                (importColumn.type === SpreadsheetColumnType.matchedSelect &&
                   importColumn.value === column.key) ||
-                (importColumn.type === ColumnType.matchedSelectOptions &&
+                (importColumn.type ===
+                  SpreadsheetColumnType.matchedSelectOptions &&
                   importColumn.value === column.key) ||
-                (importColumn.type === ColumnType.matchedCheckbox &&
+                (importColumn.type === SpreadsheetColumnType.matchedCheckbox &&
                   importColumn.value === column.key) ||
                 column.key === 'select-row',
             ).length > 0;
@@ -211,7 +213,7 @@ export const ValidationStep = <T extends string>({
         validStructuredRows: [] as ImportedStructuredRow<T>[],
         invalidStructuredRows: [] as ImportedStructuredRow<T>[],
         allStructuredRows: data,
-      } satisfies ImportValidationResult<T>,
+      } satisfies SpreadsheetImportImportValidationResult<T>,
     );
 
     setCurrentStepState({
@@ -234,13 +236,12 @@ export const ValidationStep = <T extends string>({
       submitData();
     } else {
       enqueueDialog({
-        title: 'Finish flow with errors',
-        message:
-          'There are still some rows that contain errors. Rows with errors will be ignored when submitting.',
+        title: t`Finish flow with errors`,
+        message: t`There are still some rows that contain errors. Rows with errors will be ignored when submitting.`,
         buttons: [
-          { title: 'Cancel' },
+          { title: t`Cancel` },
           {
-            title: 'Submit',
+            title: t`Submit`,
             variant: 'primary',
             onClick: submitData,
             role: 'confirm',
@@ -254,8 +255,8 @@ export const ValidationStep = <T extends string>({
     <>
       <StyledContent>
         <Heading
-          title="Review your import"
-          description="Correct the issues and fill the missing data."
+          title={t`Review your import`}
+          description={t`Correct the issues and fill the missing data.`}
         />
         <StyledToolbar>
           <StyledErrorToggle>
@@ -264,7 +265,7 @@ export const ValidationStep = <T extends string>({
               onChange={() => setFilterByErrors(!filterByErrors)}
             />
             <StyledErrorToggleDescription>
-              Show only rows with errors
+              <Trans>Show only rows with errors</Trans>
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
           <StyledErrorToggle>
@@ -273,12 +274,12 @@ export const ValidationStep = <T extends string>({
               onChange={() => setShowUnmatchedColumns(!showUnmatchedColumns)}
             />
             <StyledErrorToggleDescription>
-              Show unmatched columns
+              <Trans>Show unmatched columns</Trans>
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
           <Button
             Icon={IconTrash}
-            title="Remove"
+            title={t`Remove`}
             accent="danger"
             onClick={deleteSelectedRows}
             disabled={selectedRows.size === 0}
@@ -296,8 +297,8 @@ export const ValidationStep = <T extends string>({
               noRowsFallback: (
                 <StyledNoRowsContainer>
                   {filterByErrors
-                    ? 'No data containing errors'
-                    : 'No data found'}
+                    ? t`No data containing errors`
+                    : t`No data found`}
                 </StyledNoRowsContainer>
               ),
             }}
@@ -307,7 +308,7 @@ export const ValidationStep = <T extends string>({
       <StepNavigationButton
         onClick={onContinue}
         onBack={onBack}
-        title="Confirm"
+        title={t`Confirm`}
       />
     </>
   );

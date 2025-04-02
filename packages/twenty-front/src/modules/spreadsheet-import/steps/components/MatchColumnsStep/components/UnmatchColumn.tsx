@@ -1,16 +1,18 @@
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SubMatchingSelect } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelect';
 import { UnmatchColumnBanner } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumnBanner';
-import { Column } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Fields } from '@/spreadsheet-import/types';
+import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { AnimatedExpandableContainer } from 'twenty-ui';
 
 const getExpandableContainerTitle = <T extends string>(
-  fields: Fields<T>,
-  column: Column<T>,
+  fields: SpreadsheetImportFields<T>,
+  column: SpreadsheetColumn<T>,
 ) => {
   const fieldLabel = fields.find(
     (field) => 'value' in column && field.key === column.value,
@@ -23,7 +25,7 @@ const getExpandableContainerTitle = <T extends string>(
 };
 
 type UnmatchColumnProps<T extends string> = {
-  columns: Column<T>[];
+  columns: SpreadsheetColumns<T>;
   columnIndex: number;
   onSubChange: (val: T, index: number, option: string) => void;
 };
@@ -50,6 +52,7 @@ export const UnmatchColumn = <T extends string>({
   const [isExpanded, setIsExpanded] = useState(false);
   const column = columns[columnIndex];
   const isSelect = 'matchedOptions' in column;
+  const { t } = useLingui();
 
   if (!isSelect) return null;
 
@@ -73,7 +76,7 @@ export const UnmatchColumn = <T extends string>({
               column={column}
               onSubChange={onSubChange}
               key={option.entry}
-              placeholder="Select an option"
+              placeholder={t`Select an option`}
             />
           ))}
         </StyledContentWrapper>

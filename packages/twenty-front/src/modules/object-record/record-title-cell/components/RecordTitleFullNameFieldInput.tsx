@@ -15,7 +15,7 @@ type RecordTitleFullNameFieldInputProps = {
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
-  sizeVariant?: 'sm' | 'md';
+  sizeVariant?: 'xs' | 'md';
 };
 
 export const RecordTitleFullNameFieldInput = ({

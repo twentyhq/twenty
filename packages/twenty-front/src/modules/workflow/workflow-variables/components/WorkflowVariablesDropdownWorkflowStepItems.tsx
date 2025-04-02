@@ -1,4 +1,5 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -12,7 +13,6 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 
 type WorkflowVariablesDropdownWorkflowStepItemsProps = {
   dropdownId: string;
@@ -54,7 +54,7 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
         onChange={(event) => setSearchInputValue(event.target.value)}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {availableSteps.length > 0 ? (
           availableSteps.map((item, _index) => (
             <MenuItemSelect

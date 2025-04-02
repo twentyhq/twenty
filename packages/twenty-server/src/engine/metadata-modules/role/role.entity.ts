@@ -9,9 +9,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ObjectPermissionsEntity } from 'src/engine/metadata-modules/object-permissions/object-permissions.entity';
+import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
-import { SettingsPermissionsEntity } from 'src/engine/metadata-modules/settings-permissions/settings-permissions.entity';
+import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
 
 @Entity('role')
 @Unique('IndexOnRoleUnique', ['label', 'workspaceId'])
@@ -62,15 +62,14 @@ export class RoleEntity {
   userWorkspaceRoles: Relation<UserWorkspaceRoleEntity[]>;
 
   @OneToMany(
-    () => ObjectPermissionsEntity,
-    (objectPermissions: ObjectPermissionsEntity) => objectPermissions.role,
+    () => ObjectPermissionEntity,
+    (objectPermission: ObjectPermissionEntity) => objectPermission.role,
   )
-  objectPermissions: Relation<ObjectPermissionsEntity[]>;
+  objectPermissions: Relation<ObjectPermissionEntity[]>;
 
   @OneToMany(
-    () => SettingsPermissionsEntity,
-    (settingsPermissions: SettingsPermissionsEntity) =>
-      settingsPermissions.role,
+    () => SettingPermissionEntity,
+    (settingPermission: SettingPermissionEntity) => settingPermission.role,
   )
-  settingsPermissions: Relation<SettingsPermissionsEntity[]>;
+  settingPermissions: Relation<SettingPermissionEntity[]>;
 }

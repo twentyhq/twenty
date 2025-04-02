@@ -4,17 +4,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
-import { Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
 
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -54,6 +57,9 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(FeatureFlag, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
   async processStripeEvent(
@@ -117,10 +123,29 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
+    const wasTrialOrPausedSubscription = [
+      SubscriptionStatus.Trialing,
+      SubscriptionStatus.Paused,
+    ].includes(data.previous_attributes?.status as SubscriptionStatus);
+
+    const isMeteredProductBillingEnabled =
+      await this.featureFlagRepository.findOneBy({
+        key: FeatureFlagKey.IsMeteredProductBillingEnabled,
+        workspaceId,
+        value: true,
+      });
+
+    if (wasTrialOrPausedSubscription && isMeteredProductBillingEnabled) {
+      await this.billingSubscriptionService.convertTrialSubscriptionToSubscriptionWithMeteredProducts(
+        updatedBillingSubscription,
+      );
+    }
+
     if (
       BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
         WorkspaceActivationStatus.SUSPENDED
       ].includes(data.object.status as SubscriptionStatus) &&
+      workspace.activationStatus == WorkspaceActivationStatus.ACTIVE &&
       !hasActiveWorkspaceCompatibleSubscription
     ) {
       await this.workspaceRepository.update(workspaceId, {

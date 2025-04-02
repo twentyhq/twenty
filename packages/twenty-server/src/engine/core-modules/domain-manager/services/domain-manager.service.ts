@@ -42,20 +42,33 @@ export class DomainManagerService {
     return baseUrl;
   }
 
-  buildEmailVerificationURL({
-    emailVerificationToken,
-    email,
-    workspace,
-  }: {
-    emailVerificationToken: string;
-    email: string;
-    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
-  }) {
-    return this.buildWorkspaceURL({
-      workspace,
-      pathname: 'verify-email',
-      searchParams: { emailVerificationToken, email },
+  private appendSearchParams(
+    url: URL,
+    searchParams: Record<string, string | number>,
+  ) {
+    Object.entries(searchParams).forEach(([key, value]) => {
+      url.searchParams.set(key, value.toString());
     });
+  }
+
+  buildBaseUrl({
+    pathname,
+    searchParams,
+  }: {
+    pathname?: string;
+    searchParams?: Record<string, string | number>;
+  }) {
+    const url = this.getBaseUrl();
+
+    if (pathname) {
+      url.pathname = pathname;
+    }
+
+    if (searchParams) {
+      this.appendSearchParams(url, searchParams);
+    }
+
+    return url;
   }
 
   buildWorkspaceURL({
@@ -76,11 +89,7 @@ export class DomainManagerService {
     }
 
     if (searchParams) {
-      Object.entries(searchParams).forEach(([key, value]) => {
-        if (isDefined(value)) {
-          url.searchParams.set(key, value.toString());
-        }
-      });
+      this.appendSearchParams(url, searchParams);
     }
 
     return url;

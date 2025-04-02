@@ -36,7 +36,7 @@ import {
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
-import { SettingsPermissions } from 'src/engine/metadata-modules/permissions/constants/settings-permissions.constants';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
@@ -74,6 +74,7 @@ export class FieldMetadataResolver {
     );
   }
 
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @ResolveField(() => String, { nullable: true })
   async icon(
     @Parent() fieldMetadata: FieldMetadataDTO,
@@ -86,7 +87,7 @@ export class FieldMetadataResolver {
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
@@ -102,17 +103,18 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     try {
-      const updatedInput = (await this.beforeUpdateOneField.run(
-        input,
+      const updatedInput = (await this.beforeUpdateOneField.run(input, {
         workspaceId,
-      )) as UpdateOneFieldMetadataInput;
+        locale: context.req.headers['x-locale'],
+      })) as UpdateOneFieldMetadataInput;
 
       return await this.fieldMetadataService.updateOne(updatedInput.id, {
         ...updatedInput.update,
@@ -123,7 +125,7 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async deleteOneField(
     @Args('input') input: DeleteOneFieldInput,

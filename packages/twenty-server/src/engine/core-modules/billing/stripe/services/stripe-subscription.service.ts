@@ -76,4 +76,11 @@ export class StripeSubscriptionService {
       items: stripeSubscriptionItemsToUpdate,
     });
   }
+
+  async updateSubscription(
+    stripeSubscriptionId: string,
+    data: Stripe.SubscriptionUpdateParams,
+  ) {
+    await this.stripe.subscriptions.update(stripeSubscriptionId, data);
+  }
 }

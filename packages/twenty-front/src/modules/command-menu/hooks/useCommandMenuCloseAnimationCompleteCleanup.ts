@@ -28,7 +28,9 @@ import { useRecoilCallback } from 'recoil';
 export const useCommandMenuCloseAnimationCompleteCleanup = () => {
   const { resetSelectedItem } = useSelectableList('command-menu-list');
 
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope(
+    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  );
 
   const { resetContextStoreStates } = useResetContextStoreStates();
 

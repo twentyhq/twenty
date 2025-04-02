@@ -6,6 +6,7 @@ export enum EnvironmentVariablesGroup {
   MicrosoftAuth = 'microsoft-auth',
   EmailSettings = 'email-settings',
   Logging = 'logging',
+  Metering = 'metering',
   ExceptionHandler = 'exception-handler',
   Other = 'other',
   BillingConfig = 'billing-config',

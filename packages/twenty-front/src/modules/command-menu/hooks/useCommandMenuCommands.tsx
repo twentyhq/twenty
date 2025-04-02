@@ -3,7 +3,6 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { COMMAND_MENU_NAVIGATE_COMMANDS } from '@/command-menu/constants/CommandMenuNavigateCommands';
 import {
   Command,
   CommandScope,
@@ -31,14 +30,6 @@ export const useCommandMenuCommands = () => {
       scope: CommandScope.Global,
       hotKeys: actionMenuEntry.hotKeys,
     })) as Command[];
-
-  // TODO: refactor this to use the config
-  const navigateCommandsFromConstants = Object.values(
-    COMMAND_MENU_NAVIGATE_COMMANDS,
-  );
-  const allNavigateCommands = navigateCommands.concat(
-    navigateCommandsFromConstants,
-  );
 
   const actionRecordSelectionCommands: Command[] = actionMenuEntries
     ?.filter(
@@ -136,7 +127,7 @@ export const useCommandMenuCommands = () => {
     }));
 
   return {
-    navigateCommands: allNavigateCommands,
+    navigateCommands,
     actionRecordSelectionCommands,
     actionGlobalCommands,
     actionObjectCommands,

@@ -10,11 +10,11 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
@@ -23,13 +23,13 @@ const StyledInput = styled(TextInput)`
 type FormNumberFieldInputProps = {
   label?: string;
   error?: string;
-  placeholder: string;
   defaultValue: number | string | undefined;
   onChange: (value: number | null | string) => void;
   onBlur?: () => void;
   VariablePicker?: VariablePickerComponent;
   hint?: string;
   readonly?: boolean;
+  placeholder?: string;
 };
 
 export const FormNumberFieldInput = ({
@@ -115,7 +115,7 @@ export const FormNumberFieldInput = ({
           {draftValue.type === 'static' ? (
             <StyledInput
               inputId={inputId}
-              placeholder={placeholder}
+              placeholder={placeholder ?? 'Enter a number'}
               value={draftValue.value}
               copyButton={false}
               hotkeyScope="record-create"

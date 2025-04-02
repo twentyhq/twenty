@@ -6,24 +6,28 @@ import {
   ImportedStructuredRowMetadata,
 } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 import {
-  Fields,
   ImportedStructuredRow,
-  Info,
-  RowHook,
-  TableHook,
+  SpreadsheetImportFields,
+  SpreadsheetImportInfo,
+  SpreadsheetImportRowHook,
+  SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { isDefined } from 'twenty-shared/utils';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const addErrorsAndRunHooks = <T extends string>(
   data: (ImportedStructuredRow<T> & Partial<ImportedStructuredRowMetadata>)[],
-  fields: Fields<T>,
-  rowHook?: RowHook<T>,
-  tableHook?: TableHook<T>,
+  fields: SpreadsheetImportFields<T>,
+  rowHook?: SpreadsheetImportRowHook<T>,
+  tableHook?: SpreadsheetImportTableHook<T>,
 ): (ImportedStructuredRow<T> & ImportedStructuredRowMetadata)[] => {
   const errors: Errors = {};
 
-  const addHookError = (rowIndex: number, fieldKey: T, error: Info) => {
+  const addHookError = (
+    rowIndex: number,
+    fieldKey: T,
+    error: SpreadsheetImportInfo,
+  ) => {
     errors[rowIndex] = {
       ...errors[rowIndex],
       [fieldKey]: error,

@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import {
   IconApps,
   IconButton,
+  IconButtonSize,
   IconButtonVariant,
   IconComponent,
   LightIconButton,
@@ -21,8 +22,8 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
-import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 import { t } from '@lingui/core/macro';
+import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -34,6 +35,7 @@ export type IconPickerProps = {
   onOpen?: () => void;
   variant?: IconButtonVariant;
   className?: string;
+  size?: IconButtonSize;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -91,6 +93,7 @@ export const IconPicker = ({
   onOpen,
   variant = 'secondary',
   className,
+  size = 'medium',
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
   const {
@@ -168,6 +171,7 @@ export const IconPicker = ({
             disabled={disabled}
             Icon={icon}
             variant={variant}
+            size={size}
           />
         }
         dropdownMenuWidth={176}

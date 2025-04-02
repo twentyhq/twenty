@@ -6,6 +6,7 @@ import {
   IconColorSwatch,
   IconComponent,
   IconCurrencyDollar,
+  IconDoorEnter,
   IconFlask,
   IconFunction,
   IconHierarchy2,
@@ -21,17 +22,16 @@ import {
 } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { SettingsPermissions } from '~/generated/graphql';
 
+import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
+import { SettingPermissionType } from '~/generated/graphql';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -54,6 +54,7 @@ export type SettingsNavigationItem = {
 
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const billing = useRecoilValue(billingState);
+  const { signOut } = useAuth();
 
   const isFunctionSettingsEnabled = false;
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
@@ -63,7 +64,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     false;
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
-  const featureFlags = useFeatureFlagsMap();
   const permissionMap = useSettingsPermissionMap();
   return [
     {
@@ -108,47 +108,46 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`General`,
           path: SettingsPath.Workspace,
           Icon: IconSettings,
-          isHidden: !permissionMap[SettingsPermissions.WORKSPACE],
+          isHidden: !permissionMap[SettingPermissionType.WORKSPACE],
         },
         {
           label: t`Members`,
           path: SettingsPath.WorkspaceMembersPage,
           Icon: IconUsers,
-          isHidden: !permissionMap[SettingsPermissions.WORKSPACE_MEMBERS],
+          isHidden: !permissionMap[SettingPermissionType.WORKSPACE_MEMBERS],
         },
         {
           label: t`Roles`,
           path: SettingsPath.Roles,
           Icon: IconLock,
-          isHidden:
-            !featureFlags[FeatureFlagKey.IsPermissionsEnabled] ||
-            !permissionMap[SettingsPermissions.ROLES],
+          isHidden: !permissionMap[SettingPermissionType.ROLES],
         },
         {
           label: t`Billing`,
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
           isHidden:
-            !isBillingEnabled || !permissionMap[SettingsPermissions.WORKSPACE],
+            !isBillingEnabled ||
+            !permissionMap[SettingPermissionType.WORKSPACE],
         },
         {
           label: t`Data model`,
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
-          isHidden: !permissionMap[SettingsPermissions.DATA_MODEL],
+          isHidden: !permissionMap[SettingPermissionType.DATA_MODEL],
         },
         {
           label: t`Integrations`,
           path: SettingsPath.Integrations,
           Icon: IconApps,
-          isHidden: !permissionMap[SettingsPermissions.API_KEYS_AND_WEBHOOKS],
+          isHidden: !permissionMap[SettingPermissionType.API_KEYS_AND_WEBHOOKS],
         },
         {
           label: t`Security`,
           path: SettingsPath.Security,
           Icon: IconKey,
           isAdvanced: true,
-          isHidden: !permissionMap[SettingsPermissions.SECURITY],
+          isHidden: !permissionMap[SettingPermissionType.SECURITY],
         },
       ],
     },
@@ -161,14 +160,14 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.APIs,
           Icon: IconApi,
           isAdvanced: true,
-          isHidden: !permissionMap[SettingsPermissions.API_KEYS_AND_WEBHOOKS],
+          isHidden: !permissionMap[SettingPermissionType.API_KEYS_AND_WEBHOOKS],
         },
         {
           label: t`Webhooks`,
           path: SettingsPath.Webhooks,
           Icon: IconWebhook,
           isAdvanced: true,
-          isHidden: !permissionMap[SettingsPermissions.API_KEYS_AND_WEBHOOKS],
+          isHidden: !permissionMap[SettingPermissionType.API_KEYS_AND_WEBHOOKS],
         },
         {
           label: t`Functions`,
@@ -194,12 +193,17 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconFlask,
           isHidden:
             !labPublicFeatureFlags.length ||
-            !permissionMap[SettingsPermissions.WORKSPACE],
+            !permissionMap[SettingPermissionType.WORKSPACE],
         },
         {
           label: t`Releases`,
           path: SettingsPath.Releases,
           Icon: IconRocket,
+        },
+        {
+          label: t`Logout`,
+          onClick: signOut,
+          Icon: IconDoorEnter,
         },
       ],
     },
