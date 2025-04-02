@@ -14,10 +14,10 @@ jobs:
       - name: SSH - Connect to VPS
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ env.SSH_HOST }}
-          port: ${{ env.SSH_PORT }}
-          username: ${{ env.SSH_USER }}
-          password: ${{ env.SSH_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             echo "Successfully connected to VPS"
             echo "PROJECT_ROOT: ${{ env.PROJECT_ROOT }}"
@@ -25,10 +25,10 @@ jobs:
       - name: SSH - Pull latest code
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ env.SSH_HOST }}
-          port: ${{ env.SSH_PORT }}
-          username: ${{ env.SSH_USER }}
-          password: ${{ env.SSH_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             set -e
             echo "Changing to project directory and pulling changes"
@@ -54,10 +54,10 @@ jobs:
       - name: SSH - Deploy with docker-compose
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ env.SSH_HOST }}
-          port: ${{ env.SSH_PORT }}
-          username: ${{ env.SSH_USER }}
-          password: ${{ env.SSH_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             set -e
             echo "Starting containers"
@@ -68,10 +68,10 @@ jobs:
       - name: SSH - Verify container health
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ env.SSH_HOST }}
-          port: ${{ env.SSH_PORT }}
-          username: ${{ env.SSH_USER }}
-          password: ${{ env.SSH_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             set -e
             echo "Checking health of required containers: ${{ env.REQUIRED_CONTAINERS }}"
@@ -81,6 +81,7 @@ jobs:
             for container in ${{ env.REQUIRED_CONTAINERS }}; do
               if ! docker inspect --format '{{.State.Health.Status}}' "$container" | grep -q 'healthy'; then
                 echo "::error::Container $container is not healthy"
+                docker logs "$container"
                 docker inspect "$container" | jq '.[].State'
                 all_ok=false
               else
@@ -95,6 +96,7 @@ jobs:
 
             if ! docker inspect --format '{{.State.Status}}' "kvoipv2-worker" | grep -q 'running'; then
               echo "::error::Container kvoipv2-worker is not running"
+              docker logs kvoipv2-worker
               all_ok=false
             fi
 
@@ -119,10 +121,10 @@ jobs:
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ env.SSH_HOST }}
-          port: ${{ env.SSH_PORT }}
-          username: ${{ env.SSH_USER }}
-          password: ${{ env.SSH_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             set -e
             echo "Migration files changed - running migrations"
