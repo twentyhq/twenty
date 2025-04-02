@@ -1,9 +1,11 @@
 import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Toggle } from 'twenty-ui';
+import { t } from '@lingui/core/macro';
+import { Card, IconLifebuoy } from 'twenty-ui';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 export const ToggleImpersonate = () => {
@@ -39,9 +41,15 @@ export const ToggleImpersonate = () => {
   };
 
   return (
-    <Toggle
-      value={currentWorkspace?.allowImpersonation}
-      onChange={handleChange}
-    />
+    <Card rounded>
+      <SettingsOptionCardContentToggle
+        Icon={IconLifebuoy}
+        title={t`Allow Support Team Access`}
+        description={t`Grant access to your workspace so we can troubleshoot problems.`}
+        checked={currentWorkspace?.allowImpersonation ?? false}
+        onChange={handleChange}
+        advancedMode
+      />
+    </Card>
   );
 };
