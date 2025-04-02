@@ -79,8 +79,8 @@ export const FormSingleRecordPicker = ({
     skip: !isValidUuid(defaultValue),
   });
 
-  const dropdownId = `Form-record-picker-${objectNameSingular}`;
-  const variablesDropdownId = `Form-record-picker-${objectNameSingular}-variables`;
+  const dropdownId = `form-record-picker-${objectNameSingular}`;
+  const variablesDropdownId = `form-record-picker-${objectNameSingular}-variables`;
 
   const { closeDropdown } = useDropdown(dropdownId);
 
@@ -169,7 +169,7 @@ export const FormSingleRecordPicker = ({
             </DropdownScope>
           )}
         </StyledFormSelectContainer>
-        {VariablePicker && !disabled && (
+        {isDefined(VariablePicker) && !disabled && (
           <VariablePicker
             inputId={variablesDropdownId}
             disabled={disabled}
