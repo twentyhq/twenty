@@ -2,6 +2,8 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
+import { FormSingleRecordFieldChip } from '@/object-record/record-field/form-types/components/FormSingleRecordFieldChip';
+import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
@@ -12,13 +14,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { WorkflowSingleRecordFieldChip } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordFieldChip';
-import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import { IconChevronDown, IconForbid, LightIconButton } from 'twenty-ui';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { IconChevronDown, IconForbid, LightIconButton } from 'twenty-ui';
 
 const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`
   justify-content: space-between;
@@ -26,27 +25,10 @@ const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledSearchVariablesDropdownContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  ${({ theme }) => css`
-    :hover {
-      background-color: ${theme.background.transparent.light};
-    }
-  `}
-  ${({ theme }) => css`
-    background-color: ${theme.background.transparent.lighter};
-    border-top-right-radius: ${theme.border.radius.sm};
-    border-bottom-right-radius: ${theme.border.radius.sm};
-    border: 1px solid ${theme.border.color.medium};
-  `}
-`;
-
 export type RecordId = string;
 export type Variable = string;
 
-type WorkflowSingleRecordPickerValue =
+type FormSingleRecordPickerValue =
   | {
       type: 'static';
       value: RecordId;
@@ -56,33 +38,36 @@ type WorkflowSingleRecordPickerValue =
       value: Variable;
     };
 
-export type WorkflowSingleRecordPickerProps = {
+export type FormSingleRecordPickerProps = {
   label?: string;
   defaultValue: RecordId | Variable;
   onChange: (value: RecordId | Variable) => void;
   objectNameSingular: string;
   disabled?: boolean;
   testId?: string;
+  VariablePicker?: VariablePickerComponent;
 };
 
-export const WorkflowSingleRecordPicker = ({
+export const FormSingleRecordPicker = ({
   label,
   defaultValue,
   objectNameSingular,
   onChange,
   disabled,
   testId,
-}: WorkflowSingleRecordPickerProps) => {
-  const draftValue: WorkflowSingleRecordPickerValue =
-    isStandaloneVariableString(defaultValue)
-      ? {
-          type: 'variable',
-          value: defaultValue,
-        }
-      : {
-          type: 'static',
-          value: defaultValue || '',
-        };
+  VariablePicker,
+}: FormSingleRecordPickerProps) => {
+  const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
+    defaultValue,
+  )
+    ? {
+        type: 'variable',
+        value: defaultValue,
+      }
+    : {
+        type: 'static',
+        value: defaultValue || '',
+      };
 
   const { record: selectedRecord } = useFindOneRecord({
     objectRecordId:
@@ -94,8 +79,8 @@ export const WorkflowSingleRecordPicker = ({
     skip: !isValidUuid(defaultValue),
   });
 
-  const dropdownId = `workflow-record-picker-${objectNameSingular}`;
-  const variablesDropdownId = `workflow-record-picker-${objectNameSingular}-variables`;
+  const dropdownId = `form-record-picker-${objectNameSingular}`;
+  const variablesDropdownId = `form-record-picker-${objectNameSingular}-variables`;
 
   const { closeDropdown } = useDropdown(dropdownId);
 
@@ -144,8 +129,10 @@ export const WorkflowSingleRecordPicker = ({
     <FormFieldInputContainer testId={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormFieldInputRowContainer>
-        <StyledFormSelectContainer hasRightElement={!disabled}>
-          <WorkflowSingleRecordFieldChip
+        <StyledFormSelectContainer
+          hasRightElement={isDefined(VariablePicker) && !disabled}
+        >
+          <FormSingleRecordFieldChip
             draftValue={draftValue}
             selectedRecord={selectedRecord}
             objectNameSingular={objectNameSingular}
@@ -182,15 +169,13 @@ export const WorkflowSingleRecordPicker = ({
             </DropdownScope>
           )}
         </StyledFormSelectContainer>
-
-        {!disabled && (
-          <StyledSearchVariablesDropdownContainer>
-            <WorkflowVariablesDropdown
-              inputId={variablesDropdownId}
-              onVariableSelect={handleVariableTagInsert}
-              objectNameSingularToSelect={objectNameSingular}
-            />
-          </StyledSearchVariablesDropdownContainer>
+        {isDefined(VariablePicker) && !disabled && (
+          <VariablePicker
+            inputId={variablesDropdownId}
+            disabled={disabled}
+            onVariableSelect={handleVariableTagInsert}
+            objectNameSingularToSelect={objectNameSingular}
+          />
         )}
       </FormFieldInputRowContainer>
     </FormFieldInputContainer>

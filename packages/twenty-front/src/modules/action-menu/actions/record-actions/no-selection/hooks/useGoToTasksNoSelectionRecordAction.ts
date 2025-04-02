@@ -7,8 +7,6 @@ export const useGoToTasksNoSelectionRecordAction: ActionHookWithoutObjectMetadat
   () => {
     const navigateApp = useNavigateApp();
 
-    const shouldBeRegistered = true;
-
     const onClick = () => {
       navigateApp(AppPath.RecordIndexPage, {
         objectNamePlural: CoreObjectNamePlural.Task,
@@ -16,7 +14,6 @@ export const useGoToTasksNoSelectionRecordAction: ActionHookWithoutObjectMetadat
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

@@ -70,45 +70,12 @@ const wrapperConfigWithSelectedRecordNotAsFavorite: GetJestMetadataAndApolloMock
     },
   };
 
-const wrapperWithSelectedRecordAsFavorite =
-  getJestMetadataAndApolloMocksAndActionMenuWrapper(
-    wrapperConfigWithSelectedRecordAsFavorite,
-  );
-
 const wrapperWithSelectedRecordNotAsFavorite =
   getJestMetadataAndApolloMocksAndActionMenuWrapper(
     wrapperConfigWithSelectedRecordNotAsFavorite,
   );
 
 describe('useAddToFavoritesSingleRecordAction', () => {
-  it('should be registered when the record is not a favorite', () => {
-    const { result } = renderHook(
-      () =>
-        useAddToFavoritesSingleRecordAction({
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
-      {
-        wrapper: wrapperWithSelectedRecordNotAsFavorite,
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(true);
-  });
-
-  it('should not be registered when the record is a favorite', () => {
-    const { result } = renderHook(
-      () =>
-        useAddToFavoritesSingleRecordAction({
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
-      {
-        wrapper: wrapperWithSelectedRecordAsFavorite,
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(false);
-  });
-
   it('should call createFavorite on click', () => {
     const { result } = renderHook(
       () =>

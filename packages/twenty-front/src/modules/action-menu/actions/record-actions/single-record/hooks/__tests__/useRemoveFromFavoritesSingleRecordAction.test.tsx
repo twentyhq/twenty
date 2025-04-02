@@ -61,60 +61,15 @@ const wrapperConfigWithSelectedRecordAsFavorite: GetJestMetadataAndApolloMocksAn
     },
   };
 
-const wrapperConfigWithSelectedRecordNotAsFavorite: GetJestMetadataAndApolloMocksAndActionMenuWrapperProps =
-  {
-    ...wrapperConfigWithSelectedRecordAsFavorite,
-    contextStoreTargetedRecordsRule: {
-      mode: 'selection',
-      selectedRecordIds: [peopleMock[1].id],
-    },
-  };
-
 const wrapperWithSelectedRecordAsFavorite =
   getJestMetadataAndApolloMocksAndActionMenuWrapper(
     wrapperConfigWithSelectedRecordAsFavorite,
   );
 
-const wrapperWithSelectedRecordNotAsFavorite =
-  getJestMetadataAndApolloMocksAndActionMenuWrapper(
-    wrapperConfigWithSelectedRecordNotAsFavorite,
-  );
-
 describe('useRemoveFromFavoritesSingleRecordAction', () => {
-  it('should be registered when the record is a favorite', () => {
-    const { result } = renderHook(
-      () =>
-        useRemoveFromFavoritesSingleRecordAction({
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
-      {
-        wrapper: wrapperWithSelectedRecordAsFavorite,
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(true);
-  });
-
-  it('should not be registered when the record is not a favorite', () => {
-    const { result } = renderHook(
-      () =>
-        useRemoveFromFavoritesSingleRecordAction({
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
-      {
-        wrapper: wrapperWithSelectedRecordNotAsFavorite,
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(false);
-  });
-
   it('should call deleteFavorite on click', () => {
     const { result } = renderHook(
-      () =>
-        useRemoveFromFavoritesSingleRecordAction({
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
+      () => useRemoveFromFavoritesSingleRecordAction(),
       {
         wrapper: wrapperWithSelectedRecordAsFavorite,
       },

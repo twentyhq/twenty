@@ -4,8 +4,8 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { AppPath } from '@/types/AppPath';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isDefined } from 'twenty-shared/utils';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useSeeRunsWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -15,10 +15,8 @@ export const useSeeRunsWorkflowSingleRecordAction: ActionHookWithoutObjectMetada
 
     const navigateApp = useNavigateApp();
 
-    const shouldBeRegistered = isDefined(workflowWithCurrentVersion);
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
+      if (!isDefined(workflowWithCurrentVersion)) {
         return;
       }
 
@@ -40,7 +38,6 @@ export const useSeeRunsWorkflowSingleRecordAction: ActionHookWithoutObjectMetada
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };
