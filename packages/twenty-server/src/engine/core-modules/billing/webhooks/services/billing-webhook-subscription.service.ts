@@ -150,7 +150,7 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionDeletedEvent.Data,
   ) {
     const isTrialEnding =
-      Date.now() / 1000 - (data.object.trial_end || 0) < 60 * 60 * 24 * 3;
+      Date.now() / 1000 - (data.object.trial_end || 0) < 60 * 60 * 24;
 
     if (
       [
