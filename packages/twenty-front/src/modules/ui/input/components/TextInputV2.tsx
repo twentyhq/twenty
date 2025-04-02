@@ -22,6 +22,7 @@ const StyledContainer = styled.div<
   display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
+  position: relative;
 `;
 
 const StyledInputContainer = styled.div`

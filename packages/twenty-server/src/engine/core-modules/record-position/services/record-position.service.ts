@@ -4,30 +4,30 @@ import { isDefined } from 'class-validator';
 
 import {
   RecordPositionQueryArgs,
-  RecordPositionQueryFactory,
   RecordPositionQueryType,
-} from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
+} from 'src/engine/core-modules/record-position/types/record-position-query.type';
+import { buildRecordPositionQuery } from 'src/engine/core-modules/record-position/utils/build-record-position-query.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
-export type RecordPositionFactoryCreateArgs = {
+export type RecordPositionServiceCreateArgs = {
   value: number | 'first' | 'last';
   objectMetadata: { isCustom: boolean; nameSingular: string };
   workspaceId: string;
   index?: number;
 };
+
 @Injectable()
-export class RecordPositionFactory {
+export class RecordPositionService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly recordPositionQueryFactory: RecordPositionQueryFactory,
   ) {}
 
-  async create({
+  async buildRecordPosition({
     objectMetadata,
     value,
     workspaceId,
     index = 0,
-  }: RecordPositionFactoryCreateArgs): Promise<number> {
+  }: RecordPositionServiceCreateArgs): Promise<number> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -36,41 +36,43 @@ export class RecordPositionFactory {
     }
 
     if (value === 'first') {
-      const recordWithMinPosition = await this.findRecordPosition(
-        {
-          recordPositionQueryType: RecordPositionQueryType.FIND_MIN_POSITION,
-        },
-        objectMetadata,
-        dataSourceSchema,
-        workspaceId,
-      );
+      const recordWithMinPosition =
+        await this.createAndExecuteRecordPositionQuery(
+          {
+            recordPositionQueryType: RecordPositionQueryType.FIND_MIN_POSITION,
+          },
+          objectMetadata,
+          dataSourceSchema,
+          workspaceId,
+        );
 
       return isDefined(recordWithMinPosition?.position)
         ? recordWithMinPosition.position - index - 1
         : 1;
     }
 
-    const recordWithMaxPosition = await this.findRecordPosition(
-      {
-        recordPositionQueryType: RecordPositionQueryType.FIND_MAX_POSITION,
-      },
-      objectMetadata,
-      dataSourceSchema,
-      workspaceId,
-    );
+    const recordWithMaxPosition =
+      await this.createAndExecuteRecordPositionQuery(
+        {
+          recordPositionQueryType: RecordPositionQueryType.FIND_MAX_POSITION,
+        },
+        objectMetadata,
+        dataSourceSchema,
+        workspaceId,
+      );
 
     return isDefined(recordWithMaxPosition?.position)
       ? recordWithMaxPosition.position + index + 1
       : 1;
   }
 
-  private async findRecordPosition(
+  private async createAndExecuteRecordPositionQuery(
     recordPositionQueryArgs: RecordPositionQueryArgs,
     objectMetadata: { isCustom: boolean; nameSingular: string },
     dataSourceSchema: string,
     workspaceId: string,
   ) {
-    const [query, params] = this.recordPositionQueryFactory.create(
+    const [query, params] = buildRecordPositionQuery(
       recordPositionQueryArgs,
       objectMetadata,
       dataSourceSchema,

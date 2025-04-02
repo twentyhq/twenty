@@ -1,6 +1,7 @@
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 
+import { Milliseconds } from 'cache-manager';
 import { RedisCache } from 'cache-manager-redis-yet';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -17,7 +18,7 @@ export class CacheStorageService {
     return this.cache.get(`${this.namespace}:${key}`);
   }
 
-  async set<T>(key: string, value: T, ttl?: number) {
+  async set<T>(key: string, value: T, ttl?: Milliseconds) {
     return this.cache.set(`${this.namespace}:${key}`, value, ttl);
   }
 
@@ -25,7 +26,7 @@ export class CacheStorageService {
     return this.cache.del(`${this.namespace}:${key}`);
   }
 
-  async setAdd(key: string, value: string[], ttl?: number) {
+  async setAdd(key: string, value: string[], ttl?: Milliseconds) {
     if (value.length === 0) {
       return;
     }

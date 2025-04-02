@@ -703,6 +703,12 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String']['output'];
 };
 
+export type GetLoginTokenFromEmailVerificationTokenOutput = {
+  __typename?: 'GetLoginTokenFromEmailVerificationTokenOutput';
+  loginToken: AuthToken;
+  workspaceUrls: WorkspaceUrls;
+};
+
 export type GetServerlessFunctionSourceCodeInput = {
   /** The id of the function. */
   id: Scalars['ID']['input'];
@@ -908,7 +914,7 @@ export type Mutation = {
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginToken;
-  getLoginTokenFromEmailVerificationToken: LoginToken;
+  getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
@@ -2501,16 +2507,16 @@ export type WorkspaceNameAndId = {
   id: Scalars['String']['output'];
 };
 
+export type WorkspaceUrls = {
+  __typename?: 'WorkspaceUrls';
+  customUrl?: Maybe<Scalars['String']['output']>;
+  subdomainUrl: Scalars['String']['output'];
+};
+
 export type WorkspaceUrlsAndId = {
   __typename?: 'WorkspaceUrlsAndId';
   id: Scalars['String']['output'];
   workspaceUrls: WorkspaceUrls;
-};
-
-export type WorkspaceUrls = {
-  __typename?: 'workspaceUrls';
-  customUrl?: Maybe<Scalars['String']['output']>;
-  subdomainUrl: Scalars['String']['output'];
 };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
