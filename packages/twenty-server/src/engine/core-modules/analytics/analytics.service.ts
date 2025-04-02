@@ -54,9 +54,11 @@ export class AnalyticsService {
       } else {
         await this.clickhouseService.insert('events', [_data]);
       }
+
       return { success: true };
     } catch (error) {
       console.error('Failed to send event to ClickHouse:', error);
+
       return { success: false };
     }
   }
