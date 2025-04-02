@@ -1,11 +1,10 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
@@ -18,25 +17,23 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([InterIntegration], 'core'),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
           [InterIntegration, Workspace],
           'core',
         ),
-        TypeORMModule,
+        WorkspaceModule,
       ],
     }),
     HttpModule,
     EnvironmentModule,
-    WorkspaceModule,
   ],
   providers: [
-    TypeORMModule,
     InterIntegrationResolver,
     InterIntegrationService,
     EnvironmentService,
-    TypeORMService,
     InterService,
     InterResolver,
   ],
