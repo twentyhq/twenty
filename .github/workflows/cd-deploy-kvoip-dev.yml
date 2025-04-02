@@ -1,13 +1,14 @@
-name: Deploy to Production VPS
+name: Deploy to Production VPS KVOIP
 
 on:
   push:
     branches: [dev]
 
 env:
-  SSH_HOST: ${{ secrets.VPS_SSH_HOST }}
-  SSH_USER: ${{ secrets.VPS_SSH_USER }}
-  SSH_PASSWORD: ${{ secrets.VPS_SSH_PASSWORD }}
+  SSH_HOST: ${{ secrets.SSH_HOST }}
+  SSH_PORT: ${{ secrets.SSH_PORT }}
+  SSH_USER: ${{ secrets.SSH_USER }}
+  SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
   PROJECT_ROOT: /app/kvoip-v2
   DOCKER_DIR: ${{ env.PROJECT_ROOT }}/packages/twenty-docker
   REQUIRED_CONTAINERS: 'kvoipv2-pg kvoipv2-redis kvoipv2-server kvoipv2-worker'
@@ -22,6 +23,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ env.SSH_HOST }}
+          port: ${{ env.SSH_PORT }}
           username: ${{ env.SSH_USER }}
           password: ${{ env.SSH_PASSWORD }}
           script: |
@@ -32,6 +34,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ env.SSH_HOST }}
+          port: ${{ env.SSH_PORT }}
           username: ${{ env.SSH_USER }}
           password: ${{ env.SSH_PASSWORD }}
           script: |
@@ -46,6 +49,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ env.SSH_HOST }}
+          port: ${{ env.SSH_PORT }}
           username: ${{ env.SSH_USER }}
           password: ${{ env.SSH_PASSWORD }}
           script: |
@@ -59,6 +63,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ env.SSH_HOST }}
+          port: ${{ env.SSH_PORT }}
           username: ${{ env.SSH_USER }}
           password: ${{ env.SSH_PASSWORD }}
           script: |
@@ -72,6 +77,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ env.SSH_HOST }}
+          port: ${{ env.SSH_PORT }}
           username: ${{ env.SSH_USER }}
           password: ${{ env.SSH_PASSWORD }}
           script: |
@@ -112,6 +118,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ env.SSH_HOST }}
+          port: ${{ env.SSH_PORT }}
           username: ${{ env.SSH_USER }}
           password: ${{ env.SSH_PASSWORD }}
           script: |
