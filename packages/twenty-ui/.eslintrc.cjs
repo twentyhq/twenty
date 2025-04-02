@@ -3,9 +3,9 @@ module.exports = {
   ignorePatterns: ['!**/*'],
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['packages/twenty-ui/tsconfig.{json,*.json}'],
+        project: ['packages/twenty-ui/tsconfig.*.json'],
       },
       rules: {
         'no-restricted-imports': [

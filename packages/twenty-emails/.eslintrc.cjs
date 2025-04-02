@@ -3,9 +3,9 @@ module.exports = {
   ignorePatterns: ['!**/*'],
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['packages/twenty-emails/tsconfig.{json,*.json}'],
+        project: ['packages/twenty-emails/tsconfig.*.json'],
       },
       rules: {
         '@nx/dependency-checks': 'error',

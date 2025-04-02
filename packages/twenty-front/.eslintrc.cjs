@@ -1,11 +1,9 @@
 const path = require('path');
 
 module.exports = {
-  root: true,
   extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
   ignorePatterns: [
     '!packages/twenty-front/**/*',
-    // '!**/*',
     'node_modules',
     'mockServiceWorker.js',
     '**/generated*/*',

@@ -9,7 +9,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['*.ts'],
+      files: ['**/*.ts'],
       parserOptions: {
         project: ['packages/twenty-server/tsconfig.json'],
       },
