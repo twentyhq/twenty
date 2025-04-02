@@ -14,7 +14,6 @@ export class InterService {
 
   async getAccountBalance(integration: InterIntegration) {
     try {
-      // Exemplo de chamada à API do Banco Inter
       const response = await axios.get('https://api.inter.com.br/v1/balance', {
         headers: this.getAuthHeaders(integration),
       });

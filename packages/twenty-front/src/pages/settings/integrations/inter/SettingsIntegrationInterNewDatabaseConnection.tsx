@@ -20,8 +20,8 @@ export const settingsIntegrationInterConnectionFormSchema = z.object({
   integrationName: z.string().min(1),
   clientId: z.string(),
   clientSecret: z.string(),
-  privateKey: z.instanceof(File).optional(), // Novo campo
-  certificate: z.instanceof(File).optional(), // Novo campo
+  privateKey: z.instanceof(File).optional(),
+  certificate: z.instanceof(File).optional(),
 });
 
 export type SettingsIntegrationInterConnectionFormValues = z.infer<

@@ -1,18 +1,20 @@
+/* eslint-disable no-restricted-imports */
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable unused-imports/no-unused-vars */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card, CardFooter } from 'twenty-ui';
+import { Card, CardFooter, IconButton } from 'twenty-ui';
 
-import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
-import { useToggleWhatsappIntegration } from '@/settings/integrations/meta/whatsapp/hooks/useToggleWhatsappIntegrationDisable';
+import { useFindAllInterIntegrations } from '@/settings/integrations/inter/hooks/useFindAllInterIntegrations';
+import { useToggleInterIntegration } from '@/settings/integrations/inter/hooks/useToggleInterIntegrationDisable';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useEffect, useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
-import { IconPlus } from '@tabler/icons-react';
+import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
+import { IconPencil, IconPlus, IconPointFilled } from '@tabler/icons-react';
 
 type SettingsIntegrationInterDatabaseConectionsListCardProps = {
   integration: SettingsIntegration;
@@ -105,13 +107,13 @@ export const SettingsIntegrationInterDatabaseConectionsListCard = ({
   const [selectedIntegrationId, setSelectedIntegrationId] =
     useState<string>('');
 
-  const { whatsappIntegrations = [], refetchWhatsapp } =
-    useFindAllWhatsappIntegrations();
-  const { toggleWhatsappIntegrationDisable } = useToggleWhatsappIntegration();
+  const { interIntegrations = [], refetchInter } =
+    useFindAllInterIntegrations();
+  const { toggleInterIntegrationDisable } = useToggleInterIntegration();
 
   useEffect(() => {
-    refetchWhatsapp();
-  }, [refetchWhatsapp]);
+    refetchInter();
+  }, [refetchInter]);
 
   const handleStatusIntegration = (integrationId: string) => {
     setChangeType(ChangeType.DisableWhatsapp);
@@ -122,8 +124,8 @@ export const SettingsIntegrationInterDatabaseConectionsListCard = ({
   const handleConfirmChange = () => {
     switch (changeType) {
       case ChangeType.DisableWhatsapp:
-        toggleWhatsappIntegrationDisable(selectedIntegrationId);
-        refetchWhatsapp();
+        toggleInterIntegrationDisable(selectedIntegrationId);
+        refetchInter();
         return;
       default:
         return;
@@ -137,6 +139,48 @@ export const SettingsIntegrationInterDatabaseConectionsListCard = ({
   return (
     <>
       <StyledIntegrationsSection>
+        {interIntegrations.length > 0 && (
+          <>
+            {interIntegrations.map((interIntegrations) => (
+              <StyledCard key={interIntegrations.id}>
+                <StyledDiv>
+                  <StyledDatabaseLogo
+                    alt={interIntegrations.integrationName}
+                    src={integration.from.image}
+                  />
+                  {interIntegrations.integrationName}
+                </StyledDiv>
+                <StyledDiv>
+                  <SettingsSelectStatusPill
+                    dropdownId={`integration-${interIntegrations.id}`}
+                    options={[
+                      {
+                        Icon: IconPointFilled,
+                        label: 'Active',
+                        value: false,
+                      },
+                      {
+                        Icon: IconPointFilled,
+                        label: 'Deactive',
+                        value: true,
+                      },
+                    ]}
+                    //value={interIntegrations.disabled}
+                    onChange={(newValue) => {
+                      handleStatusIntegration(interIntegrations.id);
+                    }}
+                  />
+                  <IconButton
+                    onClick={() => handleEditIntegration(interIntegrations.id)}
+                    variant="tertiary"
+                    size="medium"
+                    Icon={IconPencil}
+                  />
+                </StyledDiv>
+              </StyledCard>
+            ))}
+          </>
+        )}
         <StyledFooter>
           <StyledButton onClick={() => navigate('new')}>
             <IconPlus size={theme.icon.size.md} />

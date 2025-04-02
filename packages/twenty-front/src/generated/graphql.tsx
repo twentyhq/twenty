@@ -1056,7 +1056,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   syncInterData: Scalars['Boolean'];
   toggleAgentStatus: Scalars['Boolean'];
-  toggleInterIntegrationStatus: InterIntegration;
+  toggleInterIntegrationStatus: Scalars['Boolean'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean'];
   track: Analytics;
   updateAgent: Agent;
@@ -3380,6 +3380,20 @@ export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; 
 
 
 export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
+
+export type ToggleInterIntegrationStatusMutationVariables = Exact<{
+  integrationId: Scalars['String'];
+}>;
+
+
+export type ToggleInterIntegrationStatusMutation = { __typename?: 'Mutation', toggleInterIntegrationStatus: boolean };
+
+export type InterIntegrationsByWorkspaceQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+}>;
+
+
+export type InterIntegrationsByWorkspaceQuery = { __typename?: 'Query', interIntegrationsByWorkspace: Array<{ __typename?: 'InterIntegration', id: string, integrationName: string, clientId: string, clientSecret: string, privateKey: string, certificate: string, status: string, expirationDate?: string | null, workspace: { __typename?: 'Workspace', id: any } }> };
 
 export type CreateWhatsappIntegrationMutationVariables = Exact<{
   createInput: CreateWhatsappIntegrationInput;
@@ -5868,6 +5882,82 @@ export function useGetSystemHealthStatusLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetSystemHealthStatusQueryHookResult = ReturnType<typeof useGetSystemHealthStatusQuery>;
 export type GetSystemHealthStatusLazyQueryHookResult = ReturnType<typeof useGetSystemHealthStatusLazyQuery>;
 export type GetSystemHealthStatusQueryResult = Apollo.QueryResult<GetSystemHealthStatusQuery, GetSystemHealthStatusQueryVariables>;
+export const ToggleInterIntegrationStatusDocument = gql`
+    mutation ToggleInterIntegrationStatus($integrationId: String!) {
+  toggleInterIntegrationStatus(integrationId: $integrationId)
+}
+    `;
+export type ToggleInterIntegrationStatusMutationFn = Apollo.MutationFunction<ToggleInterIntegrationStatusMutation, ToggleInterIntegrationStatusMutationVariables>;
+
+/**
+ * __useToggleInterIntegrationStatusMutation__
+ *
+ * To run a mutation, you first call `useToggleInterIntegrationStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleInterIntegrationStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleInterIntegrationStatusMutation, { data, loading, error }] = useToggleInterIntegrationStatusMutation({
+ *   variables: {
+ *      integrationId: // value for 'integrationId'
+ *   },
+ * });
+ */
+export function useToggleInterIntegrationStatusMutation(baseOptions?: Apollo.MutationHookOptions<ToggleInterIntegrationStatusMutation, ToggleInterIntegrationStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleInterIntegrationStatusMutation, ToggleInterIntegrationStatusMutationVariables>(ToggleInterIntegrationStatusDocument, options);
+      }
+export type ToggleInterIntegrationStatusMutationHookResult = ReturnType<typeof useToggleInterIntegrationStatusMutation>;
+export type ToggleInterIntegrationStatusMutationResult = Apollo.MutationResult<ToggleInterIntegrationStatusMutation>;
+export type ToggleInterIntegrationStatusMutationOptions = Apollo.BaseMutationOptions<ToggleInterIntegrationStatusMutation, ToggleInterIntegrationStatusMutationVariables>;
+export const InterIntegrationsByWorkspaceDocument = gql`
+    query InterIntegrationsByWorkspace($workspaceId: String!) {
+  interIntegrationsByWorkspace(workspaceId: $workspaceId) {
+    id
+    integrationName
+    clientId
+    clientSecret
+    privateKey
+    certificate
+    status
+    expirationDate
+    workspace {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useInterIntegrationsByWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useInterIntegrationsByWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInterIntegrationsByWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInterIntegrationsByWorkspaceQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useInterIntegrationsByWorkspaceQuery(baseOptions: Apollo.QueryHookOptions<InterIntegrationsByWorkspaceQuery, InterIntegrationsByWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<InterIntegrationsByWorkspaceQuery, InterIntegrationsByWorkspaceQueryVariables>(InterIntegrationsByWorkspaceDocument, options);
+      }
+export function useInterIntegrationsByWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InterIntegrationsByWorkspaceQuery, InterIntegrationsByWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<InterIntegrationsByWorkspaceQuery, InterIntegrationsByWorkspaceQueryVariables>(InterIntegrationsByWorkspaceDocument, options);
+        }
+export type InterIntegrationsByWorkspaceQueryHookResult = ReturnType<typeof useInterIntegrationsByWorkspaceQuery>;
+export type InterIntegrationsByWorkspaceLazyQueryHookResult = ReturnType<typeof useInterIntegrationsByWorkspaceLazyQuery>;
+export type InterIntegrationsByWorkspaceQueryResult = Apollo.QueryResult<InterIntegrationsByWorkspaceQuery, InterIntegrationsByWorkspaceQueryVariables>;
 export const CreateWhatsappIntegrationDocument = gql`
     mutation CreateWhatsappIntegration($createInput: CreateWhatsappIntegrationInput!) {
   createWhatsappIntegration(createInput: $createInput) {

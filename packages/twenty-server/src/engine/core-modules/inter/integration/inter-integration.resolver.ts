@@ -20,7 +20,7 @@ export class InterIntegrationResolver {
   }
 
   @Query(() => [InterIntegration])
-  interIntegrationsByWorkspace(
+  async interIntegrationsByWorkspace(
     @Args('workspaceId') workspaceId: string,
   ): Promise<InterIntegration[]> {
     return this.interIntegrationService.findAll(workspaceId);
@@ -40,7 +40,7 @@ export class InterIntegrationResolver {
     return this.interIntegrationService.update(updateInput);
   }
 
-  @Mutation(() => InterIntegration)
+  @Mutation(() => Boolean)
   toggleInterIntegrationStatus(
     @Args('integrationId') integrationId: string,
   ): Promise<InterIntegration> {
@@ -51,6 +51,6 @@ export class InterIntegrationResolver {
   async deleteInterIntegration(
     @Args('integrationId') integrationId: string,
   ): Promise<boolean> {
-    return this.interIntegrationService.delete(integrationId);
+    return this.interIntegrationService.remove(integrationId);
   }*/
 }
