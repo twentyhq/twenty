@@ -6,10 +6,7 @@ import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata
 import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 
 describe('OrderByInputFactory', () => {
-  const objectMetadata = {
-    objectMetadataItem: objectMetadataItemMock,
-    objectMetadataMapItem: objectMetadataItemMock,
-  };
+  const objectMetadata = { objectMetadataItem: objectMetadataItemMock };
 
   let service: OrderByInputFactory;
 
