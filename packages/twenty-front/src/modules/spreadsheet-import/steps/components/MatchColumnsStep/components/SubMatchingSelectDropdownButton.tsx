@@ -16,7 +16,7 @@ const StyledIconChevronDown = styled(IconChevronDown)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-export type SubMatchinSelectDropdownButtonProps<T> = {
+export type SubMatchingSelectDropdownButtonProps<T> = {
   option: SpreadsheetMatchedOptions<T> | Partial<SpreadsheetMatchedOptions<T>>;
   column:
     | SpreadsheetMatchedSelectColumn<T>
@@ -24,11 +24,11 @@ export type SubMatchinSelectDropdownButtonProps<T> = {
   placeholder: string;
 };
 
-export const SubMatchinSelectDropdownButton = <T extends string>({
+export const SubMatchingSelectDropdownButton = <T extends string>({
   option,
   column,
   placeholder,
-}: SubMatchinSelectDropdownButtonProps<T>) => {
+}: SubMatchingSelectDropdownButtonProps<T>) => {
   const { openDropdown } = useDropdown();
 
   const { fields } = useSpreadsheetImportInternal<T>();

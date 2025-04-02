@@ -1,5 +1,5 @@
 import { SubMatchingSelectRowLeftSelect } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowLeftSelect';
-import { SubMatchingSelectRowRightDropdow } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowRightDropdown';
+import { SubMatchingSelectRowRightDropdown } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowRightDropdown';
 import {
   SpreadsheetMatchedSelectColumn,
   SpreadsheetMatchedSelectOptionsColumn,
@@ -35,7 +35,7 @@ export const SubMatchingSelectRow = <T extends string>({
   return (
     <StyledRowContainer>
       <SubMatchingSelectRowLeftSelect option={option} />
-      <SubMatchingSelectRowRightDropdow
+      <SubMatchingSelectRowRightDropdown
         column={column}
         onSubChange={onSubChange}
         option={option}

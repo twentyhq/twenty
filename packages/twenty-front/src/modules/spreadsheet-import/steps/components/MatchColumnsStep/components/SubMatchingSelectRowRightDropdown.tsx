@@ -2,7 +2,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 
-import { SubMatchinSelectDropdownButton } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectDropdownButton';
+import { SubMatchingSelectDropdownButton } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectDropdownButton';
 import { SubMatchingSelectInput } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput';
 import {
   SpreadsheetMatchedSelectColumn,
@@ -18,7 +18,7 @@ const StyledDropdownContainer = styled.div`
   width: 100%;
 `;
 
-interface SubMatchingSelectRowRightDropdowProps<T> {
+interface SubMatchingSelectRowRightDropdownProps<T> {
   option: SpreadsheetMatchedOptions<T> | Partial<SpreadsheetMatchedOptions<T>>;
   column:
     | SpreadsheetMatchedSelectColumn<T>
@@ -30,12 +30,12 @@ interface SubMatchingSelectRowRightDropdowProps<T> {
     | Partial<SpreadsheetMatchedOptions<T>>;
 }
 
-export const SubMatchingSelectRowRightDropdow = <T extends string>({
+export const SubMatchingSelectRowRightDropdown = <T extends string>({
   option,
   column,
   onSubChange,
   placeholder,
-}: SubMatchingSelectRowRightDropdowProps<T>) => {
+}: SubMatchingSelectRowRightDropdownProps<T>) => {
   const dropdownId = `sub-matching-select-dropdown-${option.entry}`;
 
   const { closeDropdown } = useDropdown(dropdownId);
@@ -56,7 +56,7 @@ export const SubMatchingSelectRowRightDropdow = <T extends string>({
         dropdownId={dropdownId}
         dropdownPlacement="bottom-start"
         clickableComponent={
-          <SubMatchinSelectDropdownButton
+          <SubMatchingSelectDropdownButton
             column={column}
             option={option}
             placeholder={placeholder}
