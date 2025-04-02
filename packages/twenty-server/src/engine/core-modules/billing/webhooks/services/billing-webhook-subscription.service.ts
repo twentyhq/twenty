@@ -71,6 +71,7 @@ export class BillingWebhookSubscriptionService {
   ) {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
+      withDeleted: true,
     });
 
     if (!workspace) {
