@@ -7,7 +7,7 @@ import { JsonValue } from 'type-fest';
 
 export const JsonTree = ({
   value,
-  getNodeHightlighting,
+  getNodeHighlighting,
   shouldExpandNodeInitially,
   emptyArrayLabel,
   emptyObjectLabel,
@@ -16,7 +16,7 @@ export const JsonTree = ({
   arrowButtonExpandedLabel,
 }: {
   value: JsonValue;
-  getNodeHightlighting?: GetJsonNodeHighlighting;
+  getNodeHighlighting?: GetJsonNodeHighlighting;
   shouldExpandNodeInitially: (
     params: ShouldExpandNodeInitiallyProps,
   ) => boolean;
@@ -29,7 +29,7 @@ export const JsonTree = ({
   return (
     <JsonTreeContextProvider
       value={{
-        getNodeHightlighting,
+        getNodeHighlighting,
         shouldExpandNodeInitially,
         emptyArrayLabel,
         emptyObjectLabel,

@@ -4,7 +4,7 @@ import { createContext } from 'react';
 export type ShouldExpandNodeInitiallyProps = { keyPath: string; depth: number };
 
 export type JsonTreeContextType = {
-  getNodeHightlighting?: GetJsonNodeHighlighting;
+  getNodeHighlighting?: GetJsonNodeHighlighting;
   shouldExpandNodeInitially: (
     params: ShouldExpandNodeInitiallyProps,
   ) => boolean;

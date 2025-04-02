@@ -68,7 +68,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
           emptyStringLabel={t`[empty string]`}
           arrowButtonCollapsedLabel={t`Expand`}
           arrowButtonExpandedLabel={t`Collapse`}
-          getNodeHightlighting={
+          getNodeHighlighting={
             isDefined(stepOutput.error)
               ? setRedHighlightingForEveryNode
               : undefined

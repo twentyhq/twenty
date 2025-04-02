@@ -437,7 +437,7 @@ export const BlueHighlighting: Story = {
       name: 'John Doe',
       age: 30,
     },
-    getNodeHightlighting: () => 'blue',
+    getNodeHighlighting: () => 'blue',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -453,7 +453,7 @@ export const RedHighlighting: Story = {
       name: 'John Doe',
       age: 30,
     },
-    getNodeHightlighting: () => 'red',
+    getNodeHighlighting: () => 'red',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

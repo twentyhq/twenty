@@ -105,7 +105,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
             emptyStringLabel: t`[empty string]`,
             arrowButtonCollapsedLabel: t`Expand`,
             arrowButtonExpandedLabel: t`Collapse`,
-            getNodeHightlighting: (keyPath) =>
+            getNodeHighlighting: (keyPath) =>
               variablesUsedInStep.has(keyPath) ? 'blue' : undefined,
             shouldExpandNodeInitially: isFirstNodeDepthOfPreviousStep,
           }}

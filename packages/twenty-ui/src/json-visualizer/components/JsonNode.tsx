@@ -29,10 +29,10 @@ export const JsonNode = ({
   depth: number;
   keyPath: string;
 }) => {
-  const { getNodeHightlighting, emptyStringLabel } =
+  const { getNodeHighlighting, emptyStringLabel } =
     useJsonTreeContextOrThrow();
 
-  const highlighting = getNodeHightlighting?.(keyPath);
+  const highlighting = getNodeHighlighting?.(keyPath);
 
   if (isNull(value)) {
     return (
