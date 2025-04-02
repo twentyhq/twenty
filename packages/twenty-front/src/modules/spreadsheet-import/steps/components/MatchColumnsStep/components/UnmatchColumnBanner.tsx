@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui';
 
 const StyledBanner = styled(Banner)`
@@ -47,18 +48,21 @@ export const UnmatchColumnBanner = ({
   buttonOnClick?: () => void;
 }) => {
   const theme = useTheme();
+
   return (
     <StyledBanner>
       <IconInfoCircle color={theme.color.blue} size={theme.icon.size.md} />
-      <StyledClickableContainer onClick={buttonOnClick}>
-        <StyledText>{message}</StyledText>
-        {buttonOnClick && (
+      {isDefined(buttonOnClick) ? (
+        <StyledClickableContainer onClick={buttonOnClick}>
+          <StyledText>{message}</StyledText>
           <StyledTransitionedIconChevronDown
             isExpanded={isExpanded}
             size={theme.icon.size.md}
           />
-        )}
-      </StyledClickableContainer>
+        </StyledClickableContainer>
+      ) : (
+        <StyledText>{message}</StyledText>
+      )}
     </StyledBanner>
   );
 };
