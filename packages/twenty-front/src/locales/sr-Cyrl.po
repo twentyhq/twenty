@@ -427,6 +427,11 @@ msgstr "Омогућите пријаву преко Гуглове функци
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Омогућите пријаву преко Мајкрософтове функционалности за једнократну пријаву."
 
+#. js-lingui-id: U6bnfj
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Allow Support Team Access"
+msgstr ""
+
 #. js-lingui-id: wMg43c
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
@@ -2193,10 +2198,15 @@ msgstr ""
 msgid "Go to workflows"
 msgstr "Иди на токове рада"
 
+#. js-lingui-id: 6eo66Q
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Grant access to your workspace so we can troubleshoot problems."
+msgstr ""
+
 #. js-lingui-id: hWp1MY
 #: src/pages/settings/SettingsWorkspace.tsx
-msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-msgstr "Омогућите Twenty подршци привремени приступ вашем радном простору како би могли да реше проблеме или поврате садржај у ваше име. У сваком тренутку можете укинути приступ."
+#~ msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+#~ msgstr "Омогућите Twenty подршци привремени приступ вашем радном простору како би могли да реше проблеме или поврате садржај у ваше име. У сваком тренутку можете укинути приступ."
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2725,6 +2735,11 @@ msgstr "Управљање члановима"
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Manage security policies"
+msgstr ""
+
+#. js-lingui-id: 49MfD1
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Manage support access settings"
 msgstr ""
 
 #. js-lingui-id: 4cjU2u
@@ -4142,7 +4157,7 @@ msgid "Sum"
 msgstr "Збир"
 
 #. js-lingui-id: XYLcNv
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Support"
 msgstr "Подршка"
 

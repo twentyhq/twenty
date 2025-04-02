@@ -427,6 +427,11 @@ msgstr "Google의 SSO 기능을 통한 로그인 허용."
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Microsoft의 SSO 기능을 통한 로그인 허용."
 
+#. js-lingui-id: U6bnfj
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Allow Support Team Access"
+msgstr ""
+
 #. js-lingui-id: wMg43c
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
@@ -2193,10 +2198,15 @@ msgstr ""
 msgid "Go to workflows"
 msgstr "워크플로우로 이동"
 
+#. js-lingui-id: 6eo66Q
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Grant access to your workspace so we can troubleshoot problems."
+msgstr ""
+
 #. js-lingui-id: hWp1MY
 #: src/pages/settings/SettingsWorkspace.tsx
-msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-msgstr "Twenty 지원팀에 임시 접근 권한을 부여하여 문제를 해결하거나 콘텐츠를 복구할 수 있도록 하세요. 언제든지 접근 권한을 취소할 수 있습니다."
+#~ msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+#~ msgstr "Twenty 지원팀에 임시 접근 권한을 부여하여 문제를 해결하거나 콘텐츠를 복구할 수 있도록 하세요. 언제든지 접근 권한을 취소할 수 있습니다."
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2725,6 +2735,11 @@ msgstr "회원 관리"
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Manage security policies"
+msgstr ""
+
+#. js-lingui-id: 49MfD1
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Manage support access settings"
 msgstr ""
 
 #. js-lingui-id: 4cjU2u
@@ -4142,7 +4157,7 @@ msgid "Sum"
 msgstr "합계"
 
 #. js-lingui-id: XYLcNv
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Support"
 msgstr "지원"
 

@@ -427,6 +427,11 @@ msgstr "允许通过 Google 的单点登录功能登录。"
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "允许通过微软的单点登录功能登录。"
 
+#. js-lingui-id: U6bnfj
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Allow Support Team Access"
+msgstr ""
+
 #. js-lingui-id: wMg43c
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
@@ -2193,10 +2198,15 @@ msgstr ""
 msgid "Go to workflows"
 msgstr "访问工作流"
 
+#. js-lingui-id: 6eo66Q
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Grant access to your workspace so we can troubleshoot problems."
+msgstr ""
+
 #. js-lingui-id: hWp1MY
 #: src/pages/settings/SettingsWorkspace.tsx
-msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-msgstr "授予 Twenty 支持临时访问您的工作区，以便我们代表您排除故障或恢复内容。您可以随时撤销访问权限。"
+#~ msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+#~ msgstr "授予 Twenty 支持临时访问您的工作区，以便我们代表您排除故障或恢复内容。您可以随时撤销访问权限。"
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2725,6 +2735,11 @@ msgstr "管理成员"
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Manage security policies"
+msgstr ""
+
+#. js-lingui-id: 49MfD1
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Manage support access settings"
 msgstr ""
 
 #. js-lingui-id: 4cjU2u
@@ -4142,7 +4157,7 @@ msgid "Sum"
 msgstr "总和"
 
 #. js-lingui-id: XYLcNv
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Support"
 msgstr "支持"
 
