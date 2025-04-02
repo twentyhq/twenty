@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "0.51.0-canary",
+  "version": "0.50.5",
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
