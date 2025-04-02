@@ -26,32 +26,32 @@ import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/sin
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
 import {
-    ActionMenuEntryScope,
-    ActionMenuEntryType,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    IconBuildingSkyscraper,
-    IconCheckbox,
-    IconChevronDown,
-    IconChevronUp,
-    IconEyeOff,
-    IconFileExport,
-    IconFileImport,
-    IconHeart,
-    IconHeartOff,
-    IconPlus,
-    IconRefresh,
-    IconRotate2,
-    IconSettings,
-    IconSettingsAutomation,
-    IconTargetArrow,
-    IconTrash,
-    IconTrashX,
-    IconUser,
+  IconBuildingSkyscraper,
+  IconCheckbox,
+  IconChevronDown,
+  IconChevronUp,
+  IconEyeOff,
+  IconFileExport,
+  IconFileImport,
+  IconHeart,
+  IconHeartOff,
+  IconPlus,
+  IconRefresh,
+  IconRotate2,
+  IconSettings,
+  IconSettingsAutomation,
+  IconTargetArrow,
+  IconTrash,
+  IconTrashX,
+  IconUser,
 } from 'twenty-ui';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
