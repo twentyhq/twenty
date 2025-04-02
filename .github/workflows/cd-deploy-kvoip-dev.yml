@@ -113,8 +113,6 @@ jobs:
               exit 1
             fi
 
-
-
             echo "All required containers are healthy and running"
 
       - name: Detect migration file changes
@@ -125,7 +123,7 @@ jobs:
             packages/twenty-server/src/database/typeorm/core/migrations/**
             packages/twenty-server/src/database/typeorm/metadata/migrations/**
 
-      - name: SSH - Run migrations (if needed)
+      - name: SSH - Run migrations
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         uses: appleboy/ssh-action@v1
         with:
