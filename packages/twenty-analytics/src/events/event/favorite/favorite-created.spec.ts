@@ -1,5 +1,5 @@
 import { favoriteCreatedSchema } from './favorite-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('favoriteCreatedSchema', () => {
   const favoriteCreatedFixtures = fixtures.filter(

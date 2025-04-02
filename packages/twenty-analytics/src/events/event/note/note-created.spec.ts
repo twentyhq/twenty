@@ -1,5 +1,5 @@
 import { noteCreatedSchema } from './note-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('noteCreatedSchema', () => {
   const noteCreatedFixtures = fixtures.filter(

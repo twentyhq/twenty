@@ -1,5 +1,5 @@
 import { webhookResponseSchema } from './webhook-response';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('webhookResponseSchema', () => {
   const webhookResponseFixtures = fixtures.filter(

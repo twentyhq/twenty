@@ -1,5 +1,5 @@
 import { messageThreadCreatedSchema } from './message-thread-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('messageThreadCreatedSchema', () => {
   const messageThreadCreatedFixtures = fixtures.filter(

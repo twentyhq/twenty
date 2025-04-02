@@ -1,5 +1,5 @@
 import { timelineActivityCreatedSchema } from './timeline-activity-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('timelineActivityCreatedSchema', () => {
   const timelineActivityCreatedFixtures = fixtures.filter(

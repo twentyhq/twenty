@@ -1,5 +1,5 @@
 import { messageCreatedSchema } from './message-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('messageCreatedSchema', () => {
   const messageCreatedFixtures = fixtures.filter(

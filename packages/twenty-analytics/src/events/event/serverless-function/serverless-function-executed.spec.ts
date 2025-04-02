@@ -1,5 +1,5 @@
 import { serverlessFunctionExecutedSchema } from './serverless-function-executed';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('serverlessFunctionExecutedSchema', () => {
   const serverlessFunctionExecutedFixtures = fixtures.filter(

@@ -1,5 +1,5 @@
 import { viewFieldCreatedSchema } from './view-field-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('viewFieldCreatedSchema', () => {
   const viewFieldCreatedFixtures = fixtures.filter(

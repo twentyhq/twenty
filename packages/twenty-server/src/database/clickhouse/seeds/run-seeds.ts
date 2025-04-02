@@ -1,6 +1,6 @@
 import { createClient } from '@clickhouse/client';
 import { config } from 'dotenv';
-import { fixtures } from 'twenty-analytics/tests/fixtures';
+import { fixtures } from 'twenty-analytics';
 
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -17,10 +17,7 @@ async function seedEvents() {
 
     const processedFixtures = fixtures.map((event) => ({
       ...event,
-      payload:
-        typeof event.payload === 'object'
-          ? JSON.stringify(event.payload)
-          : event.payload,
+      payload: JSON.stringify(event.payload),
     }));
 
     await client.insert({

@@ -1,5 +1,5 @@
 import { apiKeyCreatedSchema } from './api-key-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('apiKeyCreatedSchema', () => {
   const apiKeyCreatedFixtures = fixtures.filter(

@@ -1,5 +1,5 @@
 import { companyCreatedSchema } from './company-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('companyCreatedSchema', () => {
   const companyCreatedFixtures = fixtures.filter(

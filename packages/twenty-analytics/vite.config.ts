@@ -1,7 +1,7 @@
-import * as path from 'path';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import path from 'path';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   root: __dirname,
@@ -10,14 +10,11 @@ export default defineConfig({
   plugins: [
     tsconfigPaths(),
     dts({
-      entryRoot: '.',
-      include: ['src', 'tests', 'types'],
+      entryRoot: 'src',
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
     }),
   ],
 
-  // Configuration for building your library.
-  // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
     outDir: './dist',
     reportCompressedSize: true,
@@ -27,11 +24,11 @@ export default defineConfig({
     lib: {
       entry: {
         index: 'src/index.ts',
-        tests: 'tests/fixtures.ts',
       },
       name: 'twenty-analytics',
       formats: ['es', 'cjs'],
-      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'mjs' : 'js'}`,
+      fileName: (format, entryName) =>
+        `${entryName}.${format === 'es' ? 'mjs' : 'js'}`,
     },
     rollupOptions: {
       external: ['zod'],

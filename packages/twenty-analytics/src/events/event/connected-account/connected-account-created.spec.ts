@@ -1,5 +1,5 @@
 import { connectedAccountCreatedSchema } from './connected-account-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('connectedAccountCreatedSchema', () => {
   const connectedAccountCreatedFixtures = fixtures.filter(

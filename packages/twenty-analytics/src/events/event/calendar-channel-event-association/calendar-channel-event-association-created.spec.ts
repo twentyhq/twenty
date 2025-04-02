@@ -1,5 +1,5 @@
 import { calendarChannelEventAssociationCreatedSchema } from './calendar-channel-event-association-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('calendarChannelEventAssociationCreatedSchema', () => {
   const calendarChannelEventAssociationCreatedFixtures = fixtures.filter(

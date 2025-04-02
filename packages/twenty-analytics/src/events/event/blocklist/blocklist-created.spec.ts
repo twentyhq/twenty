@@ -1,5 +1,5 @@
 import { blocklistCreatedSchema } from './blocklist-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('blocklistCreatedSchema', () => {
   const blocklistCreatedFixtures = fixtures.filter(

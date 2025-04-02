@@ -12,10 +12,10 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
-    "./tests/fixtures": {
-      "types": "./dist/tests.d.ts",
-      "import": "./dist/tests.mjs",
-      "require": "./dist/tests.js"
+    "./fixtures": {
+      "types": "./dist/fixtures.d.ts",
+      "import": "./dist/fixtures.mjs",
+      "require": "./dist/fixtures.js"
     }
   },
   "engines": {

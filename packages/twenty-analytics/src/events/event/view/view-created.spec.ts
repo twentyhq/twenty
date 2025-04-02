@@ -1,5 +1,5 @@
 import { viewCreatedSchema } from './view-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('viewCreatedSchema', () => {
   const viewCreatedFixtures = fixtures.filter(

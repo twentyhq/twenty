@@ -1,5 +1,5 @@
 import { taskTargetCreatedSchema } from './task-target-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('taskTargetCreatedSchema', () => {
   const taskTargetCreatedFixtures = fixtures.filter(

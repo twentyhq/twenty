@@ -1,5 +1,5 @@
 import { auditLogCreatedSchema } from './audit-log-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('auditLogCreatedSchema', () => {
   const auditLogCreatedFixtures = fixtures.filter(

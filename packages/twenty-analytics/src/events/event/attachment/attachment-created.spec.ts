@@ -1,5 +1,5 @@
 import { attachmentCreatedSchema } from './attachment-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('attachmentCreatedSchema', () => {
   const attachmentCreatedFixtures = fixtures.filter(

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { makePageview, makeEvent } from 'twenty-analytics';
+
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 
@@ -26,21 +28,17 @@ export class AnalyticsService {
 
     return this.clickhouseService.insert(
       createEventInput.action === 'pageview'
-        ? {
-            timestamp: new Date().toISOString(),
-            version: '1',
+        ? makePageview({
             userId: userId,
             workspaceId: workspaceId,
             ...createEventInput.payload,
-          }
-        : {
+          })
+        : makeEvent({
             action: createEventInput.action,
-            timestamp: new Date().toISOString(),
-            version: '1',
             userId: userId,
             workspaceId: workspaceId,
             payload: JSON.stringify(createEventInput.payload),
-          },
+          }),
     );
   }
 }

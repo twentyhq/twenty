@@ -1,5 +1,5 @@
 import { personCreatedSchema } from './person-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('personCreatedSchema', () => {
   const personCreatedFixtures = fixtures.filter(

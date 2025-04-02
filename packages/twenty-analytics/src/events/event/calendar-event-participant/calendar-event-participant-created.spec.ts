@@ -1,5 +1,5 @@
 import { calendarEventParticipantCreatedSchema } from './calendar-event-participant-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('calendarEventParticipantCreatedSchema', () => {
   const calendarEventParticipantCreatedFixtures = fixtures.filter(

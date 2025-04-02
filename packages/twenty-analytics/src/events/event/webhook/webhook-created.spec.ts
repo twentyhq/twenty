@@ -1,5 +1,5 @@
 import { webhookCreatedSchema } from './webhook-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('webhookCreatedSchema', () => {
   const webhookCreatedFixtures = fixtures.filter(

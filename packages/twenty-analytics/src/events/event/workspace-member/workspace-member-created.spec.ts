@@ -1,5 +1,5 @@
 import { workspaceMemberCreatedSchema } from './workspace-member-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('workspaceMemberCreatedSchema', () => {
   const workspaceMemberCreatedFixtures = fixtures.filter(

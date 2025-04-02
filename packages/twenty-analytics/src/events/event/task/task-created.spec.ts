@@ -1,5 +1,5 @@
 import { taskCreatedSchema } from './task-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('taskCreatedSchema', () => {
   const taskCreatedFixtures = fixtures.filter(

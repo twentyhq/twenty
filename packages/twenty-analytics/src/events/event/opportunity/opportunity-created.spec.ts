@@ -1,5 +1,5 @@
 import { opportunityCreatedSchema } from './opportunity-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('opportunityCreatedSchema', () => {
   const opportunityCreatedFixtures = fixtures.filter(

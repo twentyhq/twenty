@@ -1,5 +1,5 @@
 import { calendarEventCreatedSchema } from './calendar-event-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('calendarEventCreatedSchema', () => {
   const calendarEventCreatedFixtures = fixtures.filter(

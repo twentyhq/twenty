@@ -1,5 +1,5 @@
 import { functionExecuteSchema } from './function-execute';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('functionExecuteSchema', () => {
   const functionExecuteFixtures = fixtures.filter(

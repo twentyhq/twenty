@@ -1,5 +1,5 @@
 import { messageParticipantCreatedSchema } from './message-participant-created';
-import { fixtures } from '../../../../tests/fixtures';
+import { fixtures } from '../../../fixtures/fixtures';
 
 describe('messageParticipantCreatedSchema', () => {
   const messageParticipantCreatedFixtures = fixtures.filter(

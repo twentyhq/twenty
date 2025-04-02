@@ -33,7 +33,7 @@ import {
   webhookCreatedSchema,
   webhookResponseSchema,
   workspaceMemberCreatedSchema,
-} from '../src/events';
+} from '../events';
 
 export type EventSchema =
   | typeof apiKeyCreatedSchema
