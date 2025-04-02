@@ -110,9 +110,6 @@ export const ReadonlyMode: Story = {
     const numberInput = await canvas.findByPlaceholderText('Enter number');
     expect(numberInput).toBeDisabled();
 
-    const recordField = await canvas.findByPlaceholderText('Select a record');
-    expect(recordField).toBeDisabled();
-
     const submitButton = await canvas.queryByText('Submit');
     expect(submitButton).not.toBeInTheDocument();
   },

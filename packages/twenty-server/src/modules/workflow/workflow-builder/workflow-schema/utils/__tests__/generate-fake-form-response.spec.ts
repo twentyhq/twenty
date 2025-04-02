@@ -1,10 +1,24 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/search/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
+import { FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+
+const companyMockObjectMetadataItem = mockObjectMetadataItemsWithFieldMaps.find(
+  (item) => item.nameSingular === 'company',
+)!;
 
 describe('generateFakeFormResponse', () => {
-  it('should generate fake responses for a form schema', () => {
-    const schema = [
+  let objectMetadataRepository;
+
+  beforeEach(() => {
+    objectMetadataRepository = {
+      findOneOrFail: jest.fn().mockResolvedValue(companyMockObjectMetadataItem),
+    };
+  });
+
+  it('should generate fake responses for a form schema', async () => {
+    const schema: FormFieldMetadata[] = [
       {
         id: '96939213-49ac-4dee-949d-56e6c7be98e6',
         name: 'name',
@@ -19,34 +33,21 @@ describe('generateFakeFormResponse', () => {
       },
       {
         id: '96939213-49ac-4dee-949d-56e6c7be98e8',
-        name: 'email',
-        type: FieldMetadataType.EMAILS,
-        label: 'Email',
+        name: 'company',
+        type: 'RECORD',
+        label: 'Company',
+        settings: {
+          objectName: 'company',
+        },
       },
     ];
 
-    const result = generateFakeFormResponse(schema);
+    const result = await generateFakeFormResponse({
+      formMetadata: schema,
+      objectMetadataRepository,
+    });
 
     expect(result).toEqual({
-      email: {
-        isLeaf: false,
-        label: 'Email',
-        value: {
-          additionalEmails: {
-            isLeaf: true,
-            label: ' Additional Emails',
-            type: FieldMetadataType.RAW_JSON,
-            value: null,
-          },
-          primaryEmail: {
-            isLeaf: true,
-            label: ' Primary Email',
-            type: FieldMetadataType.TEXT,
-            value: 'My text',
-          },
-        },
-        icon: undefined,
-      },
       name: {
         isLeaf: true,
         label: 'Name',
@@ -60,6 +61,22 @@ describe('generateFakeFormResponse', () => {
         type: FieldMetadataType.NUMBER,
         value: 20,
         icon: undefined,
+      },
+      company: {
+        isLeaf: false,
+        label: 'Company',
+        value: {
+          _outputSchemaType: 'RECORD',
+          fields: {},
+          object: {
+            isLeaf: true,
+            label: 'Company',
+            fieldIdName: 'id',
+            icon: undefined,
+            nameSingular: 'company',
+            value: 'A company',
+          },
+        },
       },
     });
   });
