@@ -16,7 +16,7 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 
-const TRIAL_PERIOD_ALERT_TITLE = 'TRIAL_PERIOD_ALERT'; // title used in Stripe config
+const TRIAL_PERIOD_ALERT_TITLE = 'TRIAL_PERIOD_ALERT'; // to set in Stripe config
 
 @Injectable()
 export class BillingWebhookAlertService {
