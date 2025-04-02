@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/eslint-plugin-project-structure/folderStructure.schema.json",
-  "projectRoot": ".",
+  "projectRoot": "packages/twenty-front",
   "structureRoot": "src",
   "regexParameters": {
     "camelCase": "^[a-z]+([A-Za-z0-9]+)+",
