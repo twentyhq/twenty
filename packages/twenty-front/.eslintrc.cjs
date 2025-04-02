@@ -1,9 +1,11 @@
 const path = require('path');
 
 module.exports = {
+  root: true,
   extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
   ignorePatterns: [
-    '!**/*',
+    '!packages/twenty-front/**/*',
+    // '!**/*',
     'node_modules',
     'mockServiceWorker.js',
     '**/generated*/*',
@@ -17,11 +19,14 @@ module.exports = {
     'tsup.ui.index.tsx',
     '__mocks__',
   ],
+  parserOptions: {
+    project: ['packages/twenty-front/tsconfig.*.json'],
+  },
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['**/*.ts', '**/*.tsx'],
       parserOptions: {
-        project: ['packages/twenty-front/tsconfig.{json,*.json}'],
+        project: ['packages/twenty-front/tsconfig.*.json'],
       },
       plugins: ['project-structure'],
       settings: {
