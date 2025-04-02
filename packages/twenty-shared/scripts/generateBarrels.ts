@@ -1,6 +1,6 @@
 import prettier from '@prettier/sync';
 import * as fs from 'fs';
-import glob from 'glob';
+import { globSync } from 'glob';
 import path from 'path';
 import { Options } from 'prettier';
 import slash from 'slash';
@@ -60,15 +60,17 @@ const createTypeScriptFile = ({
   );
 };
 
-const getLastPathFolder = (path: string) => path.split('/').pop();
+const getLastPathFolder = (pathStr: string) => path.basename(pathStr);
 
-const getSubDirectoryPaths = (directoryPath: string): string[] =>
-  fs
-    .readdirSync(directoryPath)
-    .filter((fileOrDirectoryName) =>
-      fs.statSync(path.join(directoryPath, fileOrDirectoryName)).isDirectory(),
-    )
-    .map((subDirectoryName) => path.join(directoryPath, subDirectoryName));
+const getSubDirectoryPaths = (directoryPath: string): string[] => {
+  const pattern = slash(path.join(directoryPath, '*/'));
+  return globSync(pattern, {
+    ignore: [...EXCLUDED_DIRECTORIES],
+    cwd: SRC_PATH,
+    nodir: false,
+    maxDepth: 1,
+  }).sort((a, b) => a.localeCompare(b));
+};
 
 const partitionFileExportsByType = (declarations: DeclarationOccurence[]) => {
   return declarations.reduce<{
@@ -102,13 +104,17 @@ const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
   return exportByBarrel.map<createTypeScriptFileArgs>(
     ({ barrel: { moduleDirectory }, allFileExports }) => {
       const content = allFileExports
+        .sort((a, b) => a.file.localeCompare(b.file))
         .map(({ exports, file }) => {
           const { otherDeclarations, typeAndInterfaceDeclarations } =
             partitionFileExportsByType(exports);
 
-          const fileWithoutExtension = file.split('.').slice(0, -1).join('.');
+          const fileWithoutExtension = path.parse(file).name;
           const pathToImport = slash(
-            path.relative(moduleDirectory, fileWithoutExtension),
+            path.relative(
+              moduleDirectory,
+              path.join(path.dirname(file), fileWithoutExtension),
+            ),
           );
           const mapDeclarationNameAndJoin = (
             declarations: DeclarationOccurence[],
@@ -184,10 +190,12 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
 const computePackageJsonFilesAndPreconstructConfig = (
   moduleDirectories: string[],
 ) => {
-  const entrypoints = [...moduleDirectories.map(getLastPathFolder)];
+  const entrypoints = moduleDirectories.map(getLastPathFolder);
 
   return {
     preconstruct: {
+      // TODO refactor to merge in existing configuration
+      tsconfig: 'tsconfig.lib.json',
       entrypoints: [
         './index.ts',
         ...entrypoints.map((module) => `./${module}/index.ts`),
@@ -216,19 +224,21 @@ const EXCLUDED_EXTENSIONS = [
   '**/*.spec.tsx',
   '**/*.stories.ts',
   '**/*.stories.tsx',
-];
+] as const;
 const EXCLUDED_DIRECTORIES = [
   '**/__tests__/**',
   '**/__mocks__/**',
   '**/__stories__/**',
   '**/internal/**',
-];
+] as const;
 function getTypeScriptFiles(
   directoryPath: string,
   includeIndex: boolean = false,
 ): string[] {
-  const pattern = path.join(directoryPath, '**/*.{ts,tsx}');
-  const files = glob.sync(pattern, {
+  const pattern = slash(path.join(directoryPath, '**', '*.{ts,tsx}'));
+  const files = globSync(pattern, {
+    cwd: SRC_PATH,
+    nodir: true,
     ignore: [...EXCLUDED_EXTENSIONS, ...EXCLUDED_DIRECTORIES],
   });
 
@@ -376,7 +386,7 @@ type ExportByBarrel = {
 const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
   return barrelDirectories.map<ExportByBarrel>((moduleDirectory) => {
     const moduleExportsPerFile = findAllExports(moduleDirectory);
-    const moduleName = moduleDirectory.split('/').pop();
+    const moduleName = getLastPathFolder(moduleDirectory);
     if (!moduleName) {
       throw new Error(
         `Should never occur moduleName not found ${moduleDirectory}`,

@@ -5,7 +5,6 @@ import { VariableChipStandalone } from '@/object-record/record-field/form-types/
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -18,8 +17,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconChevronDown, SelectOption, VisibilityHidden } from 'twenty-ui';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -245,7 +244,7 @@ export const FormSelectFieldInput = ({
                     <SelectDisplay
                       color={selectedOption.color ?? 'transparent'}
                       label={selectedOption.label}
-                      Icon={selectedOption.icon ?? undefined}
+                      Icon={selectedOption.Icon ?? undefined}
                       preventPadding={preventDisplayPadding}
                     />
                   </StyledSelectDisplayContainer>
@@ -269,7 +268,7 @@ export const FormSelectFieldInput = ({
                     <SelectDisplay
                       color={selectedOption.color ?? 'transparent'}
                       label={selectedOption.label}
-                      Icon={selectedOption.icon ?? undefined}
+                      Icon={selectedOption.Icon ?? undefined}
                       preventPadding={preventDisplayPadding}
                     />
                   </StyledSelectDisplayContainer>

@@ -1,14 +1,14 @@
 import {
-  FieldValidationDefinition,
   SpreadsheetImportFieldType,
+  SpreadsheetImportFieldValidationDefinition,
 } from '@/spreadsheet-import/types';
 import { IconComponent } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 export type AvailableFieldForImport = {
-  icon: IconComponent;
+  Icon: IconComponent;
   label: string;
   key: string;
   fieldType: SpreadsheetImportFieldType;
-  fieldValidationDefinitions?: FieldValidationDefinition[];
+  fieldValidationDefinitions?: SpreadsheetImportFieldValidationDefinition[];
   fieldMetadataType: FieldMetadataType;
 };

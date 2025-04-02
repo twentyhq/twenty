@@ -1,12 +1,12 @@
+import { AdvancedFilterValueInputDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
@@ -55,22 +55,15 @@ export const AdvancedFilterValueInputDropdownButton = ({
       {operandHasNoInput ? (
         <></>
       ) : isDisabled ? (
-        <SelectControl
-          isDisabled
-          selectedOption={{
-            label: filter?.displayValue ?? '',
-            value: null,
-          }}
+        <AdvancedFilterValueInputDropdownButtonClickableSelect
+          recordFilterId={recordFilterId}
         />
       ) : (
         <Dropdown
           dropdownId={dropdownId}
           clickableComponent={
-            <SelectControl
-              selectedOption={{
-                label: filter?.displayValue ?? '',
-                value: null,
-              }}
+            <AdvancedFilterValueInputDropdownButtonClickableSelect
+              recordFilterId={recordFilterId}
             />
           }
           onOpen={() => {
@@ -79,12 +72,10 @@ export const AdvancedFilterValueInputDropdownButton = ({
             setSelectedFilter(filter);
           }}
           dropdownComponents={
-            <DropdownMenuItemsContainer>
-              <ObjectFilterDropdownFilterInput />
-            </DropdownMenuItemsContainer>
+            <ObjectFilterDropdownFilterInput recordFilterId={filter.id} />
           }
           dropdownHotkeyScope={{ scope: dropdownId }}
-          dropdownOffset={{ y: 8, x: 0 }}
+          dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
           dropdownPlacement="bottom-start"
           dropdownMenuWidth={280}
         />

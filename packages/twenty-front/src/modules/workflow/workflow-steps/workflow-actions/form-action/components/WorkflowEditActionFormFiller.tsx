@@ -10,6 +10,7 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
 import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useSubmitFormStep';
 import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
@@ -129,6 +130,10 @@ export const WorkflowEditActionFormFiller = ({
             }}
             defaultValue={field.value ?? ''}
             readonly={actionOptions.readonly}
+            placeholder={
+              field.placeholder ??
+              getDefaultFormFieldSettings(field.type).placeholder
+            }
           />
         ))}
       </WorkflowStepBody>

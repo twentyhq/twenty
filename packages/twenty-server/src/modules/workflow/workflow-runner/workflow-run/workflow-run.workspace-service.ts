@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   StepOutput,
@@ -8,6 +10,7 @@ import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
@@ -20,6 +23,8 @@ export class WorkflowRunWorkspaceService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly recordPositionService: RecordPositionService,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async createWorkflowRun({
@@ -39,13 +44,57 @@ export class WorkflowRunWorkspaceService {
         workflowVersionId,
       );
 
+    const workflowRepository =
+      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+        'workflow',
+      );
+
+    const workflow = await workflowRepository.findOne({
+      where: {
+        id: workflowVersion.workflowId,
+      },
+    });
+
+    if (!workflow) {
+      throw new WorkflowRunException(
+        'Workflow id is invalid',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    const workflowRunCount = await workflowRunRepository.count({
+      where: {
+        workflowId: workflow.id,
+      },
+    });
+
+    const workspaceId =
+      this.scopedWorkspaceContextFactory.create()?.workspaceId;
+
+    if (!workspaceId) {
+      throw new WorkflowRunException(
+        'Workspace id is invalid',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    const position = await this.recordPositionService.buildRecordPosition({
+      value: 'first',
+      objectMetadata: {
+        isCustom: false,
+        nameSingular: 'workflowRun',
+      },
+      workspaceId,
+    });
+
     return (
       await workflowRunRepository.save({
-        name: `Execution of ${workflowVersion.name}`,
+        name: `#${workflowRunCount + 1} - ${workflow.name}`,
         workflowVersionId,
         createdBy,
-        workflowId: workflowVersion.workflowId,
+        workflowId: workflow.id,
         status: WorkflowRunStatus.NOT_STARTED,
+        position,
       })
     ).id;
   }

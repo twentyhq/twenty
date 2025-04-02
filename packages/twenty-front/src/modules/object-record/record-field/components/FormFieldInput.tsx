@@ -48,6 +48,7 @@ type FormFieldInputProps = {
   onChange: (value: JsonValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  placeholder?: string;
 };
 
 export const FormFieldInput = ({
@@ -56,15 +57,16 @@ export const FormFieldInput = ({
   onChange,
   VariablePicker,
   readonly,
+  placeholder,
 }: FormFieldInputProps) => {
   return isFieldNumber(field) ? (
     <FormNumberFieldInput
       label={field.label}
       defaultValue={defaultValue as string | number | undefined}
       onChange={onChange}
-      placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldBoolean(field) ? (
     <FormBooleanFieldInput
@@ -79,9 +81,9 @@ export const FormFieldInput = ({
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onChange={onChange}
-      placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldSelect(field) ? (
     <FormSelectFieldInput
@@ -92,7 +94,7 @@ export const FormFieldInput = ({
       options={field.metadata.options}
       clearLabel={field.label}
       readonly={readonly}
-      placeholder={field.label}
+      placeholder={placeholder}
     />
   ) : isFieldFullName(field) ? (
     <FormFullNameFieldInput
@@ -141,6 +143,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldDateTime(field) ? (
     <FormDateTimeFieldInput
@@ -158,25 +161,25 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       options={field.metadata.options}
       readonly={readonly}
-      placeholder={field.label}
+      placeholder={placeholder}
     />
   ) : isFieldRawJson(field) ? (
     <FormRawJsonFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onChange={onChange}
-      placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldUuid(field) ? (
     <FormUuidFieldInput
       label={field.label}
       defaultValue={defaultValue as string | null | undefined}
       onChange={onChange}
-      placeholder={field.label}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   ) : isFieldCurrency(field) ? (
     <FormCurrencyFieldInput

@@ -72,6 +72,7 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
 
     const firstOperand = getRecordFilterOperands({
       filterType,
+      subFieldName,
     })[0];
 
     setSelectedOperandInDropdown(firstOperand);
@@ -92,14 +93,14 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       operand: firstOperand,
       value,
       recordFilterGroupId: existingRecordFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup:
+        existingRecordFilter?.positionInRecordFilterGroup,
       type: filterType,
       label: fieldMetadataItem.label,
       subFieldName,
     });
 
-    if (isDefined(subFieldName)) {
-      setSubFieldNameUsedInDropdown(subFieldName);
-    }
+    setSubFieldNameUsedInDropdown(subFieldName);
 
     setObjectFilterDropdownSearchInput('');
   };

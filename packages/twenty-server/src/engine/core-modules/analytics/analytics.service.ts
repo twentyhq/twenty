@@ -24,11 +24,11 @@ export class AnalyticsService {
       return { success: true };
     }
 
-    let data;
+    let _data;
 
     switch (createEventInput.action) {
       case 'pageview':
-        data = {
+        _data = {
           timestamp: new Date().toISOString(),
           version: '1',
           userId: userId,
@@ -37,7 +37,7 @@ export class AnalyticsService {
         };
         break;
       default:
-        data = {
+        _data = {
           action: createEventInput.action,
           timestamp: new Date().toISOString(),
           version: '1',
@@ -50,9 +50,9 @@ export class AnalyticsService {
 
     try {
       if (createEventInput.action === 'pageview') {
-        await this.clickhouseService.insert('pageview', [data]);
+        await this.clickhouseService.insert('pageview', [_data]);
       } else {
-        await this.clickhouseService.insert('events', [data]);
+        await this.clickhouseService.insert('events', [_data]);
       }
       return { success: true };
     } catch (error) {
