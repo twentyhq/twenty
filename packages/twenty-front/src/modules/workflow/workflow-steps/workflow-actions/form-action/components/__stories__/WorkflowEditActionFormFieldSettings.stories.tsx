@@ -1,11 +1,12 @@
 import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowEditActionFormFieldSettings } from '../WorkflowEditActionFormFieldSettings';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 const meta: Meta<typeof WorkflowEditActionFormFieldSettings> = {
   title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormFieldSettings',
@@ -14,6 +15,7 @@ const meta: Meta<typeof WorkflowEditActionFormFieldSettings> = {
     WorkflowStepActionDrawerDecorator,
     ComponentDecorator,
     I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
   ],
 };
 
@@ -86,6 +88,35 @@ export const NumberFieldSettings: Story = {
     expect(placeholderInput).toBeInTheDocument();
 
     const closeButton = await canvas.findByRole('button');
+    await userEvent.click(closeButton);
+    expect(args.onClose).toHaveBeenCalled();
+  },
+};
+
+export const SingleRecordFieldSettings: Story = {
+  args: {
+    field: {
+      id: 'field-3',
+      name: 'record',
+      label: 'Record',
+      type: 'RECORD',
+      settings: {
+        objectName: 'company',
+      },
+    },
+    onClose: fn(),
+  },
+
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const typeSelect = await canvas.findByText('Record');
+    expect(typeSelect).toBeVisible();
+
+    const objectSelect = await canvas.findByText('Companies');
+    expect(objectSelect).toBeVisible();
+
+    const closeButton = await canvas.findByTestId('close-button');
     await userEvent.click(closeButton);
     expect(args.onClose).toHaveBeenCalled();
   },

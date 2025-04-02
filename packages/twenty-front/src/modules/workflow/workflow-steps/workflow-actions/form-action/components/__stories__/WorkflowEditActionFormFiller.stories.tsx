@@ -54,6 +54,16 @@ const mockAction: WorkflowFormAction = {
         placeholder: 'Enter number',
         settings: {},
       },
+      {
+        id: 'field-3',
+        name: 'record',
+        label: 'Record',
+        type: 'RECORD',
+        placeholder: 'Select a record',
+        settings: {
+          objectName: 'company',
+        },
+      },
     ],
     outputSchema: {},
     errorHandlingOptions: {
@@ -78,6 +88,9 @@ export const Default: Story = {
 
     const numberField = await canvas.findByText('Number Field');
     expect(numberField).toBeVisible();
+
+    const recordField = await canvas.findByText('Record');
+    expect(recordField).toBeVisible();
   },
 };
 
@@ -96,6 +109,9 @@ export const ReadonlyMode: Story = {
 
     const numberInput = await canvas.findByPlaceholderText('Enter number');
     expect(numberInput).toBeDisabled();
+
+    const recordField = await canvas.findByPlaceholderText('Select a record');
+    expect(recordField).toBeDisabled();
 
     const submitButton = await canvas.queryByText('Submit');
     expect(submitButton).not.toBeInTheDocument();

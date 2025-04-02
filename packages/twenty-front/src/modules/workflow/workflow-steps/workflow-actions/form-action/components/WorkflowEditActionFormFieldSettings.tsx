@@ -97,6 +97,7 @@ export const WorkflowEditActionFormFieldSettings = ({
         </StyledTitleContainer>
         <StyledCloseButtonContainer>
           <LightIconButton
+            testId="close-button"
             Icon={IconX}
             size="small"
             accent="secondary"
