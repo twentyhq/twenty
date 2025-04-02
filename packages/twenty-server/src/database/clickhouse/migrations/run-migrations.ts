@@ -9,7 +9,7 @@ config({
   override: true,
 });
 
-console.log('>>>>>>>>>>>>>>', process.env.CLICKHOUSE_URL);
+console.log('>>>>>>>>>>>>>>', process.env);
 const client = createClient({
   url: process.env.CLICKHOUSE_URL,
 });
