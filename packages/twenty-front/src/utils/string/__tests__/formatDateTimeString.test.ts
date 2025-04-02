@@ -47,7 +47,7 @@ describe('formatDateTimeString', () => {
     expect(result).toBe(mockRelativeDate);
   });
 
-  it('should format date as datetime when displayAsRelativeDate is false', () => {
+  it('should format date as datetime when displayAsRelativeDate is not present', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = '1 Jan, 2023 12:00';
 
@@ -60,7 +60,6 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
-      displayFormat: 'relative_date',
     });
 
     expect(result).toBe(mockFormattedDate);
