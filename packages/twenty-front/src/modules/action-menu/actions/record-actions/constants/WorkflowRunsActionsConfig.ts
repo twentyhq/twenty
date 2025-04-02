@@ -89,31 +89,31 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
       isPinned: false,
       position: 3,
     },
-    [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-      position: 4,
-    },
-    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
-      position: 5,
-    },
     [SingleRecordActionKeys.EXPORT]: {
-      position: 6,
+      position: 4,
       label: msg`Export run`,
     },
     [MultipleRecordsActionKeys.EXPORT]: {
-      position: 7,
+      position: 5,
       label: msg`Export runs`,
     },
     [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
-      position: 8,
+      position: 6,
       label: msg`Export view`,
     },
     [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
-      position: 9,
+      position: 7,
       label: msg`See deleted runs`,
     },
     [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
-      position: 10,
+      position: 8,
       label: msg`Hide deleted runs`,
+    },
+    [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
+      position: 9,
+    },
+    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
+      position: 10,
     },
     [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
       position: 12,

@@ -140,38 +140,38 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
     NoSelectionRecordActionKeys.GO_TO_TASKS,
   ],
   {
-    [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-      position: 5,
-      label: msg`Navigate to previous version`,
-    },
-    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
-      position: 6,
-      label: msg`Navigate to next version`,
-    },
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
-      position: 7,
+      position: 5,
       isPinned: false,
     },
     [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
-      position: 8,
+      position: 6,
       isPinned: false,
     },
     [SingleRecordActionKeys.EXPORT]: {
-      position: 9,
+      position: 7,
       label: msg`Export version`,
     },
     [MultipleRecordsActionKeys.EXPORT]: {
-      position: 10,
+      position: 8,
       label: msg`Export versions`,
     },
     [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
-      position: 11,
+      position: 9,
     },
     [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
-      position: 12,
+      position: 10,
     },
     [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
+      position: 11,
+    },
+    [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
+      position: 12,
+      label: msg`Navigate to previous version`,
+    },
+    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
       position: 13,
+      label: msg`Navigate to next version`,
     },
     [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
       position: 16,

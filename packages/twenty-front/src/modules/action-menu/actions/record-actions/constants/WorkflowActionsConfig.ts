@@ -205,58 +205,58 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
       position: 0,
       label: msg`Create new workflow`,
     },
-    [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-      position: 8,
-      label: msg`Navigate to previous workflow`,
-    },
-    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
-      position: 9,
-      label: msg`Navigate to next workflow`,
-    },
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
-      position: 10,
+      position: 8,
     },
     [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
-      position: 11,
+      position: 9,
     },
     [SingleRecordActionKeys.DELETE]: {
-      position: 12,
+      position: 10,
       label: msg`Delete workflow`,
     },
     [MultipleRecordsActionKeys.DELETE]: {
-      position: 13,
+      position: 11,
       label: msg`Delete workflows`,
     },
     [SingleRecordActionKeys.DESTROY]: {
-      position: 14,
+      position: 12,
       label: msg`Permanently destroy workflow`,
     },
     [SingleRecordActionKeys.EXPORT]: {
-      position: 15,
+      position: 13,
       label: msg`Export workflow`,
     },
     [MultipleRecordsActionKeys.EXPORT]: {
-      position: 16,
+      position: 14,
       label: msg`Export workflows`,
     },
     [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
-      position: 17,
+      position: 15,
       label: msg`Export view`,
     },
     [MultipleRecordsActionKeys.DESTROY]: {
-      position: 18,
+      position: 16,
       label: msg`Permanently destroy workflows`,
     },
+    [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
+      position: 17,
+      label: msg`Navigate to previous workflow`,
+    },
+    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
+      position: 18,
+      label: msg`Navigate to next workflow`,
+    },
     [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
-      position: 20,
+      position: 19,
       label: msg`See deleted workflows`,
     },
     [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
-      position: 21,
+      position: 20,
       label: msg`Hide deleted workflows`,
     },
     [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
-      position: 22,
+      position: 21,
       label: msg`Import workflows`,
     },
     [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
