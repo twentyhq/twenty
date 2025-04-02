@@ -287,6 +287,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     await this.featureFlagRepository.save(stripeFeatureFlag);
 
+    // await this.configureWorkspaceTelephony(workspace);
+
     return await this.workspaceRepository.findOneBy({
       id: workspace.id,
     });

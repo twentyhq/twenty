@@ -102,6 +102,8 @@ export class WorkspaceResolver {
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
+    console.log('entering in activateWorkspace');
+
     return await this.workspaceService.activateWorkspace(user, workspace, data);
   }
 
