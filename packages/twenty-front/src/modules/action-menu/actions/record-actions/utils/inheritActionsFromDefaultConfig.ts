@@ -1,35 +1,14 @@
 import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
-import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
-import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionHook } from '@/action-menu/actions/types/ActionHook';
-import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { ConfigAction } from '@/action-menu/actions/types/ConfigAction';
+import { DefaultRecordActionConfigKeys } from '@/action-menu/actions/types/DefaultRecordActionConfigKeys';
 
 export const inheritActionsFromDefaultConfig = (
-  config: Record<
-    string,
-    ActionMenuEntry & {
-      shouldBeRegistered?: (
-        params: ShouldBeRegisteredFunctionParams,
-      ) => boolean;
-      useAction?: ActionHook;
-    }
-  >,
-  actionKeys: (
-    | NoSelectionRecordActionKeys
-    | SingleRecordActionKeys
-    | MultipleRecordsActionKeys
-  )[],
+  config: Record<string, ConfigAction>,
+  actionKeys: DefaultRecordActionConfigKeys[],
   propertiesToOverride: Partial<
-    Record<
-      | NoSelectionRecordActionKeys
-      | SingleRecordActionKeys
-      | MultipleRecordsActionKeys,
-      Partial<ActionMenuEntry>
-    >
+    Record<DefaultRecordActionConfigKeys, Partial<ConfigAction>>
   >,
-): Record<string, ActionMenuEntry> => {
+): Record<string, ConfigAction> => {
   const actionsFromDefaultConfig = actionKeys.reduce(
     (acc, key) => ({
       ...acc,
@@ -38,7 +17,7 @@ export const inheritActionsFromDefaultConfig = (
         ...propertiesToOverride[key],
       },
     }),
-    {} as Record<string, ActionMenuEntry>,
+    {} as Record<string, ConfigAction>,
   );
 
   return {

@@ -23,11 +23,9 @@ import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/act
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { useRestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRestoreSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
+import { ConfigAction } from '@/action-menu/actions/types/ConfigAction';
 import {
-  ActionMenuEntry,
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
@@ -60,10 +58,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | NoSelectionRecordActionKeys
   | SingleRecordActionKeys
   | MultipleRecordsActionKeys,
-  ActionMenuEntry & {
-    useAction: ActionHook;
-    shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
-  }
+  ConfigAction
 > = {
   [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
     type: ActionMenuEntryType.Standard,
