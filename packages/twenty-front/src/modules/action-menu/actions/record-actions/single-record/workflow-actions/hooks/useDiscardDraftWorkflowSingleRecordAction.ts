@@ -12,13 +12,8 @@ export const useDiscardDraftWorkflowSingleRecordAction: ActionHookWithoutObjectM
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-    const shouldBeRegistered =
-      isDefined(workflowWithCurrentVersion) &&
-      workflowWithCurrentVersion.versions.length > 1 &&
-      workflowWithCurrentVersion.currentVersion.status === 'DRAFT';
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
+      if (!isDefined(workflowWithCurrentVersion)) {
         return;
       }
 
@@ -28,7 +23,6 @@ export const useDiscardDraftWorkflowSingleRecordAction: ActionHookWithoutObjectM
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

@@ -1,15 +1,13 @@
-import { ActionHook } from '@/action-menu/actions/types/ActionHook';
+import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
 import { wrapActionInCallbacks } from '@/action-menu/actions/utils/wrapActionInCallbacks';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useContext, useEffect } from 'react';
 
 type RegisterRecordActionEffectProps = {
-  action: ActionMenuEntry & {
-    useAction: ActionHook;
-  };
+  action: RecordConfigAction;
   objectMetadataItem: ObjectMetadataItem;
 };
 
@@ -17,7 +15,7 @@ export const RegisterRecordActionEffect = ({
   action,
   objectMetadataItem,
 }: RegisterRecordActionEffectProps) => {
-  const { shouldBeRegistered, onClick, ConfirmationModal } = action.useAction({
+  const { onClick, ConfirmationModal } = action.useAction({
     objectMetadataItem,
   });
 
@@ -35,6 +33,12 @@ export const RegisterRecordActionEffect = ({
     onActionStartedCallback,
     onActionExecutedCallback,
   });
+
+  const params = useShouldActionBeRegisteredParams({
+    objectMetadataItem,
+  });
+
+  const shouldBeRegistered = action.shouldBeRegistered(params);
 
   useEffect(() => {
     if (shouldBeRegistered) {

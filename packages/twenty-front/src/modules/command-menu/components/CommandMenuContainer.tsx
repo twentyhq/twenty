@@ -1,8 +1,8 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
-import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
+import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -144,16 +144,16 @@ export const CommandMenuContainer = ({
                   isInRightDrawer: true,
                   onActionExecutedCallback: ({ key }) => {
                     if (
-                      key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
+                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS &&
                       key !==
-                        RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
+                        RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK &&
                       key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
                     ) {
                       toggleCommandMenu();
                     }
 
                     if (
-                      key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK
+                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK
                     ) {
                       setCommandMenuSearch('');
                     }
