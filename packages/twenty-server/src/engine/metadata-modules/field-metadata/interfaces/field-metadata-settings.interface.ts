@@ -13,6 +13,15 @@ export type FieldMetadataDefaultSettings = {
   isForeignKey?: boolean;
 };
 
+export enum DateDisplayFormat {
+  FULL_DATE = 'full_date',
+  RELATIVE_DATE = 'relative_date',
+  DATE = 'date',
+  TIME = 'time',
+  YEAR = 'year',
+  CUSTOM = 'custom'
+}
+
 export type FieldNumberVariant = 'number' | 'percentage';
 
 export type FieldMetadataNumberSettings = {
@@ -26,11 +35,11 @@ export type FieldMetadataTextSettings = {
 };
 
 export type FieldMetadataDateSettings = {
-  displayAsRelativeDate?: boolean;
+  displayFormat?: DateDisplayFormat;
 };
 
 export type FieldMetadataDateTimeSettings = {
-  displayAsRelativeDate?: boolean;
+  displayFormat?: DateDisplayFormat
 };
 
 export type FieldMetadataRelationSettings = {
