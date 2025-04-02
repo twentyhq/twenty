@@ -588,31 +588,6 @@ export const computeFilterRecordGqlOperationFilter = ({
       const nonEmptyOptions = options.filter((opt) => opt !== '');
 
       switch (filter.operand) {
-        // case RecordFilterOperand.IsNot: {
-        //   const conditions = [];
-
-        //   if (nonEmptyOptions.length > 0) {
-        //     conditions.push({
-        //       not: {
-        //         [correspondingField.name]: {
-        //           containsAny: nonEmptyOptions,
-        //         } as MultiSelectFilter,
-        //       },
-        //     });
-        //   }
-
-        //   if (noValueOptions.length > 0) {
-        //     conditions.push({
-        //       not: {
-        //         [correspondingField.name]: {
-        //           isEmptyArray: true,
-        //         } as MultiSelectFilter,
-        //       },
-        //     });
-        //   }
-
-        //   return conditions.length === 1 ? conditions[0] : { and: conditions };
-        // }
         case RecordFilterOperand.Contains: {
           const conditions = [];
 
