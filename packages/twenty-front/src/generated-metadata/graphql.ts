@@ -1,48 +1,35 @@
 /* eslint-disable */
-import { WhatsappIntegration } from '@/chat/call-center/types/WhatsappIntegration';
-import { WhatsappTemplatesResponse } from '@/chat/call-center/types/WhatsappTemplate';
-import { UpdateAgentInput } from '@/settings/service-center/agents/types/UpdateAgentInput';
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-import { Agent } from 'http';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
-export type MakeEmpty<
-  T extends { [key: string]: unknown },
-  K extends keyof T,
-> = { [_ in K]?: never };
-export type Incremental<T> =
-  | T
-  | {
-      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
-    };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
   /** Cursor for paging through collections */
-  ConnectionCursor: { input: any; output: any };
+  ConnectionCursor: { input: any; output: any; }
+  /** Date custom scalar type */
+  Date: { input: any; output: any; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
-  DateTime: { input: any; output: any };
+  DateTime: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: { input: any; output: any };
+  JSON: { input: any; output: any; }
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSONObject: { input: any; output: any };
+  JSONObject: { input: any; output: any; }
+  /** The `RawJSONScalar` scalar type represents JSON values, but stringifies inputs and parses outputs. */
+  RawJSONScalar: { input: any; output: any; }
   /** A UUID scalar type */
-  UUID: { input: any; output: any };
+  UUID: { input: any; output: any; }
   /** The `Upload` scalar type represents a file upload. */
-  Upload: { input: any; output: any };
+  Upload: { input: any; output: any; }
 };
 
 export type ActivateWorkspaceInput = {
@@ -62,14 +49,7 @@ export type AdminPanelHealthServiceData = {
 
 export enum AdminPanelHealthServiceStatus {
   OPERATIONAL = 'OPERATIONAL',
-  OUTAGE = 'OUTAGE',
-}
-
-export enum AdminPanelIndicatorHealthStatusInputEnum {
-  DATABASE = 'DATABASE',
-  MESSAGE_SYNC = 'MESSAGE_SYNC',
-  REDIS = 'REDIS',
-  WORKER = 'WORKER',
+  OUTAGE = 'OUTAGE'
 }
 
 export type AdminPanelWorkerQueueHealth = {
@@ -77,6 +57,19 @@ export type AdminPanelWorkerQueueHealth = {
   id: Scalars['String']['output'];
   queueName: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
+};
+
+export type Agent = {
+  __typename?: 'Agent';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  inboxes: Array<Inbox>;
+  isActive: Scalars['Boolean']['output'];
+  isAdmin: Scalars['Boolean']['output'];
+  memberId: Scalars['String']['output'];
+  sectors: Array<Sector>;
+  updatedAt: Scalars['DateTime']['output'];
+  workspace: Workspace;
 };
 
 export type Analytics = {
@@ -180,7 +173,7 @@ export type Billing = {
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
-  PRO = 'PRO',
+  PRO = 'PRO'
 }
 
 export type BillingPlanOutput = {
@@ -218,12 +211,10 @@ export type BillingPriceTierDto = {
 /** The different billing price tiers modes */
 export enum BillingPriceTiersMode {
   GRADUATED = 'GRADUATED',
-  VOLUME = 'VOLUME',
+  VOLUME = 'VOLUME'
 }
 
-export type BillingPriceUnionDto =
-  | BillingPriceLicensedDto
-  | BillingPriceMeteredDto;
+export type BillingPriceUnionDto = BillingPriceLicensedDto | BillingPriceMeteredDto;
 
 export type BillingProductDto = {
   __typename?: 'BillingProductDTO';
@@ -260,7 +251,7 @@ export type BillingUpdateOutput = {
 
 export enum BillingUsageType {
   LICENSED = 'LICENSED',
-  METERED = 'METERED',
+  METERED = 'METERED'
 }
 
 export type BooleanFieldComparison = {
@@ -270,8 +261,15 @@ export type BooleanFieldComparison = {
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
-  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING'
 }
+
+export type Campaign = {
+  __typename?: 'Campaign';
+  campanha_id?: Maybe<Scalars['ID']['output']>;
+  cliente_id?: Maybe<Scalars['String']['output']>;
+  nome?: Maybe<Scalars['String']['output']>;
+};
 
 export type Captcha = {
   __typename?: 'Captcha';
@@ -281,8 +279,38 @@ export type Captcha = {
 
 export enum CaptchaDriverType {
   GoogleRecaptcha = 'GoogleRecaptcha',
-  Turnstile = 'Turnstile',
+  Turnstile = 'Turnstile'
 }
+
+export type ChatbotFlow = {
+  __typename?: 'ChatbotFlow';
+  chatbotId: Scalars['String']['output'];
+  edges?: Maybe<Array<Scalars['JSON']['output']>>;
+  id: Scalars['UUID']['output'];
+  nodes?: Maybe<Array<Scalars['JSON']['output']>>;
+  workspace: Workspace;
+};
+
+export type ChatbotFlowInput = {
+  chatbotId: Scalars['String']['input'];
+  edges: Scalars['JSON']['input'];
+  nodes: Scalars['JSON']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+/** Chatbot status options */
+export enum ChatbotStatus {
+  ACTIVE = 'ACTIVE',
+  DEACTIVATED = 'DEACTIVATED',
+  DRAFT = 'DRAFT'
+}
+
+export type ChatbotWorkspaceEntity = {
+  __typename?: 'ChatbotWorkspaceEntity';
+  id: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  statuses?: Maybe<ChatbotStatus>;
+};
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
@@ -421,6 +449,17 @@ export type CreateRemoteServerInput = {
   userMappingOptions?: InputMaybe<UserMappingOptions>;
 };
 
+export type CreateRoleInput = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  icon?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+};
+
 export type CreateSectorInput = {
   icon: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -432,6 +471,50 @@ export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type CreateStripeIntegrationInput = {
+  accountId: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+export type CreateTelephonyInput = {
+  SIPPassword?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding1?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding1Value?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding2?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding2Value?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding3?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding3Value?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding4?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding4Value?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding5?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding5Value?: InputMaybe<Scalars['String']['input']>;
+  areaCode?: InputMaybe<Scalars['String']['input']>;
+  blockExtension?: InputMaybe<Scalars['Boolean']['input']>;
+  callerExternalID?: InputMaybe<Scalars['String']['input']>;
+  destinyMailboxAllCallsOrOffline?: InputMaybe<Scalars['String']['input']>;
+  destinyMailboxBusy?: InputMaybe<Scalars['String']['input']>;
+  dialingPlan?: InputMaybe<Scalars['String']['input']>;
+  emailForMailbox?: InputMaybe<Scalars['String']['input']>;
+  enableMailbox?: InputMaybe<Scalars['Boolean']['input']>;
+  extensionAllCallsOrOffline?: InputMaybe<Scalars['String']['input']>;
+  extensionBusy?: InputMaybe<Scalars['String']['input']>;
+  extensionGroup?: InputMaybe<Scalars['String']['input']>;
+  extensionName?: InputMaybe<Scalars['String']['input']>;
+  externalNumberAllCallsOrOffline?: InputMaybe<Scalars['String']['input']>;
+  externalNumberBusy?: InputMaybe<Scalars['String']['input']>;
+  fowardAllCalls?: InputMaybe<Scalars['String']['input']>;
+  fowardBusyNotAvailable?: InputMaybe<Scalars['String']['input']>;
+  fowardOfflineWithoutService?: InputMaybe<Scalars['String']['input']>;
+  listenToCalls?: InputMaybe<Scalars['Boolean']['input']>;
+  memberId?: InputMaybe<Scalars['ID']['input']>;
+  numberExtension: Scalars['ID']['input'];
+  pullCalls?: InputMaybe<Scalars['String']['input']>;
+  ramal_id?: InputMaybe<Scalars['String']['input']>;
+  recordCalls?: InputMaybe<Scalars['Boolean']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateWhatsappIntegrationInput = {
@@ -529,7 +612,7 @@ export enum DistantTableUpdate {
   COLUMNS_ADDED = 'COLUMNS_ADDED',
   COLUMNS_DELETED = 'COLUMNS_DELETED',
   COLUMNS_TYPE_CHANGED = 'COLUMNS_TYPE_CHANGED',
-  TABLE_DELETED = 'TABLE_DELETED',
+  TABLE_DELETED = 'TABLE_DELETED'
 }
 
 export type EditSsoInput = {
@@ -550,6 +633,13 @@ export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
+};
+
+export type Encaminhamento = {
+  __typename?: 'Encaminhamento';
+  encaminhamento_destino?: Maybe<Array<Scalars['String']['output']>>;
+  encaminhamento_destinos?: Maybe<Array<Scalars['String']['output']>>;
+  encaminhamento_tipo?: Maybe<Scalars['String']['output']>;
 };
 
 export type EnvironmentVariable = {
@@ -578,7 +668,7 @@ export enum EnvironmentVariablesGroup {
   StorageConfig = 'StorageConfig',
   SupportChatConfig = 'SupportChatConfig',
   TinybirdConfig = 'TinybirdConfig',
-  TokensDuration = 'TokensDuration',
+  TokensDuration = 'TokensDuration'
 }
 
 export type EnvironmentVariablesGroupData = {
@@ -622,11 +712,12 @@ export enum FeatureFlagKey {
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsEnabled = 'IsPermissionsEnabled',
+  IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
   IsWorkflowEnabled = 'IsWorkflowEnabled',
-  IsWorkflowFormActionEnabled = 'IsWorkflowFormActionEnabled',
+  IsWorkflowFormActionEnabled = 'IsWorkflowFormActionEnabled'
 }
 
 export type Field = {
@@ -705,7 +796,7 @@ export enum FieldMetadataType {
   SELECT = 'SELECT',
   TEXT = 'TEXT',
   TS_VECTOR = 'TS_VECTOR',
-  UUID = 'UUID',
+  UUID = 'UUID'
 }
 
 export enum FileFolder {
@@ -713,12 +804,12 @@ export enum FileFolder {
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
-  WorkspaceLogo = 'WorkspaceLogo',
+  WorkspaceLogo = 'WorkspaceLogo'
 }
 
 export enum FilterIs {
   NotNull = 'NotNull',
-  Null = 'Null',
+  Null = 'Null'
 }
 
 export type FindAvailableSsoidpOutput = {
@@ -778,7 +869,7 @@ export enum HealthIndicatorId {
   connectedAccount = 'connectedAccount',
   database = 'database',
   redis = 'redis',
-  worker = 'worker',
+  worker = 'worker'
 }
 
 export type IdFilter = {
@@ -794,13 +885,22 @@ export type IdFilter = {
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
-  SAML = 'SAML',
+  SAML = 'SAML'
 }
 
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
+};
+
+export type Inbox = {
+  __typename?: 'Inbox';
+  agents: Array<Agent>;
+  id: Scalars['UUID']['output'];
+  integrationType: IntegrationType;
+  whatsappIntegration?: Maybe<WhatsappIntegration>;
+  workspace: Workspace;
 };
 
 export type Index = {
@@ -817,23 +917,16 @@ export type Index = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+
 export type IndexIndexFieldMetadatasArgs = {
   filter?: IndexFieldFilter;
   paging?: CursorPaging;
 };
 
+
 export type IndexObjectMetadataArgs = {
   filter?: ObjectFilter;
   paging?: CursorPaging;
-};
-
-export type Inbox = {
-  __typename?: 'Inbox';
-  agents: Array<Agent>;
-  id: Scalars['UUID']['output'];
-  integrationType: IntegrationType;
-  whatsappIntegration?: Maybe<WhatsappIntegration>;
-  workspace: Workspace;
 };
 
 export type IndexConnection = {
@@ -902,13 +995,13 @@ export type IndexObjectMetadataConnection = {
 /** Type of the index */
 export enum IndexType {
   BTREE = 'BTREE',
-  GIN = 'GIN',
+  GIN = 'GIN'
 }
 
 /** Available integration types */
 export enum IntegrationType {
   MESSENGER = 'MESSENGER',
-  WHATSAPP = 'WHATSAPP',
+  WHATSAPP = 'WHATSAPP'
 }
 
 export type InvalidatePassword = {
@@ -943,7 +1036,7 @@ export type MessageAgent = {
 export enum MessageChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
-  SUBJECT = 'SUBJECT',
+  SUBJECT = 'SUBJECT'
 }
 
 export type MessageSector = {
@@ -960,6 +1053,7 @@ export type Mutation = {
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON']['output'];
   createAgent: Agent;
+  createApprovedAccessDomain: ApprovedAccessDomain;
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
@@ -967,13 +1061,17 @@ export type Mutation = {
   createOneObject: Object;
   createOneRelationMetadata: RelationMetadata;
   createOneRemoteServer: RemoteServer;
+  createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createSector: Sector;
+  createStripeIntegration: StripeIntegration;
+  createTelephony: Telephony;
   createWhatsappIntegration: WhatsappIntegration;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteAgent: Agent;
+  deleteApprovedAccessDomain: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
@@ -982,6 +1080,7 @@ export type Mutation = {
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteSector: Scalars['Boolean']['output'];
+  deleteTelephony: Scalars['Boolean']['output'];
   deleteUser: User;
   deleteWorkflowVersionStep: WorkflowAction;
   deleteWorkspaceInvitation: Scalars['String']['output'];
@@ -998,10 +1097,12 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: LoginToken;
   impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeStripeIntegration: Scalars['Boolean']['output'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveStripeAccountId: StripeIntegration;
   sendEventMessage: Scalars['Boolean']['output'];
   sendInvitations: SendInvitationsOutput;
   sendMessage: Scalars['Boolean']['output'];
@@ -1016,14 +1117,19 @@ export type Mutation = {
   toggleWhatsappIntegrationStatus: Scalars['Boolean']['output'];
   track: Analytics;
   unsyncRemoteTable: RemoteTable;
+  updateAgent: Agent;
   updateBillingSubscription: BillingUpdateOutput;
+  updateChatbotFlow: Scalars['Boolean']['output'];
   updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
+  updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSector: Sector;
+  updateStripeIntegration: StripeIntegration;
+  updateTelephony: Telephony;
   updateWhatsappIntegration: WhatsappIntegration;
   updateWhatsappIntegrationServiceLevel: WhatsappIntegration;
   updateWorkflowVersionStep: WorkflowAction;
@@ -1037,21 +1143,26 @@ export type Mutation = {
   uploadWorkspaceLogo: Scalars['String']['output'];
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  validateChatbotFlow: ChatbotFlow;
 };
+
 
 export type MutationActivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String']['input'];
 };
 
+
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
 };
+
 
 export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String']['input'];
   codeChallenge?: InputMaybe<Scalars['String']['input']>;
   redirectUrl: Scalars['String']['input'];
 };
+
 
 export type MutationCheckoutSessionArgs = {
   plan?: BillingPlanKey;
@@ -1060,139 +1171,193 @@ export type MutationCheckoutSessionArgs = {
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
 };
+
 
 export type MutationCreateAgentArgs = {
   createInput: CreateAgentInput;
 };
 
+
 export type MutationCreateApprovedAccessDomainArgs = {
   input: CreateApprovedAccessDomainInput;
 };
+
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
 
+
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
 };
+
 
 export type MutationCreateOneAppTokenArgs = {
   input: CreateOneAppTokenInput;
 };
 
+
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
+
 
 export type MutationCreateOneObjectArgs = {
   input: CreateOneObjectInput;
 };
 
+
 export type MutationCreateOneRelationMetadataArgs = {
   input: CreateOneRelationMetadataInput;
 };
+
 
 export type MutationCreateOneRemoteServerArgs = {
   input: CreateRemoteServerInput;
 };
 
+
+export type MutationCreateOneRoleArgs = {
+  createRoleInput: CreateRoleInput;
+};
+
+
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
 };
+
 
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
 
+
 export type MutationCreateSectorArgs = {
   createInput: CreateSectorInput;
 };
+
+
+export type MutationCreateStripeIntegrationArgs = {
+  createStripeIntegrationInput: CreateStripeIntegrationInput;
+};
+
+
+export type MutationCreateTelephonyArgs = {
+  createTelephonyInput: CreateTelephonyInput;
+};
+
 
 export type MutationCreateWhatsappIntegrationArgs = {
   createInput: CreateWhatsappIntegrationInput;
 };
 
+
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
 };
+
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String']['input'];
 };
 
+
 export type MutationDeleteAgentArgs = {
   agentId: Scalars['String']['input'];
 };
+
 
 export type MutationDeleteApprovedAccessDomainArgs = {
   input: DeleteApprovedAccessDomainInput;
 };
 
+
 export type MutationDeleteOneFieldArgs = {
   input: DeleteOneFieldInput;
 };
+
 
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
 };
 
+
 export type MutationDeleteOneRelationArgs = {
   input: DeleteOneRelationInput;
 };
+
 
 export type MutationDeleteOneRemoteServerArgs = {
   input: RemoteServerIdInput;
 };
 
+
 export type MutationDeleteOneServerlessFunctionArgs = {
   input: ServerlessFunctionIdInput;
 };
+
 
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
 };
 
+
 export type MutationDeleteSectorArgs = {
   sectorId: Scalars['String']['input'];
 };
+
+
+export type MutationDeleteTelephonyArgs = {
+  telephonyId: Scalars['ID']['input'];
+};
+
 
 export type MutationDeleteWorkflowVersionStepArgs = {
   input: DeleteWorkflowVersionStepInput;
 };
 
+
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String']['input'];
 };
 
+
 export type MutationEditSsoIdentityProviderArgs = {
   input: EditSsoInput;
 };
+
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String']['input'];
   workspaceId: Scalars['String']['input'];
 };
 
+
 export type MutationExecuteOneServerlessFunctionArgs = {
   input: ExecuteServerlessFunctionInput;
 };
+
 
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String']['input'];
   expiresAt: Scalars['String']['input'];
 };
 
+
 export type MutationGetAuthTokensFromLoginTokenArgs = {
   loginToken: Scalars['String']['input'];
 };
 
+
 export type MutationGetAuthorizationUrlForSsoArgs = {
   input: GetAuthorizationUrlForSsoInput;
 };
+
 
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
@@ -1200,51 +1365,74 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
   password: Scalars['String']['input'];
 };
 
+
 export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   emailVerificationToken: Scalars['String']['input'];
 };
+
 
 export type MutationImpersonateArgs = {
   userId: Scalars['String']['input'];
   workspaceId: Scalars['String']['input'];
 };
 
+
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
 };
+
+
+export type MutationRemoveStripeIntegrationArgs = {
+  accountId: Scalars['String']['input'];
+};
+
 
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String']['input'];
 };
 
+
 export type MutationResendEmailVerificationTokenArgs = {
   email: Scalars['String']['input'];
 };
+
 
 export type MutationResendWorkspaceInvitationArgs = {
   appTokenId: Scalars['String']['input'];
 };
 
+
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
 };
+
+
+export type MutationSaveStripeAccountIdArgs = {
+  accountId: Scalars['String']['input'];
+  workspaceId: Scalars['String']['input'];
+};
+
 
 export type MutationSendEventMessageArgs = {
   sendEventMessageInput: SendEventMessageInput;
 };
 
+
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']['input']>;
 };
+
 
 export type MutationSendMessageArgs = {
   sendMessageInput: SendMessageInput;
 };
 
+
 export type MutationSendTemplateArgs = {
   sendTemplateInput: SendTemplateInput;
 };
+
 
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
@@ -1256,80 +1444,125 @@ export type MutationSignUpArgs = {
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']['input']>;
 };
 
+
+export type MutationSubmitFormStepArgs = {
+  input: SubmitFormStepInput;
+};
+
+
 export type MutationSyncRemoteTableArgs = {
   input: RemoteTableInput;
 };
+
 
 export type MutationSyncRemoteTableSchemaChangesArgs = {
   input: RemoteTableInput;
 };
 
+
 export type MutationToggleAgentStatusArgs = {
   agentId: Scalars['String']['input'];
 };
 
+
 export type MutationToggleWhatsappIntegrationStatusArgs = {
   integrationId: Scalars['String']['input'];
 };
+
 
 export type MutationTrackArgs = {
   action: Scalars['String']['input'];
   payload: Scalars['JSON']['input'];
 };
 
+
 export type MutationUnsyncRemoteTableArgs = {
   input: RemoteTableInput;
 };
+
 
 export type MutationUpdateAgentArgs = {
   updateInput: UpdateAgentInput;
 };
 
+
+export type MutationUpdateChatbotFlowArgs = {
+  updateChatbotInput: UpdateChatbotFlowInput;
+};
+
+
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
 };
+
 
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
 };
 
+
 export type MutationUpdateOneObjectArgs = {
   input: UpdateOneObjectInput;
 };
+
 
 export type MutationUpdateOneRemoteServerArgs = {
   input: UpdateRemoteServerInput;
 };
 
+
+export type MutationUpdateOneRoleArgs = {
+  updateRoleInput: UpdateRoleInput;
+};
+
+
 export type MutationUpdateOneServerlessFunctionArgs = {
   input: UpdateServerlessFunctionInput;
 };
+
 
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String']['input'];
   passwordResetToken: Scalars['String']['input'];
 };
 
+
 export type MutationUpdateSectorArgs = {
   updateInput: UpdateSectorInput;
 };
 
+
+export type MutationUpdateStripeIntegrationArgs = {
+  updateStripeIntegrationInput: UpdateStripeIntegrationInput;
+};
+
+
+export type MutationUpdateTelephonyArgs = {
+  id: Scalars['ID']['input'];
+  updateTelephonyInput: UpdateTelephonyInput;
+};
+
+
 export type MutationUpdateWhatsappIntegrationArgs = {
   updateInput: UpdateWhatsappIntegrationInput;
 };
+
 
 export type MutationUpdateWhatsappIntegrationServiceLevelArgs = {
   integrationId: Scalars['String']['input'];
   sla: Scalars['Int']['input'];
 };
 
+
 export type MutationUpdateWorkflowVersionStepArgs = {
   input: UpdateWorkflowVersionStepInput;
 };
 
+
 export type MutationUpdateWorkspaceArgs = {
   data: UpdateWorkspaceInput;
 };
+
 
 export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String']['input'];
@@ -1337,15 +1570,18 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
   workspaceId: Scalars['String']['input'];
 };
 
+
 export type MutationUpdateWorkspaceMemberRoleArgs = {
   roleId: Scalars['String']['input'];
   workspaceMemberId: Scalars['String']['input'];
 };
 
+
 export type MutationUploadFileArgs = {
   file: Scalars['Upload']['input'];
   fileFolder?: InputMaybe<FileFolder>;
 };
+
 
 export type MutationUploadFileToBucketArgs = {
   file: Scalars['Upload']['input'];
@@ -1354,25 +1590,35 @@ export type MutationUploadFileToBucketArgs = {
   workspaceId: Scalars['String']['input'];
 };
 
+
 export type MutationUploadImageArgs = {
   file: Scalars['Upload']['input'];
   fileFolder?: InputMaybe<FileFolder>;
 };
 
+
 export type MutationUploadProfilePictureArgs = {
   file: Scalars['Upload']['input'];
 };
+
 
 export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload']['input'];
 };
 
+
 export type MutationUserLookupAdminPanelArgs = {
   userIdentifier: Scalars['String']['input'];
 };
 
+
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationValidateChatbotFlowArgs = {
+  chatbotInput: ChatbotFlowInput;
 };
 
 export type Object = {
@@ -1402,10 +1648,12 @@ export type Object = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+
 export type ObjectFieldsArgs = {
   filter?: FieldFilter;
   paging?: CursorPaging;
 };
+
 
 export type ObjectIndexMetadatasArgs = {
   filter?: IndexFilter;
@@ -1472,7 +1720,7 @@ export enum OnboardingStatus {
   PLAN_REQUIRED = 'PLAN_REQUIRED',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
-  WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION',
+  WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION'
 }
 
 export type OnboardingStepSuccess = {
@@ -1497,8 +1745,16 @@ export enum PermissionsOnAllObjectRecords {
   DESTROY_ALL_OBJECT_RECORDS = 'DESTROY_ALL_OBJECT_RECORDS',
   READ_ALL_OBJECT_RECORDS = 'READ_ALL_OBJECT_RECORDS',
   SOFT_DELETE_ALL_OBJECT_RECORDS = 'SOFT_DELETE_ALL_OBJECT_RECORDS',
-  UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS',
+  UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
 }
+
+export type Phones = {
+  __typename?: 'Phones';
+  additionalPhones?: Maybe<Scalars['RawJSONScalar']['output']>;
+  primaryPhoneCallingCode: Scalars['String']['output'];
+  primaryPhoneCountryCode: Scalars['String']['output'];
+  primaryPhoneNumber: Scalars['String']['output'];
+};
 
 export type PostgresCredentials = {
   __typename?: 'PostgresCredentials';
@@ -1537,6 +1793,8 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
+  agentById: Agent;
+  agentsByWorkspace: Array<Agent>;
   billingPortalSession: BillingSessionOutput;
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
@@ -1545,6 +1803,7 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
+  findAllTelephony: Array<Telephony>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
@@ -1552,8 +1811,11 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAllExtensions?: Maybe<Array<TelephonyExtension>>;
+  getAllStripeIntegrations: Array<StripeIntegration>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
+  getChatbots: Array<ChatbotWorkspaceEntity>;
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -1562,12 +1824,19 @@ export type Query = {
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
+  getStripeIntegrationById: StripeIntegration;
   getSystemHealthStatus: SystemHealth;
+  getTelephonyCallFlows?: Maybe<Array<TelephonyCallFlow>>;
+  getTelephonyDids?: Maybe<Array<TelephonyDids>>;
+  getTelephonyPlans?: Maybe<Array<TelephonyDialingPlan>>;
+  getTelephonyURAs?: Maybe<Array<Campaign>>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
+  getUserSoftfone?: Maybe<TelephonyExtension>;
   getWhatsappTemplates: WhatsappTemplatesResponse;
+  globalSearch: Array<GlobalSearchRecord>;
   inboxesByWorkspace: Array<Inbox>;
   index: Index;
   indexMetadatas: IndexConnection;
@@ -1575,80 +1844,111 @@ export type Query = {
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
   relationMetadata: RelationMetadataConnection;
+  sectorById: Sector;
+  sectorsByWorkspace: Array<Sector>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   whatsappIntegrationById: WhatsappIntegration;
   whatsappIntegrationsByWorkspace: Array<WhatsappIntegration>;
 };
 
+
 export type QueryAgentByIdArgs = {
   agentId: Scalars['String']['input'];
 };
+
 
 export type QueryAgentsByWorkspaceArgs = {
   workspaceId: Scalars['String']['input'];
 };
 
+
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 export type QueryCheckUserExistsArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
 };
 
+
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String']['input'];
 };
 
+
 export type QueryFieldArgs = {
   id: Scalars['UUID']['input'];
 };
+
 
 export type QueryFieldsArgs = {
   filter?: FieldFilter;
   paging?: CursorPaging;
 };
 
-export type QueryFindAvailableWorkspacesByEmailArgs = {
-  email: Scalars['String']['input'];
+
+export type QueryFindAllTelephonyArgs = {
+  workspaceId: Scalars['ID']['input'];
 };
+
 
 export type QueryFindDistantTablesWithStatusArgs = {
   input: FindManyRemoteTablesInput;
 };
 
+
 export type QueryFindManyRemoteServersByTypeArgs = {
   input: RemoteServerTypeInput;
 };
+
 
 export type QueryFindOneRemoteServerByIdArgs = {
   input: RemoteServerIdInput;
 };
 
+
 export type QueryFindOneServerlessFunctionArgs = {
   input: ServerlessFunctionIdInput;
 };
+
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String']['input'];
 };
 
+
+export type QueryGetAllStripeIntegrationsArgs = {
+  workspaceId: Scalars['String']['input'];
+};
+
+
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
 };
+
 
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
 };
 
-export type QueryGetProductPricesArgs = {
-  product: Scalars['String']['input'];
+
+export type QueryGetQueueMetricsArgs = {
+  queueName: Scalars['String']['input'];
+  timeRange?: InputMaybe<QueueMetricsTimeRange>;
 };
+
 
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
 };
+
+
+export type QueryGetStripeIntegrationByIdArgs = {
+  id: Scalars['String']['input'];
+};
+
 
 export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
   companyId: Scalars['UUID']['input'];
@@ -1656,11 +1956,13 @@ export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
   pageSize: Scalars['Int']['input'];
 };
 
+
 export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
   personId: Scalars['UUID']['input'];
 };
+
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['UUID']['input'];
@@ -1668,19 +1970,23 @@ export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   pageSize: Scalars['Int']['input'];
 };
 
+
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
   personId: Scalars['UUID']['input'];
 };
 
+
+export type QueryGetUserSoftfoneArgs = {
+  extNum: Scalars['String']['input'];
+};
+
+
 export type QueryGetWhatsappTemplatesArgs = {
   integrationId: Scalars['String']['input'];
 };
 
-export type QueryInboxesByWorkspaceArgs = {
-  workspaceId: Scalars['String']['input'];
-};
 
 export type QueryGlobalSearchArgs = {
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -1690,38 +1996,61 @@ export type QueryGlobalSearchArgs = {
   searchInput: Scalars['String']['input'];
 };
 
+
+export type QueryInboxesByWorkspaceArgs = {
+  workspaceId: Scalars['String']['input'];
+};
+
+
 export type QueryIndexArgs = {
   id: Scalars['UUID']['input'];
 };
+
 
 export type QueryIndexMetadatasArgs = {
   filter?: IndexFilter;
   paging?: CursorPaging;
 };
 
+
 export type QueryObjectArgs = {
   id: Scalars['UUID']['input'];
 };
+
 
 export type QueryObjectsArgs = {
   filter?: ObjectFilter;
   paging?: CursorPaging;
 };
 
+
 export type QueryRelationMetadataArgs = {
   paging?: CursorPaging;
 };
+
 
 export type QuerySectorByIdArgs = {
   sectorId: Scalars['String']['input'];
 };
 
+
 export type QuerySectorsByWorkspaceArgs = {
   workspaceId: Scalars['String']['input'];
 };
 
+
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String']['input'];
+};
+
+
+export type QueryWhatsappIntegrationByIdArgs = {
+  integrationId: Scalars['String']['input'];
+};
+
+
+export type QueryWhatsappIntegrationsByWorkspaceArgs = {
+  workspaceId: Scalars['String']['input'];
 };
 
 export type QueueMetricsData = {
@@ -1750,7 +2079,7 @@ export enum QueueMetricsTimeRange {
   OneDay = 'OneDay',
   OneHour = 'OneHour',
   SevenDays = 'SevenDays',
-  TwelveHours = 'TwelveHours',
+  TwelveHours = 'TwelveHours'
 }
 
 export type Relation = {
@@ -1777,7 +2106,7 @@ export enum RelationDefinitionType {
   MANY_TO_MANY = 'MANY_TO_MANY',
   MANY_TO_ONE = 'MANY_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
-  ONE_TO_ONE = 'ONE_TO_ONE',
+  ONE_TO_ONE = 'ONE_TO_ONE'
 }
 
 export type RelationMetadata = {
@@ -1815,14 +2144,14 @@ export enum RelationMetadataType {
   MANY_TO_MANY = 'MANY_TO_MANY',
   MANY_TO_ONE = 'MANY_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
-  ONE_TO_ONE = 'ONE_TO_ONE',
+  ONE_TO_ONE = 'ONE_TO_ONE'
 }
 
 /** Relation type */
 export enum RelationType {
   MANY_TO_ONE = 'MANY_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
-  ONE_TO_ONE = 'ONE_TO_ONE',
+  ONE_TO_ONE = 'ONE_TO_ONE'
 }
 
 export type RemoteServer = {
@@ -1864,7 +2193,7 @@ export type RemoteTableInput = {
 /** Status of the table */
 export enum RemoteTableStatus {
   NOT_SYNCED = 'NOT_SYNCED',
-  SYNCED = 'SYNCED',
+  SYNCED = 'SYNCED'
 }
 
 export type ResendEmailVerificationTokenOutput = {
@@ -1915,7 +2244,7 @@ export type SsoIdentityProvider = {
 export enum SsoIdentityProviderStatus {
   Active = 'Active',
   Error = 'Error',
-  Inactive = 'Inactive',
+  Inactive = 'Inactive'
 }
 
 export type Sector = {
@@ -2007,7 +2336,7 @@ export type ServerlessFunctionExecutionResult = {
 export enum ServerlessFunctionExecutionStatus {
   ERROR = 'ERROR',
   IDLE = 'IDLE',
-  SUCCESS = 'SUCCESS',
+  SUCCESS = 'SUCCESS'
 }
 
 export type ServerlessFunctionIdInput = {
@@ -2019,7 +2348,7 @@ export type ServerlessFunctionIdInput = {
 export enum ServerlessFunctionSyncStatus {
   BUILDING = 'BUILDING',
   NOT_READY = 'NOT_READY',
-  READY = 'READY',
+  READY = 'READY'
 }
 
 export enum SettingsPermissions {
@@ -2029,7 +2358,7 @@ export enum SettingsPermissions {
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
   WORKSPACE = 'WORKSPACE',
-  WORKSPACE_USERS = 'WORKSPACE_USERS',
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
 
 export type SetupOidcSsoInput = {
@@ -2063,6 +2392,13 @@ export type SignUpOutput = {
   workspace: WorkspaceUrlsAndId;
 };
 
+export type StripeIntegration = {
+  __typename?: 'StripeIntegration';
+  accountId: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  workspace: Workspace;
+};
+
 export type SubmitFormStepInput = {
   /** Form response in JSON format */
   response: Scalars['JSON']['input'];
@@ -2076,7 +2412,7 @@ export enum SubscriptionInterval {
   Day = 'Day',
   Month = 'Month',
   Week = 'Week',
-  Year = 'Year',
+  Year = 'Year'
 }
 
 export enum SubscriptionStatus {
@@ -2087,7 +2423,7 @@ export enum SubscriptionStatus {
   PastDue = 'PastDue',
   Paused = 'Paused',
   Trialing = 'Trialing',
-  Unpaid = 'Unpaid',
+  Unpaid = 'Unpaid'
 }
 
 export type Support = {
@@ -2106,6 +2442,124 @@ export type SystemHealthService = {
   id: HealthIndicatorId;
   label: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
+};
+
+export type Telephony = {
+  __typename?: 'Telephony';
+  SIPPassword?: Maybe<Scalars['String']['output']>;
+  advancedFowarding1?: Maybe<Scalars['String']['output']>;
+  advancedFowarding1Value?: Maybe<Scalars['String']['output']>;
+  advancedFowarding2?: Maybe<Scalars['String']['output']>;
+  advancedFowarding2Value?: Maybe<Scalars['String']['output']>;
+  advancedFowarding3?: Maybe<Scalars['String']['output']>;
+  advancedFowarding3Value?: Maybe<Scalars['String']['output']>;
+  advancedFowarding4?: Maybe<Scalars['String']['output']>;
+  advancedFowarding4Value?: Maybe<Scalars['String']['output']>;
+  advancedFowarding5?: Maybe<Scalars['String']['output']>;
+  advancedFowarding5Value?: Maybe<Scalars['String']['output']>;
+  areaCode?: Maybe<Scalars['String']['output']>;
+  blockExtension?: Maybe<Scalars['Boolean']['output']>;
+  callerExternalID?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  destinyMailboxAllCallsOrOffline?: Maybe<Scalars['String']['output']>;
+  destinyMailboxBusy?: Maybe<Scalars['String']['output']>;
+  dialingPlan?: Maybe<Scalars['String']['output']>;
+  emailForMailbox?: Maybe<Scalars['String']['output']>;
+  enableMailbox?: Maybe<Scalars['Boolean']['output']>;
+  extensionAllCallsOrOffline?: Maybe<Scalars['String']['output']>;
+  extensionBusy?: Maybe<Scalars['String']['output']>;
+  extensionGroup?: Maybe<Scalars['String']['output']>;
+  extensionName?: Maybe<Scalars['String']['output']>;
+  externalNumberAllCallsOrOffline?: Maybe<Scalars['String']['output']>;
+  externalNumberBusy?: Maybe<Scalars['String']['output']>;
+  fowardAllCalls?: Maybe<Scalars['String']['output']>;
+  fowardBusyNotAvailable?: Maybe<Scalars['String']['output']>;
+  fowardOfflineWithoutService?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  listenToCalls?: Maybe<Scalars['Boolean']['output']>;
+  memberId: Scalars['String']['output'];
+  numberExtension: Scalars['String']['output'];
+  pullCalls?: Maybe<Scalars['String']['output']>;
+  ramal_id?: Maybe<Scalars['String']['output']>;
+  recordCalls?: Maybe<Scalars['Boolean']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  workspace: Workspace;
+};
+
+export type TelephonyCallFlow = {
+  __typename?: 'TelephonyCallFlow';
+  fluxo_chamada_id?: Maybe<Scalars['ID']['output']>;
+  fluxo_chamada_nome?: Maybe<Scalars['String']['output']>;
+};
+
+export type TelephonyDialingPlan = {
+  __typename?: 'TelephonyDialingPlan';
+  cliente_id?: Maybe<Scalars['String']['output']>;
+  nome?: Maybe<Scalars['String']['output']>;
+  plano_discagem_id?: Maybe<Scalars['ID']['output']>;
+};
+
+export type TelephonyDids = {
+  __typename?: 'TelephonyDids';
+  apontar_para?: Maybe<Scalars['String']['output']>;
+  cliente_id?: Maybe<Scalars['String']['output']>;
+  destino?: Maybe<Scalars['String']['output']>;
+  did_id?: Maybe<Scalars['ID']['output']>;
+  gravar_chamadas?: Maybe<Scalars['String']['output']>;
+  habilitar_horario_funcionamento?: Maybe<Scalars['String']['output']>;
+  habilitar_registro?: Maybe<Scalars['String']['output']>;
+  horario_funcionamento_dias_semana?: Maybe<Array<Scalars['String']['output']>>;
+  horario_funcionamento_fim?: Maybe<Scalars['String']['output']>;
+  horario_funcionamento_inicio?: Maybe<Scalars['String']['output']>;
+  horario_funcionamento_lista_feriados?: Maybe<Array<Scalars['String']['output']>>;
+  maximo_chamadas_simultaneas?: Maybe<Scalars['String']['output']>;
+  numero?: Maybe<Scalars['String']['output']>;
+  registro_dominio?: Maybe<Scalars['String']['output']>;
+  registro_senha?: Maybe<Scalars['String']['output']>;
+  registro_usuario?: Maybe<Scalars['String']['output']>;
+};
+
+export type TelephonyExtension = {
+  __typename?: 'TelephonyExtension';
+  bloquear_ramal?: Maybe<Scalars['String']['output']>;
+  caller_id_externo?: Maybe<Scalars['String']['output']>;
+  centro_custo?: Maybe<Scalars['String']['output']>;
+  cliente_id?: Maybe<Scalars['String']['output']>;
+  codigo_area?: Maybe<Scalars['String']['output']>;
+  codigo_incorporacao?: Maybe<Scalars['String']['output']>;
+  dupla_autenticacao_ip_permitido?: Maybe<Scalars['String']['output']>;
+  dupla_autenticacao_mascara?: Maybe<Scalars['String']['output']>;
+  encaminhar_ocupado_indisponivel?: Maybe<Encaminhamento>;
+  encaminhar_offline_sem_atendimento?: Maybe<Encaminhamento>;
+  encaminhar_todas_chamadas?: Maybe<Encaminhamento>;
+  escutar_chamadas?: Maybe<Scalars['String']['output']>;
+  gravar_chamadas?: Maybe<Scalars['String']['output']>;
+  grupo_musica_espera?: Maybe<Scalars['String']['output']>;
+  grupo_ramais?: Maybe<Scalars['String']['output']>;
+  habilitar_blf?: Maybe<Scalars['String']['output']>;
+  habilitar_dupla_autenticacao?: Maybe<Scalars['String']['output']>;
+  habilitar_timers?: Maybe<Scalars['String']['output']>;
+  nome?: Maybe<Scalars['String']['output']>;
+  numero?: Maybe<Scalars['String']['output']>;
+  plano_discagem_id?: Maybe<Scalars['String']['output']>;
+  puxar_chamadas?: Maybe<Scalars['String']['output']>;
+  ramal_id?: Maybe<Scalars['ID']['output']>;
+  senha_sip?: Maybe<Scalars['String']['output']>;
+  senha_web?: Maybe<Scalars['String']['output']>;
+  tipo?: Maybe<Scalars['String']['output']>;
+  usuario_autenticacao?: Maybe<Scalars['String']['output']>;
+};
+
+export type Template = {
+  __typename?: 'Template';
+  category: Scalars['String']['output'];
+  components: Array<Component>;
+  id: Scalars['String']['output'];
+  language: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  parameter_format: Scalars['String']['output'];
+  status: Scalars['String']['output'];
 };
 
 export type TimelineCalendarEvent = {
@@ -2194,6 +2648,20 @@ export type UuidFilterComparison = {
   notLike?: InputMaybe<Scalars['UUID']['input']>;
 };
 
+export type UpdateAgentInput = {
+  id: Scalars['String']['input'];
+  inboxesIds: Array<Scalars['String']['input']>;
+  isAdmin: Scalars['Boolean']['input'];
+  memberId: Scalars['ID']['input'];
+  sectorIds: Array<Scalars['String']['input']>;
+};
+
+export type UpdateChatbotFlowInput = {
+  chatbotId: Scalars['String']['input'];
+  edges: Scalars['JSON']['input'];
+  nodes: Scalars['JSON']['input'];
+};
+
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -2249,6 +2717,23 @@ export type UpdateRemoteServerInput = {
   userMappingOptions?: InputMaybe<UserMappingOptionsUpdateInput>;
 };
 
+export type UpdateRoleInput = {
+  /** The id of the role to update */
+  id: Scalars['UUID']['input'];
+  update: UpdateRolePayload;
+};
+
+export type UpdateRolePayload = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  icon?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UpdateSectorInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
@@ -2263,6 +2748,49 @@ export type UpdateServerlessFunctionInput = {
   id: Scalars['UUID']['input'];
   name: Scalars['String']['input'];
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type UpdateStripeIntegrationInput = {
+  accountId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+export type UpdateTelephonyInput = {
+  SIPPassword?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding1?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding1Value?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding2?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding2Value?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding3?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding3Value?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding4?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding4Value?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding5?: InputMaybe<Scalars['String']['input']>;
+  advancedFowarding5Value?: InputMaybe<Scalars['String']['input']>;
+  areaCode?: InputMaybe<Scalars['String']['input']>;
+  blockExtension?: InputMaybe<Scalars['Boolean']['input']>;
+  callerExternalID?: InputMaybe<Scalars['String']['input']>;
+  destinyMailboxAllCallsOrOffline?: InputMaybe<Scalars['String']['input']>;
+  destinyMailboxBusy?: InputMaybe<Scalars['String']['input']>;
+  dialingPlan?: InputMaybe<Scalars['String']['input']>;
+  emailForMailbox?: InputMaybe<Scalars['String']['input']>;
+  enableMailbox?: InputMaybe<Scalars['Boolean']['input']>;
+  extensionAllCallsOrOffline?: InputMaybe<Scalars['String']['input']>;
+  extensionBusy?: InputMaybe<Scalars['String']['input']>;
+  extensionGroup?: InputMaybe<Scalars['String']['input']>;
+  extensionName?: InputMaybe<Scalars['String']['input']>;
+  externalNumberAllCallsOrOffline?: InputMaybe<Scalars['String']['input']>;
+  externalNumberBusy?: InputMaybe<Scalars['String']['input']>;
+  fowardAllCalls?: InputMaybe<Scalars['String']['input']>;
+  fowardBusyNotAvailable?: InputMaybe<Scalars['String']['input']>;
+  fowardOfflineWithoutService?: InputMaybe<Scalars['String']['input']>;
+  listenToCalls?: InputMaybe<Scalars['Boolean']['input']>;
+  memberId?: InputMaybe<Scalars['ID']['input']>;
+  numberExtension: Scalars['ID']['input'];
+  pullCalls?: InputMaybe<Scalars['String']['input']>;
+  ramal_id?: InputMaybe<Scalars['String']['input']>;
+  recordCalls?: InputMaybe<Scalars['Boolean']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateWhatsappIntegrationInput = {
@@ -2399,6 +2927,26 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String']['output'];
 };
 
+export type WhatsappIntegration = {
+  __typename?: 'WhatsappIntegration';
+  accessToken: Scalars['String']['output'];
+  appId: Scalars['String']['output'];
+  appKey: Scalars['String']['output'];
+  businessAccountId: Scalars['String']['output'];
+  disabled: Scalars['Boolean']['output'];
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
+  phoneId: Scalars['String']['output'];
+  sla: Scalars['Float']['output'];
+  verifyToken: Scalars['String']['output'];
+  workspace: Workspace;
+};
+
+export type WhatsappTemplatesResponse = {
+  __typename?: 'WhatsappTemplatesResponse';
+  templates: Array<Template>;
+};
+
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float']['output'];
@@ -2455,9 +3003,10 @@ export type Workspace = {
   isPublicInviteLinkEnabled: Scalars['Boolean']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   metadataVersion: Scalars['Float']['output'];
+  stripeIntegrations: Array<StripeIntegration>;
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  whatsappIntegrations: Array<WhatsappIntegration>;
+  version?: Maybe<Scalars['String']['output']>;
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
   workspaceUrls: WorkspaceUrls;
 };
@@ -2467,7 +3016,7 @@ export enum WorkspaceActivationStatus {
   INACTIVE = 'INACTIVE',
   ONGOING_CREATION = 'ONGOING_CREATION',
   PENDING_CREATION = 'PENDING_CREATION',
-  SUSPENDED = 'SUSPENDED',
+  SUSPENDED = 'SUSPENDED'
 }
 
 export type WorkspaceEdge = {
@@ -2512,7 +3061,9 @@ export type WorkspaceMember = {
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']['output']>;
+  userDocument?: Maybe<Scalars['String']['output']>;
   userEmail: Scalars['String']['output'];
+  userPhone?: Maybe<Phones>;
   userWorkspaceId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -2521,14 +3072,14 @@ export enum WorkspaceMemberDateFormatEnum {
   DAY_FIRST = 'DAY_FIRST',
   MONTH_FIRST = 'MONTH_FIRST',
   SYSTEM = 'SYSTEM',
-  YEAR_FIRST = 'YEAR_FIRST',
+  YEAR_FIRST = 'YEAR_FIRST'
 }
 
 /** Time time as Military, Standard or system as default */
 export enum WorkspaceMemberTimeFormatEnum {
   HOUR_12 = 'HOUR_12',
   HOUR_24 = 'HOUR_24',
-  SYSTEM = 'SYSTEM',
+  SYSTEM = 'SYSTEM'
 }
 
 export type WorkspaceNameAndId = {
@@ -2549,3430 +3100,229 @@ export type WorkspaceUrls = {
   subdomainUrl: Scalars['String']['output'];
 };
 
-export type RemoteServerFieldsFragment = {
-  __typename?: 'RemoteServer';
-  id: string;
-  createdAt: any;
-  foreignDataWrapperId: string;
-  foreignDataWrapperOptions?: any | null;
-  foreignDataWrapperType: string;
-  updatedAt: any;
-  schema?: string | null;
-  label: string;
-  userMappingOptions?: {
-    __typename?: 'UserMappingOptionsUser';
-    user?: string | null;
-  } | null;
-};
+export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
 
-export type RemoteTableFieldsFragment = {
-  __typename?: 'RemoteTable';
-  id?: any | null;
-  name: string;
-  schema?: string | null;
-  status: RemoteTableStatus;
-  schemaPendingUpdates?: Array<DistantTableUpdate> | null;
-};
+export type RemoteTableFieldsFragment = { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null };
 
 export type CreateServerMutationVariables = Exact<{
   input: CreateRemoteServerInput;
 }>;
 
-export type CreateServerMutation = {
-  __typename?: 'Mutation';
-  createOneRemoteServer: {
-    __typename?: 'RemoteServer';
-    id: string;
-    createdAt: any;
-    foreignDataWrapperId: string;
-    foreignDataWrapperOptions?: any | null;
-    foreignDataWrapperType: string;
-    updatedAt: any;
-    schema?: string | null;
-    label: string;
-    userMappingOptions?: {
-      __typename?: 'UserMappingOptionsUser';
-      user?: string | null;
-    } | null;
-  };
-};
+
+export type CreateServerMutation = { __typename?: 'Mutation', createOneRemoteServer: { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
 
 export type DeleteServerMutationVariables = Exact<{
   input: RemoteServerIdInput;
 }>;
 
-export type DeleteServerMutation = {
-  __typename?: 'Mutation';
-  deleteOneRemoteServer: { __typename?: 'RemoteServer'; id: string };
-};
+
+export type DeleteServerMutation = { __typename?: 'Mutation', deleteOneRemoteServer: { __typename?: 'RemoteServer', id: string } };
 
 export type SyncRemoteTableMutationVariables = Exact<{
   input: RemoteTableInput;
 }>;
 
-export type SyncRemoteTableMutation = {
-  __typename?: 'Mutation';
-  syncRemoteTable: {
-    __typename?: 'RemoteTable';
-    id?: any | null;
-    name: string;
-    schema?: string | null;
-    status: RemoteTableStatus;
-    schemaPendingUpdates?: Array<DistantTableUpdate> | null;
-  };
-};
+
+export type SyncRemoteTableMutation = { __typename?: 'Mutation', syncRemoteTable: { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null } };
 
 export type SyncRemoteTableSchemaChangesMutationVariables = Exact<{
   input: RemoteTableInput;
 }>;
 
-export type SyncRemoteTableSchemaChangesMutation = {
-  __typename?: 'Mutation';
-  syncRemoteTableSchemaChanges: {
-    __typename?: 'RemoteTable';
-    id?: any | null;
-    name: string;
-    schema?: string | null;
-    status: RemoteTableStatus;
-    schemaPendingUpdates?: Array<DistantTableUpdate> | null;
-  };
-};
+
+export type SyncRemoteTableSchemaChangesMutation = { __typename?: 'Mutation', syncRemoteTableSchemaChanges: { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null } };
 
 export type UnsyncRemoteTableMutationVariables = Exact<{
   input: RemoteTableInput;
 }>;
 
-export type UnsyncRemoteTableMutation = {
-  __typename?: 'Mutation';
-  unsyncRemoteTable: {
-    __typename?: 'RemoteTable';
-    id?: any | null;
-    name: string;
-    schema?: string | null;
-    status: RemoteTableStatus;
-    schemaPendingUpdates?: Array<DistantTableUpdate> | null;
-  };
-};
+
+export type UnsyncRemoteTableMutation = { __typename?: 'Mutation', unsyncRemoteTable: { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null } };
 
 export type UpdateServerMutationVariables = Exact<{
   input: UpdateRemoteServerInput;
 }>;
 
-export type UpdateServerMutation = {
-  __typename?: 'Mutation';
-  updateOneRemoteServer: {
-    __typename?: 'RemoteServer';
-    id: string;
-    createdAt: any;
-    foreignDataWrapperId: string;
-    foreignDataWrapperOptions?: any | null;
-    foreignDataWrapperType: string;
-    updatedAt: any;
-    schema?: string | null;
-    label: string;
-    userMappingOptions?: {
-      __typename?: 'UserMappingOptionsUser';
-      user?: string | null;
-    } | null;
-  };
-};
+
+export type UpdateServerMutation = { __typename?: 'Mutation', updateOneRemoteServer: { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
 
 export type GetManyDatabaseConnectionsQueryVariables = Exact<{
   input: RemoteServerTypeInput;
 }>;
 
-export type GetManyDatabaseConnectionsQuery = {
-  __typename?: 'Query';
-  findManyRemoteServersByType: Array<{
-    __typename?: 'RemoteServer';
-    id: string;
-    createdAt: any;
-    foreignDataWrapperId: string;
-    foreignDataWrapperOptions?: any | null;
-    foreignDataWrapperType: string;
-    updatedAt: any;
-    schema?: string | null;
-    label: string;
-    userMappingOptions?: {
-      __typename?: 'UserMappingOptionsUser';
-      user?: string | null;
-    } | null;
-  }>;
-};
+
+export type GetManyDatabaseConnectionsQuery = { __typename?: 'Query', findManyRemoteServersByType: Array<{ __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null }> };
 
 export type GetManyRemoteTablesQueryVariables = Exact<{
   input: FindManyRemoteTablesInput;
 }>;
 
-export type GetManyRemoteTablesQuery = {
-  __typename?: 'Query';
-  findDistantTablesWithStatus: Array<{
-    __typename?: 'RemoteTable';
-    id?: any | null;
-    name: string;
-    schema?: string | null;
-    status: RemoteTableStatus;
-    schemaPendingUpdates?: Array<DistantTableUpdate> | null;
-  }>;
-};
+
+export type GetManyRemoteTablesQuery = { __typename?: 'Query', findDistantTablesWithStatus: Array<{ __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null }> };
 
 export type GetOneDatabaseConnectionQueryVariables = Exact<{
   input: RemoteServerIdInput;
 }>;
 
-export type GetOneDatabaseConnectionQuery = {
-  __typename?: 'Query';
-  findOneRemoteServerById: {
-    __typename?: 'RemoteServer';
-    id: string;
-    createdAt: any;
-    foreignDataWrapperId: string;
-    foreignDataWrapperOptions?: any | null;
-    foreignDataWrapperType: string;
-    updatedAt: any;
-    schema?: string | null;
-    label: string;
-    userMappingOptions?: {
-      __typename?: 'UserMappingOptionsUser';
-      user?: string | null;
-    } | null;
-  };
-};
+
+export type GetOneDatabaseConnectionQuery = { __typename?: 'Query', findOneRemoteServerById: { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null } };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
   input: CreateOneObjectInput;
 }>;
 
-export type CreateOneObjectMetadataItemMutation = {
-  __typename?: 'Mutation';
-  createOneObject: {
-    __typename?: 'Object';
-    id: any;
-    dataSourceId: string;
-    nameSingular: string;
-    namePlural: string;
-    labelSingular: string;
-    labelPlural: string;
-    description?: string | null;
-    icon?: string | null;
-    isCustom: boolean;
-    isActive: boolean;
-    createdAt: any;
-    updatedAt: any;
-    labelIdentifierFieldMetadataId?: string | null;
-    imageIdentifierFieldMetadataId?: string | null;
-  };
-};
+
+export type CreateOneObjectMetadataItemMutation = { __typename?: 'Mutation', createOneObject: { __typename?: 'Object', id: any, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: any, updatedAt: any, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null } };
 
 export type CreateOneFieldMetadataItemMutationVariables = Exact<{
   input: CreateOneFieldMetadataInput;
 }>;
 
-export type CreateOneFieldMetadataItemMutation = {
-  __typename?: 'Mutation';
-  createOneField: {
-    __typename?: 'Field';
-    id: any;
-    type: FieldMetadataType;
-    name: string;
-    label: string;
-    description?: string | null;
-    icon?: string | null;
-    isCustom?: boolean | null;
-    isActive?: boolean | null;
-    isNullable?: boolean | null;
-    createdAt: any;
-    updatedAt: any;
-    settings?: any | null;
-    defaultValue?: any | null;
-    options?: any | null;
-  };
-};
+
+export type CreateOneFieldMetadataItemMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'Field', id: any, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: any, updatedAt: any, settings?: any | null, defaultValue?: any | null, options?: any | null } };
 
 export type CreateOneRelationMetadataItemMutationVariables = Exact<{
   input: CreateOneRelationMetadataInput;
 }>;
 
-export type CreateOneRelationMetadataItemMutation = {
-  __typename?: 'Mutation';
-  createOneRelationMetadata: {
-    __typename?: 'RelationMetadata';
-    id: any;
-    relationType: RelationMetadataType;
-    fromObjectMetadataId: string;
-    toObjectMetadataId: string;
-    fromFieldMetadataId: string;
-    toFieldMetadataId: string;
-    createdAt: any;
-    updatedAt: any;
-  };
-};
+
+export type CreateOneRelationMetadataItemMutation = { __typename?: 'Mutation', createOneRelationMetadata: { __typename?: 'RelationMetadata', id: any, relationType: RelationMetadataType, fromObjectMetadataId: string, toObjectMetadataId: string, fromFieldMetadataId: string, toFieldMetadataId: string, createdAt: any, updatedAt: any } };
 
 export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['UUID']['input'];
   updatePayload: UpdateFieldInput;
 }>;
 
-export type UpdateOneFieldMetadataItemMutation = {
-  __typename?: 'Mutation';
-  updateOneField: {
-    __typename?: 'Field';
-    id: any;
-    type: FieldMetadataType;
-    name: string;
-    label: string;
-    description?: string | null;
-    icon?: string | null;
-    isCustom?: boolean | null;
-    isActive?: boolean | null;
-    isNullable?: boolean | null;
-    createdAt: any;
-    updatedAt: any;
-    settings?: any | null;
-    isLabelSyncedWithName?: boolean | null;
-  };
-};
+
+export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'Field', id: any, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: any, updatedAt: any, settings?: any | null, isLabelSyncedWithName?: boolean | null } };
 
 export type UpdateOneObjectMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['UUID']['input'];
   updatePayload: UpdateObjectPayload;
 }>;
 
-export type UpdateOneObjectMetadataItemMutation = {
-  __typename?: 'Mutation';
-  updateOneObject: {
-    __typename?: 'Object';
-    id: any;
-    dataSourceId: string;
-    nameSingular: string;
-    namePlural: string;
-    labelSingular: string;
-    labelPlural: string;
-    description?: string | null;
-    icon?: string | null;
-    isCustom: boolean;
-    isActive: boolean;
-    createdAt: any;
-    updatedAt: any;
-    labelIdentifierFieldMetadataId?: string | null;
-    imageIdentifierFieldMetadataId?: string | null;
-  };
-};
+
+export type UpdateOneObjectMetadataItemMutation = { __typename?: 'Mutation', updateOneObject: { __typename?: 'Object', id: any, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: any, updatedAt: any, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null } };
 
 export type DeleteOneObjectMetadataItemMutationVariables = Exact<{
   idToDelete: Scalars['UUID']['input'];
 }>;
 
-export type DeleteOneObjectMetadataItemMutation = {
-  __typename?: 'Mutation';
-  deleteOneObject: {
-    __typename?: 'Object';
-    id: any;
-    dataSourceId: string;
-    nameSingular: string;
-    namePlural: string;
-    labelSingular: string;
-    labelPlural: string;
-    description?: string | null;
-    icon?: string | null;
-    isCustom: boolean;
-    isActive: boolean;
-    createdAt: any;
-    updatedAt: any;
-    labelIdentifierFieldMetadataId?: string | null;
-    imageIdentifierFieldMetadataId?: string | null;
-  };
-};
+
+export type DeleteOneObjectMetadataItemMutation = { __typename?: 'Mutation', deleteOneObject: { __typename?: 'Object', id: any, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: any, updatedAt: any, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null } };
 
 export type DeleteOneFieldMetadataItemMutationVariables = Exact<{
   idToDelete: Scalars['UUID']['input'];
 }>;
 
-export type DeleteOneFieldMetadataItemMutation = {
-  __typename?: 'Mutation';
-  deleteOneField: {
-    __typename?: 'Field';
-    id: any;
-    type: FieldMetadataType;
-    name: string;
-    label: string;
-    description?: string | null;
-    icon?: string | null;
-    isCustom?: boolean | null;
-    isActive?: boolean | null;
-    isNullable?: boolean | null;
-    createdAt: any;
-    updatedAt: any;
-    settings?: any | null;
-  };
-};
+
+export type DeleteOneFieldMetadataItemMutation = { __typename?: 'Mutation', deleteOneField: { __typename?: 'Field', id: any, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: any, updatedAt: any, settings?: any | null } };
 
 export type DeleteOneRelationMetadataItemMutationVariables = Exact<{
   idToDelete: Scalars['UUID']['input'];
 }>;
 
-export type DeleteOneRelationMetadataItemMutation = {
-  __typename?: 'Mutation';
-  deleteOneRelation: { __typename?: 'RelationMetadata'; id: any };
-};
 
-export type ObjectMetadataItemsQueryVariables = Exact<{ [key: string]: never }>;
+export type DeleteOneRelationMetadataItemMutation = { __typename?: 'Mutation', deleteOneRelation: { __typename?: 'RelationMetadata', id: any } };
 
-export type ObjectMetadataItemsQuery = {
-  __typename?: 'Query';
-  objects: {
-    __typename?: 'ObjectConnection';
-    edges: Array<{
-      __typename?: 'ObjectEdge';
-      node: {
-        __typename?: 'Object';
-        id: any;
-        dataSourceId: string;
-        nameSingular: string;
-        namePlural: string;
-        labelSingular: string;
-        labelPlural: string;
-        description?: string | null;
-        icon?: string | null;
-        isCustom: boolean;
-        isRemote: boolean;
-        isActive: boolean;
-        isSystem: boolean;
-        createdAt: any;
-        updatedAt: any;
-        labelIdentifierFieldMetadataId?: string | null;
-        imageIdentifierFieldMetadataId?: string | null;
-        shortcut?: string | null;
-        isLabelSyncedWithName: boolean;
-        duplicateCriteria?: Array<Array<string>> | null;
-        indexMetadatas: {
-          __typename?: 'ObjectIndexMetadatasConnection';
-          edges: Array<{
-            __typename?: 'IndexEdge';
-            node: {
-              __typename?: 'Index';
-              id: any;
-              createdAt: any;
-              updatedAt: any;
-              name: string;
-              indexWhereClause?: string | null;
-              indexType: IndexType;
-              isUnique: boolean;
-              indexFieldMetadatas: {
-                __typename?: 'IndexIndexFieldMetadatasConnection';
-                edges: Array<{
-                  __typename?: 'IndexFieldEdge';
-                  node: {
-                    __typename?: 'IndexField';
-                    id: any;
-                    createdAt: any;
-                    updatedAt: any;
-                    order: number;
-                    fieldMetadataId: any;
-                  };
-                }>;
-              };
-            };
-          }>;
-        };
-        fieldsList: Array<{
-          __typename?: 'Field';
-          id: any;
-          type: FieldMetadataType;
-          name: string;
-          label: string;
-          description?: string | null;
-          icon?: string | null;
-          isCustom?: boolean | null;
-          isActive?: boolean | null;
-          isSystem?: boolean | null;
-          isNullable?: boolean | null;
-          isUnique?: boolean | null;
-          createdAt: any;
-          updatedAt: any;
-          defaultValue?: any | null;
-          options?: any | null;
-          settings?: any | null;
-          isLabelSyncedWithName?: boolean | null;
-          relationDefinition?: {
-            __typename?: 'RelationDefinition';
-            relationId: any;
-            direction: RelationDefinitionType;
-            sourceObjectMetadata: {
-              __typename?: 'Object';
-              id: any;
-              nameSingular: string;
-              namePlural: string;
-            };
-            sourceFieldMetadata: {
-              __typename?: 'Field';
-              id: any;
-              name: string;
-            };
-            targetObjectMetadata: {
-              __typename?: 'Object';
-              id: any;
-              nameSingular: string;
-              namePlural: string;
-            };
-            targetFieldMetadata: {
-              __typename?: 'Field';
-              id: any;
-              name: string;
-            };
-          } | null;
-        }>;
-      };
-    }>;
-    pageInfo: {
-      __typename?: 'PageInfo';
-      hasNextPage?: boolean | null;
-      hasPreviousPage?: boolean | null;
-      startCursor?: any | null;
-      endCursor?: any | null;
-    };
-  };
-};
+export type ObjectMetadataItemsQueryVariables = Exact<{
+  objectFilter?: InputMaybe<ObjectFilter>;
+  fieldFilter?: InputMaybe<FieldFilter>;
+}>;
 
-export type ServerlessFunctionFieldsFragment = {
-  __typename?: 'ServerlessFunction';
-  id: any;
-  name: string;
-  description?: string | null;
-  runtime: string;
-  timeoutSeconds: number;
-  syncStatus: ServerlessFunctionSyncStatus;
-  latestVersion?: string | null;
-  latestVersionInputSchema?: any | null;
-  publishedVersions: Array<string>;
-  createdAt: any;
-  updatedAt: any;
-};
+
+export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'ObjectEdge', node: { __typename?: 'Object', id: any, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, createdAt: any, updatedAt: any, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, indexMetadatas: { __typename?: 'ObjectIndexMetadatasConnection', edges: Array<{ __typename?: 'IndexEdge', node: { __typename?: 'Index', id: any, createdAt: any, updatedAt: any, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, indexFieldMetadatas: { __typename?: 'IndexIndexFieldMetadatasConnection', edges: Array<{ __typename?: 'IndexFieldEdge', node: { __typename?: 'IndexField', id: any, createdAt: any, updatedAt: any, order: number, fieldMetadataId: any } }> } } }> }, fields: { __typename?: 'ObjectFieldsConnection', edges: Array<{ __typename?: 'FieldEdge', node: { __typename?: 'Field', id: any, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: any, updatedAt: any, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relationDefinition?: { __typename?: 'RelationDefinition', relationId: any, direction: RelationDefinitionType, sourceObjectMetadata: { __typename?: 'Object', id: any, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: any, name: string }, targetObjectMetadata: { __typename?: 'Object', id: any, nameSingular: string, namePlural: string }, targetFieldMetadata: { __typename?: 'Field', id: any, name: string } } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
+
+export type ServerlessFunctionFieldsFragment = { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, timeoutSeconds: number, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, latestVersionInputSchema?: any | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any };
 
 export type CreateOneServerlessFunctionItemMutationVariables = Exact<{
   input: CreateServerlessFunctionInput;
 }>;
 
-export type CreateOneServerlessFunctionItemMutation = {
-  __typename?: 'Mutation';
-  createOneServerlessFunction: {
-    __typename?: 'ServerlessFunction';
-    id: any;
-    name: string;
-    description?: string | null;
-    runtime: string;
-    timeoutSeconds: number;
-    syncStatus: ServerlessFunctionSyncStatus;
-    latestVersion?: string | null;
-    latestVersionInputSchema?: any | null;
-    publishedVersions: Array<string>;
-    createdAt: any;
-    updatedAt: any;
-  };
-};
+
+export type CreateOneServerlessFunctionItemMutation = { __typename?: 'Mutation', createOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, timeoutSeconds: number, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, latestVersionInputSchema?: any | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any } };
 
 export type DeleteOneServerlessFunctionMutationVariables = Exact<{
   input: ServerlessFunctionIdInput;
 }>;
 
-export type DeleteOneServerlessFunctionMutation = {
-  __typename?: 'Mutation';
-  deleteOneServerlessFunction: {
-    __typename?: 'ServerlessFunction';
-    id: any;
-    name: string;
-    description?: string | null;
-    runtime: string;
-    timeoutSeconds: number;
-    syncStatus: ServerlessFunctionSyncStatus;
-    latestVersion?: string | null;
-    latestVersionInputSchema?: any | null;
-    publishedVersions: Array<string>;
-    createdAt: any;
-    updatedAt: any;
-  };
-};
+
+export type DeleteOneServerlessFunctionMutation = { __typename?: 'Mutation', deleteOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, timeoutSeconds: number, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, latestVersionInputSchema?: any | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any } };
 
 export type ExecuteOneServerlessFunctionMutationVariables = Exact<{
   input: ExecuteServerlessFunctionInput;
 }>;
 
-export type ExecuteOneServerlessFunctionMutation = {
-  __typename?: 'Mutation';
-  executeOneServerlessFunction: {
-    __typename?: 'ServerlessFunctionExecutionResult';
-    data?: any | null;
-    duration: number;
-    status: ServerlessFunctionExecutionStatus;
-    error?: any | null;
-  };
-};
+
+export type ExecuteOneServerlessFunctionMutation = { __typename?: 'Mutation', executeOneServerlessFunction: { __typename?: 'ServerlessFunctionExecutionResult', data?: any | null, logs: string, duration: number, status: ServerlessFunctionExecutionStatus, error?: any | null } };
 
 export type PublishOneServerlessFunctionMutationVariables = Exact<{
   input: PublishServerlessFunctionInput;
 }>;
 
-export type PublishOneServerlessFunctionMutation = {
-  __typename?: 'Mutation';
-  publishServerlessFunction: {
-    __typename?: 'ServerlessFunction';
-    id: any;
-    name: string;
-    description?: string | null;
-    runtime: string;
-    timeoutSeconds: number;
-    syncStatus: ServerlessFunctionSyncStatus;
-    latestVersion?: string | null;
-    latestVersionInputSchema?: any | null;
-    publishedVersions: Array<string>;
-    createdAt: any;
-    updatedAt: any;
-  };
-};
+
+export type PublishOneServerlessFunctionMutation = { __typename?: 'Mutation', publishServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, timeoutSeconds: number, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, latestVersionInputSchema?: any | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any } };
 
 export type UpdateOneServerlessFunctionMutationVariables = Exact<{
   input: UpdateServerlessFunctionInput;
 }>;
 
-export type UpdateOneServerlessFunctionMutation = {
-  __typename?: 'Mutation';
-  updateOneServerlessFunction: {
-    __typename?: 'ServerlessFunction';
-    id: any;
-    name: string;
-    description?: string | null;
-    runtime: string;
-    timeoutSeconds: number;
-    syncStatus: ServerlessFunctionSyncStatus;
-    latestVersion?: string | null;
-    latestVersionInputSchema?: any | null;
-    publishedVersions: Array<string>;
-    createdAt: any;
-    updatedAt: any;
-  };
-};
+
+export type UpdateOneServerlessFunctionMutation = { __typename?: 'Mutation', updateOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, timeoutSeconds: number, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, latestVersionInputSchema?: any | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any } };
 
 export type FindManyAvailablePackagesQueryVariables = Exact<{
   input: ServerlessFunctionIdInput;
 }>;
 
-export type FindManyAvailablePackagesQuery = {
-  __typename?: 'Query';
-  getAvailablePackages: any;
-};
 
-export type GetManyServerlessFunctionsQueryVariables = Exact<{
-  [key: string]: never;
-}>;
+export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailablePackages: any };
 
-export type GetManyServerlessFunctionsQuery = {
-  __typename?: 'Query';
-  findManyServerlessFunctions: Array<{
-    __typename?: 'ServerlessFunction';
-    id: any;
-    name: string;
-    description?: string | null;
-    runtime: string;
-    timeoutSeconds: number;
-    syncStatus: ServerlessFunctionSyncStatus;
-    latestVersion?: string | null;
-    latestVersionInputSchema?: any | null;
-    publishedVersions: Array<string>;
-    createdAt: any;
-    updatedAt: any;
-  }>;
-};
+export type GetManyServerlessFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetManyServerlessFunctionsQuery = { __typename?: 'Query', findManyServerlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, timeoutSeconds: number, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, latestVersionInputSchema?: any | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any }> };
 
 export type GetOneServerlessFunctionQueryVariables = Exact<{
   input: ServerlessFunctionIdInput;
 }>;
 
-export type GetOneServerlessFunctionQuery = {
-  __typename?: 'Query';
-  findOneServerlessFunction: {
-    __typename?: 'ServerlessFunction';
-    id: any;
-    name: string;
-    description?: string | null;
-    runtime: string;
-    timeoutSeconds: number;
-    syncStatus: ServerlessFunctionSyncStatus;
-    latestVersion?: string | null;
-    latestVersionInputSchema?: any | null;
-    publishedVersions: Array<string>;
-    createdAt: any;
-    updatedAt: any;
-  };
-};
+
+export type GetOneServerlessFunctionQuery = { __typename?: 'Query', findOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, timeoutSeconds: number, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, latestVersionInputSchema?: any | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any } };
 
 export type FindOneServerlessFunctionSourceCodeQueryVariables = Exact<{
   input: GetServerlessFunctionSourceCodeInput;
 }>;
 
-export type FindOneServerlessFunctionSourceCodeQuery = {
-  __typename?: 'Query';
-  getServerlessFunctionSourceCode?: any | null;
-};
 
-export const RemoteServerFieldsFragmentDoc = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteServerFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteServer' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperId' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperOptions' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperType' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'userMappingOptions' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'user' } },
-              ],
-            },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'label' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<RemoteServerFieldsFragment, unknown>;
-export const RemoteTableFieldsFragmentDoc = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteTableFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteTable' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'schemaPendingUpdates' },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<RemoteTableFieldsFragment, unknown>;
-export const ServerlessFunctionFieldsFragmentDoc = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'ServerlessFunction' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'runtime' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'timeoutSeconds' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'syncStatus' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'latestVersion' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'latestVersionInputSchema' },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'publishedVersions' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<ServerlessFunctionFieldsFragment, unknown>;
-export const CreateServerDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'createServer' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'CreateRemoteServerInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'createOneRemoteServer' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RemoteServerFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteServerFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteServer' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperId' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperOptions' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperType' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'userMappingOptions' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'user' } },
-              ],
-            },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'label' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  CreateServerMutation,
-  CreateServerMutationVariables
->;
-export const DeleteServerDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'deleteServer' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'RemoteServerIdInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'deleteOneRemoteServer' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  DeleteServerMutation,
-  DeleteServerMutationVariables
->;
-export const SyncRemoteTableDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'syncRemoteTable' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'RemoteTableInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'syncRemoteTable' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RemoteTableFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteTableFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteTable' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'schemaPendingUpdates' },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  SyncRemoteTableMutation,
-  SyncRemoteTableMutationVariables
->;
-export const SyncRemoteTableSchemaChangesDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'syncRemoteTableSchemaChanges' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'RemoteTableInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'syncRemoteTableSchemaChanges' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RemoteTableFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteTableFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteTable' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'schemaPendingUpdates' },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  SyncRemoteTableSchemaChangesMutation,
-  SyncRemoteTableSchemaChangesMutationVariables
->;
-export const UnsyncRemoteTableDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'unsyncRemoteTable' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'RemoteTableInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'unsyncRemoteTable' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RemoteTableFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteTableFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteTable' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'schemaPendingUpdates' },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UnsyncRemoteTableMutation,
-  UnsyncRemoteTableMutationVariables
->;
-export const UpdateServerDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'updateServer' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'UpdateRemoteServerInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'updateOneRemoteServer' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RemoteServerFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteServerFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteServer' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperId' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperOptions' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperType' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'userMappingOptions' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'user' } },
-              ],
-            },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'label' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UpdateServerMutation,
-  UpdateServerMutationVariables
->;
-export const GetManyDatabaseConnectionsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetManyDatabaseConnections' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'RemoteServerTypeInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'findManyRemoteServersByType' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RemoteServerFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteServerFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteServer' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperId' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperOptions' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperType' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'userMappingOptions' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'user' } },
-              ],
-            },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'label' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetManyDatabaseConnectionsQuery,
-  GetManyDatabaseConnectionsQueryVariables
->;
-export const GetManyRemoteTablesDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetManyRemoteTables' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'FindManyRemoteTablesInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'findDistantTablesWithStatus' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RemoteTableFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteTableFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteTable' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'schemaPendingUpdates' },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetManyRemoteTablesQuery,
-  GetManyRemoteTablesQueryVariables
->;
-export const GetOneDatabaseConnectionDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetOneDatabaseConnection' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'RemoteServerIdInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'findOneRemoteServerById' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RemoteServerFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RemoteServerFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'RemoteServer' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperId' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperOptions' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'foreignDataWrapperType' },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'userMappingOptions' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'user' } },
-              ],
-            },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'schema' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'label' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetOneDatabaseConnectionQuery,
-  GetOneDatabaseConnectionQueryVariables
->;
-export const CreateOneObjectMetadataItemDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'CreateOneObjectMetadataItem' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'CreateOneObjectInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'createOneObject' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'dataSourceId' },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'nameSingular' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'namePlural' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'labelSingular' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'labelPlural' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'icon' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isCustom' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isActive' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-                {
-                  kind: 'Field',
-                  name: {
-                    kind: 'Name',
-                    value: 'labelIdentifierFieldMetadataId',
-                  },
-                },
-                {
-                  kind: 'Field',
-                  name: {
-                    kind: 'Name',
-                    value: 'imageIdentifierFieldMetadataId',
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  CreateOneObjectMetadataItemMutation,
-  CreateOneObjectMetadataItemMutationVariables
->;
-export const CreateOneFieldMetadataItemDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'CreateOneFieldMetadataItem' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'CreateOneFieldMetadataInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'createOneField' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'type' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'label' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'icon' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isCustom' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isActive' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isNullable' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'settings' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'defaultValue' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'options' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  CreateOneFieldMetadataItemMutation,
-  CreateOneFieldMetadataItemMutationVariables
->;
-export const CreateOneRelationMetadataItemDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'CreateOneRelationMetadataItem' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'CreateOneRelationMetadataInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'createOneRelationMetadata' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'relationType' },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'fromObjectMetadataId' },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'toObjectMetadataId' },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'fromFieldMetadataId' },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'toFieldMetadataId' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  CreateOneRelationMetadataItemMutation,
-  CreateOneRelationMetadataItemMutationVariables
->;
-export const UpdateOneFieldMetadataItemDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'UpdateOneFieldMetadataItem' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'idToUpdate' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'UUID' } },
-          },
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'updatePayload' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'UpdateFieldInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'updateOneField' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'ObjectValue',
-                  fields: [
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'id' },
-                      value: {
-                        kind: 'Variable',
-                        name: { kind: 'Name', value: 'idToUpdate' },
-                      },
-                    },
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'update' },
-                      value: {
-                        kind: 'Variable',
-                        name: { kind: 'Name', value: 'updatePayload' },
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'type' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'label' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'icon' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isCustom' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isActive' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isNullable' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'settings' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'isLabelSyncedWithName' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UpdateOneFieldMetadataItemMutation,
-  UpdateOneFieldMetadataItemMutationVariables
->;
-export const UpdateOneObjectMetadataItemDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'UpdateOneObjectMetadataItem' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'idToUpdate' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'UUID' } },
-          },
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'updatePayload' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'UpdateObjectPayload' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'updateOneObject' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'ObjectValue',
-                  fields: [
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'id' },
-                      value: {
-                        kind: 'Variable',
-                        name: { kind: 'Name', value: 'idToUpdate' },
-                      },
-                    },
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'update' },
-                      value: {
-                        kind: 'Variable',
-                        name: { kind: 'Name', value: 'updatePayload' },
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'dataSourceId' },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'nameSingular' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'namePlural' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'labelSingular' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'labelPlural' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'icon' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isCustom' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isActive' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-                {
-                  kind: 'Field',
-                  name: {
-                    kind: 'Name',
-                    value: 'labelIdentifierFieldMetadataId',
-                  },
-                },
-                {
-                  kind: 'Field',
-                  name: {
-                    kind: 'Name',
-                    value: 'imageIdentifierFieldMetadataId',
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UpdateOneObjectMetadataItemMutation,
-  UpdateOneObjectMetadataItemMutationVariables
->;
-export const DeleteOneObjectMetadataItemDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'DeleteOneObjectMetadataItem' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'idToDelete' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'UUID' } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'deleteOneObject' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'ObjectValue',
-                  fields: [
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'id' },
-                      value: {
-                        kind: 'Variable',
-                        name: { kind: 'Name', value: 'idToDelete' },
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'dataSourceId' },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'nameSingular' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'namePlural' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'labelSingular' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'labelPlural' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'icon' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isCustom' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isActive' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-                {
-                  kind: 'Field',
-                  name: {
-                    kind: 'Name',
-                    value: 'labelIdentifierFieldMetadataId',
-                  },
-                },
-                {
-                  kind: 'Field',
-                  name: {
-                    kind: 'Name',
-                    value: 'imageIdentifierFieldMetadataId',
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  DeleteOneObjectMetadataItemMutation,
-  DeleteOneObjectMetadataItemMutationVariables
->;
-export const DeleteOneFieldMetadataItemDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'DeleteOneFieldMetadataItem' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'idToDelete' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'UUID' } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'deleteOneField' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'ObjectValue',
-                  fields: [
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'id' },
-                      value: {
-                        kind: 'Variable',
-                        name: { kind: 'Name', value: 'idToDelete' },
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'type' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'label' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'icon' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isCustom' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isActive' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'isNullable' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'settings' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  DeleteOneFieldMetadataItemMutation,
-  DeleteOneFieldMetadataItemMutationVariables
->;
-export const DeleteOneRelationMetadataItemDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'DeleteOneRelationMetadataItem' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'idToDelete' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'UUID' } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'deleteOneRelation' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'ObjectValue',
-                  fields: [
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'id' },
-                      value: {
-                        kind: 'Variable',
-                        name: { kind: 'Name', value: 'idToDelete' },
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  DeleteOneRelationMetadataItemMutation,
-  DeleteOneRelationMetadataItemMutationVariables
->;
-export const ObjectMetadataItemsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'ObjectMetadataItems' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'objects' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'paging' },
-                value: {
-                  kind: 'ObjectValue',
-                  fields: [
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'first' },
-                      value: { kind: 'IntValue', value: '1000' },
-                    },
-                  ],
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'edges' },
-                  selectionSet: {
-                    kind: 'SelectionSet',
-                    selections: [
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'node' },
-                        selectionSet: {
-                          kind: 'SelectionSet',
-                          selections: [
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'id' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'dataSourceId' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'nameSingular' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'namePlural' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'labelSingular' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'labelPlural' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'description' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'icon' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'isCustom' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'isRemote' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'isActive' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'isSystem' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'createdAt' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'updatedAt' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: {
-                                kind: 'Name',
-                                value: 'labelIdentifierFieldMetadataId',
-                              },
-                            },
-                            {
-                              kind: 'Field',
-                              name: {
-                                kind: 'Name',
-                                value: 'imageIdentifierFieldMetadataId',
-                              },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'shortcut' },
-                            },
-                            {
-                              kind: 'Field',
-                              name: {
-                                kind: 'Name',
-                                value: 'isLabelSyncedWithName',
-                              },
-                            },
-                            {
-                              kind: 'Field',
-                              name: {
-                                kind: 'Name',
-                                value: 'duplicateCriteria',
-                              },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'indexMetadatas' },
-                              arguments: [
-                                {
-                                  kind: 'Argument',
-                                  name: { kind: 'Name', value: 'paging' },
-                                  value: {
-                                    kind: 'ObjectValue',
-                                    fields: [
-                                      {
-                                        kind: 'ObjectField',
-                                        name: { kind: 'Name', value: 'first' },
-                                        value: {
-                                          kind: 'IntValue',
-                                          value: '100',
-                                        },
-                                      },
-                                    ],
-                                  },
-                                },
-                              ],
-                              selectionSet: {
-                                kind: 'SelectionSet',
-                                selections: [
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'edges' },
-                                    selectionSet: {
-                                      kind: 'SelectionSet',
-                                      selections: [
-                                        {
-                                          kind: 'Field',
-                                          name: { kind: 'Name', value: 'node' },
-                                          selectionSet: {
-                                            kind: 'SelectionSet',
-                                            selections: [
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'id',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'createdAt',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'updatedAt',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'name',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'indexWhereClause',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'indexType',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'isUnique',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'indexFieldMetadatas',
-                                                },
-                                                arguments: [
-                                                  {
-                                                    kind: 'Argument',
-                                                    name: {
-                                                      kind: 'Name',
-                                                      value: 'paging',
-                                                    },
-                                                    value: {
-                                                      kind: 'ObjectValue',
-                                                      fields: [
-                                                        {
-                                                          kind: 'ObjectField',
-                                                          name: {
-                                                            kind: 'Name',
-                                                            value: 'first',
-                                                          },
-                                                          value: {
-                                                            kind: 'IntValue',
-                                                            value: '100',
-                                                          },
-                                                        },
-                                                      ],
-                                                    },
-                                                  },
-                                                ],
-                                                selectionSet: {
-                                                  kind: 'SelectionSet',
-                                                  selections: [
-                                                    {
-                                                      kind: 'Field',
-                                                      name: {
-                                                        kind: 'Name',
-                                                        value: 'edges',
-                                                      },
-                                                      selectionSet: {
-                                                        kind: 'SelectionSet',
-                                                        selections: [
-                                                          {
-                                                            kind: 'Field',
-                                                            name: {
-                                                              kind: 'Name',
-                                                              value: 'node',
-                                                            },
-                                                            selectionSet: {
-                                                              kind: 'SelectionSet',
-                                                              selections: [
-                                                                {
-                                                                  kind: 'Field',
-                                                                  name: {
-                                                                    kind: 'Name',
-                                                                    value: 'id',
-                                                                  },
-                                                                },
-                                                                {
-                                                                  kind: 'Field',
-                                                                  name: {
-                                                                    kind: 'Name',
-                                                                    value:
-                                                                      'createdAt',
-                                                                  },
-                                                                },
-                                                                {
-                                                                  kind: 'Field',
-                                                                  name: {
-                                                                    kind: 'Name',
-                                                                    value:
-                                                                      'updatedAt',
-                                                                  },
-                                                                },
-                                                                {
-                                                                  kind: 'Field',
-                                                                  name: {
-                                                                    kind: 'Name',
-                                                                    value:
-                                                                      'order',
-                                                                  },
-                                                                },
-                                                                {
-                                                                  kind: 'Field',
-                                                                  name: {
-                                                                    kind: 'Name',
-                                                                    value:
-                                                                      'fieldMetadataId',
-                                                                  },
-                                                                },
-                                                              ],
-                                                            },
-                                                          },
-                                                        ],
-                                                      },
-                                                    },
-                                                  ],
-                                                },
-                                              },
-                                            ],
-                                          },
-                                        },
-                                      ],
-                                    },
-                                  },
-                                ],
-                              },
-                            },
-                            {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'fieldsList' },
-                              selectionSet: {
-                                kind: 'SelectionSet',
-                                selections: [
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'id' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'type' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'name' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'label' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: {
-                                      kind: 'Name',
-                                      value: 'description',
-                                    },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'icon' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'isCustom' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'isActive' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'isSystem' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'isNullable' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'isUnique' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'createdAt' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'updatedAt' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: {
-                                      kind: 'Name',
-                                      value: 'defaultValue',
-                                    },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'options' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'settings' },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: {
-                                      kind: 'Name',
-                                      value: 'isLabelSyncedWithName',
-                                    },
-                                  },
-                                  {
-                                    kind: 'Field',
-                                    name: {
-                                      kind: 'Name',
-                                      value: 'relationDefinition',
-                                    },
-                                    selectionSet: {
-                                      kind: 'SelectionSet',
-                                      selections: [
-                                        {
-                                          kind: 'Field',
-                                          name: {
-                                            kind: 'Name',
-                                            value: 'relationId',
-                                          },
-                                        },
-                                        {
-                                          kind: 'Field',
-                                          name: {
-                                            kind: 'Name',
-                                            value: 'direction',
-                                          },
-                                        },
-                                        {
-                                          kind: 'Field',
-                                          name: {
-                                            kind: 'Name',
-                                            value: 'sourceObjectMetadata',
-                                          },
-                                          selectionSet: {
-                                            kind: 'SelectionSet',
-                                            selections: [
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'id',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'nameSingular',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'namePlural',
-                                                },
-                                              },
-                                            ],
-                                          },
-                                        },
-                                        {
-                                          kind: 'Field',
-                                          name: {
-                                            kind: 'Name',
-                                            value: 'sourceFieldMetadata',
-                                          },
-                                          selectionSet: {
-                                            kind: 'SelectionSet',
-                                            selections: [
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'id',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'name',
-                                                },
-                                              },
-                                            ],
-                                          },
-                                        },
-                                        {
-                                          kind: 'Field',
-                                          name: {
-                                            kind: 'Name',
-                                            value: 'targetObjectMetadata',
-                                          },
-                                          selectionSet: {
-                                            kind: 'SelectionSet',
-                                            selections: [
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'id',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'nameSingular',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'namePlural',
-                                                },
-                                              },
-                                            ],
-                                          },
-                                        },
-                                        {
-                                          kind: 'Field',
-                                          name: {
-                                            kind: 'Name',
-                                            value: 'targetFieldMetadata',
-                                          },
-                                          selectionSet: {
-                                            kind: 'SelectionSet',
-                                            selections: [
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'id',
-                                                },
-                                              },
-                                              {
-                                                kind: 'Field',
-                                                name: {
-                                                  kind: 'Name',
-                                                  value: 'name',
-                                                },
-                                              },
-                                            ],
-                                          },
-                                        },
-                                      ],
-                                    },
-                                  },
-                                ],
-                              },
-                            },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'pageInfo' },
-                  selectionSet: {
-                    kind: 'SelectionSet',
-                    selections: [
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'hasNextPage' },
-                      },
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'hasPreviousPage' },
-                      },
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'startCursor' },
-                      },
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'endCursor' },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  ObjectMetadataItemsQuery,
-  ObjectMetadataItemsQueryVariables
->;
-export const CreateOneServerlessFunctionItemDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'CreateOneServerlessFunctionItem' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'CreateServerlessFunctionInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'createOneServerlessFunction' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'ServerlessFunction' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'runtime' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'timeoutSeconds' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'syncStatus' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'latestVersion' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'latestVersionInputSchema' },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'publishedVersions' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  CreateOneServerlessFunctionItemMutation,
-  CreateOneServerlessFunctionItemMutationVariables
->;
-export const DeleteOneServerlessFunctionDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'DeleteOneServerlessFunction' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'ServerlessFunctionIdInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'deleteOneServerlessFunction' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'ServerlessFunction' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'runtime' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'timeoutSeconds' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'syncStatus' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'latestVersion' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'latestVersionInputSchema' },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'publishedVersions' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  DeleteOneServerlessFunctionMutation,
-  DeleteOneServerlessFunctionMutationVariables
->;
-export const ExecuteOneServerlessFunctionDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'ExecuteOneServerlessFunction' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'ExecuteServerlessFunctionInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'executeOneServerlessFunction' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'data' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'duration' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'error' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  ExecuteOneServerlessFunctionMutation,
-  ExecuteOneServerlessFunctionMutationVariables
->;
-export const PublishOneServerlessFunctionDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'PublishOneServerlessFunction' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'PublishServerlessFunctionInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'publishServerlessFunction' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'ServerlessFunction' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'runtime' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'timeoutSeconds' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'syncStatus' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'latestVersion' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'latestVersionInputSchema' },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'publishedVersions' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  PublishOneServerlessFunctionMutation,
-  PublishOneServerlessFunctionMutationVariables
->;
-export const UpdateOneServerlessFunctionDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'UpdateOneServerlessFunction' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'UpdateServerlessFunctionInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'updateOneServerlessFunction' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'ServerlessFunction' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'runtime' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'timeoutSeconds' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'syncStatus' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'latestVersion' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'latestVersionInputSchema' },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'publishedVersions' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UpdateOneServerlessFunctionMutation,
-  UpdateOneServerlessFunctionMutationVariables
->;
-export const FindManyAvailablePackagesDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'FindManyAvailablePackages' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'ServerlessFunctionIdInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'getAvailablePackages' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  FindManyAvailablePackagesQuery,
-  FindManyAvailablePackagesQueryVariables
->;
-export const GetManyServerlessFunctionsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetManyServerlessFunctions' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'findManyServerlessFunctions' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'ServerlessFunction' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'runtime' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'timeoutSeconds' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'syncStatus' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'latestVersion' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'latestVersionInputSchema' },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'publishedVersions' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetManyServerlessFunctionsQuery,
-  GetManyServerlessFunctionsQueryVariables
->;
-export const GetOneServerlessFunctionDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetOneServerlessFunction' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'ServerlessFunctionIdInput' },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'findOneServerlessFunction' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ServerlessFunctionFields' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'ServerlessFunction' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'description' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'runtime' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'timeoutSeconds' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'syncStatus' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'latestVersion' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'latestVersionInputSchema' },
-          },
-          { kind: 'Field', name: { kind: 'Name', value: 'publishedVersions' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetOneServerlessFunctionQuery,
-  GetOneServerlessFunctionQueryVariables
->;
-export const FindOneServerlessFunctionSourceCodeDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'FindOneServerlessFunctionSourceCode' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'input' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: {
-                kind: 'Name',
-                value: 'GetServerlessFunctionSourceCodeInput',
-              },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'getServerlessFunctionSourceCode' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'input' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'input' },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  FindOneServerlessFunctionSourceCodeQuery,
-  FindOneServerlessFunctionSourceCodeQueryVariables
->;
+export type FindOneServerlessFunctionSourceCodeQuery = { __typename?: 'Query', getServerlessFunctionSourceCode?: any | null };
+
+export const RemoteServerFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteServerFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperId"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperOptions"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperType"}},{"kind":"Field","name":{"kind":"Name","value":"userMappingOptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]} as unknown as DocumentNode<RemoteServerFieldsFragment, unknown>;
+export const RemoteTableFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteTableFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteTable"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"schemaPendingUpdates"}}]}}]} as unknown as DocumentNode<RemoteTableFieldsFragment, unknown>;
+export const ServerlessFunctionFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ServerlessFunctionFieldsFragment, unknown>;
+export const CreateServerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createServer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRemoteServerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneRemoteServer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RemoteServerFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteServerFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperId"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperOptions"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperType"}},{"kind":"Field","name":{"kind":"Name","value":"userMappingOptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]} as unknown as DocumentNode<CreateServerMutation, CreateServerMutationVariables>;
+export const DeleteServerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteServer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteServerIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneRemoteServer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteServerMutation, DeleteServerMutationVariables>;
+export const SyncRemoteTableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"syncRemoteTable"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteTableInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"syncRemoteTable"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RemoteTableFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteTableFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteTable"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"schemaPendingUpdates"}}]}}]} as unknown as DocumentNode<SyncRemoteTableMutation, SyncRemoteTableMutationVariables>;
+export const SyncRemoteTableSchemaChangesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"syncRemoteTableSchemaChanges"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteTableInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"syncRemoteTableSchemaChanges"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RemoteTableFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteTableFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteTable"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"schemaPendingUpdates"}}]}}]} as unknown as DocumentNode<SyncRemoteTableSchemaChangesMutation, SyncRemoteTableSchemaChangesMutationVariables>;
+export const UnsyncRemoteTableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"unsyncRemoteTable"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteTableInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unsyncRemoteTable"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RemoteTableFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteTableFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteTable"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"schemaPendingUpdates"}}]}}]} as unknown as DocumentNode<UnsyncRemoteTableMutation, UnsyncRemoteTableMutationVariables>;
+export const UpdateServerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateServer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateRemoteServerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneRemoteServer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RemoteServerFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteServerFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperId"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperOptions"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperType"}},{"kind":"Field","name":{"kind":"Name","value":"userMappingOptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]} as unknown as DocumentNode<UpdateServerMutation, UpdateServerMutationVariables>;
+export const GetManyDatabaseConnectionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetManyDatabaseConnections"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteServerTypeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyRemoteServersByType"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RemoteServerFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteServerFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperId"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperOptions"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperType"}},{"kind":"Field","name":{"kind":"Name","value":"userMappingOptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]} as unknown as DocumentNode<GetManyDatabaseConnectionsQuery, GetManyDatabaseConnectionsQueryVariables>;
+export const GetManyRemoteTablesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetManyRemoteTables"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FindManyRemoteTablesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findDistantTablesWithStatus"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RemoteTableFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteTableFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteTable"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"schemaPendingUpdates"}}]}}]} as unknown as DocumentNode<GetManyRemoteTablesQuery, GetManyRemoteTablesQueryVariables>;
+export const GetOneDatabaseConnectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOneDatabaseConnection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteServerIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findOneRemoteServerById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RemoteServerFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RemoteServerFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RemoteServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperId"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperOptions"}},{"kind":"Field","name":{"kind":"Name","value":"foreignDataWrapperType"}},{"kind":"Field","name":{"kind":"Name","value":"userMappingOptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"schema"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]} as unknown as DocumentNode<GetOneDatabaseConnectionQuery, GetOneDatabaseConnectionQueryVariables>;
+export const CreateOneObjectMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOneObjectMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateOneObjectInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneObject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dataSourceId"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}},{"kind":"Field","name":{"kind":"Name","value":"labelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"labelPlural"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSearchable"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"labelIdentifierFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"imageIdentifierFieldMetadataId"}}]}}]}}]} as unknown as DocumentNode<CreateOneObjectMetadataItemMutation, CreateOneObjectMetadataItemMutationVariables>;
+export const CreateOneFieldMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOneFieldMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateOneFieldMetadataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneField"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isNullable"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"options"}}]}}]}}]} as unknown as DocumentNode<CreateOneFieldMetadataItemMutation, CreateOneFieldMetadataItemMutationVariables>;
+export const CreateOneRelationMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOneRelationMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateOneRelationMetadataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneRelationMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"relationType"}},{"kind":"Field","name":{"kind":"Name","value":"fromObjectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"toObjectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"fromFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"toFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateOneRelationMetadataItemMutation, CreateOneRelationMetadataItemMutationVariables>;
+export const UpdateOneFieldMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneFieldMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"idToUpdate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updatePayload"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateFieldInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneField"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"idToUpdate"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"update"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updatePayload"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isNullable"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"isLabelSyncedWithName"}}]}}]}}]} as unknown as DocumentNode<UpdateOneFieldMetadataItemMutation, UpdateOneFieldMetadataItemMutationVariables>;
+export const UpdateOneObjectMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneObjectMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"idToUpdate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updatePayload"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateObjectPayload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneObject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"idToUpdate"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"update"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updatePayload"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dataSourceId"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}},{"kind":"Field","name":{"kind":"Name","value":"labelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"labelPlural"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSearchable"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"labelIdentifierFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"imageIdentifierFieldMetadataId"}}]}}]}}]} as unknown as DocumentNode<UpdateOneObjectMetadataItemMutation, UpdateOneObjectMetadataItemMutationVariables>;
+export const DeleteOneObjectMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteOneObjectMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"idToDelete"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneObject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"idToDelete"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dataSourceId"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}},{"kind":"Field","name":{"kind":"Name","value":"labelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"labelPlural"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSearchable"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"labelIdentifierFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"imageIdentifierFieldMetadataId"}}]}}]}}]} as unknown as DocumentNode<DeleteOneObjectMetadataItemMutation, DeleteOneObjectMetadataItemMutationVariables>;
+export const DeleteOneFieldMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteOneFieldMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"idToDelete"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneField"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"idToDelete"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isNullable"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}}]}}]}}]} as unknown as DocumentNode<DeleteOneFieldMetadataItemMutation, DeleteOneFieldMetadataItemMutationVariables>;
+export const DeleteOneRelationMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteOneRelationMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"idToDelete"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneRelation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"idToDelete"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteOneRelationMetadataItemMutation, DeleteOneRelationMetadataItemMutationVariables>;
+export const ObjectMetadataItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ObjectMetadataItems"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectFilter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ObjectFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fieldFilter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"FieldFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objects"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paging"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1000"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dataSourceId"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}},{"kind":"Field","name":{"kind":"Name","value":"labelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"labelPlural"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isRemote"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"labelIdentifierFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"imageIdentifierFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"shortcut"}},{"kind":"Field","name":{"kind":"Name","value":"isLabelSyncedWithName"}},{"kind":"Field","name":{"kind":"Name","value":"indexMetadatas"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paging"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"indexWhereClause"}},{"kind":"Field","name":{"kind":"Name","value":"indexType"}},{"kind":"Field","name":{"kind":"Name","value":"isUnique"}},{"kind":"Field","name":{"kind":"Name","value":"indexFieldMetadatas"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paging"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}}]}}]}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paging"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1000"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fieldFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isNullable"}},{"kind":"Field","name":{"kind":"Name","value":"isUnique"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"options"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"isLabelSyncedWithName"}},{"kind":"Field","name":{"kind":"Name","value":"relationDefinition"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"relationId"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}},{"kind":"Field","name":{"kind":"Name","value":"sourceObjectMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sourceFieldMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetObjectMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetFieldMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<ObjectMetadataItemsQuery, ObjectMetadataItemsQueryVariables>;
+export const CreateOneServerlessFunctionItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOneServerlessFunctionItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateServerlessFunctionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<CreateOneServerlessFunctionItemMutation, CreateOneServerlessFunctionItemMutationVariables>;
+export const DeleteOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunctionIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<DeleteOneServerlessFunctionMutation, DeleteOneServerlessFunctionMutationVariables>;
+export const ExecuteOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ExecuteOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ExecuteServerlessFunctionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"executeOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"logs"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]} as unknown as DocumentNode<ExecuteOneServerlessFunctionMutation, ExecuteOneServerlessFunctionMutationVariables>;
+export const PublishOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PublishOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PublishServerlessFunctionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"publishServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<PublishOneServerlessFunctionMutation, PublishOneServerlessFunctionMutationVariables>;
+export const UpdateOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateServerlessFunctionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateOneServerlessFunctionMutation, UpdateOneServerlessFunctionMutationVariables>;
+export const FindManyAvailablePackagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyAvailablePackages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunctionIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAvailablePackages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>;
+export const GetManyServerlessFunctionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetManyServerlessFunctions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyServerlessFunctions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<GetManyServerlessFunctionsQuery, GetManyServerlessFunctionsQueryVariables>;
+export const GetOneServerlessFunctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOneServerlessFunction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunctionIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findOneServerlessFunction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ServerlessFunctionFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ServerlessFunctionFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ServerlessFunction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"runtime"}},{"kind":"Field","name":{"kind":"Name","value":"timeoutSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersion"}},{"kind":"Field","name":{"kind":"Name","value":"latestVersionInputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"publishedVersions"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<GetOneServerlessFunctionQuery, GetOneServerlessFunctionQueryVariables>;
+export const FindOneServerlessFunctionSourceCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindOneServerlessFunctionSourceCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GetServerlessFunctionSourceCodeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getServerlessFunctionSourceCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<FindOneServerlessFunctionSourceCodeQuery, FindOneServerlessFunctionSourceCodeQueryVariables>;

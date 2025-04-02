@@ -1,3 +1,5 @@
+/* eslint-disable @nx/workspace-component-props-naming */
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/ui/BaseNode';
 import styled from '@emotion/styled';
 import { Node, NodeProps, useReactFlow } from '@xyflow/react';
@@ -37,10 +39,6 @@ function TextNode({
   const { updateNodeData } = useReactFlow();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    console.log('data text input:', data);
-  }, [data]);
-
   const handleInputChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = evt.target;
     textarea.style.height = 'auto';
@@ -49,8 +47,9 @@ function TextNode({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = '30px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [data.text]);

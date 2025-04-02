@@ -1,6 +1,9 @@
 /* eslint-disable no-constant-condition */
 import TextNode from '@/chatbot/components/ui/TextNode';
+import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
+import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
   addEdge,
   applyEdgeChanges,
@@ -13,13 +16,61 @@ import {
   Panel,
   ReactFlow,
   ReactFlowInstance,
+  useReactFlow,
 } from '@xyflow/react';
-import { useCallback, useEffect, useState } from 'react';
-import { Button } from 'twenty-ui';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared';
+import { Button, Tag, TagColor, THEME_COMMON } from 'twenty-ui';
 
 type BotDiagramBaseProps = {
   nodeTypes?: NodeTypes | null;
+  tagColor: TagColor;
+  tagText: string;
 };
+
+const StyledResetReactflowStyles = styled.div`
+  height: 100%;
+  width: 100%;
+  position: relative;
+
+  /* Below we reset the default styling of Reactflow */
+  .react-flow__node-input,
+  .react-flow__node-default,
+  .react-flow__node-output,
+  .react-flow__node-group {
+    padding: 0;
+    width: auto;
+    text-align: start;
+    white-space: nowrap;
+  }
+
+  .react-flow__handle {
+    min-height: 0;
+    min-width: 0;
+  }
+  .react-flow__handle-top {
+    transform: translate(-50%, -50%);
+  }
+  .react-flow__handle-bottom {
+    transform: translate(-50%, 100%);
+  }
+  .react-flow__handle.connectionindicator {
+    cursor: pointer;
+  }
+
+  --xy-node-border-radius: none;
+  --xy-node-border: none;
+  --xy-node-background-color: none;
+  --xy-node-boxshadow-hover: none;
+  --xy-node-boxshadow-selected: none;
+`;
+
+const StyledStatusTagContainer = styled.div`
+  left: 0;
+  top: 0;
+  position: absolute;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
 
 const types: NodeTypes = {
   textInput: TextNode,
@@ -38,7 +89,11 @@ const initialEdges: Edge[] = [];
 
 const flowKey = 'flow';
 
-export const BotDiagramBase = ({ nodeTypes }: BotDiagramBaseProps) => {
+export const BotDiagramBase = ({
+  nodeTypes,
+  tagColor,
+  tagText,
+}: BotDiagramBaseProps) => {
   const theme = useTheme();
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
@@ -85,23 +140,64 @@ export const BotDiagramBase = ({ nodeTypes }: BotDiagramBaseProps) => {
     [setEdges],
   );
 
+  const reactflow = useReactFlow();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { rightDrawerState } = useRightDrawerState();
+  const rightDrawerWidth = Number(
+    THEME_COMMON.rightDrawerWidth.replace('px', ''),
+  );
+
+  useEffect(() => {
+    if (!isDefined(containerRef.current) || !reactflow.viewportInitialized) {
+      return;
+    }
+
+    const currentViewport = reactflow.getViewport();
+
+    const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
+
+    let visibleRightDrawerWidth = 0;
+    if (rightDrawerState === 'normal') {
+      visibleRightDrawerWidth = rightDrawerWidth;
+    }
+
+    const viewportX =
+      (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
+      flowBounds.width / 2;
+
+    reactflow.setViewport(
+      {
+        ...currentViewport,
+        x: viewportX - visibleRightDrawerWidth,
+      },
+      { duration: 300 },
+    );
+  }, [reactflow, rightDrawerState, rightDrawerWidth]);
+
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={types}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onInit={setRfInstance}
-      fitViewOptions={{ padding: 2 }}
-      fitView
-      nodesDraggable={false}
-    >
-      <Background color={theme.border.color.medium} size={2} />
-      <Panel>
-        <Button accent="blue" title="Save" onClick={onSave} />
-      </Panel>
-    </ReactFlow>
+    <StyledResetReactflowStyles ref={containerRef}>
+      <WorkflowDiagramCustomMarkers />
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={types}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onInit={setRfInstance}
+        fitViewOptions={{ padding: 2 }}
+        fitView
+        nodesDraggable={false}
+      >
+        <Background color={theme.border.color.medium} size={2} />
+        <Panel>
+          <Button accent="blue" title="Save" onClick={onSave} />
+        </Panel>
+      </ReactFlow>
+
+      <StyledStatusTagContainer data-testid={'tagContainerBotDiagram'}>
+        <Tag color={tagColor} text={tagText} />
+      </StyledStatusTagContainer>
+    </StyledResetReactflowStyles>
   );
 };

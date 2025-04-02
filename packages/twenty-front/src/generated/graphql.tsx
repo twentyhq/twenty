@@ -273,6 +273,36 @@ export enum CaptchaDriverType {
   Turnstile = 'Turnstile'
 }
 
+export type ChatbotFlow = {
+  __typename?: 'ChatbotFlow';
+  chatbotId: Scalars['String'];
+  edges?: Maybe<Array<Scalars['JSON']>>;
+  id: Scalars['UUID'];
+  nodes?: Maybe<Array<Scalars['JSON']>>;
+  workspace: Workspace;
+};
+
+export type ChatbotFlowInput = {
+  chatbotId: Scalars['String'];
+  edges: Scalars['JSON'];
+  nodes: Scalars['JSON'];
+  workspaceId: Scalars['ID'];
+};
+
+/** Chatbot status options */
+export enum ChatbotStatus {
+  ACTIVE = 'ACTIVE',
+  DEACTIVATED = 'DEACTIVATED',
+  DRAFT = 'DRAFT'
+}
+
+export type ChatbotWorkspaceEntity = {
+  __typename?: 'ChatbotWorkspaceEntity';
+  id: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  statuses?: Maybe<ChatbotStatus>;
+};
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   analyticsEnabled: Scalars['Boolean'];
@@ -352,6 +382,17 @@ export type CreateFieldInput = {
 export type CreateOneFieldMetadataInput = {
   /** The record to create */
   field: CreateFieldInput;
+};
+
+export type CreateRoleInput = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label: Scalars['String'];
 };
 
 export type CreateSectorInput = {
@@ -601,6 +642,7 @@ export enum FeatureFlagKey {
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsEnabled = 'IsPermissionsEnabled',
+  IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
@@ -940,6 +982,7 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
+  createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createSector: Sector;
@@ -992,9 +1035,11 @@ export type Mutation = {
   track: Analytics;
   updateAgent: Agent;
   updateBillingSubscription: BillingUpdateOutput;
+  updateChatbotFlow: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
+  updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSector: Sector;
@@ -1013,6 +1058,7 @@ export type Mutation = {
   uploadWorkspaceLogo: Scalars['String'];
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  validateChatbotFlow: ChatbotFlow;
 };
 
 
@@ -1068,6 +1114,11 @@ export type MutationCreateOidcIdentityProviderArgs = {
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
+};
+
+
+export type MutationCreateOneRoleArgs = {
+  createRoleInput: CreateRoleInput;
 };
 
 
@@ -1305,6 +1356,11 @@ export type MutationUpdateAgentArgs = {
 };
 
 
+export type MutationUpdateChatbotFlowArgs = {
+  updateChatbotInput: UpdateChatbotFlowInput;
+};
+
+
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
 };
@@ -1317,6 +1373,11 @@ export type MutationUpdateOneFieldArgs = {
 
 export type MutationUpdateOneObjectArgs = {
   input: UpdateOneObjectInput;
+};
+
+
+export type MutationUpdateOneRoleArgs = {
+  updateRoleInput: UpdateRoleInput;
 };
 
 
@@ -1418,6 +1479,11 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationValidateChatbotFlowArgs = {
+  chatbotInput: ChatbotFlowInput;
 };
 
 export type Object = {
@@ -1611,6 +1677,7 @@ export type Query = {
   getAllStripeIntegrations: Array<StripeIntegration>;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON'];
+  getChatbots: Array<ChatbotWorkspaceEntity>;
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -2383,6 +2450,12 @@ export type UpdateAgentInput = {
   sectorIds: Array<Scalars['String']>;
 };
 
+export type UpdateChatbotFlowInput = {
+  chatbotId: Scalars['String'];
+  edges: Scalars['JSON'];
+  nodes: Scalars['JSON'];
+};
+
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -2428,6 +2501,23 @@ export type UpdateOneObjectInput = {
   /** The id of the object to update */
   id: Scalars['UUID'];
   update: UpdateObjectPayload;
+};
+
+export type UpdateRoleInput = {
+  /** The id of the role to update */
+  id: Scalars['UUID'];
+  update: UpdateRolePayload;
+};
+
+export type UpdateRolePayload = {
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateSectorInput = {
@@ -3058,6 +3148,27 @@ export type UploadFileToBucketMutationVariables = Exact<{
 
 export type UploadFileToBucketMutation = { __typename?: 'Mutation', uploadFileToBucket: string };
 
+export type UpdateChatbotFlowMutationVariables = Exact<{
+  updateChatbotInput: UpdateChatbotFlowInput;
+}>;
+
+
+export type UpdateChatbotFlowMutation = { __typename?: 'Mutation', updateChatbotFlow: boolean };
+
+export type ValidateChatbotFlowMutationVariables = Exact<{
+  chatbotInput: ChatbotFlowInput;
+}>;
+
+
+export type ValidateChatbotFlowMutation = { __typename?: 'Mutation', validateChatbotFlow: { __typename?: 'ChatbotFlow', id: any, nodes?: Array<any> | null, edges?: Array<any> | null, chatbotId: string, workspace: { __typename?: 'Workspace', id: any, displayName?: string | null } } };
+
+export type GetChatbotsFragmentFragment = { __typename?: 'ChatbotWorkspaceEntity', name?: string | null, statuses?: ChatbotStatus | null };
+
+export type GetChatbotsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetChatbotsQuery = { __typename?: 'Query', getChatbots: Array<{ __typename?: 'ChatbotWorkspaceEntity', name?: string | null, statuses?: ChatbotStatus | null }> };
+
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3590,6 +3701,12 @@ export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
     id
     displayName
   }
+}
+    `;
+export const GetChatbotsFragmentFragmentDoc = gql`
+    fragment GetChatbotsFragment on ChatbotWorkspaceEntity {
+  name
+  statuses
 }
     `;
 export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
@@ -4991,6 +5108,111 @@ export function useUploadFileToBucketMutation(baseOptions?: Apollo.MutationHookO
 export type UploadFileToBucketMutationHookResult = ReturnType<typeof useUploadFileToBucketMutation>;
 export type UploadFileToBucketMutationResult = Apollo.MutationResult<UploadFileToBucketMutation>;
 export type UploadFileToBucketMutationOptions = Apollo.BaseMutationOptions<UploadFileToBucketMutation, UploadFileToBucketMutationVariables>;
+export const UpdateChatbotFlowDocument = gql`
+    mutation updateChatbotFlow($updateChatbotInput: UpdateChatbotFlowInput!) {
+  updateChatbotFlow(updateChatbotInput: $updateChatbotInput)
+}
+    `;
+export type UpdateChatbotFlowMutationFn = Apollo.MutationFunction<UpdateChatbotFlowMutation, UpdateChatbotFlowMutationVariables>;
+
+/**
+ * __useUpdateChatbotFlowMutation__
+ *
+ * To run a mutation, you first call `useUpdateChatbotFlowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateChatbotFlowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateChatbotFlowMutation, { data, loading, error }] = useUpdateChatbotFlowMutation({
+ *   variables: {
+ *      updateChatbotInput: // value for 'updateChatbotInput'
+ *   },
+ * });
+ */
+export function useUpdateChatbotFlowMutation(baseOptions?: Apollo.MutationHookOptions<UpdateChatbotFlowMutation, UpdateChatbotFlowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateChatbotFlowMutation, UpdateChatbotFlowMutationVariables>(UpdateChatbotFlowDocument, options);
+      }
+export type UpdateChatbotFlowMutationHookResult = ReturnType<typeof useUpdateChatbotFlowMutation>;
+export type UpdateChatbotFlowMutationResult = Apollo.MutationResult<UpdateChatbotFlowMutation>;
+export type UpdateChatbotFlowMutationOptions = Apollo.BaseMutationOptions<UpdateChatbotFlowMutation, UpdateChatbotFlowMutationVariables>;
+export const ValidateChatbotFlowDocument = gql`
+    mutation validateChatbotFlow($chatbotInput: ChatbotFlowInput!) {
+  validateChatbotFlow(chatbotInput: $chatbotInput) {
+    id
+    nodes
+    edges
+    chatbotId
+    workspace {
+      id
+      displayName
+    }
+  }
+}
+    `;
+export type ValidateChatbotFlowMutationFn = Apollo.MutationFunction<ValidateChatbotFlowMutation, ValidateChatbotFlowMutationVariables>;
+
+/**
+ * __useValidateChatbotFlowMutation__
+ *
+ * To run a mutation, you first call `useValidateChatbotFlowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useValidateChatbotFlowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [validateChatbotFlowMutation, { data, loading, error }] = useValidateChatbotFlowMutation({
+ *   variables: {
+ *      chatbotInput: // value for 'chatbotInput'
+ *   },
+ * });
+ */
+export function useValidateChatbotFlowMutation(baseOptions?: Apollo.MutationHookOptions<ValidateChatbotFlowMutation, ValidateChatbotFlowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ValidateChatbotFlowMutation, ValidateChatbotFlowMutationVariables>(ValidateChatbotFlowDocument, options);
+      }
+export type ValidateChatbotFlowMutationHookResult = ReturnType<typeof useValidateChatbotFlowMutation>;
+export type ValidateChatbotFlowMutationResult = Apollo.MutationResult<ValidateChatbotFlowMutation>;
+export type ValidateChatbotFlowMutationOptions = Apollo.BaseMutationOptions<ValidateChatbotFlowMutation, ValidateChatbotFlowMutationVariables>;
+export const GetChatbotsDocument = gql`
+    query GetChatbots {
+  getChatbots {
+    ...GetChatbotsFragment
+  }
+}
+    ${GetChatbotsFragmentFragmentDoc}`;
+
+/**
+ * __useGetChatbotsQuery__
+ *
+ * To run a query within a React component, call `useGetChatbotsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatbotsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChatbotsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetChatbotsQuery(baseOptions?: Apollo.QueryHookOptions<GetChatbotsQuery, GetChatbotsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetChatbotsQuery, GetChatbotsQueryVariables>(GetChatbotsDocument, options);
+      }
+export function useGetChatbotsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatbotsQuery, GetChatbotsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetChatbotsQuery, GetChatbotsQueryVariables>(GetChatbotsDocument, options);
+        }
+export type GetChatbotsQueryHookResult = ReturnType<typeof useGetChatbotsQuery>;
+export type GetChatbotsLazyQueryHookResult = ReturnType<typeof useGetChatbotsLazyQuery>;
+export type GetChatbotsQueryResult = Apollo.QueryResult<GetChatbotsQuery, GetChatbotsQueryVariables>;
 export const GetClientConfigDocument = gql`
     query GetClientConfig {
   clientConfig {

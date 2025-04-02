@@ -1,3 +1,5 @@
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared';
 
@@ -56,6 +58,11 @@ const ChatbotStatusOptions: FieldMetadataComplexOption[] = [
   },
 ];
 
+registerEnumType(ChatbotStatus, {
+  name: 'ChatbotStatus',
+  description: 'Chatbot status options',
+});
+
 const NAME_FIELD_NAME = 'name';
 
 export const SEARCH_FIELDS_FOR_CHATBOT: FieldTypeAndNameMetadata[] = [
@@ -72,6 +79,7 @@ export const SEARCH_FIELDS_FOR_CHATBOT: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: CHATBOT_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
+@ObjectType()
 export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.name,
@@ -80,6 +88,7 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The chatbot flow name`,
     icon: 'IconSettingsAutomation',
   })
+  @Field(() => String, { nullable: true })
   name: string | null;
 
   @WorkspaceField({
@@ -91,7 +100,8 @@ export class ChatbotWorkspaceEntity extends BaseWorkspaceEntity {
     options: ChatbotStatusOptions,
   })
   @WorkspaceIsNullable()
-  statuses: ChatbotStatus[] | null;
+  @Field(() => ChatbotStatus, { nullable: true })
+  statuses: ChatbotStatus | null;
 
   @WorkspaceField({
     standardId: CHATBOT_STANDARD_FIELD_IDS.position,
