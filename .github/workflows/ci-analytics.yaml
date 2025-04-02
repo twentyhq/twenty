@@ -60,7 +60,7 @@ jobs:
         run: npx nx reset:env twenty-server
       - name: Update .env for ClickHouse
         run: |
-          echo "CLICKHOUSE_URL=http://default:ciPassword@localhost:8123" >> packages/twenty-server/.env
+          echo -e "\nCLICKHOUSE_URL=http://default:ciPassword@localhost:8123" >> packages/twenty-server/.env
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
       - name: Verify ClickHouse is working
