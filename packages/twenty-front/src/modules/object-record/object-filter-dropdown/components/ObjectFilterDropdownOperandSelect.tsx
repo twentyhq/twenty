@@ -73,6 +73,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
         value: '',
         type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
         label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
       return;
     }
@@ -100,6 +101,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
         value,
         type: filterType,
         label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
     }
   };
