@@ -67,7 +67,10 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+    recordId,
+    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Workflow,
+  );
 
   return {
     isFavorite,
