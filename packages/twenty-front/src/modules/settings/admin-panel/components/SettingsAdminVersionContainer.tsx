@@ -28,15 +28,17 @@ const StyledSpan = styled.span`
 `;
 
 export const SettingsAdminVersionContainer = () => {
-  const { data: versionInfo } = useGetVersionInfoQuery({
+  const { data } = useGetVersionInfoQuery({
     variables: { currentVersion: packageJson.version },
   });
+
+  const { currentVersionExists, latestVersion } = data?.versionInfo ?? {};
 
   const versionItems = [
     {
       Icon: IconCircleDot,
       label: t`Current version`,
-      value: versionInfo?.versionInfo.currentVersionExists ? (
+      value: currentVersionExists ? (
         <StyledActionLink
           href={`${DOCKER_HUB_LINK}/tags?name=v${packageJson.version}`}
           target="_blank"
@@ -51,18 +53,16 @@ export const SettingsAdminVersionContainer = () => {
     {
       Icon: IconStatusChange,
       label: t`Latest version`,
-      value: versionInfo?.versionInfo.latestVersion ? (
+      value: latestVersion ? (
         <StyledActionLink
-          href={`${DOCKER_HUB_LINK}/tags?name=v${versionInfo.versionInfo.latestVersion}`}
+          href={`${DOCKER_HUB_LINK}/tags?name=v${latestVersion}`}
           target="_blank"
           rel="noreferrer"
         >
-          {versionInfo.versionInfo.latestVersion}
+          {latestVersion}
         </StyledActionLink>
       ) : (
-        <StyledSpan>
-          {versionInfo?.versionInfo.latestVersion ?? 'Loading...'}
-        </StyledSpan>
+        <StyledSpan>{latestVersion ?? 'Loading...'}</StyledSpan>
       ),
     },
   ];
