@@ -37,7 +37,7 @@ export class RoleService {
       where: {
         workspaceId,
       },
-      relations: ['userWorkspaceRoles'],
+      relations: ['userWorkspaceRoles', 'settingPermissions'],
     });
   }
 
@@ -50,7 +50,7 @@ export class RoleService {
         id,
         workspaceId,
       },
-      relations: ['userWorkspaceRoles'],
+      relations: ['userWorkspaceRoles', 'settingPermissions'],
     });
   }
 
@@ -63,7 +63,7 @@ export class RoleService {
   }): Promise<RoleEntity> {
     await this.validateRoleInput({ input, workspaceId });
 
-    return this.roleRepository.save({
+    const savedRole = await this.roleRepository.save({
       label: input.label,
       description: input.description,
       icon: input.icon,
@@ -75,6 +75,17 @@ export class RoleService {
       isEditable: true,
       workspaceId,
     });
+
+    const newRole = await this.roleRepository.findOne({
+      where: { id: savedRole.id },
+      relations: ['settingPermissions'],
+    });
+
+    if (!newRole) {
+      throw new Error('Failed to refetch newly created role');
+    }
+
+    return newRole;
   }
 
   public async updateRole({
@@ -109,12 +120,24 @@ export class RoleService {
       roleId: input.id,
     });
 
-    const updatedRole = await this.roleRepository.save({
+    await this.roleRepository.save({
       id: input.id,
       ...input.update,
     });
 
-    return { ...existingRole, ...updatedRole };
+    const updatedRole = await this.roleRepository.findOne({
+      where: { id: input.id },
+      relations: ['settingPermissions'],
+    });
+
+    if (!updatedRole) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    return updatedRole;
   }
 
   public async createAdminRole({

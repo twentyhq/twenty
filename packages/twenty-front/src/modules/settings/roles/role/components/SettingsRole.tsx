@@ -21,10 +21,13 @@ import { Button, IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui';
 import { v4 } from 'uuid';
 import {
   FeatureFlagKey,
+  Role,
   useCreateOneRoleMutation,
   useUpdateOneRoleMutation,
+  useUpsertSettingPermissionsMutation,
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -32,6 +35,17 @@ type SettingsRoleProps = {
   roleId: string;
   isCreateMode: boolean;
 };
+
+const ROLE_BASIC_KEYS: Array<keyof Role> = [
+  'label',
+  'description',
+  'icon',
+  'canUpdateAllSettings',
+  'canReadAllObjectRecords',
+  'canUpdateAllObjectRecords',
+  'canSoftDeleteAllObjectRecords',
+  'canDestroyAllObjectRecords',
+];
 
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const activeTabId = useRecoilComponentValueV2(
@@ -47,6 +61,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const [createRole] = useCreateOneRoleMutation();
   const [updateRole] = useUpdateOneRoleMutation();
+  const [upsertSettingPermissions] = useUpsertSettingPermissionsMutation();
 
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
@@ -87,6 +102,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const isDirty = !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
   const handleSave = () => {
+    const dirtyFields = getDirtyFields(
+      settingsDraftRole,
+      settingsPersistedRole,
+    );
+
     if (isCreateMode) {
       const roleId = v4();
 
@@ -115,33 +135,62 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
             ),
           });
 
+          await upsertSettingPermissions({
+            variables: {
+              upsertSettingPermissionsInput: {
+                roleId: data.createOneRole.id,
+                settingPermissionKeys:
+                  settingsDraftRole.settingPermissions?.map(
+                    (settingPermission) => settingPermission.setting,
+                  ) ?? [],
+              },
+            },
+          });
+
           navigateSettings(SettingsPath.RoleDetail, {
             roleId: data.createOneRole.id,
           });
         },
       });
     } else {
-      updateRole({
-        variables: {
-          updateRoleInput: {
-            id: roleId,
-            update: {
-              label: settingsDraftRole.label,
-              description: settingsDraftRole.description,
-              icon: settingsDraftRole.icon,
-              canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
-              canReadAllObjectRecords:
-                settingsDraftRole.canReadAllObjectRecords,
-              canUpdateAllObjectRecords:
-                settingsDraftRole.canUpdateAllObjectRecords,
-              canSoftDeleteAllObjectRecords:
-                settingsDraftRole.canSoftDeleteAllObjectRecords,
-              canDestroyAllObjectRecords:
-                settingsDraftRole.canDestroyAllObjectRecords,
+      if (ROLE_BASIC_KEYS.some((key) => key in dirtyFields)) {
+        updateRole({
+          variables: {
+            updateRoleInput: {
+              id: roleId,
+              update: {
+                label: settingsDraftRole.label,
+                description: settingsDraftRole.description,
+                icon: settingsDraftRole.icon,
+                canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
+                canReadAllObjectRecords:
+                  settingsDraftRole.canReadAllObjectRecords,
+                canUpdateAllObjectRecords:
+                  settingsDraftRole.canUpdateAllObjectRecords,
+                canSoftDeleteAllObjectRecords:
+                  settingsDraftRole.canSoftDeleteAllObjectRecords,
+                canDestroyAllObjectRecords:
+                  settingsDraftRole.canDestroyAllObjectRecords,
+              },
             },
           },
-        },
-      });
+        });
+      }
+
+      if (isDefined(dirtyFields.settingPermissions)) {
+        upsertSettingPermissions({
+          variables: {
+            upsertSettingPermissionsInput: {
+              roleId: roleId,
+              settingPermissionKeys:
+                settingsDraftRole.settingPermissions?.map(
+                  (settingPermission) => settingPermission.setting,
+                ) ?? [],
+            },
+          },
+          refetchQueries: ['GetRoles'],
+        });
+      }
     }
   };
 

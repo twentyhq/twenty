@@ -1,7 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -10,7 +12,7 @@ import {
 
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 
-@InputType()
+@InputType({ description: 'Input for upserting a setting permission' })
 export class UpsertSettingPermissionInput {
   @IsUUID()
   @IsNotEmpty()
@@ -26,4 +28,17 @@ export class UpsertSettingPermissionInput {
   @IsOptional()
   @Field({ nullable: true })
   canUpdateSetting?: boolean;
+}
+
+@InputType()
+export class UpsertSettingPermissionsInput {
+  @IsUUID()
+  @IsNotEmpty()
+  @Field()
+  roleId: string;
+
+  @IsArray()
+  @IsEnum(SettingPermissionType, { each: true })
+  @Field(() => [SettingPermissionType])
+  settingPermissionKeys: SettingPermissionType[];
 }
