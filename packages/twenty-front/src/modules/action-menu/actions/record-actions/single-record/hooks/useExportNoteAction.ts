@@ -3,6 +3,7 @@ import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useExportNoteAction: ActionHookWithoutObjectMetadataItem = () => {
   const recordId = useSelectedRecordIdOrThrow();
@@ -12,7 +13,7 @@ export const useExportNoteAction: ActionHookWithoutObjectMetadataItem = () => {
   const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 
   const onClick = async () => {
-    if (!selectedRecord) {
+    if (!isDefined(selectedRecord)) {
       return;
     }
 

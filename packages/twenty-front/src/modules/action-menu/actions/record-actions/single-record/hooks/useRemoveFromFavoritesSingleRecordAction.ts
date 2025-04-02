@@ -2,6 +2,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveFromFavoritesSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -16,7 +17,7 @@ export const useRemoveFromFavoritesSingleRecordAction: ActionHookWithoutObjectMe
     );
 
     const onClick = () => {
-      if (!foundFavorite) {
+      if (!isDefined(foundFavorite)) {
         return;
       }
 

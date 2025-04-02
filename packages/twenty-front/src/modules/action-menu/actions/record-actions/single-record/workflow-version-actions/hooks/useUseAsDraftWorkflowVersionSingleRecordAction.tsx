@@ -34,7 +34,7 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: ActionHookWithoutOb
       workflow?.versions.some((version) => version.status === 'DRAFT') || false;
 
     const onClick = async () => {
-      if (!workflowVersion || !workflow) {
+      if (!isDefined(workflowVersion) || !isDefined(workflow)) {
         return;
       }
 

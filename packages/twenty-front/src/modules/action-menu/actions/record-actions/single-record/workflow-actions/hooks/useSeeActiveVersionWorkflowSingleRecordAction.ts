@@ -3,6 +3,7 @@ import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AppPath } from '@/types/AppPath';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
@@ -14,7 +15,7 @@ export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObj
     const navigateApp = useNavigateApp();
 
     const onClick = () => {
-      if (!workflowActiveVersion) {
+      if (!isDefined(workflowActiveVersion)) {
         return;
       }
 

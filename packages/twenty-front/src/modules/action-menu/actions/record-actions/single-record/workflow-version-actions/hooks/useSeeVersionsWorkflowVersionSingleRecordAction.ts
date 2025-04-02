@@ -6,6 +6,7 @@ import { AppPath } from '@/types/AppPath';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useSeeVersionsWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
@@ -21,7 +22,7 @@ export const useSeeVersionsWorkflowVersionSingleRecordAction: ActionHookWithoutO
     const navigateApp = useNavigateApp();
 
     const onClick = () => {
-      if (!workflowWithCurrentVersion) {
+      if (!isDefined(workflowWithCurrentVersion)) {
         return;
       }
 

@@ -2,6 +2,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDiscardDraftWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
@@ -12,7 +13,7 @@ export const useDiscardDraftWorkflowSingleRecordAction: ActionHookWithoutObjectM
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
     const onClick = () => {
-      if (!workflowWithCurrentVersion) {
+      if (!isDefined(workflowWithCurrentVersion)) {
         return;
       }
 

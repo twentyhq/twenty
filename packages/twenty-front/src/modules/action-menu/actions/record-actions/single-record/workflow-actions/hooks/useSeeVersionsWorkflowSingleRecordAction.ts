@@ -4,6 +4,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { AppPath } from '@/types/AppPath';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useSeeVersionsWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
@@ -15,7 +16,9 @@ export const useSeeVersionsWorkflowSingleRecordAction: ActionHookWithoutObjectMe
     const navigateApp = useNavigateApp();
 
     const onClick = () => {
-      if (!workflowWithCurrentVersion) return;
+      if (!isDefined(workflowWithCurrentVersion)) {
+        return;
+      }
 
       navigateApp(
         AppPath.RecordIndexPage,

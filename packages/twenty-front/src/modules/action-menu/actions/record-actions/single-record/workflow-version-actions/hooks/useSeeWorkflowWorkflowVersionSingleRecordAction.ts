@@ -4,6 +4,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AppPath } from '@/types/AppPath';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useSeeWorkflowWorkflowVersionSingleRecordAction: ActionHookWithoutObjectMetadataItem =
@@ -15,7 +16,10 @@ export const useSeeWorkflowWorkflowVersionSingleRecordAction: ActionHookWithoutO
     const navigateApp = useNavigateApp();
 
     const onClick = () => {
-      if (!workflowVersion?.workflow?.id) {
+      if (
+        !isDefined(workflowVersion) ||
+        !isDefined(workflowVersion?.workflow?.id)
+      ) {
         return;
       }
 

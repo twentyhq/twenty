@@ -3,6 +3,7 @@ import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/Ac
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useAddToFavoritesSingleRecordAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
@@ -13,7 +14,7 @@ export const useAddToFavoritesSingleRecordAction: ActionHookWithObjectMetadataIt
     const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
     const onClick = () => {
-      if (!selectedRecord) {
+      if (!isDefined(selectedRecord)) {
         return;
       }
 
