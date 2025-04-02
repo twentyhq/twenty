@@ -427,6 +427,11 @@ msgstr "Googleのシングルサインオン機能でログインを許可する
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Microsoftのシングルサインオン機能でログインを許可する。"
 
+#. js-lingui-id: U6bnfj
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Allow Support Team Access"
+msgstr ""
+
 #. js-lingui-id: wMg43c
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
@@ -2193,10 +2198,15 @@ msgstr ""
 msgid "Go to workflows"
 msgstr "ワークフローに移動"
 
+#. js-lingui-id: 6eo66Q
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Grant access to your workspace so we can troubleshoot problems."
+msgstr ""
+
 #. js-lingui-id: hWp1MY
 #: src/pages/settings/SettingsWorkspace.tsx
-msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-msgstr "Twentyサポートに一時的なアクセスを許可して、問題のトラブルシューティングやコンテンツの復旧を行います。アクセスはいつでも取り消せます。"
+#~ msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+#~ msgstr "Twentyサポートに一時的なアクセスを許可して、問題のトラブルシューティングやコンテンツの復旧を行います。アクセスはいつでも取り消せます。"
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2725,6 +2735,11 @@ msgstr "メンバー管理"
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Manage security policies"
+msgstr ""
+
+#. js-lingui-id: 49MfD1
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Manage support access settings"
 msgstr ""
 
 #. js-lingui-id: 4cjU2u
@@ -4142,7 +4157,7 @@ msgid "Sum"
 msgstr "合計"
 
 #. js-lingui-id: XYLcNv
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Support"
 msgstr "サポート"
 
