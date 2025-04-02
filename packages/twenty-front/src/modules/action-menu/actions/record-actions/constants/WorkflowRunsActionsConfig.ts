@@ -14,8 +14,8 @@ import {
 import { msg } from '@lingui/core/macro';
 import { IconSettingsAutomation, IconVersions } from 'twenty-ui';
 
-export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
-  {
+export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
+  config: {
     [WorkflowRunSingleRecordActionKeys.SEE_WORKFLOW]: {
       key: WorkflowRunSingleRecordActionKeys.SEE_WORKFLOW,
       label: msg`See workflow`,
@@ -64,7 +64,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
       hotKeys: ['G', 'W'],
     },
   },
-  [
+  actionKeys: [
     SingleRecordActionKeys.ADD_TO_FAVORITES,
     SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
@@ -80,7 +80,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
     NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     NoSelectionRecordActionKeys.GO_TO_TASKS,
   ],
-  {
+  propertiesToOverwrite: {
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
       isPinned: false,
       position: 2,
@@ -131,4 +131,4 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
       position: 16,
     },
   },
-);
+});

@@ -28,8 +28,8 @@ import {
   IconVersions,
 } from 'twenty-ui';
 
-export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
-  {
+export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
+  config: {
     [WorkflowSingleRecordActionKeys.ACTIVATE]: {
       key: WorkflowSingleRecordActionKeys.ACTIVATE,
       label: msg`Activate Workflow`,
@@ -180,7 +180,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
       useAction: useSeeRunsNoSelectionRecordAction,
     },
   },
-  [
+  actionKeys: [
     NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
     SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
@@ -200,7 +200,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
     NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     NoSelectionRecordActionKeys.GO_TO_TASKS,
   ],
-  {
+  propertiesToOverwrite: {
     [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
       position: 0,
       label: msg`Create new workflow`,
@@ -275,4 +275,4 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
       position: 27,
     },
   },
-);
+});
