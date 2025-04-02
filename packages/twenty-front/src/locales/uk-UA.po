@@ -99,7 +99,7 @@ msgid "{name}"
 msgstr "{name}"
 
 #. js-lingui-id: WN9tFl
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} буде позбавлений наступної ролі:"
 
@@ -156,7 +156,7 @@ msgid "A shared environment where you will be able to manage your customer relat
 msgstr "Спільне оточення, де ви зможете керувати вашими відносинами з клієнтами разом з вашою командою."
 
 #. js-lingui-id: 09tRFp
-#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "Можливість взаємодії з кожним об'єктом"
 
@@ -212,8 +212,8 @@ msgid "Action"
 msgstr "Дія"
 
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Actions"
 msgstr "Дії"
 
@@ -282,6 +282,11 @@ msgstr "Додати об'єкт"
 msgid "Add option"
 msgstr "Додати опцію"
 
+#. js-lingui-id: M067Bn
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Add or remove users"
+msgstr ""
+
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
@@ -338,7 +343,7 @@ msgid "Added to blocklist"
 msgstr "Додано до чорного списку"
 
 #. js-lingui-id: Eis4ey
-#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
 msgstr "Налаштувати параметри, пов'язані з роллю"
 
@@ -347,9 +352,20 @@ msgstr "Налаштувати параметри, пов'язані з ролл
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
 msgstr "Панель адміністратора"
+
+#. js-lingui-id: ae6Tab
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Admin settings and system tools"
+msgstr ""
+
+#. js-lingui-id: sxkWRg
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+msgid "Advanced"
+msgstr ""
 
 #. js-lingui-id: tMFFwF
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
@@ -397,7 +413,7 @@ msgid "All Objects"
 msgstr "Всі об'єкти"
 
 #. js-lingui-id: Hm90t3
-#: src/modules/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "All roles"
 msgstr "Всі ролі"
 
@@ -478,6 +494,11 @@ msgstr "API-ключ скопійовано в буфер обміну"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "API keys"
 msgstr "API-ключі"
+
+#. js-lingui-id: vByqA1
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "API Keys & Webhooks"
+msgstr ""
 
 #. js-lingui-id: kAtj+q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -572,32 +593,32 @@ msgid "Ascending"
 msgstr "За зростанням"
 
 #. js-lingui-id: 9ch9Mz
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "Призначити {workspaceMemberName}?"
 
 #. js-lingui-id: rfYmIr
-#: src/modules/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "Призначте ролі для визначення дозволів доступу кожного учасника"
 
 #. js-lingui-id: 2y2quh
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "Assign to member"
 msgstr "Призначити члену"
 
 #. js-lingui-id: OItM/o
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "Assigned members"
 msgstr "Призначені учасники"
 
 #. js-lingui-id: lxQ+5m
-#: src/modules/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Призначено"
 
 #. js-lingui-id: 0dtKl9
-#: src/pages/settings/roles/SettingsRoleEdit.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Assignment"
 msgstr "Призначення"
 
@@ -872,6 +893,14 @@ msgstr ""
 msgid "Compact view"
 msgstr "Компактний вигляд"
 
+#. js-lingui-id: s2QZS6
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Companies"
+msgstr ""
+
 #. js-lingui-id: +zUMwJ
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
@@ -899,7 +928,7 @@ msgstr "Налаштуйте налаштування електронної п�
 
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "Підтвердити"
 
@@ -1054,6 +1083,7 @@ msgstr "Підрахунок унікальних значень"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Create"
 msgstr "Створити"
 
@@ -1079,7 +1109,7 @@ msgid "Create profile"
 msgstr "Створити профіль"
 
 #. js-lingui-id: RoyYUE
-#: src/modules/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Create Role"
 msgstr "Створити роль"
 
@@ -1201,6 +1231,11 @@ msgstr "Видалення даних"
 msgid "Data model"
 msgstr "Модель даних"
 
+#. js-lingui-id: 4BuYDo
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Data Model"
+msgstr ""
+
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1280,6 +1315,11 @@ msgstr "Значення за замовчуванням"
 msgid "Define the name and description of your object"
 msgstr "Визначте назву та опис вашого об'єкта"
 
+#. js-lingui-id: Ntu10D
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Define user roles and access levels"
+msgstr ""
+
 #. js-lingui-id: bQkkFU
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -1333,6 +1373,11 @@ msgstr "Видалити ключ API"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete records"
 msgstr "Видалити записи"
+
+#. js-lingui-id: mcXHCJ
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Delete Records on All Objects"
+msgstr ""
 
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -1412,7 +1457,7 @@ msgstr "По спадаючій"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 msgid "Description"
 msgstr "Опис"
 
@@ -1423,6 +1468,11 @@ msgstr "Опис"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Destroy"
 msgstr "Знищити"
+
+#. js-lingui-id: L68qSB
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Destroy Records on All Objects"
+msgstr ""
 
 #. js-lingui-id: n+SX4g
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -1546,6 +1596,11 @@ msgstr "Редагувати"
 msgid "Edit billing interval"
 msgstr "Редагувати інтервал білінгу"
 
+#. js-lingui-id: 6vZ75d
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Edit CRM data structure and fields"
+msgstr ""
+
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
@@ -1561,6 +1616,11 @@ msgstr "Редагувати поля"
 msgid "Edit payment method, see your invoices and more"
 msgstr "Редагувати спосіб оплати, переглядати свої рахунки та більше"
 
+#. js-lingui-id: 6n2zpV
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Edit Records on All Objects"
+msgstr ""
+
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Edit your subdomain name or set a custom domain."
@@ -1572,7 +1632,7 @@ msgstr "Редагуйте назву вашого субдомену або в�
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "Електронна адреса"
@@ -2097,6 +2157,30 @@ msgstr "Отримайте свою передплату"
 msgid "Global"
 msgstr "Глобальні"
 
+#. js-lingui-id: mUbv8L
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Go to Companies"
+msgstr ""
+
+#. js-lingui-id: buPcNi
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Go to Opportunities"
+msgstr ""
+
+#. js-lingui-id: MrE/Qb
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Go to People"
+msgstr ""
+
 #. js-lingui-id: iS69s6
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -2105,8 +2189,20 @@ msgstr "Перейти до запусків"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Go to Settings"
 msgstr "Перейти до налаштувань"
+
+#. js-lingui-id: BM24SF
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Go to Tasks"
+msgstr ""
 
 #. js-lingui-id: A5WHZY
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2633,6 +2729,11 @@ msgstr "Шукати користувачів та керувати їх пра�
 msgid "Look up users to impersonate them."
 msgstr "Шукати користувачів для їх персонуфікації."
 
+#. js-lingui-id: n0FHLv
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Manage API keys and webhooks"
+msgstr ""
+
 #. js-lingui-id: U8dG4j
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -2643,6 +2744,11 @@ msgstr "Керувати обраними"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
 msgstr "Управління членами"
+
+#. js-lingui-id: eGGH1l
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Manage security policies"
+msgstr ""
 
 #. js-lingui-id: 4cjU2u
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2759,10 +2865,10 @@ msgstr "Перемістити вправо"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
-#: src/modules/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2940,7 +3046,7 @@ msgid "No members"
 msgstr "Немає членів"
 
 #. js-lingui-id: Y4qK8/
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No members assigned"
 msgstr "Учасники не призначені"
 
@@ -2951,7 +3057,7 @@ msgstr "Учасники не призначені"
 
 #. js-lingui-id: /nLvVj
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No members match your search"
 msgstr "Жоден учасник не відповідає вашому запиту"
 
@@ -2976,7 +3082,7 @@ msgstr "Дані метрик недоступні"
 #~ msgstr "No more members to add"
 
 #. js-lingui-id: DL8pzn
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Більше немає учасників для призначення"
 
@@ -2996,9 +3102,14 @@ msgid "No results"
 msgstr ""
 
 #. js-lingui-id: MA3x23
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Немає результатів"
+
+#. js-lingui-id: 9mcJ/7
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "No roles found"
+msgstr ""
 
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -3091,7 +3202,7 @@ msgstr "Об'єкт призначення"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Objects"
 msgstr "Об'єкти"
 
@@ -3126,13 +3237,21 @@ msgstr "Відкрити в"
 msgid "Opened"
 msgstr "Відкрився"
 
+#. js-lingui-id: 4MyDFl
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Opportunities"
+msgstr ""
+
 #. js-lingui-id: qNELak
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "Необов'язково: визначте секретний рядок, який включимо у всі вебхуки. Використовуйте це для автентифікації та перевірки вебхука при отриманні."
 
 #. js-lingui-id: 0zpgxV
-#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -3191,6 +3310,14 @@ msgstr "Пароль було оновлено"
 msgid "Password reset link has been sent to the email"
 msgstr "Посилання для скидання пароля було відправлене на електронну пошту"
 
+#. js-lingui-id: 1wdjme
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "People"
+msgstr ""
+
 #. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to and received emails from."
@@ -3240,7 +3367,7 @@ msgid "Permanently destroy workflows"
 msgstr "Назавжди знищити Workflow"
 
 #. js-lingui-id: 9cDpsw
-#: src/pages/settings/roles/SettingsRoleEdit.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "Дозволи"
 
@@ -3537,9 +3664,15 @@ msgstr "Результати"
 msgid "Review your import"
 msgstr ""
 
+#. js-lingui-id: iSfzXo
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "Role name"
+msgstr ""
+
 #. js-lingui-id: 5dJK4M
-#: src/pages/settings/roles/SettingsRoles.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
+#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "Ролі"
@@ -3560,6 +3693,7 @@ msgid "Russian"
 msgstr "Російська"
 
 #. js-lingui-id: tfDRzk
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 msgid "Save"
 msgstr "Зберегти"
@@ -3577,7 +3711,7 @@ msgstr "Схема"
 #. js-lingui-id: A1taO8
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
@@ -3612,7 +3746,7 @@ msgid "Search a type"
 msgstr "Пошук типу"
 
 #. js-lingui-id: x55IVv
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "Search an assigned team member..."
 msgstr "Шукати призначеного учасника команди..."
 
@@ -3655,6 +3789,7 @@ msgstr "Секрет"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Security"
 msgstr "Безпека"
@@ -3684,6 +3819,11 @@ msgstr "Переглянути видалені версії"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See deleted workflows"
 msgstr "Переглянути видалені робочі процеси"
+
+#. js-lingui-id: irbH/8
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "See Records on All Objects"
+msgstr ""
 
 #. js-lingui-id: OpPn5Z
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -3819,7 +3959,7 @@ msgid "Service Provider Details"
 msgstr "Деталі постачальника послуг"
 
 #. js-lingui-id: YZwx1e
-#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
 msgstr "Встановіть роль за замовчуванням для цього робочого простору"
 
@@ -3832,6 +3972,11 @@ msgstr "Встановити як за замовчуванням"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Налаштуйте видимість електронної пошти, керуйте списком блокування та більше."
+
+#. js-lingui-id: 6KA8xy
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Set global workspace preferences"
+msgstr ""
 
 #. js-lingui-id: qNbuWB
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
@@ -3849,17 +3994,21 @@ msgid "Set the name of your subdomain"
 msgstr "Встановіть назву вашого субдомену"
 
 #. js-lingui-id: Tz0i8g
-#: src/pages/settings/roles/SettingsRoleEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Settings"
 msgstr "Налаштування"
 
 #. js-lingui-id: p8fNBm
-#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Settings permissions"
 msgstr "Налаштування дозволів"
 
@@ -4093,6 +4242,14 @@ msgstr "Системні налаштування - {systemTimeFormatLabel}"
 msgid "Table"
 msgstr "Таблиця"
 
+#. js-lingui-id: GtycJ/
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Tasks"
+msgstr ""
+
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -4243,7 +4400,7 @@ msgstr "Цю дію не можна відмінити. Це назавжди в
 #~ msgstr "This Role is assigned to these workspace member."
 
 #. js-lingui-id: xPfDRx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "Ця роль призначена цим членам робочого простору."
 
@@ -4281,6 +4438,11 @@ msgstr "на річний"
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "Сьогодні"
+
+#. js-lingui-id: XArpJK
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+msgid "Toggle all object permissions"
+msgstr ""
 
 #. js-lingui-id: vb0Q0/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -4437,9 +4599,9 @@ msgstr "Користувач не увійшов в систему"
 #~ msgstr "User Name"
 
 #. js-lingui-id: Sxm8rQ
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-#~ msgid "Users"
-#~ msgstr "Users"
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Users"
+msgstr "Users"
 
 #. js-lingui-id: MGeZsN
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -4585,7 +4747,6 @@ msgstr "Виконання робочого процесу не вдалося"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -4601,6 +4762,8 @@ msgstr "Виконання робочого процесу не вдалося"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
@@ -4643,7 +4806,7 @@ msgstr "Обернути на сторінках записів"
 
 #. js-lingui-id: Q9pNST
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"

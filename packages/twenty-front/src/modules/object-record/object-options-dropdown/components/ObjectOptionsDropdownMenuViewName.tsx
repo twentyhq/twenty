@@ -61,6 +61,8 @@ export const ObjectOptionsDropdownMenuViewName = ({
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
 
+  setViewPickerSelectedIcon(currentView.icon);
+
   const viewPickerIsPersisting = useRecoilComponentValueV2(
     viewPickerIsPersistingComponentState,
   );

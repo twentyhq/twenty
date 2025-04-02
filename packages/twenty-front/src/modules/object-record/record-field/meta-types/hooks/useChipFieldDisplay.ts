@@ -12,8 +12,13 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useChipFieldDisplay = () => {
-  const { recordId, fieldDefinition, isLabelIdentifier, labelIdentifierLink } =
-    useContext(FieldContext);
+  const {
+    recordId,
+    fieldDefinition,
+    isLabelIdentifier,
+    labelIdentifierLink,
+    isLabelHidden,
+  } = useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
     PreComputedChipGeneratorsContext,
@@ -42,5 +47,6 @@ export const useChipFieldDisplay = () => {
     recordValue,
     isLabelIdentifier,
     labelIdentifierLink,
+    isLabelHidden,
   };
 };
