@@ -46,7 +46,7 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
           fieldMetadataItem={{
             ...fieldMetadataItem,
             settings: {
-              displayAsRelativeDate: watchFormValue(
+              displayFormat: watchFormValue(
                 'settings.displayFormat',
                 initialDisplayFormat,
               ),
