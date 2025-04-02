@@ -37,7 +37,6 @@ type MultiItemFieldInputProps<T> = {
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
   onClickOutside?: FieldInputClickOutsideEvent;
-  // onClickOutside?: (event: MouseEvent | TouchEvent) => void | string;
   onError?: (hasError: boolean, values: any[]) => void;
 };
 

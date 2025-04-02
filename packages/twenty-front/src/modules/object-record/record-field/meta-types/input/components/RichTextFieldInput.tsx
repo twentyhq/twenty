@@ -1,8 +1,8 @@
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useRichTextField } from '@/object-record/record-field/meta-types/hooks/useRichTextField';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { BlockEditorComponentInstanceContext } from '@/ui/input/editor/contexts/BlockEditorCompoponeInstanceContext';
 import { PartialBlock } from '@blocknote/core';
