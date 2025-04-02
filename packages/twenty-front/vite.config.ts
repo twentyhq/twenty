@@ -64,7 +64,7 @@ export default defineConfig(({ command, mode }) => {
     checkers['eslint'] = {
       lintCommand:
         // Appended to packages/twenty-front/.eslintrc.cjs
-        'cd  ../.. && eslint packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+        'eslint ../../packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
     };
   }
 
@@ -106,7 +106,10 @@ export default defineConfig(({ command, mode }) => {
       lingui({
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),
-      checker(checkers),
+      checker({
+        root: __dirname,
+        ...checkers
+      }),
       // TODO: fix this, we have to restrict the include to only the components that are using linaria
       // Otherwise the build will fail because wyw tries to include emotion styled components
       wyw({
