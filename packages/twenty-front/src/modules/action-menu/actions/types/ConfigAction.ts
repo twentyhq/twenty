@@ -1,4 +1,7 @@
-import { ActionHook } from '@/action-menu/actions/types/ActionHook';
+import {
+  ActionHook,
+  ActionHookWithoutObjectMetadataItem,
+} from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import {
@@ -8,7 +11,7 @@ import {
 import { MessageDescriptor } from '@lingui/core';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
-export type ConfigAction = {
+export type RecordConfigAction = {
   type: ActionMenuEntryType;
   scope: ActionMenuEntryScope;
   key: string;
@@ -22,4 +25,11 @@ export type ConfigAction = {
   shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
   useAction: ActionHook;
   hotKeys?: string[];
+};
+
+export type RecordAgnosticConfigAction = Omit<
+  RecordConfigAction,
+  'useAction'
+> & {
+  useAction: ActionHookWithoutObjectMetadataItem;
 };

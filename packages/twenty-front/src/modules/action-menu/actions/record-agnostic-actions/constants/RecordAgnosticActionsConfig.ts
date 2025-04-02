@@ -1,7 +1,7 @@
 import { useSearchRecordsRecordAgnosticAction } from '@/action-menu/actions/record-agnostic-actions/hooks/useSearchRecordsRecordAgnosticAction';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { ConfigAction } from '@/action-menu/actions/types/ConfigAction';
+import { RecordAgnosticConfigAction } from '@/action-menu/actions/types/ConfigAction';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -9,7 +9,10 @@ import {
 import { msg } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui';
 
-export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ConfigAction> = {
+export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
+  string,
+  RecordAgnosticConfigAction
+> = {
   [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Global,

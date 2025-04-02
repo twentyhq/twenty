@@ -1,4 +1,4 @@
-import { ConfigAction } from '@/action-menu/actions/types/ConfigAction';
+import { RecordConfigAction } from '@/action-menu/actions/types/ConfigAction';
 import { wrapActionInCallbacks } from '@/action-menu/actions/utils/wrapActionInCallbacks';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
@@ -7,7 +7,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useContext, useEffect } from 'react';
 
 type RegisterRecordActionEffectProps = {
-  action: ConfigAction;
+  action: RecordConfigAction;
   objectMetadataItem: ObjectMetadataItem;
 };
 
