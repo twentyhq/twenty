@@ -68,7 +68,7 @@ export class RestApiCoreServiceV2 {
 
     await repository.delete(recordId);
 
-    this.apiEventEmitterService.emitDeletedEvents(
+    this.apiEventEmitterService.emitDestroyEvents(
       [recordToDelete],
       this.getAuthContextFromRequest(request),
       objectMetadata.objectMetadataMapItem,
