@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ClickhouseService } from 'src/database/clickhouse/clickhouse.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 
 type CreateEventInput = {
   action: string;
@@ -20,44 +20,33 @@ export class AnalyticsService {
     userId: string | null | undefined,
     workspaceId: string | null | undefined,
   ) {
+    console.log('>>>>>>>>>>>>>> EVENT');
     if (!this.environmentService.get('ANALYTICS_ENABLED')) {
       return { success: true };
     }
 
-    let _data;
-
+    console.trace('>>>>>>>>>>>>>> userId:', userId);
+    console.log('>>>>>>>>>>>>>> createEventInput:', createEventInput);
     switch (createEventInput.action) {
       case 'pageview':
-        _data = {
+        await this.clickhouseService.insert({
           timestamp: new Date().toISOString(),
           version: '1',
           userId: userId,
           workspaceId: workspaceId,
           ...createEventInput.payload,
-        };
+        });
         break;
       default:
-        _data = {
+        await this.clickhouseService.insert({
           action: createEventInput.action,
           timestamp: new Date().toISOString(),
           version: '1',
           userId: userId,
           workspaceId: workspaceId,
           payload: JSON.stringify(createEventInput.payload),
-        };
+        });
         break;
-    }
-
-    try {
-      if (createEventInput.action === 'pageview') {
-        await this.clickhouseService.insert('pageview', [_data]);
-      } else {
-        await this.clickhouseService.insert('events', [_data]);
-      }
-      return { success: true };
-    } catch (error) {
-      console.error('Failed to send event to ClickHouse:', error);
-      return { success: false };
     }
   }
 }

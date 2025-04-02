@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
-import { AnalyticsService } from './analytics.service';
+import { AnalyticsService } from './services/analytics.service';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;

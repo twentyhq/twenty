@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';

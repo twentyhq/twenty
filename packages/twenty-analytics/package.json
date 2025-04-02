@@ -1,8 +1,7 @@
 {
   "name": "twenty-analytics",
   "version": "0.50.0-canary",
-  "main": "dist/twenty-analytics.cjs.js",
-  "module": "dist/twenty-analytics.esm.js",
+  "main": "./dist/index.js",
   "license": "AGPL-3.0",
   "scripts": {
     "build": "npx vite build"

@@ -1,10 +1,7 @@
-// Export pageview schema
 export { pageviewSchema } from './pageview/pageview';
 
-// Export base event schema
 export { eventSchema } from './event/common/base-schemas';
 
-// Export event schemas
 export { apiKeyCreatedSchema } from './event/api-key/api-key-created';
 export { attachmentCreatedSchema } from './event/attachment/attachment-created';
 export { auditLogCreatedSchema } from './event/audit-log/audit-log-created';

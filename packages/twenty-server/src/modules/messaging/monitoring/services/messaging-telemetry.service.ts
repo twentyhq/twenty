@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 type MessagingTelemetryTrackInput = {
