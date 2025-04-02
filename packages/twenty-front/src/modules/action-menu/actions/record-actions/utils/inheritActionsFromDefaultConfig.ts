@@ -29,12 +29,20 @@ export const inheritActionsFromDefaultConfig = (
       Partial<ActionMenuEntry>
     >
   >,
-) => {
+): Record<string, ActionMenuEntry> => {
+  const actionsFromDefaultConfig = actionKeys.reduce(
+    (acc, key) => ({
+      ...acc,
+      [key]: {
+        ...DEFAULT_RECORD_ACTIONS_CONFIG[key],
+        ...propertiesToOverride[key],
+      },
+    }),
+    {} as Record<string, ActionMenuEntry>,
+  );
+
   return {
-    ...actionKeys.map((key) => ({
-      ...DEFAULT_RECORD_ACTIONS_CONFIG[key],
-      ...propertiesToOverride[key],
-    })),
+    ...actionsFromDefaultConfig,
     ...config,
   };
 };
