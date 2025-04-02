@@ -4,13 +4,13 @@ import { DateTimeDisplay } from '@/ui/field/display/components/DateTimeDisplay';
 export const DateTimeFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useDateTimeFieldDisplay();
 
-  const displayAsRelativeDate =
-    fieldDefinition.metadata?.settings?.displayAsRelativeDate;
+  const displayFormat =
+    fieldDefinition.metadata?.settings?.displayFormat;
 
   return (
     <DateTimeDisplay
       value={fieldValue}
-      displayAsRelativeDate={displayAsRelativeDate}
+      displayFormat={displayFormat}
     />
   );
 };

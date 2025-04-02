@@ -1,3 +1,4 @@
+import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { formatDateString } from '~/utils/string/formatDateString';
@@ -5,12 +6,12 @@ import { EllipsisDisplay } from './EllipsisDisplay';
 
 type DateDisplayProps = {
   value: string | null | undefined;
-  displayAsRelativeDate?: boolean;
+  displayFormat?: FieldDateDisplayFormat;
 };
 
 export const DateDisplay = ({
   value,
-  displayAsRelativeDate,
+  displayFormat,
 }: DateDisplayProps) => {
   const { dateFormat, timeZone } = useContext(UserContext);
 
@@ -18,7 +19,7 @@ export const DateDisplay = ({
     value,
     timeZone,
     dateFormat,
-    displayAsRelativeDate,
+    displayFormat,
   });
 
   return <EllipsisDisplay>{formattedDate}</EllipsisDisplay>;

@@ -2,25 +2,29 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { formatDateISOStringToDateTime } from '@/localization/utils/formatDateISOStringToDateTime';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
 
 export const formatDateTimeString = ({
   value,
   timeZone,
   dateFormat,
   timeFormat,
-  displayAsRelativeDate,
+  displayFormat,
 }: {
   timeZone: string;
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
   value?: string | null;
-  displayAsRelativeDate?: boolean;
+  displayFormat?: FieldDateDisplayFormat;
 }) => {
-  const formattedDate = value
-    ? displayAsRelativeDate
-      ? formatDateISOStringToRelativeDate(value)
-      : formatDateISOStringToDateTime(value, timeZone, dateFormat, timeFormat)
-    : '';
+  if (!value) {
+    return '';
+  }
 
-  return formattedDate;
+  switch (displayFormat) {
+    case ('relative_date'):
+      return formatDateISOStringToRelativeDate(value);
+    default:
+      return formatDateISOStringToDateTime(value, timeZone, dateFormat, timeFormat);
+  }
 };

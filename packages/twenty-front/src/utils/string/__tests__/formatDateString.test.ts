@@ -39,7 +39,7 @@ describe('formatDateString', () => {
     const result = formatDateString({
       ...defaultParams,
       value: mockDate,
-      displayAsRelativeDate: true,
+      displayFormat: 'relative_date',
     });
 
     expect(result).toBe(mockRelativeDate);
@@ -58,7 +58,7 @@ describe('formatDateString', () => {
     const result = formatDateString({
       ...defaultParams,
       value: mockDate,
-      displayAsRelativeDate: false,
+      displayFormat: 'relative_date',
     });
 
     expect(result).toBe(mockFormattedDate);

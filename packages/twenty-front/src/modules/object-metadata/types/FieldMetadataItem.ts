@@ -1,3 +1,4 @@
+import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
 import { ThemeColor } from 'twenty-ui';
 
 import {
@@ -37,7 +38,7 @@ export type FieldMetadataItem = Omit<
     >;
   } | null;
   settings?: {
-    displayAsRelativeDate?: boolean;
+    displayFormat?: FieldDateDisplayFormat;
   };
   isLabelSyncedWithName?: boolean | null;
 };

@@ -3,10 +3,10 @@ import { ThemeColor } from 'twenty-ui';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import * as z from 'zod';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 export type FieldUuidMetadata = {
   objectMetadataNameSingular?: string;
@@ -29,12 +29,14 @@ export type FieldTextMetadata = {
   };
 };
 
+export type FieldDateDisplayFormat = 'full_date' | 'relative_date' | 'date' | 'time' | 'year' | 'custom'
+
 export type FieldDateTimeMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
   settings?: {
-    displayAsRelativeDate?: boolean;
+    displayFormat?: FieldDateDisplayFormat;
   };
 };
 
@@ -43,7 +45,7 @@ export type FieldDateMetadata = {
   placeHolder: string;
   fieldName: string;
   settings?: {
-    displayAsRelativeDate?: boolean;
+    displayFormat?: FieldDateDisplayFormat;
   };
 };
 
