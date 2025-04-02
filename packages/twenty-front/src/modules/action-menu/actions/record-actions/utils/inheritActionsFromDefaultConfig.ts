@@ -1,6 +1,6 @@
 import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
-import { RecordConfigAction } from '@/action-menu/actions/types/ConfigAction';
 import { DefaultRecordActionConfigKeys } from '@/action-menu/actions/types/DefaultRecordActionConfigKeys';
+import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
 
 export const inheritActionsFromDefaultConfig = (
   config: Record<string, RecordConfigAction>,

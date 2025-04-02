@@ -1,7 +1,7 @@
 import { useSearchRecordsRecordAgnosticAction } from '@/action-menu/actions/record-agnostic-actions/hooks/useSearchRecordsRecordAgnosticAction';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { RecordAgnosticConfigAction } from '@/action-menu/actions/types/ConfigAction';
+import { RecordAgnosticConfigAction } from '@/action-menu/actions/types/RecordAgnosticConfigAction';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,

@@ -1,7 +1,4 @@
-import {
-  ActionHook,
-  ActionHookWithoutObjectMetadataItem,
-} from '@/action-menu/actions/types/ActionHook';
+import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import {
@@ -25,11 +22,4 @@ export type RecordConfigAction = {
   shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
   useAction: ActionHook;
   hotKeys?: string[];
-};
-
-export type RecordAgnosticConfigAction = Omit<
-  RecordConfigAction,
-  'useAction'
-> & {
-  useAction: ActionHookWithoutObjectMetadataItem;
 };
