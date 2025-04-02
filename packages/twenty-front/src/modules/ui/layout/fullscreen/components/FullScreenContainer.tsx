@@ -17,15 +17,15 @@ type FullScreenContainerProps = {
 };
 
 const StyledFullScreen = styled.div`
+  background: ${({ theme }) => theme.background.noisy};
   display: flex;
   flex-direction: column;
+  padding: ${({ theme }) =>
+    `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};
   width: 100dvw;
-  height: 100dvh;
-  background: ${({ theme }) => theme.background.noisy};
 `;
 
 const StyledMainContainer = styled.div`
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
   height: calc(
     100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2)}
   );
