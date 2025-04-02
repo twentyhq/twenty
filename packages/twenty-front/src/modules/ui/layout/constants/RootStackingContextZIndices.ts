@@ -3,7 +3,7 @@
  *
  * It is important to keep track of the stacking contexts that are created on top of the root stacking context of the document.
  *
- * Right now we have to guess it by looking into the deve
+ * Right now we have to guess it by looking into the developer console
  *
  * This way we can avoid hazardous fidgeting with z-index CSS properties
  *   and having to look down the tree in the developer console to see which component is in the root stacking context or not
