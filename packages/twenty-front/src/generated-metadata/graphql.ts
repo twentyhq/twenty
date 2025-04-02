@@ -380,6 +380,7 @@ export type CreateRoleInput = {
   canUpdateAllSettings?: InputMaybe<Scalars['Boolean']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
 };
 

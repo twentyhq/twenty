@@ -99,7 +99,7 @@ msgid "{name}"
 msgstr "{name}"
 
 #. js-lingui-id: WN9tFl
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModalSubtitle.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName}将不再被分配以下角色："
 
@@ -156,7 +156,7 @@ msgid "A shared environment where you will be able to manage your customer relat
 msgstr "一个共享的环境，您可以与您的团队一起管理客户关系。"
 
 #. js-lingui-id: 09tRFp
-#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Ability to interact with each object"
 msgstr "与每个对象交互的能力"
 
@@ -207,8 +207,8 @@ msgid "Action"
 msgstr "操作"
 
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Actions"
 msgstr "操作"
 
@@ -277,6 +277,11 @@ msgstr "添加对象"
 msgid "Add option"
 msgstr "添加选项"
 
+#. js-lingui-id: M067Bn
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Add or remove users"
+msgstr ""
+
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
@@ -333,7 +338,7 @@ msgid "Added to blocklist"
 msgstr "已添加到拦截列表"
 
 #. js-lingui-id: Eis4ey
-#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
 msgstr "调整角色相关设置"
 
@@ -342,9 +347,20 @@ msgstr "调整角色相关设置"
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
 msgstr "管理面板"
+
+#. js-lingui-id: ae6Tab
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Admin settings and system tools"
+msgstr ""
+
+#. js-lingui-id: sxkWRg
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+msgid "Advanced"
+msgstr ""
 
 #. js-lingui-id: tMFFwF
 #: src/modules/object-record/object-filter-dropdown/components/AdvancedFilterButton.tsx
@@ -392,7 +408,7 @@ msgid "All Objects"
 msgstr "所有对象"
 
 #. js-lingui-id: Hm90t3
-#: src/modules/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "All roles"
 msgstr "所有角色"
 
@@ -473,6 +489,11 @@ msgstr "API 密钥已复制到剪贴板"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "API keys"
 msgstr "API 密钥"
+
+#. js-lingui-id: vByqA1
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "API Keys & Webhooks"
+msgstr ""
 
 #. js-lingui-id: kAtj+q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -567,32 +588,32 @@ msgid "Ascending"
 msgstr "升序"
 
 #. js-lingui-id: 9ch9Mz
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "Assign {workspaceMemberName}?"
 msgstr "分配给{workspaceMemberName}？"
 
 #. js-lingui-id: rfYmIr
-#: src/modules/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Assign roles to specify each member's access permissions"
 msgstr "分配角色以指定每个成员的访问权限"
 
 #. js-lingui-id: 2y2quh
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "Assign to member"
 msgstr "分配给成员"
 
 #. js-lingui-id: OItM/o
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "Assigned members"
 msgstr "已分配成员"
 
 #. js-lingui-id: lxQ+5m
-#: src/modules/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "分配给"
 
 #. js-lingui-id: 0dtKl9
-#: src/pages/settings/roles/SettingsRoleEdit.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Assignment"
 msgstr "分配"
 
@@ -835,7 +856,7 @@ msgid "Close"
 msgstr "关闭"
 
 #. js-lingui-id: qYsAlX
-#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Close command menu"
 msgstr "关闭命令菜单"
 
@@ -866,6 +887,14 @@ msgstr ""
 msgid "Compact view"
 msgstr "紧凑视图"
 
+#. js-lingui-id: s2QZS6
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Companies"
+msgstr ""
+
 #. js-lingui-id: +zUMwJ
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
@@ -893,7 +922,7 @@ msgstr "配置电子邮件和日历设置。"
 
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "Confirm"
 msgstr "确认"
 
@@ -1048,6 +1077,7 @@ msgstr "计算唯一值"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Create"
 msgstr "创建"
 
@@ -1073,7 +1103,7 @@ msgid "Create profile"
 msgstr "创建个人资料"
 
 #. js-lingui-id: RoyYUE
-#: src/modules/settings/roles/components/Roles.tsx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Create Role"
 msgstr "创建角色"
 
@@ -1195,6 +1225,11 @@ msgstr "数据删除"
 msgid "Data model"
 msgstr "数据模型"
 
+#. js-lingui-id: 4BuYDo
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Data Model"
+msgstr ""
+
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1274,6 +1309,11 @@ msgstr "默认值"
 msgid "Define the name and description of your object"
 msgstr "定义对象的名称和描述"
 
+#. js-lingui-id: Ntu10D
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Define user roles and access levels"
+msgstr ""
+
 #. js-lingui-id: bQkkFU
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -1294,6 +1334,7 @@ msgstr "定义在您的工作区中对其他用户可见的内容"
 #: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete"
@@ -1319,13 +1360,18 @@ msgstr "删除 API 密钥"
 
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Delete record"
-msgstr "删除记录"
+#~ msgid "Delete record"
+#~ msgstr "删除记录"
 
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Delete records"
 msgstr "删除记录"
+
+#. js-lingui-id: mcXHCJ
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Delete Records on All Objects"
+msgstr ""
 
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -1405,7 +1451,7 @@ msgstr "降序"
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 msgid "Description"
 msgstr "描述"
 
@@ -1416,6 +1462,11 @@ msgstr "描述"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Destroy"
 msgstr "销毁"
+
+#. js-lingui-id: L68qSB
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Destroy Records on All Objects"
+msgstr ""
 
 #. js-lingui-id: n+SX4g
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -1533,6 +1584,11 @@ msgstr "编辑"
 msgid "Edit billing interval"
 msgstr "编辑账单间隔"
 
+#. js-lingui-id: 6vZ75d
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Edit CRM data structure and fields"
+msgstr ""
+
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
@@ -1548,6 +1604,11 @@ msgstr "编辑字段"
 msgid "Edit payment method, see your invoices and more"
 msgstr "编辑付款方式、查看发票等"
 
+#. js-lingui-id: 6n2zpV
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Edit Records on All Objects"
+msgstr ""
+
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Edit your subdomain name or set a custom domain."
@@ -1559,7 +1620,7 @@ msgstr "编辑子域名或设置自定义域名。"
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "电子邮件"
@@ -1862,13 +1923,14 @@ msgstr "到期时间"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Export"
 msgstr "导出"
 
 #. js-lingui-id: G5DJkP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-msgid "Export record"
-msgstr "导出记录"
+#~ msgid "Export record"
+#~ msgstr "导出记录"
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
@@ -2077,6 +2139,30 @@ msgstr "获取订阅"
 msgid "Global"
 msgstr "全局"
 
+#. js-lingui-id: mUbv8L
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Go to Companies"
+msgstr ""
+
+#. js-lingui-id: buPcNi
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Go to Opportunities"
+msgstr ""
+
+#. js-lingui-id: MrE/Qb
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Go to People"
+msgstr ""
+
 #. js-lingui-id: iS69s6
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -2085,8 +2171,20 @@ msgstr "前往运行"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Go to Settings"
 msgstr "转到设置"
+
+#. js-lingui-id: BM24SF
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Go to Tasks"
+msgstr ""
 
 #. js-lingui-id: A5WHZY
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2608,6 +2706,11 @@ msgstr "查询用户并管理他们的工作区功能标志或假装他们。"
 msgid "Look up users to impersonate them."
 msgstr "查询用户以假装他们。"
 
+#. js-lingui-id: n0FHLv
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Manage API keys and webhooks"
+msgstr ""
+
 #. js-lingui-id: U8dG4j
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -2618,6 +2721,11 @@ msgstr "管理收藏"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
 msgstr "管理成员"
+
+#. js-lingui-id: eGGH1l
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Manage security policies"
+msgstr ""
 
 #. js-lingui-id: 4cjU2u
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2734,10 +2842,10 @@ msgstr "右移"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentTableHeader.tsx
-#: src/modules/settings/roles/components/RolesTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2915,7 +3023,7 @@ msgid "No members"
 msgstr "没有成员"
 
 #. js-lingui-id: Y4qK8/
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No members assigned"
 msgstr "没有分配成员"
 
@@ -2926,7 +3034,7 @@ msgstr "没有分配成员"
 
 #. js-lingui-id: /nLvVj
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No members match your search"
 msgstr "没有与您的搜索匹配的成员"
 
@@ -2951,7 +3059,7 @@ msgstr "没有可用的指标数据"
 #~ msgstr "No more members to add"
 
 #. js-lingui-id: DL8pzn
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "没有更多成员可分配"
 
@@ -2971,9 +3079,14 @@ msgid "No results"
 msgstr ""
 
 #. js-lingui-id: MA3x23
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "无结果"
+
+#. js-lingui-id: 9mcJ/7
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "No roles found"
+msgstr ""
 
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -3066,7 +3179,7 @@ msgstr "对象目的地"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Objects"
 msgstr "对象"
 
@@ -3086,7 +3199,7 @@ msgid "Only the timestamp & participants will be shared with your team."
 msgstr "仅时间戳和参与者将与您的团队分享。"
 
 #. js-lingui-id: 69b7aE
-#: src/modules/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton.tsx
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Open command menu"
 msgstr "打开命令菜单"
 
@@ -3101,13 +3214,21 @@ msgstr "在以下中打开"
 msgid "Opened"
 msgstr "已打开"
 
+#. js-lingui-id: 4MyDFl
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Opportunities"
+msgstr ""
+
 #. js-lingui-id: qNELak
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
 msgstr "可选：定义我们将在每个 Webhooks 中包含的秘密字符串。使用此字符串在接收到 Webhooks 时进行身份验证和验证。"
 
 #. js-lingui-id: 0zpgxV
-#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
@@ -3166,6 +3287,14 @@ msgstr "密码已更新"
 msgid "Password reset link has been sent to the email"
 msgstr "密码重置链接已发送至电子邮件"
 
+#. js-lingui-id: 1wdjme
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "People"
+msgstr ""
+
 #. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to and received emails from."
@@ -3215,7 +3344,7 @@ msgid "Permanently destroy workflows"
 msgstr "永久销毁工作流程序"
 
 #. js-lingui-id: 9cDpsw
-#: src/pages/settings/roles/SettingsRoleEdit.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "权限"
 
@@ -3507,9 +3636,15 @@ msgstr "结果"
 msgid "Review your import"
 msgstr ""
 
+#. js-lingui-id: iSfzXo
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "Role name"
+msgstr ""
+
 #. js-lingui-id: 5dJK4M
-#: src/pages/settings/roles/SettingsRoles.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
+#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "角色"
@@ -3530,6 +3665,7 @@ msgid "Russian"
 msgstr "俄语"
 
 #. js-lingui-id: tfDRzk
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 msgid "Save"
 msgstr "保存"
@@ -3547,7 +3683,7 @@ msgstr "模式"
 #. js-lingui-id: A1taO8
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignmentWorkspaceMemberPickerDropdown.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
@@ -3582,7 +3718,7 @@ msgid "Search a type"
 msgstr "搜索类型"
 
 #. js-lingui-id: x55IVv
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "Search an assigned team member..."
 msgstr "搜索已分配的团队成员……"
 
@@ -3625,6 +3761,7 @@ msgstr "密钥"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Security"
 msgstr "安全"
@@ -3654,6 +3791,11 @@ msgstr "查看已删除的版本"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "See deleted workflows"
 msgstr "查看已删除的工作流"
+
+#. js-lingui-id: irbH/8
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "See Records on All Objects"
+msgstr ""
 
 #. js-lingui-id: OpPn5Z
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -3789,7 +3931,7 @@ msgid "Service Provider Details"
 msgstr "服务提供商详情"
 
 #. js-lingui-id: YZwx1e
-#: src/modules/settings/roles/components/RolesDefaultRole.tsx
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
 msgstr "为此工作区设置一个默认角色"
 
@@ -3802,6 +3944,11 @@ msgstr "设置为默认"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "设置电子邮件可见性、管理黑名单等。"
+
+#. js-lingui-id: 6KA8xy
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Set global workspace preferences"
+msgstr ""
 
 #. js-lingui-id: qNbuWB
 #: src/pages/settings/workspace/SettingsCustomDomain.tsx
@@ -3819,17 +3966,21 @@ msgid "Set the name of your subdomain"
 msgstr "设置您的子域名"
 
 #. js-lingui-id: Tz0i8g
-#: src/pages/settings/roles/SettingsRoleEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 msgid "Settings"
 msgstr "设置"
 
 #. js-lingui-id: p8fNBm
-#: src/modules/settings/roles/role-permissions/components/RolePermissions.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Settings permissions"
 msgstr "设置权限"
 
@@ -4063,6 +4214,14 @@ msgstr "系统设置 - {systemTimeFormatLabel}"
 msgid "Table"
 msgstr "表格"
 
+#. js-lingui-id: GtycJ/
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+msgid "Tasks"
+msgstr ""
+
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -4213,7 +4372,7 @@ msgstr "此操作无法撤销。这将永久删除您的整个工作区。 <0/> 
 #~ msgstr "This Role is assigned to these workspace member."
 
 #. js-lingui-id: xPfDRx
-#: src/modules/settings/roles/role-assignment/components/RoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "This role is assigned to these workspace members."
 msgstr "这个角色被分配给这些工作区成员。"
 
@@ -4251,6 +4410,11 @@ msgstr "切换到每年"
 #: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
 msgid "Today"
 msgstr "今天"
+
+#. js-lingui-id: XArpJK
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+msgid "Toggle all object permissions"
+msgstr ""
 
 #. js-lingui-id: vb0Q0/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -4407,9 +4571,9 @@ msgstr "用户未登录"
 #~ msgstr "User Name"
 
 #. js-lingui-id: Sxm8rQ
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-#~ msgid "Users"
-#~ msgstr "Users"
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Users"
+msgstr "Users"
 
 #. js-lingui-id: MGeZsN
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -4555,7 +4719,6 @@ msgstr "工作流运行失败"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/roles/SettingsRoles.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -4571,6 +4734,8 @@ msgstr "工作流运行失败"
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
@@ -4613,7 +4778,7 @@ msgstr "在记录页面上换行"
 
 #. js-lingui-id: Q9pNST
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-#: src/modules/settings/roles/role-settings/components/RoleSettings.tsx
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"

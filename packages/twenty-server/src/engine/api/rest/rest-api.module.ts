@@ -1,5 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RestApiCoreBatchController } from 'src/engine/api/rest/core/controllers/rest-api-core-batch.controller';
 import { RestApiCoreController } from 'src/engine/api/rest/core/controllers/rest-api-core.controller';
@@ -7,13 +8,18 @@ import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/c
 import { RestApiCoreServiceV2 } from 'src/engine/api/rest/core/rest-api-core-v2.service';
 import { RestApiCoreService } from 'src/engine/api/rest/core/rest-api-core.service';
 import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
+import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
 import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
+import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
 import { MetadataQueryBuilderModule } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.module';
 import { RestApiMetadataController } from 'src/engine/api/rest/metadata/rest-api-metadata.controller';
 import { RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-metadata.service';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
@@ -25,6 +31,8 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     AuthModule,
     HttpModule,
     TwentyORMModule,
+    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    FeatureFlagModule,
   ],
   controllers: [
     RestApiMetadataController,
@@ -36,9 +44,12 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     RestApiCoreService,
     RestApiCoreServiceV2,
     RestApiService,
+    FeatureFlagService,
     StartingAfterInputFactory,
     EndingBeforeInputFactory,
     LimitInputFactory,
+    FilterInputFactory,
+    OrderByInputFactory,
   ],
   exports: [RestApiMetadataService],
 })

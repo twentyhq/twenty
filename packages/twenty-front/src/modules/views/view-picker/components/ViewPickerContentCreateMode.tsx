@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
-import { IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
+import { IconX } from 'twenty-ui';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -16,7 +17,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
-import { ViewType } from '@/views/types/ViewType';
+import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
@@ -32,9 +33,8 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { useMemo, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { useMemo, useState } from 'react';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -101,8 +101,7 @@ export const ViewPickerContentCreateMode = () => {
     ViewsHotkeyScope.ListDropdown,
   );
 
-  const defaultIcon =
-    viewPickerType === ViewType.Kanban ? 'IconLayoutKanban' : 'IconTable';
+  const defaultIcon = viewTypeIconMapping(viewPickerType).displayName;
 
   const selectedIcon = useMemo(() => {
     if (hasManuallySelectedIcon) {
@@ -165,11 +164,15 @@ export const ViewPickerContentCreateMode = () => {
               setViewPickerType(value);
             }}
             options={[
-              { value: ViewType.Table, label: t`Table`, Icon: IconTable },
+              {
+                value: ViewType.Table,
+                label: t`Table`,
+                Icon: viewTypeIconMapping(ViewType.Table),
+              },
               {
                 value: ViewType.Kanban,
                 label: t`Kanban`,
-                Icon: IconLayoutKanban,
+                Icon: viewTypeIconMapping(ViewType.Kanban),
               },
             ]}
             dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}

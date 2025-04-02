@@ -80,7 +80,7 @@ export class MicrosoftGetMessagesService {
 
     const messages = parsedResponses.map((response) => {
       if ('error' in response) {
-        this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(
+        this.microsoftHandleErrorService.throwMicrosoftBatchError(
           response.error,
         );
       }
