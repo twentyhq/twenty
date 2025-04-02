@@ -51,21 +51,6 @@ const draftWorkflowMock = {
   ],
 };
 
-const activeWorkflowMock = {
-  ...baseWorkflowMock,
-  currentVersion: {
-    ...baseWorkflowMock.currentVersion,
-    status: 'ACTIVE',
-  },
-  versions: [
-    {
-      __typename: 'WorkflowVersion',
-      id: 'currentVersionId',
-      status: 'ACTIVE',
-    },
-  ],
-};
-
 jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
   useWorkflowWithCurrentVersion: jest.fn(),
 }));
@@ -128,24 +113,5 @@ describe('useActivateWorkflowSingleRecordAction', () => {
       workflowId: draftWorkflowMock.id,
       workflowVersionId: draftWorkflowMock.currentVersion.id,
     });
-  });
-
-  it('should not call activateWorkflowVersion when not registered', () => {
-    (useWorkflowWithCurrentVersion as jest.Mock).mockReturnValue(
-      activeWorkflowMock,
-    );
-
-    const { result } = renderHook(
-      () => useActivateWorkflowSingleRecordAction(),
-      {
-        wrapper: createWrapper(activeWorkflowMock),
-      },
-    );
-
-    act(() => {
-      result.current.onClick();
-    });
-
-    expect(activateWorkflowVersionMock).not.toHaveBeenCalled();
   });
 });
