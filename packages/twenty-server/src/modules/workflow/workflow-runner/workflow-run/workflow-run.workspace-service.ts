@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   StepOutput,
@@ -21,7 +23,6 @@ import {
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -32,6 +33,7 @@ export class WorkflowRunWorkspaceService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly recordPositionService: RecordPositionService,
   ) {}
 
   async createWorkflowRun({
@@ -75,6 +77,25 @@ export class WorkflowRunWorkspaceService {
       },
     });
 
+    const workspaceId =
+      this.scopedWorkspaceContextFactory.create()?.workspaceId;
+
+    if (!workspaceId) {
+      throw new WorkflowRunException(
+        'Workspace id is invalid',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    const position = await this.recordPositionService.buildRecordPosition({
+      value: 'first',
+      objectMetadata: {
+        isCustom: false,
+        nameSingular: 'workflowRun',
+      },
+      workspaceId,
+    });
+
     return (
       await workflowRunRepository.save({
         name: `#${workflowRunCount + 1} - ${workflow.name}`,
@@ -82,6 +103,7 @@ export class WorkflowRunWorkspaceService {
         createdBy,
         workflowId: workflow.id,
         status: WorkflowRunStatus.NOT_STARTED,
+        position,
       })
     ).id;
   }
