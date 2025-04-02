@@ -64,6 +64,14 @@ const mockAction: WorkflowFormAction = {
           objectName: 'company',
         },
       },
+      {
+        id: 'field-4',
+        name: 'date',
+        label: 'Date',
+        type: FieldMetadataType.DATE,
+        placeholder: 'mm/dd/yyyy',
+        settings: {},
+      },
     ],
     outputSchema: {},
     errorHandlingOptions: {
@@ -91,6 +99,9 @@ export const Default: Story = {
 
     const recordField = await canvas.findByText('Record');
     expect(recordField).toBeVisible();
+
+    const dateField = await canvas.findByText('Date');
+    expect(dateField).toBeVisible();
   },
 };
 
@@ -109,6 +120,9 @@ export const ReadonlyMode: Story = {
 
     const numberInput = await canvas.findByPlaceholderText('Enter number');
     expect(numberInput).toBeDisabled();
+
+    const dateInput = await canvas.findByPlaceholderText('mm/dd/yyyy');
+    expect(dateInput).toBeDisabled();
 
     const submitButton = await canvas.queryByText('Submit');
     expect(submitButton).not.toBeInTheDocument();

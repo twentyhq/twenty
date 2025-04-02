@@ -121,3 +121,27 @@ export const SingleRecordFieldSettings: Story = {
     expect(args.onClose).toHaveBeenCalled();
   },
 };
+
+export const DateFieldSettings: Story = {
+  args: {
+    field: {
+      id: 'field-4',
+      name: 'date',
+      label: 'Date Field',
+      type: FieldMetadataType.DATE,
+      placeholder: 'Enter date',
+      settings: {},
+    },
+    onClose: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const typeSelect = await canvas.findByText('Date');
+    expect(typeSelect).toBeVisible();
+
+    const closeButton = await canvas.findByTestId('close-button');
+    await userEvent.click(closeButton);
+    expect(args.onClose).toHaveBeenCalled();
+  },
+};

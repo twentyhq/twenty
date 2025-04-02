@@ -158,7 +158,7 @@ export const WorkflowEditActionFormFiller = ({
                   value,
                 });
               }}
-              defaultValue={field.value ?? ''}
+              defaultValue={field.value}
               readonly={actionOptions.readonly}
               placeholder={
                 field.placeholder ??
