@@ -66,7 +66,13 @@ export const MultiItemFieldInput = <T,>({
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
-      onClickOutside?.(event);
+      const isEditing = inputValue !== '';
+      const isPrimaryItem = items.length === 0;
+
+      if (isEditing && isPrimaryItem) {
+        handleSubmitInput();
+      }
+      onClickOutside?.(() => {}, event);
     },
     listenerId: hotkeyScope,
   });
@@ -197,22 +203,13 @@ export const MultiItemFieldInput = <T,>({
           value={inputValue}
           hotkeyScope={hotkeyScope}
           hasError={!errorData.isValid}
-          renderInput={
-            renderInput
-              ? (props) =>
-                  renderInput({
-                    ...props,
-                    onChange: (newValue) =>
-                      setInputValue(newValue as unknown as string),
-                  })
-              : undefined
-          }
+          renderInput={renderInput}
           onEscape={handleDropdownClose}
-          onChange={(event) =>
-            handleOnChange(
-              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-            )
-          }
+          onChange={(value) => {
+            value
+              ? handleOnChange(turnIntoEmptyStringIfWhitespacesOnly(value))
+              : handleOnChange('');
+          }}
           onEnter={handleSubmitInput}
           hasItem={!!items.length}
           rightComponent={
