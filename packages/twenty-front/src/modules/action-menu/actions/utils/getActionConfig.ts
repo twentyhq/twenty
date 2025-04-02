@@ -1,4 +1,4 @@
-import { DEFAULT_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
+import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
 import { WORKFLOW_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowActionsConfig';
 import { WORKFLOW_RUNS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig';
 import { WORKFLOW_VERSIONS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig';
@@ -14,6 +14,6 @@ export const getActionConfig = (objectMetadataItem: ObjectMetadataItem) => {
     case CoreObjectNameSingular.WorkflowRun:
       return WORKFLOW_RUNS_ACTIONS_CONFIG;
     default:
-      return DEFAULT_ACTIONS_CONFIG;
+      return DEFAULT_RECORD_ACTIONS_CONFIG;
   }
 };

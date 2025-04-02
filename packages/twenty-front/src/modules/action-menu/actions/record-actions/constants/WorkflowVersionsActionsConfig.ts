@@ -1,8 +1,9 @@
-import { DEFAULT_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
+import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
 import { useHideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useHideDeletedRecordsNoSelectionRecordAction';
 import { useSeeRunsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeRunsNoSelectionRecordAction';
 import { useSeeWorkflowsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeWorkflowsNoSelectionRecordAction';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
+import { NoSelectionWorkflowRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/workflow-actions/types/NoSelectionWorkflowRecordActionsKeys';
 import { useSeeRunsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeRunsWorkflowVersionSingleRecordAction';
 import { useSeeVersionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeVersionsWorkflowVersionSingleRecordAction';
 import { useSeeWorkflowWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowWorkflowVersionSingleRecordAction';
@@ -101,44 +102,44 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     useAction: useSeeVersionsWorkflowVersionSingleRecordAction,
   },
   navigateToPreviousRecord: {
-    ...DEFAULT_ACTIONS_CONFIG.navigateToPreviousRecord,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.navigateToPreviousRecord,
     position: 5,
   },
   navigateToNextRecord: {
-    ...DEFAULT_ACTIONS_CONFIG.navigateToNextRecord,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.navigateToNextRecord,
     shouldBeRegistered: () => true,
   },
 
   addToFavoritesSingleRecord: {
-    ...DEFAULT_ACTIONS_CONFIG.addToFavoritesSingleRecord,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.addToFavoritesSingleRecord,
     position: 7,
     isPinned: false,
   },
   removeFromFavoritesSingleRecord: {
-    ...DEFAULT_ACTIONS_CONFIG.removeFromFavoritesSingleRecord,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.removeFromFavoritesSingleRecord,
     position: 8,
     isPinned: false,
   },
   exportSingleRecord: {
-    ...DEFAULT_ACTIONS_CONFIG.exportSingleRecord,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.exportSingleRecord,
     position: 9,
     label: msg`Export version`,
   },
   exportMultipleRecords: {
-    ...DEFAULT_ACTIONS_CONFIG.exportMultipleRecords,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.exportMultipleRecords,
     position: 10,
     label: msg`Export versions`,
   },
   exportView: {
-    ...DEFAULT_ACTIONS_CONFIG.exportView,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.exportView,
     position: 11,
   },
   seeDeletedRecords: {
-    ...DEFAULT_ACTIONS_CONFIG.seeDeletedRecords,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.seeDeletedRecords,
     position: 12,
   },
   hideDeletedRecords: {
-    ...DEFAULT_ACTIONS_CONFIG.hideDeletedRecords,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.hideDeletedRecords,
     position: 13,
     Icon: IconEyeOff,
     accent: 'default',
@@ -164,7 +165,7 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
   seeAllRuns: {
     type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_RUNS,
+    key: NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS,
     label: msg`Go to runs`,
     shortLabel: msg`See runs`,
     position: 15,
@@ -176,23 +177,23 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG: Record<
     useAction: useSeeRunsNoSelectionRecordAction,
   },
   goToPeople: {
-    ...DEFAULT_ACTIONS_CONFIG.goToPeople,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.goToPeople,
     position: 16,
   },
   goToCompanies: {
-    ...DEFAULT_ACTIONS_CONFIG.goToCompanies,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.goToCompanies,
     position: 17,
   },
   goToOpportunities: {
-    ...DEFAULT_ACTIONS_CONFIG.goToOpportunities,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.goToOpportunities,
     position: 18,
   },
   goToSettings: {
-    ...DEFAULT_ACTIONS_CONFIG.goToSettings,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.goToSettings,
     position: 19,
   },
   goToTasks: {
-    ...DEFAULT_ACTIONS_CONFIG.goToTasks,
+    ...DEFAULT_RECORD_ACTIONS_CONFIG.goToTasks,
     position: 20,
   },
 };
