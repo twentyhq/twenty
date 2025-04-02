@@ -63,7 +63,7 @@ export default defineConfig(({ command, mode }) => {
   if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
       lintCommand:
-        'cd ../.. && eslint packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+        'cd ../.. && eslint packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config packages/twenty-front/.eslintrc.cjs',
     };
   }
 
