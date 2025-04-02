@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import Stripe from 'stripe';
-import { Not, Repository } from 'typeorm';
+import { JsonContains, Not, Repository } from 'typeorm';
 
 import {
   BillingException,
@@ -203,17 +203,15 @@ export class BillingSubscriptionService {
   async convertTrialSubscriptionToSubscriptionWithMeteredProducts(
     billingSubscription: BillingSubscription,
   ) {
-    const meteredProducts = (
-      await this.billingProductRepository.find({
-        where: {
-          active: true,
-        },
-        relations: ['billingPrices'],
-      })
-    ).filter(
-      (product) =>
-        product.metadata.priceUsageBased === BillingUsageType.METERED,
-    );
+    const meteredProducts = await this.billingProductRepository.find({
+      where: {
+        active: true,
+        metadata: JsonContains({
+          priceUsageBased: BillingUsageType.METERED,
+        }),
+      },
+      relations: ['billingPrices'],
+    });
 
     // subscription update to enable metered product billing
     await this.stripeSubscriptionService.updateSubscription(

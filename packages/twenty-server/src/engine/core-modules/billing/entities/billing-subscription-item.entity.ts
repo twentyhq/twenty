@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -18,6 +19,14 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
   'billingSubscriptionId',
   'stripeProductId',
 ])
+@Index(
+  'IndexOnStripeNonNullableSubscriptionItemIdUnique',
+  ['stripeSubscriptionItemId'],
+  {
+    unique: true,
+    where: '"stripeSubscriptionItemId" IS NOT NULL',
+  },
+)
 export class BillingSubscriptionItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -58,9 +67,13 @@ export class BillingSubscriptionItem {
   @Column({ nullable: false })
   stripePriceId: string;
 
-  @Column({ nullable: false, unique: true })
+  // null during trial period (not yet created in Stripe)
+  @Column({ nullable: true })
   stripeSubscriptionItemId: string;
 
   @Column({ nullable: true, type: 'numeric' })
   quantity: number | null;
+
+  @Column({ type: 'boolean', default: false })
+  hasReachedCurrentPeriodCap: boolean;
 }

@@ -3,7 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { JsonContains, Repository } from 'typeorm';
 
 import {
   BillingException,
@@ -35,11 +35,11 @@ export class BillingPlanService {
   }): Promise<BillingProduct[]> {
     const products = await this.billingProductRepository.find({
       where: {
-        metadata: {
-          planKey,
+        metadata: JsonContains({
           priceUsageBased,
+          planKey,
           isBaseProduct,
-        },
+        }),
         active: true,
       },
       relations: ['billingPrices'],

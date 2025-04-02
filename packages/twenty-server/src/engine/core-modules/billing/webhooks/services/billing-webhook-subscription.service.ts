@@ -13,6 +13,7 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-customer.util';
@@ -62,6 +63,7 @@ export class BillingWebhookSubscriptionService {
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
   ) {}
 
   async processStripeEvent(
@@ -114,13 +116,6 @@ export class BillingWebhookSubscriptionService {
       throw new Error('Billing subscription not found');
     }
 
-    const hasActiveWorkspaceCompatibleSubscription = billingSubscriptions.some(
-      (subscription) =>
-        BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
-          WorkspaceActivationStatus.ACTIVE
-        ].includes(subscription.status),
-    );
-
     await this.billingSubscriptionItemRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscriptionItem(
         updatedBillingSubscription.id,
@@ -132,11 +127,6 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    const wasTrialOrPausedSubscription = [
-      SubscriptionStatus.Trialing,
-      SubscriptionStatus.Paused,
-    ].includes(data.previous_attributes?.status as SubscriptionStatus);
-
     const isMeteredProductBillingEnabled =
       await this.featureFlagRepository.findOneBy({
         key: FeatureFlagKey.IsMeteredProductBillingEnabled,
@@ -144,11 +134,33 @@ export class BillingWebhookSubscriptionService {
         value: true,
       });
 
+    if (
+      type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED &&
+      data.object.status === SubscriptionStatus.Trialing &&
+      isMeteredProductBillingEnabled
+    ) {
+      await this.billingSubscriptionItemService.createPreliminarySubscriptionItemsForMeteredProducts(
+        updatedBillingSubscription,
+      );
+    }
+
+    const wasTrialOrPausedSubscription = [
+      SubscriptionStatus.Trialing,
+      SubscriptionStatus.Paused,
+    ].includes(data.previous_attributes?.status as SubscriptionStatus);
+
     if (wasTrialOrPausedSubscription && isMeteredProductBillingEnabled) {
       await this.billingSubscriptionService.convertTrialSubscriptionToSubscriptionWithMeteredProducts(
         updatedBillingSubscription,
       );
     }
+
+    const hasActiveWorkspaceCompatibleSubscription = billingSubscriptions.some(
+      (subscription) =>
+        BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
+          WorkspaceActivationStatus.ACTIVE
+        ].includes(subscription.status),
+    );
 
     if (
       BILLING_SUBSCRIPTION_STATUS_BY_WORKSPACE_ACTIVATION_STATUS[
