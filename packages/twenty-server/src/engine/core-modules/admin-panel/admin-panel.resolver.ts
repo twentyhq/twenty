@@ -1,17 +1,26 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { GraphQLJSON } from 'graphql-type-json';
+
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import {
+  ConfigVarObject,
+  ConfigVarSource,
+} from 'src/engine/core-modules/admin-panel/dtos/config-var.dto';
 import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
 import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
+import { UpdateConfigVarInput } from 'src/engine/core-modules/admin-panel/dtos/update-config-var.input';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -34,6 +43,7 @@ export class AdminPanelResolver {
     private adminPanelHealthService: AdminPanelHealthService,
     private workerHealthIndicator: WorkerHealthIndicator,
     private featureFlagService: FeatureFlagService,
+    private environmentService: EnvironmentService,
   ) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
@@ -113,5 +123,81 @@ export class AdminPanelResolver {
       queueName as MessageQueue,
       timeRange,
     );
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Query(() => [ConfigVarObject])
+  async configVars(): Promise<ConfigVarObject[]> {
+    const allVars = this.environmentService.getAll();
+
+    return Object.entries(allVars).map(([key, data]) => {
+      // With GraphQLJSON we can return values directly without stringification
+      return {
+        key,
+        value: data.value,
+        metadata: data.metadata,
+        source: data.source as ConfigVarSource,
+      };
+    });
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Mutation(() => ConfigVarObject)
+  async updateConfigVar(
+    @Args('input') input: UpdateConfigVarInput,
+  ): Promise<ConfigVarObject> {
+    const { key, value } = input;
+
+    // Check if variable can be updated
+    const metadata = this.environmentService.getMetadata(
+      key as keyof EnvironmentVariables,
+    );
+
+    if (!metadata) {
+      throw new UserInputError(`Configuration variable ${key} does not exist`);
+    }
+
+    if (metadata.isEnvOnly) {
+      throw new UserInputError(
+        `Configuration variable ${key} cannot be stored in the database`,
+      );
+    }
+
+    // Parse the value if it looks like JSON (for arrays and objects)
+    let parsedValue = value;
+
+    if (
+      typeof value === 'string' &&
+      (value.startsWith('[') || value.startsWith('{'))
+    ) {
+      try {
+        parsedValue = JSON.parse(value);
+      } catch (e) {
+        // If parsing fails, keep the original string value
+      }
+    }
+
+    // Update the value
+    await this.environmentService.update(
+      key as keyof EnvironmentVariables,
+      parsedValue,
+    );
+    await this.environmentService.refreshConfig(
+      key as keyof EnvironmentVariables,
+    );
+
+    // Return updated config with direct value (no stringification needed with GraphQLJSON)
+    return {
+      key,
+      value: parsedValue,
+      metadata,
+      source: ConfigVarSource.DATABASE,
+    };
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Query(() => GraphQLJSON, { name: 'configCacheInfo' })
+  async getConfigCacheInfo(): Promise<any> {
+    return this.environmentService.getCacheInfo();
   }
 }

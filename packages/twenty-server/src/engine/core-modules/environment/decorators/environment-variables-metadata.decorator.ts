@@ -7,6 +7,7 @@ export interface EnvironmentVariablesMetadataOptions {
   group: EnvironmentVariablesGroup;
   description: string;
   sensitive?: boolean;
+  isEnvOnly?: boolean;
 }
 
 export type EnvironmentVariablesMetadataMap = {

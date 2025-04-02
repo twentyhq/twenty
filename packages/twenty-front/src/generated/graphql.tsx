@@ -272,6 +272,29 @@ export type ComputeStepOutputSchemaInput = {
   step: Scalars['JSON'];
 };
 
+export type ConfigVarMetadata = {
+  __typename?: 'ConfigVarMetadata';
+  description: Scalars['String'];
+  group: EnvironmentVariablesGroup;
+  isEnvOnly?: Maybe<Scalars['Boolean']>;
+  sensitive?: Maybe<Scalars['Boolean']>;
+};
+
+export type ConfigVarObject = {
+  __typename?: 'ConfigVarObject';
+  key: Scalars['String'];
+  metadata: ConfigVarMetadata;
+  source: ConfigVarSource;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** Source of a configuration variable value */
+export enum ConfigVarSource {
+  DATABASE = 'DATABASE',
+  DEFAULT = 'DEFAULT',
+  ENVIRONMENT = 'ENVIRONMENT'
+}
+
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
@@ -497,6 +520,7 @@ export enum FeatureFlagKey {
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
+  IsMeteredProductBillingEnabled = 'IsMeteredProductBillingEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
@@ -842,6 +866,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   track: Analytics;
   updateBillingSubscription: BillingUpdateOutput;
+  updateConfigVar: ConfigVarObject;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateOneField: Field;
   updateOneObject: Object;
@@ -1079,6 +1104,11 @@ export type MutationSubmitFormStepArgs = {
 export type MutationTrackArgs = {
   action: Scalars['String'];
   payload: Scalars['JSON'];
+};
+
+
+export type MutationUpdateConfigVarArgs = {
+  input: UpdateConfigVarInput;
 };
 
 
@@ -1371,6 +1401,7 @@ export type Query = {
   checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
+  configVars: Array<ConfigVarObject>;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
@@ -1931,6 +1962,11 @@ export type UuidFilterComparison = {
   notILike?: InputMaybe<Scalars['UUID']>;
   notIn?: InputMaybe<Array<Scalars['UUID']>>;
   notLike?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpdateConfigVarInput = {
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type UpdateFieldInput = {
@@ -2545,6 +2581,13 @@ export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]
 
 export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
 
+export type UpdateConfigVarMutationVariables = Exact<{
+  input: UpdateConfigVarInput;
+}>;
+
+
+export type UpdateConfigVarMutation = { __typename?: 'Mutation', updateConfigVar: { __typename?: 'ConfigVarObject', key: string, value?: string | null, source: ConfigVarSource, metadata: { __typename?: 'ConfigVarMetadata', group: EnvironmentVariablesGroup, description: string, sensitive?: boolean | null, isEnvOnly?: boolean | null } } };
+
 export type UpdateWorkspaceFeatureFlagMutationVariables = Exact<{
   workspaceId: Scalars['String'];
   featureFlag: Scalars['String'];
@@ -2560,6 +2603,11 @@ export type UserLookupAdminPanelMutationVariables = Exact<{
 
 
 export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookupAdminPanel: { __typename?: 'UserLookup', user: { __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }, workspaces: Array<{ __typename?: 'WorkspaceInfo', id: string, name: string, logo?: string | null, totalUsers: number, allowImpersonation: boolean, users: Array<{ __typename?: 'UserInfo', id: string, email: string, firstName?: string | null, lastName?: string | null }>, featureFlags: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> }> } };
+
+export type ConfigVarsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ConfigVarsQuery = { __typename?: 'Query', configVars: Array<{ __typename?: 'ConfigVarObject', key: string, value?: string | null, source: ConfigVarSource, metadata: { __typename?: 'ConfigVarMetadata', group: EnvironmentVariablesGroup, description: string, sensitive?: boolean | null, isEnvOnly?: boolean | null } }> };
 
 export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4313,6 +4361,47 @@ export function useSkipSyncEmailOnboardingStepMutation(baseOptions?: Apollo.Muta
 export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof useSkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
+export const UpdateConfigVarDocument = gql`
+    mutation UpdateConfigVar($input: UpdateConfigVarInput!) {
+  updateConfigVar(input: $input) {
+    key
+    value
+    source
+    metadata {
+      group
+      description
+      sensitive
+      isEnvOnly
+    }
+  }
+}
+    `;
+export type UpdateConfigVarMutationFn = Apollo.MutationFunction<UpdateConfigVarMutation, UpdateConfigVarMutationVariables>;
+
+/**
+ * __useUpdateConfigVarMutation__
+ *
+ * To run a mutation, you first call `useUpdateConfigVarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateConfigVarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateConfigVarMutation, { data, loading, error }] = useUpdateConfigVarMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateConfigVarMutation(baseOptions?: Apollo.MutationHookOptions<UpdateConfigVarMutation, UpdateConfigVarMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateConfigVarMutation, UpdateConfigVarMutationVariables>(UpdateConfigVarDocument, options);
+      }
+export type UpdateConfigVarMutationHookResult = ReturnType<typeof useUpdateConfigVarMutation>;
+export type UpdateConfigVarMutationResult = Apollo.MutationResult<UpdateConfigVarMutation>;
+export type UpdateConfigVarMutationOptions = Apollo.BaseMutationOptions<UpdateConfigVarMutation, UpdateConfigVarMutationVariables>;
 export const UpdateWorkspaceFeatureFlagDocument = gql`
     mutation UpdateWorkspaceFeatureFlag($workspaceId: String!, $featureFlag: String!, $value: Boolean!) {
   updateWorkspaceFeatureFlag(
@@ -4405,6 +4494,48 @@ export function useUserLookupAdminPanelMutation(baseOptions?: Apollo.MutationHoo
 export type UserLookupAdminPanelMutationHookResult = ReturnType<typeof useUserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationResult = Apollo.MutationResult<UserLookupAdminPanelMutation>;
 export type UserLookupAdminPanelMutationOptions = Apollo.BaseMutationOptions<UserLookupAdminPanelMutation, UserLookupAdminPanelMutationVariables>;
+export const ConfigVarsDocument = gql`
+    query ConfigVars {
+  configVars {
+    key
+    value
+    source
+    metadata {
+      group
+      description
+      sensitive
+      isEnvOnly
+    }
+  }
+}
+    `;
+
+/**
+ * __useConfigVarsQuery__
+ *
+ * To run a query within a React component, call `useConfigVarsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConfigVarsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConfigVarsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useConfigVarsQuery(baseOptions?: Apollo.QueryHookOptions<ConfigVarsQuery, ConfigVarsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ConfigVarsQuery, ConfigVarsQueryVariables>(ConfigVarsDocument, options);
+      }
+export function useConfigVarsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConfigVarsQuery, ConfigVarsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ConfigVarsQuery, ConfigVarsQueryVariables>(ConfigVarsDocument, options);
+        }
+export type ConfigVarsQueryHookResult = ReturnType<typeof useConfigVarsQuery>;
+export type ConfigVarsLazyQueryHookResult = ReturnType<typeof useConfigVarsLazyQuery>;
+export type ConfigVarsQueryResult = Apollo.QueryResult<ConfigVarsQuery, ConfigVarsQueryVariables>;
 export const GetEnvironmentVariablesGroupedDocument = gql`
     query GetEnvironmentVariablesGrouped {
   getEnvironmentVariablesGrouped {

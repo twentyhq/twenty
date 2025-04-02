@@ -21,7 +21,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export enum KeyValuePairType {
   USER_VAR = 'USER_VAR',
   FEATURE_FLAG = 'FEATURE_FLAG',
-  SYSTEM_VAR = 'SYSTEM_VAR',
+  CONFIG_VAR = 'CONFIG_VAR',
 }
 
 @Entity({ name: 'keyValuePair', schema: 'core' })

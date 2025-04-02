@@ -289,6 +289,14 @@ const SettingsAdminSecondaryEnvVariables = lazy(() =>
   })),
 );
 
+const SettingsAdminEnvVarDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminEnvVarDetail').then(
+    (module) => ({
+      default: module.SettingsAdminEnvVarDetail,
+    }),
+  ),
+);
+
 const SettingsLab = lazy(() =>
   import('~/pages/settings/lab/SettingsLab').then((module) => ({
     default: module.SettingsLab,
@@ -498,6 +506,10 @@ export const SettingsRoutes = ({
           <Route
             path={SettingsPath.AdminPanelOtherEnvVariables}
             element={<SettingsAdminSecondaryEnvVariables />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelEnvVarDetail}
+            element={<SettingsAdminEnvVarDetail />}
           />
         </>
       )}

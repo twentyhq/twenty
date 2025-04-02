@@ -1,3 +1,4 @@
+import { SettingsAdminEnvVarDebug } from '@/settings/admin-panel/components/SettingsAdminEnvVarDebug';
 import { SettingsAdminEnvVariables } from '@/settings/admin-panel/components/SettingsAdminEnvVariables';
 import { SettingsAdminGeneral } from '@/settings/admin-panel/components/SettingsAdminGeneral';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
@@ -19,6 +20,8 @@ export const SettingsAdminTabContent = () => {
       return <SettingsAdminEnvVariables />;
     case SETTINGS_ADMIN_TABS.HEALTH_STATUS:
       return <SettingsAdminHealthStatus />;
+    case SETTINGS_ADMIN_TABS.ENV_VAR_DEBUG:
+      return <SettingsAdminEnvVarDebug />;
     default:
       return null;
   }
