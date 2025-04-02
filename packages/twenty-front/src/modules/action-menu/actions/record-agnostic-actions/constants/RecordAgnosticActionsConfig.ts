@@ -10,7 +10,7 @@ import { msg } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ConfigAction> = {
-  searchRecords: {
+  [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Global,
     key: RecordAgnosticActionsKeys.SEARCH_RECORDS,
@@ -24,7 +24,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ConfigAction> = {
     hotKeys: ['/'],
     shouldBeRegistered: () => true,
   },
-  searchRecordsFallback: {
+  [RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK]: {
     type: ActionMenuEntryType.Fallback,
     scope: ActionMenuEntryScope.Global,
     key: RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK,
