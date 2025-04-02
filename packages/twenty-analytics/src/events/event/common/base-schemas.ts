@@ -7,7 +7,7 @@ export const emptyPayloadSchema = z.object({}).strict();
 export const eventSchema = z
   .object({
     action: z.string(),
-    timestamp: z.string().datetime(),
+    timestamp: z.string().datetime({ local: true }),
     version: z.string(),
     userId: z.string().default(''),
     workspaceId: z.string().default(''),
