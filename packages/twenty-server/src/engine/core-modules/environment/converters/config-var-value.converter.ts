@@ -18,6 +18,7 @@ export class ConfigVarValueConverter {
     }
 
     // Get the default value to determine the expected type
+    // UGLY
     const defaultValue = new EnvironmentVariables()[key];
     const valueType = typeof defaultValue;
 
@@ -44,7 +45,7 @@ export class ConfigVarValueConverter {
     appValue: EnvironmentVariables[T],
   ): JSON | undefined {
     if (appValue === undefined) {
-      return undefined; // Return undefined instead of null for TypeORM compatibility
+      return undefined;
     }
 
     // Convert to the appropriate type for JSON storage

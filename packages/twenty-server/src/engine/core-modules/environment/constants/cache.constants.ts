@@ -1,4 +1,5 @@
 // TTL values in milliseconds
+// TODO: seperate file for each constant
 export const POSITIVE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 export const NEGATIVE_CACHE_TTL = 60 * 1000; // 1 minute
 export const CACHE_SCAVENGE_INTERVAL = 5 * 60 * 1000; // 5 minutes

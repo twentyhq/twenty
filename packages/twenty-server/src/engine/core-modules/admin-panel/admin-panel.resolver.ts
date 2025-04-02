@@ -131,7 +131,6 @@ export class AdminPanelResolver {
     const allVars = this.environmentService.getAll();
 
     return Object.entries(allVars).map(([key, data]) => {
-      // With GraphQLJSON we can return values directly without stringification
       return {
         key,
         value: data.value,
@@ -148,7 +147,6 @@ export class AdminPanelResolver {
   ): Promise<ConfigVarObject> {
     const { key, value } = input;
 
-    // Check if variable can be updated
     const metadata = this.environmentService.getMetadata(
       key as keyof EnvironmentVariables,
     );
@@ -163,7 +161,6 @@ export class AdminPanelResolver {
       );
     }
 
-    // Parse the value if it looks like JSON (for arrays and objects)
     let parsedValue = value;
 
     if (
@@ -174,6 +171,7 @@ export class AdminPanelResolver {
         parsedValue = JSON.parse(value);
       } catch (e) {
         // If parsing fails, keep the original string value
+        // TODO: I don't like this, but for now I don't know how to handle this better
       }
     }
 
@@ -186,7 +184,6 @@ export class AdminPanelResolver {
       key as keyof EnvironmentVariables,
     );
 
-    // Return updated config with direct value (no stringification needed with GraphQLJSON)
     return {
       key,
       value: parsedValue,
