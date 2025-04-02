@@ -13,7 +13,6 @@ import { iconsState } from 'twenty-ui';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
-import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -87,7 +86,6 @@ export const useAuth = () => {
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -337,8 +335,6 @@ export const useAuth = () => {
 
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
-      setIsVerifyPendingState(true);
-
       const getAuthTokensResult = await getAuthTokensFromLoginToken({
         variables: { loginToken },
       });
@@ -356,15 +352,8 @@ export const useAuth = () => {
       );
 
       await loadCurrentUser();
-
-      setIsVerifyPendingState(false);
     },
-    [
-      setIsVerifyPendingState,
-      getAuthTokensFromLoginToken,
-      setTokenPair,
-      loadCurrentUser,
-    ],
+    [getAuthTokensFromLoginToken, setTokenPair, loadCurrentUser],
   );
 
   const handleCredentialsSignIn = useCallback(
@@ -391,8 +380,6 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string,
       captchaToken?: string,
     ) => {
-      setIsVerifyPendingState(true);
-
       const signUpResult = await signUp({
         variables: {
           email,
@@ -440,7 +427,6 @@ export const useAuth = () => {
       );
     },
     [
-      setIsVerifyPendingState,
       signUp,
       workspacePublicData,
       isMultiWorkspaceEnabled,

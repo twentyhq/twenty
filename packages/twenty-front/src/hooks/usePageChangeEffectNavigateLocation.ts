@@ -19,16 +19,17 @@ export const usePageChangeEffectNavigateLocation = () => {
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
+
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
   const isMatchingOpenRoute =
     isMatchingLocation(AppPath.Invite) ||
-    isMatchingLocation(AppPath.ResetPassword) ||
-    isMatchingLocation(AppPath.VerifyEmail);
+    isMatchingLocation(AppPath.ResetPassword);
 
   const isMatchingOngoingUserCreationRoute =
     isMatchingOpenRoute ||
     isMatchingLocation(AppPath.SignInUp) ||
+    isMatchingLocation(AppPath.VerifyEmail) ||
     isMatchingLocation(AppPath.Verify);
 
   const isMatchingOnboardingRoute =
