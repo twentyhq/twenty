@@ -1,5 +1,5 @@
 import { useSearchRecordsRecordAgnosticAction } from '@/action-menu/actions/record-agnostic-actions/hooks/useSearchRecordsRecordAgnosticAction';
-import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
+import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
@@ -21,7 +21,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
   searchRecords: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Global,
-    key: RecordAgnosticActionsKey.SEARCH_RECORDS,
+    key: RecordAgnosticActionsKeys.SEARCH_RECORDS,
     label: msg`Search records`,
     shortLabel: msg`Search`,
     position: 0,
@@ -35,7 +35,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
   searchRecordsFallback: {
     type: ActionMenuEntryType.Fallback,
     scope: ActionMenuEntryScope.Global,
-    key: RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK,
+    key: RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK,
     label: msg`Search records`,
     shortLabel: msg`Search`,
     position: 1,
