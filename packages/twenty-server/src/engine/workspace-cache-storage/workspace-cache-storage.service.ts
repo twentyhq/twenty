@@ -73,7 +73,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<boolean>(
       `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
       true,
-      TTL_INFINITE,
+      1_000 * 60, // 1 minute
     );
   }
 

@@ -13,4 +13,5 @@ export enum FeatureFlagKey {
   IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
   IsWorkflowFormActionEnabled = 'IS_WORKFLOW_FORM_ACTION_ENABLED',
   IsPermissionsV2Enabled = 'IS_PERMISSIONS_V2_ENABLED',
+  IsMeteredProductBillingEnabled = 'IS_METERED_PRODUCT_BILLING_ENABLED',
 }

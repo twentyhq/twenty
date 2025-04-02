@@ -4,8 +4,12 @@ import { ChipSize } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ChipFieldDisplay = () => {
-  const { recordValue, objectNameSingular, labelIdentifierLink } =
-    useChipFieldDisplay();
+  const {
+    recordValue,
+    objectNameSingular,
+    labelIdentifierLink,
+    isLabelHidden,
+  } = useChipFieldDisplay();
 
   if (!isDefined(recordValue)) {
     return null;
@@ -17,6 +21,7 @@ export const ChipFieldDisplay = () => {
       record={recordValue}
       size={ChipSize.Small}
       to={labelIdentifierLink}
+      isLabelHidden={isLabelHidden}
     />
   );
 };

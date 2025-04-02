@@ -77,7 +77,7 @@ export const fetchMetadataFields = (objectNamePlural: string) => {
         `;
     case 'fields':
       return fields;
-    case 'relations':
+    case 'relationMetadata':
       return `
           id
           relationType
