@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { ObjectLiteral, OrderByCondition, SelectQueryBuilder } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -25,12 +25,11 @@ import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/f
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
-interface FindManyMeta {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
+interface PageInfo {
+  hasNextPage?: boolean;
+  hasPreviousPage?: boolean;
   startCursor: string | null;
   endCursor: string | null;
-  totalCount: number;
 }
 
 interface FormatResultParams<T> {
@@ -38,7 +37,8 @@ interface FormatResultParams<T> {
   objectNameSingular?: string;
   objectNamePlural?: string;
   data: T;
-  meta?: FindManyMeta;
+  pageInfo?: PageInfo;
+  totalCount?: number;
 }
 @Injectable()
 export class RestApiCoreServiceV2 {
@@ -141,6 +141,7 @@ export class RestApiCoreServiceV2 {
     const { id: recordId } = parseCorePath(request);
     const {
       objectMetadataNameSingular,
+      objectMetadataNamePlural,
       repository,
       objectMetadata,
       objectMetadataItemWithFieldsMaps,
@@ -158,6 +159,7 @@ export class RestApiCoreServiceV2 {
         repository,
         objectMetadata,
         objectMetadataNameSingular,
+        objectMetadataNamePlural,
         objectMetadataItemWithFieldsMaps,
       );
     }
@@ -184,6 +186,7 @@ export class RestApiCoreServiceV2 {
     repository: WorkspaceRepository<ObjectLiteral>,
     objectMetadata: any,
     objectMetadataNameSingular: string,
+    objectMetadataNamePlural: string,
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
       | undefined,
@@ -194,6 +197,9 @@ export class RestApiCoreServiceV2 {
     // Create query builder
     const qb = repository.createQueryBuilder(objectMetadataNameSingular);
 
+    // Get total count
+    const totalCount = await this.getTotalCount(qb);
+
     // Apply filters with cursor
     const { finalQuery } = await this.applyFiltersWithCursor(
       qb,
@@ -201,9 +207,6 @@ export class RestApiCoreServiceV2 {
       objectMetadataItemWithFieldsMaps,
       inputs,
     );
-
-    // Get total count
-    const totalCount = await this.getTotalCount(finalQuery);
 
     // Get records with pagination
     const { finalRecords, hasMoreRecords } =
@@ -217,7 +220,7 @@ export class RestApiCoreServiceV2 {
     // Format and return result
     return this.formatPaginatedResult(
       finalRecords,
-      objectMetadataNameSingular,
+      objectMetadataNamePlural,
       objectMetadataItemWithFieldsMaps,
       objectMetadata,
       inputs.isForwardPagination,
@@ -367,24 +370,26 @@ export class RestApiCoreServiceV2 {
 
   private formatPaginatedResult(
     finalRecords: any[],
-    objectMetadataNameSingular: string,
+    objectMetadataNamePlural: string,
     objectMetadataItemWithFieldsMaps: any,
     objectMetadata: any,
     isForwardPagination: boolean,
     hasMoreRecords: boolean,
     totalCount: number,
   ) {
+    const hasPreviousPage = !isForwardPagination && hasMoreRecords;
+
     return this.formatResult({
       operation: 'findMany',
-      objectNamePlural: objectMetadataNameSingular,
+      objectNamePlural: objectMetadataNamePlural,
       data: formatGetManyData(
         finalRecords,
         objectMetadataItemWithFieldsMaps as any,
         objectMetadata.objectMetadataMaps,
       ),
-      meta: {
+      pageInfo: {
         hasNextPage: isForwardPagination && hasMoreRecords,
-        hasPreviousPage: !isForwardPagination && hasMoreRecords,
+        ...(hasPreviousPage ? { hasPreviousPage } : {}),
         startCursor:
           finalRecords.length > 0
             ? Buffer.from(JSON.stringify({ id: finalRecords[0].id })).toString(
@@ -399,8 +404,8 @@ export class RestApiCoreServiceV2 {
                 }),
               ).toString('base64')
             : null,
-        totalCount,
       },
+      totalCount,
     });
   }
 
@@ -409,7 +414,8 @@ export class RestApiCoreServiceV2 {
     objectNameSingular,
     objectNamePlural,
     data,
-    meta,
+    pageInfo,
+    totalCount,
   }: FormatResultParams<T>) {
     let prefix: string;
 
@@ -420,21 +426,14 @@ export class RestApiCoreServiceV2 {
     } else {
       prefix = operation + capitalize(objectNameSingular || '');
     }
-    const result = {
+
+    return {
       data: {
         [prefix]: data,
       },
+      ...(isDefined(pageInfo) ? { pageInfo } : {}),
+      ...(isDefined(totalCount) ? { totalCount } : {}),
     };
-
-    if (meta) {
-      const { totalCount, ...rest } = meta;
-
-      (result.data as any).pageInfo = { ...rest };
-
-      (result.data as any).totalCount = totalCount;
-    }
-
-    return result;
   }
 
   private async getRepositoryAndMetadataOrFail(request: Request) {
@@ -471,6 +470,7 @@ export class RestApiCoreServiceV2 {
 
     return {
       objectMetadataNameSingular,
+      objectMetadataNamePlural: objectMetadata.objectMetadataMapItem.namePlural,
       objectMetadata,
       repository,
       objectMetadataItemWithFieldsMaps,
