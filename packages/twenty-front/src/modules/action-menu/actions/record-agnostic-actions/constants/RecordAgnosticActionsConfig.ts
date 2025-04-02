@@ -1,23 +1,15 @@
 import { useSearchRecordsRecordAgnosticAction } from '@/action-menu/actions/record-agnostic-actions/hooks/useSearchRecordsRecordAgnosticAction';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
-import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
+import { ConfigAction } from '@/action-menu/actions/types/ConfigAction';
 import {
-  ActionMenuEntry,
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui';
 
-export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
-  string,
-  ActionMenuEntry & {
-    useAction: ActionHookWithoutObjectMetadataItem;
-    shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
-  }
-> = {
+export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ConfigAction> = {
   searchRecords: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Global,
