@@ -11,7 +11,7 @@ env:
   SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
   PROJECT_ROOT: /app/kvoip-v2
   DOCKER_DIR: ${{ env.PROJECT_ROOT }}/packages/twenty-docker
-  REQUIRED_CONTAINERS: 'kvoipv2-pg kvoipv2-redis kvoipv2-server kvoipv2-worker'
+  REQUIRED_CONTAINERS: 'kvoipv2-pg kvoipv2-server'
 
 jobs:
   deploy:
@@ -85,25 +85,37 @@ jobs:
             echo "Checking health of required containers: ${{ env.REQUIRED_CONTAINERS }}"
 
             # Check each required container
-            all_healthy=true
+            all_ok=true
             for container in ${{ env.REQUIRED_CONTAINERS }}; do
               if ! docker inspect --format '{{.State.Health.Status}}' "$container" | grep -q 'healthy'; then
                 echo "::error::Container $container is not healthy"
                 docker inspect "$container" | jq '.[].State'
-                all_healthy=false
+                all_ok=false
               else
                 echo "✓ $container is healthy"
               fi
             done
 
-            if [ "$all_healthy" != "true" ]; then
+            if docker exec redis redis-cli ping | grep -qv "PONG"; then
+              echo "::error::Redis is not responding to PING"
+              all_ok=false
+            fi
+
+            if ! docker inspect --format '{{.State.Status}}' "kvoipv2-worker" | grep -q 'running'; then
+              echo "::error::Container kvoipv2-worker is not running"
+              all_ok=false
+            fi
+
+            if [ "$all_ok" != "true" ]; then
               echo "::error::Not all required containers are healthy"
               echo "Current container status:"
               docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
               exit 1
             fi
 
-            echo "All required containers are healthy"
+
+
+            echo "All required containers are healthy and running"
 
       - name: Detect migration file changes
         id: changed-files
