@@ -2,14 +2,11 @@ import { Nullable } from 'twenty-ui';
 
 import { DateInput } from '@/ui/field/input/components/DateInput';
 
+import { FieldInputEvent } from '@/object-record/record-field/meta-types/input/components/NumberFieldInput';
+
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDateTimeField } from '../../hooks/useDateTimeField';
-
-export type FieldInputEvent = (persist: () => void) => void;
-export type FieldInputClickOutsideEvent = (
-  persist: () => void,
-  event: MouseEvent | TouchEvent,
-) => void;
 
 export type DateTimeFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
