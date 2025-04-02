@@ -10,6 +10,7 @@ import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-he
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
+import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
@@ -113,5 +114,13 @@ export class AdminPanelResolver {
       queueName as MessageQueue,
       timeRange,
     );
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
+  @Query(() => VersionInfo)
+  async versionInfo(
+    @Args('currentVersion') currentVersion: string,
+  ): Promise<VersionInfo> {
+    return this.adminService.getVersionInfo(currentVersion);
   }
 }

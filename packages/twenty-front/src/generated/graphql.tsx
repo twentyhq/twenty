@@ -497,6 +497,7 @@ export enum FeatureFlagKey {
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsEventObjectEnabled = 'IsEventObjectEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
+  IsMeteredProductBillingEnabled = 'IsMeteredProductBillingEnabled',
   IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
@@ -1407,6 +1408,7 @@ export type Query = {
   plans: Array<BillingPlanOutput>;
   search: Array<SearchRecord>;
   validatePasswordResetToken: ValidatePasswordResetToken;
+  versionInfo: VersionInfo;
 };
 
 
@@ -1496,6 +1498,11 @@ export type QuerySearchArgs = {
 
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
+};
+
+
+export type QueryVersionInfoArgs = {
+  currentVersion: Scalars['String'];
 };
 
 export type QueueMetricsData = {
@@ -2147,6 +2154,12 @@ export type ValidatePasswordResetToken = {
   id: Scalars['String'];
 };
 
+export type VersionInfo = {
+  __typename?: 'VersionInfo';
+  currentVersionExists: Scalars['Boolean'];
+  latestVersion: Scalars['String'];
+};
+
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
   active: Scalars['Float'];
@@ -2571,6 +2584,13 @@ export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]
 
 
 export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', name: EnvironmentVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> } };
+
+export type GetVersionInfoQueryVariables = Exact<{
+  currentVersion: Scalars['String'];
+}>;
+
+
+export type GetVersionInfoQuery = { __typename?: 'Query', versionInfo: { __typename?: 'VersionInfo', latestVersion: string, currentVersionExists: boolean } };
 
 export type GetIndicatorHealthStatusQueryVariables = Exact<{
   indicatorId: HealthIndicatorId;
@@ -4459,6 +4479,42 @@ export function useGetEnvironmentVariablesGroupedLazyQuery(baseOptions?: Apollo.
 export type GetEnvironmentVariablesGroupedQueryHookResult = ReturnType<typeof useGetEnvironmentVariablesGroupedQuery>;
 export type GetEnvironmentVariablesGroupedLazyQueryHookResult = ReturnType<typeof useGetEnvironmentVariablesGroupedLazyQuery>;
 export type GetEnvironmentVariablesGroupedQueryResult = Apollo.QueryResult<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>;
+export const GetVersionInfoDocument = gql`
+    query GetVersionInfo($currentVersion: String!) {
+  versionInfo(currentVersion: $currentVersion) {
+    latestVersion
+    currentVersionExists
+  }
+}
+    `;
+
+/**
+ * __useGetVersionInfoQuery__
+ *
+ * To run a query within a React component, call `useGetVersionInfoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetVersionInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetVersionInfoQuery({
+ *   variables: {
+ *      currentVersion: // value for 'currentVersion'
+ *   },
+ * });
+ */
+export function useGetVersionInfoQuery(baseOptions: Apollo.QueryHookOptions<GetVersionInfoQuery, GetVersionInfoQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetVersionInfoQuery, GetVersionInfoQueryVariables>(GetVersionInfoDocument, options);
+      }
+export function useGetVersionInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetVersionInfoQuery, GetVersionInfoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetVersionInfoQuery, GetVersionInfoQueryVariables>(GetVersionInfoDocument, options);
+        }
+export type GetVersionInfoQueryHookResult = ReturnType<typeof useGetVersionInfoQuery>;
+export type GetVersionInfoLazyQueryHookResult = ReturnType<typeof useGetVersionInfoLazyQuery>;
+export type GetVersionInfoQueryResult = Apollo.QueryResult<GetVersionInfoQuery, GetVersionInfoQueryVariables>;
 export const GetIndicatorHealthStatusDocument = gql`
     query GetIndicatorHealthStatus($indicatorId: HealthIndicatorId!) {
   getIndicatorHealthStatus(indicatorId: $indicatorId) {

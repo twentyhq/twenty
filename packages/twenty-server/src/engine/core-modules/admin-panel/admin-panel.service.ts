@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import axios from 'axios';
 import { Repository } from 'typeorm';
 
 import { EnvironmentVariable } from 'src/engine/core-modules/admin-panel/dtos/environment-variable.dto';
 import { EnvironmentVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/environment-variables-group.dto';
 import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
+import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import {
   AuthException,
   AuthExceptionCode,
@@ -162,5 +164,29 @@ export class AdminPanelService {
       }));
 
     return { groups };
+  }
+
+  async getVersionInfo(currentVersion: string): Promise<VersionInfo> {
+    try {
+      const response = await axios.get(
+        'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags',
+      );
+
+      const tags = response.data.results
+        .map((tag: { name: string }) => tag.name)
+        .filter((tag: string) => tag !== 'latest');
+      const latestVersion = tags[0].replace('v', '');
+      const currentVersionExists = tags.includes(`v${currentVersion}`);
+
+      return {
+        latestVersion,
+        currentVersionExists,
+      };
+    } catch (error) {
+      return {
+        latestVersion: 'latest',
+        currentVersionExists: false,
+      };
+    }
   }
 }
