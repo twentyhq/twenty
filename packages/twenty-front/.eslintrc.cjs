@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
+  extends: ['../../.eslintrc.global.cjs', '../../.eslintrc.react.cjs'],
   ignorePatterns: [
     'node_modules',
     'mockServiceWorker.js',

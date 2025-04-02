@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
+  extends: ['../../.eslintrc.global.cjs', '../../.eslintrc.react.cjs'],
   ignorePatterns: [
     'node_modules',
     'dist',
