@@ -3,6 +3,7 @@
 import Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/utils/is-stripe-valid-product-metadata.util';
 describe('isStripeValidProductMetadata', () => {
@@ -15,7 +16,7 @@ describe('isStripeValidProductMetadata', () => {
     const metadata: Stripe.Metadata = {
       planKey: BillingPlanKey.PRO,
       priceUsageBased: BillingUsageType.METERED,
-      isBaseProduct: 'true',
+      productKey: BillingProductKey.BaseProduct,
     };
 
     expect(isStripeValidProductMetadata(metadata)).toBe(true);
@@ -25,7 +26,7 @@ describe('isStripeValidProductMetadata', () => {
     const metadata: Stripe.Metadata = {
       planKey: BillingPlanKey.ENTERPRISE,
       priceUsageBased: BillingUsageType.METERED,
-      isBaseProduct: 'false',
+      productKey: BillingProductKey.WorkflowNodeExecution,
       randomKey: 'randomValue',
     };
 
@@ -36,7 +37,7 @@ describe('isStripeValidProductMetadata', () => {
     const metadata: Stripe.Metadata = {
       planKey: 'invalid',
       priceUsageBased: BillingUsageType.METERED,
-      isBaseProduct: 'invalid',
+      productKey: 'invalid',
     };
 
     expect(isStripeValidProductMetadata(metadata)).toBe(false);
@@ -46,7 +47,7 @@ describe('isStripeValidProductMetadata', () => {
     const metadata: Stripe.Metadata = {
       planKey: BillingPlanKey.PRO,
       priceUsageBased: 'invalid',
-      isBaseProduct: 'true',
+      productKey: BillingProductKey.BaseProduct,
     };
 
     expect(isStripeValidProductMetadata(metadata)).toBe(false);

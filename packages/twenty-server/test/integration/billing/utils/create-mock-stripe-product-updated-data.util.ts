@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 
 export const createMockStripeProductUpdatedData = (
@@ -17,8 +18,8 @@ export const createMockStripeProductUpdatedData = (
     marketing_features: [],
     metadata: {
       planKey: 'base',
-      isBaseProduct: 'true',
       priceUsageBased: BillingUsageType.LICENSED,
+      productKey: BillingProductKey.BaseProduct,
     },
     name: 'kjnnjkjknkjnjkn',
     package_dimensions: null,

@@ -3,6 +3,7 @@
 import Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 
@@ -14,10 +15,9 @@ export function isStripeValidProductMetadata(
   }
   const hasBillingPlanKey = isValidBillingPlanKey(metadata.planKey);
   const hasPriceUsageBased = isValidPriceUsageBased(metadata.priceUsageBased);
-  const hasIsBaseProduct =
-    metadata.isBaseProduct === 'true' || metadata.isBaseProduct === 'false';
+  const hasProductKey = isValidProductKey(metadata.productKey);
 
-  return hasBillingPlanKey && hasPriceUsageBased && hasIsBaseProduct;
+  return hasBillingPlanKey && hasPriceUsageBased && hasProductKey;
 }
 
 const isValidBillingPlanKey = (planKey?: string) => {
@@ -36,6 +36,17 @@ const isValidPriceUsageBased = (priceUsageBased?: string) => {
     case BillingUsageType.METERED:
       return true;
     case BillingUsageType.LICENSED:
+      return true;
+    default:
+      return false;
+  }
+};
+
+const isValidProductKey = (productKey?: string) => {
+  switch (productKey) {
+    case BillingProductKey.BaseProduct:
+      return true;
+    case BillingProductKey.WorkflowNodeExecution:
       return true;
     default:
       return false;
