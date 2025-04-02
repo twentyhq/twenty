@@ -3,7 +3,7 @@ import { Event } from '../types/event.type';
 export const fixtures: Array<Event> = [
   {
     action: 'apiKey.created',
-    timestamp: '2024-10-24T15:55:35.177Z',
+    timestamp: '2024-10-24T15:55:35.177',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -11,7 +11,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'apiKey.created',
-    timestamp: '2024-10-24T15:55:35.178Z',
+    timestamp: '2024-10-24T15:55:35.178',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -19,7 +19,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'apiKey.created',
-    timestamp: '2024-10-24T15:55:35.212Z',
+    timestamp: '2024-10-24T15:55:35.212',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -27,7 +27,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'apiKey.created',
-    timestamp: '2024-10-24T15:57:42.810Z',
+    timestamp: '2024-10-24T15:57:42.810',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -35,7 +35,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'apiKey.created',
-    timestamp: '2024-10-24T15:57:42.812Z',
+    timestamp: '2024-10-24T15:57:42.812',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -43,7 +43,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'apiKey.created',
-    timestamp: '2024-10-24T15:57:42.989Z',
+    timestamp: '2024-10-24T15:57:42.989',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -51,7 +51,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'apiKey.created',
-    timestamp: '2024-10-24T16:03:18.134Z',
+    timestamp: '2024-10-24T16:03:18.134',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -59,7 +59,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'apiKey.created',
-    timestamp: '2024-10-24T16:03:18.135Z',
+    timestamp: '2024-10-24T16:03:18.135',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -67,7 +67,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'apiKey.created',
-    timestamp: '2024-10-24T16:03:18.205Z',
+    timestamp: '2024-10-24T16:03:18.205',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -75,7 +75,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'attachment.created',
-    timestamp: '2024-10-24T15:55:31.949Z',
+    timestamp: '2024-10-24T15:55:31.949',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -83,7 +83,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'attachment.created',
-    timestamp: '2024-10-24T15:55:31.950Z',
+    timestamp: '2024-10-24T15:55:31.950',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -91,7 +91,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'attachment.created',
-    timestamp: '2024-10-24T15:55:32.027Z',
+    timestamp: '2024-10-24T15:55:32.027',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -99,7 +99,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'attachment.created',
-    timestamp: '2024-10-24T15:57:31.970Z',
+    timestamp: '2024-10-24T15:57:31.970',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -107,7 +107,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'attachment.created',
-    timestamp: '2024-10-24T15:57:31.979Z',
+    timestamp: '2024-10-24T15:57:31.979',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -115,7 +115,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'attachment.created',
-    timestamp: '2024-10-24T15:57:34.033Z',
+    timestamp: '2024-10-24T15:57:34.033',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -123,7 +123,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'attachment.created',
-    timestamp: '2024-10-24T16:03:17.602Z',
+    timestamp: '2024-10-24T16:03:17.602',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -131,7 +131,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'attachment.created',
-    timestamp: '2024-10-24T16:03:17.602Z',
+    timestamp: '2024-10-24T16:03:17.602',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -139,7 +139,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'attachment.created',
-    timestamp: '2024-10-24T16:03:17.755Z',
+    timestamp: '2024-10-24T16:03:17.755',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -147,7 +147,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'auditLog.created',
-    timestamp: '2024-10-24T15:55:33.498Z',
+    timestamp: '2024-10-24T15:55:33.498',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -155,7 +155,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'auditLog.created',
-    timestamp: '2024-10-24T15:55:33.499Z',
+    timestamp: '2024-10-24T15:55:33.499',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -163,7 +163,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'auditLog.created',
-    timestamp: '2024-10-24T15:55:33.602Z',
+    timestamp: '2024-10-24T15:55:33.602',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -171,7 +171,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'auditLog.created',
-    timestamp: '2024-10-24T15:57:42.984Z',
+    timestamp: '2024-10-24T15:57:42.984',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -179,7 +179,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'auditLog.created',
-    timestamp: '2024-10-24T15:57:42.986Z',
+    timestamp: '2024-10-24T15:57:42.986',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -187,7 +187,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'auditLog.created',
-    timestamp: '2024-10-24T15:57:43.219Z',
+    timestamp: '2024-10-24T15:57:43.219',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -195,7 +195,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'auditLog.created',
-    timestamp: '2024-10-24T16:03:19.139Z',
+    timestamp: '2024-10-24T16:03:19.139',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -203,7 +203,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'auditLog.created',
-    timestamp: '2024-10-24T16:03:19.141Z',
+    timestamp: '2024-10-24T16:03:19.141',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -211,7 +211,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'auditLog.created',
-    timestamp: '2024-10-24T16:03:19.289Z',
+    timestamp: '2024-10-24T16:03:19.289',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -219,7 +219,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'blocklist.created',
-    timestamp: '2024-10-24T15:55:33.732Z',
+    timestamp: '2024-10-24T15:55:33.732',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -227,7 +227,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'blocklist.created',
-    timestamp: '2024-10-24T15:55:33.733Z',
+    timestamp: '2024-10-24T15:55:33.733',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -235,7 +235,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'blocklist.created',
-    timestamp: '2024-10-24T15:55:33.836Z',
+    timestamp: '2024-10-24T15:55:33.836',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -243,7 +243,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'blocklist.created',
-    timestamp: '2024-10-24T15:57:43.255Z',
+    timestamp: '2024-10-24T15:57:43.255',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -251,7 +251,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'blocklist.created',
-    timestamp: '2024-10-24T15:57:43.257Z',
+    timestamp: '2024-10-24T15:57:43.257',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -259,7 +259,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'blocklist.created',
-    timestamp: '2024-10-24T15:57:43.454Z',
+    timestamp: '2024-10-24T15:57:43.454',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -267,7 +267,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'blocklist.created',
-    timestamp: '2024-10-24T16:03:18.813Z',
+    timestamp: '2024-10-24T16:03:18.813',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -275,7 +275,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'blocklist.created',
-    timestamp: '2024-10-24T16:03:18.814Z',
+    timestamp: '2024-10-24T16:03:18.814',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -283,7 +283,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'blocklist.created',
-    timestamp: '2024-10-24T16:03:19.148Z',
+    timestamp: '2024-10-24T16:03:19.148',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -291,7 +291,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T15:55:31.547Z',
+    timestamp: '2024-10-24T15:55:31.547',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -299,7 +299,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T15:55:32.156Z',
+    timestamp: '2024-10-24T15:55:32.156',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -307,7 +307,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T15:55:32.158Z',
+    timestamp: '2024-10-24T15:55:32.158',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -315,7 +315,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T15:55:32.279Z',
+    timestamp: '2024-10-24T15:55:32.279',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -323,7 +323,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T15:57:26.908Z',
+    timestamp: '2024-10-24T15:57:26.908',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -331,7 +331,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T15:57:26.914Z',
+    timestamp: '2024-10-24T15:57:26.914',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -339,7 +339,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T15:57:26.914Z',
+    timestamp: '2024-10-24T15:57:26.914',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -347,7 +347,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T15:57:27.059Z',
+    timestamp: '2024-10-24T15:57:27.059',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -355,7 +355,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T16:03:16.523Z',
+    timestamp: '2024-10-24T16:03:16.523',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -363,7 +363,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T16:03:16.524Z',
+    timestamp: '2024-10-24T16:03:16.524',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -371,7 +371,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T16:03:16.525Z',
+    timestamp: '2024-10-24T16:03:16.525',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -379,7 +379,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannel.created',
-    timestamp: '2024-10-24T16:03:16.686Z',
+    timestamp: '2024-10-24T16:03:16.686',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -387,7 +387,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannelEventAssociation.created',
-    timestamp: '2024-10-24T15:55:32.230Z',
+    timestamp: '2024-10-24T15:55:32.230',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -395,7 +395,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannelEventAssociation.created',
-    timestamp: '2024-10-24T15:55:32.231Z',
+    timestamp: '2024-10-24T15:55:32.231',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -403,7 +403,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannelEventAssociation.created',
-    timestamp: '2024-10-24T15:55:32.334Z',
+    timestamp: '2024-10-24T15:55:32.334',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -411,7 +411,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannelEventAssociation.created',
-    timestamp: '2024-10-24T15:57:27.238Z',
+    timestamp: '2024-10-24T15:57:27.238',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -419,7 +419,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannelEventAssociation.created',
-    timestamp: '2024-10-24T15:57:27.238Z',
+    timestamp: '2024-10-24T15:57:27.238',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -427,7 +427,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannelEventAssociation.created',
-    timestamp: '2024-10-24T15:57:27.611Z',
+    timestamp: '2024-10-24T15:57:27.611',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -435,7 +435,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannelEventAssociation.created',
-    timestamp: '2024-10-24T16:03:16.756Z',
+    timestamp: '2024-10-24T16:03:16.756',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -443,7 +443,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannelEventAssociation.created',
-    timestamp: '2024-10-24T16:03:16.757Z',
+    timestamp: '2024-10-24T16:03:16.757',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -451,7 +451,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarChannelEventAssociation.created',
-    timestamp: '2024-10-24T16:03:16.861Z',
+    timestamp: '2024-10-24T16:03:16.861',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -459,7 +459,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEvent.created',
-    timestamp: '2024-10-24T15:55:31.420Z',
+    timestamp: '2024-10-24T15:55:31.420',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -467,7 +467,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEvent.created',
-    timestamp: '2024-10-24T15:55:32.015Z',
+    timestamp: '2024-10-24T15:55:32.015',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -475,7 +475,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEvent.created',
-    timestamp: '2024-10-24T15:57:26.778Z',
+    timestamp: '2024-10-24T15:57:26.778',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -483,7 +483,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEvent.created',
-    timestamp: '2024-10-24T15:57:27.090Z',
+    timestamp: '2024-10-24T15:57:27.090',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -491,7 +491,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEvent.created',
-    timestamp: '2024-10-24T16:03:16.377Z',
+    timestamp: '2024-10-24T16:03:16.377',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -499,7 +499,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEvent.created',
-    timestamp: '2024-10-24T16:03:16.692Z',
+    timestamp: '2024-10-24T16:03:16.692',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -507,7 +507,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEventParticipant.created',
-    timestamp: '2024-10-24T15:55:31.728Z',
+    timestamp: '2024-10-24T15:55:31.728',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -515,7 +515,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEventParticipant.created',
-    timestamp: '2024-10-24T15:55:31.730Z',
+    timestamp: '2024-10-24T15:55:31.730',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -523,7 +523,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEventParticipant.created',
-    timestamp: '2024-10-24T15:55:32.060Z',
+    timestamp: '2024-10-24T15:55:32.060',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -531,7 +531,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEventParticipant.created',
-    timestamp: '2024-10-24T15:57:26.901Z',
+    timestamp: '2024-10-24T15:57:26.901',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -539,7 +539,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEventParticipant.created',
-    timestamp: '2024-10-24T15:57:26.902Z',
+    timestamp: '2024-10-24T15:57:26.902',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -547,7 +547,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEventParticipant.created',
-    timestamp: '2024-10-24T15:57:27.045Z',
+    timestamp: '2024-10-24T15:57:27.045',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -555,7 +555,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEventParticipant.created',
-    timestamp: '2024-10-24T16:03:16.517Z',
+    timestamp: '2024-10-24T16:03:16.517',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -563,7 +563,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEventParticipant.created',
-    timestamp: '2024-10-24T16:03:16.517Z',
+    timestamp: '2024-10-24T16:03:16.517',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -571,7 +571,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'calendarEventParticipant.created',
-    timestamp: '2024-10-24T16:03:16.682Z',
+    timestamp: '2024-10-24T16:03:16.682',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -579,7 +579,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-22T09:31:13.563Z',
+    timestamp: '2024-10-22T09:31:13.563',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -587,7 +587,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-22T10:17:00.671Z',
+    timestamp: '2024-10-22T10:17:00.671',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -595,7 +595,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-22T13:16:50.935Z',
+    timestamp: '2024-10-22T13:16:50.935',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -603,7 +603,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-24T15:55:36.922Z',
+    timestamp: '2024-10-24T15:55:36.922',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -611,7 +611,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-24T15:55:36.927Z',
+    timestamp: '2024-10-24T15:55:36.927',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -619,7 +619,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-24T15:55:38.123Z',
+    timestamp: '2024-10-24T15:55:38.123',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -627,7 +627,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-24T15:57:34.430Z',
+    timestamp: '2024-10-24T15:57:34.430',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -635,7 +635,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-24T15:57:34.443Z',
+    timestamp: '2024-10-24T15:57:34.443',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -643,7 +643,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-24T15:57:37.343Z',
+    timestamp: '2024-10-24T15:57:37.343',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -651,7 +651,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-24T16:03:17.741Z',
+    timestamp: '2024-10-24T16:03:17.741',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -659,7 +659,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-24T16:03:17.742Z',
+    timestamp: '2024-10-24T16:03:17.742',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -667,7 +667,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'company.created',
-    timestamp: '2024-10-24T16:03:17.854Z',
+    timestamp: '2024-10-24T16:03:17.854',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -675,7 +675,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T15:55:31.333Z',
+    timestamp: '2024-10-24T15:55:31.333',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -683,7 +683,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T15:55:33.225Z',
+    timestamp: '2024-10-24T15:55:33.225',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -691,7 +691,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T15:55:33.226Z',
+    timestamp: '2024-10-24T15:55:33.226',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -699,7 +699,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T15:55:33.271Z',
+    timestamp: '2024-10-24T15:55:33.271',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -707,7 +707,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T15:57:26.651Z',
+    timestamp: '2024-10-24T15:57:26.651',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -715,7 +715,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T15:57:44.533Z',
+    timestamp: '2024-10-24T15:57:44.533',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -723,7 +723,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T15:57:44.534Z',
+    timestamp: '2024-10-24T15:57:44.534',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -731,7 +731,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T15:57:44.621Z',
+    timestamp: '2024-10-24T15:57:44.621',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -739,7 +739,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T16:03:16.374Z',
+    timestamp: '2024-10-24T16:03:16.374',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -747,7 +747,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T16:03:18.781Z',
+    timestamp: '2024-10-24T16:03:18.781',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -755,7 +755,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T16:03:18.782Z',
+    timestamp: '2024-10-24T16:03:18.782',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -763,7 +763,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'connectedAccount.created',
-    timestamp: '2024-10-24T16:03:18.922Z',
+    timestamp: '2024-10-24T16:03:18.922',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -771,7 +771,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'favorite.created',
-    timestamp: '2024-10-24T15:55:34.589Z',
+    timestamp: '2024-10-24T15:55:34.589',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -779,7 +779,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'favorite.created',
-    timestamp: '2024-10-24T15:55:34.590Z',
+    timestamp: '2024-10-24T15:55:34.590',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -787,7 +787,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'favorite.created',
-    timestamp: '2024-10-24T15:55:34.651Z',
+    timestamp: '2024-10-24T15:55:34.651',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -795,7 +795,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'favorite.created',
-    timestamp: '2024-10-24T15:57:44.022Z',
+    timestamp: '2024-10-24T15:57:44.022',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -803,7 +803,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'favorite.created',
-    timestamp: '2024-10-24T15:57:44.023Z',
+    timestamp: '2024-10-24T15:57:44.023',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -811,7 +811,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'favorite.created',
-    timestamp: '2024-10-24T15:57:44.183Z',
+    timestamp: '2024-10-24T15:57:44.183',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -819,7 +819,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'favorite.created',
-    timestamp: '2024-10-24T16:03:20.770Z',
+    timestamp: '2024-10-24T16:03:20.770',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -827,7 +827,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'favorite.created',
-    timestamp: '2024-10-24T16:03:20.772Z',
+    timestamp: '2024-10-24T16:03:20.772',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -835,7 +835,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'favorite.created',
-    timestamp: '2024-10-24T16:03:20.964Z',
+    timestamp: '2024-10-24T16:03:20.964',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -843,7 +843,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'function.execute',
-    timestamp: '2024-10-22T14:51:25.149Z',
+    timestamp: '2024-10-22T14:51:25.149',
     version: '1',
     userId: 'serverless-function',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -856,7 +856,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'function.execute',
-    timestamp: '2024-10-22T14:54:59.296Z',
+    timestamp: '2024-10-22T14:54:59.296',
     version: '1',
     userId: 'serverless-function',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -870,7 +870,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'function.execute',
-    timestamp: '2024-10-22T14:55:00.677Z',
+    timestamp: '2024-10-22T14:55:00.677',
     version: '1',
     userId: 'serverless-function',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -884,7 +884,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'function.execute',
-    timestamp: '2024-10-22T14:55:03.512Z',
+    timestamp: '2024-10-22T14:55:03.512',
     version: '1',
     userId: 'serverless-function',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -898,7 +898,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'message.created',
-    timestamp: '2024-10-24T15:55:32.004Z',
+    timestamp: '2024-10-24T15:55:32.004',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -906,7 +906,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'message.created',
-    timestamp: '2024-10-24T15:57:26.780Z',
+    timestamp: '2024-10-24T15:57:26.780',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -914,7 +914,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'message.created',
-    timestamp: '2024-10-24T16:03:16.384Z',
+    timestamp: '2024-10-24T16:03:16.384',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -922,7 +922,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannel.created',
-    timestamp: '2024-10-24T15:55:32.169Z',
+    timestamp: '2024-10-24T15:55:32.169',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -930,7 +930,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannel.created',
-    timestamp: '2024-10-24T15:55:32.170Z',
+    timestamp: '2024-10-24T15:55:32.170',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -938,7 +938,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannel.created',
-    timestamp: '2024-10-24T15:55:32.281Z',
+    timestamp: '2024-10-24T15:55:32.281',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -946,7 +946,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannel.created',
-    timestamp: '2024-10-24T15:57:26.872Z',
+    timestamp: '2024-10-24T15:57:26.872',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -954,7 +954,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannel.created',
-    timestamp: '2024-10-24T15:57:26.872Z',
+    timestamp: '2024-10-24T15:57:26.872',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -962,7 +962,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannel.created',
-    timestamp: '2024-10-24T15:57:27.035Z',
+    timestamp: '2024-10-24T15:57:27.035',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -970,7 +970,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannel.created',
-    timestamp: '2024-10-24T16:03:16.506Z',
+    timestamp: '2024-10-24T16:03:16.506',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -978,7 +978,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannel.created',
-    timestamp: '2024-10-24T16:03:16.507Z',
+    timestamp: '2024-10-24T16:03:16.507',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -986,7 +986,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannel.created',
-    timestamp: '2024-10-24T16:03:16.661Z',
+    timestamp: '2024-10-24T16:03:16.661',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -994,7 +994,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannelMessageAssociation.created',
-    timestamp: '2024-10-24T15:55:32.184Z',
+    timestamp: '2024-10-24T15:55:32.184',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1002,7 +1002,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannelMessageAssociation.created',
-    timestamp: '2024-10-24T15:55:32.185Z',
+    timestamp: '2024-10-24T15:55:32.185',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1010,7 +1010,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannelMessageAssociation.created',
-    timestamp: '2024-10-24T15:55:32.303Z',
+    timestamp: '2024-10-24T15:55:32.303',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1018,7 +1018,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannelMessageAssociation.created',
-    timestamp: '2024-10-24T15:57:26.714Z',
+    timestamp: '2024-10-24T15:57:26.714',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1026,7 +1026,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannelMessageAssociation.created',
-    timestamp: '2024-10-24T15:57:26.717Z',
+    timestamp: '2024-10-24T15:57:26.717',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1034,7 +1034,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannelMessageAssociation.created',
-    timestamp: '2024-10-24T15:57:26.869Z',
+    timestamp: '2024-10-24T15:57:26.869',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1042,7 +1042,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannelMessageAssociation.created',
-    timestamp: '2024-10-24T16:03:16.385Z',
+    timestamp: '2024-10-24T16:03:16.385',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1050,7 +1050,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannelMessageAssociation.created',
-    timestamp: '2024-10-24T16:03:16.386Z',
+    timestamp: '2024-10-24T16:03:16.386',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1058,7 +1058,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageChannelMessageAssociation.created',
-    timestamp: '2024-10-24T16:03:16.553Z',
+    timestamp: '2024-10-24T16:03:16.553',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1066,7 +1066,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageParticipant.created',
-    timestamp: '2024-10-24T15:55:32.236Z',
+    timestamp: '2024-10-24T15:55:32.236',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1074,7 +1074,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageParticipant.created',
-    timestamp: '2024-10-24T15:55:32.237Z',
+    timestamp: '2024-10-24T15:55:32.237',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1082,7 +1082,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageParticipant.created',
-    timestamp: '2024-10-24T15:55:32.310Z',
+    timestamp: '2024-10-24T15:55:32.310',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1090,7 +1090,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageParticipant.created',
-    timestamp: '2024-10-24T15:57:26.944Z',
+    timestamp: '2024-10-24T15:57:26.944',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1098,7 +1098,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageParticipant.created',
-    timestamp: '2024-10-24T15:57:26.945Z',
+    timestamp: '2024-10-24T15:57:26.945',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1106,7 +1106,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageParticipant.created',
-    timestamp: '2024-10-24T15:57:27.114Z',
+    timestamp: '2024-10-24T15:57:27.114',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1114,7 +1114,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageParticipant.created',
-    timestamp: '2024-10-24T16:03:16.499Z',
+    timestamp: '2024-10-24T16:03:16.499',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1122,7 +1122,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageParticipant.created',
-    timestamp: '2024-10-24T16:03:16.499Z',
+    timestamp: '2024-10-24T16:03:16.499',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1130,7 +1130,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageParticipant.created',
-    timestamp: '2024-10-24T16:03:16.684Z',
+    timestamp: '2024-10-24T16:03:16.684',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1138,7 +1138,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageThread.created',
-    timestamp: '2024-10-24T15:55:34.758Z',
+    timestamp: '2024-10-24T15:55:34.758',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1146,7 +1146,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageThread.created',
-    timestamp: '2024-10-24T15:55:34.759Z',
+    timestamp: '2024-10-24T15:55:34.759',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1154,7 +1154,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageThread.created',
-    timestamp: '2024-10-24T15:55:34.877Z',
+    timestamp: '2024-10-24T15:55:34.877',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1162,7 +1162,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageThread.created',
-    timestamp: '2024-10-24T15:57:35.725Z',
+    timestamp: '2024-10-24T15:57:35.725',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1170,7 +1170,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageThread.created',
-    timestamp: '2024-10-24T15:57:35.803Z',
+    timestamp: '2024-10-24T15:57:35.803',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1178,7 +1178,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageThread.created',
-    timestamp: '2024-10-24T15:57:37.351Z',
+    timestamp: '2024-10-24T15:57:37.351',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1186,7 +1186,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageThread.created',
-    timestamp: '2024-10-24T16:03:17.807Z',
+    timestamp: '2024-10-24T16:03:17.807',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1194,7 +1194,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageThread.created',
-    timestamp: '2024-10-24T16:03:17.808Z',
+    timestamp: '2024-10-24T16:03:17.808',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1202,7 +1202,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'messageThread.created',
-    timestamp: '2024-10-24T16:03:17.879Z',
+    timestamp: '2024-10-24T16:03:17.879',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1210,7 +1210,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'note.created',
-    timestamp: '2024-10-24T15:55:35.486Z',
+    timestamp: '2024-10-24T15:55:35.486',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1218,7 +1218,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'note.created',
-    timestamp: '2024-10-24T15:55:35.486Z',
+    timestamp: '2024-10-24T15:55:35.486',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1226,7 +1226,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'note.created',
-    timestamp: '2024-10-24T15:55:35.671Z',
+    timestamp: '2024-10-24T15:55:35.671',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1234,7 +1234,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'note.created',
-    timestamp: '2024-10-24T15:57:36.207Z',
+    timestamp: '2024-10-24T15:57:36.207',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1242,7 +1242,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'note.created',
-    timestamp: '2024-10-24T15:57:36.209Z',
+    timestamp: '2024-10-24T15:57:36.209',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1250,7 +1250,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'note.created',
-    timestamp: '2024-10-24T15:57:37.487Z',
+    timestamp: '2024-10-24T15:57:37.487',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1258,7 +1258,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'note.created',
-    timestamp: '2024-10-24T16:03:17.594Z',
+    timestamp: '2024-10-24T16:03:17.594',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1266,7 +1266,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'note.created',
-    timestamp: '2024-10-24T16:03:17.594Z',
+    timestamp: '2024-10-24T16:03:17.594',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1274,7 +1274,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'note.created',
-    timestamp: '2024-10-24T16:03:17.762Z',
+    timestamp: '2024-10-24T16:03:17.762',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1282,7 +1282,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'noteTarget.created',
-    timestamp: '2024-10-24T15:55:33.621Z',
+    timestamp: '2024-10-24T15:55:33.621',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1290,7 +1290,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'noteTarget.created',
-    timestamp: '2024-10-24T15:55:33.622Z',
+    timestamp: '2024-10-24T15:55:33.622',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1298,7 +1298,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'noteTarget.created',
-    timestamp: '2024-10-24T15:55:33.734Z',
+    timestamp: '2024-10-24T15:55:33.734',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1306,7 +1306,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'noteTarget.created',
-    timestamp: '2024-10-24T15:57:42.859Z',
+    timestamp: '2024-10-24T15:57:42.859',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1314,7 +1314,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'noteTarget.created',
-    timestamp: '2024-10-24T15:57:42.859Z',
+    timestamp: '2024-10-24T15:57:42.859',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1322,7 +1322,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'noteTarget.created',
-    timestamp: '2024-10-24T15:57:43.174Z',
+    timestamp: '2024-10-24T15:57:43.174',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1330,7 +1330,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'noteTarget.created',
-    timestamp: '2024-10-24T16:03:18.800Z',
+    timestamp: '2024-10-24T16:03:18.800',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1338,7 +1338,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'noteTarget.created',
-    timestamp: '2024-10-24T16:03:18.802Z',
+    timestamp: '2024-10-24T16:03:18.802',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1346,7 +1346,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'noteTarget.created',
-    timestamp: '2024-10-24T16:03:19.118Z',
+    timestamp: '2024-10-24T16:03:19.118',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1354,7 +1354,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'opportunity.created',
-    timestamp: '2024-10-24T15:55:33.606Z',
+    timestamp: '2024-10-24T15:55:33.606',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1362,7 +1362,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'opportunity.created',
-    timestamp: '2024-10-24T15:55:33.607Z',
+    timestamp: '2024-10-24T15:55:33.607',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1370,7 +1370,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'opportunity.created',
-    timestamp: '2024-10-24T15:55:33.736Z',
+    timestamp: '2024-10-24T15:55:33.736',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1378,7 +1378,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'opportunity.created',
-    timestamp: '2024-10-24T15:57:42.937Z',
+    timestamp: '2024-10-24T15:57:42.937',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1386,7 +1386,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'opportunity.created',
-    timestamp: '2024-10-24T15:57:42.938Z',
+    timestamp: '2024-10-24T15:57:42.938',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1394,7 +1394,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'opportunity.created',
-    timestamp: '2024-10-24T15:57:43.166Z',
+    timestamp: '2024-10-24T15:57:43.166',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1402,7 +1402,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'opportunity.created',
-    timestamp: '2024-10-24T16:03:19.409Z',
+    timestamp: '2024-10-24T16:03:19.409',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1410,7 +1410,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'opportunity.created',
-    timestamp: '2024-10-24T16:03:19.410Z',
+    timestamp: '2024-10-24T16:03:19.410',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1418,7 +1418,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'opportunity.created',
-    timestamp: '2024-10-24T16:03:21.884Z',
+    timestamp: '2024-10-24T16:03:21.884',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1426,7 +1426,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:55:33.525Z',
+    timestamp: '2024-10-24T15:55:33.525',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1434,7 +1434,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:55:33.526Z',
+    timestamp: '2024-10-24T15:55:33.526',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1442,7 +1442,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:55:35.037Z',
+    timestamp: '2024-10-24T15:55:35.037',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1450,7 +1450,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:55:35.038Z',
+    timestamp: '2024-10-24T15:55:35.038',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1458,7 +1458,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:55:35.228Z',
+    timestamp: '2024-10-24T15:55:35.228',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1466,7 +1466,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:57:34.269Z',
+    timestamp: '2024-10-24T15:57:34.269',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1474,7 +1474,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:57:34.273Z',
+    timestamp: '2024-10-24T15:57:34.273',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1482,7 +1482,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:57:37.353Z',
+    timestamp: '2024-10-24T15:57:37.353',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1490,7 +1490,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:57:41.933Z',
+    timestamp: '2024-10-24T15:57:41.933',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1498,7 +1498,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T15:57:41.935Z',
+    timestamp: '2024-10-24T15:57:41.935',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1506,7 +1506,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T16:03:17.781Z',
+    timestamp: '2024-10-24T16:03:17.781',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1514,7 +1514,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T16:03:17.782Z',
+    timestamp: '2024-10-24T16:03:17.782',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1522,7 +1522,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T16:03:17.871Z',
+    timestamp: '2024-10-24T16:03:17.871',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1530,7 +1530,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T16:03:18.137Z',
+    timestamp: '2024-10-24T16:03:18.137',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1538,7 +1538,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'person.created',
-    timestamp: '2024-10-24T16:03:18.137Z',
+    timestamp: '2024-10-24T16:03:18.137',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1546,7 +1546,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'serverlessFunction.executed',
-    timestamp: '2024-10-22T16:08:22.853Z',
+    timestamp: '2024-10-22T16:08:22.853',
     version: '1',
     userId: 'serverless-function',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1559,7 +1559,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'serverlessFunction.executed',
-    timestamp: '2024-10-22T16:08:25.262Z',
+    timestamp: '2024-10-22T16:08:25.262',
     version: '1',
     userId: 'serverless-function',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1572,7 +1572,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'serverlessFunction.executed',
-    timestamp: '2024-10-22T16:08:38.831Z',
+    timestamp: '2024-10-22T16:08:38.831',
     version: '1',
     userId: 'serverless-function',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1585,7 +1585,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'serverlessFunction.executed',
-    timestamp: '2024-10-22T16:08:40.553Z',
+    timestamp: '2024-10-22T16:08:40.553',
     version: '1',
     userId: 'serverless-function',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1599,7 +1599,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'serverlessFunction.executed',
-    timestamp: '2024-10-22T16:17:42.534Z',
+    timestamp: '2024-10-22T16:17:42.534',
     version: '1',
     userId: 'serverless-function',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1612,7 +1612,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'task.created',
-    timestamp: '2024-10-24T15:55:35.469Z',
+    timestamp: '2024-10-24T15:55:35.469',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1620,7 +1620,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'task.created',
-    timestamp: '2024-10-24T15:55:35.469Z',
+    timestamp: '2024-10-24T15:55:35.469',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1628,7 +1628,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'task.created',
-    timestamp: '2024-10-24T15:55:35.672Z',
+    timestamp: '2024-10-24T15:55:35.672',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1636,7 +1636,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'task.created',
-    timestamp: '2024-10-24T15:57:32.646Z',
+    timestamp: '2024-10-24T15:57:32.646',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1644,7 +1644,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'task.created',
-    timestamp: '2024-10-24T15:57:32.649Z',
+    timestamp: '2024-10-24T15:57:32.649',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1652,7 +1652,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'task.created',
-    timestamp: '2024-10-24T15:57:33.949Z',
+    timestamp: '2024-10-24T15:57:33.949',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1660,7 +1660,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'task.created',
-    timestamp: '2024-10-24T16:03:17.587Z',
+    timestamp: '2024-10-24T16:03:17.587',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1668,7 +1668,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'task.created',
-    timestamp: '2024-10-24T16:03:17.589Z',
+    timestamp: '2024-10-24T16:03:17.589',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1676,7 +1676,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'task.created',
-    timestamp: '2024-10-24T16:03:17.738Z',
+    timestamp: '2024-10-24T16:03:17.738',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1684,7 +1684,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'taskTarget.created',
-    timestamp: '2024-10-24T15:55:33.705Z',
+    timestamp: '2024-10-24T15:55:33.705',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1692,7 +1692,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'taskTarget.created',
-    timestamp: '2024-10-24T15:55:33.706Z',
+    timestamp: '2024-10-24T15:55:33.706',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1700,7 +1700,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'taskTarget.created',
-    timestamp: '2024-10-24T15:55:33.781Z',
+    timestamp: '2024-10-24T15:55:33.781',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1708,7 +1708,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'taskTarget.created',
-    timestamp: '2024-10-24T15:57:42.390Z',
+    timestamp: '2024-10-24T15:57:42.390',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1716,7 +1716,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'taskTarget.created',
-    timestamp: '2024-10-24T15:57:42.392Z',
+    timestamp: '2024-10-24T15:57:42.392',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1724,7 +1724,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'taskTarget.created',
-    timestamp: '2024-10-24T15:57:42.749Z',
+    timestamp: '2024-10-24T15:57:42.749',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1732,7 +1732,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'taskTarget.created',
-    timestamp: '2024-10-24T16:03:18.274Z',
+    timestamp: '2024-10-24T16:03:18.274',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1740,7 +1740,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'taskTarget.created',
-    timestamp: '2024-10-24T16:03:18.275Z',
+    timestamp: '2024-10-24T16:03:18.275',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1748,7 +1748,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'taskTarget.created',
-    timestamp: '2024-10-24T16:03:18.362Z',
+    timestamp: '2024-10-24T16:03:18.362',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1756,7 +1756,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'timelineActivity.created',
-    timestamp: '2024-10-24T15:55:32.239Z',
+    timestamp: '2024-10-24T15:55:32.239',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1764,7 +1764,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'timelineActivity.created',
-    timestamp: '2024-10-24T15:55:32.239Z',
+    timestamp: '2024-10-24T15:55:32.239',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1772,7 +1772,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'timelineActivity.created',
-    timestamp: '2024-10-24T15:55:32.319Z',
+    timestamp: '2024-10-24T15:55:32.319',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1780,7 +1780,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'timelineActivity.created',
-    timestamp: '2024-10-24T15:57:26.541Z',
+    timestamp: '2024-10-24T15:57:26.541',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1788,7 +1788,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'timelineActivity.created',
-    timestamp: '2024-10-24T15:57:26.581Z',
+    timestamp: '2024-10-24T15:57:26.581',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1796,7 +1796,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'timelineActivity.created',
-    timestamp: '2024-10-24T15:57:26.836Z',
+    timestamp: '2024-10-24T15:57:26.836',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1804,7 +1804,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'timelineActivity.created',
-    timestamp: '2024-10-24T16:03:16.284Z',
+    timestamp: '2024-10-24T16:03:16.284',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1812,7 +1812,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'timelineActivity.created',
-    timestamp: '2024-10-24T16:03:16.310Z',
+    timestamp: '2024-10-24T16:03:16.310',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1820,7 +1820,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'timelineActivity.created',
-    timestamp: '2024-10-24T16:03:16.469Z',
+    timestamp: '2024-10-24T16:03:16.469',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1828,7 +1828,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'view.created',
-    timestamp: '2024-10-24T15:55:33.555Z',
+    timestamp: '2024-10-24T15:55:33.555',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1836,7 +1836,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'view.created',
-    timestamp: '2024-10-24T15:55:33.557Z',
+    timestamp: '2024-10-24T15:55:33.557',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1844,7 +1844,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'view.created',
-    timestamp: '2024-10-24T15:55:33.665Z',
+    timestamp: '2024-10-24T15:55:33.665',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1852,7 +1852,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'view.created',
-    timestamp: '2024-10-24T15:57:42.752Z',
+    timestamp: '2024-10-24T15:57:42.752',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1860,7 +1860,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'view.created',
-    timestamp: '2024-10-24T15:57:42.753Z',
+    timestamp: '2024-10-24T15:57:42.753',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1868,7 +1868,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'view.created',
-    timestamp: '2024-10-24T15:57:42.864Z',
+    timestamp: '2024-10-24T15:57:42.864',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1876,7 +1876,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'view.created',
-    timestamp: '2024-10-24T16:03:18.825Z',
+    timestamp: '2024-10-24T16:03:18.825',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1884,7 +1884,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'view.created',
-    timestamp: '2024-10-24T16:03:18.826Z',
+    timestamp: '2024-10-24T16:03:18.826',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1892,7 +1892,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'view.created',
-    timestamp: '2024-10-24T16:03:18.968Z',
+    timestamp: '2024-10-24T16:03:18.968',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1900,7 +1900,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewField.created',
-    timestamp: '2024-10-24T15:55:33.519Z',
+    timestamp: '2024-10-24T15:55:33.519',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1908,7 +1908,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewField.created',
-    timestamp: '2024-10-24T15:55:33.520Z',
+    timestamp: '2024-10-24T15:55:33.520',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1916,7 +1916,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewField.created',
-    timestamp: '2024-10-24T15:55:33.604Z',
+    timestamp: '2024-10-24T15:55:33.604',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1924,7 +1924,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewField.created',
-    timestamp: '2024-10-24T15:57:44.535Z',
+    timestamp: '2024-10-24T15:57:44.535',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1932,7 +1932,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewField.created',
-    timestamp: '2024-10-24T15:57:44.535Z',
+    timestamp: '2024-10-24T15:57:44.535',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1940,7 +1940,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewField.created',
-    timestamp: '2024-10-24T15:57:44.649Z',
+    timestamp: '2024-10-24T15:57:44.649',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1948,7 +1948,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewField.created',
-    timestamp: '2024-10-24T16:03:19.752Z',
+    timestamp: '2024-10-24T16:03:19.752',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1956,7 +1956,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewField.created',
-    timestamp: '2024-10-24T16:03:19.754Z',
+    timestamp: '2024-10-24T16:03:19.754',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1964,7 +1964,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewField.created',
-    timestamp: '2024-10-24T16:03:19.872Z',
+    timestamp: '2024-10-24T16:03:19.872',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1972,7 +1972,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewFilter.created',
-    timestamp: '2024-10-24T15:55:33.521Z',
+    timestamp: '2024-10-24T15:55:33.521',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1980,7 +1980,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewFilter.created',
-    timestamp: '2024-10-24T15:55:33.522Z',
+    timestamp: '2024-10-24T15:55:33.522',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1988,7 +1988,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewFilter.created',
-    timestamp: '2024-10-24T15:55:33.652Z',
+    timestamp: '2024-10-24T15:55:33.652',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -1996,7 +1996,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewFilter.created',
-    timestamp: '2024-10-24T15:57:43.289Z',
+    timestamp: '2024-10-24T15:57:43.289',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2004,7 +2004,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewFilter.created',
-    timestamp: '2024-10-24T15:57:43.290Z',
+    timestamp: '2024-10-24T15:57:43.290',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2012,7 +2012,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewFilter.created',
-    timestamp: '2024-10-24T15:57:43.419Z',
+    timestamp: '2024-10-24T15:57:43.419',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2020,7 +2020,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewFilter.created',
-    timestamp: '2024-10-24T16:03:21.314Z',
+    timestamp: '2024-10-24T16:03:21.314',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2028,7 +2028,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewFilter.created',
-    timestamp: '2024-10-24T16:03:21.315Z',
+    timestamp: '2024-10-24T16:03:21.315',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2036,7 +2036,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewFilter.created',
-    timestamp: '2024-10-24T16:03:23.508Z',
+    timestamp: '2024-10-24T16:03:23.508',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2044,7 +2044,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewSort.created',
-    timestamp: '2024-10-24T15:55:35.156Z',
+    timestamp: '2024-10-24T15:55:35.156',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2052,7 +2052,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewSort.created',
-    timestamp: '2024-10-24T15:55:35.158Z',
+    timestamp: '2024-10-24T15:55:35.158',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2060,7 +2060,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewSort.created',
-    timestamp: '2024-10-24T15:55:35.205Z',
+    timestamp: '2024-10-24T15:55:35.205',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2068,7 +2068,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewSort.created',
-    timestamp: '2024-10-24T15:57:40.833Z',
+    timestamp: '2024-10-24T15:57:40.833',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2076,7 +2076,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewSort.created',
-    timestamp: '2024-10-24T15:57:40.840Z',
+    timestamp: '2024-10-24T15:57:40.840',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2084,7 +2084,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewSort.created',
-    timestamp: '2024-10-24T15:57:41.421Z',
+    timestamp: '2024-10-24T15:57:41.421',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2092,7 +2092,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewSort.created',
-    timestamp: '2024-10-24T16:03:17.860Z',
+    timestamp: '2024-10-24T16:03:17.860',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2100,7 +2100,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewSort.created',
-    timestamp: '2024-10-24T16:03:17.860Z',
+    timestamp: '2024-10-24T16:03:17.860',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2108,7 +2108,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'viewSort.created',
-    timestamp: '2024-10-24T16:03:17.966Z',
+    timestamp: '2024-10-24T16:03:17.966',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2116,7 +2116,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.created',
-    timestamp: '2024-10-24T15:57:26.784Z',
+    timestamp: '2024-10-24T15:57:26.784',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2124,7 +2124,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.created',
-    timestamp: '2024-10-24T15:57:26.787Z',
+    timestamp: '2024-10-24T15:57:26.787',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2132,7 +2132,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.created',
-    timestamp: '2024-10-24T15:57:26.947Z',
+    timestamp: '2024-10-24T15:57:26.947',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2140,7 +2140,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.created',
-    timestamp: '2024-10-24T16:03:16.340Z',
+    timestamp: '2024-10-24T16:03:16.340',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2148,7 +2148,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.created',
-    timestamp: '2024-10-24T16:03:16.341Z',
+    timestamp: '2024-10-24T16:03:16.341',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2156,7 +2156,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.created',
-    timestamp: '2024-10-24T16:03:16.555Z',
+    timestamp: '2024-10-24T16:03:16.555',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2164,7 +2164,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.response',
-    timestamp: '2024-10-22T09:31:14.307Z',
+    timestamp: '2024-10-22T09:31:14.307',
     version: '1',
     userId: 'webhook',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2178,7 +2178,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.response',
-    timestamp: '2024-10-22T09:31:14.447Z',
+    timestamp: '2024-10-22T09:31:14.447',
     version: '1',
     userId: 'webhook',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2192,7 +2192,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.response',
-    timestamp: '2024-10-22T09:31:14.453Z',
+    timestamp: '2024-10-22T09:31:14.453',
     version: '1',
     userId: 'webhook',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2205,7 +2205,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.response',
-    timestamp: '2024-10-22T10:17:01.108Z',
+    timestamp: '2024-10-22T10:17:01.108',
     version: '1',
     userId: 'webhook',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2219,7 +2219,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.response',
-    timestamp: '2024-10-22T10:17:01.271Z',
+    timestamp: '2024-10-22T10:17:01.271',
     version: '1',
     userId: 'webhook',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2233,7 +2233,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.response',
-    timestamp: '2024-10-22T10:17:01.277Z',
+    timestamp: '2024-10-22T10:17:01.277',
     version: '1',
     userId: 'webhook',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2246,7 +2246,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.response',
-    timestamp: '2024-10-22T13:16:51.473Z',
+    timestamp: '2024-10-22T13:16:51.473',
     version: '1',
     userId: 'webhook',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2260,7 +2260,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.response',
-    timestamp: '2024-10-22T13:16:51.617Z',
+    timestamp: '2024-10-22T13:16:51.617',
     version: '1',
     userId: 'webhook',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2274,7 +2274,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'webhook.response',
-    timestamp: '2024-10-22T13:16:51.621Z',
+    timestamp: '2024-10-22T13:16:51.621',
     version: '1',
     userId: 'webhook',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2287,7 +2287,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'workspaceMember.created',
-    timestamp: '2024-10-24T15:55:32.038Z',
+    timestamp: '2024-10-24T15:55:32.038',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2295,7 +2295,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'workspaceMember.created',
-    timestamp: '2024-10-24T15:55:32.039Z',
+    timestamp: '2024-10-24T15:55:32.039',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2303,7 +2303,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'workspaceMember.created',
-    timestamp: '2024-10-24T15:55:32.223Z',
+    timestamp: '2024-10-24T15:55:32.223',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2311,7 +2311,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'workspaceMember.created',
-    timestamp: '2024-10-24T15:57:26.646Z',
+    timestamp: '2024-10-24T15:57:26.646',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2319,7 +2319,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'workspaceMember.created',
-    timestamp: '2024-10-24T15:57:26.647Z',
+    timestamp: '2024-10-24T15:57:26.647',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2327,7 +2327,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'workspaceMember.created',
-    timestamp: '2024-10-24T15:57:26.854Z',
+    timestamp: '2024-10-24T15:57:26.854',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2335,7 +2335,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'workspaceMember.created',
-    timestamp: '2024-10-24T16:03:16.337Z',
+    timestamp: '2024-10-24T16:03:16.337',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2343,7 +2343,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'workspaceMember.created',
-    timestamp: '2024-10-24T16:03:16.337Z',
+    timestamp: '2024-10-24T16:03:16.337',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -2351,7 +2351,7 @@ export const fixtures: Array<Event> = [
   },
   {
     action: 'workspaceMember.created',
-    timestamp: '2024-10-24T16:03:16.490Z',
+    timestamp: '2024-10-24T16:03:16.490',
     version: '1',
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
