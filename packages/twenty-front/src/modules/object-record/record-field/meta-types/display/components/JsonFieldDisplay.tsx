@@ -1,5 +1,8 @@
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useJsonFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useJsonFieldDisplay';
-import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import styled from '@emotion/styled';
@@ -29,9 +32,23 @@ const StyledSwitchModeButtonContainer = styled.div`
 export const JsonFieldDisplay = () => {
   const id = useId();
 
+  const { isFocused } = useFieldFocus();
   const { fieldValue, maxWidth } = useJsonFieldDisplay();
 
-  const { openTableCell } = useOpenRecordTableCellFromCell();
+  const {
+    displayModeContent,
+    customEditHotkeyScope,
+    editModeContent,
+    editModeContentOnly,
+    readonly,
+    loading,
+    isCentered,
+  } = useRecordInlineCellContext();
+
+  // const { openTableCell } = useOpenRecordTableCellFromCell();
+  const { openInlineCell } = useInlineCell();
+
+  const isDisplayModeContentEmpty = useIsFieldEmpty();
 
   if (!isDefined(fieldValue)) {
     return <></>;
@@ -39,8 +56,13 @@ export const JsonFieldDisplay = () => {
 
   const value = JSON.stringify(fieldValue);
 
+  // Taken from packages/twenty-front/src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
+  const showEditButton =
+    isFocused && !isDisplayModeContentEmpty && !editModeContentOnly;
+
   const handleStartEditing = () => {
-    openTableCell();
+    openInlineCell();
+    // openTableCell();
   };
 
   return (
@@ -67,12 +89,14 @@ export const JsonFieldDisplay = () => {
             e.stopPropagation();
           }}
         >
-          <StyledSwitchModeButtonContainer>
-            <FloatingIconButton
-              Icon={IconPencil}
-              onClick={handleStartEditing}
-            />
-          </StyledSwitchModeButtonContainer>
+          {showEditButton && (
+            <StyledSwitchModeButtonContainer>
+              <FloatingIconButton
+                Icon={IconPencil}
+                onClick={handleStartEditing}
+              />
+            </StyledSwitchModeButtonContainer>
+          )}
 
           <JsonTree
             value={fieldValue}
