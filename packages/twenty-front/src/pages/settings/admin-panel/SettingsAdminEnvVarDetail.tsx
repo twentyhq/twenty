@@ -94,7 +94,7 @@ export const SettingsAdminEnvVarDetail = () => {
         });
       },
       onError: (error) => {
-        enqueueSnackBar(t`Failed to update variable: ${error.message}`, {
+        enqueueSnackBar(`Failed to update variable: ${error.message}`, {
           variant: SnackBarVariant.Error,
         });
       },

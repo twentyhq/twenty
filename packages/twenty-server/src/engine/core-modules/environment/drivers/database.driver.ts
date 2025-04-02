@@ -169,6 +169,9 @@ export class DatabaseDriver implements ConfigVarDriver, OnModuleDestroy {
   ): Promise<void> {
     try {
       // Convert the value to JSON storage format using the converter
+      // TODO: same here. More clean way would be to have a non json table for config vars, which means a new table just for the config vars
+      // TODO: and then we can just store the value as is, without converting to json
+      // or can we store the type of value win the json?
       const processedValue = ConfigVarValueConverter.toStorageType(value);
 
       this.logger.debug(`[Cache:${key}] Updating in database`, {
@@ -247,7 +250,25 @@ export class DatabaseDriver implements ConfigVarDriver, OnModuleDestroy {
   private async scheduleRefresh(
     key: keyof EnvironmentVariables,
   ): Promise<void> {
-    return this.refreshConfig(key);
+    // Log when a refresh is scheduled but not yet executed
+    this.logger.debug(`[Cache:${key}] Scheduling background refresh`);
+    console.log(`🕒 CACHE: Scheduling background refresh for ${key as string}`);
+
+    setImmediate(() => {
+      this.logger.debug(`[Cache:${key}] Executing background refresh`);
+      console.log(
+        `⏳ CACHE: Executing background refresh for ${key as string}`,
+      );
+
+      this.refreshConfig(key).catch((error) => {
+        this.logger.error(
+          `Failed to refresh config for ${key as string}`,
+          error,
+        );
+      });
+    });
+
+    return Promise.resolve();
   }
 
   private scheduleRetry(): void {
@@ -283,7 +304,6 @@ export class DatabaseDriver implements ConfigVarDriver, OnModuleDestroy {
         return;
       }
 
-      // Populate caches
       const now = Date.now();
 
       for (const configVar of configVars) {
@@ -337,21 +357,20 @@ export class DatabaseDriver implements ConfigVarDriver, OnModuleDestroy {
   private scavengeCache(): void {
     const now = Date.now();
 
-    // Scavenge value cache
     for (const [key, entry] of this.valueCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
         this.valueCache.delete(key);
       }
     }
 
-    // Scavenge negative lookup cache
     for (const [key, entry] of this.negativeLookupCache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
         this.negativeLookupCache.delete(key);
       }
     }
 
-    // Enforce size limits
+    // THis is some thing I added later not in the design doc
+    // makes sense tho, because we don't want to have too many cache entries
     if (this.valueCache.size > MAX_CACHE_ENTRIES) {
       const entriesToDelete = this.valueCache.size - MAX_CACHE_ENTRIES;
       const keysToDelete = Array.from(this.valueCache.keys()).slice(
@@ -373,12 +392,11 @@ export class DatabaseDriver implements ConfigVarDriver, OnModuleDestroy {
     }
   }
 
-  // Add method to access the value cache directly
   getFromValueCache(key: string): any {
     const entry = this.valueCache.get(key);
 
     if (entry && !this.isCacheExpired(entry)) {
-      // Convert the value to the appropriate type before returning
+      // again same type conversion -- I don't like it
       return ConfigVarValueConverter.toAppType(
         entry.value,
         key as keyof EnvironmentVariables,

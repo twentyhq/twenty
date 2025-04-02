@@ -15,7 +15,6 @@ import { EnvironmentVariables } from 'src/engine/core-modules/environment/enviro
 import { environmentVariableMaskSensitiveData } from 'src/engine/core-modules/environment/utils/environment-variable-mask-sensitive-data.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-import { ConfigVarDriver } from './drivers/config-var-driver.interface';
 import { DatabaseDriver } from './drivers/database.driver';
 import { EnvironmentDriver } from './drivers/environment.driver';
 
@@ -23,7 +22,7 @@ import { EnvironmentDriver } from './drivers/environment.driver';
 export class EnvironmentService
   implements OnModuleInit, OnApplicationBootstrap
 {
-  private driver: ConfigVarDriver;
+  private driver: DatabaseDriver | EnvironmentDriver;
   private initializationState = InitializationState.NOT_INITIALIZED;
   private readonly isConfigVarInDbEnabled: boolean;
   private readonly logger = new Logger(EnvironmentService.name);
@@ -36,9 +35,10 @@ export class EnvironmentService
     // Always start with environment driver during construction
     this.driver = this.environmentDriver;
 
-    // Handle both string and boolean values for IS_CONFIG_VAR_IN_DB_ENABLED
     const configVarInDb = this.configService.get('IS_CONFIG_VAR_IN_DB_ENABLED');
 
+    // Handle both string and boolean values for IS_CONFIG_VAR_IN_DB_ENABLED
+    // TODO: Remove this once we have a proper way to handle this, or am I being dumb?
     this.isConfigVarInDbEnabled =
       configVarInDb === true || configVarInDb === 'true';
 
@@ -128,7 +128,6 @@ export class EnvironmentService
       );
     }
 
-    // Check if this is an environment-only variable
     const metadata =
       TypedReflect.getMetadata('environment-variables', EnvironmentVariables) ??
       {};
@@ -140,7 +139,6 @@ export class EnvironmentService
       );
     }
 
-    // If we're using the database driver, call its update method
     if (this.driver === this.databaseDriver) {
       await this.databaseDriver.update(key, value);
     } else {
@@ -182,7 +180,6 @@ export class EnvironmentService
       TypedReflect.getMetadata('environment-variables', EnvironmentVariables) ??
       {};
 
-    // Check if we're using the database driver
     const isUsingDatabaseDriver =
       this.driver === this.databaseDriver &&
       this.isConfigVarInDbEnabled &&
@@ -192,7 +189,6 @@ export class EnvironmentService
       let value = this.get(key as keyof EnvironmentVariables) ?? '';
       let source = 'ENVIRONMENT';
 
-      // Determine the source of the value
       if (isUsingDatabaseDriver && !envMetadata.isEnvOnly) {
         const valueCacheEntry = this.databaseDriver.getFromValueCache(key);
 
@@ -237,11 +233,15 @@ export class EnvironmentService
   }
 
   clearCache(key: keyof EnvironmentVariables): void {
-    this.driver.clearCache(key);
+    if (this.driver === this.databaseDriver) {
+      this.databaseDriver.clearCache(key);
+    }
   }
 
   async refreshConfig(key: keyof EnvironmentVariables): Promise<void> {
-    await this.driver.refreshConfig(key);
+    if (this.driver === this.databaseDriver) {
+      await this.databaseDriver.refreshConfig(key);
+    }
   }
 
   // Get cache information for debugging

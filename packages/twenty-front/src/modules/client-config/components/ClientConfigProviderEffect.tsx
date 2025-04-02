@@ -157,10 +157,6 @@ export const ClientConfigProviderEffect = () => {
     setIsAttachmentPreviewEnabled(
       data?.clientConfig?.isAttachmentPreviewEnabled,
     );
-    console.log(
-      'isAttachmentPreviewEnabled',
-      data?.clientConfig?.isAttachmentPreviewEnabled,
-    );
   }, [
     data,
     setIsDebugMode,
