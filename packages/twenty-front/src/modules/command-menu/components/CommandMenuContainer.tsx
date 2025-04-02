@@ -23,6 +23,7 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -46,7 +47,7 @@ const StyledCommandMenu = styled(motion.div)`
   position: fixed;
   right: 0%;
   top: 0%;
-  z-index: 30;
+  z-index: ${RootStackingContextZIndices.CommandMenu};
   display: flex;
   flex-direction: column;
 `;

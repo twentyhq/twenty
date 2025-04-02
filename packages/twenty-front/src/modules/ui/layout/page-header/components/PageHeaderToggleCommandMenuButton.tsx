@@ -9,6 +9,7 @@ import {
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
@@ -17,7 +18,7 @@ import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
 const StyledButtonWrapper = styled.div`
-  z-index: 30;
+  z-index: ${RootStackingContextZIndices.CommandMenuButton};
 `;
 
 const StyledTooltipWrapper = styled.div`

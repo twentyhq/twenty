@@ -27,6 +27,16 @@ const StyledTransitionedIconChevronDown = styled(IconChevronDown)<{
   cursor: pointer;
 `;
 
+const StyledClickableContainer = styled.div`
+  cursor: pointer;
+  display: flex;
+
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const UnmatchColumnBanner = ({
   message,
   isExpanded,
@@ -40,14 +50,15 @@ export const UnmatchColumnBanner = ({
   return (
     <StyledBanner>
       <IconInfoCircle color={theme.color.blue} size={theme.icon.size.md} />
-      <StyledText>{message}</StyledText>
-      {buttonOnClick && (
-        <StyledTransitionedIconChevronDown
-          isExpanded={isExpanded}
-          onClick={buttonOnClick}
-          size={theme.icon.size.md}
-        />
-      )}
+      <StyledClickableContainer onClick={buttonOnClick}>
+        <StyledText>{message}</StyledText>
+        {buttonOnClick && (
+          <StyledTransitionedIconChevronDown
+            isExpanded={isExpanded}
+            size={theme.icon.size.md}
+          />
+        )}
+      </StyledClickableContainer>
     </StyledBanner>
   );
 };

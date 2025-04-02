@@ -2,6 +2,7 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { AppPath } from '@/types/AppPath';
 import { Trans, useLingui } from '@lingui/react/macro';
 
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import styled from '@emotion/styled';
 import {
@@ -26,7 +27,7 @@ const StyledBackDrop = styled.div`
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 10000;
+  z-index: ${RootStackingContextZIndices.NotFound};
 `;
 
 const StyledButtonContainer = styled.div`
