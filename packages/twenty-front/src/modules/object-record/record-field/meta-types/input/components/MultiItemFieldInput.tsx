@@ -6,6 +6,7 @@ import {
   MultiItemBaseInput,
   MultiItemBaseInputProps,
 } from '@/object-record/record-field/meta-types/input/components/MultiItemBaseInput';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -35,7 +36,8 @@ type MultiItemFieldInputProps<T> = {
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
-  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
+  onClickOutside?: FieldInputClickOutsideEvent;
+  // onClickOutside?: (event: MouseEvent | TouchEvent) => void | string;
   onError?: (hasError: boolean, values: any[]) => void;
 };
 
