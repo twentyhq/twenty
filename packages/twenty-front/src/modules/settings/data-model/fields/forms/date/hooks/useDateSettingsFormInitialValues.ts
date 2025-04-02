@@ -8,18 +8,18 @@ export const useDateSettingsFormInitialValues = ({
 }: {
   fieldMetadataItem?: Pick<FieldMetadataItem, 'settings'>;
 }) => {
-  const initialDisplayAsRelativeDateValue =
-    fieldMetadataItem?.settings?.displayAsRelativeDate;
+  const initialDisplayFormat =
+    fieldMetadataItem?.settings?.displayFormat;
 
   const { resetField } = useFormContext<SettingsDataModelFieldDateFormValues>();
 
   const resetDefaultValueField = () =>
-    resetField('settings.displayAsRelativeDate', {
-      defaultValue: initialDisplayAsRelativeDateValue,
+    resetField('settings.displayFormat', {
+      defaultValue: initialDisplayFormat,
     });
 
   return {
-    initialDisplayAsRelativeDateValue,
+    initialDisplayFormat,
     resetDefaultValueField,
   };
 };

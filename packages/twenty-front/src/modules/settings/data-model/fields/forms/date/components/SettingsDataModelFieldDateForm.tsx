@@ -2,15 +2,28 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
+import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import { IconSlash } from 'twenty-ui';
+
+const displayFormatsToLabelMap: Record<FieldDateDisplayFormat, string> = {
+  'full_date': 'Full Date',
+  'relative_date': 'Relative Date',
+  'date': 'Date',
+  'time': 'Time',
+  'year': 'Year',
+  'custom': 'Custom'
+} as const
+
+const displayFormats = Object.keys(displayFormatsToLabelMap) as [keyof typeof displayFormatsToLabelMap];
 
 export const settingsDataModelFieldDateFormSchema = z.object({
   settings: z
     .object({
-      displayAsRelativeDate: z.boolean().optional(),
+      displayFormat: z.enum(displayFormats).optional(),
     })
     .optional(),
 });
@@ -32,24 +45,38 @@ export const SettingsDataModelFieldDateForm = ({
 
   const { control } = useFormContext<SettingsDataModelFieldDateFormValues>();
 
-  const { initialDisplayAsRelativeDateValue } =
+  const { initialDisplayFormat } =
     useDateSettingsFormInitialValues({
       fieldMetadataItem,
     });
 
   return (
     <Controller
-      name="settings.displayAsRelativeDate"
+      name="settings.displayFormat"
       control={control}
-      defaultValue={initialDisplayAsRelativeDateValue}
+      defaultValue={initialDisplayFormat}
       render={({ field: { onChange, value } }) => (
-        <SettingsOptionCardContentToggle
+        <SettingsOptionCardContentSelect
           Icon={IconSlash}
-          title={t`Display as relative date`}
-          checked={value ?? false}
+          title={t`Display Format`}
           disabled={disabled}
-          onChange={onChange}
-        />
+          description={t`Choose the format used to display date value`}
+        >
+          <Select<FieldDateDisplayFormat>
+              disabled={disabled}
+              selectSizeVariant="small"
+              dropdownWidth={120}
+              dropdownId="selectFieldDateDisplayFormat"
+              value={value}
+              onChange={onChange}
+              options={Object.entries(displayFormatsToLabelMap).map((format) => (
+                {
+                  label: t`${format[1]}`,
+                  value: format[0] as FieldDateDisplayFormat
+                }
+              ))} 
+          />
+        </SettingsOptionCardContentSelect>
       )}
     />
   );
