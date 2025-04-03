@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
+import semver from 'semver';
 import { Repository } from 'typeorm';
 
 import { EnvironmentVariable } from 'src/engine/core-modules/admin-panel/dtos/environment-variable.dto';
@@ -168,15 +169,35 @@ export class AdminPanelService {
 
   async getVersionInfo(currentVersion: string): Promise<VersionInfo> {
     try {
-      const response = await axios.get(
-        'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags',
-      );
+      // much slower -- multiple requests
+      // let allTags: string[] = [];
+      // let nextUrl =
+      //   'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags';
 
-      const tags = response.data.results
-        .map((tag: { name: string }) => tag.name)
+      // // Fetch all pages of tags
+      // while (nextUrl) {
+      //   const response = await axios.get(nextUrl);
+      //   const tags = response.data.results
+      //     .map((tag: { name: string }) => tag.name.replace('v', ''))
+      //     .filter((tag: string) => tag !== 'latest');
+
+      //   allTags = [...allTags, ...tags];
+      //   nextUrl = response.data.next;
+      // }
+
+      // much faster -- single request
+      // each page contains 10 tags, which means page_size 100 is good enough buffer
+      // right now we have 148 tags ie ~ 15 pages
+      const response = await axios.get(
+        'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100',
+      );
+      const allTags = response.data.results
+        .map((tag: { name: string }) => tag.name.replace('v', ''))
         .filter((tag: string) => tag !== 'latest');
-      const latestVersion = tags[0].replace('v', '');
-      const currentVersionExists = tags.includes(`v${currentVersion}`);
+
+      const latestVersion =
+        semver.maxSatisfying(allTags, '*')?.toString() ?? 'latest';
+      const currentVersionExists = allTags.includes(currentVersion);
 
       return {
         latestVersion,
