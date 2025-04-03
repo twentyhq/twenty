@@ -30,13 +30,14 @@ jobs:
     runs-on: depot-ubuntu-24.04-8
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-      CLICKHOUSE_PASSWORD: ciPassword
     services:
       clickhouse:
         image: clickhouse/clickhouse-server:latest
         ports:
           - 8123:8123
           - 9000:9000
+        env:
+          CLICKHOUSE_PASSWORD: ciPassword
         options: >-
           --health-cmd "clickhouse-client --password=ciPassword --query='SELECT 1'" 
           --health-interval 10s 
@@ -47,17 +48,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Wait for ClickHouse
-        timeout-minutes: 1
-        run: |
-          until curl -s http://default:ciPassword@localhost:8123/ping; do
-            echo "Waiting for ClickHouse..."
-            sleep 2
-          done
-          echo "ClickHouse is up!"
-      - name: Run a test query
-        run: |
-          clickhouse-client --host=localhost --password=ciPassword --query="SELECT version();"
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
       - name: Restore clickhouse setup
