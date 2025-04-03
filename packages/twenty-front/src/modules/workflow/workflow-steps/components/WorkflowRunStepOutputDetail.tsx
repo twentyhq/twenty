@@ -9,17 +9,19 @@ import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 import {
   GetJsonNodeHighlighting,
   isTwoFirstDepths,
   JsonTree,
 } from 'twenty-ui/json-visualizer';
-import { useIcons } from 'twenty-ui/display';
+import { useCopyJsonValue } from '~/hooks/useCopyJsonValue';
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const { copyJsonValue } = useCopyJsonValue();
 
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
@@ -73,6 +75,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
               ? setRedHighlightingForEveryNode
               : undefined
           }
+          onNodeValueClick={copyJsonValue}
         />
       </WorkflowRunStepJsonContainer>
     </>
