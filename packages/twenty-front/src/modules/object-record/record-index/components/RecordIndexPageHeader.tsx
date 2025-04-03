@@ -8,7 +8,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { capitalize } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 const StyledTitleWithSelectedRecords = styled.div`
   display: flex;

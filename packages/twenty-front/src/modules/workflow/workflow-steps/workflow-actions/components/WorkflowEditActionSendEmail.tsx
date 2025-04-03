@@ -20,10 +20,11 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { IconPlus, SelectOption, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { IconPlus, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;

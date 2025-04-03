@@ -9,7 +9,6 @@ import {
 } from '@floating-ui/react';
 import React, { useCallback, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AppTooltip, MenuItem, MenuItemSelect, SelectOption } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -21,6 +20,9 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useLingui } from '@lingui/react/macro';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
+import { AppTooltip } from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { SelectOption } from 'twenty-ui/input';
 
 const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};

@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { SettingsDataModelFieldDescriptionForm } from '../SettingsDataModelFieldDescriptionForm';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof SettingsDataModelFieldDescriptionForm> = {
   title: 'Modules/Settings/DataModel/SettingsDataModelFieldDescriptionForm',

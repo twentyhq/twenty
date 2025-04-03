@@ -9,9 +9,11 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { Button, H2Title, IconPlus, Section } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconPlus } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledCreateRoleSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};

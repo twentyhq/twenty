@@ -1,5 +1,3 @@
-import { IconChevronLeft, IconEyeOff, MenuItemNavigate } from 'twenty-ui';
-
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
@@ -10,6 +8,8 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { IconChevronLeft, IconEyeOff } from 'twenty-ui/display';
+import { MenuItemNavigate } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownFieldsContent = () => {
   const { t } = useLingui();

@@ -3,11 +3,11 @@ import { Meta, StoryObj } from '@storybook/react';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
-import { ComponentDecorator } from 'twenty-ui';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta = {
   title:

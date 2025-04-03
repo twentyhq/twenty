@@ -12,10 +12,10 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { useState } from 'react';
 import {
   IconChevronLeft,
-  MenuItemSelect,
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownObjectItemsProps = {
   step: StepOutputSchema;

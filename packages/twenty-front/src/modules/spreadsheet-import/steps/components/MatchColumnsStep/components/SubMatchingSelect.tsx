@@ -14,7 +14,9 @@ import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/Spreadshee
 import { SelectInput } from '@/ui/input/components/SelectInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useEffect, useState } from 'react';
-import { IconChevronDown, SelectOption, Tag, TagColor } from 'twenty-ui';
+import { IconChevronDown } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
+import { Tag, TagColor } from 'twenty-ui/components';
 
 const StyledContainer = styled.div`
   align-items: center;

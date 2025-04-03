@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { AnimatedEaseInOut } from 'twenty-ui';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 const StyledThreadMessageBody = styled(motion.div)`
   color: ${({ theme }) => theme.font.color.primary};

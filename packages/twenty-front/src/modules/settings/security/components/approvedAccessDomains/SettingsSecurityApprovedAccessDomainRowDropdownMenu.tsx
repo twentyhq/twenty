@@ -1,10 +1,3 @@
-import {
-  IconDotsVertical,
-  IconTrash,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
-
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -14,6 +7,9 @@ import { UnwrapRecoilValue, useSetRecoilState } from 'recoil';
 import { useDeleteApprovedAccessDomainMutation } from '~/generated/graphql';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { isDefined } from 'twenty-shared/utils';
+import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type SettingsSecurityApprovedAccessDomainRowDropdownMenuProps = {
   approvedAccessDomain: UnwrapRecoilValue<typeof approvedAccessDomainsState>[0];

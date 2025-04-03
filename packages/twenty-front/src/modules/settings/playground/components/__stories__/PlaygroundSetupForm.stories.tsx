@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { PlaygroundSetupForm } from '../PlaygroundSetupForm';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof PlaygroundSetupForm> = {
   title: 'Modules/Settings/Playground/PlaygroundSetupForm',

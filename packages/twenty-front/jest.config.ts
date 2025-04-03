@@ -15,12 +15,26 @@ const jestConfig: JestConfigWithTsJest = {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
   testEnvironment: 'jsdom',
-  transformIgnorePatterns: ['../../node_modules/'],
+
+  transformIgnorePatterns: [
+    '/node_modules/(?!(twenty-ui)/.*)',
+    '../../node_modules/(?!(twenty-ui)/.*)',
+    '../../twenty-ui/',
+  ],
   transform: {
     '^.+\\.(ts|js|tsx|jsx)$': [
       '@swc/jest',
       {
         jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: true,
+          },
+          transform: {
+            react: {
+              runtime: 'automatic',
+            },
+          },
           experimental: {
             plugins: [['@lingui/swc-plugin', {}]],
           },

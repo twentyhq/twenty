@@ -15,8 +15,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Loader, MainButton } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
+import { MainButton } from 'twenty-ui/input';
 
 const StyledForm = styled.form`
   align-items: center;

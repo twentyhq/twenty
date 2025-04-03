@@ -4,7 +4,6 @@ import { useCallback, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H2Title, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -24,6 +23,8 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { H2Title } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
 
 const StyledContentContainer = styled.div`
   width: 100%;

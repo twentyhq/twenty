@@ -8,8 +8,8 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordShowActionMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(

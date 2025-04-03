@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconPoint } from 'twenty-ui';
+import { IconPoint } from 'twenty-ui/display';
 
 const StyledWrapper = styled.div`
   position: relative;

@@ -2,9 +2,8 @@ import styled from '@emotion/styled';
 import { MouseEvent } from 'react';
 
 import { checkUrlType } from '~/utils/checkUrlType';
-
-import { LinkType, RoundedLink, SocialLink } from 'twenty-ui';
 import { EllipsisDisplay } from './EllipsisDisplay';
+import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 
 const StyledRawLink = styled(RoundedLink)`
   overflow: hidden;
