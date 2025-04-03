@@ -1,15 +1,15 @@
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { useSeeRunsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeRunsNoSelectionRecordAction';
+import { SeeRunsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeRunsNoSelectionRecordActionEffect';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { NoSelectionWorkflowRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/workflow-actions/types/NoSelectionWorkflowRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { useActivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateWorkflowSingleRecordAction';
-import { useDeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useDeactivateWorkflowSingleRecordAction';
-import { useDiscardDraftWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useDiscardDraftWorkflowSingleRecordAction';
-import { useSeeActiveVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeActiveVersionWorkflowSingleRecordAction';
-import { useSeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeRunsWorkflowSingleRecordAction';
-import { useSeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeVersionsWorkflowSingleRecordAction';
-import { useTestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useTestWorkflowSingleRecordAction';
+import { ActivateWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/ActivateWorkflowSingleRecordActionEffect';
+import { DeactivateWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DeactivateWorkflowSingleRecordActionEffect';
+import { DiscardDraftWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DiscardDraftWorkflowSingleRecordActionEffect';
+import { SeeActiveVersionWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeActiveVersionWorkflowSingleRecordActionEffect';
+import { SeeRunsWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeRunsWorkflowSingleRecordActionEffect';
+import { SeeVersionsWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeVersionsWorkflowSingleRecordActionEffect';
+import { TestWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/TestWorkflowSingleRecordActionEffect';
 import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
@@ -51,7 +51,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      useAction: useActivateWorkflowSingleRecordAction,
+      component: ActivateWorkflowSingleRecordActionEffect,
     },
     [WorkflowSingleRecordActionKeys.DEACTIVATE]: {
       key: WorkflowSingleRecordActionKeys.DEACTIVATE,
@@ -69,7 +69,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      useAction: useDeactivateWorkflowSingleRecordAction,
+      component: DeactivateWorkflowSingleRecordActionEffect,
     },
     [WorkflowSingleRecordActionKeys.DISCARD_DRAFT]: {
       key: WorkflowSingleRecordActionKeys.DISCARD_DRAFT,
@@ -88,7 +88,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      useAction: useDiscardDraftWorkflowSingleRecordAction,
+      component: DiscardDraftWorkflowSingleRecordActionEffect,
     },
     [WorkflowSingleRecordActionKeys.SEE_ACTIVE_VERSION]: {
       key: WorkflowSingleRecordActionKeys.SEE_ACTIVE_VERSION,
@@ -106,7 +106,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      useAction: useSeeActiveVersionWorkflowSingleRecordAction,
+      component: SeeActiveVersionWorkflowSingleRecordActionEffect,
     },
     [WorkflowSingleRecordActionKeys.SEE_RUNS]: {
       key: WorkflowSingleRecordActionKeys.SEE_RUNS,
@@ -123,7 +123,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      useAction: useSeeRunsWorkflowSingleRecordAction,
+      component: SeeRunsWorkflowSingleRecordActionEffect,
     },
     [WorkflowSingleRecordActionKeys.SEE_VERSIONS]: {
       key: WorkflowSingleRecordActionKeys.SEE_VERSIONS,
@@ -140,7 +140,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      useAction: useSeeVersionsWorkflowSingleRecordAction,
+      component: SeeVersionsWorkflowSingleRecordActionEffect,
     },
     [WorkflowSingleRecordActionKeys.TEST]: {
       key: WorkflowSingleRecordActionKeys.TEST,
@@ -163,7 +163,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      useAction: useTestWorkflowSingleRecordAction,
+      component: TestWorkflowSingleRecordActionEffect,
     },
     [NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS]: {
       type: ActionMenuEntryType.Navigation,
@@ -177,7 +177,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       shouldBeRegistered: () => true,
       availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-      useAction: useSeeRunsNoSelectionRecordAction,
+      component: SeeRunsNoSelectionRecordActionEffect,
     },
   },
   actionKeys: [
