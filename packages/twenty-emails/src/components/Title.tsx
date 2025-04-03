@@ -1,10 +1,9 @@
-import { ReactNode } from 'react';
 import { Heading } from '@react-email/components';
 
 import { emailTheme } from 'src/common-style';
 
 type TitleProps = {
-  value: ReactNode;
+  value: JSX.Element | JSX.Element[] | string;
 };
 
 const titleStyle = {
