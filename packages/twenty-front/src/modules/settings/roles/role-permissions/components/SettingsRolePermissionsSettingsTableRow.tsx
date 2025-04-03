@@ -58,7 +58,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   );
   const canUpdateAllSettings = settingsDraftRole.canUpdateAllSettings;
 
-  const isEnabled =
+  const isSettingPermissionEnabled =
     settingsDraftRole.settingPermissions?.some(
       (settingPermission) => settingPermission.setting === permission.key,
     ) ?? false;
@@ -66,7 +66,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   const handleChange = (value: boolean) => {
     const currentPermissions = settingsDraftRole.settingPermissions ?? [];
 
-    if (value) {
+    if (value === true) {
       setSettingsDraftRole({
         ...settingsDraftRole,
         settingPermissions: [
@@ -105,7 +105,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
       </StyledPermissionCell>
       <StyledCheckboxCell>
         <Checkbox
-          checked={isEnabled || canUpdateAllSettings}
+          checked={isSettingPermissionEnabled || canUpdateAllSettings}
           disabled={
             !isEditable || canUpdateAllSettings || !isPermissionsV2Enabled
           }

@@ -6,5 +6,6 @@ export const SettingsRolePermissionsSettingsTableHeader = () => (
   <TableRow gridAutoColumns="3fr 4fr 24px">
     <TableHeader>{t`Name`}</TableHeader>
     <TableHeader>{t`Description`}</TableHeader>
+    <TableHeader></TableHeader>
   </TableRow>
 );

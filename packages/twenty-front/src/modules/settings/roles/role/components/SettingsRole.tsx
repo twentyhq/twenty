@@ -1,4 +1,5 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
@@ -14,6 +15,7 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,6 +65,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const [updateRole] = useUpdateOneRoleMutation();
   const [upsertSettingPermissions] = useUpsertSettingPermissionsMutation();
 
+  const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
+
+  const settingsRolesIsLoading = useRecoilValue(settingsRolesIsLoadingState);
+
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );
@@ -70,10 +76,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const settingsPersistedRole = useRecoilValue(
     settingsPersistedRoleFamilyState(roleId),
   );
-
-  const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
-
-  const settingsRolesIsLoading = useRecoilValue(settingsRolesIsLoadingState);
 
   if (!isDefined(settingsRolesIsLoading)) {
     return <></>;
@@ -101,7 +103,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const isDirty = !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const dirtyFields = getDirtyFields(
       settingsDraftRole,
       settingsPersistedRole,
@@ -145,6 +147,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
                   ) ?? [],
               },
             },
+            refetchQueries: [getOperationName(GET_ROLES) ?? ''],
           });
 
           navigateSettings(SettingsPath.RoleDetail, {
@@ -154,7 +157,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
       });
     } else {
       if (ROLE_BASIC_KEYS.some((key) => key in dirtyFields)) {
-        updateRole({
+        await updateRole({
           variables: {
             updateRoleInput: {
               id: roleId,
@@ -178,7 +181,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
       }
 
       if (isDefined(dirtyFields.settingPermissions)) {
-        upsertSettingPermissions({
+        await upsertSettingPermissions({
           variables: {
             upsertSettingPermissionsInput: {
               roleId: roleId,
@@ -188,7 +191,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
                 ) ?? [],
             },
           },
-          refetchQueries: ['GetRoles'],
+          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
         });
       }
     }

@@ -118,15 +118,6 @@ export class SettingPermissionService {
     }
   }
 
-  public async getSettingPermissionsForRole(
-    roleId: string,
-    workspaceId: string,
-  ): Promise<SettingPermissionEntity[]> {
-    return this.settingPermissionRepository.find({
-      where: { roleId, workspaceId },
-    });
-  }
-
   private async validateRoleIsEditableOrThrow({
     roleId,
     workspaceId,
