@@ -12,12 +12,19 @@
   "dependencies": {
     "@lingui/core": "^5.1.2",
     "@lingui/react": "^5.1.2",
+    "@react-email/components": "0.0.35",
+    "@react-email/preview": "^0.0.10",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "twenty-shared": "workspace:*"
   },
   "devDependencies": {
     "@lingui/cli": "^5.1.2",
     "@lingui/swc-plugin": "^5.1.0",
-    "@lingui/vite-plugin": "^5.1.2"
+    "@lingui/vite-plugin": "^5.1.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react-email": "4.0.3"
   },
   "exports": {
     ".": {

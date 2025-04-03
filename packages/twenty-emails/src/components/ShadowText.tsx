@@ -1,5 +1,5 @@
+import { Text } from '@react-email/components';
 import { PropsWithChildren as ShadowTextProps } from 'react';
-import { Text } from '@react-email/text';
 
 import { emailTheme } from 'src/common-style';
 

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { i18n } from '@lingui/core';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
@@ -39,7 +39,7 @@ export const SendInviteLinkEmail = ({
 
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={<Trans>Join your team on Twenty</Trans>} />
+      <Title value={i18n._('Join your team on Twenty')} />
       <MainText>
         {capitalize(sender.firstName)} (
         <Link
@@ -47,16 +47,36 @@ export const SendInviteLinkEmail = ({
           value={sender.email}
           color={emailTheme.font.colors.blue}
         />
-        ) <Trans>has invited you to join a workspace called </Trans>
+        ) {i18n._('has invited you to join a workspace called')}{' '}
         <b>{workspace.name}</b>
         <br />
       </MainText>
       <HighlightedContainer>
-        {workspaceLogo && <Img src={workspaceLogo} width={40} height={40} />}
+        {workspaceLogo && (
+          <Img
+            src={workspaceLogo}
+            width={40}
+            height={40}
+            alt="Workspace logo"
+          />
+        )}
         {workspace.name && <HighlightedText value={workspace.name} />}
-        <CallToAction href={link} value={<Trans>Accept invite</Trans>} />
+        <CallToAction href={link} value={i18n._('Accept invite')} />
       </HighlightedContainer>
       <WhatIsTwenty />
     </BaseEmail>
   );
 };
+
+SendInviteLinkEmail.PreviewProps = {
+  link: 'https://app.twenty.com/invite/123',
+  workspace: {
+    name: 'Acme Inc.',
+    logo: 'https://fakeimg.pl/200x200/?text=ACME&font=lobster',
+  },
+  sender: { email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe' },
+  serverUrl: 'https://app.twenty.com',
+  locale: 'en',
+} as SendInviteLinkEmailProps;
+
+export default SendInviteLinkEmail;

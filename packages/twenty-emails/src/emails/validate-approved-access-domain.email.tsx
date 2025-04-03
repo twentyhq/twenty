@@ -1,5 +1,4 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { i18n } from '@lingui/core';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
@@ -10,7 +9,6 @@ import { HighlightedText } from 'src/components/HighlightedText';
 import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
-import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
@@ -42,7 +40,7 @@ export const SendApprovedAccessDomainValidation = ({
 
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={t`Validate domain`} />
+      <Title value={i18n._('Validate domain')} />
       <MainText>
         {capitalize(sender.firstName)} (
         <Link
@@ -50,20 +48,36 @@ export const SendApprovedAccessDomainValidation = ({
           value={sender.email}
           color={emailTheme.font.colors.blue}
         />
-        ) <Trans>Please validate this domain to allow users with</Trans>{' '}
+        ) {i18n._('Please validate this domain to allow users with')}{' '}
         <b>@{domain}</b>{' '}
-        <Trans>
-          email addresses to join your workspace without requiring an
-          invitation.
-        </Trans>
+        {i18n._(
+          'email addresses to join your workspace without requiring an invitation.',
+        )}
         <br />
       </MainText>
       <HighlightedContainer>
         {workspaceLogo && <Img src={workspaceLogo} width={40} height={40} />}
         {workspace.name && <HighlightedText value={workspace.name} />}
-        <CallToAction href={link} value={t`Validate domain`} />
+        <CallToAction href={link} value={i18n._('Validate domain')} />
       </HighlightedContainer>
-      <WhatIsTwenty />
     </BaseEmail>
   );
 };
+
+SendApprovedAccessDomainValidation.PreviewProps = {
+  link: 'https://app.twenty.com/validate-domain',
+  domain: 'example.com',
+  workspace: {
+    name: 'Acme Inc.',
+    logo: 'https://fakeimg.pl/200x200/?text=ACME&font=lobster',
+  },
+  sender: {
+    email: 'john.doe@example.com',
+    firstName: 'John',
+    lastName: 'Doe',
+  },
+  serverUrl: 'https://app.twenty.com',
+  locale: 'en',
+} as SendApprovedAccessDomainValidationProps;
+
+export default SendApprovedAccessDomainValidation;

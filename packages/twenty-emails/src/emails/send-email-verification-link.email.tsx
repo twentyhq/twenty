@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/react/macro';
+import { i18n } from '@lingui/core';
 
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -17,17 +17,22 @@ export const SendEmailVerificationLinkEmail = ({
 }: SendEmailVerificationLinkEmailProps) => {
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={<Trans>Confirm your email address</Trans>} />
-      <CallToAction href={link} value={<Trans>Verify Email</Trans>} />
+      <Title value={i18n._('Confirm your email address')} />
+      <CallToAction href={link} value={i18n._('Verify Email')} />
       <br />
       <br />
       <MainText>
-        <Trans>
-          Thanks for registering for an account on Twenty! Before we get
-          started, we just need to confirm that this is you. Click above to
-          verify your email address.
-        </Trans>
+        {i18n._(
+          'Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address.',
+        )}
       </MainText>
     </BaseEmail>
   );
 };
+
+SendEmailVerificationLinkEmail.PreviewProps = {
+  link: 'https://app.twenty.com/verify-email/123',
+  locale: 'en',
+};
+
+export default SendEmailVerificationLinkEmail;

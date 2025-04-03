@@ -1,3 +1,4 @@
+import { i18n } from '@lingui/core';
 import { Column, Container, Row } from '@react-email/components';
 import { Link } from 'src/components/Link';
 import { ShadowText } from 'src/components/ShadowText';
@@ -14,8 +15,8 @@ export const Footer = () => {
           <ShadowText>
             <Link
               href="https://twenty.com/"
-              value="Website"
-              aria-label="Visit Twenty's website"
+              value={i18n._('Website')}
+              aria-label={i18n._("Visit Twenty's website")}
             />
           </ShadowText>
         </Column>
@@ -23,8 +24,8 @@ export const Footer = () => {
           <ShadowText>
             <Link
               href="https://github.com/twentyhq/twenty"
-              value="Github"
-              aria-label="Visit Twenty's GitHub repository"
+              value={i18n._('Github')}
+              aria-label={i18n._("Visit Twenty's GitHub repository")}
             />
           </ShadowText>
         </Column>
@@ -32,8 +33,8 @@ export const Footer = () => {
           <ShadowText>
             <Link
               href="https://twenty.com/user-guide"
-              value="User guide"
-              aria-label="Read Twenty's user guide"
+              value={i18n._('User guide')}
+              aria-label={i18n._("Read Twenty's user guide")}
             />
           </ShadowText>
         </Column>
@@ -41,18 +42,16 @@ export const Footer = () => {
           <ShadowText>
             <Link
               href="https://docs.twenty.com/"
-              value="Developers"
-              aria-label="Visit Twenty's developer documentation"
+              value={i18n._('Developers')}
+              aria-label={i18n._("Visit Twenty's developer documentation")}
             />
           </ShadowText>
         </Column>
       </Row>
       <ShadowText>
-        Twenty.com Public Benefit Corporation
+        {i18n._('Twenty.com, Public Benefit Corporation')}
         <br />
-        2261 Market Street #5275
-        <br />
-        San Francisco, CA 94114
+        {i18n._('Built in San Francisco and Paris')}
       </ShadowText>
     </Container>
   );

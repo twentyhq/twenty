@@ -1,6 +1,4 @@
 import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -21,29 +19,33 @@ export const PasswordUpdateNotifyEmail = ({
   link,
   locale,
 }: PasswordUpdateNotifyEmailProps) => {
-  const helloString = userName?.length > 1 ? t`Dear ${userName}` : t`Hello`;
   const formattedDate = i18n.date(new Date());
 
   return (
     <BaseEmail locale={locale}>
-      <Title value={<Trans>Password updated</Trans>} />
+      <Title value={i18n._('Password updated')} />
       <MainText>
-        {helloString},
+        {userName?.length > 1 ? i18n._(`Dear ${userName}`) : i18n._('Hello')}
+        ,
         <br />
         <br />
-        <Trans>
-          This is a confirmation that password for your account ({email}) was
-          successfully changed on {formattedDate}.
-        </Trans>
+        {i18n._(
+          `This is a confirmation that password for your account (${email}) was successfully changed on ${formattedDate}.`,
+        )}
         <br />
         <br />
-        <Trans>
-          If you did not initiate this change, please contact your workspace
-          owner immediately.
-        </Trans>
+        {i18n._(
+          'If you did not initiate this change, please contact your workspace owner immediately.',
+        )}
         <br />
       </MainText>
-      <CallToAction value={<Trans>Connect to Twenty</Trans>} href={link} />
+      <CallToAction value={i18n._('Connect to Twenty')} href={link} />
     </BaseEmail>
   );
 };
+
+PasswordUpdateNotifyEmail.PreviewProps = {
+  locale: 'en',
+} as PasswordUpdateNotifyEmailProps;
+
+export default PasswordUpdateNotifyEmail;

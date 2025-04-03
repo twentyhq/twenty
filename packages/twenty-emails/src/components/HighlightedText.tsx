@@ -1,4 +1,4 @@
-import { Text } from '@react-email/text';
+import { Text } from '@react-email/components';
 import { ReactNode } from 'react';
 
 import { emailTheme } from 'src/common-style';
