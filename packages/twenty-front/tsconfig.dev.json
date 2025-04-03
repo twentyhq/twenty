@@ -10,5 +10,5 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "lingui.config.ts"
-, "src/modules/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordActionEffect.tss"  ]
+  ]
 }
