@@ -37,9 +37,9 @@ jobs:
           - 8123:8123
           - 9000:9000
         env:
-          CLICKHOUSE_PASSWORD: ciPassword
+          CLICKHOUSE_PASSWORD: ${{ env.CLICKHOUSE_CLICKHOUSE_CI_PASSWORD }}
         options: >-
-          --health-cmd "clickhouse-client --password=ciPassword --query='SELECT 1'" 
+          --health-cmd "clickhouse-client --password=${{ env.CLICKHOUSE_CLICKHOUSE_CI_PASSWORD }} --query='SELECT 1'" 
           --health-interval 10s 
           --health-timeout 5s 
           --health-retries 5
@@ -61,7 +61,7 @@ jobs:
         run: npx nx reset:env twenty-server
       - name: Update .env for ClickHouse
         run: |
-          echo -e "\nCLICKHOUSE_URL=http://default:ciPassword@localhost:8123" >> packages/twenty-server/.env
+          echo -e "\nCLICKHOUSE_URL=http://default:${{ env.CLICKHOUSE_CLICKHOUSE_CI_PASSWORD }}@localhost:8123" >> packages/twenty-server/.env
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
       - name: Save clickhouse setup
