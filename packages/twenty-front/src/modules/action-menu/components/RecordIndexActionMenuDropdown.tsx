@@ -84,7 +84,6 @@ export const RecordIndexActionMenuDropdown = () => {
                 LeftIcon={item.Icon}
                 onClick={() => {
                   closeDropdown();
-                  item.onClick?.();
                 }}
                 accent={item.accent}
                 text={i18n._(item.label)}

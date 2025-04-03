@@ -2,7 +2,6 @@ import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-acti
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
-import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -10,8 +9,8 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const RecordShowRightDrawerActionMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
@@ -45,7 +44,6 @@ export const RecordShowRightDrawerActionMenu = () => {
           }}
         >
           <CommandMenuActionMenuDropdown />
-          <ActionMenuConfirmationModals />
 
           {isDefined(contextStoreTargetedRecordsRule) &&
             contextStoreTargetedRecordsRule.mode === 'selection' &&

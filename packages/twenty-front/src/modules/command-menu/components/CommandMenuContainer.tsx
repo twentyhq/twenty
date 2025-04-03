@@ -3,7 +3,6 @@ import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-action
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
-import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
@@ -165,7 +164,6 @@ export const CommandMenuContainer = ({
                 {isWorkflowEnabled && (
                   <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
                 )}
-                <ActionMenuConfirmationModals />
                 <AnimatePresence
                   mode="wait"
                   onExitComplete={commandMenuCloseAnimationCompleteCleanup}
