@@ -22,7 +22,7 @@
     "outDir": "../../.cache/tsc",
     "paths": {
       "@/*": ["./src/modules/*"],
-      "~/*": ["./src/*"],
+      "~/*": ["./src/*"]
     }
   },
   "files": [],
