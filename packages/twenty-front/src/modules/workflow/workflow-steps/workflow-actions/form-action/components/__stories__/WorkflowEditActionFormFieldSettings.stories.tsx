@@ -97,8 +97,8 @@ export const SingleRecordFieldSettings: Story = {
   args: {
     field: {
       id: 'field-3',
-      name: 'record',
-      label: 'Record',
+      name: 'company',
+      label: 'Company',
       type: 'RECORD',
       settings: {
         objectName: 'company',
