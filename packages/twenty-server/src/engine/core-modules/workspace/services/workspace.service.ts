@@ -126,6 +126,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.customDomainService.updateCustomDomain(
         workspace.customDomain,
         customDomain,
+        workspace.id,
       );
     }
 
@@ -134,7 +135,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspace.customDomain !== customDomain &&
       !isDefined(workspace.customDomain)
     ) {
-      await this.customDomainService.registerCustomDomain(customDomain);
+      await this.customDomainService.registerCustomDomain(
+        customDomain,
+        workspace.id,
+      );
     }
   }
 

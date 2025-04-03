@@ -12,5 +12,5 @@ export class CreateAnalyticsInput {
 
   @Field(() => graphqlTypeJson, { description: 'Event payload in JSON format' })
   @IsObject()
-  payload: JSON;
+  payload: Record<string, unknown>;
 }

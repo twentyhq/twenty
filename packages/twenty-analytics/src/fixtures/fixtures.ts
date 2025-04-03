@@ -2,6 +2,38 @@ import { Event } from '../types/event.type';
 
 export const fixtures: Array<Event> = [
   {
+    action: 'customDomain.activated',
+    timestamp: '2024-10-24T15:55:35.177',
+    version: '1',
+    userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
+    workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+    payload: {},
+  },
+  {
+    action: 'customDomain.activated',
+    timestamp: '2024-10-24T15:55:35.178',
+    version: '1',
+    userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
+    workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+    payload: {},
+  },
+  {
+    action: 'customDomain.created',
+    timestamp: '2024-10-24T15:55:35.179',
+    version: '1',
+    userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
+    workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+    payload: {},
+  },
+  {
+    action: 'customDomain.created',
+    timestamp: '2024-10-24T15:55:35.180',
+    version: '1',
+    userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
+    workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+    payload: {},
+  },
+  {
     action: 'apiKey.created',
     timestamp: '2024-10-24T15:55:35.177',
     version: '1',

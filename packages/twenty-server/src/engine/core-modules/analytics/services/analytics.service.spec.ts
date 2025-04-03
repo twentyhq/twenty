@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 
-import { AnalyticsService } from './services/analytics.service';
+import { AnalyticsService } from './analytics.service';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;

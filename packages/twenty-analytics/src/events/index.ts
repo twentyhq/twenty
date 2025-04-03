@@ -34,3 +34,5 @@ export { viewSortCreatedSchema } from './event/view-sort/view-sort-created';
 export { webhookCreatedSchema } from './event/webhook/webhook-created';
 export { webhookResponseSchema } from './event/webhook/webhook-response';
 export { workspaceMemberCreatedSchema } from './event/workspace-member/workspace-member-created';
+export { customDomainActivatedSchema } from './event/custom-domain/custom-domain-activated';
+export { customDomainCreatedSchema } from './event/custom-domain/custom-domain-created';

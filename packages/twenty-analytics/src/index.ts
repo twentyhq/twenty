@@ -1,20 +1,30 @@
 import { fixtures } from './fixtures/fixtures';
 import { pageviewSchema, eventSchema } from './events';
-import { z } from 'zod';
+import {
+  SpecificEventType,
+  EventWithoutCommonKeys,
+  Event,
+} from './types/event.type';
+import { Pageview, PageviewWithoutCommonKeys } from '@/types/pageview.type';
+import { CommonPropertiesType } from '@/types/common.type';
 
-type Event = z.infer<typeof eventSchema>;
-type Pageview = z.infer<typeof pageviewSchema>;
-
-const commonProperties = () => ({
+const commonProperties = (): Record<CommonPropertiesType, string> => ({
   timestamp: new Date().toISOString(),
   version: '1',
 });
 
-const makeEvent = (data: Record<string, unknown>): Event => {
+// Use this function when you can't properly type the event. Instead prefer makeEvent
+const makeUnsafeEvent = (data: Record<string, unknown>) => {
   return eventSchema.parse({
     ...data,
     ...commonProperties(),
   });
+};
+
+const makeEvent = <T extends SpecificEventType>(
+  data: Omit<T, CommonPropertiesType>,
+): T => {
+  return makeUnsafeEvent(data) as T;
 };
 
 const makePageview = (data: Record<string, unknown>): Pageview => {
@@ -24,4 +34,12 @@ const makePageview = (data: Record<string, unknown>): Pageview => {
   });
 };
 
-export { makeEvent, makePageview, Event, Pageview, fixtures };
+export { makeUnsafeEvent, makePageview, makeEvent, fixtures };
+
+export type {
+  SpecificEventType,
+  EventWithoutCommonKeys,
+  PageviewWithoutCommonKeys,
+  Event,
+  Pageview,
+};
