@@ -3,7 +3,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { capitalize } from 'twenty-shared/utils';
 import { Request } from 'express';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
@@ -49,16 +48,12 @@ export class RestApiCoreServiceV2 {
   }
 
   async createOne(request: Request) {
-    const {
-      fieldMetadataByFieldName,
-      objectMetadataNameSingular,
-      objectMetadata,
-      repository,
-    } = await this.getRepositoryAndMetadataOrFail(request);
+    const { objectMetadataNameSingular, objectMetadata, repository } =
+      await this.getRepositoryAndMetadataOrFail(request);
 
     const overriddenBody = await this.recordInputTransformerService.process({
       recordInput: request.body,
-      fieldMetadataByFieldName,
+      objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
     });
 
     const createdRecord = await repository.save(overriddenBody);
@@ -83,12 +78,8 @@ export class RestApiCoreServiceV2 {
       throw new BadRequestException('Record ID not found');
     }
 
-    const {
-      fieldMetadataByFieldName,
-      objectMetadataNameSingular,
-      objectMetadata,
-      repository,
-    } = await this.getRepositoryAndMetadataOrFail(request);
+    const { objectMetadataNameSingular, objectMetadata, repository } =
+      await this.getRepositoryAndMetadataOrFail(request);
 
     const recordToUpdate = await repository.findOneOrFail({
       where: { id: recordId },
@@ -96,7 +87,7 @@ export class RestApiCoreServiceV2 {
 
     const overriddenBody = await this.recordInputTransformerService.process({
       recordInput: request.body,
-      fieldMetadataByFieldName,
+      objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
     });
 
     const updatedRecord = await repository.save({
@@ -158,18 +149,7 @@ export class RestApiCoreServiceV2 {
         objectMetadataNameSingular,
       );
 
-    const fieldMetadataByFieldName =
-      objectMetadata.objectMetadataMapItem.fields.reduce(
-        (acc, field) => {
-          acc[field.name] = field;
-
-          return acc;
-        },
-        {} as Record<string, FieldMetadataInterface>,
-      );
-
     return {
-      fieldMetadataByFieldName,
       objectMetadataNameSingular,
       objectMetadata,
       repository,

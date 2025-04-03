@@ -12,19 +12,29 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 @Injectable()
 export class RecordInputTransformerService {
   async process({
     recordInput,
-    fieldMetadataByFieldName,
+    objectMetadataMapItem,
   }: {
     recordInput: Record<string, any>;
-    fieldMetadataByFieldName: Record<string, FieldMetadataInterface>;
+    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
   }): Promise<Record<string, any>> {
     if (!recordInput) {
       return recordInput;
     }
+
+    const fieldMetadataByFieldName = objectMetadataMapItem.fields.reduce(
+      (acc, field) => {
+        acc[field.name] = field;
+
+        return acc;
+      },
+      {} as Record<string, FieldMetadataInterface>,
+    );
 
     const transformedEntries = await Promise.all(
       Object.entries(recordInput).map(async ([key, value]) => {
