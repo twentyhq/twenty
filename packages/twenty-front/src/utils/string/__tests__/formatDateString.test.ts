@@ -26,7 +26,7 @@ describe('formatDateString', () => {
     expect(result).toBe('');
   });
 
-  it('should format date as relative when displayAsRelativeDate is true', () => {
+  it('should format date as relative when displayFormat is relative_date', () => {
     const mockDate = DateTime.now().minus({ months: 2 }).toISO();
     const mockRelativeDate = 'about 2 months ago';
 
@@ -45,7 +45,7 @@ describe('formatDateString', () => {
     expect(result).toBe(mockRelativeDate);
   });
 
-  it('should format date as datetime when displayAsRelativeDate is not present', () => {
+  it('should format date as datetime when displayFormat is full_date', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = '1 Jan, 2023';
 
@@ -57,13 +57,14 @@ describe('formatDateString', () => {
 
     const result = formatDateString({
       ...defaultParams,
-      value: mockDate
+      value: mockDate,
+      displayFormat: 'full_date'
     });
 
     expect(result).toBe(mockFormattedDate);
   });
 
-  it('should format date as datetime by default when displayAsRelativeDate is not provided', () => {
+  it('should format date as datetime by default when displayFormat is not provided', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = '1 Jan, 2023';
 
