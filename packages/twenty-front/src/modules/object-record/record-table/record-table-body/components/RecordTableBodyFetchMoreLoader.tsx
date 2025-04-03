@@ -2,13 +2,13 @@ import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilCallback } from 'recoil';
-import { GRAY_SCALE } from 'twenty-ui';
 
 import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { GRAY_SCALE } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
   align-items: center;

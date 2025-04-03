@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { MenuItem } from 'twenty-ui';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledCreateNewButton = styled(MenuItem)<{ hovered?: boolean }>`
   ${({ hovered, theme }) =>

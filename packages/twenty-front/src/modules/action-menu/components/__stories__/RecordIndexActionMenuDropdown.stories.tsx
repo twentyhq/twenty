@@ -15,13 +15,9 @@ import {
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { msg } from '@lingui/core/macro';
-import {
-  IconCheckbox,
-  IconHeart,
-  IconTrash,
-  getCanvasElementForDropdownTesting,
-} from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui/display';
+import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 const deleteMock = jest.fn();
 const markAsDoneMock = jest.fn();

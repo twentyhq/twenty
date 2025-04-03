@@ -11,7 +11,8 @@ import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/uti
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
-import { SelectOption, useIcons } from 'twenty-ui';
+import { SelectOption } from 'twenty-ui/input';
+import { useIcons } from 'twenty-ui/display';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;

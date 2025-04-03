@@ -1,5 +1,5 @@
+import IllustrationIconCalendarTimeRaw from '@assets/icons/illustration-calendar-time.svg?react';
 import { useTheme } from '@emotion/react';
-import IllustrationIconCalendarTimeRaw from '@ui/display/icon/assets/illustration-calendar-time.svg?react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 

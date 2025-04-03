@@ -2,7 +2,7 @@ import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui';
+import { IconPlus } from 'twenty-ui/display';
 
 export const RecordTableEmptyStateReadOnly = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();

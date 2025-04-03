@@ -1,4 +1,4 @@
-import IconTwentyStarFilledRaw from '@ui/display/icon/assets/twenty-star-filled.svg?react';
+import IconTwentyStarFilledRaw from '@assets/icons/twenty-star-filled.svg?react';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 import { THEME_COMMON } from '@ui/theme';
 

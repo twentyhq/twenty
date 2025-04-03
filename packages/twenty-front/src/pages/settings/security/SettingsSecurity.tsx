@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { H2Title, IconLock, Section, Tag } from 'twenty-ui';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -14,6 +13,9 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { H2Title, IconLock } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { Tag } from 'twenty-ui/components';
 
 const StyledContainer = styled.div`
   width: 100%;
