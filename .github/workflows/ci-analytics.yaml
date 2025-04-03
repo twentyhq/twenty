@@ -30,7 +30,7 @@ jobs:
     runs-on: depot-ubuntu-24.04-8
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-      CLICKHOUSE_CI_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
+      CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
     services:
       clickhouse:
         image: clickhouse/clickhouse-server:latest
@@ -38,9 +38,9 @@ jobs:
           - 8123:8123
           - 9000:9000
         env:
-          CLICKHOUSE_CI_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
+          CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
         options: >-
-          --health-cmd "clickhouse-client --password=$CLICKHOUSE_CI_PASSWORD --query='SELECT 1'" 
+          --health-cmd "clickhouse-client --password=$CLICKHOUSE_PASSWORD --query='SELECT 1'" 
           --health-interval 10s 
           --health-timeout 5s 
           --health-retries 5
@@ -62,7 +62,7 @@ jobs:
         run: npx nx reset:env twenty-server
       - name: Update .env for ClickHouse
         run: |
-          echo -e "\nCLICKHOUSE_URL=http://default:$CLICKHOUSE_CI_PASSWORD@localhost:8123" >> packages/twenty-server/.env
+          echo -e "\nCLICKHOUSE_URL=http://default:$CLICKHOUSE_PASSWORD@localhost:8123" >> packages/twenty-server/.env
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
       - name: Save clickhouse setup
