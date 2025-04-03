@@ -14,6 +14,12 @@ export class DbEventDTO {
   @Field(() => DatabaseEventAction)
   action: DatabaseEventAction;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  payload: object;
+  @Field(() => String)
+  objectNameSingular: string;
+
+  @Field(() => GraphQLJSON)
+  record: object;
+
+  @Field(() => [String], { nullable: true })
+  updatedFields?: string[];
 }

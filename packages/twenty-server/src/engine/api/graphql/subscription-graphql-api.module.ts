@@ -3,8 +3,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
+
 @Module({
   imports: [
+    SubscriptionsModule,
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
       useFactory: () => {

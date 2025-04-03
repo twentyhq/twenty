@@ -4,6 +4,7 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SubscriptionsResolver } from 'src/engine/subscriptions/subscriptions.resolver';
+import { SubscriptionsJob } from 'src/engine/subscriptions/subscriptions.job';
 
 @Module({
   exports: ['PUB_SUB'],
@@ -19,6 +20,7 @@ import { SubscriptionsResolver } from 'src/engine/subscriptions/subscriptions.re
         }),
     },
     SubscriptionsResolver,
+    SubscriptionsJob,
   ],
 })
 export class SubscriptionsModule {}
