@@ -1,16 +1,23 @@
 import styled from '@emotion/styled';
+import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 
-const StyledText = styled.span<{ isHighlighted?: boolean }>`
-  color: ${({ theme, isHighlighted }) =>
-    isHighlighted ? theme.adaptiveColors.blue4 : theme.font.color.tertiary};
+const StyledText = styled.span<{
+  highlighting: JsonNodeHighlighting | undefined;
+}>`
+  color: ${({ theme, highlighting }) =>
+    highlighting === 'blue'
+      ? theme.adaptiveColors.blue4
+      : highlighting === 'red'
+        ? theme.font.color.danger
+        : theme.font.color.tertiary};
 `;
 
 export const JsonNodeValue = ({
   valueAsString,
-  isHighlighted,
+  highlighting,
 }: {
   valueAsString: string;
-  isHighlighted?: boolean;
+  highlighting?: JsonNodeHighlighting | undefined;
 }) => {
-  return <StyledText isHighlighted={isHighlighted}>{valueAsString}</StyledText>;
+  return <StyledText highlighting={highlighting}>{valueAsString}</StyledText>;
 };

@@ -7,8 +7,6 @@ export const useSeeRunsNoSelectionRecordAction: ActionHookWithoutObjectMetadataI
   () => {
     const navigateApp = useNavigateApp();
 
-    const shouldBeRegistered = true;
-
     const onClick = () => {
       navigateApp(AppPath.RecordIndexPage, {
         objectNamePlural: CoreObjectNamePlural.WorkflowRun,
@@ -16,7 +14,6 @@ export const useSeeRunsNoSelectionRecordAction: ActionHookWithoutObjectMetadataI
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };
