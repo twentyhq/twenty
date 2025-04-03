@@ -1,5 +1,6 @@
 import { SupportDropdown } from '@/support/components/SupportDropdown';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
+import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -35,8 +36,8 @@ export const SignInAppNavigationDrawerMock = ({
   const isMobile = useIsMobile();
   const { t } = useLingui();
 
-  const children = (
-    <>
+  return (
+    <NavigationDrawer className={className} title={DEFAULT_WORKSPACE_NAME}>
       {!isMobile && (
         <StyledMainSection>
           <NavigationDrawerItem
@@ -60,18 +61,9 @@ export const SignInAppNavigationDrawerMock = ({
           WORKSPACE_FAVORITES.includes(item.nameSingular),
         )}
       />
-    </>
-  );
-
-  const footer = <SupportDropdown />;
-
-  return (
-    <NavigationDrawer
-      className={className}
-      footer={footer}
-      title={DEFAULT_WORKSPACE_NAME}
-    >
-      {children}
+      <NavigationDrawerFixedContent>
+        <SupportDropdown />
+      </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
 };
