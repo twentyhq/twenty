@@ -3,14 +3,14 @@ import { Inject } from '@nestjs/common';
 
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-run.dto';
+import { DbEventDTO } from 'src/engine/subscriptions/dtos/db-event.dto';
 
 @Resolver()
-export class WorkflowRunResolver {
+export class SubscriptionsResolver {
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
 
-  @Subscription(() => WorkflowRunDTO)
-  workflowRunUpdated() {
-    return this.pubSub.asyncIterator('workflowRunUpdated');
+  @Subscription(() => DbEventDTO)
+  onDbEvent() {
+    return this.pubSub.asyncIterator('onDbEvent');
   }
 }

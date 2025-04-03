@@ -6,22 +6,15 @@ import { RecordPositionModule } from 'src/engine/core-modules/record-position/re
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
-import { WorkflowRunListener } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.listener';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Module({
   imports: [
     WorkflowCommonModule,
-    SubscriptionsModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     RecordPositionModule,
   ],
-  providers: [
-    WorkflowRunWorkspaceService,
-    WorkflowRunListener,
-    ScopedWorkspaceContextFactory,
-  ],
+  providers: [WorkflowRunWorkspaceService, ScopedWorkspaceContextFactory],
   exports: [WorkflowRunWorkspaceService],
 })
 export class WorkflowRunModule {}

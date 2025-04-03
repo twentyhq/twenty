@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { SubscriptionsResolver } from 'src/engine/subscriptions/subscriptions.resolver';
 
 @Module({
   exports: ['PUB_SUB'],
@@ -17,6 +18,7 @@ import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-c
           subscriber: redisClientService.getClient().duplicate(),
         }),
     },
+    SubscriptionsResolver,
   ],
 })
 export class SubscriptionsModule {}

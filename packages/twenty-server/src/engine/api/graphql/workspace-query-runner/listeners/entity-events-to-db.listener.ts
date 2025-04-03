@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -24,6 +26,7 @@ export class EntityEventsToDbListener {
     private readonly entityEventsToDbQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly webhookQueueService: MessageQueueService,
+    @Inject('PUB_SUB') private readonly pubSub: RedisPubSub,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -64,6 +67,12 @@ export class EntityEventsToDbListener {
     );
 
     await Promise.all([
+      this.pubSub.publish('onDbEvent', {
+        onDbEvent: {
+          action,
+          payload: action,
+        },
+      }),
       this.webhookQueueService.add<WorkspaceEventBatch<T>>(
         CallWebhookJobsJob.name,
         batchEvent,

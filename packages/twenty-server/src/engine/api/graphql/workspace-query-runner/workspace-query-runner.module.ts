@@ -15,6 +15,7 @@ import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.mod
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 
 import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listener';
 
@@ -31,6 +32,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     FileModule,
     FeatureFlagModule,
     RecordPositionModule,
+    SubscriptionsModule,
   ],
   providers: [
     ...workspaceQueryRunnerFactories,
