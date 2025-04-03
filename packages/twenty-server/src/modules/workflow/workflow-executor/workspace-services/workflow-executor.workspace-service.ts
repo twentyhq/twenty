@@ -188,7 +188,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create().workspaceId ?? '';
 
-    return await this.billingService.canBillMeteredProduct(
+    return this.billingService.canBillMeteredProduct(
       workspaceId,
       BillingProductKey.WORKFLOW_NODE_EXECUTION,
     );
