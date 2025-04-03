@@ -9,6 +9,7 @@ import { TEXT_INPUT_STYLE } from 'twenty-ui';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { css } from '@emotion/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -61,7 +62,7 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
 
 type PhonesFieldInputProps = {
   onCancel?: () => void;
-  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
+  onClickOutside?: FieldInputClickOutsideEvent;
 };
 
 export const PhonesFieldInput = ({
