@@ -38,15 +38,26 @@ jobs:
           - 8123:8123
           - 9000:9000
         options: >-
-          --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
+          --health-cmd "clickhouse-client --password=ciPassword --query='SELECT 1'" 
+          --health-interval 10s 
+          --health-timeout 5s 
           --health-retries 5
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Wait for ClickHouse
+        timeout-minutes: 1
+        run: |
+          until curl -s http://default:ciPassword@localhost:8123/ping; do
+            echo "Waiting for ClickHouse..."
+            sleep 2
+          done
+          echo "ClickHouse is up!"
+      - name: Run a test query
+        run: |
+          clickhouse-client --host=localhost --password=ciPassword --query="SELECT version();"
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
       - name: Restore clickhouse setup
@@ -63,10 +74,6 @@ jobs:
           echo -e "\nCLICKHOUSE_URL=http://default:ciPassword@localhost:8123" >> packages/twenty-server/.env
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
-      - name: Verify ClickHouse is working
-        run: |
-          echo "SELECT 1" | curl -s --data-binary @- http://default:ciPassword@localhost:8123/
-          echo "SHOW TABLES" | curl -s --data-binary @- http://default:ciPassword@localhost:8123/
       - name: Save clickhouse setup
         uses: ./.github/workflows/actions/save-cache
         with:
