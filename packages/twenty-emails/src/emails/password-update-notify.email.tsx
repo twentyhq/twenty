@@ -1,5 +1,5 @@
 import { i18n } from '@lingui/core';
-
+import { Trans } from '@lingui/react';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
@@ -25,13 +25,13 @@ export const PasswordUpdateNotifyEmail = ({
     <BaseEmail locale={locale}>
       <Title value={i18n._('Password updated')} />
       <MainText>
-        {userName?.length > 1 ? i18n._(`Dear ${userName}`) : i18n._('Hello')}
-        ,
+        {userName?.length > 1 ? i18n._(`Dear ${userName},`) : i18n._('Hello,')}
         <br />
         <br />
-        {i18n._(
-          `This is a confirmation that password for your account (${email}) was successfully changed on ${formattedDate}.`,
-        )}
+        <Trans
+          id="This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+          values={{ email, formattedDate }}
+        />
         <br />
         <br />
         {i18n._(
@@ -45,6 +45,9 @@ export const PasswordUpdateNotifyEmail = ({
 };
 
 PasswordUpdateNotifyEmail.PreviewProps = {
+  userName: 'John Doe',
+  email: 'john.doe@example.com',
+  link: 'https://app.twenty.com',
   locale: 'en',
 } as PasswordUpdateNotifyEmailProps;
 

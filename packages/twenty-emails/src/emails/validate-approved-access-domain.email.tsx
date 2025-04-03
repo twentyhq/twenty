@@ -1,4 +1,5 @@
 import { i18n } from '@lingui/core';
+import { Trans } from '@lingui/react';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
@@ -38,25 +39,38 @@ export const SendApprovedAccessDomainValidation = ({
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : null;
 
+  const senderName = capitalize(sender.firstName);
+  const senderEmail = sender.email;
+
   return (
     <BaseEmail width={333} locale={locale}>
       <Title value={i18n._('Validate domain')} />
       <MainText>
-        {capitalize(sender.firstName)} (
-        <Link
-          href={`mailto:${sender.email}`}
-          value={sender.email}
-          color={emailTheme.font.colors.blue}
+        <Trans
+          id="{senderName} (<0>{senderEmail}</0>) Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+          values={{ senderName, senderEmail, domain }}
+          components={{
+            0: (
+              <Link
+                href={`mailto:${senderEmail}`}
+                value={senderEmail}
+                color={emailTheme.font.colors.blue}
+              />
+            ),
+            1: <b />,
+          }}
         />
-        ) {i18n._('Please validate this domain to allow users with')}{' '}
-        <b>@{domain}</b>{' '}
-        {i18n._(
-          'email addresses to join your workspace without requiring an invitation.',
-        )}
         <br />
       </MainText>
       <HighlightedContainer>
-        {workspaceLogo && <Img src={workspaceLogo} width={40} height={40} />}
+        {workspaceLogo && (
+          <Img
+            src={workspaceLogo}
+            width={40}
+            height={40}
+            alt="Workspace logo"
+          />
+        )}
         {workspace.name && <HighlightedText value={workspace.name} />}
         <CallToAction href={link} value={i18n._('Validate domain')} />
       </HighlightedContainer>

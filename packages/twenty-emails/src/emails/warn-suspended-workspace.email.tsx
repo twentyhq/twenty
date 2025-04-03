@@ -1,4 +1,5 @@
 import { i18n } from '@lingui/core';
+import { Trans } from '@lingui/react';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
@@ -22,7 +23,7 @@ export const WarnSuspendedWorkspaceEmail = ({
 }: WarnSuspendedWorkspaceEmailProps) => {
   const daysLeft = inactiveDaysBeforeDelete - daysSinceInactive;
   const dayOrDays = daysLeft > 1 ? 'days' : 'day';
-  const remainingDays = daysLeft > 0 ? `${daysLeft} ` : '';
+  const remainingDays = daysLeft > 0 ? daysLeft : 0;
 
   return (
     <BaseEmail width={333} locale={locale}>
@@ -31,19 +32,23 @@ export const WarnSuspendedWorkspaceEmail = ({
         {userName?.length > 1 ? i18n._(`Dear ${userName},`) : i18n._('Hello,')}
         <br />
         <br />
-        {i18n._(
-          `It appears that your workspace <b>${workspaceDisplayName}</b> has been suspended for ${daysSinceInactive} days.`,
-        )}
+        <Trans
+          id="It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
+          values={{ workspaceDisplayName, daysSinceInactive }}
+          components={{ 0: <b /> }}
+        />
         <br />
         <br />
-        {i18n._(
-          `The workspace will be deactivated in ${remainingDays} ${dayOrDays}, and all its data will be deleted.`,
-        )}
+        <Trans
+          id="The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
+          values={{ remainingDays, dayOrDays }}
+        />
         <br />
         <br />
-        {i18n._(
-          `If you wish to continue using Twenty, please update your subscription within the next ${remainingDays} ${dayOrDays}.`,
-        )}
+        <Trans
+          id="If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+          values={{ remainingDays, dayOrDays }}
+        />
       </MainText>
       <CallToAction
         href="https://app.twenty.com/settings/billing"

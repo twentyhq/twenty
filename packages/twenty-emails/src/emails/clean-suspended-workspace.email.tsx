@@ -1,4 +1,5 @@
 import { i18n } from '@lingui/core';
+import { Trans } from '@lingui/react';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
@@ -25,9 +26,11 @@ export const CleanSuspendedWorkspaceEmail = ({
         {userName?.length > 1 ? i18n._(`Dear ${userName},`) : i18n._('Hello,')}
         <br />
         <br />
-        {i18n._(
-          `Your workspace${workspaceDisplayName} has been deleted as your subscription expired ${daysSinceInactive} days ago.`,
-        )}
+        <Trans
+          id="Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+          values={{ workspaceDisplayName, daysSinceInactive }}
+          components={{ 0: <b /> }}
+        />
         <br />
         <br />
         {i18n._('All data in this workspace has been permanently deleted.')}

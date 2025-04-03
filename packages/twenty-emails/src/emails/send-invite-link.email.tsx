@@ -1,4 +1,5 @@
 import { i18n } from '@lingui/core';
+import { Trans } from '@lingui/react';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
@@ -37,18 +38,28 @@ export const SendInviteLinkEmail = ({
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : null;
 
+  const senderName = capitalize(sender.firstName);
+  const senderEmail = sender.email;
+  const workspaceName = workspace.name;
+
   return (
     <BaseEmail width={333} locale={locale}>
       <Title value={i18n._('Join your team on Twenty')} />
       <MainText>
-        {capitalize(sender.firstName)} (
-        <Link
-          href={`mailto:${sender.email}`}
-          value={sender.email}
-          color={emailTheme.font.colors.blue}
+        <Trans
+          id="{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>"
+          values={{ senderName, senderEmail, workspaceName }}
+          components={{
+            0: (
+              <Link
+                href={`mailto:${senderEmail}`}
+                value={senderEmail}
+                color={emailTheme.font.colors.blue}
+              />
+            ),
+            1: <b />,
+          }}
         />
-        ) {i18n._('has invited you to join a workspace called')}{' '}
-        <b>{workspace.name}</b>
         <br />
       </MainText>
       <HighlightedContainer>

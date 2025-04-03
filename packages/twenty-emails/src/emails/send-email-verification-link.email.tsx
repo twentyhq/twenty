@@ -1,5 +1,5 @@
 import { i18n } from '@lingui/core';
-
+import { Trans } from '@lingui/react';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
@@ -22,9 +22,7 @@ export const SendEmailVerificationLinkEmail = ({
       <br />
       <br />
       <MainText>
-        {i18n._(
-          'Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address.',
-        )}
+        <Trans id="Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click above to verify your email address." />
       </MainText>
     </BaseEmail>
   );
