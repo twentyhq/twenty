@@ -1,10 +1,10 @@
-import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { MessageDescriptor } from '@lingui/core';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
@@ -20,6 +20,6 @@ export type RecordConfigAction = {
   accent?: MenuItemAccent;
   availableOn?: ActionViewType[];
   shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
-  useAction: ActionHook;
+  component?: React.ComponentType<{ objectMetadataItem: ObjectMetadataItem }>;
   hotKeys?: string[];
 };

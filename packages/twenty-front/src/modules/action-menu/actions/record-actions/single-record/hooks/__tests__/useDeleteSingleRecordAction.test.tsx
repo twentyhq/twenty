@@ -4,7 +4,7 @@ import { act } from 'react';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
-import { useDeleteSingleRecordAction } from '../useDeleteSingleRecordAction';
+import { DeleteSingleRecordActionEffect } from '../../components/DeleteSingleRecordAction';
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
@@ -38,7 +38,7 @@ describe('useDeleteSingleRecordAction', () => {
   it('should call deleteOneRecord on click', () => {
     const { result } = renderHook(
       () =>
-        useDeleteSingleRecordAction({
+        DeleteSingleRecordActionEffect({
           objectMetadataItem: personMockObjectMetadataItem,
         }),
       {

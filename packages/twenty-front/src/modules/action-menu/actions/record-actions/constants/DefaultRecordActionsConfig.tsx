@@ -3,25 +3,24 @@ import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-ac
 import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { useRestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useRestoreMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { useCreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useCreateNewTableRecordNoSelectionRecordAction';
-import { useGoToCompaniesNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToCompaniesNoSelectionRecordAction';
-import { useGoToOpportunitiesNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToOpportunitiesNoSelectionRecordAction';
-import { useGoToPeopleNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToPeopleNoSelectionRecordAction';
-import { useGoToSettingsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToSettingsNoSelectionRecordAction';
-import { useGoToTasksNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useGoToTasksNoSelectionRecordAction';
-import { useHideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useHideDeletedRecordsNoSelectionRecordAction';
-import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
-import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
-import { useSeeWorkflowsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeWorkflowsNoSelectionRecordAction';
+import { CreateNewTableRecordNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewTableRecordNoSelectionRecordActionEffect';
+import { GoToCompaniesNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToCompaniesNoSelectionRecordActionEffect';
+import { GoToOpportunitiesNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToOpportunitiesNoSelectionRecordActionEffect';
+import { GoToPeopleNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToPeopleNoSelectionRecordActionEffect';
+import { GoToSettingsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToSettingsNoSelectionRecordActionEffect';
+import { GoToTasksNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToTasksNoSelectionRecordActionEffect';
+import { HideDeletedRecordsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/HideDeletedRecordsNoSelectionRecordActionEffect';
+import { ImportRecordsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/ImportRecordsNoSelectionRecordActionEffect';
+import { SeeDeletedRecordsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeDeletedRecordsNoSelectionRecordActionEffect';
+import { SeeWorkflowsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeWorkflowsNoSelectionRecordActionEffect';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
-import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
-import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
-import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDestroySingleRecordAction';
-import { useExportNoteAction } from '@/action-menu/actions/record-actions/single-record/hooks/useExportNoteAction';
-import { useNavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToNextRecordSingleRecordAction';
-import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useNavigateToPreviousRecordSingleRecordAction';
-import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
-import { useRestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRestoreSingleRecordAction';
+import { AddToFavoritesSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordActionEffect';
+import { DeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction';
+import { DestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction';
+import { ExportNoteActionSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/ExportNoteActionSingleRecordActionEffect';
+import { NavigateToNextRecordSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/NavigateToNextRecordSingleRecordActionEffect';
+import { NavigateToPreviousRecordSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/NavigateToPreviousRecordSingleRecordActionEffect';
+import { RemoveFromFavoritesSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/RemoveFromFavoritesSingleRecordActionEffect';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
@@ -72,7 +71,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({ hasObjectReadOnlyPermission }) =>
       !hasObjectReadOnlyPermission,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useCreateNewTableRecordNoSelectionRecordAction,
+    component: CreateNewTableRecordNoSelectionRecordActionEffect,
   },
   [SingleRecordActionKeys.EXPORT_NOTE_TO_PDF]: {
     type: ActionMenuEntryType.Standard,
@@ -88,7 +87,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isNoteOrTask &&
       isNonEmptyString(selectedRecord?.bodyV2?.blocknote),
     availableOn: [ActionViewType.SHOW_PAGE],
-    useAction: useExportNoteAction,
+    component: ExportNoteActionSingleRecordActionEffect,
   },
   [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
     type: ActionMenuEntryType.Standard,
@@ -105,7 +104,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    useAction: useAddToFavoritesSingleRecordAction,
+    component: AddToFavoritesSingleRecordActionEffect,
   },
   [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
     type: ActionMenuEntryType.Standard,
@@ -125,7 +124,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    useAction: useRemoveFromFavoritesSingleRecordAction,
+    component: RemoveFromFavoritesSingleRecordActionEffect,
   },
   [SingleRecordActionKeys.EXPORT]: {
     type: ActionMenuEntryType.Standard,
@@ -189,7 +188,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    useAction: useDeleteSingleRecordAction,
+    component: DeleteSingleRecordAction,
   },
   [MultipleRecordsActionKeys.DELETE]: {
     type: ActionMenuEntryType.Standard,
@@ -228,7 +227,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
       !isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useSeeDeletedRecordsNoSelectionRecordAction,
+    component: SeeDeletedRecordsNoSelectionRecordActionEffect,
   },
   [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
     type: ActionMenuEntryType.Standard,
@@ -243,7 +242,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
       isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useHideDeletedRecordsNoSelectionRecordAction,
+    component: HideDeletedRecordsNoSelectionRecordActionEffect,
   },
   [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
     type: ActionMenuEntryType.Standard,
@@ -257,7 +256,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useImportRecordsNoSelectionRecordAction,
+    component: ImportRecordsNoSelectionRecordActionEffect,
   },
   [SingleRecordActionKeys.DESTROY]: {
     type: ActionMenuEntryType.Standard,
@@ -281,7 +280,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    useAction: useDestroySingleRecordAction,
+    component: DestroySingleRecordAction,
   },
   [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
     type: ActionMenuEntryType.Standard,
@@ -293,7 +292,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconChevronUp,
     shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
     availableOn: [ActionViewType.SHOW_PAGE],
-    useAction: useNavigateToPreviousRecordSingleRecordAction,
+    component: NavigateToPreviousRecordSingleRecordActionEffect,
   },
   [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
     type: ActionMenuEntryType.Standard,
@@ -305,7 +304,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconChevronDown,
     shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
     availableOn: [ActionViewType.SHOW_PAGE],
-    useAction: useNavigateToNextRecordSingleRecordAction,
+    component: NavigateToNextRecordSingleRecordActionEffect,
   },
   [MultipleRecordsActionKeys.DESTROY]: {
     type: ActionMenuEntryType.Standard,
@@ -397,7 +396,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useSeeWorkflowsNoSelectionRecordAction,
+    component: SeeWorkflowsNoSelectionRecordActionEffect,
     hotKeys: ['G', 'W'],
   },
   [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
@@ -416,7 +415,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    useAction: useGoToPeopleNoSelectionRecordAction,
+    component: GoToPeopleNoSelectionRecordActionEffect,
     hotKeys: ['G', 'P'],
   },
   [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
@@ -435,7 +434,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    useAction: useGoToCompaniesNoSelectionRecordAction,
+    component: GoToCompaniesNoSelectionRecordActionEffect,
     hotKeys: ['G', 'C'],
   },
   [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
@@ -454,7 +453,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    useAction: useGoToOpportunitiesNoSelectionRecordAction,
+    component: GoToOpportunitiesNoSelectionRecordActionEffect,
     hotKeys: ['G', 'O'],
   },
   [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
@@ -473,7 +472,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    useAction: useGoToSettingsNoSelectionRecordAction,
+    component: GoToSettingsNoSelectionRecordActionEffect,
     hotKeys: ['G', 'S'],
   },
   [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
@@ -492,7 +491,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    useAction: useGoToTasksNoSelectionRecordAction,
+    component: GoToTasksNoSelectionRecordActionEffect,
     hotKeys: ['G', 'T'],
   },
 };
