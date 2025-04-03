@@ -107,6 +107,10 @@ export class AppModule {
       .apply(GraphQLHydrateRequestFromTokenMiddleware)
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
 
+    consumer
+      .apply(GraphQLHydrateRequestFromTokenMiddleware)
+      .forRoutes({ path: 'subscription', method: RequestMethod.ALL });
+
     for (const method of MIGRATED_REST_METHODS) {
       consumer.apply(RestCoreMiddleware).forRoutes({ path: 'rest/*', method });
     }
