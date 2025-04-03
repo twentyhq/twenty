@@ -1,7 +1,7 @@
-import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
-import { useDestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDestroyMultipleRecordsAction';
-import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
-import { useRestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useRestoreMultipleRecordsAction';
+import { DeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsActionEffect';
+import { DestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsActionEffect';
+import { ExportMultipleRecordsActionEffect } from '@/action-menu/actions/record-actions/multiple-records/components/ExportMultipleRecordsActionEffect';
+import { RestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsActionEffect';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { CreateNewTableRecordNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewTableRecordNoSelectionRecordActionEffect';
 import { GoToCompaniesNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToCompaniesNoSelectionRecordActionEffect';
@@ -21,6 +21,7 @@ import { ExportNoteActionSingleRecordActionEffect } from '@/action-menu/actions/
 import { NavigateToNextRecordSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/NavigateToNextRecordSingleRecordActionEffect';
 import { NavigateToPreviousRecordSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/NavigateToPreviousRecordSingleRecordActionEffect';
 import { RemoveFromFavoritesSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/RemoveFromFavoritesSingleRecordActionEffect';
+import { RestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
@@ -142,7 +143,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    useAction: useExportMultipleRecordsAction,
+    component: ExportMultipleRecordsActionEffect,
   },
   [MultipleRecordsActionKeys.EXPORT]: {
     type: ActionMenuEntryType.Standard,
@@ -156,7 +157,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    useAction: useExportMultipleRecordsAction,
+    component: ExportMultipleRecordsActionEffect,
   },
   [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
     type: ActionMenuEntryType.Standard,
@@ -170,7 +171,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    useAction: useExportMultipleRecordsAction,
+    component: ExportMultipleRecordsActionEffect,
   },
   [SingleRecordActionKeys.DELETE]: {
     type: ActionMenuEntryType.Standard,
@@ -212,7 +213,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(numberOfSelectedRecords) &&
       numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    useAction: useDeleteMultipleRecordsAction,
+    component: DeleteMultipleRecordsAction,
   },
   [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
     type: ActionMenuEntryType.Standard,
@@ -329,7 +330,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(numberOfSelectedRecords) &&
       numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    useAction: useDestroyMultipleRecordsAction,
+    component: DestroyMultipleRecordsAction,
   },
   [SingleRecordActionKeys.RESTORE]: {
     type: ActionMenuEntryType.Standard,
@@ -357,7 +358,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
-    useAction: useRestoreSingleRecordAction,
+    component: RestoreSingleRecordAction,
   },
   [MultipleRecordsActionKeys.RESTORE]: {
     type: ActionMenuEntryType.Standard,
@@ -382,7 +383,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(numberOfSelectedRecords) &&
       numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    useAction: useRestoreMultipleRecordsAction,
+    component: RestoreMultipleRecordsAction,
   },
   [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
     type: ActionMenuEntryType.Navigation,
