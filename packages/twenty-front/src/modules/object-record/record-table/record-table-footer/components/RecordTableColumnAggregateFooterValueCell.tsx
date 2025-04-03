@@ -9,7 +9,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconChevronDown } from 'twenty-ui';
+import { IconChevronDown } from 'twenty-ui/display';
 
 const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
   align-items: center;

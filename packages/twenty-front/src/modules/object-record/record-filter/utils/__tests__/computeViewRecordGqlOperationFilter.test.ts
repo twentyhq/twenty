@@ -933,4 +933,156 @@ describe('should work as expected for the different field types', () => {
       ],
     });
   });
+
+  it('select field type with empty options', () => {
+    const selectFieldMetadata = companyMockObjectMetadataItem.fields.find(
+      (field) => field.type === FieldMetadataType.SELECT,
+    );
+
+    if (!selectFieldMetadata) {
+      throw new Error(
+        `Select field metadata not found ${companyMockObjectMetadataItem.fields.map((field) => [field.name, field.type])}`,
+      );
+    }
+
+    const selectFilterIs: RecordFilter = {
+      id: 'company-select-filter-is',
+      value: '["option1",""]',
+      fieldMetadataId: selectFieldMetadata?.id,
+      displayValue: '["option1",""]',
+      operand: ViewFilterOperand.Is,
+      label: 'Select',
+      type: FieldMetadataType.SELECT,
+    };
+
+    const selectFilterIsNot: RecordFilter = {
+      id: 'company-select-filter-is-not',
+      value: '["option1",""]',
+      fieldMetadataId: selectFieldMetadata.id,
+      displayValue: '["option1",""]',
+      operand: ViewFilterOperand.IsNot,
+      label: 'Select',
+      type: FieldMetadataType.SELECT,
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [selectFilterIs, selectFilterIsNot],
+      recordFilterGroups: [],
+      fields: companyMockObjectMetadataItem.fields,
+    });
+
+    expect(result).toEqual({
+      and: [
+        {
+          or: [
+            {
+              [selectFieldMetadata.name]: {
+                in: ['option1'],
+              },
+            },
+            {
+              [selectFieldMetadata.name]: {
+                is: 'NULL',
+              },
+            },
+          ],
+        },
+        {
+          and: [
+            {
+              not: {
+                [selectFieldMetadata.name]: {
+                  in: ['option1'],
+                },
+              },
+            },
+            {
+              not: {
+                [selectFieldMetadata.name]: {
+                  is: 'NULL',
+                },
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('multi-select field type with empty options', () => {
+    const multiSelectFieldMetadata = companyMockObjectMetadataItem.fields.find(
+      (field) => field.type === FieldMetadataType.MULTI_SELECT,
+    )!;
+
+    const multiSelectFilterContains: RecordFilter = {
+      id: 'company-multi-select-filter-contains',
+      value: '["option1",""]',
+      fieldMetadataId: multiSelectFieldMetadata.id,
+      displayValue: '["option1",""]',
+      operand: ViewFilterOperand.Contains,
+      label: 'MultiSelect',
+      type: FieldMetadataType.MULTI_SELECT,
+    };
+
+    const multiSelectFilterDoesNotContain: RecordFilter = {
+      id: 'company-multi-select-filter-does-not-contain',
+      value: '["option1",""]',
+      fieldMetadataId: multiSelectFieldMetadata.id,
+      displayValue: '["option1",""]',
+      operand: ViewFilterOperand.DoesNotContain,
+      label: 'MultiSelect',
+      type: FieldMetadataType.MULTI_SELECT,
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [
+        multiSelectFilterContains,
+        multiSelectFilterDoesNotContain,
+      ],
+      recordFilterGroups: [],
+      fields: companyMockObjectMetadataItem.fields,
+    });
+
+    expect(result).toEqual({
+      and: [
+        {
+          or: [
+            {
+              [multiSelectFieldMetadata.name]: {
+                containsAny: ['option1'],
+              },
+            },
+            {
+              [multiSelectFieldMetadata.name]: {
+                isEmptyArray: true,
+              },
+            },
+          ],
+        },
+        {
+          or: [
+            {
+              not: {
+                [multiSelectFieldMetadata.name]: {
+                  containsAny: ['option1'],
+                },
+              },
+            },
+            {
+              [multiSelectFieldMetadata.name]: {
+                isEmptyArray: true,
+              },
+            },
+            {
+              [multiSelectFieldMetadata.name]: {
+                is: 'NULL',
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
 });

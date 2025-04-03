@@ -4,10 +4,10 @@ import { useCallback } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { Button } from 'twenty-ui';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
 import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 const StyledDialogOverlay = styled(motion.div)`

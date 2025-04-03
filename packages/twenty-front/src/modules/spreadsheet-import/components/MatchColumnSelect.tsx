@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { AppTooltip, MenuItem, MenuItemSelect, SelectOption } from 'twenty-ui';
+import { createPortal } from 'react-dom';
 import { ReadonlyDeep } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -9,7 +9,9 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useLingui } from '@lingui/react/macro';
-import { createPortal } from 'react-dom';
+import { AppTooltip } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 

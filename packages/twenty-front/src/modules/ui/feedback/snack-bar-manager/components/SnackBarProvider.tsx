@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useSnackBarManagerScopedStates } from '@/ui/feedback/snack-bar-manager/hooks/internal/useSnackBarManagerScopedStates';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -8,6 +7,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { SnackBar } from './SnackBar';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledSnackBarContainer = styled.div`
   bottom: ${({ theme }) => theme.spacing(3)};

@@ -5,7 +5,7 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import { IconArrowDown, IconDotsVertical } from 'twenty-ui';
+import { IconArrowDown, IconDotsVertical } from 'twenty-ui/display';
 
 const mockedPageInfo = {
   title: 'Initial Title',

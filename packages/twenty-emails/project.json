@@ -11,6 +11,13 @@
       },
       "dependsOn": ["^build"]
     },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "email dev -d src/emails -p 4001"
+      }
+    },
     "typecheck": {},
     "lint": {
       "options": {

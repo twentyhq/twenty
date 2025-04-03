@@ -1,7 +1,8 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconLayoutSidebarRightExpand, getOsControlSymbol } from 'twenty-ui';
+import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledButton = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};

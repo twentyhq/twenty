@@ -5,7 +5,8 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import styled from '@emotion/styled';
-import { SelectOption, useIcons } from 'twenty-ui';
+import { SelectOption } from 'twenty-ui/input';
+import { useIcons } from 'twenty-ui/display';
 
 type WorkflowFormFieldSettingsRecordPickerProps = {
   label?: string;

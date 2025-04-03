@@ -17,7 +17,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Button, IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui';
 import { v4 } from 'uuid';
 import {
   FeatureFlagKey,
@@ -27,6 +26,8 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Button } from 'twenty-ui/input';
+import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
 
 type SettingsRoleProps = {
   roleId: string;

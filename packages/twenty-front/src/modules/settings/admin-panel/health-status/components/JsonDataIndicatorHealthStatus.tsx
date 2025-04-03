@@ -2,8 +2,9 @@ import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/heal
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { JsonTree, Section } from 'twenty-ui';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
+import { JsonTree } from 'twenty-ui/json-visualizer';
+import { Section } from 'twenty-ui/layout';
 
 const StyledDetailsContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};

@@ -2,11 +2,11 @@ import { WorkflowFormAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { ComponentDecorator } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowEditActionFormFieldSettings } from '../WorkflowEditActionFormFieldSettings';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof WorkflowEditActionFormFieldSettings> = {
   title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormFieldSettings',
@@ -97,8 +97,8 @@ export const SingleRecordFieldSettings: Story = {
   args: {
     field: {
       id: 'field-3',
-      name: 'record',
-      label: 'Record',
+      name: 'company',
+      label: 'Company',
       type: 'RECORD',
       settings: {
         objectName: 'company',
@@ -115,6 +115,30 @@ export const SingleRecordFieldSettings: Story = {
 
     const objectSelect = await canvas.findByText('Companies');
     expect(objectSelect).toBeVisible();
+
+    const closeButton = await canvas.findByTestId('close-button');
+    await userEvent.click(closeButton);
+    expect(args.onClose).toHaveBeenCalled();
+  },
+};
+
+export const DateFieldSettings: Story = {
+  args: {
+    field: {
+      id: 'field-4',
+      name: 'date',
+      label: 'Date Field',
+      type: FieldMetadataType.DATE,
+      placeholder: 'Enter date',
+      settings: {},
+    },
+    onClose: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const typeSelect = await canvas.findByText('Date');
+    expect(typeSelect).toBeVisible();
 
     const closeButton = await canvas.findByTestId('close-button');
     await userEvent.click(closeButton);

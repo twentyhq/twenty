@@ -33,8 +33,8 @@ import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledCommandMenu = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};

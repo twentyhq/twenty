@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedExpandableContainer } from 'twenty-ui';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 const getExpandableContainerTitle = <T extends string>(
   fields: SpreadsheetImportFields<T>,

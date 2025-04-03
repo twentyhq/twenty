@@ -11,9 +11,9 @@ import {
   AnimatedPlaceholderErrorContainer,
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
-  MainButton,
-  UndecoratedLink,
-} from 'twenty-ui';
+} from 'twenty-ui/layout';
+import { MainButton } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledBackDrop = styled.div`
   align-items: center;

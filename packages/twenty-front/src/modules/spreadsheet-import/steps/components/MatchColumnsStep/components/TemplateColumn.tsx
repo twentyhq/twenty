@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { IconForbid } from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -7,6 +6,7 @@ import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetCol
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { IconForbid } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   display: flex;

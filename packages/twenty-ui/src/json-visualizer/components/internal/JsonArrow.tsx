@@ -27,9 +27,11 @@ const MotionIconChevronDown = motion.create(IconChevronDown);
 export const JsonArrow = ({
   isOpen,
   onClick,
+  variant,
 }: {
   isOpen: boolean;
   onClick: () => void;
+  variant?: 'blue';
 }) => {
   const theme = useTheme();
 
@@ -44,7 +46,9 @@ export const JsonArrow = ({
 
       <MotionIconChevronDown
         size={theme.icon.size.md}
-        color={theme.font.color.secondary}
+        color={
+          variant === 'blue' ? theme.color.blue : theme.font.color.secondary
+        }
         initial={false}
         animate={{ rotate: isOpen ? 0 : -90 }}
         transition={{ duration: ANIMATION.duration.normal }}

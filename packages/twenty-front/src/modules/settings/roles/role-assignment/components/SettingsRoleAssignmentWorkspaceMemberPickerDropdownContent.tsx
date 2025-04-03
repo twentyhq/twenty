@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
-import { MenuItem, MenuItemAvatar } from 'twenty-ui';
 import { SearchRecord } from '~/generated-metadata/graphql';
+import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;

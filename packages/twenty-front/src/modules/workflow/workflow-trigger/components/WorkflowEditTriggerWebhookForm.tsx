@@ -1,6 +1,5 @@
 import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import { useIcons, IconCopy } from 'twenty-ui';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -14,6 +13,7 @@ import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons, IconCopy } from 'twenty-ui/display';
 
 type WorkflowEditTriggerWebhookFormProps = {
   trigger: WorkflowWebhookTrigger;

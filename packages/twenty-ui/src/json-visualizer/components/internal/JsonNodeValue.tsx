@@ -8,7 +8,7 @@ const StyledText = styled.span<{
     highlighting === 'blue'
       ? theme.adaptiveColors.blue4
       : highlighting === 'red'
-        ? theme.font.color.danger
+        ? theme.adaptiveColors.red4
         : theme.font.color.tertiary};
 `;
 

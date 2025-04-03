@@ -4,6 +4,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
+import { Role } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
   AppTooltip,
   Avatar,
@@ -11,9 +13,7 @@ import {
   IconLock,
   TooltipDelay,
   useIcons,
-} from 'twenty-ui';
-import { Role } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+} from 'twenty-ui/display';
 
 const StyledAssignedText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};

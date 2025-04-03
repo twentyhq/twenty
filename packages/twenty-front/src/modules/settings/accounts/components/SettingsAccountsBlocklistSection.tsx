@@ -1,5 +1,4 @@
 import { useRecoilValue } from 'recoil';
-import { H2Title, Section } from 'twenty-ui';
 
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -10,23 +9,25 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccountsBlocklistSection = () => {
   const { t } = useLingui();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  if (!currentWorkspaceMember) {
-    throw new Error('No workspace member found.');
-  }
+  const currentWorkspaceMemberId = currentWorkspaceMember?.id ?? '';
 
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
     objectNameSingular: CoreObjectNameSingular.Blocklist,
     filter: {
       workspaceMemberId: {
-        in: [currentWorkspaceMember.id],
+        in: [currentWorkspaceMemberId],
       },
     },
+    skip: !isDefined(currentWorkspaceMember),
   });
 
   const { createOneRecord: createBlocklistItem } =
