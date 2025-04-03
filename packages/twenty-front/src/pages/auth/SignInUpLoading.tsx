@@ -79,7 +79,7 @@ export const SignInUpLoading = () => {
             <StyledForm>
               <MainButton
                 disabled={true}
-                title={'Continue'}
+                title={t`Continue`}
                 type="submit"
                 variant={'primary'}
                 Icon={() => <Loader />}
