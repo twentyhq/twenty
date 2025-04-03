@@ -7,14 +7,6 @@
  *                              |___/
  */
 
-export type { AvatarChipProps } from './avatar-chip/components/AvatarChip';
-export { AvatarChip } from './avatar-chip/components/AvatarChip';
-export type { AvatarChipsLeftComponentProps } from './avatar-chip/components/AvatarChipLeftComponent';
-export { AvatarChipsLeftComponent } from './avatar-chip/components/AvatarChipLeftComponent';
-export type { LinkAvatarChipProps } from './avatar-chip/components/LinkAvatarChip';
-export { LinkAvatarChip } from './avatar-chip/components/LinkAvatarChip';
-export type { AvatarChipsCommonProps } from './avatar-chip/types/AvatarChipsCommonProps.type';
-export { AvatarChipVariant } from './avatar-chip/types/AvatarChipsVariant.type';
 export type { AvatarProps } from './avatar/components/Avatar';
 export { Avatar } from './avatar/components/Avatar';
 export type { AvatarGroupProps } from './avatar/components/AvatarGroup';
