@@ -1,4 +1,4 @@
-import { useRegisteredRecordActions } from '@/action-menu/hooks/useRegisteredRecordActions';
+import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -11,7 +11,7 @@ import {
 import { i18n } from '@lingui/core';
 
 export const useCommandMenuCommands = () => {
-  const actionMenuEntries = useRegisteredRecordActions();
+  const actionMenuEntries = useRegisteredActions();
 
   const navigateCommands = actionMenuEntries
     ?.filter(

@@ -1,4 +1,4 @@
-import { useRegisteredRecordActions } from '@/action-menu/hooks/useRegisteredRecordActions';
+import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
@@ -29,7 +29,7 @@ const StyledDropdownMenuContainer = styled.div`
 `;
 
 export const RecordIndexActionMenuDropdown = () => {
-  const actionMenuEntries = useRegisteredRecordActions();
+  const actionMenuEntries = useRegisteredActions();
 
   const recordIndexActions = actionMenuEntries.filter(
     (actionMenuEntry) =>

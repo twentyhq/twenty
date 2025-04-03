@@ -1,3 +1,4 @@
+import { RECORD_AGNOSTIC_ACTIONS_CONFIG } from '@/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
@@ -11,7 +12,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRegisteredRecordActions = () => {
+export const useRegisteredActions = () => {
   const localContextStoreCurrentObjectMetadataItemId =
     useRecoilComponentValueV2(
       contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -37,10 +38,6 @@ export const useRegisteredRecordActions = () => {
   const objectMetadataItem =
     localContextStoreObjectMetadataItem ?? mainContextStoreObjectMetadataItem;
 
-  if (!isDefined(objectMetadataItem)) {
-    throw new Error('Object metadata item not found');
-  }
-
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
   );
@@ -58,10 +55,17 @@ export const useRegisteredRecordActions = () => {
     contextStoreTargetedRecordsRule,
   );
 
-  const actionConfig = getActionConfig(objectMetadataItem);
+  const recordActionConfig = getActionConfig(objectMetadataItem);
+
+  const recordAgnosticActionConfig = RECORD_AGNOSTIC_ACTIONS_CONFIG;
+
+  const actionsConfig = {
+    ...recordActionConfig,
+    ...recordAgnosticActionConfig,
+  };
 
   const actionsToRegister = isDefined(viewType)
-    ? Object.values(actionConfig ?? {}).filter(
+    ? Object.values(actionsConfig ?? {}).filter(
         (action) =>
           action.availableOn?.includes(viewType) ||
           action.availableOn?.includes(ActionViewType.GLOBAL),

@@ -1,4 +1,4 @@
-import { useRegisteredRecordActions } from '@/action-menu/hooks/useRegisteredRecordActions';
+import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
@@ -14,7 +14,7 @@ import { i18n } from '@lingui/core';
 import { Button, MenuItem, getOsControlSymbol } from 'twenty-ui';
 
 export const CommandMenuActionMenuDropdown = () => {
-  const actionMenuEntries = useRegisteredRecordActions();
+  const actionMenuEntries = useRegisteredActions();
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,

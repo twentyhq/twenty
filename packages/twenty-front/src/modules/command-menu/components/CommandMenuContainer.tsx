@@ -1,7 +1,4 @@
-import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
-import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
-import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -159,11 +156,6 @@ export const CommandMenuContainer = ({
                   },
                 }}
               >
-                <RecordActionMenuEntriesSetter />
-                <RecordAgnosticActionMenuEntriesSetter />
-                {isWorkflowEnabled && (
-                  <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
-                )}
                 <AnimatePresence
                   mode="wait"
                   onExitComplete={commandMenuCloseAnimationCompleteCleanup}

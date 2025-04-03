@@ -19,7 +19,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem?: ObjectMetadataItem;
 }) => {
   const { sortedFavorites: favorites } = useFavorites();
 
@@ -41,7 +41,7 @@ export const useShouldActionBeRegisteredParams = ({
   const selectedRecord =
     useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
 
-  const isRemoteObject = objectMetadataItem.isRemote;
+  const isRemoteObject = objectMetadataItem?.isRemote;
 
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
@@ -69,7 +69,7 @@ export const useShouldActionBeRegisteredParams = ({
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId,
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Workflow,
+    objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Workflow,
   );
 
   return {

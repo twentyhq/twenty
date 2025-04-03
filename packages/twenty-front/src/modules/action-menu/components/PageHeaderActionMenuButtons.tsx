@@ -1,4 +1,4 @@
-import { useRegisteredRecordActions } from '@/action-menu/hooks/useRegisteredRecordActions';
+import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
 import {
@@ -14,7 +14,7 @@ const StyledWrapper = styled.div`
 `;
 
 export const PageHeaderActionMenuButtons = () => {
-  const actionMenuEntries = useRegisteredRecordActions();
+  const actionMenuEntries = useRegisteredActions();
 
   const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
 

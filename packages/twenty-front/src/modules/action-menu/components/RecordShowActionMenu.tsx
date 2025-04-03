@@ -1,14 +1,9 @@
-import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
-import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useIsMobile } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordShowActionMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
@@ -23,10 +18,6 @@ export const RecordShowActionMenu = () => {
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
 
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
-  );
-
   const isMobile = useIsMobile();
 
   return (
@@ -39,11 +30,6 @@ export const RecordShowActionMenu = () => {
           }}
         >
           {!isMobile && <PageHeaderActionMenuButtons />}
-          <RecordActionMenuEntriesSetter />
-          <RecordAgnosticActionMenuEntriesSetter />
-          {isWorkflowEnabled && (
-            <RunWorkflowRecordAgnosticActionMenuEntriesSetter />
-          )}
         </ActionMenuContext.Provider>
       )}
     </>
