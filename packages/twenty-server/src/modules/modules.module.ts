@@ -5,6 +5,7 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
 import { FavoriteFolderModule } from 'src/modules/favorite-folder/favorite-folder.module';
 import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
+import { SoapClientModule } from 'src/modules/soap-client/soap-client.module';
 import { TraceableModule } from 'src/modules/traceable/traceable.module';
 import { ViewModule } from 'src/modules/view/view.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
@@ -19,6 +20,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     FavoriteFolderModule,
     FavoriteModule,
     TraceableModule,
+    SoapClientModule,
   ],
   providers: [],
   exports: [],

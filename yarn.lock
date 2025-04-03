@@ -26287,6 +26287,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios-ntlm@npm:^1.4.3":
+  version: 1.4.4
+  resolution: "axios-ntlm@npm:1.4.4"
+  dependencies:
+    axios: "npm:^1.8.4"
+    des.js: "npm:^1.1.0"
+    dev-null: "npm:^0.1.1"
+    js-md4: "npm:^0.3.2"
+  checksum: 10c0/41c76fece41f5b883cebc3a641f2b5924f4bb32ee84b386f6fb14b934cdfbf86eedd44f2db23b53dcdfa073b246490bcddf9a85c2d1eb0711adb67cdbc7bebc8
+  languageName: node
+  linkType: hard
+
 "axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.6.2":
   version: 1.7.3
   resolution: "axios@npm:1.7.3"
@@ -26295,6 +26307,17 @@ __metadata:
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
   checksum: 10c0/a18cbe559203efa05fb1fec2d1898e23bf6329bd2575784ee32aa11b5bbe1d54b9f472c49a261294125519cf62aa4fe5ef6e647bb7482eafc15bffe15ab314ce
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.8.3, axios@npm:^1.8.4":
+  version: 1.8.4
+  resolution: "axios@npm:1.8.4"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/450993c2ba975ffccaf0d480b68839a3b2435a5469a71fa2fb0b8a55cdb2c2ae47e609360b9c1e2b2534b73dfd69e2733a1cf9f8215bee0bcd729b72f801b0ce
   languageName: node
   linkType: hard
 
@@ -31042,6 +31065,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"debug@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "debug@npm:4.4.0"
+  dependencies:
+    ms: "npm:^2.1.3"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10c0/db94f1a182bf886f57b4755f85b3a74c39b5114b9377b7ab375dc2cfa3454f09490cc6c30f829df3fc8042bc8b8995f6567ce5cd96f3bc3688bd24027197d9de
+  languageName: node
+  linkType: hard
+
 "debuglog@npm:^1.0.1":
   version: 1.0.1
   resolution: "debuglog@npm:1.0.1"
@@ -31380,7 +31415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"des.js@npm:^1.0.0":
+"des.js@npm:^1.0.0, des.js@npm:^1.1.0":
   version: 1.1.0
   resolution: "des.js@npm:1.1.0"
   dependencies:
@@ -31482,6 +31517,13 @@ __metadata:
   bin:
     detective: bin/detective.js
   checksum: 10c0/0d3bdfe49ef094165e7876d83ae1a9e0a07d037785ab0edc7b50df9e4390e0a050167670f3d2d506457c7b00b612471ba840898964422c425e50fe046a379e55
+  languageName: node
+  linkType: hard
+
+"dev-null@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "dev-null@npm:0.1.1"
+  checksum: 10c0/189223075b837c36adb05663ff16991a206cd85aaf3fb44e34be91c0858787c583b18683b581446dc40101989d9aaaf5a49c02bc2200c0955b07d833252ef86e
   languageName: node
   linkType: hard
 
@@ -34858,6 +34900,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"formidable@npm:^3.5.2":
+  version: 3.5.2
+  resolution: "formidable@npm:3.5.2"
+  dependencies:
+    dezalgo: "npm:^1.0.4"
+    hexoid: "npm:^2.0.0"
+    once: "npm:^1.4.0"
+  checksum: 10c0/c26d89ba84d392f0e68ba1aca9f779e0f2e94db053d95df562c730782956f302e3f069c07ab96f991415af915ac7b8771f4c813d298df43577fdf439e1e8741e
+  languageName: node
+  linkType: hard
+
 "forwarded@npm:0.2.0":
   version: 0.2.0
   resolution: "forwarded@npm:0.2.0"
@@ -35346,7 +35399,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-stream@npm:^6.0.0":
+"get-stream@npm:^6.0.0, get-stream@npm:^6.0.1":
   version: 6.0.1
   resolution: "get-stream@npm:6.0.1"
   checksum: 10c0/49825d57d3fd6964228e6200a58169464b8e8970489b3acdc24906c782fb7f01f9f56f8e6653c4a50713771d6658f7cfe051e5eb8c12e334138c9c918b296341
@@ -36882,6 +36935,13 @@ __metadata:
   version: 1.0.0
   resolution: "hexoid@npm:1.0.0"
   checksum: 10c0/9c45e8ba676b9eb88455631ebceec4c829a8374a583410dc735472ab9808bf11339fcd074633c3fa30e420901b894d8a92ffd5e2e21eddd41149546e05a91f69
+  languageName: node
+  linkType: hard
+
+"hexoid@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "hexoid@npm:2.0.0"
+  checksum: 10c0/a9d5e6f4adeaefcb4a53803dd48bf0a242d92e8ec699555aea616c4bf8f91788f03093595085976f63d6830815dd080c063503540fabc7e854ebfb11161687c6
   languageName: node
   linkType: hard
 
@@ -39809,6 +39869,13 @@ __metadata:
   version: 1.1.6
   resolution: "js-levenshtein@npm:1.1.6"
   checksum: 10c0/14045735325ea1fd87f434a74b11d8a14380f090f154747e613529c7cff68b5ee607f5230fa40665d5fb6125a3791f4c223f73b9feca754f989b059f5c05864f
+  languageName: node
+  linkType: hard
+
+"js-md4@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "js-md4@npm:0.3.2"
+  checksum: 10c0/8313e00c45f710a53bdadc199c095b48ebaf54ea7b8cdb67a3f1863c270a5e9d0f89f204436b73866002af8c7ac4cacc872fdf271fc70e26614e424c7685b577
   languageName: node
   linkType: hard
 
@@ -50978,7 +51045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sax@npm:>=0.6.0, sax@npm:^1.2.4":
+"sax@npm:>=0.6.0, sax@npm:^1.2.4, sax@npm:^1.4.1":
   version: 1.4.1
   resolution: "sax@npm:1.4.1"
   checksum: 10c0/6bf86318a254c5d898ede6bd3ded15daf68ae08a5495a2739564eb265cd13bcc64a07ab466fb204f67ce472bb534eb8612dac587435515169593f4fffa11de7c
@@ -51735,6 +51802,24 @@ __metadata:
     dot-case: "npm:^3.0.4"
     tslib: "npm:^2.0.3"
   checksum: 10c0/ab19a913969f58f4474fe9f6e8a026c8a2142a01f40b52b79368068343177f818cdfef0b0c6b9558f298782441d5ca8ed5932eb57822439fad791d866e62cecd
+  languageName: node
+  linkType: hard
+
+"soap@npm:^1.1.10":
+  version: 1.1.10
+  resolution: "soap@npm:1.1.10"
+  dependencies:
+    axios: "npm:^1.8.3"
+    axios-ntlm: "npm:^1.4.3"
+    debug: "npm:^4.4.0"
+    formidable: "npm:^3.5.2"
+    get-stream: "npm:^6.0.1"
+    lodash: "npm:^4.17.21"
+    sax: "npm:^1.4.1"
+    strip-bom: "npm:^3.0.0"
+    whatwg-mimetype: "npm:4.0.0"
+    xml-crypto: "npm:^6.0.1"
+  checksum: 10c0/f1120ff3fe675bed2e4b334b7af2eacee692665736cc4e45eaba5931fef5ab326909e65b30c8f44aa39d03d2a01a8f35583193395814c4975813f537f7c77197
   languageName: node
   linkType: hard
 
@@ -54319,6 +54404,7 @@ __metadata:
     psl: "npm:^1.9.0"
     redis: "npm:^4.7.0"
     rimraf: "npm:^5.0.5"
+    soap: "npm:^1.1.10"
     ts-morph: "npm:^24.0.0"
     tsconfig-paths: "npm:^4.2.0"
     twenty-emails: "workspace:*"
@@ -54705,6 +54791,7 @@ __metadata:
     sharp: "npm:^0.32.1"
     sip.js: "npm:^0.21.2"
     slash: "npm:^5.1.0"
+    soap: "npm:^1.1.10"
     source-map-support: "npm:^0.5.20"
     storybook: "npm:^7.6.3"
     storybook-addon-cookie: "npm:^3.2.0"
@@ -57047,17 +57134,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"whatwg-mimetype@npm:4.0.0, whatwg-mimetype@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "whatwg-mimetype@npm:4.0.0"
+  checksum: 10c0/a773cdc8126b514d790bdae7052e8bf242970cebd84af62fb2f35a33411e78e981f6c0ab9ed1fe6ec5071b09d5340ac9178e05b52d35a9c4bcf558ba1b1551df
+  languageName: node
+  linkType: hard
+
 "whatwg-mimetype@npm:^3.0.0":
   version: 3.0.0
   resolution: "whatwg-mimetype@npm:3.0.0"
   checksum: 10c0/323895a1cda29a5fb0b9ca82831d2c316309fede0365047c4c323073e3239067a304a09a1f4b123b9532641ab604203f33a1403b5ca6a62ef405bcd7a204080f
-  languageName: node
-  linkType: hard
-
-"whatwg-mimetype@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "whatwg-mimetype@npm:4.0.0"
-  checksum: 10c0/a773cdc8126b514d790bdae7052e8bf242970cebd84af62fb2f35a33411e78e981f6c0ab9ed1fe6ec5071b09d5340ac9178e05b52d35a9c4bcf558ba1b1551df
   languageName: node
   linkType: hard
 
@@ -57461,6 +57548,17 @@ __metadata:
     "@xmldom/xmldom": "npm:^0.8.10"
     xpath: "npm:^0.0.33"
   checksum: 10c0/1a9d8be4cc7a4c618fa413b8ef30f11cda9ae81f20bc03e84c51f6c61383168a9915f8c3a26061e2053e58807b76d3a13726338f7bc0d8c45285fbb1da296293
+  languageName: node
+  linkType: hard
+
+"xml-crypto@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "xml-crypto@npm:6.0.1"
+  dependencies:
+    "@xmldom/is-dom-node": "npm:^1.0.1"
+    "@xmldom/xmldom": "npm:^0.8.10"
+    xpath: "npm:^0.0.33"
+  checksum: 10c0/608121007ddc50e7e0e23c1305af1dba5e449ff79ab3d0ecfb034a8072896f47bc082d377d7ef13c4ee82137f64cd1b5dde1d2f8eecea59fda55a04c1b080d0a
   languageName: node
   linkType: hard
 
