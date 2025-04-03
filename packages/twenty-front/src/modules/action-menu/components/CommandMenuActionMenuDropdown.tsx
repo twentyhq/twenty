@@ -1,4 +1,4 @@
-import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
+import { useRegisteredRecordActions } from '@/action-menu/hooks/useRegisteredRecordActions';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
@@ -9,15 +9,12 @@ import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import { i18n } from '@lingui/core';
-import { Button, getOsControlSymbol, MenuItem } from 'twenty-ui';
+import { Button, MenuItem, getOsControlSymbol } from 'twenty-ui';
 
 export const CommandMenuActionMenuDropdown = () => {
-  const actionMenuEntries = useRecoilComponentValueV2(
-    actionMenuEntriesComponentSelector,
-  );
+  const actionMenuEntries = useRegisteredRecordActions();
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
@@ -74,7 +71,6 @@ export const CommandMenuActionMenuDropdown = () => {
                       actionMenuId,
                     ),
                   );
-                  actionMenuEntry.onClick?.();
                 }}
                 text={i18n._(actionMenuEntry.label)}
               />

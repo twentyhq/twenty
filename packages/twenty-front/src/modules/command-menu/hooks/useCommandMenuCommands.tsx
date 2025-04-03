@@ -1,4 +1,4 @@
-import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
+import { useRegisteredRecordActions } from '@/action-menu/hooks/useRegisteredRecordActions';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -8,13 +8,10 @@ import {
   CommandScope,
   CommandType,
 } from '@/command-menu/types/Command';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { i18n } from '@lingui/core';
 
 export const useCommandMenuCommands = () => {
-  const actionMenuEntries = useRecoilComponentValueV2(
-    actionMenuEntriesComponentSelector,
-  );
+  const actionMenuEntries = useRegisteredRecordActions();
 
   const navigateCommands = actionMenuEntries
     ?.filter(
@@ -25,7 +22,6 @@ export const useCommandMenuCommands = () => {
       id: actionMenuEntry.key,
       label: i18n._(actionMenuEntry.label),
       Icon: actionMenuEntry.Icon,
-      onCommandClick: actionMenuEntry.onClick,
       type: CommandType.Navigate,
       scope: CommandScope.Global,
       hotKeys: actionMenuEntry.hotKeys,
@@ -41,7 +37,6 @@ export const useCommandMenuCommands = () => {
       id: actionMenuEntry.key,
       label: i18n._(actionMenuEntry.label),
       Icon: actionMenuEntry.Icon,
-      onCommandClick: actionMenuEntry.onClick,
       type: CommandType.StandardAction,
       scope: CommandScope.RecordSelection,
       hotKeys: actionMenuEntry.hotKeys,
@@ -57,7 +52,6 @@ export const useCommandMenuCommands = () => {
       id: actionMenuEntry.key,
       label: i18n._(actionMenuEntry.label),
       Icon: actionMenuEntry.Icon,
-      onCommandClick: actionMenuEntry.onClick,
       type: CommandType.StandardAction,
       scope: CommandScope.Object,
       hotKeys: actionMenuEntry.hotKeys,
@@ -73,7 +67,6 @@ export const useCommandMenuCommands = () => {
       id: actionMenuEntry.key,
       label: i18n._(actionMenuEntry.label),
       Icon: actionMenuEntry.Icon,
-      onCommandClick: actionMenuEntry.onClick,
       type: CommandType.StandardAction,
       scope: CommandScope.Global,
       hotKeys: actionMenuEntry.hotKeys,
@@ -89,7 +82,6 @@ export const useCommandMenuCommands = () => {
       id: actionMenuEntry.key,
       label: i18n._(actionMenuEntry.label),
       Icon: actionMenuEntry.Icon,
-      onCommandClick: actionMenuEntry.onClick,
       type: CommandType.WorkflowRun,
       scope: CommandScope.RecordSelection,
       hotKeys: actionMenuEntry.hotKeys,
@@ -105,7 +97,6 @@ export const useCommandMenuCommands = () => {
       id: actionMenuEntry.key,
       label: i18n._(actionMenuEntry.label),
       Icon: actionMenuEntry.Icon,
-      onCommandClick: actionMenuEntry.onClick,
       type: CommandType.WorkflowRun,
       scope: CommandScope.Global,
       hotKeys: actionMenuEntry.hotKeys,
@@ -120,7 +111,6 @@ export const useCommandMenuCommands = () => {
       id: actionMenuEntry.key,
       label: i18n._(actionMenuEntry.label),
       Icon: actionMenuEntry.Icon,
-      onCommandClick: actionMenuEntry.onClick,
       type: CommandType.Fallback,
       scope: CommandScope.Global,
       hotKeys: actionMenuEntry.hotKeys,

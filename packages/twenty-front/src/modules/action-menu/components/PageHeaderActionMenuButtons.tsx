@@ -1,5 +1,4 @@
-import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRegisteredRecordActions } from '@/action-menu/hooks/useRegisteredRecordActions';
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
 import {
@@ -15,9 +14,7 @@ const StyledWrapper = styled.div`
 `;
 
 export const PageHeaderActionMenuButtons = () => {
-  const actionMenuEntries = useRecoilComponentValueV2(
-    actionMenuEntriesComponentSelector,
-  );
+  const actionMenuEntries = useRegisteredRecordActions();
 
   const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
 
@@ -32,7 +29,6 @@ export const PageHeaderActionMenuButtons = () => {
             variant="secondary"
             accent="default"
             title={entry.shortLabel ? i18n._(entry.shortLabel) : ''}
-            onClick={() => entry.onClick?.()}
             ariaLabel={i18n._(entry.label)}
           />
         ) : (
@@ -42,7 +38,6 @@ export const PageHeaderActionMenuButtons = () => {
               size="small"
               variant="secondary"
               accent="default"
-              onClick={() => entry.onClick?.()}
               ariaLabel={i18n._(entry.label)}
             />
             <StyledWrapper>

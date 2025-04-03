@@ -1,4 +1,3 @@
-import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
@@ -51,7 +50,6 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
           {!isMobile && <PageHeaderActionMenuButtons />}
           <RecordIndexActionMenuDropdown />
           <ActionMenuConfirmationModals />
-          <RecordActionMenuEntriesSetter />
           <RecordAgnosticActionMenuEntriesSetter />
           {isWorkflowEnabled && (
             <RunWorkflowRecordAgnosticActionMenuEntriesSetter />

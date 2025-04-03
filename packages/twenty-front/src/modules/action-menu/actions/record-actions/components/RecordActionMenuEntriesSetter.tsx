@@ -1,4 +1,3 @@
-import { RegisterRecordActionEffects } from '@/action-menu/actions/record-actions/components/RegisterRecordActionEffects';
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -50,8 +49,6 @@ export const RecordActionMenuEntriesSetter = () => {
 
   return (
     <>
-      <RegisterRecordActionEffects objectMetadataItem={objectMetadataItem} />
-
       {isWorkflowEnabled &&
         contextStoreTargetedRecordsRule?.mode === 'selection' &&
         contextStoreTargetedRecordsRule?.selectedRecordIds.length === 1 && (

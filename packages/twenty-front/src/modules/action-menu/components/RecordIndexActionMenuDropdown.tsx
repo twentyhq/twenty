@@ -1,4 +1,4 @@
-import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
+import { useRegisteredRecordActions } from '@/action-menu/hooks/useRegisteredRecordActions';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
@@ -12,7 +12,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
@@ -30,9 +29,7 @@ const StyledDropdownMenuContainer = styled.div`
 `;
 
 export const RecordIndexActionMenuDropdown = () => {
-  const actionMenuEntries = useRecoilComponentValueV2(
-    actionMenuEntriesComponentSelector,
-  );
+  const actionMenuEntries = useRegisteredRecordActions();
 
   const recordIndexActions = actionMenuEntries.filter(
     (actionMenuEntry) =>
