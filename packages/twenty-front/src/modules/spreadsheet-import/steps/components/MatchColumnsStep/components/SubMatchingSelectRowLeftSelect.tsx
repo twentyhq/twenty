@@ -3,7 +3,7 @@ import { SubMatchingSelectControlContainer } from '@/spreadsheet-import/steps/co
 import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronDown } from 'twenty-ui';
+import { IconChevronDown } from 'twenty-ui/display';
 
 const StyledIconChevronDown = styled(IconChevronDown)`
   color: ${({ theme }) => theme.font.color.tertiary};

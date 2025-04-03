@@ -10,8 +10,9 @@ import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronDown, SelectOption, Tag, TagColor } from 'twenty-ui';
-
+import { Tag, TagColor } from 'twenty-ui/components';
+import { IconChevronDown } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 const StyledIconChevronDown = styled(IconChevronDown)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;

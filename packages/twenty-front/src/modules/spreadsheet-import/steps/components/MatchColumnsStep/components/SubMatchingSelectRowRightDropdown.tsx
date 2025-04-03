@@ -12,7 +12,7 @@ import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/Spreadshee
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import styled from '@emotion/styled';
-import { SelectOption } from 'twenty-ui';
+import { SelectOption } from 'twenty-ui/input';
 
 const StyledDropdownContainer = styled.div`
   width: 100%;

@@ -3,7 +3,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useMemo, useRef, useState } from 'react';
-import { MenuItemSelectTag, SelectOption, TagColor } from 'twenty-ui';
+import { TagColor } from 'twenty-ui/components';
+import { SelectOption } from 'twenty-ui/input';
+import { MenuItemSelectTag } from 'twenty-ui/navigation';
 
 interface SubMatchingSelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;
