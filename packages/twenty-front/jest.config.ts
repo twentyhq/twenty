@@ -35,23 +35,8 @@ const jestConfig: JestConfigWithTsJest = {
               runtime: 'automatic',
             },
           },
-          experimental: { 
-            plugins: [
-              [
-                '@swc/plugin-emotion',
-                {
-                  importMap: {
-                    '@emotion/styled': {
-                      styled: {
-                        canonicalImport: ['@emotion/styled', 'default'],
-                        styledBaseImport: ['@emotion/styled', 'default'],
-                      },
-                    },
-                  },
-                },
-              ],
-              ['@lingui/swc-plugin', {}],
-            ],
+          experimental: {
+            plugins: [['@lingui/swc-plugin', {}]],
           },
         },
       },

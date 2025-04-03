@@ -97,7 +97,7 @@ export default defineConfig(({ command }) => {
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
       cssCodeSplit: false,
-      minify: false, //TMP
+      minify: false,
       sourcemap: false,
       outDir: './dist',
       reportCompressedSize: true,

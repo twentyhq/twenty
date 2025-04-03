@@ -148,7 +148,7 @@ export default defineConfig(({ command, mode }) => {
     },
 
     build: {
-      minify: true,
+      minify: false,
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
