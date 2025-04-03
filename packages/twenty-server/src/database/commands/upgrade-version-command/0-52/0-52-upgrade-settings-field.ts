@@ -74,7 +74,7 @@ export class UpgradeDateAndDateTimeFieldsSettingsJsonCommand extends ActiveOrSus
   ): FieldMetadataEntity<FieldMetadataType.DATE> {
     const settings = field.settings as DeprecatedFieldMetadataDateSettings;
 
-    if (!settings?.displayAsRelativeDate) {
+    if (typeof settings?.displayAsRelativeDate === 'undefined') {
       return field;
     }
 
