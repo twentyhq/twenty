@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { Pill } from './Pill/Pill';
 export { AvatarChip } from './avatar-chip/AvatarChip';
 export type { AvatarChipProps } from './avatar-chip/AvatarChip';
 export { AvatarChipsLeftComponent } from './avatar-chip/AvatarChipLeftComponent';
@@ -19,6 +20,5 @@ export { Chip, ChipAccent, ChipSize, ChipVariant } from './chip/Chip';
 export type { ChipProps } from './chip/Chip';
 export { LinkChip } from './chip/LinkChip';
 export type { LinkChipProps } from './chip/LinkChip';
-export { Pill } from './Pill/Pill';
 export { Tag } from './tag/Tag';
 export type { TagColor } from './tag/Tag';

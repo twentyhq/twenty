@@ -253,6 +253,7 @@ export {
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
   IconLibraryPlus,
+  IconLifebuoy,
   IconLink,
   IconLinkOff,
   IconList,
