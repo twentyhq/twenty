@@ -3,6 +3,9 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { SoapClientService } from './soap-client.service';
 
+import { IpDeOrigemEstrutura } from './interfaces/ip-de-origem.interface';
+import { RetornoEstrutura } from './interfaces/return.interface';
+
 @Controller('api/soap-client')
 @UseGuards(AuthGuard('jwt'))
 export class SoapClientController {
@@ -13,11 +16,8 @@ export class SoapClientController {
     @Query('method') method: string,
     @Query('params') paramsString?: string,
   ) {
-    console.log('callMethodGet', method, paramsString);
-
     const params = paramsString ? JSON.parse(paramsString) : {};
 
-    // Add auth structure for all requests
     params.auth = this.soapClientService.createAuthStruct();
 
     return this.soapClientService.callMethod(method, params);
@@ -25,29 +25,24 @@ export class SoapClientController {
 
   @Post('call-method')
   async callMethodPost(
-    @Body('method') bodyMethod: string,
-    @Body('params') bodyParams: Record<string, any> = {},
-    @Query('method') queryMethod?: string,
-    @Query('params') queryParamsString?: string,
+    @Body('method') method: string,
+    @Body('params') params: Record<string, any> = {},
   ) {
-    console.log('callMethodPost body:', bodyMethod, bodyParams);
-    console.log('callMethodPost query:', queryMethod, queryParamsString);
+    const auth = this.soapClientService.createAuthStruct();
 
-    // Use body params if available, otherwise use query params
-    let method = bodyMethod;
-    let params = bodyParams;
-
-    // If method is not in body but is in query, use query parameters
-    if (!method && queryMethod) {
-      method = queryMethod;
-      params = queryParamsString ? JSON.parse(queryParamsString) : {};
-    }
-
-    console.log('callMethodPost final:', method, params);
-
-    // Add auth structure for all requests
-    params.auth = this.soapClientService.createAuthStruct();
+    params.usuario = auth.usuario;
+    params.senha = auth.senha;
 
     return this.soapClientService.callMethod(method, params);
+  }
+
+  /**
+   * Endpoint specifically for inserting IP de Origem
+   */
+  @Post('insere-ip-de-origem')
+  async insereIpDeOrigem(
+    @Body() ipData: IpDeOrigemEstrutura,
+  ): Promise<RetornoEstrutura> {
+    return this.soapClientService.insereIpDeOrigem(ipData);
   }
 }

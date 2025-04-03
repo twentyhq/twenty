@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import * as soap from 'soap';
 
 import { AuthEstrutura } from './interfaces/auth.interface';
+import { IpDeOrigemEstrutura } from './interfaces/ip-de-origem.interface';
+import { RetornoEstrutura } from './interfaces/return.interface';
 
 @Injectable()
 export class SoapClientService {
@@ -16,7 +18,14 @@ export class SoapClientService {
   async callMethod(methodName: string, params: any): Promise<any> {
     try {
       const client = await soap.createClientAsync(this.wsdlUrl);
+
+      console.log('client', client);
+
+      console.log('params', params);
+
       const result = await client[methodName + 'Async'](params);
+
+      console.log('result', result[0].return);
 
       return result[0];
     } catch (error) {
@@ -25,13 +34,35 @@ export class SoapClientService {
     }
   }
 
-  /**
-   * Creates the authentication structure required for SOAP requests
-   */
   createAuthStruct(): AuthEstrutura {
     return {
       usuario: this.configService.get('SOAP_USERNAME') || '',
       senha: this.configService.get('SOAP_PASSWORD') || '',
     };
+  }
+
+  /**
+   * Convenience method to call InsereIpDeOrigem SOAP method
+   * @param ipData The IP origin data to insert
+   * @returns The result of the operation
+   */
+  async insereIpDeOrigem(
+    ipData: IpDeOrigemEstrutura,
+  ): Promise<RetornoEstrutura> {
+    const auth = this.createAuthStruct();
+
+    const params = {
+      auth,
+      obj: ipData,
+    };
+
+    try {
+      const result = await this.callMethod('InsereIpDeOrigem', params);
+
+      return result.return as RetornoEstrutura;
+    } catch (error) {
+      this.logger.error('Error inserting IP de origem:', error);
+      throw error;
+    }
   }
 }
