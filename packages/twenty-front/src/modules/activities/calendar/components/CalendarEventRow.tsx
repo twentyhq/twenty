@@ -12,18 +12,17 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
 import {
-  Avatar,
-  AvatarGroup,
-  Card,
-  CardContent,
-  IconArrowRight,
-  IconLock,
-} from 'twenty-ui';
-import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,
 } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  Avatar,
+  AvatarGroup,
+  IconArrowRight,
+  IconLock,
+} from 'twenty-ui/display';
+import { Card, CardContent } from 'twenty-ui/layout';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;

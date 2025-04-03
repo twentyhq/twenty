@@ -7,7 +7,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
-import { IconSlash } from 'twenty-ui';
+import { IconSlash } from 'twenty-ui/display';
 
 const displayFormatsToLabelMap: Record<FieldDateDisplayFormat, string> = {
   'full_date': 'Full Date',

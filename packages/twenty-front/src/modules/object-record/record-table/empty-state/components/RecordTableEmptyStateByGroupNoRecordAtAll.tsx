@@ -1,5 +1,3 @@
-import { Button, IconPlus } from 'twenty-ui';
-
 import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
 import { RecordIndexAddRecordInGroupDropdown } from '@/object-record/record-index/components/RecordIndexAddRecordInGroupDropdown';
 import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
@@ -9,6 +7,8 @@ import { getEmptyStateSubTitle } from '@/object-record/record-table/empty-state/
 import { getEmptyStateTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateTitle';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
 import { ViewType } from '@/views/types/ViewType';
+import { Button } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui/display';
 
 export const RecordTableEmptyStateByGroupNoRecordAtAll = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();

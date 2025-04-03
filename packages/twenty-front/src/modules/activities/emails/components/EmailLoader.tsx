@@ -3,8 +3,8 @@ import {
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  Loader,
-} from 'twenty-ui';
+} from 'twenty-ui/layout';
+import { Loader } from 'twenty-ui/feedback';
 
 export const EmailLoader = ({ loadingText }: { loadingText?: string }) => (
   <AnimatedPlaceholderEmptyContainer>

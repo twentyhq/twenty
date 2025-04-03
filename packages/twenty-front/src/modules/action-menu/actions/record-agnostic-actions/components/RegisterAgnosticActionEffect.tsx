@@ -4,16 +4,14 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { useContext, useEffect } from 'react';
 
-type RegisterAgnosticRecordActionEffectProps = {
+type RegisterAgnosticActionEffectProps = {
   action: RecordAgnosticConfigAction;
 };
 
-export const RegisterAgnosticRecordActionEffect = ({
+export const RegisterAgnosticActionEffect = ({
   action,
-}: RegisterAgnosticRecordActionEffectProps) => {
+}: RegisterAgnosticActionEffectProps) => {
   const { onClick, ConfirmationModal } = action.useAction();
-
-  const shouldBeRegistered = action.shouldBeRegistered({});
 
   const { onActionStartedCallback, onActionExecutedCallback } =
     useContext(ActionMenuContext);
@@ -31,19 +29,12 @@ export const RegisterAgnosticRecordActionEffect = ({
   });
 
   useEffect(() => {
-    if (shouldBeRegistered) {
-      addActionMenuEntry(wrappedAction);
-    }
+    addActionMenuEntry(wrappedAction);
 
     return () => {
       removeActionMenuEntry(wrappedAction.key);
     };
-  }, [
-    addActionMenuEntry,
-    removeActionMenuEntry,
-    shouldBeRegistered,
-    wrappedAction,
-  ]);
+  }, [addActionMenuEntry, removeActionMenuEntry, wrappedAction]);
 
   return null;
 };

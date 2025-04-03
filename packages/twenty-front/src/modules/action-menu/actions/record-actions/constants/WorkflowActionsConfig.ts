@@ -26,7 +26,7 @@ import {
   IconPlayerPlay,
   IconPower,
   IconVersions,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {

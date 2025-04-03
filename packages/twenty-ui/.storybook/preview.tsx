@@ -1,13 +1,8 @@
-import { useEffect } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { Preview } from '@storybook/react';
+import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from '@ui/theme';
+import { useEffect } from 'react';
 import { useDarkMode } from 'storybook-dark-mode';
-
-import {
-  THEME_DARK,
-  THEME_LIGHT,
-  ThemeContextProvider,
-} from '../src/theme/index';
 
 const preview: Preview = {
   decorators: [

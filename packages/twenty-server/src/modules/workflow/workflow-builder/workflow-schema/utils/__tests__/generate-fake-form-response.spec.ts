@@ -40,6 +40,13 @@ describe('generateFakeFormResponse', () => {
           objectName: 'company',
         },
       },
+      {
+        id: '96939213-49ac-4dee-949d-56e6c7be98e9',
+        name: 'date',
+        type: FieldMetadataType.DATE,
+        label: 'Date',
+        placeholder: 'mm/dd/yyyy',
+      },
     ];
 
     const result = await generateFakeFormResponse({
@@ -78,6 +85,13 @@ describe('generateFakeFormResponse', () => {
             value: 'A company',
           },
         },
+      },
+      date: {
+        isLeaf: true,
+        label: 'Date',
+        type: FieldMetadataType.DATE,
+        value: '01/23/2025',
+        icon: undefined,
       },
     });
   });

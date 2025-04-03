@@ -7,7 +7,7 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { Button } from 'twenty-ui';
+import { Button } from 'twenty-ui/input';
 
 export const ViewPickerEditButton = () => {
   const { availableFieldsForKanban, navigateToSelectSettings } =

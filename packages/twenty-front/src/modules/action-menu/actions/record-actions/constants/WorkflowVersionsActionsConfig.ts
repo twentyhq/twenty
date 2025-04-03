@@ -22,7 +22,7 @@ import {
   IconPencil,
   IconSettingsAutomation,
   IconVersions,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
   {

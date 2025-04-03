@@ -12,7 +12,7 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
-import { IconSettingsAutomation, IconVersions } from 'twenty-ui';
+import { IconSettingsAutomation, IconVersions } from 'twenty-ui/display';
 
 export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {

@@ -1,11 +1,11 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { fn, userEvent, waitFor, within } from '@storybook/test';
-import { getUserDevice } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormRawJsonFieldInput } from '../FormRawJsonFieldInput';
+import { getUserDevice } from 'twenty-ui/utilities';
 
 const meta: Meta<typeof FormRawJsonFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRawJsonFieldInput',

@@ -7,8 +7,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Button, H2Title, IconCopy, Section } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconCopy } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledInputsContainer = styled.div`
   display: flex;

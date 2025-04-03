@@ -7,6 +7,7 @@ import {
   RelationDefinition,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
+import { ThemeColor } from 'twenty-ui/theme';
 
 export type FieldMetadataItemOption = {
   color: ThemeColor;

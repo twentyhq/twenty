@@ -3,10 +3,10 @@ import { checkTwentyVersionExists } from '@/settings/admin-panel/utils/checkTwen
 import { fetchLatestTwentyRelease } from '@/settings/admin-panel/utils/fetchLatestTwentyRelease';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { GITHUB_LINK } from '@ui/navigation/link/constants/GithubLink';
 import { useEffect, useState } from 'react';
-import { IconCircleDot, IconStatusChange } from 'twenty-ui';
 import packageJson from '../../../../../package.json';
+import { GITHUB_LINK } from 'twenty-ui/navigation';
+import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
 
 const StyledActionLink = styled.a`
   align-items: center;

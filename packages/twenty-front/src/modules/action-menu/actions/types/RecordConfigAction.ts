@@ -6,7 +6,8 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { MessageDescriptor } from '@lingui/core';
-import { IconComponent, MenuItemAccent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
+import { MenuItemAccent } from 'twenty-ui/navigation';
 
 export type RecordConfigAction = {
   type: ActionMenuEntryType;

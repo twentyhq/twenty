@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { HttpResponse, graphql } from 'msw';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof EventCardMessage> = {
   title: 'Modules/TimelineActivities/Rows/Message/EventCardMessage',

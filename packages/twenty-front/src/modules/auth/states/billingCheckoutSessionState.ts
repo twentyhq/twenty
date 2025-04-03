@@ -1,7 +1,7 @@
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
-import { createState } from '@ui/utilities/state/utils/createState';
 import { syncEffect } from 'recoil-sync';
+import { createState } from 'twenty-ui/utilities';
 
 export const billingCheckoutSessionState = createState<BillingCheckoutSession>({
   key: 'billingCheckoutSessionState',

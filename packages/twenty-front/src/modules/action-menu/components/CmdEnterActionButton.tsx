@@ -1,7 +1,8 @@
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Key } from 'ts-key-enum';
-import { Button, getOsControlSymbol } from 'twenty-ui';
+import { Button } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 export const CmdEnterActionButton = ({
   title,

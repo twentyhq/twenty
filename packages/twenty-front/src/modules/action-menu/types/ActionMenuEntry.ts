@@ -2,7 +2,8 @@ import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ConfirmationModalProps } from '@/ui/layout/modal/components/ConfirmationModal';
 import { MessageDescriptor } from '@lingui/core';
 import { MouseEvent, ReactElement } from 'react';
-import { IconComponent, MenuItemAccent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
+import { MenuItemAccent } from 'twenty-ui/navigation';
 
 export enum ActionMenuEntryType {
   Standard = 'Standard',
