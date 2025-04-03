@@ -9,7 +9,7 @@ export const pageviewSchema = z.object({
   timeZone: z.string(),
   timestamp: z.string().datetime(),
   userAgent: z.string(),
-  userId: z.string().optional().default(''),
   version: z.string(),
+  userId: z.string().optional().default(''),
   workspaceId: z.string().optional().default(''),
 });

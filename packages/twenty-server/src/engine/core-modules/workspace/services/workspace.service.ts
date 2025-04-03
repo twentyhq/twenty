@@ -44,6 +44,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { AnalyticsContext } from 'src/engine/core-modules/analytics/types/analytics.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -104,7 +105,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  private async setCustomDomain(workspace: Workspace, customDomain: string) {
+  private async setCustomDomain(
+    workspace: Workspace,
+    customDomain: string,
+    analytics: AnalyticsContext,
+  ) {
     await this.isCustomDomainEnabled(workspace.id);
 
     const existingWorkspace = await this.workspaceRepository.findOne({
@@ -126,7 +131,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.customDomainService.updateCustomDomain(
         workspace.customDomain,
         customDomain,
-        workspace.id,
+        analytics,
       );
     }
 
@@ -137,20 +142,23 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     ) {
       await this.customDomainService.registerCustomDomain(
         customDomain,
-        workspace.id,
+        analytics,
       );
     }
   }
 
-  async updateWorkspaceById({
-    payload,
-    userWorkspaceId,
-    apiKey,
-  }: {
-    payload: Partial<Workspace> & { id: string };
-    userWorkspaceId?: string;
-    apiKey?: string;
-  }) {
+  async updateWorkspaceById(
+    {
+      payload,
+      userWorkspaceId,
+      apiKey,
+    }: {
+      payload: Partial<Workspace> & { id: string };
+      userWorkspaceId?: string;
+      apiKey?: string;
+    },
+    analytics: AnalyticsContext,
+  ) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
     });
@@ -187,7 +195,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       payload.customDomain &&
       workspace.customDomain !== payload.customDomain
     ) {
-      await this.setCustomDomain(workspace, payload.customDomain);
+      await this.setCustomDomain(workspace, payload.customDomain, analytics);
       customDomainRegistered = true;
     }
 

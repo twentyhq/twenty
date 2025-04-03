@@ -14,6 +14,7 @@ import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/v
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
+import { AnalyticsContext } from 'src/engine/core-modules/analytics/types/analytics.type';
 
 @Injectable()
 export class CustomDomainService {
@@ -31,7 +32,10 @@ export class CustomDomainService {
     }
   }
 
-  async registerCustomDomain(customDomain: string, workspaceId?: string) {
+  async registerCustomDomain(
+    customDomain: string,
+    analytics: AnalyticsContext,
+  ) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     if (isDefined(await this.getCustomDomainDetails(customDomain))) {
@@ -59,10 +63,9 @@ export class CustomDomainService {
       },
     });
 
-    this.analyticsService.send(
+    analytics.sendEvent(
       makeEvent({
         action: 'customDomain.created',
-        workspaceId,
       }),
     );
 
@@ -158,7 +161,7 @@ export class CustomDomainService {
   async updateCustomDomain(
     fromHostname: string,
     toHostname: string,
-    workspaceId?: string,
+    analytics: AnalyticsContext,
   ) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
@@ -168,7 +171,7 @@ export class CustomDomainService {
       await this.deleteCustomHostname(fromCustomHostname.id);
     }
 
-    return this.registerCustomDomain(toHostname, workspaceId);
+    return this.registerCustomDomain(toHostname, analytics);
   }
 
   async deleteCustomHostnameByHostnameSilently(customDomain: string) {

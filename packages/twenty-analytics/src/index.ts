@@ -18,6 +18,7 @@ const makeUnsafeEvent = (data: Record<string, unknown>) => {
   return eventSchema.parse({
     ...data,
     ...commonProperties(),
+    ...(data.payload ? { payload: data.payload } : { payload: '{}' }),
   });
 };
 
