@@ -93,7 +93,7 @@ async function runMigrations() {
     await recordMigration(file, client);
   }
 
-  console.log('✅ All migrations applied');
+  console.log('✅ All migrations applied.');
   await client.close();
 }
 
