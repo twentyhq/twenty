@@ -1,6 +1,6 @@
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { useEffect } from 'react';
 
 export const CreateNewTableRecordNoSelectionRecordActionEffect = ({
   objectMetadataItem,
@@ -11,7 +11,7 @@ export const CreateNewTableRecordNoSelectionRecordActionEffect = ({
     objectMetadataItem,
   });
 
-  useEffect(() => {
+  useActionEffect(() => {
     createNewIndexRecord();
   }, [createNewIndexRecord]);
 

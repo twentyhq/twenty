@@ -1,10 +1,10 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AppPath } from '@/types/AppPath';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -17,7 +17,7 @@ export const SeeRunsWorkflowVersionSingleRecordActionEffect = () => {
   );
   const navigateApp = useNavigateApp();
 
-  useEffect(() => {
+  useActionEffect(() => {
     if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }

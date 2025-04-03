@@ -1,11 +1,11 @@
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { SettingsPath } from '@/types/SettingsPath';
-import { useEffect } from 'react';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const GoToSettingsNoSelectionRecordActionEffect = () => {
   const navigateSettings = useNavigateSettings();
 
-  useEffect(() => {
+  useActionEffect(() => {
     navigateSettings(SettingsPath.ProfilePage);
   }, [navigateSettings]);
 

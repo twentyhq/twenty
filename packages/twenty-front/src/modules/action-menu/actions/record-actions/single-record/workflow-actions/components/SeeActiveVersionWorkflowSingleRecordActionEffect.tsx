@@ -1,8 +1,8 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AppPath } from '@/types/AppPath';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
-import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -13,7 +13,7 @@ export const SeeActiveVersionWorkflowSingleRecordActionEffect = () => {
 
   const navigateApp = useNavigateApp();
 
-  useEffect(() => {
+  useActionEffect(() => {
     if (!isDefined(workflowActiveVersion)) {
       return;
     }

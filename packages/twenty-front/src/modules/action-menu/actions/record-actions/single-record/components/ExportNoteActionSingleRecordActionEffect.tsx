@@ -1,7 +1,7 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockNoteEditor } from '@blocknote/core';
-import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,7 +12,7 @@ export const ExportNoteActionSingleRecordActionEffect = () => {
 
   const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 
-  useEffect(() => {
+  useActionEffect(() => {
     const exportNote = async () => {
       if (!isDefined(selectedRecord)) {
         return;

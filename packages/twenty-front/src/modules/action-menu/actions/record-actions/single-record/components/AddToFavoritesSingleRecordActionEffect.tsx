@@ -1,8 +1,8 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,7 +17,7 @@ export const AddToFavoritesSingleRecordActionEffect = ({
 
   const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-  useEffect(() => {
+  useActionEffect(() => {
     if (!isDefined(selectedRecord)) {
       return;
     }

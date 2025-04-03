@@ -1,7 +1,7 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RemoveFromFavoritesSingleRecordActionEffect = () => {
@@ -15,7 +15,7 @@ export const RemoveFromFavoritesSingleRecordActionEffect = () => {
     (favorite) => favorite.recordId === recordId,
   );
 
-  useEffect(() => {
+  useActionEffect(() => {
     if (!isDefined(foundFavorite)) {
       return;
     }

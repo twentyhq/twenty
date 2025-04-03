@@ -1,9 +1,9 @@
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useExportRecords } from '@/object-record/record-index/export/hooks/useExportRecords';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useEffect } from 'react';
 
 export const ExportMultipleRecordsActionEffect = ({
   objectMetadataItem,
@@ -28,7 +28,7 @@ export const ExportMultipleRecordsActionEffect = ({
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
-  useEffect(() => {
+  useActionEffect(() => {
     const exportRecords = async () => {
       await download();
     };

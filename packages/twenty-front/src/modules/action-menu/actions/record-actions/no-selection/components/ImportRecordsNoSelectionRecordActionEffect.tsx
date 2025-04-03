@@ -1,6 +1,6 @@
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
-import { useEffect } from 'react';
 
 export const ImportRecordsNoSelectionRecordActionEffect = ({
   objectMetadataItem,
@@ -12,7 +12,7 @@ export const ImportRecordsNoSelectionRecordActionEffect = ({
       objectMetadataItem.nameSingular,
     );
 
-  useEffect(() => {
+  useActionEffect(() => {
     openObjectRecordsSpreadsheetImportDialog();
   }, [openObjectRecordsSpreadsheetImportDialog]);
 

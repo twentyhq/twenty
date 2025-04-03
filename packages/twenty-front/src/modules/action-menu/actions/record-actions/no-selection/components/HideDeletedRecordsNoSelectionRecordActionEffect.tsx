@@ -1,3 +1,4 @@
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
@@ -6,7 +7,6 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const HideDeletedRecordsNoSelectionRecordActionEffect = ({
@@ -43,7 +43,7 @@ export const HideDeletedRecordsNoSelectionRecordActionEffect = ({
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  useEffect(() => {
+  useActionEffect(() => {
     if (!isDefined(deletedFilter)) {
       return;
     }

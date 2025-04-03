@@ -1,12 +1,12 @@
+import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath } from '@/types/AppPath';
-import { useEffect } from 'react';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const SeeWorkflowsNoSelectionRecordActionEffect = () => {
   const navigateApp = useNavigateApp();
 
-  useEffect(() => {
+  useActionEffect(() => {
     navigateApp(AppPath.RecordIndexPage, {
       objectNamePlural: CoreObjectNamePlural.Workflow,
     });
