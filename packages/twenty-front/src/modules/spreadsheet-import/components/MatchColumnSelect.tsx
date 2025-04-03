@@ -1,38 +1,26 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import {
-  autoUpdate,
-  flip,
-  offset,
-  size,
-  useFloating,
-} from '@floating-ui/react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AppTooltip, MenuItem, MenuItemSelect, SelectOption } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useLingui } from '@lingui/react/macro';
-import { v4 as uuidV4 } from 'uuid';
+import { AppTooltip } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { v4 } from 'uuid';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
-const StyledFloatingDropdown = styled.div`
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
-`;
-
 interface MatchColumnSelectProps {
+  columnIndex: string;
   onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
   value?: ReadonlyDeep<SelectOption>;
   options: readonly ReadonlyDeep<SelectOption>[];
   placeholder?: string;
-  name?: string;
 }
 
 export const MatchColumnSelect = ({
@@ -40,28 +28,14 @@ export const MatchColumnSelect = ({
   value,
   options: initialOptions,
   placeholder,
+  columnIndex,
 }: MatchColumnSelectProps) => {
-  const theme = useTheme();
+  const dropdownId = `match-column-select-dropdown-${columnIndex}`;
 
-  const dropdownContainerRef = useRef<HTMLDivElement>(null);
+  const { closeDropdown } = useDropdown(dropdownId);
 
-  const [isOpen, setIsOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
   const [options, setOptions] = useState(initialOptions);
-
-  const { refs, floatingStyles } = useFloating({
-    strategy: 'absolute',
-    middleware: [
-      offset(() => {
-        return parseInt(theme.spacing(2), 10);
-      }),
-      flip(),
-      size(),
-    ],
-    whileElementsMounted: autoUpdate,
-    open: isOpen,
-    placement: 'bottom-start',
-  });
 
   const handleSearchFilterChange = useCallback(
     (text: string) => {
@@ -89,22 +63,10 @@ export const MatchColumnSelect = ({
     debouncedHandleSearchFilter(value);
   };
 
-  const handleDropdownItemClick = () => {
-    setIsOpen(true);
-  };
-
   const handleChange = (option: ReadonlyDeep<SelectOption>) => {
     onChange(option);
-    setIsOpen(false);
+    closeDropdown();
   };
-
-  useListenClickOutside({
-    refs: [dropdownContainerRef],
-    callback: () => {
-      setIsOpen(false);
-    },
-    listenerId: 'match-column-select',
-  });
 
   useUpdateEffect(() => {
     setOptions(initialOptions);
@@ -113,70 +75,64 @@ export const MatchColumnSelect = ({
   const { t } = useLingui();
 
   return (
-    <>
-      <div ref={refs.setReference}>
+    <Dropdown
+      dropdownId={dropdownId}
+      dropdownHotkeyScope={{
+        scope: dropdownId,
+      }}
+      dropdownPlacement="bottom-start"
+      clickableComponent={
         <MenuItem
           LeftIcon={value?.Icon}
-          onClick={handleDropdownItemClick}
           text={value?.label ?? placeholder ?? ''}
           accent={value?.label ? 'default' : 'placeholder'}
         />
-      </div>
-      {isOpen &&
-        createPortal(
-          <StyledFloatingDropdown ref={refs.setFloating} style={floatingStyles}>
-            <OverlayContainer>
-              <DropdownMenu
-                data-select-disable
-                ref={dropdownContainerRef}
-                // width={refs.domReference.current?.clientWidth}
-              >
-                <DropdownMenuSearchInput
-                  value={searchFilter}
-                  onChange={handleFilterChange}
-                  autoFocus
-                />
-                <DropdownMenuSeparator />
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  {options?.map((option) => {
-                    const id = `${uuidV4()}-${option.value}`;
-                    return (
-                      <React.Fragment key={id}>
-                        <div id={id}>
-                          <MenuItemSelect
-                            selected={value?.label === option.label}
-                            onClick={() => handleChange(option)}
-                            disabled={
-                              option.disabled && value?.value !== option.value
-                            }
-                            LeftIcon={option?.Icon}
-                            text={option.label}
-                          />
-                        </div>
-                        {option.disabled &&
-                          value?.value !== option.value &&
-                          createPortal(
-                            <AppTooltip
-                              key={id}
-                              anchorSelect={`#${id}`}
-                              content={t`You are already importing this column.`}
-                              place="right"
-                              offset={-20}
-                            />,
-                            document.body,
-                          )}
-                      </React.Fragment>
-                    );
-                  })}
-                  {options?.length === 0 && (
-                    <MenuItem key="No results" text={t`No results`} />
-                  )}
-                </DropdownMenuItemsContainer>
-              </DropdownMenu>
-            </OverlayContainer>
-          </StyledFloatingDropdown>,
-          document.body,
-        )}
-    </>
+      }
+      dropdownComponents={
+        <>
+          <DropdownMenuSearchInput
+            value={searchFilter}
+            onChange={handleFilterChange}
+            autoFocus
+          />
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer hasMaxHeight>
+            {options?.map((option) => {
+              const id = `${v4()}-${option.value}`;
+              return (
+                <React.Fragment key={id}>
+                  <div id={id}>
+                    <MenuItemSelect
+                      selected={value?.label === option.label}
+                      onClick={() => handleChange(option)}
+                      disabled={
+                        option.disabled && value?.value !== option.value
+                      }
+                      LeftIcon={option?.Icon}
+                      text={option.label}
+                    />
+                  </div>
+                  {option.disabled &&
+                    value?.value !== option.value &&
+                    createPortal(
+                      <AppTooltip
+                        key={id}
+                        anchorSelect={`#${id}`}
+                        content={t`You are already importing this column.`}
+                        place="right"
+                        offset={-20}
+                      />,
+                      document.body,
+                    )}
+                </React.Fragment>
+              );
+            })}
+            {options?.length === 0 && (
+              <MenuItem key="No results" text={t`No results`} />
+            )}
+          </DropdownMenuItemsContainer>
+        </>
+      }
+    />
   );
 };

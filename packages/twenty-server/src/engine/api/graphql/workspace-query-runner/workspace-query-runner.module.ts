@@ -10,6 +10,7 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
@@ -31,6 +32,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     FileModule,
     FeatureFlagModule,
     RecordTransformerModule,
+    RecordPositionModule,
   ],
   providers: [
     ...workspaceQueryRunnerFactories,

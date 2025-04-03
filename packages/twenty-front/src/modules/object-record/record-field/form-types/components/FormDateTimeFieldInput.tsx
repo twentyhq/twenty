@@ -30,7 +30,8 @@ import {
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
+import { Nullable } from 'twenty-ui/utilities';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
 const StyledInputContainer = styled(FormFieldInputInputContainer)`
   display: grid;

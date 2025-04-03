@@ -12,7 +12,9 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import { i18n } from '@lingui/core';
-import { Button, getOsControlSymbol, MenuItem } from 'twenty-ui';
+import { Button } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const CommandMenuActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(

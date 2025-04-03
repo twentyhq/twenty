@@ -1,5 +1,5 @@
 import { SignInUpMode } from '@/auth/types/signInUpMode';
-import { createState } from '@ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui/utilities';
 
 export const signInUpModeState = createState<SignInUpMode>({
   key: 'signInUpModeState',

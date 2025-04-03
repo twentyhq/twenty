@@ -4,11 +4,14 @@ import { capitalize } from 'twenty-shared/utils';
 import { Request } from 'express';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class RestApiCoreServiceV2 {
@@ -16,6 +19,7 @@ export class RestApiCoreServiceV2 {
     private readonly coreQueryBuilderFactory: CoreQueryBuilderFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly recordInputTransformerService: RecordInputTransformerService,
+    protected readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
   async delete(request: Request) {
@@ -25,7 +29,7 @@ export class RestApiCoreServiceV2 {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadataNameSingular, repository } =
+    const { objectMetadataNameSingular, objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
     const recordToDelete = await repository.findOneOrFail({
       where: { id: recordId },
@@ -33,14 +37,24 @@ export class RestApiCoreServiceV2 {
 
     await repository.delete(recordId);
 
+    this.apiEventEmitterService.emitDestroyEvents(
+      [recordToDelete],
+      this.getAuthContextFromRequest(request),
+      objectMetadata.objectMetadataMapItem,
+    );
+
     return this.formatResult('delete', objectMetadataNameSingular, {
       id: recordToDelete.id,
     });
   }
 
   async createOne(request: Request) {
-    const { fieldMetadataByFieldName, objectMetadataNameSingular, repository } =
-      await this.getRepositoryAndMetadataOrFail(request);
+    const {
+      fieldMetadataByFieldName,
+      objectMetadataNameSingular,
+      objectMetadata,
+      repository,
+    } = await this.getRepositoryAndMetadataOrFail(request);
 
     const overriddenBody = await this.recordInputTransformerService.process({
       recordInput: request.body,
@@ -48,6 +62,12 @@ export class RestApiCoreServiceV2 {
     });
 
     const createdRecord = await repository.save(overriddenBody);
+
+    this.apiEventEmitterService.emitCreateEvents(
+      [createdRecord],
+      this.getAuthContextFromRequest(request),
+      objectMetadata.objectMetadataMapItem,
+    );
 
     return this.formatResult(
       'create',
@@ -63,8 +83,12 @@ export class RestApiCoreServiceV2 {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { fieldMetadataByFieldName, objectMetadataNameSingular, repository } =
-      await this.getRepositoryAndMetadataOrFail(request);
+    const {
+      fieldMetadataByFieldName,
+      objectMetadataNameSingular,
+      objectMetadata,
+      repository,
+    } = await this.getRepositoryAndMetadataOrFail(request);
 
     const recordToUpdate = await repository.findOneOrFail({
       where: { id: recordId },
@@ -79,6 +103,14 @@ export class RestApiCoreServiceV2 {
       ...recordToUpdate,
       ...overriddenBody,
     });
+
+    this.apiEventEmitterService.emitUpdateEvents(
+      [recordToUpdate],
+      [updatedRecord],
+      Object.keys(request.body),
+      this.getAuthContextFromRequest(request),
+      objectMetadata.objectMetadataMapItem,
+    );
 
     return this.formatResult(
       'update',
@@ -121,7 +153,7 @@ export class RestApiCoreServiceV2 {
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
     const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ObjectRecord>(
         workspace.id,
         objectMetadataNameSingular,
       );
@@ -136,6 +168,21 @@ export class RestApiCoreServiceV2 {
         {} as Record<string, FieldMetadataInterface>,
       );
 
-    return { fieldMetadataByFieldName, objectMetadataNameSingular, repository };
+    return {
+      fieldMetadataByFieldName,
+      objectMetadataNameSingular,
+      objectMetadata,
+      repository,
+    };
+  }
+
+  private getAuthContextFromRequest(request: Request): AuthContext {
+    return {
+      user: request.user,
+      workspace: request.workspace,
+      apiKey: request.apiKey,
+      workspaceMemberId: request.workspaceMemberId,
+      userWorkspaceId: request.userWorkspaceId,
+    };
   }
 }

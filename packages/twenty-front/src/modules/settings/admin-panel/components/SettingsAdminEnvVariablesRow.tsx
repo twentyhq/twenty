@@ -6,13 +6,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import {
-  AnimatedExpandableContainer,
-  IconChevronRight,
-  IconEye,
-  IconEyeOff,
-  LightIconButton,
-} from 'twenty-ui';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { IconChevronRight, IconEye, IconEyeOff } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 type SettingsAdminEnvVariablesRowProps = {
   variable: {

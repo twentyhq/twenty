@@ -43,3 +43,4 @@ dump.rdb
 /flake.nix
 
 .crowdin.yml
+.react-email/

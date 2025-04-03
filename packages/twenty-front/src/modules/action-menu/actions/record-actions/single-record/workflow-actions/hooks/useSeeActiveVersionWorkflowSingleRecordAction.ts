@@ -3,26 +3,19 @@ import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AppPath } from '@/types/AppPath';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isDefined } from 'twenty-shared/utils';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObjectMetadataItem =
   () => {
     const recordId = useSelectedRecordIdOrThrow();
 
-    const workflow = useWorkflowWithCurrentVersion(recordId);
-
-    const isDraft = workflow?.statuses?.includes('DRAFT') || false;
-
     const workflowActiveVersion = useActiveWorkflowVersion(recordId);
 
     const navigateApp = useNavigateApp();
 
-    const shouldBeRegistered = isDefined(workflowActiveVersion) && isDraft;
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
+      if (!isDefined(workflowActiveVersion)) {
         return;
       }
 
@@ -33,7 +26,6 @@ export const useSeeActiveVersionWorkflowSingleRecordAction: ActionHookWithoutObj
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

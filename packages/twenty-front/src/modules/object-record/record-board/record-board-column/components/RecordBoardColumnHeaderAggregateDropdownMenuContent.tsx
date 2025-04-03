@@ -1,5 +1,4 @@
 import { Key } from 'ts-key-enum';
-import { MenuItem } from 'twenty-ui';
 
 import { useDropdown } from '@/dropdown/hooks/useDropdown';
 import {
@@ -11,6 +10,7 @@ import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/Tabl
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useLingui } from '@lingui/react/macro';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
   const { t } = useLingui();

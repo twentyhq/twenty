@@ -1,10 +1,4 @@
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import {
-  Avatar,
-  IconChevronLeft,
-  MenuItemSelectAvatar,
-  UndecoratedLink,
-} from 'twenty-ui';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
@@ -19,6 +13,8 @@ import { useState } from 'react';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { Avatar, IconChevronLeft } from 'twenty-ui/display';
+import { MenuItemSelectAvatar, UndecoratedLink } from 'twenty-ui/navigation';
 
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);

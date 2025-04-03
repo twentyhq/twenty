@@ -1,10 +1,4 @@
 import { useEffect } from 'react';
-import {
-  IconChevronLeft,
-  IconSettings,
-  MenuItem,
-  UndecoratedLink,
-} from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
@@ -24,6 +18,8 @@ import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
+import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const { t } = useLingui();

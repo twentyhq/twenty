@@ -20,10 +20,9 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-
-import { RecordPositionFactory } from './record-position.factory';
 
 type ArgPositionBackfillInput = {
   argIndex?: number;
@@ -33,7 +32,7 @@ type ArgPositionBackfillInput = {
 @Injectable()
 export class QueryRunnerArgsFactory {
   constructor(
-    private readonly recordPositionFactory: RecordPositionFactory,
+    private readonly recordPositionService: RecordPositionService,
     private readonly recordInputTransformerService: RecordInputTransformerService,
   ) {}
 
@@ -188,16 +187,18 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.POSITION: {
           isFieldPositionPresent = true;
 
-          const newValue = await this.recordPositionFactory.create({
-            value,
-            workspaceId,
-            objectMetadata: {
-              isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
-              nameSingular:
-                options.objectMetadataItemWithFieldMaps.nameSingular,
+          const newValue = await this.recordPositionService.buildRecordPosition(
+            {
+              value,
+              workspaceId,
+              objectMetadata: {
+                isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
+                nameSingular:
+                  options.objectMetadataItemWithFieldMaps.nameSingular,
+              },
+              index: argPositionBackfillInput.argIndex,
             },
-            index: argPositionBackfillInput.argIndex,
-          });
+          );
 
           return [key, newValue];
         }
@@ -229,7 +230,7 @@ export class QueryRunnerArgsFactory {
         ...newArgEntries,
         [
           'position',
-          await this.recordPositionFactory.create({
+          await this.recordPositionService.buildRecordPosition({
             value: 'first',
             workspaceId,
             objectMetadata: {

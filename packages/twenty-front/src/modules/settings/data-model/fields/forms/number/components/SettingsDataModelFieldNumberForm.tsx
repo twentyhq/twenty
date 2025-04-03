@@ -7,9 +7,14 @@ import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
-import { IconDecimal, IconEye, IconNumber9, IconPercentage } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 import { t } from '@lingui/core/macro';
+import {
+  IconDecimal,
+  IconEye,
+  IconNumber9,
+  IconPercentage,
+} from 'twenty-ui/display';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
   settings: numberFieldDefaultValueSchema,

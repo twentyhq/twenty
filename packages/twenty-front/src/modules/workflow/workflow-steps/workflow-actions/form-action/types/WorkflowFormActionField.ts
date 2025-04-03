@@ -1,12 +1,11 @@
-import { JsonValue } from 'type-fest';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 
 export type WorkflowFormActionField = {
   id: string;
   name: string;
   label: string;
-  type: FieldMetadataType.TEXT | FieldMetadataType.NUMBER;
+  type: WorkflowFormFieldType;
   placeholder?: string;
-  settings?: Record<string, unknown>;
-  value?: JsonValue;
+  settings?: Record<string, any>;
+  value?: any;
 };

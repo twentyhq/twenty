@@ -3,8 +3,8 @@ import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
-import { IconCalendarEvent } from 'twenty-ui';
 import { v4 } from 'uuid';
+import { IconCalendarEvent } from 'twenty-ui/display';
 
 export const useOpenCalendarEventInCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();

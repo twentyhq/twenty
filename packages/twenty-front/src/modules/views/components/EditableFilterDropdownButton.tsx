@@ -12,28 +12,26 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { EditableFilterDropdownButtonEffect } from '@/views/components/EditableFilterDropdownButtonEffect';
 
 type EditableFilterDropdownButtonProps = {
-  viewFilterDropdownId: string;
-  viewFilter: RecordFilter;
+  recordFilter: RecordFilter;
   hotkeyScope: HotkeyScope;
 };
 
 export const EditableFilterDropdownButton = ({
-  viewFilterDropdownId,
-  viewFilter,
+  recordFilter,
   hotkeyScope,
 }: EditableFilterDropdownButtonProps) => {
-  const { closeDropdown } = useDropdown(viewFilterDropdownId);
+  const { closeDropdown } = useDropdown(recordFilter.id);
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
   const handleRemove = () => {
     closeDropdown();
 
-    removeRecordFilter({ recordFilterId: viewFilter.id });
+    removeRecordFilter({ recordFilterId: recordFilter.id });
   };
 
   const handleDropdownClickOutside = useCallback(() => {
-    const { value, operand } = viewFilter;
+    const { value, operand } = recordFilter;
     if (
       !value &&
       ![
@@ -44,24 +42,24 @@ export const EditableFilterDropdownButton = ({
         RecordFilterOperand.IsToday,
       ].includes(operand)
     ) {
-      removeRecordFilter({ recordFilterId: viewFilter.id });
+      removeRecordFilter({ recordFilterId: recordFilter.id });
     }
-  }, [viewFilter, removeRecordFilter]);
+  }, [recordFilter, removeRecordFilter]);
 
   return (
     <>
-      <EditableFilterDropdownButtonEffect
-        viewFilterDropdownId={viewFilterDropdownId}
-        viewFilter={viewFilter}
-      />
+      <EditableFilterDropdownButtonEffect recordFilter={recordFilter} />
       <Dropdown
-        dropdownId={viewFilterDropdownId}
+        dropdownId={recordFilter.id}
         clickableComponent={
-          <EditableFilterChip viewFilter={viewFilter} onRemove={handleRemove} />
+          <EditableFilterChip
+            viewFilter={recordFilter}
+            onRemove={handleRemove}
+          />
         }
         dropdownComponents={
           <ObjectFilterOperandSelectAndInput
-            filterDropdownId={viewFilterDropdownId}
+            filterDropdownId={recordFilter.id}
           />
         }
         dropdownHotkeyScope={hotkeyScope}

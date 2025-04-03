@@ -5,10 +5,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-
-import { Card, H2Title, IconHeartRateMonitor, Section } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Card, Section } from 'twenty-ui/layout';
+import { H2Title, IconHeartRateMonitor } from 'twenty-ui/display';
 
 const StyledGroupContainer = styled.div``;
 

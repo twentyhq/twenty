@@ -2,14 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { Repository } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { Repository } from 'typeorm';
 
-import {
-  RecordPositionQueryFactory,
-  RecordPositionQueryType,
-} from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
-import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { RecordPositionQueryType } from 'src/engine/core-modules/record-position/types/record-position-query.type';
+import { buildRecordPositionQuery } from 'src/engine/core-modules/record-position/utils/build-record-position-query.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
@@ -19,9 +17,8 @@ export class RecordPositionBackfillService {
   constructor(
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly recordPositionFactory: RecordPositionFactory,
-    private readonly recordPositionQueryFactory: RecordPositionQueryFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly recordPositionService: RecordPositionService,
   ) {}
 
   async backfill(workspaceId: string, dryRun: boolean) {
@@ -47,7 +44,7 @@ export class RecordPositionBackfillService {
 
     for (const objectMetadata of objectMetadataCollection) {
       const [recordsWithoutPositionQuery, recordsWithoutPositionQueryParams] =
-        this.recordPositionQueryFactory.create(
+        buildRecordPositionQuery(
           {
             recordPositionQueryType: RecordPositionQueryType.FIND_BY_POSITION,
             positionValue: null,
@@ -73,7 +70,7 @@ export class RecordPositionBackfillService {
         continue;
       }
 
-      const position = await this.recordPositionFactory.create({
+      const position = await this.recordPositionService.buildRecordPosition({
         objectMetadata: {
           isCustom: objectMetadata.isCustom,
           nameSingular: objectMetadata.nameSingular,
@@ -106,7 +103,7 @@ export class RecordPositionBackfillService {
           continue;
         }
 
-        const [query, params] = this.recordPositionQueryFactory.create(
+        const [query, params] = buildRecordPositionQuery(
           {
             recordPositionQueryType: RecordPositionQueryType.UPDATE_POSITION,
             recordId: recordsWithoutPosition[recordIndex].id,

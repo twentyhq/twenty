@@ -4,10 +4,11 @@ import { useCallback } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { Button } from 'twenty-ui';
 
-import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
+import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 const StyledDialogOverlay = styled(motion.div)`
   align-items: center;
@@ -19,7 +20,7 @@ const StyledDialogOverlay = styled(motion.div)`
   position: fixed;
   top: 0;
   width: 100vw;
-  z-index: 9999;
+  z-index: ${RootStackingContextZIndices.Dialog};
 `;
 
 const StyledDialogContainer = styled(motion.div)`

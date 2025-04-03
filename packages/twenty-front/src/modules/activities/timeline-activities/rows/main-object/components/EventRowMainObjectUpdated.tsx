@@ -3,32 +3,48 @@ import { useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
-import {
-  StyledEventRowItemAction,
-  StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { StyledEventRowItemColumn } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: ObjectMetadataItem;
   authorFullName: string;
   labelIdentifierValue: string;
   event: TimelineActivity;
+  createdAt?: string;
 };
 
 const StyledRowContainer = styled.div`
+  align-items: center;
   display: flex;
-  flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: space-between;
+`;
+
+const StyledItemTitleDate = styled.div`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: 0 ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
 `;
 
 const StyledEventRowMainObjectUpdatedContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 export const EventRowMainObjectUpdated = ({
@@ -36,6 +52,7 @@ export const EventRowMainObjectUpdated = ({
   labelIdentifierValue,
   event,
   mainObjectMetadataItem,
+  createdAt,
 }: EventRowMainObjectUpdatedProps) => {
   const diff: Record<string, { before: any; after: any }> =
     event.properties?.diff;
@@ -56,8 +73,8 @@ export const EventRowMainObjectUpdated = ({
   return (
     <StyledEventRowMainObjectUpdatedContainer>
       <StyledRowContainer>
-        <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-        <StyledEventRowItemAction>
+        <StyledRow>
+          <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
           updated
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer
@@ -76,7 +93,8 @@ export const EventRowMainObjectUpdated = ({
               <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
             </>
           )}
-        </StyledEventRowItemAction>
+        </StyledRow>
+        <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
       </StyledRowContainer>
       {diffEntries.length > 1 && (
         <EventCard isOpen={isOpen}>

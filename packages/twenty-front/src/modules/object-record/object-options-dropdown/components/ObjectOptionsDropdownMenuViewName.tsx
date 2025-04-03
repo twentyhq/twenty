@@ -16,10 +16,9 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { OverflowingTextWithTooltip } from '@ui/display';
 import { useState } from 'react';
-import { useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`
   align-items: center;
@@ -60,6 +59,8 @@ export const ObjectOptionsDropdownMenuViewName = ({
 }) => {
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
     useRecoilComponentStateV2(viewPickerSelectedIconComponentState);
+
+  setViewPickerSelectedIcon(currentView.icon);
 
   const viewPickerIsPersisting = useRecoilComponentValueV2(
     viewPickerIsPersistingComponentState,
