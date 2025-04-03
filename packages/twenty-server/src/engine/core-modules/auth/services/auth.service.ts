@@ -9,9 +9,9 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
-import { Repository } from 'typeorm';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
@@ -481,10 +481,12 @@ export class AuthService {
     loginToken,
     workspace,
     billingCheckoutSessionState,
+    disableDataLoad,
   }: {
     loginToken: string;
     workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
     billingCheckoutSessionState?: string;
+    disableDataLoad?: boolean;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({
       workspace,
@@ -492,6 +494,7 @@ export class AuthService {
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
+        ...(disableDataLoad ? { disableDataLoad } : {}),
       },
     });
 

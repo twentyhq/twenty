@@ -70,11 +70,13 @@ export const SignInBackgroundMockContainer = () => {
                     instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
                   }}
                 >
-                  <SignInBackgroundMockContainerEffect
-                    objectNamePlural={objectNamePlural}
-                    recordTableId={recordIndexId}
-                    viewId={viewBarId}
-                  />
+                  {isDefined(objectMetadataItem) && (
+                    <SignInBackgroundMockContainerEffect
+                      objectNamePlural={objectNamePlural}
+                      recordTableId={recordIndexId}
+                      viewId={viewBarId}
+                    />
+                  )}
                   <ActionMenuComponentInstanceContext.Provider
                     value={{ instanceId: recordIndexId }}
                   >

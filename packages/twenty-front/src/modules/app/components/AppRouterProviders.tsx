@@ -16,8 +16,8 @@ import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
-import { UserThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
+import { UserThemeProviderContainer } from '@/ui/theme/components/UserThemeProviderContainer';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ServerPreconnect } from '@/ui/utilities/server-preconnect/components/ServerPreconnect';
@@ -41,18 +41,23 @@ export const AppRouterProviders = () => {
             <ChromeExtensionSidecarEffect />
             <ChromeExtensionSidecarProvider>
               <UserProviderEffect />
+              {/* could be here in userproidfverefffect */}
               <WorkspaceProviderEffect />
               <UserProvider>
                 <AuthProvider>
                   <ApolloMetadataClientProvider>
                     <ObjectMetadataItemsProvider>
                       <ObjectMetadataItemsGater>
+                        <>ggggggg</>
                         <PrefetchDataProvider>
-                          <UserThemeProviderEffect />
+                          <>ggggggg</>
+                          <UserThemeProviderContainer />
                           <SnackBarProvider>
+                            <>ggggggg</>
                             <DialogManagerScope dialogManagerScopeId="dialog-manager">
                               <DialogManager>
                                 <StrictMode>
+                                  <>hhhhhhh</>
                                   <PromiseRejectionEffect />
                                   <GotoHotkeysEffectsProvider />
                                   <ServerPreconnect />
