@@ -8,7 +8,7 @@ import { isDoubleTextFieldEmpty } from '@/object-record/record-field/meta-types/
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
-} from './DateTimeFieldInput';
+} from '@/object-record/record-field/types/FieldInputEvent';
 
 type FullNameFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;

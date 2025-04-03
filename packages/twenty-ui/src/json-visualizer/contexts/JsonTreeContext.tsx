@@ -1,9 +1,10 @@
+import { GetJsonNodeHighlighting } from '@ui/json-visualizer/types/GetJsonNodeHighlighting';
 import { createContext } from 'react';
 
 export type ShouldExpandNodeInitiallyProps = { keyPath: string; depth: number };
 
 export type JsonTreeContextType = {
-  shouldHighlightNode?: (keyPath: string) => boolean;
+  getNodeHighlighting?: GetJsonNodeHighlighting;
   shouldExpandNodeInitially: (
     params: ShouldExpandNodeInitiallyProps,
   ) => boolean;
