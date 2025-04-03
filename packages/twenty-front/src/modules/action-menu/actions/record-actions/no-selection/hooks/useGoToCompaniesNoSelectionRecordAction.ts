@@ -7,8 +7,6 @@ export const useGoToCompaniesNoSelectionRecordAction: ActionHookWithoutObjectMet
   () => {
     const navigateApp = useNavigateApp();
 
-    const shouldBeRegistered = true;
-
     const onClick = () => {
       navigateApp(AppPath.RecordIndexPage, {
         objectNamePlural: CoreObjectNamePlural.Company,
@@ -16,7 +14,6 @@ export const useGoToCompaniesNoSelectionRecordAction: ActionHookWithoutObjectMet
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

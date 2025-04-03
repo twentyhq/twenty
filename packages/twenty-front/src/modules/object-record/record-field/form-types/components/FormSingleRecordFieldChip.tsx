@@ -1,11 +1,11 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import {
   RecordId,
   Variable,
-} from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
+} from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
+import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 
 const StyledRecordChip = styled(RecordChip)`
@@ -18,7 +18,7 @@ const StyledPlaceholder = styled.div`
   margin: ${({ theme }) => theme.spacing(2)};
 `;
 
-type WorkflowSingleRecordFieldChipProps = {
+type FormSingleRecordFieldChipProps = {
   draftValue:
     | {
         type: 'static';
@@ -34,13 +34,13 @@ type WorkflowSingleRecordFieldChipProps = {
   disabled?: boolean;
 };
 
-export const WorkflowSingleRecordFieldChip = ({
+export const FormSingleRecordFieldChip = ({
   draftValue,
   selectedRecord,
   objectNameSingular,
   onRemove,
   disabled,
-}: WorkflowSingleRecordFieldChipProps) => {
+}: FormSingleRecordFieldChipProps) => {
   if (
     !!draftValue &&
     draftValue.type === 'variable' &&

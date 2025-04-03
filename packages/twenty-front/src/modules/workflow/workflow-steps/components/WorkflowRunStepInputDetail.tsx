@@ -11,6 +11,7 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconBrackets,
   JsonNestedNode,
@@ -18,7 +19,6 @@ import {
   ShouldExpandNodeInitiallyProps,
   useIcons,
 } from 'twenty-ui';
-import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
@@ -105,7 +105,8 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
             emptyStringLabel: t`[empty string]`,
             arrowButtonCollapsedLabel: t`Expand`,
             arrowButtonExpandedLabel: t`Collapse`,
-            shouldHighlightNode: (keyPath) => variablesUsedInStep.has(keyPath),
+            getNodeHighlighting: (keyPath) =>
+              variablesUsedInStep.has(keyPath) ? 'blue' : undefined,
             shouldExpandNodeInitially: isFirstNodeDepthOfPreviousStep,
           }}
         >

@@ -6,14 +6,11 @@ export const useGoToSettingsNoSelectionRecordAction: ActionHookWithoutObjectMeta
   () => {
     const navigateSettings = useNavigateSettings();
 
-    const shouldBeRegistered = true;
-
     const onClick = () => {
       navigateSettings(SettingsPath.ProfilePage);
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };
