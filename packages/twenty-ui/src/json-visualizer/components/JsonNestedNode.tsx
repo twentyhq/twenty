@@ -6,11 +6,12 @@ import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
+import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 import { ANIMATION } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import { JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
+import { JsonValue } from 'type-fest';
 
 const StyledContainer = styled.li`
   display: grid;
@@ -41,6 +42,7 @@ export const JsonNestedNode = ({
   emptyElementsText,
   depth,
   keyPath,
+  highlighting,
 }: {
   label?: string;
   Icon: IconComponent;
@@ -49,6 +51,7 @@ export const JsonNestedNode = ({
   emptyElementsText: string;
   depth: number;
   keyPath: string;
+  highlighting?: JsonNodeHighlighting | undefined;
 }) => {
   const { shouldExpandNodeInitially } = useJsonTreeContextOrThrow();
 
@@ -115,7 +118,11 @@ export const JsonNestedNode = ({
   return (
     <StyledContainer>
       <StyledLabelContainer>
-        <JsonArrow isOpen={isOpen} onClick={handleArrowClick} />
+        <JsonArrow
+          isOpen={isOpen}
+          onClick={handleArrowClick}
+          variant={highlighting === 'partial-blue' ? 'blue' : undefined}
+        />
 
         <JsonNodeLabel label={label} Icon={Icon} />
 
