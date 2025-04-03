@@ -23,9 +23,13 @@ export const PasswordUpdateNotifyEmail = ({
 
   return (
     <BaseEmail locale={locale}>
-      <Title value={i18n._('Password updated')} />
+      <Title value={<Trans id="Password updated" />} />
       <MainText>
-        {userName?.length > 1 ? i18n._(`Dear ${userName},`) : i18n._('Hello,')}
+        {userName?.length > 1 ? (
+          <Trans id="Dear {userName}," values={{ userName }} />
+        ) : (
+          <Trans id="Hello," />
+        )}
         <br />
         <br />
         <Trans
@@ -34,12 +38,10 @@ export const PasswordUpdateNotifyEmail = ({
         />
         <br />
         <br />
-        {i18n._(
-          'If you did not initiate this change, please contact your workspace owner immediately.',
-        )}
+        <Trans id="If you did not initiate this change, please contact your workspace owner immediately." />
         <br />
       </MainText>
-      <CallToAction value={i18n._('Connect to Twenty')} href={link} />
+      <CallToAction value={<Trans id="Connect to Twenty" />} href={link} />
     </BaseEmail>
   );
 };

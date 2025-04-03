@@ -47,7 +47,7 @@ export const SendApprovedAccessDomainValidation = ({
       <Title value={i18n._('Validate domain')} />
       <MainText>
         <Trans
-          id="{senderName} (<0>{senderEmail}</0>) Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+          id="{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
           values={{ senderName, senderEmail, domain }}
           components={{
             0: (

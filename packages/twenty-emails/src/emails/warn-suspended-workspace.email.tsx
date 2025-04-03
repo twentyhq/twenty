@@ -1,4 +1,3 @@
-import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -27,9 +26,13 @@ export const WarnSuspendedWorkspaceEmail = ({
 
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={i18n._('Suspended Workspace')} />
+      <Title value={<Trans id="Suspended Workspace" />} />
       <MainText>
-        {userName?.length > 1 ? i18n._(`Dear ${userName},`) : i18n._('Hello,')}
+        {userName?.length > 1 ? (
+          <Trans id="Dear {userName}," values={{ userName }} />
+        ) : (
+          <Trans id="Hello," />
+        )}
         <br />
         <br />
         <Trans
@@ -52,7 +55,7 @@ export const WarnSuspendedWorkspaceEmail = ({
       </MainText>
       <CallToAction
         href="https://app.twenty.com/settings/billing"
-        value={i18n._('Update your subscription')}
+        value={<Trans id="Update your subscription" />}
       />
     </BaseEmail>
   );
