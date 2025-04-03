@@ -447,6 +447,26 @@ export const BlueHighlighting: Story = {
   },
 };
 
+export const PartialBlueHighlighting: Story = {
+  args: {
+    value: {
+      name: 'John Doe',
+      age: 30,
+      address: {
+        city: 'Paris',
+      },
+    },
+    getNodeHighlighting: (keyPath: string) =>
+      keyPath === 'address' ? 'partial-blue' : undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const ageElement = await canvas.findByText('age');
+    expect(ageElement).toBeVisible();
+  },
+};
+
 export const RedHighlighting: Story = {
   args: {
     value: {

@@ -84,6 +84,7 @@ export const JsonNode = ({
         value={value}
         depth={depth}
         keyPath={keyPath}
+        highlighting={highlighting}
       />
     );
   }
@@ -94,6 +95,7 @@ export const JsonNode = ({
       value={value}
       depth={depth}
       keyPath={keyPath}
+      highlighting={highlighting}
     />
   );
 };
