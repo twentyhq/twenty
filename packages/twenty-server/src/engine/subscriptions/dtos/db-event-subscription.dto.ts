@@ -2,6 +2,8 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 registerEnumType(DatabaseEventAction, {
@@ -10,7 +12,7 @@ registerEnumType(DatabaseEventAction, {
 });
 
 @ObjectType()
-export class DbEventDTO {
+export class DbEventSubscriptionDTO {
   @Field(() => DatabaseEventAction)
   action: DatabaseEventAction;
 
@@ -18,7 +20,7 @@ export class DbEventDTO {
   objectNameSingular: string;
 
   @Field(() => GraphQLJSON)
-  record: object;
+  record: ObjectRecord;
 
   @Field(() => [String], { nullable: true })
   updatedFields?: string[];
