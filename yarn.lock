@@ -44971,7 +44971,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"optionator@npm:^0.9.3":
+"optionator@npm:^0.9.1, optionator@npm:^0.9.3":
   version: 0.9.4
   resolution: "optionator@npm:0.9.4"
   dependencies:
@@ -53168,10 +53168,31 @@ __metadata:
     "@tiptap/extension-text-style": "npm:^2.10.4"
     "@tiptap/react": "npm:^2.10.4"
     "@types/file-saver": "npm:^2"
+    "@typescript-eslint/eslint-plugin": "npm:6.21.0"
+    "@typescript-eslint/experimental-utils": "npm:^5.62.0"
+    "@typescript-eslint/parser": "npm:6.21.0"
+    "@typescript-eslint/utils": "npm:6.21.0"
     "@xyflow/react": "npm:^12.4.2"
     buffer: "npm:^6.0.3"
     docx: "npm:^9.1.0"
+    eslint: "npm:^8.53.0"
+    eslint-config-next: "npm:14.0.4"
+    eslint-config-prettier: "npm:^9.1.0"
+    eslint-plugin-import: "npm:2.29.1"
+    eslint-plugin-jsx-a11y: "npm:^6.8.0"
+    eslint-plugin-lingui: "npm:^0.9.0"
+    eslint-plugin-prefer-arrow: "npm:^1.2.3"
+    eslint-plugin-prettier: "npm:^5.1.2"
+    eslint-plugin-project-structure: "npm:^3.9.1"
+    eslint-plugin-react: "npm:^7.33.2"
+    eslint-plugin-react-hooks: "npm:^4.6.0"
+    eslint-plugin-react-refresh: "npm:^0.4.4"
+    eslint-plugin-simple-import-sort: "npm:^10.0.0"
+    eslint-plugin-storybook: "npm:^0.6.15"
+    eslint-plugin-unicorn: "npm:^51.0.1"
+    eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
+    optionator: "npm:^0.9.1"
     recoil-sync: "npm:^0.2.0"
     transliteration: "npm:^2.3.5"
     twenty-shared: "workspace:*"

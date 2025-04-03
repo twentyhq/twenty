@@ -13,7 +13,7 @@ import { useHideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/acti
 import { useImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useImportRecordsNoSelectionRecordAction';
 import { useSeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeDeletedRecordsNoSelectionRecordAction';
 import { useSeeWorkflowsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useSeeWorkflowsNoSelectionRecordAction';
-import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useDestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDestroySingleRecordAction';
@@ -23,14 +23,16 @@ import { useNavigateToPreviousRecordSingleRecordAction } from '@/action-menu/act
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
 import { useRestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRestoreSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActionHook } from '@/action-menu/actions/types/ActionHook';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
 import {
-  ActionMenuEntry,
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconBuildingSkyscraper,
   IconCheckbox,
@@ -52,13 +54,13 @@ import {
   IconUser,
 } from 'twenty-ui';
 
-export const DEFAULT_ACTIONS_CONFIG: Record<
-  string,
-  ActionMenuEntry & {
-    useAction: ActionHook;
-  }
+export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
+  | NoSelectionRecordActionKeys
+  | SingleRecordActionKeys
+  | MultipleRecordsActionKeys,
+  RecordConfigAction
 > = {
-  createNewRecord: {
+  [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
@@ -67,10 +69,12 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 0,
     isPinned: true,
     Icon: IconPlus,
+    shouldBeRegistered: ({ hasObjectReadOnlyPermission }) =>
+      !hasObjectReadOnlyPermission,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useCreateNewTableRecordNoSelectionRecordAction,
   },
-  exportNoteToPdf: {
+  [SingleRecordActionKeys.EXPORT_NOTE_TO_PDF]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.EXPORT_NOTE_TO_PDF,
@@ -79,10 +83,14 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 1,
     isPinned: false,
     Icon: IconFileExport,
+    shouldBeRegistered: ({ selectedRecord, isNoteOrTask }) =>
+      isDefined(isNoteOrTask) &&
+      isNoteOrTask &&
+      isNonEmptyString(selectedRecord?.bodyV2?.blocknote),
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useExportNoteAction,
   },
-  addToFavoritesSingleRecord: {
+  [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
@@ -91,13 +99,15 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 2,
     isPinned: true,
     Icon: IconHeart,
+    shouldBeRegistered: ({ selectedRecord, isFavorite }) =>
+      !selectedRecord?.isRemote && !isFavorite,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
     useAction: useAddToFavoritesSingleRecordAction,
   },
-  removeFromFavoritesSingleRecord: {
+  [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
@@ -106,13 +116,18 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     isPinned: true,
     position: 3,
     Icon: IconHeartOff,
+    shouldBeRegistered: ({ selectedRecord, isFavorite }) =>
+      isDefined(selectedRecord) &&
+      !selectedRecord?.isRemote &&
+      isDefined(isFavorite) &&
+      isFavorite,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
     useAction: useRemoveFromFavoritesSingleRecordAction,
   },
-  exportSingleRecord: {
+  [SingleRecordActionKeys.EXPORT]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.EXPORT,
@@ -122,13 +137,15 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconFileExport,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: ({ selectedRecord }) =>
+      isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     useAction: useExportMultipleRecordsAction,
   },
-  exportMultipleRecords: {
+  [MultipleRecordsActionKeys.EXPORT]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.EXPORT,
@@ -138,10 +155,11 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconFileExport,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useExportMultipleRecordsAction,
   },
-  exportView: {
+  [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
@@ -151,10 +169,11 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconFileExport,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useExportMultipleRecordsAction,
   },
-  deleteSingleRecord: {
+  [SingleRecordActionKeys.DELETE]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.DELETE,
@@ -164,13 +183,15 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconTrash,
     accent: 'default',
     isPinned: true,
+    shouldBeRegistered: ({ selectedRecord }) =>
+      isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
     useAction: useDeleteSingleRecordAction,
   },
-  deleteMultipleRecords: {
+  [MultipleRecordsActionKeys.DELETE]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.DELETE,
@@ -180,10 +201,21 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconTrash,
     accent: 'default',
     isPinned: true,
+    shouldBeRegistered: ({
+      hasObjectReadOnlyPermission,
+      isRemote,
+      isSoftDeleteFilterActive,
+      numberOfSelectedRecords,
+    }) =>
+      !hasObjectReadOnlyPermission &&
+      !isRemote &&
+      !isSoftDeleteFilterActive &&
+      isDefined(numberOfSelectedRecords) &&
+      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useDeleteMultipleRecordsAction,
   },
-  seeDeletedRecords: {
+  [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
@@ -193,10 +225,12 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconRotate2,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
+      !isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeDeletedRecordsNoSelectionRecordAction,
   },
-  hideDeletedRecords: {
+  [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
@@ -206,10 +240,12 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconEyeOff,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
+      isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useHideDeletedRecordsNoSelectionRecordAction,
   },
-  importRecords: {
+  [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Object,
     key: NoSelectionRecordActionKeys.IMPORT_RECORDS,
@@ -219,10 +255,11 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useImportRecordsNoSelectionRecordAction,
   },
-  destroySingleRecord: {
+  [SingleRecordActionKeys.DESTROY]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.DESTROY,
@@ -232,13 +269,21 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
+    shouldBeRegistered: ({
+      selectedRecord,
+      hasObjectReadOnlyPermission,
+      isRemote,
+    }) =>
+      !hasObjectReadOnlyPermission &&
+      !isRemote &&
+      isDefined(selectedRecord?.deletedAt),
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
     useAction: useDestroySingleRecordAction,
   },
-  navigateToPreviousRecord: {
+  [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
@@ -246,10 +291,11 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 13,
     isPinned: true,
     Icon: IconChevronUp,
+    shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useNavigateToPreviousRecordSingleRecordAction,
   },
-  navigateToNextRecord: {
+  [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
@@ -257,10 +303,11 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     position: 14,
     isPinned: true,
     Icon: IconChevronDown,
+    shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
     availableOn: [ActionViewType.SHOW_PAGE],
     useAction: useNavigateToNextRecordSingleRecordAction,
   },
-  destroyMultipleRecords: {
+  [MultipleRecordsActionKeys.DESTROY]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.DESTROY,
@@ -270,10 +317,22 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
+    shouldBeRegistered: ({
+      hasObjectReadOnlyPermission,
+      isRemote,
+      isSoftDeleteFilterActive,
+      numberOfSelectedRecords,
+    }) =>
+      !hasObjectReadOnlyPermission &&
+      !isRemote &&
+      isDefined(isSoftDeleteFilterActive) &&
+      isSoftDeleteFilterActive &&
+      isDefined(numberOfSelectedRecords) &&
+      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useDestroyMultipleRecordsAction,
   },
-  restoreSingleRecord: {
+  [SingleRecordActionKeys.RESTORE]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: SingleRecordActionKeys.RESTORE,
@@ -283,13 +342,25 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconRefresh,
     accent: 'default',
     isPinned: true,
+    shouldBeRegistered: ({
+      selectedRecord,
+      hasObjectReadOnlyPermission,
+      isRemote,
+      isShowPage,
+      isSoftDeleteFilterActive,
+    }) =>
+      !isRemote &&
+      isDefined(selectedRecord?.deletedAt) &&
+      !hasObjectReadOnlyPermission &&
+      ((isDefined(isShowPage) && isShowPage) ||
+        (isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive)),
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
     ],
     useAction: useRestoreSingleRecordAction,
   },
-  restoreMultipleRecords: {
+  [MultipleRecordsActionKeys.RESTORE]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     key: MultipleRecordsActionKeys.RESTORE,
@@ -299,10 +370,22 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconRefresh,
     accent: 'default',
     isPinned: true,
+    shouldBeRegistered: ({
+      hasObjectReadOnlyPermission,
+      isRemote,
+      isSoftDeleteFilterActive,
+      numberOfSelectedRecords,
+    }) =>
+      !hasObjectReadOnlyPermission &&
+      !isRemote &&
+      isDefined(isSoftDeleteFilterActive) &&
+      isSoftDeleteFilterActive &&
+      isDefined(numberOfSelectedRecords) &&
+      numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     useAction: useRestoreMultipleRecordsAction,
   },
-  seeAllWorkflows: {
+  [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
     type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
@@ -312,11 +395,12 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
     Icon: IconSettingsAutomation,
     accent: 'default',
     isPinned: false,
+    shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     useAction: useSeeWorkflowsNoSelectionRecordAction,
     hotKeys: ['G', 'W'],
   },
-  goToPeople: {
+  [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
     type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
@@ -331,10 +415,11 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToPeopleNoSelectionRecordAction,
     hotKeys: ['G', 'P'],
   },
-  goToCompanies: {
+  [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
     type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
@@ -349,10 +434,11 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToCompaniesNoSelectionRecordAction,
     hotKeys: ['G', 'C'],
   },
-  goToOpportunities: {
+  [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
     type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
@@ -367,10 +453,11 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToOpportunitiesNoSelectionRecordAction,
     hotKeys: ['G', 'O'],
   },
-  goToSettings: {
+  [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
     type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
@@ -385,10 +472,11 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToSettingsNoSelectionRecordAction,
     hotKeys: ['G', 'S'],
   },
-  goToTasks: {
+  [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
     type: ActionMenuEntryType.Navigation,
     scope: ActionMenuEntryScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
@@ -403,6 +491,7 @@ export const DEFAULT_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
+    shouldBeRegistered: () => true,
     useAction: useGoToTasksNoSelectionRecordAction,
     hotKeys: ['G', 'T'],
   },

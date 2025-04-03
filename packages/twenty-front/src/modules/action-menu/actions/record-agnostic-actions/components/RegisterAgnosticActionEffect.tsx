@@ -1,20 +1,17 @@
-import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { RecordAgnosticConfigAction } from '@/action-menu/actions/types/RecordAgnosticConfigAction';
 import { wrapActionInCallbacks } from '@/action-menu/actions/utils/wrapActionInCallbacks';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { useContext, useEffect } from 'react';
 
-type RegisterAgnosticRecordActionEffectProps = {
-  action: ActionMenuEntry & {
-    useAction: ActionHookWithoutObjectMetadataItem;
-  };
+type RegisterAgnosticActionEffectProps = {
+  action: RecordAgnosticConfigAction;
 };
 
-export const RegisterAgnosticRecordActionEffect = ({
+export const RegisterAgnosticActionEffect = ({
   action,
-}: RegisterAgnosticRecordActionEffectProps) => {
-  const { shouldBeRegistered, onClick, ConfirmationModal } = action.useAction();
+}: RegisterAgnosticActionEffectProps) => {
+  const { onClick, ConfirmationModal } = action.useAction();
 
   const { onActionStartedCallback, onActionExecutedCallback } =
     useContext(ActionMenuContext);
@@ -32,19 +29,12 @@ export const RegisterAgnosticRecordActionEffect = ({
   });
 
   useEffect(() => {
-    if (shouldBeRegistered) {
-      addActionMenuEntry(wrappedAction);
-    }
+    addActionMenuEntry(wrappedAction);
 
     return () => {
       removeActionMenuEntry(wrappedAction.key);
     };
-  }, [
-    addActionMenuEntry,
-    removeActionMenuEntry,
-    shouldBeRegistered,
-    wrappedAction,
-  ]);
+  }, [addActionMenuEntry, removeActionMenuEntry, wrappedAction]);
 
   return null;
 };

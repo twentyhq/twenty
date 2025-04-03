@@ -29,9 +29,9 @@ export const JsonNode = ({
   depth: number;
   keyPath: string;
 }) => {
-  const { shouldHighlightNode, emptyStringLabel } = useJsonTreeContextOrThrow();
+  const { getNodeHighlighting, emptyStringLabel } = useJsonTreeContextOrThrow();
 
-  const isHighlighted = shouldHighlightNode?.(keyPath) ?? false;
+  const highlighting = getNodeHighlighting?.(keyPath);
 
   if (isNull(value)) {
     return (
@@ -39,7 +39,7 @@ export const JsonNode = ({
         label={label}
         valueAsString="null"
         Icon={IconCircleOff}
-        isHighlighted={isHighlighted}
+        highlighting={highlighting}
       />
     );
   }
@@ -50,7 +50,7 @@ export const JsonNode = ({
         label={label}
         valueAsString={isNonEmptyString(value) ? value : emptyStringLabel}
         Icon={IconTypography}
-        isHighlighted={isHighlighted}
+        highlighting={highlighting}
       />
     );
   }
@@ -61,7 +61,7 @@ export const JsonNode = ({
         label={label}
         valueAsString={String(value)}
         Icon={IconNumber9}
-        isHighlighted={isHighlighted}
+        highlighting={highlighting}
       />
     );
   }
@@ -72,7 +72,7 @@ export const JsonNode = ({
         label={label}
         valueAsString={String(value)}
         Icon={IconCheckbox}
-        isHighlighted={isHighlighted}
+        highlighting={highlighting}
       />
     );
   }

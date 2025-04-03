@@ -1,6 +1,7 @@
 module.exports = {
   root: true,
   extends: ['plugin:prettier/recommended', 'plugin:lingui/recommended'],
+  ignorePatterns: ['node_modules'],
   plugins: [
     '@nx',
     'prefer-arrow',
