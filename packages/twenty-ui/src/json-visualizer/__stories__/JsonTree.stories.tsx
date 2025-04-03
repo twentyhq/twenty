@@ -430,3 +430,35 @@ export const LongText: Story = {
     },
   },
 };
+
+export const BlueHighlighting: Story = {
+  args: {
+    value: {
+      name: 'John Doe',
+      age: 30,
+    },
+    getNodeHighlighting: () => 'blue',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const ageElement = await canvas.findByText('age');
+    expect(ageElement).toBeVisible();
+  },
+};
+
+export const RedHighlighting: Story = {
+  args: {
+    value: {
+      name: 'John Doe',
+      age: 30,
+    },
+    getNodeHighlighting: () => 'red',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const ageElement = await canvas.findByText('age');
+    expect(ageElement).toBeVisible();
+  },
+};
