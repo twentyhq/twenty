@@ -1,4 +1,4 @@
-import { useSearchRecordsRecordAgnosticAction } from '@/action-menu/actions/record-agnostic-actions/hooks/useSearchRecordsRecordAgnosticAction';
+import { SearchRecordsRecordAgnosticActionEffect } from '@/action-menu/actions/record-agnostic-actions/components/SearchRecordsRecordAgnosticActionEffect';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { RecordAgnosticConfigAction } from '@/action-menu/actions/types/RecordAgnosticConfigAction';
@@ -23,7 +23,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     isPinned: false,
     Icon: IconSearch,
     availableOn: [ActionViewType.GLOBAL],
-    useAction: useSearchRecordsRecordAgnosticAction,
+    component: SearchRecordsRecordAgnosticActionEffect,
     hotKeys: ['/'],
     shouldBeRegistered: () => true,
   },
@@ -37,7 +37,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     isPinned: false,
     Icon: IconSearch,
     availableOn: [ActionViewType.GLOBAL],
-    useAction: useSearchRecordsRecordAgnosticAction,
+    component: SearchRecordsRecordAgnosticActionEffect,
     hotKeys: ['/'],
     shouldBeRegistered: () => true,
   },
