@@ -10,9 +10,12 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   height: 100%;
   overflow-y: scroll;
   width: 100%;
+  scrollbar-width: none;
 `;
 
 const ApiReferenceReact = lazy(() =>
