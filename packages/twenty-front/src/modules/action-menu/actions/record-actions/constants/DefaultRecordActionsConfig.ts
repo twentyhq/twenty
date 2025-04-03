@@ -4,15 +4,9 @@ import { ExportMultipleRecordsActionEffect } from '@/action-menu/actions/record-
 import { RestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { CreateNewTableRecordNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewTableRecordNoSelectionRecordActionEffect';
-import { GoToCompaniesNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToCompaniesNoSelectionRecordActionEffect';
-import { GoToOpportunitiesNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToOpportunitiesNoSelectionRecordActionEffect';
-import { GoToPeopleNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToPeopleNoSelectionRecordActionEffect';
-import { GoToSettingsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToSettingsNoSelectionRecordActionEffect';
-import { GoToTasksNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToTasksNoSelectionRecordActionEffect';
 import { HideDeletedRecordsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/HideDeletedRecordsNoSelectionRecordActionEffect';
 import { ImportRecordsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/ImportRecordsNoSelectionRecordActionEffect';
 import { SeeDeletedRecordsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeDeletedRecordsNoSelectionRecordActionEffect';
-import { SeeWorkflowsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeWorkflowsNoSelectionRecordActionEffect';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { AddToFavoritesSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordActionEffect';
 import { DeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction';
@@ -34,8 +28,6 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconBuildingSkyscraper,
-  IconCheckbox,
   IconChevronDown,
   IconChevronUp,
   IconEyeOff,
@@ -46,12 +38,8 @@ import {
   IconPlus,
   IconRefresh,
   IconRotate2,
-  IconSettings,
-  IconSettingsAutomation,
-  IconTargetArrow,
   IconTrash,
   IconTrashX,
-  IconUser,
 } from 'twenty-ui';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
@@ -384,115 +372,5 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: RestoreMultipleRecordsAction,
-  },
-  [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
-    label: msg`Go to workflows`,
-    shortLabel: msg`See workflows`,
-    position: 18,
-    Icon: IconSettingsAutomation,
-    accent: 'default',
-    isPinned: false,
-    shouldBeRegistered: () => true,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    component: SeeWorkflowsNoSelectionRecordActionEffect,
-    hotKeys: ['G', 'W'],
-  },
-  [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
-    label: msg`Go to People`,
-    shortLabel: msg`People`,
-    position: 19,
-    Icon: IconUser,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    shouldBeRegistered: () => true,
-    component: GoToPeopleNoSelectionRecordActionEffect,
-    hotKeys: ['G', 'P'],
-  },
-  [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
-    label: msg`Go to Companies`,
-    shortLabel: msg`Companies`,
-    position: 20,
-    Icon: IconBuildingSkyscraper,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    shouldBeRegistered: () => true,
-    component: GoToCompaniesNoSelectionRecordActionEffect,
-    hotKeys: ['G', 'C'],
-  },
-  [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
-    label: msg`Go to Opportunities`,
-    shortLabel: msg`Opportunities`,
-    position: 21,
-    Icon: IconTargetArrow,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    shouldBeRegistered: () => true,
-    component: GoToOpportunitiesNoSelectionRecordActionEffect,
-    hotKeys: ['G', 'O'],
-  },
-  [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
-    label: msg`Go to Settings`,
-    shortLabel: msg`Settings`,
-    position: 22,
-    Icon: IconSettings,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    shouldBeRegistered: () => true,
-    component: GoToSettingsNoSelectionRecordActionEffect,
-    hotKeys: ['G', 'S'],
-  },
-  [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_TASKS,
-    label: msg`Go to Tasks`,
-    shortLabel: msg`Tasks`,
-    position: 23,
-    Icon: IconCheckbox,
-    isPinned: false,
-    availableOn: [
-      ActionViewType.INDEX_PAGE_NO_SELECTION,
-      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ActionViewType.INDEX_PAGE_BULK_SELECTION,
-      ActionViewType.SHOW_PAGE,
-    ],
-    shouldBeRegistered: () => true,
-    component: GoToTasksNoSelectionRecordActionEffect,
-    hotKeys: ['G', 'T'],
   },
 };

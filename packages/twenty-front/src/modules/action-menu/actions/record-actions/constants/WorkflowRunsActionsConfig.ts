@@ -1,5 +1,4 @@
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { SeeWorkflowsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeWorkflowsNoSelectionRecordActionEffect';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { SeeVersionWorkflowRunSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeVersionWorkflowRunSingleRecordActionEffect';
@@ -48,21 +47,6 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       ],
       component: SeeVersionWorkflowRunSingleRecordActionEffect,
     },
-    [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
-      type: ActionMenuEntryType.Navigation,
-      scope: ActionMenuEntryScope.Global,
-      key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
-      label: msg`Go to workflows`,
-      shortLabel: msg`See workflows`,
-      position: 11,
-      Icon: IconSettingsAutomation,
-      accent: 'default',
-      isPinned: true,
-      shouldBeRegistered: () => true,
-      availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-      component: SeeWorkflowsNoSelectionRecordActionEffect,
-      hotKeys: ['G', 'W'],
-    },
   },
   actionKeys: [
     SingleRecordActionKeys.ADD_TO_FAVORITES,
@@ -74,11 +58,6 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     NoSelectionRecordActionKeys.EXPORT_VIEW,
     NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
     NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
-    NoSelectionRecordActionKeys.GO_TO_PEOPLE,
-    NoSelectionRecordActionKeys.GO_TO_COMPANIES,
-    NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
-    NoSelectionRecordActionKeys.GO_TO_SETTINGS,
-    NoSelectionRecordActionKeys.GO_TO_TASKS,
   ],
   propertiesToOverwrite: {
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
@@ -114,21 +93,6 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     },
     [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
       position: 10,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-      position: 12,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
-      position: 13,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
-      position: 14,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
-      position: 15,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
-      position: 16,
     },
   },
 });

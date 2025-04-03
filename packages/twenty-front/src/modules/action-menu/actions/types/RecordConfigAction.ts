@@ -20,6 +20,6 @@ export type RecordConfigAction = {
   accent?: MenuItemAccent;
   availableOn?: ActionViewType[];
   shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
-  component?: React.ComponentType<{ objectMetadataItem: ObjectMetadataItem }>;
+  component: React.ComponentType<{ objectMetadataItem: ObjectMetadataItem }>;
   hotKeys?: string[];
 };

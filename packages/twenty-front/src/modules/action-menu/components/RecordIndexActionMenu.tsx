@@ -1,3 +1,4 @@
+import { Actions } from '@/action-menu/actions/components/Actions';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
@@ -39,6 +40,7 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
           }}
         >
           {!isMobile && <PageHeaderActionMenuButtons />}
+          <Actions />
           <RecordIndexActionMenuDropdown />
         </ActionMenuContext.Provider>
       )}
