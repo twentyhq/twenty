@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import BaseNode from '@/chatbot/components/ui/BaseNode';
 import styled from '@emotion/styled';
-import { Node, NodeProps, useReactFlow } from '@xyflow/react';
+import { Handle, Node, NodeProps, Position, useReactFlow } from '@xyflow/react';
 import { memo, useEffect, useRef } from 'react';
 
 const StyledDiv = styled.div`
@@ -59,8 +59,14 @@ function TextNode({
       icon={'IconTextSize'}
       title={'Mensagem Inicial'}
       nodeStart={data.nodeStart}
-      isConnectable={isConnectable}
     >
+      {!data.nodeStart && (
+        <Handle
+          type="target"
+          position={Position.Top}
+          isConnectable={isConnectable}
+        />
+      )}
       <StyledDiv>
         <textarea
           id="text"
@@ -69,6 +75,11 @@ function TextNode({
           value={data.text}
         />
       </StyledDiv>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        isConnectable={isConnectable}
+      />
     </BaseNode>
   );
 }

@@ -2,11 +2,11 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 
 const StyledPageContainer = styled.div`
-  height: 100%;
-  width: 100%;
   display: flex;
   flex-direction: row;
+  height: 100%;
   margin-top: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 type ChatbotPageContainerProps = {

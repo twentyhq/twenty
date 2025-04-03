@@ -1,18 +1,17 @@
 import styled from '@emotion/styled';
-import { Handle, Position } from '@xyflow/react';
 import { ReactNode } from 'react';
 import { Label, useIcons } from 'twenty-ui';
 
-const BaseNodeWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 250px;
+const StyledBaseNodeWrapper = styled.div`
+  background-color: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.background.quaternary};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  padding: ${({ theme }) => theme.spacing(2)};
-  background-color: ${({ theme }) => theme.background.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
   box-shadow: rgba(100, 100, 111, 0.15) 0px 4px 16px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: 250px;
 `;
 
 const StyledHeader = styled.div`
@@ -56,13 +55,12 @@ const BaseNode = ({
   title,
   children,
   nodeStart,
-  isConnectable,
 }: {
   icon?: string;
   title?: string;
   children: ReactNode;
   nodeStart?: boolean;
-  isConnectable: boolean;
+  newNode?: boolean;
 }) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(icon);
@@ -71,26 +69,14 @@ const BaseNode = ({
 
   return (
     <>
-      {!nodeStart && (
-        <Handle
-          type="target"
-          position={Position.Top}
-          isConnectable={isConnectable}
-        />
-      )}
       {nodeStart && <StyledNodeType variant="small">Start</StyledNodeType>}
-      <BaseNodeWrapper>
+      <StyledBaseNodeWrapper>
         <StyledHeader>
           {icon && <div className="icon">{iconHeader}</div>}
           {title && <p>{title}</p>}
         </StyledHeader>
         {children}
-      </BaseNodeWrapper>
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-      />
+      </StyledBaseNodeWrapper>
     </>
   );
 };

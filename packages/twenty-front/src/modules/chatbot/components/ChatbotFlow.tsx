@@ -1,13 +1,18 @@
 import { BotDiagramBase } from '@/chatbot/components/BotDiagramBase';
+import TextNode from '@/chatbot/components/ui/TextNode';
 import { useGetChatbot } from '@/chatbot/hooks/useGetChatbot';
 import { chatbotStatusTagProps } from '@/chatbot/utils/chatbotStatusTagProps';
-import { ReactFlowProvider } from '@xyflow/react';
+import { NodeTypes, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 interface TargetableObject {
   id: string;
   targetObjectNameSingular: string;
 }
+
+const types: NodeTypes = {
+  textInput: TextNode,
+};
 
 export const ChatbotFlow = ({
   targetableObject,
@@ -31,7 +36,11 @@ export const ChatbotFlow = ({
   // Enter the types of nodes and edges here in BotDiagramBase
   return (
     <ReactFlowProvider>
-      <BotDiagramBase tagColor={tagProps.color} tagText={tagProps.text} />
+      <BotDiagramBase
+        nodeTypes={types}
+        tagColor={tagProps.color}
+        tagText={tagProps.text}
+      />
     </ReactFlowProvider>
   );
 };
