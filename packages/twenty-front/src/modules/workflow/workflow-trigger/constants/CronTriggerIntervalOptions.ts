@@ -4,8 +4,7 @@ import {
   IconHours24,
   IconTimeDuration60,
   IconBrandDaysCounter,
-} from 'twenty-ui';
-
+} from 'twenty-ui/display';
 export type CronTriggerInterval = 'DAYS' | 'HOURS' | 'MINUTES' | 'CUSTOM';
 
 export const CRON_TRIGGER_INTERVAL_OPTIONS: Array<{

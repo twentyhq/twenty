@@ -1,8 +1,7 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
-import { IconSettings } from 'twenty-ui';
-
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { SettingsPath } from '@/types/SettingsPath';
+import { IconSettings } from 'twenty-ui/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const RecordTableEmptyStateRemote = () => {

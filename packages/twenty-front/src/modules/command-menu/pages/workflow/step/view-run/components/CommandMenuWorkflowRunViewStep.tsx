@@ -17,8 +17,8 @@ import {
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import styled from '@emotion/styled';
-import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   display: flex;

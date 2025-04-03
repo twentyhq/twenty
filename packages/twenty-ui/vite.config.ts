@@ -10,14 +10,38 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 import { UserPluginConfig } from 'vite-plugin-checker/dist/esm/types';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries, import/no-relative-packages
-import packageJson from '../../package.json';
+import packageJson from './package.json';
+
+const entries = Object.keys(packageJson.exports)
+  .filter((el) => el !== './style.css')
+  .map((module) => `src/${module}/index.ts`);
+
+const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
+  if (!chunk.isEntry) {
+    throw new Error(
+      `Should never occurs, encountered a non entry chunk ${chunk.facadeModuleId}`,
+    );
+  }
+
+  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
+  if (splitFaceModuleId === undefined) {
+    throw new Error(
+      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
+    );
+  }
+
+  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
+  if (moduleDirectory === 'src') {
+    return `${chunk.name}.${extension}`;
+  }
+  return `${moduleDirectory}.${extension}`;
+};
 
 export default defineConfig(({ command }) => {
   const isBuildCommand = command === 'build';
 
   const tsConfigPath = isBuildCommand
-    ? path.resolve(__dirname, './tsconfig.build.json')
+    ? path.resolve(__dirname, './tsconfig.lib.json')
     : path.resolve(__dirname, './tsconfig.dev.json');
 
   const checkersConfig: UserPluginConfig = {
@@ -32,22 +56,36 @@ export default defineConfig(({ command }) => {
   };
 
   return {
+    css: {
+      modules: {
+        localsConvention: 'camelCaseOnly',
+      },
+    },
+    optimizeDeps: {
+      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
+    },
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-ui',
-
+    assetsInclude: ['src/**/*.svg'],
     plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
-      tsconfigPaths(),
+      react({
+        jsxImportSource: '@emotion/react',
+        plugins: [['@swc/plugin-emotion', {}]],
+      }),
+      tsconfigPaths({
+        projects: ['tsconfig.json'],
+      }),
       svgr(),
       dts(dtsConfig),
       checker(checkersConfig),
       wyw({
         include: [
           '**/OverflowingTextWithTooltip.tsx',
-          '**/Chip.tsx',
           '**/Tag.tsx',
           '**/Avatar.tsx',
-          '**/AvatarChip.tsx',
+          '**/Chip.tsx',
+          '**/ContactLink.tsx',
+          '**/RoundedLink.tsx',
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
@@ -58,23 +96,47 @@ export default defineConfig(({ command }) => {
     // Configuration for building your library.
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
+      cssCodeSplit: false,
+      minify: false,
+      sourcemap: false,
       outDir: './dist',
       reportCompressedSize: true,
       commonjsOptions: {
         transformMixedEsModules: true,
+        interopDefault: true,
+        defaultIsModuleExports: true,
+        requireReturnsDefault: 'auto',
       },
       lib: {
-        // Could also be a dictionary or array of multiple entry points.
-        entry: 'src/index.ts',
+        entry: ['src/index.ts', ...entries],
         name: 'twenty-ui',
-        fileName: 'index',
-        // Change this to the formats you want to support.
-        // Don't forget to update your package.json as well.
-        formats: ['es', 'cjs'],
       },
       rollupOptions: {
         // External packages that should not be bundled into your library.
         external: Object.keys(packageJson.dependencies || {}),
+        output: [
+          {
+            assetFileNames: 'style.css',
+            globals: {
+              react: 'React',
+              'react-dom': 'ReactDOM',
+            },
+            format: 'es',
+            entryFileNames: (chunk) => entryFileNames(chunk, 'mjs'),
+          },
+          {
+            assetFileNames: 'style.css',
+            format: 'cjs',
+            globals: {
+              react: 'React',
+              'react-dom': 'ReactDOM',
+            },
+            interop: 'auto',
+            esModule: true,
+            exports: 'named',
+            entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),
+          },
+        ],
       },
     },
   };

@@ -301,6 +301,12 @@ const SettingsRoles = lazy(() =>
   })),
 );
 
+const SettingsRoleCreate = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleCreate').then((module) => ({
+    default: module.SettingsRoleCreate,
+  })),
+);
+
 const SettingsRoleEdit = lazy(() =>
   import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
     default: module.SettingsRoleEdit,
@@ -392,6 +398,10 @@ export const SettingsRoutes = ({
       >
         <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
+        <Route
+          path={SettingsPath.RoleCreate}
+          element={<SettingsRoleCreate />}
+        />
       </Route>
       <Route
         element={

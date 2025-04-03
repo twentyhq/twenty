@@ -1,11 +1,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, IconCopy, IconLink } from 'twenty-ui';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useLingui } from '@lingui/react/macro';
+import { Button } from 'twenty-ui/input';
+import { IconCopy, IconLink } from 'twenty-ui/display';
+
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;

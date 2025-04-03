@@ -1,6 +1,5 @@
 import { ReactElement, useContext, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconArrowUpRight } from 'twenty-ui';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
@@ -15,6 +14,8 @@ import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useI
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 import { isDefined } from 'twenty-shared/utils';
+import { IconArrowUpRight } from 'twenty-ui/display';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type RecordTableCellSoftFocusModeProps = {
   editModeContent: ReactElement;
@@ -80,8 +81,12 @@ export const RecordTableCellSoftFocusMode = ({
     ? IconArrowUpRight // IconLayoutSidebarRightExpand - Disabling sidepanel access for now
     : customButtonIcon;
 
+  const isMobile = useIsMobile();
   const showButton =
-    isDefined(buttonIcon) && !editModeContentOnly && !isFieldReadOnly;
+    isDefined(buttonIcon) &&
+    !editModeContentOnly &&
+    !isFieldReadOnly &&
+    !(isMobile && isFirstColumn);
 
   const dontShowContent = isEmpty && isFieldReadOnly;
 

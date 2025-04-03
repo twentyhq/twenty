@@ -28,8 +28,10 @@ export const checkFilterEnumValues = (
   if (!enumValues) {
     return;
   }
+  const allowedEnumValues = ['NULL', 'NOT_NULL', ...enumValues];
+
   values.forEach((val) => {
-    if (!enumValues.includes(val)) {
+    if (!allowedEnumValues.includes(val)) {
       throw new BadRequestException(
         `'filter' enum value '${val}' not available in '${fieldName}' enum. Available enum values are ['${enumValues.join(
           "', '",

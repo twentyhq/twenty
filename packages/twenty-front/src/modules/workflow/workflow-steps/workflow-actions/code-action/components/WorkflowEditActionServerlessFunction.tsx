@@ -37,9 +37,10 @@ import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { CodeEditor, IconCode, IconPlayerPlay, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { isDefined } from 'twenty-shared/utils';
+import { CodeEditor } from 'twenty-ui/input';
+import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;

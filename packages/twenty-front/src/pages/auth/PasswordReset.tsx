@@ -22,7 +22,6 @@ import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AnimatedEaseIn, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 import {
   useUpdatePasswordViaResetTokenMutation,
@@ -30,6 +29,8 @@ import {
 } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { MainButton } from 'twenty-ui/input';
 
 const validationSchema = z
   .object({

@@ -7,9 +7,8 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AppTooltip, MenuItem, MenuItemSelect, SelectOption } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -20,8 +19,10 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useLingui } from '@lingui/react/macro';
-import { v4 as uuidV4 } from 'uuid';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
+import { AppTooltip } from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { SelectOption } from 'twenty-ui/input';
 
 const StyledFloatingDropdown = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
@@ -42,6 +43,7 @@ export const MatchColumnSelect = ({
   placeholder,
 }: MatchColumnSelectProps) => {
   const theme = useTheme();
+  const idPrefix = useId();
 
   const dropdownContainerRef = useRef<HTMLDivElement>(null);
 
@@ -138,8 +140,8 @@ export const MatchColumnSelect = ({
                 />
                 <DropdownMenuSeparator />
                 <DropdownMenuItemsContainer hasMaxHeight>
-                  {options?.map((option) => {
-                    const id = `${uuidV4()}-${option.value}`;
+                  {options?.map((option, index) => {
+                    const id = `${idPrefix}-option-${index}`;
                     return (
                       <React.Fragment key={id}>
                         <div id={id}>

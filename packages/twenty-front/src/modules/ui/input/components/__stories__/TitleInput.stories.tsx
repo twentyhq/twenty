@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { TitleInput } from '@/ui/input/components/TitleInput';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof TitleInput> = {
   title: 'UI/Input/TitleInput',

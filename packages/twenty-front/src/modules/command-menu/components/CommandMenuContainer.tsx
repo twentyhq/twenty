@@ -1,8 +1,8 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
-import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
+import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -32,8 +32,8 @@ import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledCommandMenu = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};
@@ -144,16 +144,16 @@ export const CommandMenuContainer = ({
                   isInRightDrawer: true,
                   onActionExecutedCallback: ({ key }) => {
                     if (
-                      key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
+                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS &&
                       key !==
-                        RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
+                        RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK &&
                       key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
                     ) {
                       toggleCommandMenu();
                     }
 
                     if (
-                      key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK
+                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK
                     ) {
                       setCommandMenuSearch('');
                     }

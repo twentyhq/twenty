@@ -16,6 +16,7 @@ import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     StartingAfterInputFactory,
     EndingBeforeInputFactory,
     LimitInputFactory,
+    ApiEventEmitterService,
   ],
   exports: [RestApiMetadataService],
 })

@@ -7,8 +7,9 @@ import { msg } from '@lingui/core/macro';
 import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-import { ComponentDecorator, IconCheckbox, IconTrash } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { IconCheckbox, IconTrash } from 'twenty-ui/display';
 
 const meta: Meta<typeof RecordIndexActionMenuBarEntry> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuBarEntry',

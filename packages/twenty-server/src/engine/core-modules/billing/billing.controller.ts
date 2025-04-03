@@ -114,7 +114,7 @@ export class BillingController {
 
         return await this.billingWebhookSubscriptionService.processStripeEvent(
           workspaceId,
-          event.data,
+          event,
         );
       }
       default:

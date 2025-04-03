@@ -2,11 +2,8 @@ import { SelectSizeVariant } from '@/ui/input/components/Select';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronDown,
-  OverflowingTextWithTooltip,
-  SelectOption,
-} from 'twenty-ui';
+import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 

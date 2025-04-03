@@ -1,12 +1,3 @@
-import {
-  Button,
-  CodeEditor,
-  CoreEditorHeader,
-  H2Title,
-  IconPlayerPlay,
-  Section,
-} from 'twenty-ui';
-
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -17,6 +8,9 @@ import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
+import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledInputsContainer = styled.div`
   display: flex;
