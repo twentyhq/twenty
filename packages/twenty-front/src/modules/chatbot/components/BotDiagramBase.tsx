@@ -1,5 +1,4 @@
 /* eslint-disable no-constant-condition */
-import TextNode from '@/chatbot/components/ui/TextNode';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { useTheme } from '@emotion/react';
@@ -23,7 +22,7 @@ import { isDefined } from 'twenty-shared';
 import { Button, Tag, TagColor, THEME_COMMON } from 'twenty-ui';
 
 type BotDiagramBaseProps = {
-  nodeTypes?: NodeTypes | null;
+  nodeTypes: NodeTypes;
   tagColor: TagColor;
   tagText: string;
 };
@@ -72,16 +71,18 @@ const StyledStatusTagContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-const types: NodeTypes = {
-  textInput: TextNode,
-};
-
 const initialNodes: Node[] = [
   {
     id: '1',
     type: 'textInput',
     data: { nodeStart: true, text: '' },
     position: { x: 0, y: 0 },
+  },
+  {
+    id: '2',
+    type: 'newNode',
+    data: { newNode: true },
+    position: { x: 150, y: 150 },
   },
 ];
 
@@ -180,14 +181,14 @@ export const BotDiagramBase = ({
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        nodeTypes={types}
+        nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onInit={setRfInstance}
         fitViewOptions={{ padding: 2 }}
         fitView
-        nodesDraggable={false}
+        // nodesDraggable={false}
       >
         <Background color={theme.border.color.medium} size={2} />
         <Panel>
