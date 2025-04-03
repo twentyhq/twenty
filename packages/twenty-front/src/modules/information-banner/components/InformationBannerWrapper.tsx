@@ -6,9 +6,9 @@ import { InformationBannerReconnectAccountInsufficientPermissions } from '@/info
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
-import { SubscriptionStatus } from '~/generated-metadata/graphql';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledInformationBannerWrapper = styled.div`
   height: 40px;
@@ -40,7 +40,7 @@ export const InformationBannerWrapper = () => {
       <InformationBannerReconnectAccountInsufficientPermissions />
       <InformationBannerReconnectAccountEmailAliases />
       {displayBillingSubscriptionPausedBanner && (
-        <InformationBannerBillingSubscriptionPaused />
+        <InformationBannerBillingSubscriptionPaused /> // TODO: remove this once paused subscriptions are deprecated
       )}
       {displayBillingSubscriptionCanceledBanner && (
         <InformationBannerNoBillingSubscription />

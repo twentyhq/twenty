@@ -64,7 +64,7 @@ export class StripeCheckoutService {
               ),
               trial_settings: {
                 end_behavior: {
-                  missing_payment_method: 'pause',
+                  missing_payment_method: 'create_invoice',
                 },
               },
             }

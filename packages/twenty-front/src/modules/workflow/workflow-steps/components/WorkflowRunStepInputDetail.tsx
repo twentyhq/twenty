@@ -14,6 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrackets, useIcons } from 'twenty-ui/display';
 import {
+  GetJsonNodeHighlighting,
   JsonNestedNode,
   JsonTreeContextProvider,
   ShouldExpandNodeInitiallyProps,
@@ -70,6 +71,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const variablesUsedInStep = getWorkflowVariablesUsedInStep({
     step,
   });
+  const allVariablesUsedInStep = Array.from(variablesUsedInStep);
 
   const stepContext = getWorkflowRunStepContext({
     context: workflowRun.context,
@@ -79,6 +81,21 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   if (stepContext.length === 0) {
     throw new Error('The input tab must be rendered with a non-empty context.');
   }
+
+  const getNodeHighlighting: GetJsonNodeHighlighting = (keyPath: string) => {
+    if (variablesUsedInStep.has(keyPath)) {
+      return 'blue';
+    }
+
+    const isUsedVariableParent = allVariablesUsedInStep.some((variable) =>
+      variable.startsWith(keyPath),
+    );
+    if (isUsedVariableParent) {
+      return 'partial-blue';
+    }
+
+    return undefined;
+  };
 
   const isFirstNodeDepthOfPreviousStep = ({
     keyPath,
@@ -104,8 +121,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
             emptyStringLabel: t`[empty string]`,
             arrowButtonCollapsedLabel: t`Expand`,
             arrowButtonExpandedLabel: t`Collapse`,
-            getNodeHighlighting: (keyPath) =>
-              variablesUsedInStep.has(keyPath) ? 'blue' : undefined,
+            getNodeHighlighting,
             shouldExpandNodeInitially: isFirstNodeDepthOfPreviousStep,
           }}
         >
