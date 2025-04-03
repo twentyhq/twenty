@@ -53,7 +53,7 @@ export class BillingPlanService {
     const [baseProduct] = await this.getProductsByProductMetadata({
       planKey,
       priceUsageBased: BillingUsageType.LICENSED,
-      productKey: BillingProductKey.BaseProduct,
+      productKey: BillingProductKey.BASE_PRODUCT,
     });
 
     return baseProduct;
@@ -82,7 +82,7 @@ export class BillingPlanService {
         });
       const baseProduct = planProducts.find(
         (product) =>
-          product.metadata.productKey === BillingProductKey.BaseProduct,
+          product.metadata.productKey === BillingProductKey.BASE_PRODUCT,
       );
 
       if (!baseProduct) {
@@ -99,7 +99,7 @@ export class BillingPlanService {
       const otherLicensedProducts = planProducts.filter(
         (product) =>
           product.metadata.priceUsageBased === BillingUsageType.LICENSED &&
-          product.metadata.productKey !== BillingProductKey.BaseProduct,
+          product.metadata.productKey !== BillingProductKey.BASE_PRODUCT,
       );
 
       return {

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
+import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -57,20 +58,24 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
 
     let actionOutput: WorkflowExecutorOutput;
 
-    const { canBillWorkflow, billingErrorOutput } =
-      await this.canBillWorkflow();
+    if (
+      this.billingService.isBillingEnabled() &&
+      !(await this.canBillWorkflowNodeExecution())
+    ) {
+      const billingOutput = {
+        error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
+      };
 
-    if (!canBillWorkflow) {
       await this.workflowRunWorkspaceService.saveWorkflowRunState({
         workflowRunId,
         stepOutput: {
           id: step.id,
-          output: billingErrorOutput,
+          output: billingOutput,
         },
         context,
       });
 
-      return billingErrorOutput;
+      return billingOutput;
     }
 
     try {
@@ -179,25 +184,13 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     );
   }
 
-  private async canBillWorkflow() {
-    if (!this.billingService.isBillingEnabled()) {
-      return { canBillWorkflow: true, billingErrorOutput: {} };
-    }
-
+  private async canBillWorkflowNodeExecution() {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create().workspaceId ?? '';
 
-    const canBillWorkflow = await this.billingService.canBillMeteredProduct(
+    return await this.billingService.canBillMeteredProduct(
       workspaceId,
-      BillingProductKey.WorkflowNodeExecution,
+      BillingProductKey.WORKFLOW_NODE_EXECUTION,
     );
-
-    const billingErrorOutput = canBillWorkflow
-      ? {}
-      : {
-          error: 'Unable to execute workflow. Please verify your subscription.',
-        };
-
-    return { canBillWorkflow, billingErrorOutput };
   }
 }

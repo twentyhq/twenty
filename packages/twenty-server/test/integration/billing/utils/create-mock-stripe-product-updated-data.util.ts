@@ -19,7 +19,7 @@ export const createMockStripeProductUpdatedData = (
     metadata: {
       planKey: 'base',
       priceUsageBased: BillingUsageType.LICENSED,
-      productKey: BillingProductKey.BaseProduct,
+      productKey: BillingProductKey.BASE_PRODUCT,
     },
     name: 'kjnnjkjknkjnjkn',
     package_dimensions: null,

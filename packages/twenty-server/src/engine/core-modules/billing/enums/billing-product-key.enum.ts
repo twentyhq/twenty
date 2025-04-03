@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
 export enum BillingProductKey {
-  BaseProduct = 'BaseProduct',
-  WorkflowNodeExecution = 'WorkflowNodeExecution',
+  BASE_PRODUCT = 'BASE_PRODUCT',
+  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION',
 }

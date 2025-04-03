@@ -16,7 +16,7 @@ describe('isStripeValidProductMetadata', () => {
     const metadata: Stripe.Metadata = {
       planKey: BillingPlanKey.PRO,
       priceUsageBased: BillingUsageType.METERED,
-      productKey: BillingProductKey.BaseProduct,
+      productKey: BillingProductKey.BASE_PRODUCT,
     };
 
     expect(isStripeValidProductMetadata(metadata)).toBe(true);
@@ -26,7 +26,7 @@ describe('isStripeValidProductMetadata', () => {
     const metadata: Stripe.Metadata = {
       planKey: BillingPlanKey.ENTERPRISE,
       priceUsageBased: BillingUsageType.METERED,
-      productKey: BillingProductKey.WorkflowNodeExecution,
+      productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
       randomKey: 'randomValue',
     };
 
@@ -47,7 +47,7 @@ describe('isStripeValidProductMetadata', () => {
     const metadata: Stripe.Metadata = {
       planKey: BillingPlanKey.PRO,
       priceUsageBased: 'invalid',
-      productKey: BillingProductKey.BaseProduct,
+      productKey: BillingProductKey.BASE_PRODUCT,
     };
 
     expect(isStripeValidProductMetadata(metadata)).toBe(false);
