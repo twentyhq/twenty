@@ -14,7 +14,6 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -38,8 +37,6 @@ export class BillingSubscriptionService {
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingProduct, 'core')
-    private readonly billingProductRepository: Repository<BillingProduct>,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
