@@ -39,7 +39,7 @@ jobs:
         env:
           CLICKHOUSE_PASSWORD: ${{ env.CLICKHOUSE_CI_PASSWORD }}
         options: >-
-          --health-cmd "clickhouse-client --password=${{ env.CLICKHOUSE_CI_PASSWORD }} --query='SELECT 1'" 
+          --health-cmd "clickhouse-client --password=$CLICKHOUSE_CI_PASSWORD --query='SELECT 1'" 
           --health-interval 10s 
           --health-timeout 5s 
           --health-retries 5
