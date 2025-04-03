@@ -17,7 +17,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui';
 
 const StyledLayout = styled.div`
@@ -73,6 +73,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const animateModal = useParams().animateModal ?? true;
 
   return (
     <>
@@ -96,7 +97,9 @@ export const DefaultLayout = () => {
                     2
                   : 0,
             }}
-            transition={{ duration: theme.animation.duration.normal }}
+            transition={{
+              duration: animateModal ? theme.animation.duration.normal : 0,
+            }}
           >
             {!showAuthModal && (
               <>
@@ -112,13 +115,21 @@ export const DefaultLayout = () => {
             {showAuthModal ? (
               <>
                 <SignInBackgroundMockPage />
-                <AnimatePresence mode="wait">
+                {animateModal ? (
+                  <AnimatePresence mode="wait">
+                    <LayoutGroup>
+                      <AuthModal>
+                        <Outlet />
+                      </AuthModal>
+                    </LayoutGroup>
+                  </AnimatePresence>
+                ) : (
                   <LayoutGroup>
                     <AuthModal>
                       <Outlet />
                     </AuthModal>
                   </LayoutGroup>
-                </AnimatePresence>
+                )}
               </>
             ) : (
               <StyledMainContainer>

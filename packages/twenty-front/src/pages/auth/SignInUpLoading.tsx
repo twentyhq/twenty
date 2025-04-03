@@ -10,6 +10,7 @@ import { Loader, MainButton } from 'twenty-ui';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
@@ -58,7 +59,7 @@ export const SignInUpLoading = () => {
     }
     const workspaceName = !isDefined(workspacePublicData?.displayName)
       ? DEFAULT_WORKSPACE_NAME
-      : workspacePublicData?.displayName === ''
+      : !isNonEmptyString(workspacePublicData?.displayName)
         ? t`Your Workspace`
         : workspacePublicData?.displayName;
 
