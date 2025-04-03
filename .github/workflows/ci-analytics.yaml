@@ -30,6 +30,7 @@ jobs:
     runs-on: depot-ubuntu-24.04-8
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+      CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
     services:
       clickhouse:
         image: clickhouse/clickhouse-server:latest
@@ -37,7 +38,7 @@ jobs:
           - 8123:8123
           - 9000:9000
         env:
-          CLICKHOUSE_PASSWORD: ${{ env.CLICKHOUSE_CI_PASSWORD }}
+          CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
         options: >-
           --health-cmd "clickhouse-client --password=${{ env.CLICKHOUSE_CI_PASSWORD }} --query='SELECT 1'" 
           --health-interval 10s 
