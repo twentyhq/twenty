@@ -141,6 +141,7 @@ mutation UpdateOneFavorite(
       employees
       id
       idealCustomerProfile
+      internalCompetitions
       introVideo {
         primaryLinkUrl
         primaryLinkLabel
@@ -510,6 +511,7 @@ export const mocks = [
               employees
               id
               idealCustomerProfile
+              internalCompetitions
               introVideo {
                 primaryLinkUrl
                 primaryLinkLabel
