@@ -1,11 +1,12 @@
 import { ActivityList } from '@/activities/components/ActivityList';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { SMSText } from '@/activities/types/SMSText';
+import { SMSText, TwilioMessage } from '@/activities/types/SMSText';
 import styled from '@emotion/styled';
+import axios from 'axios';
+import { selectorFamily, useRecoilValueLoadable } from 'recoil';
 import { H1Title, H1TitleFontColor, Section } from 'twenty-ui';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
-
 // Styled components copied from EmailThread
 const StyledContainer = styled.div`
   display: flex;
@@ -42,35 +43,90 @@ const StyledReceivedAt = styled.div`
   margin-left: auto;
 `;
 
+const apiUrl = process.env.REACT_APP_TWILIO_API_URL;
+const accountSid = process.env.REACT_APP_TWILIO_ACCOUNT_SID as string;
+const authToken = process.env.REACT_APP_TWILIO_AUTH_TOKEN as string;
+
+const smsTextDataSelector = selectorFamily({
+  key: 'smsTextDataSelector',
+  get: (targetableObject) => async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        {
+          auth: {
+            username: accountSid,
+            password: authToken,
+          },
+        },
+      );
+      console.log('Twilio messages:', response.data.messages);
+      return response.data.messages;
+    } catch (error) {
+      console.error('Error fetching Twilio messages:', error);
+      throw error;
+    }
+  },
+});
+
+// // Call API with twilio node package
+// import twilio from 'twilio';
+// const client = twilio(accountSid, authToken);
+// const smsTextDataSelector = selectorFamily({
+//   key: 'smsTextDataSelector',
+//   get: (targetableObject) => async () => {
+//     const messages = await client.messages.list({ limit: 3 });
+//     messages.forEach((m) => console.log(m.body));
+//   },
+// });
+
 export const SMSTexts = ({
   targetableObject,
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const texts: SMSText[] = [
-    {
-      sender: 'You',
-      body: 'Ok will do',
-      date: new Date(),
-    },
-    {
-      sender: 'Your Agent',
-      body: 'Please send over your completed underwriting form, then I can go ahead and submit it for approval. Let me know if you have any questions on completing the form',
-      date: new Date(2025, 2, 28),
-    },
-    {
-      sender: 'Byrider Admin',
-      body: 'New recommendation: 2018 Kia Forte just listed for sale at our Philadelphia location. Find out more at this link: https://www.byrider.com/inventory',
-      date: new Date(2025, 2, 23),
-    },
-    {
-      sender: 'Byrider Admin',
-      body: "Welcome to Byrider! You're signed up for texts regarding upcoming appointments, new inventory, and more. View your profile and manage preferences here:",
-      date: new Date(2025, 2, 18),
-    },
-  ];
 
-  // can't click on each text, also not grouped by 'thread'
+  const textDataLoadable = useRecoilValueLoadable(smsTextDataSelector(targetableObject));
+
+//   const fakeTexts: SMSText[] = [
+//     {
+//       id: '1',
+//       sender: 'You',
+//       body: 'Ok will do',
+//       date: new Date(),
+//     },
+//     {
+//       id: '2',
+//       sender: 'Your Agent',
+//       body: 'Please send over your completed underwriting form, then I can go ahead and submit it for approval. Let me know if you have any questions on completing the form',
+//       date: new Date(2025, 2, 28),
+//     },
+//     {
+//       id: '3',
+//       sender: 'Byrider Admin',
+//       body: 'New recommendation: 2018 Kia Forte just listed for sale at our Philadelphia location. Find out more at this link: https://www.byrider.com/inventory',
+//       date: new Date(2025, 2, 23),
+//     },
+//     {
+//       id: '4',
+//       sender: 'Byrider Admin',
+//       body: "Welcome to Byrider! You're signed up for texts regarding upcoming appointments, new inventory, and more. View your profile and manage preferences here:",
+//       date: new Date(2025, 2, 18),
+//     },
+//   ];
+
+  if (textDataLoadable.state === 'loading') return <p>Loading</p>
+  if (textDataLoadable.state === 'hasError') return <p>Error</p>
+
+  const transformedTexts = textDataLoadable.contents.map((text: TwilioMessage) => ({
+    id: text.sid,
+    sender: text.from,
+    body: text.body,
+    date: new Date(text.date_sent),
+  }));
+
+  console.log('transformed', transformedTexts);
+
   return (
     <StyledContainer>
       <Section>
@@ -78,15 +134,16 @@ export const SMSTexts = ({
           title={
             <>
               SMS Text History
-              <StyledTextCount>{texts.length}</StyledTextCount>
+              <StyledTextCount>{transformedTexts.length}</StyledTextCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
 
         <ActivityList>
-          {texts?.map((text) => (
-            <ActivityRow onClick={() => {}}>
+          {transformedTexts?.map((text : SMSText) => (
+            // can't click on each text
+            <ActivityRow onClick={() => {}} key={text.id}>
               <StyledSenderNames>{text.sender}</StyledSenderNames>
               <StyledBody>{text.body}</StyledBody>
               <StyledReceivedAt>

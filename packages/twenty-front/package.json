@@ -7,7 +7,8 @@
     "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=4500 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=7000 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "start:prod": "NODE_ENV=production npx vite --host",
-    "tsup": "npx tsup"
+    "tsup": "npx tsup",
+    "twilio-proxy": "lcp --proxyUrl https://api.twilio.com"
   },
   "engines": {
     "node": "^18.17.1",
@@ -51,12 +52,15 @@
     "@tiptap/extension-text-style": "^2.10.4",
     "@tiptap/react": "^2.10.4",
     "@xyflow/react": "^12.4.2",
+    "axios": "^1.8.4",
     "buffer": "^6.0.3",
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
+    "local-cors-proxy": "^1.1.0",
     "recoil-sync": "^0.2.0",
     "transliteration": "^2.3.5",
-    "twenty-shared": "workspace:*"
+    "twenty-shared": "workspace:*",
+    "twilio": "^5.5.1"
   },
   "devDependencies": {
     "@lingui/cli": "^5.1.2",
