@@ -92,6 +92,7 @@ export const workflowFormActionSettingsSchema =
         type: z.union([
           z.literal(FieldMetadataType.TEXT),
           z.literal(FieldMetadataType.NUMBER),
+          z.literal(FieldMetadataType.DATE),
           z.literal('RECORD'),
         ]),
         placeholder: z.string().optional(),
