@@ -1,5 +1,4 @@
 import { Button } from '@react-email/components';
-import { ReactNode } from 'react';
 
 import { emailTheme } from 'src/common-style';
 
@@ -17,7 +16,7 @@ const callToActionStyle = {
 
 type CallToActionProps = {
   href: string;
-  value: ReactNode;
+  value: JSX.Element | JSX.Element[] | string;
 };
 
 export const CallToAction = ({ value, href }: CallToActionProps) => {

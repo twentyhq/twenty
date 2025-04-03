@@ -1,7 +1,6 @@
 import { i18n, Messages } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Container, Html } from '@react-email/components';
-import { PropsWithChildren } from 'react';
 
 import { BaseHead } from 'src/components/BaseHead';
 import { Footer } from 'src/components/Footer';
@@ -39,10 +38,11 @@ import { messages as viMessages } from '../locales/generated/vi-VN';
 import { messages as zhHansMessages } from '../locales/generated/zh-CN';
 import { messages as zhHantMessages } from '../locales/generated/zh-TW';
 
-type BaseEmailProps = PropsWithChildren<{
+type BaseEmailProps = {
+  children: JSX.Element | JSX.Element[] | string;
   width?: number;
   locale: keyof typeof APP_LOCALES;
-}>;
+};
 
 const messages: Record<keyof typeof APP_LOCALES, Messages> = {
   en: enMessages,

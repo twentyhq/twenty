@@ -1,3 +1,4 @@
+import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -19,8 +20,8 @@ export const PasswordResetLinkEmail = ({
 }: PasswordResetLinkEmailProps) => {
   return (
     <BaseEmail locale={locale}>
-      <Title value={<Trans id="Reset your password 🗝" />} />
-      <CallToAction href={link} value={<Trans id="Reset" />} />
+      <Title value={i18n._('Reset your password 🗝')} />
+      <CallToAction href={link} value={i18n._('Reset')} />
       <MainText>
         <Trans
           id="This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"

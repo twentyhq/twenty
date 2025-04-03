@@ -49,9 +49,11 @@ export const Footer = () => {
         </Column>
       </Row>
       <ShadowText>
-        {i18n._('Twenty.com, Public Benefit Corporation')}
-        <br />
-        {i18n._('San Francisco / Paris')}
+        <>
+          {i18n._('Twenty.com, Public Benefit Corporation')}
+          <br />
+          {i18n._('San Francisco / Paris')}
+        </>
       </ShadowText>
     </Container>
   );

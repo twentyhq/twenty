@@ -1,7 +1,10 @@
 import { Text } from '@react-email/components';
-import { PropsWithChildren as ShadowTextProps } from 'react';
 
 import { emailTheme } from 'src/common-style';
+
+type ShadowTextProps = {
+  children: JSX.Element | JSX.Element[] | string;
+};
 
 const shadowTextStyle = {
   fontSize: emailTheme.font.size.sm,

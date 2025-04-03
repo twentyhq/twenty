@@ -9,8 +9,8 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
-import { IsNull, Repository } from 'typeorm';
 import { APP_LOCALES } from 'twenty-shared/translations';
+import { IsNull, Repository } from 'typeorm';
 
 import {
   AppToken,
@@ -305,8 +305,8 @@ export class WorkspaceInvitationService {
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);
-        const html = render(emailTemplate);
-        const text = render(emailTemplate, {
+        const html = await render(emailTemplate);
+        const text = await render(emailTemplate, {
           plainText: true,
         });
 

@@ -1,7 +1,10 @@
 import { Text } from '@react-email/components';
-import { PropsWithChildren as MainTextProps } from 'react';
 
 import { emailTheme } from 'src/common-style';
+
+type MainTextProps = {
+  children: JSX.Element | JSX.Element[] | string;
+};
 
 const mainTextStyle = {
   fontFamily: emailTheme.font.family,

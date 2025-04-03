@@ -218,6 +218,8 @@
     "@nx/vite": "18.3.3",
     "@nx/web": "18.3.3",
     "@playwright/test": "^1.46.0",
+    "@react-email/components": "0.0.35",
+    "@react-email/render": "0.0.17",
     "@sentry/types": "^7.109.0",
     "@storybook/addon-actions": "^7.6.3",
     "@storybook/addon-coverage": "^1.0.0",

@@ -1,3 +1,4 @@
+import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -20,7 +21,7 @@ export const CleanSuspendedWorkspaceEmail = ({
 }: CleanSuspendedWorkspaceEmailProps) => {
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={<Trans id="Deleted Workspace" />} />
+      <Title value={i18n._('Deleted Workspace')} />
       <MainText>
         {userName?.length > 1 ? (
           <Trans id="Dear {userName}," values={{ userName }} />
@@ -43,7 +44,7 @@ export const CleanSuspendedWorkspaceEmail = ({
       </MainText>
       <CallToAction
         href="https://app.twenty.com/"
-        value={<Trans id="Create a new workspace" />}
+        value={i18n._('Create a new workspace')}
       />
     </BaseEmail>
   );

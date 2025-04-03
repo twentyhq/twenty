@@ -23,7 +23,7 @@ export const PasswordUpdateNotifyEmail = ({
 
   return (
     <BaseEmail locale={locale}>
-      <Title value={<Trans id="Password updated" />} />
+      <Title value={i18n._('Password updated')} />
       <MainText>
         {userName?.length > 1 ? (
           <Trans id="Dear {userName}," values={{ userName }} />
@@ -41,7 +41,7 @@ export const PasswordUpdateNotifyEmail = ({
         <Trans id="If you did not initiate this change, please contact your workspace owner immediately." />
         <br />
       </MainText>
-      <CallToAction value={<Trans id="Connect to Twenty" />} href={link} />
+      <CallToAction value={i18n._('Connect to Twenty')} href={link} />
     </BaseEmail>
   );
 };

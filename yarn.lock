@@ -12150,6 +12150,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@one-ini/wasm@npm:0.1.1":
+  version: 0.1.1
+  resolution: "@one-ini/wasm@npm:0.1.1"
+  checksum: 10c0/54700e055037f1a63bfcc86d24822203b25759598c2c3e295d1435130a449108aebc119c9c2e467744767dbe0b6ab47a182c61aa1071ba7368f5e20ab197ba65
+  languageName: node
+  linkType: hard
+
 "@open-draft/deferred-promise@npm:^2.1.0, @open-draft/deferred-promise@npm:^2.2.0":
   version: 2.2.0
   resolution: "@open-draft/deferred-promise@npm:2.2.0"
@@ -15262,12 +15269,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-email/preview@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "@react-email/preview@npm:0.0.10"
+"@react-email/render@npm:0.0.17":
+  version: 0.0.17
+  resolution: "@react-email/render@npm:0.0.17"
+  dependencies:
+    html-to-text: "npm:9.0.5"
+    js-beautify: "npm:^1.14.11"
+    react-promise-suspense: "npm:0.3.4"
   peerDependencies:
     react: ^18.2.0
-  checksum: 10c0/d2692e148537b288c4f132d8c85414fccf2567d209cd25d1d4d21fe50bf96eddf5835c5f7eeedf7f0c3e09871a6d0f1787e271525edb29e573912f7c5ba81e34
+    react-dom: ^18.2.0
+  checksum: 10c0/34a1c5a55586d7cd723638d8cd5328fddf30015e5065a2e9d5204772e0532e84d63af1b2b1b8ec02cef52a8f57d34871200c0075a9ed7b2861362d8138d3db5e
   languageName: node
   linkType: hard
 
@@ -29358,6 +29370,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"config-chain@npm:^1.1.13":
+  version: 1.1.13
+  resolution: "config-chain@npm:1.1.13"
+  dependencies:
+    ini: "npm:^1.3.4"
+    proto-list: "npm:~1.2.1"
+  checksum: 10c0/39d1df18739d7088736cc75695e98d7087aea43646351b028dfabd5508d79cf6ef4c5bcd90471f52cd87ae470d1c5490c0a8c1a292fbe6ee9ff688061ea0963e
+  languageName: node
+  linkType: hard
+
 "configstore@npm:^5.0.1":
   version: 5.0.1
   resolution: "configstore@npm:5.0.1"
@@ -31595,6 +31617,20 @@ __metadata:
   dependencies:
     safe-buffer: "npm:^5.0.1"
   checksum: 10c0/ebfbf19d4b8be938f4dd4a83b8788385da353d63307ede301a9252f9f7f88672e76f2191618fd8edfc2f24679236064176fab0b78131b161ee73daa37125408c
+  languageName: node
+  linkType: hard
+
+"editorconfig@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "editorconfig@npm:1.0.4"
+  dependencies:
+    "@one-ini/wasm": "npm:0.1.1"
+    commander: "npm:^10.0.0"
+    minimatch: "npm:9.0.1"
+    semver: "npm:^7.5.3"
+  bin:
+    editorconfig: bin/editorconfig
+  checksum: 10c0/ed6985959d7b34a56e1c09bef118758c81c969489b768d152c93689fce8403b0452462e934f665febaba3478eebc0fd41c0a36100783eaadf6d926c4abc87a3d
   languageName: node
   linkType: hard
 
@@ -35119,7 +35155,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^10.0.0, glob@npm:^10.2.2, glob@npm:^10.3.10, glob@npm:^10.3.7":
+"glob@npm:^10.0.0, glob@npm:^10.2.2, glob@npm:^10.3.10, glob@npm:^10.3.7, glob@npm:^10.4.2":
   version: 10.4.5
   resolution: "glob@npm:10.4.5"
   dependencies:
@@ -39307,6 +39343,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-beautify@npm:^1.14.11":
+  version: 1.15.4
+  resolution: "js-beautify@npm:1.15.4"
+  dependencies:
+    config-chain: "npm:^1.1.13"
+    editorconfig: "npm:^1.0.4"
+    glob: "npm:^10.4.2"
+    js-cookie: "npm:^3.0.5"
+    nopt: "npm:^7.2.1"
+  bin:
+    css-beautify: js/bin/css-beautify.js
+    html-beautify: js/bin/html-beautify.js
+    js-beautify: js/bin/js-beautify.js
+  checksum: 10c0/300386f648579feacda98640742e8db50d4504bc896673af8bc784a5864585abf89ad8d1f257f2cfd4e3da951e0e4d1f027aa3c21537edb920bd498a0e27bd86
+  languageName: node
+  linkType: hard
+
 "js-cookie@npm:^2.2.1":
   version: 2.2.1
   resolution: "js-cookie@npm:2.2.1"
@@ -43463,6 +43516,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimatch@npm:9.0.1":
+  version: 9.0.1
+  resolution: "minimatch@npm:9.0.1"
+  dependencies:
+    brace-expansion: "npm:^2.0.1"
+  checksum: 10c0/aa043eb8822210b39888a5d0d28df0017b365af5add9bd522f180d2a6962de1cbbf1bdeacdb1b17f410dc3336bc8d76fb1d3e814cdc65d00c2f68e01f0010096
+  languageName: node
+  linkType: hard
+
 "minimatch@npm:9.0.3":
   version: 9.0.3
   resolution: "minimatch@npm:9.0.3"
@@ -44682,7 +44744,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nopt@npm:^7.0.0":
+"nopt@npm:^7.0.0, nopt@npm:^7.2.1":
   version: 7.2.1
   resolution: "nopt@npm:7.2.1"
   dependencies:
@@ -47767,6 +47829,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proto-list@npm:~1.2.1":
+  version: 1.2.4
+  resolution: "proto-list@npm:1.2.4"
+  checksum: 10c0/b9179f99394ec8a68b8afc817690185f3b03933f7b46ce2e22c1930dc84b60d09f5ad222beab4e59e58c6c039c7f7fcf620397235ef441a356f31f9744010e12
+  languageName: node
+  linkType: hard
+
 "protobufjs@npm:^7.3.0":
   version: 7.4.0
   resolution: "protobufjs@npm:7.4.0"
@@ -48240,17 +48309,6 @@ __metadata:
     resolve: "npm:^1.22.1"
     strip-indent: "npm:^4.0.0"
   checksum: 10c0/74622750e60b287d2897a6887a2bd88303fadd84540247e162e9e970430864ae7b49152de043233d873a0aa7cffa406e5cd8fc1e8e2c277b8da73198b570f16b
-  languageName: node
-  linkType: hard
-
-"react-dom@npm:19.1.0":
-  version: 19.1.0
-  resolution: "react-dom@npm:19.1.0"
-  dependencies:
-    scheduler: "npm:^0.26.0"
-  peerDependencies:
-    react: ^19.1.0
-  checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
   languageName: node
   linkType: hard
 
@@ -48845,13 +48903,6 @@ __metadata:
     react: "*"
     react-dom: "*"
   checksum: 10c0/3d6a8f46539b32698d31600239e72b5c23376a5343d0d687c6520e14532ed7f5c72c9b99d222be4eeacb0401ce3ae763d5648d0476440c8b4a6afbd56dc98bfa
-  languageName: node
-  linkType: hard
-
-"react@npm:19.1.0":
-  version: 19.1.0
-  resolution: "react@npm:19.1.0"
-  checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
   languageName: node
   linkType: hard
 
@@ -50489,13 +50540,6 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:^0.26.0":
-  version: 0.26.0
-  resolution: "scheduler@npm:0.26.0"
-  checksum: 10c0/5b8d5bfddaae3513410eda54f2268e98a376a429931921a81b5c3a2873aab7ca4d775a8caac5498f8cbc7d0daeab947cf923dbd8e215d61671f9f4e392d34356
   languageName: node
   linkType: hard
 
@@ -53717,14 +53761,13 @@ __metadata:
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^5.1.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
-    "@react-email/components": "npm:0.0.35"
-    "@react-email/preview": "npm:^0.0.10"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
-    react: "npm:19.1.0"
-    react-dom: "npm:19.1.0"
     react-email: "npm:4.0.3"
     twenty-shared: "workspace:*"
+  peerDependencies:
+    react: ^18.2.0 || ^19.0.0
+    react-dom: ^18.2.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -53965,6 +54008,8 @@ __metadata:
     "@playwright/test": "npm:^1.46.0"
     "@ptc-org/nestjs-query-core": "npm:^4.2.0"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
+    "@react-email/components": "npm:0.0.35"
+    "@react-email/render": "npm:0.0.17"
     "@sentry/node": "npm:^8"
     "@sentry/profiling-node": "npm:^8"
     "@sentry/react": "npm:^8"
