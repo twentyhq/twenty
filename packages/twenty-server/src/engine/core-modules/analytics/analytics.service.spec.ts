@@ -1,10 +1,9 @@
-import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 
-import { AnalyticsService } from './analytics.service';
+import { AnalyticsService } from './services/analytics.service';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
@@ -18,11 +17,7 @@ describe('AnalyticsService', () => {
           useValue: {},
         },
         {
-          provide: JwtWrapperService,
-          useValue: {},
-        },
-        {
-          provide: HttpService,
+          provide: ClickhouseService,
           useValue: {},
         },
       ],

@@ -58,6 +58,7 @@
     "redis": "^4.7.0",
     "ts-morph": "^24.0.0",
     "tsconfig-paths": "^4.2.0",
+    "twenty-analytics": "workspace:*",
     "typeorm": "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch",
     "unzipper": "^0.12.3",
     "zod-to-json-schema": "^3.23.1"

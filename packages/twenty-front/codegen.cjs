@@ -1,3 +1,6 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+
 module.exports = {
   schema:
     (process.env.REACT_APP_SERVER_BASE_URL ?? 'http://localhost:3000') +

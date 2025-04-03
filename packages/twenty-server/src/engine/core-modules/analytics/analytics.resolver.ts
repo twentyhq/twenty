@@ -5,8 +5,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
-import { AnalyticsService } from './analytics.service';
-
+import { AnalyticsService } from './services/analytics.service';
 import { CreateAnalyticsInput } from './dtos/create-analytics.input';
 import { Analytics } from './entities/analytics.entity';
 
