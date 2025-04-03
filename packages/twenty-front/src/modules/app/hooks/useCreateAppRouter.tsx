@@ -1,12 +1,13 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 
-import { VerifyEffect } from '@/auth/components/VerifyEffect';
+import { Verify } from '@/auth/components/Verify';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { VerifyLayout } from '@/ui/layout/page/components/VerifyLayout';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -37,8 +38,10 @@ export const useCreateAppRouter = (
         // to set scroll position before the page is rendered
         loader={async () => Promise.resolve(null)}
       >
+        <Route element={<VerifyLayout />}>
+          <Route path={AppPath.Verify} element={<Verify />} />
+        </Route>
         <Route element={<DefaultLayout />}>
-          <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
