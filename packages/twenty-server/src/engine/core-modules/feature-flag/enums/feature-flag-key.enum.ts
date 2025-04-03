@@ -11,7 +11,6 @@ export enum FeatureFlagKey {
   IsCustomDomainEnabled = 'IS_CUSTOM_DOMAIN_ENABLED',
   IsApprovedAccessDomainsEnabled = 'IS_APPROVED_ACCESS_DOMAINS_ENABLED',
   IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
-  IsWorkflowFormActionEnabled = 'IS_WORKFLOW_FORM_ACTION_ENABLED',
   IsPermissionsV2Enabled = 'IS_PERMISSIONS_V2_ENABLED',
   IsMeteredProductBillingEnabled = 'IS_METERED_PRODUCT_BILLING_ENABLED',
 }
