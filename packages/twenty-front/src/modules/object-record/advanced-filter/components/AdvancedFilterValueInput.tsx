@@ -1,63 +1,61 @@
+import { AdvancedFilterDropdownFilterInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownFilterInput';
+import { AdvancedFilterDropdownNumberInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownNumberInput';
+import { AdvancedFilterDropdownTextInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownTextInput';
 import { AdvancedFilterValueInputDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
-import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
-import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
+import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
+import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
-import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledValueDropdownContainer = styled.div`
   flex: 3;
 `;
 
-type AdvancedFilterValueInputDropdownButtonProps = {
+type AdvancedFilterValueInputProps = {
   recordFilterId: string;
 };
 
-export const AdvancedFilterValueInputDropdownButton = ({
+export const AdvancedFilterValueInput = ({
   recordFilterId,
-}: AdvancedFilterValueInputDropdownButtonProps) => {
+}: AdvancedFilterValueInputProps) => {
   const dropdownId = `advanced-filter-view-filter-value-input-${recordFilterId}`;
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
-  const filter = currentRecordFilters.find(
+  const recordFilter = currentRecordFilters.find(
     (recordFilter) => recordFilter.id === recordFilterId,
   );
 
-  const isDisabled = !filter?.fieldMetadataId || !filter.operand;
+  const isDisabled = !recordFilter?.fieldMetadataId || !recordFilter.operand;
 
   const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
-    fieldMetadataItemIdUsedInDropdownComponentState,
-  );
-
-  const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
-    selectedOperandInDropdownComponentState,
-  );
-
-  const setSelectedFilter = useSetRecoilComponentStateV2(
-    selectedFilterComponentState,
-  );
-
   const operandHasNoInput =
-    filter && !configurableViewFilterOperands.has(filter.operand);
+    recordFilter && !configurableViewFilterOperands.has(recordFilter.operand);
 
   const handleFilterValueDropdownClose = () => {
     setObjectFilterDropdownSearchInput('');
   };
+
+  const filterType = recordFilter?.type;
+
+  const dropdownContentOffset =
+    filterType === 'DATE' || filterType === 'DATE_TIME'
+      ? ({ y: -33, x: 0 } satisfies DropdownOffset)
+      : DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET;
 
   return (
     <StyledValueDropdownContainer>
@@ -67,6 +65,10 @@ export const AdvancedFilterValueInputDropdownButton = ({
         <AdvancedFilterValueInputDropdownButtonClickableSelect
           recordFilterId={recordFilterId}
         />
+      ) : isDefined(filterType) && TEXT_FILTER_TYPES.includes(filterType) ? (
+        <AdvancedFilterDropdownTextInput />
+      ) : isDefined(filterType) && NUMBER_FILTER_TYPES.includes(filterType) ? (
+        <AdvancedFilterDropdownNumberInput />
       ) : (
         <Dropdown
           dropdownId={dropdownId}
@@ -75,16 +77,13 @@ export const AdvancedFilterValueInputDropdownButton = ({
               recordFilterId={recordFilterId}
             />
           }
-          onOpen={() => {
-            setFieldMetadataItemIdUsedInDropdown(filter.fieldMetadataId);
-            setSelectedOperandInDropdown(filter.operand);
-            setSelectedFilter(filter);
-          }}
           dropdownComponents={
-            <ObjectFilterDropdownFilterInput recordFilterId={filter.id} />
+            <AdvancedFilterDropdownFilterInput
+              recordFilterId={recordFilter.id}
+            />
           }
           dropdownHotkeyScope={{ scope: dropdownId }}
-          dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
+          dropdownOffset={dropdownContentOffset}
           dropdownPlacement="bottom-start"
           dropdownMenuWidth={280}
           onClose={handleFilterValueDropdownClose}
