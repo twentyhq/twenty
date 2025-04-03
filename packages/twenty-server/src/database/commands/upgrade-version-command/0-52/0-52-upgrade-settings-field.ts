@@ -2,22 +2,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { In, Repository } from 'typeorm';
+
+import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { In, Repository } from 'typeorm';
 
 type DeprecatedFieldMetadataDateSettings = {
-  displayAsRelativeDate?: boolean
-}
+  displayAsRelativeDate?: boolean;
+};
 
 @Command({
   name: 'upgrade:0-52:upgrade-date-and-date-time-field-settings',
@@ -46,15 +48,17 @@ export class UpgradeDateAndDateTimeFieldsSettingsJsonCommand extends ActiveOrSus
       `Running command for workspace ${workspaceId} ${index + 1}/${total}`,
     );
 
-    const fieldMetadataCollection = await this.fieldMetadataRepository.find({
-        where: {
-          workspaceId,
-          type: In([FieldMetadataType.DATE, FieldMetadataType.DATE_TIME]),
-        },
-        relations: ['fromRelationMetadata', 'toRelationMetadata'],
-    }) as FieldMetadataEntity<FieldMetadataType.DATE>[];
+    const fieldMetadataCollection = (await this.fieldMetadataRepository.find({
+      where: {
+        workspaceId,
+        type: In([FieldMetadataType.DATE, FieldMetadataType.DATE_TIME]),
+      },
+      relations: ['fromRelationMetadata', 'toRelationMetadata'],
+    })) as FieldMetadataEntity<FieldMetadataType.DATE>[];
 
-    const updatedFieldMetadataCollection = fieldMetadataCollection.map((field) => this.updateDateAndDateTimeFieldMetadata(field))
+    const updatedFieldMetadataCollection = fieldMetadataCollection.map(
+      (field) => this.updateDateAndDateTimeFieldMetadata(field),
+    );
 
     if (updatedFieldMetadataCollection.length > 0) {
       await this.fieldMetadataRepository.save(updatedFieldMetadataCollection);
@@ -65,22 +69,22 @@ export class UpgradeDateAndDateTimeFieldsSettingsJsonCommand extends ActiveOrSus
     );
   }
 
-  private updateDateAndDateTimeFieldMetadata (
-    field: FieldMetadataEntity<FieldMetadataType.DATE>
+  private updateDateAndDateTimeFieldMetadata(
+    field: FieldMetadataEntity<FieldMetadataType.DATE>,
   ): FieldMetadataEntity<FieldMetadataType.DATE> {
-    const settings = field.settings as DeprecatedFieldMetadataDateSettings
+    const settings = field.settings as DeprecatedFieldMetadataDateSettings;
 
     if (!settings?.displayAsRelativeDate) {
-      return field
+      return field;
     }
 
     return {
       ...field,
       settings: {
-        displayFormat: settings.displayAsRelativeDate 
-          ? DateDisplayFormat.RELATIVE_DATE 
-          : DateDisplayFormat.FULL_DATE
-      }
-    }
+        displayFormat: settings.displayAsRelativeDate
+          ? DateDisplayFormat.RELATIVE_DATE
+          : DateDisplayFormat.FULL_DATE,
+      },
+    };
   }
-  }
+}
