@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { createClient } from '@clickhouse/client';
+import { createClient, ClickHouseClient } from '@clickhouse/client';
 import { config } from 'dotenv';
 
 config({
@@ -9,12 +9,30 @@ config({
   override: true,
 });
 
-console.log('>>>>>>>>>>>>>>', process.env);
-const client = createClient({
-  url: process.env.CLICKHOUSE_URL,
-});
+const clickhouseUrl = () => {
+  const url = process.env.CLICKHOUSE_URL;
 
-async function ensureMigrationTable() {
+  if (url) return url;
+
+  throw new Error(
+    'CLICKHOUSE_URL environment variable is not set. Please set it to the ClickHouse URL.',
+  );
+};
+
+async function ensureDatabaseExists() {
+  const [url, database] = clickhouseUrl().split(/\/(?=[^/]*$)/);
+  const client = createClient({
+    url,
+  });
+
+  await client.command({
+    query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
+  });
+
+  client.close();
+}
+
+async function ensureMigrationTable(client: ClickHouseClient) {
   await client.command({
     query: `
         CREATE TABLE IF NOT EXISTS migrations (
@@ -26,7 +44,10 @@ async function ensureMigrationTable() {
   });
 }
 
-async function hasMigrationBeenRun(filename: string): Promise<boolean> {
+async function hasMigrationBeenRun(
+  filename: string,
+  client: ClickHouseClient,
+): Promise<boolean> {
   const resultSet = await client.query({
     query: `SELECT count() as count FROM migrations WHERE filename = {filename:String}`,
     query_params: { filename },
@@ -37,7 +58,7 @@ async function hasMigrationBeenRun(filename: string): Promise<boolean> {
   return result.data[0].count > 0;
 }
 
-async function recordMigration(filename: string) {
+async function recordMigration(filename: string, client: ClickHouseClient) {
   await client.insert({
     table: 'migrations',
     values: [{ filename }],
@@ -49,10 +70,16 @@ async function runMigrations() {
   const dir = path.join(__dirname);
   const files = fs.readdirSync(dir).filter((f) => f.endsWith('.sql'));
 
-  await ensureMigrationTable();
+  await ensureDatabaseExists();
+
+  const client = createClient({
+    url: clickhouseUrl(),
+  });
+
+  await ensureMigrationTable(client);
 
   for (const file of files) {
-    const alreadyRun = await hasMigrationBeenRun(file);
+    const alreadyRun = await hasMigrationBeenRun(file, client);
 
     if (alreadyRun) {
       console.log(`✔︎ Skipping already applied migration: ${file}`);
@@ -63,7 +90,7 @@ async function runMigrations() {
 
     console.log(`⚡ Running ${file}...`);
     await client.command({ query: sql });
-    await recordMigration(file);
+    await recordMigration(file, client);
   }
 
   console.log('✅ All migrations applied');
