@@ -1,5 +1,4 @@
 import { useRecoilValue } from 'recoil';
-import { H2Title, Section } from 'twenty-ui';
 
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -11,6 +10,8 @@ import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/S
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccountsBlocklistSection = () => {
   const { t } = useLingui();

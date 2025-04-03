@@ -1,9 +1,12 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, ComponentWithRouterDecorator } from 'twenty-ui';
 import { SettingsGraphQLPlayground } from '~/pages/settings/developers/playground/SettingsGraphQLPlayground';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import {
+  ComponentDecorator,
+  ComponentWithRouterDecorator,
+} from 'twenty-ui/testing';
 
 const meta: Meta<any> = {
   title: 'Pages/Settings/Playground/GraphQLPlayground',

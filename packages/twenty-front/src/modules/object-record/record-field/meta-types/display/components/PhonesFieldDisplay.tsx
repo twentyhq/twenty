@@ -5,7 +5,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { PhonesDisplay } from '@/ui/field/display/components/PhonesDisplay';
 import { useLingui } from '@lingui/react/macro';
 import React from 'react';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 export const PhonesFieldDisplay = () => {
   const { fieldValue } = usePhonesFieldDisplay();

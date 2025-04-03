@@ -17,7 +17,8 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { IconChevronDown, IconForbid, LightIconButton } from 'twenty-ui';
+import { IconChevronDown, IconForbid } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 const StyledFormSelectContainer = styled(FormFieldInputInputContainer)`
   justify-content: space-between;

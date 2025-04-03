@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 
 import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
 import { Trans } from '@lingui/react/macro';
-import { Card, CardContent } from 'twenty-ui';
+import { Card, CardContent } from 'twenty-ui/layout';
 
 type SettingsDataModelPreviewFormCardProps = {
   className?: string;

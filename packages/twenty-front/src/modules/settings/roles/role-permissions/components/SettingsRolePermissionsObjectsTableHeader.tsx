@@ -5,7 +5,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import { Checkbox } from 'twenty-ui';
+import { Checkbox } from 'twenty-ui/input';
 
 const StyledNameHeader = styled(TableHeader)`
   flex: 1;

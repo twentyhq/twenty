@@ -10,8 +10,9 @@ import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-a
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator, SelectOption, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditActionFindRecordsProps = {
   action: WorkflowFindRecordsAction;

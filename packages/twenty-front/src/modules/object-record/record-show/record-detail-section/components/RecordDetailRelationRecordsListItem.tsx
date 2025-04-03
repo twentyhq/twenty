@@ -2,16 +2,6 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useCallback, useContext, useState } from 'react';
-import {
-  AnimatedEaseInOut,
-  IconChevronDown,
-  IconComponent,
-  IconDotsVertical,
-  IconTrash,
-  IconUnlink,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -46,6 +36,16 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { createPortal } from 'react-dom';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
+import {
+  IconChevronDown,
+  IconComponent,
+  IconDotsVertical,
+  IconTrash,
+  IconUnlink,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;

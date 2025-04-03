@@ -3,8 +3,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccountsCalendars = () => {
   const { t } = useLingui();

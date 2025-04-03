@@ -1,6 +1,6 @@
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import { TabVisibilityConfig } from '@/ui/layout/tab/types/TabVisibilityConfig';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
 
 export type RecordLayoutTab = {
   title: string;

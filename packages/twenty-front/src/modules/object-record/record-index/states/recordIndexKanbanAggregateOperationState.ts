@@ -1,5 +1,5 @@
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { createState } from "twenty-ui";
+import { createState } from 'twenty-ui/utilities';
 
 export type KanbanAggregateOperation = {
   operation?: ExtendedAggregateOperations | null;

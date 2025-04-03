@@ -1,5 +1,5 @@
-import { createState } from "twenty-ui";
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
+import { createState } from 'twenty-ui/utilities';
 
 export const workspacePublicDataState =
   createState<PublicWorkspaceDataOutput | null>({

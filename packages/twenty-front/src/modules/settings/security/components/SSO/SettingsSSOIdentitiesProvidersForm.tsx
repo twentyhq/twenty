@@ -9,9 +9,10 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, IconComponent, IconKey, Section } from 'twenty-ui';
 import { IdentityProviderType } from '~/generated/graphql';
 import { t } from '@lingui/core/macro';
+import { H2Title, IconComponent, IconKey } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledInputsContainer = styled.div`
   display: grid;

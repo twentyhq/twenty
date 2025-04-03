@@ -2,7 +2,7 @@ import { InformationBanner } from '@/information-banner/components/InformationBa
 import { useAccountToReconnect } from '@/information-banner/hooks/useAccountToReconnect';
 import { InformationBannerKeys } from '@/information-banner/types/InformationBannerKeys';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { IconRefresh } from 'twenty-ui';
+import { IconRefresh } from 'twenty-ui/display';
 
 export const InformationBannerReconnectAccountInsufficientPermissions = () => {
   const { accountToReconnect } = useAccountToReconnect(

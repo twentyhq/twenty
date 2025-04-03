@@ -13,8 +13,8 @@ import {
   GetJsonNodeHighlighting,
   isTwoFirstDepths,
   JsonTree,
-  useIcons,
-} from 'twenty-ui';
+} from 'twenty-ui/json-visualizer';
+import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();

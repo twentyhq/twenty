@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -8,6 +7,8 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { SettingsDataModelObjectAboutForm } from '../SettingsDataModelObjectAboutForm';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
 );

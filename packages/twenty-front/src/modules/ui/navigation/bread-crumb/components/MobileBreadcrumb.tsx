@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { IconChevronLeft } from 'twenty-ui';
+import { IconChevronLeft } from 'twenty-ui/display';
 
 export type MobileBreadcrumbProps = {
   className?: string;
