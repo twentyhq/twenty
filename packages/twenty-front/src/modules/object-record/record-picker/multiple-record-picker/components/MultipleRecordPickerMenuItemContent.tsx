@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { Avatar, MenuItemMultiSelectAvatar } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
@@ -13,6 +12,8 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { SearchRecord } from '~/generated-metadata/graphql';
+import { Avatar } from 'twenty-ui/display';
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;

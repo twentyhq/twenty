@@ -1,4 +1,5 @@
-import { Trans } from '@lingui/react/macro';
+import { i18n } from '@lingui/core';
+import { Trans } from '@lingui/react';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
@@ -37,26 +38,58 @@ export const SendInviteLinkEmail = ({
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : null;
 
+  const senderName = capitalize(sender.firstName);
+  const senderEmail = sender.email;
+  const workspaceName = workspace.name;
+
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={<Trans>Join your team on Twenty</Trans>} />
+      <Title value={i18n._('Join your team on Twenty')} />
       <MainText>
-        {capitalize(sender.firstName)} (
-        <Link
-          href={`mailto:${sender.email}`}
-          value={sender.email}
-          color={emailTheme.font.colors.blue}
+        <Trans
+          id="{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+          values={{ senderName, senderEmail, workspaceName }}
+          components={{
+            0: (
+              <Link
+                href={`mailto:${senderEmail}`}
+                value={senderEmail}
+                color={emailTheme.font.colors.blue}
+              />
+            ),
+            1: <b />,
+          }}
         />
-        ) <Trans>has invited you to join a workspace called </Trans>
-        <b>{workspace.name}</b>
         <br />
       </MainText>
       <HighlightedContainer>
-        {workspaceLogo && <Img src={workspaceLogo} width={40} height={40} />}
-        {workspace.name && <HighlightedText value={workspace.name} />}
-        <CallToAction href={link} value={<Trans>Accept invite</Trans>} />
+        {workspaceLogo ? (
+          <Img
+            src={workspaceLogo}
+            width={40}
+            height={40}
+            alt="Workspace logo"
+          />
+        ) : (
+          <></>
+        )}
+        {workspace.name ? <HighlightedText value={workspace.name} /> : <></>}
+        <CallToAction href={link} value={i18n._('Accept invite')} />
       </HighlightedContainer>
       <WhatIsTwenty />
     </BaseEmail>
   );
 };
+
+SendInviteLinkEmail.PreviewProps = {
+  link: 'https://app.twenty.com/invite/123',
+  workspace: {
+    name: 'Acme Inc.',
+    logo: 'https://fakeimg.pl/200x200/?text=ACME&font=lobster',
+  },
+  sender: { email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe' },
+  serverUrl: 'https://app.twenty.com',
+  locale: 'en',
+} as SendInviteLinkEmailProps;
+
+export default SendInviteLinkEmail;

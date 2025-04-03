@@ -1,5 +1,4 @@
-import { IconComponent, IconLayoutKanban, IconTable } from 'twenty-ui';
-
+import { IconComponent, IconLayoutKanban, IconTable } from 'twenty-ui/display';
 export enum ViewType {
   Table = 'table',
   Kanban = 'kanban',

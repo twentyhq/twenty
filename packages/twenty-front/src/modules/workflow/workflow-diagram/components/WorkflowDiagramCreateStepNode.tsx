@@ -4,7 +4,8 @@ import { NODE_ICON_LEFT_MARGIN } from '@/workflow/workflow-diagram/constants/Nod
 import { NODE_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/NodeIconWidth';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
-import { IconButton, IconPlus } from 'twenty-ui';
+import { IconButton } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(3)};

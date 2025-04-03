@@ -7,8 +7,6 @@ export const useGoToPeopleNoSelectionRecordAction: ActionHookWithoutObjectMetada
   () => {
     const navigateApp = useNavigateApp();
 
-    const shouldBeRegistered = true;
-
     const onClick = () => {
       navigateApp(AppPath.RecordIndexPage, {
         objectNamePlural: CoreObjectNamePlural.Person,
@@ -16,7 +14,6 @@ export const useGoToPeopleNoSelectionRecordAction: ActionHookWithoutObjectMetada
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

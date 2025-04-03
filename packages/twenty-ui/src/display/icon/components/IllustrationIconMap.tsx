@@ -1,5 +1,5 @@
+import IllustrationIconMapRaw from '@assets/icons/illustration-map.svg?react';
 import { useTheme } from '@emotion/react';
-import IllustrationIconMapRaw from '@ui/display/icon/assets/illustration-map.svg?react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 

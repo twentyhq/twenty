@@ -14,8 +14,9 @@ import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { CodeEditor, useIcons } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { CodeEditor } from 'twenty-ui/input';
+import { useIcons } from 'twenty-ui/display';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;

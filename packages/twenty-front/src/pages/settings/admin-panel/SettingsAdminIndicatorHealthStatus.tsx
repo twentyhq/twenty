@@ -8,13 +8,14 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
-import { H2Title, H3Title, Section } from 'twenty-ui';
 import {
   AdminPanelHealthServiceStatus,
   HealthIndicatorId,
   useGetIndicatorHealthStatusQuery,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { H2Title, H3Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledTitleContainer = styled.div`
   align-items: center;

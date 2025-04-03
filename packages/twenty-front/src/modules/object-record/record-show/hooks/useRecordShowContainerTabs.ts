@@ -10,6 +10,8 @@ import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 import {
   IconCalendarEvent,
   IconHome,
@@ -17,9 +19,7 @@ import {
   IconNotes,
   IconPrinter,
   IconSettings,
-} from 'twenty-ui';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+} from 'twenty-ui/display';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,

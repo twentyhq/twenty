@@ -11,7 +11,6 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import {
-  Card,
   H2Title,
   IconCode,
   IconEye,
@@ -24,8 +23,8 @@ import {
   IconTrash,
   IconTrashX,
   IconUsers,
-  Section,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
 import {
   FeatureFlagKey,
   SettingPermissionType,

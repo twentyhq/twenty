@@ -9,7 +9,8 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
-import { MOBILE_VIEWPORT, OverflowingTextWithTooltip } from 'twenty-ui';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 

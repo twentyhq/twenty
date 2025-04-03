@@ -10,14 +10,15 @@
     "types": ["node"],
     "outDir": "../../.cache/tsc",
     "paths": {
-      "@ui/*": ["./src/*"]
+      "@ui/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"]
     }
   },
   "files": [],
   "include": [],
   "references": [
     {
-      "path": "./tsconfig.build.json"
+      "path": "./tsconfig.lib.json"
     },
     {
       "path": "./tsconfig.dev.json"

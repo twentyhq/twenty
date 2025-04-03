@@ -4,7 +4,7 @@ import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlin
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledDiv = styled.div`
   align-items: center;

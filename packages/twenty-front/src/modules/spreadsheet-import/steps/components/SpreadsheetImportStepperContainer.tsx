@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -10,6 +9,7 @@ import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledHeader = styled(Modal.Header)`
   background-color: ${({ theme }) => theme.background.secondary};

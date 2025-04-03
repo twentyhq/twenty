@@ -1,11 +1,10 @@
-import { ThemeColor } from 'twenty-ui';
-
 import {
   Field,
   Object as MetadataObject,
   RelationDefinition,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
+import { ThemeColor } from 'twenty-ui/theme';
 
 export type FieldMetadataItemOption = {
   color: ThemeColor;

@@ -1,11 +1,10 @@
-import { Nullable } from 'twenty-ui';
-
 import { useDateField } from '@/object-record/record-field/meta-types/hooks/useDateField';
 import { DateInput } from '@/ui/field/input/components/DateInput';
 
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
-import { usePersistField } from '../../../hooks/usePersistField';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isDefined } from 'twenty-shared/utils';
+import { usePersistField } from '../../../hooks/usePersistField';
+import { Nullable } from 'twenty-ui/utilities';
 
 type FieldInputEvent = (persist: () => void) => void;
 

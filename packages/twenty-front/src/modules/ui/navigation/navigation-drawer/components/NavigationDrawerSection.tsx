@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useIsMobile } from 'twenty-ui';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledSection = styled.div`
   width: 100%;
