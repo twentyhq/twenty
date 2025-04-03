@@ -41,23 +41,18 @@ export const AppRouterProviders = () => {
             <ChromeExtensionSidecarEffect />
             <ChromeExtensionSidecarProvider>
               <UserProviderEffect />
-              {/* could be here in userproidfverefffect */}
               <WorkspaceProviderEffect />
               <UserProvider>
                 <AuthProvider>
                   <ApolloMetadataClientProvider>
                     <ObjectMetadataItemsProvider>
                       <ObjectMetadataItemsGater>
-                        <>ggggggg</>
                         <PrefetchDataProvider>
-                          <>ggggggg</>
                           <UserThemeProviderContainer />
                           <SnackBarProvider>
-                            <>ggggggg</>
                             <DialogManagerScope dialogManagerScopeId="dialog-manager">
                               <DialogManager>
                                 <StrictMode>
-                                  <>hhhhhhh</>
                                   <PromiseRejectionEffect />
                                   <GotoHotkeysEffectsProvider />
                                   <ServerPreconnect />

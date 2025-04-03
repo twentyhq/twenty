@@ -75,8 +75,6 @@ export const DefaultLayout = () => {
   const useShowFullScreen = useShowFullscreen();
   const [searchParams] = useSearchParams();
   const animateModal = searchParams.get('animateModal') ?? true;
-  console.log('animateModal', animateModal);
-  console.log('searchParams', searchParams);
 
   return (
     <>
