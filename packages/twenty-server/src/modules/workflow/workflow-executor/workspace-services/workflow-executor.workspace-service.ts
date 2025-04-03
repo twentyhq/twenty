@@ -4,6 +4,8 @@ import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfa
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -31,6 +33,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly billingService: BillingService,
   ) {}
 
   async execute({
@@ -53,6 +56,22 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     const workflowExecutor = this.workflowExecutorFactory.get(step.type);
 
     let actionOutput: WorkflowExecutorOutput;
+
+    const { canBillWorkflow, billingErrorOutput } =
+      await this.canBillWorkflow();
+
+    if (!canBillWorkflow) {
+      await this.workflowRunWorkspaceService.saveWorkflowRunState({
+        workflowRunId,
+        stepOutput: {
+          id: step.id,
+          output: billingErrorOutput,
+        },
+        context,
+      });
+
+      return billingErrorOutput;
+    }
 
     try {
       actionOutput = await workflowExecutor.execute({
@@ -158,5 +177,27 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
       ],
       workspaceId,
     );
+  }
+
+  private async canBillWorkflow() {
+    if (!this.billingService.isBillingEnabled()) {
+      return { canBillWorkflow: true, billingErrorOutput: {} };
+    }
+
+    const workspaceId =
+      this.scopedWorkspaceContextFactory.create().workspaceId ?? '';
+
+    const canBillWorkflow = await this.billingService.canBillMeteredProduct(
+      workspaceId,
+      BillingProductKey.WorkflowNodeExecution,
+    );
+
+    const billingErrorOutput = canBillWorkflow
+      ? {}
+      : {
+          error: 'Unable to execute workflow. Please verify your subscription.',
+        };
+
+    return { canBillWorkflow, billingErrorOutput };
   }
 }
