@@ -19,7 +19,7 @@ export enum DateDisplayFormat {
   DATE = 'date',
   TIME = 'time',
   YEAR = 'year',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 export type FieldNumberVariant = 'number' | 'percentage';
@@ -39,7 +39,7 @@ export type FieldMetadataDateSettings = {
 };
 
 export type FieldMetadataDateTimeSettings = {
-  displayFormat?: DateDisplayFormat
+  displayFormat?: DateDisplayFormat;
 };
 
 export type FieldMetadataRelationSettings = {

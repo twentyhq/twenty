@@ -57,7 +57,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly upgradeCreatedByEnumCommand: UpgradeCreatedByEnumCommand,
 
     // 0.52 Commands
-    protected readonly upgradeDateAndDateTimeFieldsSettingsJsonCommand: UpgradeDateAndDateTimeFieldsSettingsJsonCommand
+    protected readonly upgradeDateAndDateTimeFieldsSettingsJsonCommand: UpgradeDateAndDateTimeFieldsSettingsJsonCommand,
   ) {
     super(
       workspaceRepository,
@@ -97,9 +97,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const _commands_052: VersionCommands = {
-      beforeSyncMetadata: [this.upgradeDateAndDateTimeFieldsSettingsJsonCommand],
-      afterSyncMetadata: []
-    }
+      beforeSyncMetadata: [
+        this.upgradeDateAndDateTimeFieldsSettingsJsonCommand,
+      ],
+      afterSyncMetadata: [],
+    };
 
     this.commands = commands_050;
   }

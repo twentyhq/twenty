@@ -6,6 +6,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsPrimaryField } from 'src/engine/twenty-orm/decorators/workspace-is-primary-field.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+
 import { DateDisplayFormat } from '../metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 export abstract class BaseWorkspaceEntity {
@@ -29,7 +30,7 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendar',
     defaultValue: 'now',
     settings: {
-      displayFormat: DateDisplayFormat.RELATIVE_DATE
+      displayFormat: DateDisplayFormat.RELATIVE_DATE,
     },
   })
   createdAt: string;
