@@ -5,7 +5,6 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import * as z from 'zod';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ThemeColor } from 'twenty-ui/theme';
 
 export type FieldUuidMetadata = {
