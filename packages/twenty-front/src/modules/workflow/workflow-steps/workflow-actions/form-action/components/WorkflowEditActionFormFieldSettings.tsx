@@ -2,6 +2,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
+import { FORM_SELECT_FIELD_TYPE_OPTIONS } from '@/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions';
 import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
@@ -9,15 +10,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
-import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  IconSettingsAutomation,
-  IconX,
-  IllustrationIconNumbers,
-  IllustrationIconOneToMany,
-  IllustrationIconText,
-  LightIconButton,
-} from 'twenty-ui';
+import { IconSettingsAutomation, IconX, LightIconButton } from 'twenty-ui';
 
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
@@ -109,31 +102,7 @@ export const WorkflowEditActionFormFieldSettings = ({
         <FormFieldInputContainer>
           <InputLabel>Type</InputLabel>
           <FormSelectFieldInput
-            options={
-              [
-                {
-                  label: getDefaultFormFieldSettings(FieldMetadataType.TEXT)
-                    .label,
-                  value: FieldMetadataType.TEXT,
-                  Icon: IllustrationIconText,
-                },
-                {
-                  label: getDefaultFormFieldSettings(FieldMetadataType.NUMBER)
-                    .label,
-                  value: FieldMetadataType.NUMBER,
-                  Icon: IllustrationIconNumbers,
-                },
-                {
-                  label: 'Record Picker',
-                  value: 'RECORD',
-                  Icon: IllustrationIconOneToMany,
-                },
-              ] satisfies {
-                label: string;
-                value: WorkflowFormFieldType;
-                Icon: React.ElementType;
-              }[]
-            }
+            options={FORM_SELECT_FIELD_TYPE_OPTIONS}
             onChange={(newType: string | null) => {
               if (newType === null) {
                 return;

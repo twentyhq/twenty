@@ -1,12 +1,14 @@
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useTextField } from '@/object-record/record-field/meta-types/hooks/useTextField';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from '@/object-record/record-field/types/FieldInputEvent';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useRef } from 'react';
-import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 import { isDefined } from 'twenty-shared/utils';
+import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 type RecordTitleCellTextFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;

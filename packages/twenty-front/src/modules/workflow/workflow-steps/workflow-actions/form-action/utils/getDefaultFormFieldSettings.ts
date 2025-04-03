@@ -19,6 +19,13 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
         label: 'Number',
         placeholder: '1000',
       };
+    case FieldMetadataType.DATE:
+      return {
+        id: v4(),
+        name: 'date',
+        label: 'Date',
+        placeholder: 'mm/dd/yyyy',
+      };
     case 'RECORD':
       return {
         id: v4(),

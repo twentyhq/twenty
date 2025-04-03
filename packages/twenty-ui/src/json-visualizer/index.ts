@@ -7,5 +7,7 @@ export * from './components/JsonTreeContextProvider';
 export * from './components/JsonValueNode';
 export * from './contexts/JsonTreeContext';
 export * from './hooks/useJsonTreeContextOrThrow';
+export * from './types/GetJsonNodeHighlighting';
+export * from './types/JsonNodeHighlighting';
 export * from './utils/isArray';
 export * from './utils/isTwoFirstDepths';
