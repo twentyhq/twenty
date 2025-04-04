@@ -169,45 +169,31 @@ export class AdminPanelService {
 
   async getVersionInfo(currentVersion: string): Promise<VersionInfo> {
     try {
-      // much slower -- multiple requests
-      // let allTags: string[] = [];
-      // let nextUrl =
-      //   'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags';
-
-      // // Fetch all pages of tags
-      // while (nextUrl) {
-      //   const response = await axios.get(nextUrl);
-      //   const tags = response.data.results
-      //     .map((tag: { name: string }) => tag.name.replace('v', ''))
-      //     .filter((tag: string) => tag !== 'latest');
-
-      //   allTags = [...allTags, ...tags];
-      //   nextUrl = response.data.next;
-      // }
-
-      // much faster -- single request
-      // each page contains 10 tags, which means page_size 100 is good enough buffer
-      // right now we have 148 tags ie ~ 15 pages
       const response = await axios.get(
         'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100',
       );
-      const allTags = response.data.results
-        .map((tag: { name: string }) => tag.name.replace('v', ''))
-        .filter((tag: string) => tag !== 'latest');
 
-      const latestVersion =
-        semver.maxSatisfying(allTags, '*')?.toString() ?? 'latest';
-      const currentVersionExists = allTags.includes(currentVersion);
+      const versions = response.data.results
+        .filter((tag) => tag && tag.name !== 'latest')
+        .map((tag) => semver.coerce(tag.name)?.version)
+        .filter((version) => version !== undefined);
 
-      return {
-        latestVersion,
-        currentVersionExists,
-      };
+      if (versions.length === 0) {
+        return { latestVersion: 'latest', currentVersionExists: false };
+      }
+
+      versions.sort((a, b) => semver.compare(b, a));
+
+      const latestVersion = versions[0];
+
+      const normalizedCurrent = semver.coerce(currentVersion)?.version;
+      const currentVersionExists = normalizedCurrent
+        ? versions.includes(normalizedCurrent)
+        : false;
+
+      return { latestVersion, currentVersionExists };
     } catch (error) {
-      return {
-        latestVersion: 'latest',
-        currentVersionExists: false,
-      };
+      return { latestVersion: 'latest', currentVersionExists: false };
     }
   }
 }

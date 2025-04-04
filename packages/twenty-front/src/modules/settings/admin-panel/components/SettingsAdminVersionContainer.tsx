@@ -1,7 +1,7 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { DOCKER_HUB_LINK } from '@ui/navigation/link';
+import { TWENTY_DOCKER_HUB_LINK } from 'twenty-shared/constants';
 import { IconCircleDot, IconStatusChange } from 'twenty-ui';
 import { useGetVersionInfoQuery } from '~/generated/graphql';
 import packageJson from '../../../../../package.json';
@@ -40,7 +40,7 @@ export const SettingsAdminVersionContainer = () => {
       label: t`Current version`,
       value: currentVersionExists ? (
         <StyledActionLink
-          href={`${DOCKER_HUB_LINK}/tags?name=v${packageJson.version}`}
+          href={`${TWENTY_DOCKER_HUB_LINK}/tags?name=${packageJson.version}`}
           target="_blank"
           rel="noreferrer"
         >
@@ -55,7 +55,7 @@ export const SettingsAdminVersionContainer = () => {
       label: t`Latest version`,
       value: latestVersion ? (
         <StyledActionLink
-          href={`${DOCKER_HUB_LINK}/tags?name=v${latestVersion}`}
+          href={`${TWENTY_DOCKER_HUB_LINK}/tags?name=${latestVersion}`}
           target="_blank"
           rel="noreferrer"
         >
