@@ -8,7 +8,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { H1Title, H2Title, Section } from 'twenty-ui';
+import { H1Title, H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from '~/modules/types/SettingsPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
