@@ -1,12 +1,10 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
-import { checkTwentyVersionExists } from '@/settings/admin-panel/utils/checkTwentyVersionExists';
-import { fetchLatestTwentyRelease } from '@/settings/admin-panel/utils/fetchLatestTwentyRelease';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useEffect, useState } from 'react';
-import packageJson from '../../../../../package.json';
-import { GITHUB_LINK } from 'twenty-ui/navigation';
+import { TWENTY_DOCKER_HUB_LINK } from 'twenty-shared/constants';
 import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
+import { useGetVersionInfoQuery } from '~/generated/graphql';
+import packageJson from '../../../../../package.json';
 
 const StyledActionLink = styled.a`
   align-items: center;
@@ -30,13 +28,11 @@ const StyledSpan = styled.span`
 `;
 
 export const SettingsAdminVersionContainer = () => {
-  const [latestVersion, setLatestVersion] = useState<string | null>(null);
-  const [currentVersionExists, setCurrentVersionExists] = useState(false);
+  const { data } = useGetVersionInfoQuery({
+    variables: { currentVersion: packageJson.version },
+  });
 
-  useEffect(() => {
-    fetchLatestTwentyRelease().then(setLatestVersion);
-    checkTwentyVersionExists(packageJson.version).then(setCurrentVersionExists);
-  }, []);
+  const { currentVersionExists, latestVersion } = data?.versionInfo ?? {};
 
   const versionItems = [
     {
@@ -44,7 +40,7 @@ export const SettingsAdminVersionContainer = () => {
       label: t`Current version`,
       value: currentVersionExists ? (
         <StyledActionLink
-          href={`${GITHUB_LINK}/releases/tag/v${packageJson.version}`}
+          href={`${TWENTY_DOCKER_HUB_LINK}/tags?name=${packageJson.version}`}
           target="_blank"
           rel="noreferrer"
         >
@@ -59,7 +55,7 @@ export const SettingsAdminVersionContainer = () => {
       label: t`Latest version`,
       value: latestVersion ? (
         <StyledActionLink
-          href={`${GITHUB_LINK}/releases/tag/v${latestVersion}`}
+          href={`${TWENTY_DOCKER_HUB_LINK}/tags?name=${latestVersion}`}
           target="_blank"
           rel="noreferrer"
         >

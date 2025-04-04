@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import axios from 'axios';
+import semver from 'semver';
 import { Repository } from 'typeorm';
 
 import { EnvironmentVariable } from 'src/engine/core-modules/admin-panel/dtos/environment-variable.dto';
 import { EnvironmentVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/environment-variables-group.dto';
 import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
+import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import {
   AuthException,
   AuthExceptionCode,
@@ -162,5 +165,35 @@ export class AdminPanelService {
       }));
 
     return { groups };
+  }
+
+  async getVersionInfo(currentVersion: string): Promise<VersionInfo> {
+    try {
+      const response = await axios.get(
+        'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100',
+      );
+
+      const versions = response.data.results
+        .filter((tag) => tag && tag.name !== 'latest')
+        .map((tag) => semver.coerce(tag.name)?.version)
+        .filter((version) => version !== undefined);
+
+      if (versions.length === 0) {
+        return { latestVersion: 'latest', currentVersionExists: false };
+      }
+
+      versions.sort((a, b) => semver.compare(b, a));
+
+      const latestVersion = versions[0];
+
+      const normalizedCurrent = semver.coerce(currentVersion)?.version;
+      const currentVersionExists = normalizedCurrent
+        ? versions.includes(normalizedCurrent)
+        : false;
+
+      return { latestVersion, currentVersionExists };
+    } catch (error) {
+      return { latestVersion: 'latest', currentVersionExists: false };
+    }
   }
 }
