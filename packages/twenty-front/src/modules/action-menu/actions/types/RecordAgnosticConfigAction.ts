@@ -4,5 +4,5 @@ export type RecordAgnosticConfigAction = Omit<
   RecordConfigAction,
   'component'
 > & {
-  component: React.ComponentType;
+  component: React.ReactNode;
 };

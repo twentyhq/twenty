@@ -1,8 +1,4 @@
-import { GoToCompaniesNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToCompaniesNoSelectionRecordActionEffect';
-import { GoToOpportunitiesNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToOpportunitiesNoSelectionRecordActionEffect';
-import { GoToPeopleNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToPeopleNoSelectionRecordActionEffect';
-import { GoToSettingsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToSettingsNoSelectionRecordActionEffect';
-import { GoToTasksNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/GoToTasksNoSelectionRecordActionEffect';
+import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { SeeWorkflowsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeWorkflowsNoSelectionRecordActionEffect';
 import { SearchRecordsRecordAgnosticActionEffect } from '@/action-menu/actions/record-agnostic-actions/components/SearchRecordsRecordAgnosticActionEffect';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
@@ -12,6 +8,8 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { AppPath } from '@/types/AppPath';
 import { msg } from '@lingui/core/macro';
 import {
   IconBuildingSkyscraper,
@@ -86,7 +84,12 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    component: GoToPeopleNoSelectionRecordActionEffect,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Person }}
+      />
+    ),
     hotKeys: ['G', 'P'],
   },
   [RecordAgnosticActionsKeys.GO_TO_COMPANIES]: {
@@ -105,7 +108,12 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    component: GoToCompaniesNoSelectionRecordActionEffect,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Company }}
+      />
+    ),
     hotKeys: ['G', 'C'],
   },
   [RecordAgnosticActionsKeys.GO_TO_OPPORTUNITIES]: {
@@ -124,7 +132,12 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    component: GoToOpportunitiesNoSelectionRecordActionEffect,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Opportunity }}
+      />
+    ),
     hotKeys: ['G', 'O'],
   },
   [RecordAgnosticActionsKeys.GO_TO_SETTINGS]: {
@@ -143,7 +156,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    component: GoToSettingsNoSelectionRecordActionEffect,
+    component: <ActionLink to={AppPath.Settings} />,
     hotKeys: ['G', 'S'],
   },
   [RecordAgnosticActionsKeys.GO_TO_TASKS]: {
@@ -162,7 +175,12 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    component: GoToTasksNoSelectionRecordActionEffect,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Task }}
+      />
+    ),
     hotKeys: ['G', 'T'],
   },
 };

@@ -1,19 +1,18 @@
-import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
+import { Action } from '@/action-menu/actions/components/Action';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const HideDeletedRecordsNoSelectionRecordActionEffect = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const HideDeletedRecordsNoSelectionRecordAction = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
@@ -43,7 +42,7 @@ export const HideDeletedRecordsNoSelectionRecordActionEffect = ({
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  useActionEffect(() => {
+  const onClick = useCallback(() => {
     if (!isDefined(deletedFilter)) {
       return;
     }
@@ -52,5 +51,5 @@ export const HideDeletedRecordsNoSelectionRecordActionEffect = ({
     toggleSoftDeleteFilterState(false);
   }, [deletedFilter, removeRecordFilter, toggleSoftDeleteFilterState]);
 
-  return null;
+  return <Action onClick={onClick} />;
 };

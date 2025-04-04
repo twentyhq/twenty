@@ -4,7 +4,6 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { MessageDescriptor } from '@lingui/core';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
@@ -20,6 +19,6 @@ export type RecordConfigAction = {
   accent?: MenuItemAccent;
   availableOn?: ActionViewType[];
   shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
-  component: React.ComponentType<{ objectMetadataItem: ObjectMetadataItem }>;
+  component: React.ReactNode;
   hotKeys?: string[];
 };

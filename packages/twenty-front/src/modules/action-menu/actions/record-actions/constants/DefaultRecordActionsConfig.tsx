@@ -3,10 +3,10 @@ import { DestroyMultipleRecordsAction } from '@/action-menu/actions/record-actio
 import { ExportMultipleRecordsActionEffect } from '@/action-menu/actions/record-actions/multiple-records/components/ExportMultipleRecordsActionEffect';
 import { RestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { CreateNewTableRecordNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewTableRecordNoSelectionRecordActionEffect';
-import { HideDeletedRecordsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/HideDeletedRecordsNoSelectionRecordActionEffect';
-import { ImportRecordsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/ImportRecordsNoSelectionRecordActionEffect';
-import { SeeDeletedRecordsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeDeletedRecordsNoSelectionRecordActionEffect';
+import { CreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewTableRecordNoSelectionRecordActionEffect';
+import { HideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/HideDeletedRecordsNoSelectionRecordActionEffect';
+import { ImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/ImportRecordsNoSelectionRecordActionEffect';
+import { SeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/SeeDeletedRecordsNoSelectionRecordActionEffect';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { AddToFavoritesSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordActionEffect';
 import { DeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction';
@@ -60,7 +60,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({ hasObjectReadOnlyPermission }) =>
       !hasObjectReadOnlyPermission,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    component: CreateNewTableRecordNoSelectionRecordActionEffect,
+    component: <CreateNewTableRecordNoSelectionRecordAction />,
   },
   [SingleRecordActionKeys.EXPORT_NOTE_TO_PDF]: {
     type: ActionMenuEntryType.Standard,
@@ -216,7 +216,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
       !isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    component: SeeDeletedRecordsNoSelectionRecordActionEffect,
+    component: <SeeDeletedRecordsNoSelectionRecordAction />,
   },
   [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
     type: ActionMenuEntryType.Standard,
@@ -231,7 +231,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
       isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    component: HideDeletedRecordsNoSelectionRecordActionEffect,
+    component: <HideDeletedRecordsNoSelectionRecordAction />,
   },
   [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
     type: ActionMenuEntryType.Standard,
@@ -245,7 +245,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    component: ImportRecordsNoSelectionRecordActionEffect,
+    component: <ImportRecordsNoSelectionRecordAction />,
   },
   [SingleRecordActionKeys.DESTROY]: {
     type: ActionMenuEntryType.Standard,

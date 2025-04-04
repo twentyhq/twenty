@@ -1,19 +1,13 @@
-import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { Action } from '@/action-menu/actions/components/Action';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 
-export const CreateNewTableRecordNoSelectionRecordActionEffect = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const CreateNewTableRecordNoSelectionRecordAction = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
   });
 
-  useActionEffect(() => {
-    createNewIndexRecord();
-  }, [createNewIndexRecord]);
-
-  return null;
+  return <Action onClick={createNewIndexRecord} />;
 };
