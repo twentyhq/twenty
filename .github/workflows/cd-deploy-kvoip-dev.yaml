@@ -43,6 +43,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
+          timeout: 1200
           script: |
             echo "Building canary image"
             cd ${{vars.PROJECT_ROOT}}/${{ vars.DOCKER_DIR }}
@@ -85,7 +86,7 @@ jobs:
               fi
             done
 
-            if docker exec redis redis-cli ping | grep -qv "PONG"; then
+            if docker exec kvoipv2-redis redis-cli ping | grep -qv "PONG"; then
               echo "::error::Redis is not responding to PING"
               all_ok=false
             fi
