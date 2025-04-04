@@ -1,6 +1,6 @@
-import { AvatarChipsLeftComponent } from '@ui/display/avatar-chip/components/AvatarChipLeftComponent';
-import { AvatarChipsCommonProps } from '@ui/display/avatar-chip/types/AvatarChipsCommonProps.type';
-import { Chip, ChipVariant } from '@ui/display/chip/components/Chip';
+import { AvatarChipsLeftComponent } from '@ui/components/avatar-chip/AvatarChipLeftComponent';
+import { AvatarChipsCommonProps } from '@ui/components/avatar-chip/types/AvatarChipsCommonProps.type';
+import { Chip, ChipVariant } from '@ui/components/chip/Chip';
 
 export type AvatarChipProps = AvatarChipsCommonProps;
 export const AvatarChip = ({

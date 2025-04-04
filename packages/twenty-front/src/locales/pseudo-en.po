@@ -976,6 +976,11 @@ msgstr ""
 msgid "Continue with Microsoft"
 msgstr ""
 
+#. js-lingui-id: FxVG/l
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Copied to clipboard"
+msgstr ""
+
 #. js-lingui-id: u+VWhB
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
@@ -1024,6 +1029,11 @@ msgstr ""
 #. js-lingui-id: w5Stxm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Correct the issues and fill the missing data."
+msgstr ""
+
+#. js-lingui-id: s8lFtq
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Couldn't copy to clipboard"
 msgstr ""
 
 #. js-lingui-id: wBMjJ2

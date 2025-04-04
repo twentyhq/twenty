@@ -1,16 +1,4 @@
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import {
-  Avatar,
-  IconDotsVertical,
-  IconLogout,
-  IconPlus,
-  IconSwitchHorizontal,
-  IconUserPlus,
-  LightIconButton,
-  MenuItem,
-  MenuItemSelectAvatar,
-  UndecoratedLink,
-} from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -34,6 +22,20 @@ import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  Avatar,
+  IconDotsVertical,
+  IconLogout,
+  IconPlus,
+  IconSwitchHorizontal,
+  IconUserPlus,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import {
+  MenuItem,
+  MenuItemSelectAvatar,
+  UndecoratedLink,
+} from 'twenty-ui/navigation';
 import { useSignUpInNewWorkspaceMutation } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';

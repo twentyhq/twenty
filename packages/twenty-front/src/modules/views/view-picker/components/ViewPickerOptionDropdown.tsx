@@ -15,9 +15,9 @@ import {
   IconLock,
   IconPencil,
   IconTrash,
-  MenuItem,
   useIcons,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;

@@ -8,7 +8,7 @@ import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui';
+import { MainButton } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;

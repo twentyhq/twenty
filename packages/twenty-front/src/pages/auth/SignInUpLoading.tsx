@@ -5,7 +5,6 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
-import { Loader, MainButton } from 'twenty-ui';
 
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import styled from '@emotion/styled';
@@ -13,6 +12,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
+import { MainButton } from 'twenty-ui/input';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
 
 const StyledContentContainer = styled(motion.div)`

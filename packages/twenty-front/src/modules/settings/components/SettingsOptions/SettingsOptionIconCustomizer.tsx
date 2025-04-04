@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
 
 type SettingsOptionIconCustomizerProps = {
   Icon: IconComponent;

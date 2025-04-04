@@ -18,7 +18,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
-import { IconChevronLeft, IconSettings, MenuItem, useIcons } from 'twenty-ui';
+import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};

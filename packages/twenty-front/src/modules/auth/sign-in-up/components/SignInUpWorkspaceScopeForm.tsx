@@ -11,7 +11,8 @@ import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import { ActionLink, HorizontalSeparator } from 'twenty-ui';
+import { ActionLink } from 'twenty-ui/navigation';
+import { HorizontalSeparator } from 'twenty-ui/display';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};

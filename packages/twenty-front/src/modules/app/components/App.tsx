@@ -10,8 +10,8 @@ import { I18nProvider } from '@lingui/react';
 import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
-import { IconsProvider } from 'twenty-ui';
 import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
+import { IconsProvider } from 'twenty-ui/display';
 
 initialI18nActivate();
 

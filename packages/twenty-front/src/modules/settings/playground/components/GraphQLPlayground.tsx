@@ -7,8 +7,8 @@ import { GraphiQL } from 'graphiql';
 import 'graphiql/graphiql.css';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ThemeContext } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { ThemeContext } from 'twenty-ui/theme';
 
 type GraphQLPlaygroundProps = {
   onError(): void;

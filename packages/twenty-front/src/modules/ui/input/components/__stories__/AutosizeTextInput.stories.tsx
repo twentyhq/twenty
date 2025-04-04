@@ -1,10 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { CatalogDecorator, CatalogStory, ComponentDecorator } from 'twenty-ui';
 
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
 } from '../AutosizeTextInput';
+import {
+  CatalogDecorator,
+  CatalogStory,
+  ComponentDecorator,
+} from 'twenty-ui/testing';
 
 const meta: Meta<typeof AutosizeTextInput> = {
   title: 'UI/Input/AutosizeTextInput/AutosizeTextInput',

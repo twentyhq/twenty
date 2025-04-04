@@ -12,13 +12,9 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  ActionLink,
-  CAL_LINK,
-  CardPicker,
-  Loader,
-  MainButton,
-} from 'twenty-ui';
+import { Loader } from 'twenty-ui/feedback';
+import { CardPicker, MainButton } from 'twenty-ui/input';
+import { ActionLink, CAL_LINK } from 'twenty-ui/navigation';
 import {
   BillingPlanKey,
   BillingPriceLicensedDto,

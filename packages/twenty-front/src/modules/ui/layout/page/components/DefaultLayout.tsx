@@ -18,7 +18,7 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet, useSearchParams } from 'react-router-dom';
-import { useScreenSize } from 'twenty-ui';
+import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};

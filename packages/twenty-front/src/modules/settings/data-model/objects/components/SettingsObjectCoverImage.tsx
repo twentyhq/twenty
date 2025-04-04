@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
-import { Card, FloatingButton, IconEye } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
 import { useLingui } from '@lingui/react/macro';
 import DarkCoverImage from '../../assets/cover-dark.png';
 import LightCoverImage from '../../assets/cover-light.png';
+import { Card } from 'twenty-ui/layout';
+import { FloatingButton } from 'twenty-ui/input';
+import { IconEye } from 'twenty-ui/display';
 
 const StyledCoverImageContainer = styled(Card)`
   align-items: center;

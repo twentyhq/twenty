@@ -10,7 +10,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
-import { IconSettingsAutomation, IconX, LightIconButton } from 'twenty-ui';
+import { IconSettingsAutomation, IconX } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;

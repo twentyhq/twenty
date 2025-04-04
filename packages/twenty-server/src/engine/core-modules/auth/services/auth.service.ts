@@ -442,8 +442,8 @@ export class AuthService {
       locale,
     });
 
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     i18n.activate(locale);
 
