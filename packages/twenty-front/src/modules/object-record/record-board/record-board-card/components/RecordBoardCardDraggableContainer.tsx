@@ -16,9 +16,7 @@ export const RecordBoardCardDraggableContainer = ({
   });
 
   return (
-    <RecordBoardCardContext.Provider
-      value={{ recordId, isRecordReadOnly: false }}
-    >
+    <RecordBoardCardContext.Provider value={{ recordId, isRecordReadOnly }}>
       <Draggable key={recordId} draggableId={recordId} index={index}>
         {(draggableProvided) => (
           <div
