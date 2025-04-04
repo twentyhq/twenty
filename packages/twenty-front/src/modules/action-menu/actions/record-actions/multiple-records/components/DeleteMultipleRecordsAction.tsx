@@ -1,8 +1,9 @@
+import { Action } from '@/action-menu/actions/components/Action';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
@@ -14,11 +15,9 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
-export const DeleteMultipleRecordsAction = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const DeleteMultipleRecordsAction = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(true);
 
@@ -77,13 +76,16 @@ export const DeleteMultipleRecordsAction = ({
   };
 
   return (
-    <ConfirmationModal
-      isOpen={isDeleteRecordsModalOpen}
-      setIsOpen={setIsDeleteRecordsModalOpen}
-      title={'Delete Records'}
-      subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
-      onConfirmClick={handleDeleteClick}
-      confirmButtonText={'Delete Records'}
-    />
+    <>
+      <Action onClick={() => setIsDeleteRecordsModalOpen(true)} />
+      <ConfirmationModal
+        isOpen={isDeleteRecordsModalOpen}
+        setIsOpen={setIsDeleteRecordsModalOpen}
+        title={'Delete Records'}
+        subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
+        onConfirmClick={handleDeleteClick}
+        confirmButtonText={'Delete Records'}
+      />
+    </>
   );
 };

@@ -1,8 +1,9 @@
+import { Action } from '@/action-menu/actions/components/Action';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
@@ -14,11 +15,8 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useState } from 'react';
 
-export const RestoreMultipleRecordsAction = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const RestoreMultipleRecordsAction = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const [isRestoreRecordsModalOpen, setIsRestoreRecordsModalOpen] =
     useState(true);
 
@@ -84,13 +82,16 @@ export const RestoreMultipleRecordsAction = ({
   };
 
   return (
-    <ConfirmationModal
-      isOpen={isRestoreRecordsModalOpen}
-      setIsOpen={setIsRestoreRecordsModalOpen}
-      title={'Restore Records'}
-      subtitle={`Are you sure you want to restore these records?`}
-      onConfirmClick={handleRestoreClick}
-      confirmButtonText={'Restore Records'}
-    />
+    <>
+      <Action onClick={() => setIsRestoreRecordsModalOpen(true)} />
+      <ConfirmationModal
+        isOpen={isRestoreRecordsModalOpen}
+        setIsOpen={setIsRestoreRecordsModalOpen}
+        title={'Restore Records'}
+        subtitle={`Are you sure you want to restore these records?`}
+        onConfirmClick={handleRestoreClick}
+        confirmButtonText={'Restore Records'}
+      />
+    </>
   );
 };

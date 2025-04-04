@@ -1,15 +1,13 @@
-import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
+import { Action } from '@/action-menu/actions/components/Action';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useExportRecords } from '@/object-record/record-index/export/hooks/useExportRecords';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const ExportMultipleRecordsActionEffect = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const ExportMultipleRecordsAction = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
@@ -28,13 +26,5 @@ export const ExportMultipleRecordsActionEffect = ({
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
-  useActionEffect(() => {
-    const exportRecords = async () => {
-      await download();
-    };
-
-    exportRecords();
-  }, [download]);
-
-  return null;
+  return <Action onClick={download} />;
 };

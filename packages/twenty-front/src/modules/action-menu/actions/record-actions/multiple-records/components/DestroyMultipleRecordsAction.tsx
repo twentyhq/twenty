@@ -1,8 +1,9 @@
+import { Action } from '@/action-menu/actions/components/Action';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
@@ -14,11 +15,9 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useState } from 'react';
 
-export const DestroyMultipleRecordsAction = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const DestroyMultipleRecordsAction = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
     useState(true);
 
@@ -81,15 +80,18 @@ export const DestroyMultipleRecordsAction = ({
   };
 
   return (
-    <ConfirmationModal
-      isOpen={isDestroyRecordsModalOpen}
-      setIsOpen={setIsDestroyRecordsModalOpen}
-      title={'Permanently Destroy Records'}
-      subtitle={
-        "Are you sure you want to destroy these records? They won't be recoverable anymore."
-      }
-      onConfirmClick={handleDestroyClick}
-      confirmButtonText={'Destroy Records'}
-    />
+    <>
+      <Action onClick={() => setIsDestroyRecordsModalOpen(true)} />
+      <ConfirmationModal
+        isOpen={isDestroyRecordsModalOpen}
+        setIsOpen={setIsDestroyRecordsModalOpen}
+        title={'Permanently Destroy Records'}
+        subtitle={
+          "Are you sure you want to destroy these records? They won't be recoverable anymore."
+        }
+        onConfirmClick={handleDestroyClick}
+        confirmButtonText={'Destroy Records'}
+      />
+    </>
   );
 };
