@@ -948,7 +948,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
   upsertOneObjectPermission: ObjectPermission;
-  upsertOneSettingPermission: SettingPermission;
+  upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
 };
@@ -1308,8 +1308,8 @@ export type MutationUpsertOneObjectPermissionArgs = {
 };
 
 
-export type MutationUpsertOneSettingPermissionArgs = {
-  upsertSettingPermissionInput: UpsertSettingPermissionInput;
+export type MutationUpsertSettingPermissionsArgs = {
+  upsertSettingPermissionsInput: UpsertSettingPermissionsInput;
 };
 
 
@@ -1849,6 +1849,7 @@ export type Role = {
   id: Scalars['String']['output'];
   isEditable: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
+  settingPermissions?: Maybe<Array<SettingPermission>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
@@ -1958,7 +1959,6 @@ export enum ServerlessFunctionSyncStatus {
 
 export type SettingPermission = {
   __typename?: 'SettingPermission';
-  canUpdateSetting?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['String']['output'];
   roleId: Scalars['String']['output'];
   setting: SettingPermissionType;
@@ -2262,10 +2262,9 @@ export type UpsertObjectPermissionInput = {
   roleId: Scalars['String']['input'];
 };
 
-export type UpsertSettingPermissionInput = {
-  canUpdateSetting?: InputMaybe<Scalars['Boolean']['input']>;
+export type UpsertSettingPermissionsInput = {
   roleId: Scalars['String']['input'];
-  setting: SettingPermissionType;
+  settingPermissionKeys: Array<SettingPermissionType>;
 };
 
 export type User = {
