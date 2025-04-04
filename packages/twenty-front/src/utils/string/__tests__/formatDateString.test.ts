@@ -106,7 +106,7 @@ describe('formatDateString', () => {
     const mockFormattedDate = '06:00:00';
 
     jest.mock('@/localization/utils/formatDateISOStringToTime', () => ({
-      formatDateISOStringToDateTime: jest
+      formatDateISOStringToTime: jest
         .fn()
         .mockReturnValue(mockFormattedDate),
     }));
