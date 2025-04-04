@@ -19,6 +19,8 @@ import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import {
   FeatureFlagKey,
@@ -31,8 +33,6 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { Button } from 'twenty-ui/input';
-import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
 
 type SettingsRoleProps = {
   roleId: string;
@@ -102,6 +102,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     },
   ];
 
+  console.log(settingsDraftRole, settingsPersistedRole);
   const isDirty = !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
   const handleSave = async () => {
