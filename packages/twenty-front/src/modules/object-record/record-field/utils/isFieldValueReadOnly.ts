@@ -39,6 +39,20 @@ export const isFieldValueReadOnly = ({
   }
 
   if (
+    objectNameSingular !== CoreObjectNameSingular.Note &&
+    fieldName === 'noteTargets'
+  ) {
+    return true;
+  }
+
+  if (
+    objectNameSingular !== CoreObjectNameSingular.Task &&
+    fieldName === 'taskTargets'
+  ) {
+    return true;
+  }
+
+  if (
     isDefined(fieldType) &&
     (isFieldActor({ type: fieldType }) ||
       isFieldRichText({ type: fieldType }) ||

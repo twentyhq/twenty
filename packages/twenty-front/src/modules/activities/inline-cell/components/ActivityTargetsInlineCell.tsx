@@ -2,8 +2,8 @@ import { useContext } from 'react';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
-import { useOpenActivityTargetInlineCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetInlineCellEditMode';
-import { useUpdateActivityTargetFromInlineCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromInlineCell';
+import { useOpenActivityTargetCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetCellEditMode';
+import { useUpdateActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromCell';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -40,14 +40,13 @@ export const ActivityTargetsInlineCell = ({
 
   const { fieldDefinition, isReadOnly } = useContext(FieldContext);
 
-  const { openActivityTargetInlineCellEditMode } =
-    useOpenActivityTargetInlineCellEditMode();
+  const { openActivityTargetCellEditMode } =
+    useOpenActivityTargetCellEditMode();
 
-  const { updateActivityTargetFromInlineCell } =
-    useUpdateActivityTargetFromInlineCell({
-      activityObjectNameSingular,
-      activityId: activityRecordId,
-    });
+  const { updateActivityTargetFromCell } = useUpdateActivityTargetFromCell({
+    activityObjectNameSingular,
+    activityId: activityRecordId,
+  });
 
   return (
     <RecordFieldComponentInstanceContext.Provider
@@ -79,7 +78,7 @@ export const ActivityTargetsInlineCell = ({
                     closeInlineCell();
                   }}
                   onChange={(morphItem) => {
-                    updateActivityTargetFromInlineCell({
+                    updateActivityTargetFromCell({
                       recordPickerInstanceId: componentInstanceId,
                       morphItem,
                       activityTargetWithTargetRecords:
@@ -99,7 +98,7 @@ export const ActivityTargetsInlineCell = ({
                 />
               ),
               onOpenEditMode: () => {
-                openActivityTargetInlineCellEditMode({
+                openActivityTargetCellEditMode({
                   recordPickerInstanceId: componentInstanceId,
                   activityTargetObjectRecords,
                 });
