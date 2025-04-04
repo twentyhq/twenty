@@ -118,6 +118,7 @@ export class SearchResolver {
     return this.searchService.computeSearchObjectResults(
       allRecordsWithObjectMetadataItems,
       limit,
+      workspace.id,
     );
   }
 }

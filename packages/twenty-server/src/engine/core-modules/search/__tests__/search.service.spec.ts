@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/search/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
 
@@ -8,7 +9,7 @@ describe('SearchService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SearchService],
+      providers: [SearchService, { provide: FileService, useValue: {} }],
     }).compile();
 
     service = module.get<SearchService>(SearchService);
