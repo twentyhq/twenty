@@ -4,6 +4,10 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import {
+  makePageview,
+  makeUnknownEvent,
+} from 'src/engine/core-modules/analytics/utils/analytics.utils';
 
 import { AnalyticsService } from './services/analytics.service';
 import { CreateAnalyticsInput } from './dtos/create-analytics.input';
@@ -14,15 +18,24 @@ export class AnalyticsResolver {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
   @Mutation(() => Analytics)
-  track(
+  async track(
     @Args() createAnalyticsInput: CreateAnalyticsInput,
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
-    return this.analyticsService.create(
-      createAnalyticsInput,
-      user?.id,
-      workspace?.id,
+    const analyticsContext = this.analyticsService.createAnalyticsContext({
+      workspaceId: workspace?.id,
+      userId: user?.id,
+    });
+
+    if (createAnalyticsInput.action === 'pageview') {
+      return analyticsContext.sendPageview(
+        makePageview(createAnalyticsInput.payload),
+      );
+    }
+
+    return analyticsContext.sendUnknownEvent(
+      makeUnknownEvent(createAnalyticsInput.payload),
     );
   }
 }
