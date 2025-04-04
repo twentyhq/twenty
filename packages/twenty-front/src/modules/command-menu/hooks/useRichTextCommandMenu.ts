@@ -1,7 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { IconPencil } from 'twenty-ui/display';
@@ -12,17 +11,14 @@ export const useRichTextCommandMenu = () => {
   const openRichTextInCommandMenu = useRecoilCallback(
     ({ set }) =>
       ({
-        activityId: id,
+        activityId,
         activityObjectNameSingular,
       }: {
         activityId: string;
-        activityObjectNameSingular:
-          | CoreObjectNameSingular.Note
-          | CoreObjectNameSingular.Task
-          | null;
+        activityObjectNameSingular: string;
       }) => {
         set(viewableRichTextComponentState, {
-          activityId: id,
+          activityId,
           activityObjectNameSingular,
         });
 
@@ -38,13 +34,7 @@ export const useRichTextCommandMenu = () => {
   );
 
   const editRichText = useCallback(
-    (
-      activityId: string,
-      activityObjectNameSingular:
-        | CoreObjectNameSingular.Note
-        | CoreObjectNameSingular.Task
-        | null,
-    ) => {
+    (activityId: string, activityObjectNameSingular: string) => {
       openRichTextInCommandMenu({ activityId, activityObjectNameSingular });
     },
     [openRichTextInCommandMenu],

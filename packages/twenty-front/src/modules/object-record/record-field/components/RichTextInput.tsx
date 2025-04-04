@@ -63,18 +63,17 @@ export const RichTextInput = ({
     };
   }, [onClickOutside]);
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      onEscape?.(() => {});
-    }
-  };
-
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onEscape?.(() => {});
+      }
+    };
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  });
+  }, [onEscape]);
 
   return (
     <StyledContainer ref={containerRef}>
