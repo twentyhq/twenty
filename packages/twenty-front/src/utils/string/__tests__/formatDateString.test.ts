@@ -121,7 +121,7 @@ describe('formatDateString', () => {
     expect(result).toBe(mockFormattedDate);
   });
 
-  it('should return only date from date value when displayFormat is set to time', () => {
+  it('should return only date from date value when displayFormat is set to date', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = 'January 2';
 
