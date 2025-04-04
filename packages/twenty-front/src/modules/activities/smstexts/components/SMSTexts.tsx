@@ -2,6 +2,8 @@ import { ActivityList } from '@/activities/components/ActivityList';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { SMSText, TwilioMessage } from '@/activities/types/SMSText';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { Person } from '@/people/types/Person';
 import styled from '@emotion/styled';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -50,47 +52,33 @@ export const SMSTexts = ({
   targetableObject: ActivityTargetableObject;
 }) => {
 
-// //   const fakeTexts: SMSText[] = [
-// //     {
-// //       id: '1',
-// //       sender: 'You',
-// //       body: 'Ok will do',
-// //       date: new Date(),
-// //     },
-// //     {
-// //       id: '2',
-// //       sender: 'Your Agent',
-// //       body: 'Please send over your completed underwriting form, then I can go ahead and submit it for approval. Let me know if you have any questions on completing the form',
-// //       date: new Date(2025, 2, 28),
-// //     },
-// //     {
-// //       id: '3',
-// //       sender: 'Byrider Admin',
-// //       body: 'New recommendation: 2018 Kia Forte just listed for sale at our Philadelphia location. Find out more at this link: https://www.byrider.com/inventory',
-// //       date: new Date(2025, 2, 23),
-// //     },
-// //     {
-// //       id: '4',
-// //       sender: 'Byrider Admin',
-// //       body: "Welcome to Byrider! You're signed up for texts regarding upcoming appointments, new inventory, and more. View your profile and manage preferences here:",
-// //       date: new Date(2025, 2, 18),
-// //     },
-// //   ];
-
   const [textData, setTextData] = useState<any[]>([]);
+
+  const {    
+    record: person,
+    loading,
+    } =  useFindOneRecord<Person>({
+    objectNameSingular: targetableObject.targetObjectNameSingular,
+    objectRecordId: targetableObject.id,
+    recordGqlFields: {
+        phones: true,
+    }
+    });
 
   useEffect(() => {
     async function fetchTexts() {
 
+        if(!person || loading ) return;
+
         const apiUrl = process.env.REACT_APP_TWILIO_API_URL;
         const accountSid = process.env.REACT_APP_TWILIO_ACCOUNT_SID as string;
         const authToken = process.env.REACT_APP_TWILIO_AUTH_TOKEN as string;
+        const personPhoneNumber = `${person.phones.primaryPhoneCallingCode}${person.phones.primaryPhoneNumber}`;
     
         try {
             const [toResponse, fromResponse] = await Promise.all([
-                // user's phone number hardcoded
                 await axios.get(
-                    `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?To=+16179997801`,
+                    `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?To=${personPhoneNumber}`,
                     {
                       auth: {
                         username: accountSid,
@@ -99,7 +87,7 @@ export const SMSTexts = ({
                     },
                   ),
                   await axios.get(
-                    `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?From=+16179997801`,
+                    `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?From=${personPhoneNumber}`,
                     {
                       auth: {
                         username: accountSid,
@@ -111,8 +99,8 @@ export const SMSTexts = ({
 
           const texts = [...toResponse.data.messages, ...fromResponse.data.messages];
           const textsSortedByDateDescending = texts.sort((a,b) => new Date(b.date_sent).valueOf() - new Date(a.date_sent).valueOf());
-        //   console.log('Twilio response sorted:', textsSortedByDateDescending);
           setTextData(textsSortedByDateDescending);
+        //   console.log('Twilio response sorted:', textsSortedByDateDescending);
 
         } catch (error) {
           console.error('Error fetching Twilio messages:', error);
@@ -121,7 +109,7 @@ export const SMSTexts = ({
         
     }
     fetchTexts();
-  }, []);
+  }, [person, loading]);
 
   const transformedTexts = textData.map((text: TwilioMessage) => ({
     id: text.sid,
@@ -129,7 +117,6 @@ export const SMSTexts = ({
     body: text.body,
     date: new Date(text.date_sent),
   }));
-
 //   console.log('Twilio texts formatted: ', transformedTexts);
 
   return (
