@@ -3,24 +3,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import {
-  GithubVersionLink,
-  IconAt,
-  IconBell,
-  IconBuildingSkyscraper,
-  IconCalendarEvent,
-  IconCheckbox,
-  IconColorSwatch,
-  IconMail,
-  IconSearch,
-  IconServer,
-  IconSettings,
-  IconTargetArrow,
-  IconUser,
-  IconUserCircle,
-  IconUsers,
-  getOsControlSymbol,
-} from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -43,6 +25,25 @@ import { NavigationDrawerItem } from '../NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '../NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
+import { GithubVersionLink } from 'twenty-ui/navigation';
+import {
+  IconAt,
+  IconBell,
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
+  IconCheckbox,
+  IconColorSwatch,
+  IconMail,
+  IconSearch,
+  IconServer,
+  IconSettings,
+  IconTargetArrow,
+  IconUser,
+  IconUserCircle,
+  IconUsers,
+} from 'twenty-ui/display';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
+
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',
   component: NavigationDrawer,

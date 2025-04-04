@@ -25,9 +25,10 @@ import {
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
-import { Button, IconTrash, Toggle } from 'twenty-ui';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
+import { Button, Toggle } from 'twenty-ui/input';
+import { IconTrash } from 'twenty-ui/display';
 
 const StyledContent = styled(Modal.Content)`
   padding-left: ${({ theme }) => theme.spacing(6)};

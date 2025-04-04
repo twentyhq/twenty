@@ -5,10 +5,12 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import { Button, H2Title, IconReload, Section } from 'twenty-ui';
-import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
+import { H2Title, IconReload } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
 import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
+import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 
 const StyledDomainFormWrapper = styled.div`

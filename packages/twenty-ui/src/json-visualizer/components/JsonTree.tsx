@@ -2,20 +2,22 @@ import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { JsonTreeContextProvider } from '@ui/json-visualizer/components/JsonTreeContextProvider';
 import { ShouldExpandNodeInitiallyProps } from '@ui/json-visualizer/contexts/JsonTreeContext';
+import { GetJsonNodeHighlighting } from '@ui/json-visualizer/types/GetJsonNodeHighlighting';
 import { JsonValue } from 'type-fest';
 
 export const JsonTree = ({
   value,
-  shouldHighlightNode,
+  getNodeHighlighting,
   shouldExpandNodeInitially,
   emptyArrayLabel,
   emptyObjectLabel,
   emptyStringLabel,
   arrowButtonCollapsedLabel,
   arrowButtonExpandedLabel,
+  onNodeValueClick,
 }: {
   value: JsonValue;
-  shouldHighlightNode?: (keyPath: string) => boolean;
+  getNodeHighlighting?: GetJsonNodeHighlighting;
   shouldExpandNodeInitially: (
     params: ShouldExpandNodeInitiallyProps,
   ) => boolean;
@@ -24,17 +26,19 @@ export const JsonTree = ({
   emptyStringLabel: string;
   arrowButtonCollapsedLabel: string;
   arrowButtonExpandedLabel: string;
+  onNodeValueClick?: (valueAsString: string) => void;
 }) => {
   return (
     <JsonTreeContextProvider
       value={{
-        shouldHighlightNode,
+        getNodeHighlighting,
         shouldExpandNodeInitially,
         emptyArrayLabel,
         emptyObjectLabel,
         emptyStringLabel,
         arrowButtonCollapsedLabel,
         arrowButtonExpandedLabel,
+        onNodeValueClick,
       }}
     >
       <JsonList depth={0}>

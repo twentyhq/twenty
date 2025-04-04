@@ -1,11 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  Checkbox,
-  CheckboxShape,
-  IconCalendar,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui';
 
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
@@ -17,6 +11,8 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
 import { useCompleteTask } from '../hooks/useCompleteTask';
+import { Checkbox, CheckboxShape } from 'twenty-ui/input';
+import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};

@@ -4,7 +4,6 @@ import { useCallback, useState } from 'react';
 import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H2Title, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -26,7 +25,9 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { OnboardingStatus } from '~/generated/graphql';
+import { H2Title } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { formatCnpj } from '~/utils/formatCnpj';
 import { formatCpf } from '~/utils/formatCpf';
 import isCnpj from '~/utils/isCnpj';

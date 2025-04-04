@@ -17,21 +17,21 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-  AppTooltip,
-  Button,
-  H2Title,
-  IconPlus,
-  IconSearch,
-  Section,
-  TooltipDelay,
-} from 'twenty-ui';
-import {
   Role,
   SearchRecord,
   WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsRoleAssignmentTableRow } from './SettingsRoleAssignmentTableRow';
+import {
+  AppTooltip,
+  H2Title,
+  IconPlus,
+  IconSearch,
+  TooltipDelay,
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 
 const StyledAssignToMemberContainer = styled.div`
   display: flex;

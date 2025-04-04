@@ -3,12 +3,12 @@ import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
-import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
-import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
-} from './DateTimeFieldInput';
+} from '@/object-record/record-field/types/FieldInputEvent';
+import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 export type TextFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;

@@ -3,7 +3,8 @@ import { AdvancedFilterFieldSelectDropdownButton } from '@/object-record/advance
 import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
 import { AdvancedFilterRecordFilterOperandSelect } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelect';
 import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown';
-import { AdvancedFilterValueInputDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButton';
+import { AdvancedFilterValueInput } from '@/object-record/advanced-filter/components/AdvancedFilterValueInput';
+import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -19,7 +20,11 @@ export const AdvancedFilterRecordFilterRow = ({
 }) => {
   return (
     <ObjectFilterDropdownComponentInstanceContext.Provider
-      value={{ instanceId: `advanced-filter-${recordFilter.id}` }}
+      value={{
+        instanceId: getAdvancedFilterObjectFilterDropdownComponentInstanceId(
+          recordFilter.id,
+        ),
+      }}
     >
       <AdvancedFilterDropdownRow>
         <AdvancedFilterLogicalOperatorCell
@@ -32,9 +37,7 @@ export const AdvancedFilterRecordFilterRow = ({
         <AdvancedFilterRecordFilterOperandSelect
           recordFilterId={recordFilter.id}
         />
-        <AdvancedFilterValueInputDropdownButton
-          recordFilterId={recordFilter.id}
-        />
+        <AdvancedFilterValueInput recordFilterId={recordFilter.id} />
         <AdvancedFilterRecordFilterOptionsDropdown
           recordFilterId={recordFilter.id}
         />

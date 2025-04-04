@@ -1,3 +1,14 @@
+import { SettingsPath } from '@/types/SettingsPath';
+
+import { useAuth } from '@/auth/hooks/useAuth';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { billingState } from '@/client-config/states/billingState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
+import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
+import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
+import { SettingPermissionType } from '~/generated/graphql';
 import {
   IconApi,
   IconApps,
@@ -20,19 +31,7 @@ import {
   IconUserCircle,
   IconUsers,
   IconWebhook,
-} from 'twenty-ui';
-
-import { SettingsPath } from '@/types/SettingsPath';
-
-import { useAuth } from '@/auth/hooks/useAuth';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { billingState } from '@/client-config/states/billingState';
-import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
-import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
-import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
-import { SettingPermissionType } from '~/generated/graphql';
+} from 'twenty-ui/display';
 
 // eslint-disable-next-line no-restricted-imports
 import { IconIdBadge2, IconMessageCircleCog } from '@tabler/icons-react';

@@ -4,19 +4,6 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  AppTooltip,
-  Avatar,
-  H2Title,
-  IconButton,
-  IconMail,
-  IconReload,
-  IconSearch,
-  IconTrash,
-  Section,
-  Status,
-  TooltipDelay,
-} from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -44,6 +31,19 @@ import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation
 import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  AppTooltip,
+  Avatar,
+  H2Title,
+  IconMail,
+  IconReload,
+  IconSearch,
+  IconTrash,
+  Status,
+  TooltipDelay,
+} from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 
 const StyledButtonContainer = styled.div`
   align-items: center;

@@ -9,10 +9,11 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { z } from 'zod';
-import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();

@@ -2,9 +2,9 @@ import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
-import { Status } from 'twenty-ui';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { Status } from 'twenty-ui/display';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;

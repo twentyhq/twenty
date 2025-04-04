@@ -92,6 +92,8 @@ export const workflowFormActionSettingsSchema =
         type: z.union([
           z.literal(FieldMetadataType.TEXT),
           z.literal(FieldMetadataType.NUMBER),
+          z.literal(FieldMetadataType.DATE),
+          z.literal('RECORD'),
         ]),
         placeholder: z.string().optional(),
         settings: z.record(z.any()).optional(),
@@ -255,6 +257,7 @@ export const workflowRunSchema = z
     __typename: z.literal('WorkflowRun'),
     id: z.string(),
     workflowVersionId: z.string(),
+    workflowId: z.string(),
     output: workflowRunOutputSchema.nullable(),
     context: workflowRunContextSchema.nullable(),
     status: workflowRunStatusSchema,

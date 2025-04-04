@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { HttpResponse, graphql } from 'msw';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { EventCardCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof EventCardCalendarEvent> = {
   title: 'Modules/TimelineActivities/Rows/CalendarEvent/EventCardCalendarEvent',

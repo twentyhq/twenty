@@ -1,3 +1,4 @@
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
@@ -23,7 +24,7 @@ import { Key } from 'ts-key-enum';
 
 export const StyledDropdownContentContainer = styled.div`
   display: flex;
-  z-index: 30;
+  z-index: ${RootStackingContextZIndices.DropdownPortal};
 `;
 
 export type DropdownContentProps = {

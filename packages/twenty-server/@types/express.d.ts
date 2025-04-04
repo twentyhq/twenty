@@ -7,7 +7,7 @@ declare module 'express-serve-static-core' {
     user?: User | null;
     apiKey?: ApiKeyWorkspaceEntity | null;
     workspace: Workspace;
-    workspaceId?: string;
+    workspaceId: string;
     workspaceMetadataVersion?: number;
     workspaceMemberId?: string;
     userWorkspaceId?: string;

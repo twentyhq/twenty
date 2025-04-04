@@ -72,7 +72,7 @@ export class OrderByInputFactory {
       result = [...result, ...resultFields];
     }
 
-    checkArrayFields(objectMetadata.objectMetadataMapItem, result);
+    checkArrayFields(objectMetadata.objectMetadataItem, result);
 
     return result;
   }

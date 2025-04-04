@@ -1,7 +1,7 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
+import { Verify } from '@/auth/components/Verify';
 
-import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import { CallCenterProvider } from '@/chat/call-center/context/CallCenterContext';
 import ChatProvider from '@/chat/internal/context/chatContext';
@@ -9,6 +9,7 @@ import indexAppPath from '@/navigation/utils/indexAppPath';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -44,7 +45,7 @@ export const useCreateAppRouter = (
         loader={async () => Promise.resolve(null)}
       >
         <Route element={<DefaultLayout />}>
-          <Route path={AppPath.Verify} element={<VerifyEffect />} />
+          <Route path={AppPath.Verify} element={<Verify />} />
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />

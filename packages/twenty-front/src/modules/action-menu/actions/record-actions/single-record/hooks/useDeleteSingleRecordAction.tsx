@@ -3,14 +3,10 @@ import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/Ac
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { t } from '@lingui/core/macro';
-import { isNull } from '@sniptt/guards';
 import { useCallback, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
@@ -21,8 +17,6 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
   const { resetTableRowSelection } = useRecordTable({
     recordTableId: objectMetadataItem.namePlural,
   });
@@ -30,8 +24,6 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
   const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
-
-  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
@@ -56,23 +48,11 @@ export const useDeleteSingleRecordAction: ActionHookWithObjectMetadataItem = ({
     recordId,
   ]);
 
-  const isRemoteObject = objectMetadataItem.isRemote;
-
-  const shouldBeRegistered =
-    !isRemoteObject &&
-    isNull(selectedRecord?.deletedAt) &&
-    !hasObjectReadOnlyPermission;
-
   const onClick = () => {
-    if (!shouldBeRegistered) {
-      return;
-    }
-
     setIsDeleteRecordsModalOpen(true);
   };
 
   return {
-    shouldBeRegistered,
     onClick,
     ConfirmationModal: (
       <ConfirmationModal

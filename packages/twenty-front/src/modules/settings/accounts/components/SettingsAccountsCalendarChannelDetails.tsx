@@ -5,9 +5,10 @@ import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { Card, H2Title, IconUserPlus } from 'twenty-ui';
 import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
+import { Card } from 'twenty-ui/layout';
+import { H2Title, IconUserPlus } from 'twenty-ui/display';
 
 const StyledDetailsContainer = styled.div`
   display: flex;

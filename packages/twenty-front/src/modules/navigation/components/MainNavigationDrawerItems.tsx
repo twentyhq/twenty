@@ -1,9 +1,8 @@
 /* eslint-disable no-restricted-imports */
 import { useLocation } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconLink, IconRobot, IconSearch, IconSettings } from 'twenty-ui';
 
 import { IconChartBar } from '@tabler/icons-react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
@@ -25,6 +24,12 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
+import {
+  IconLink,
+  IconRobot,
+  IconSearch,
+  IconSettings,
+} from 'twenty-ui/display';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -33,6 +38,7 @@ const StyledMainSection = styled(NavigationDrawerSection)`
 `;
 const StyledInnerContainer = styled.div`
   height: 100%;
+  width: 100%;
 `;
 
 export const MainNavigationDrawerItems = () => {
@@ -118,10 +124,8 @@ export const MainNavigationDrawerItems = () => {
         </StyledMainSection>
       )}
       <ScrollWrapper
-        contextProviderName="navigationDrawer"
         componentInstanceId={`scroll-wrapper-navigation-drawer`}
         defaultEnableXScroll={false}
-        scrollbarVariant="no-padding"
       >
         <StyledInnerContainer>
           <NavigationDrawerOpenedSection />

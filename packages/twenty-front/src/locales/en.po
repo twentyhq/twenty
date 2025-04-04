@@ -150,6 +150,11 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "A shared environment where you will be able to manage your customer relations with your team."
 
+#. js-lingui-id: JE9zuL
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Ability to edit all settings"
+msgstr "Ability to edit all settings"
+
 #. js-lingui-id: 09tRFp
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Ability to interact with each object"
@@ -207,7 +212,6 @@ msgid "Action"
 msgstr "Action"
 
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Actions"
 msgstr "Actions"
@@ -301,14 +305,8 @@ msgstr "Add to Favorite"
 #. js-lingui-id: pBsoKL
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Add to favorites"
 msgstr "Add to favorites"
 
@@ -426,6 +424,11 @@ msgstr "Allow logins through Google's single sign-on functionality."
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Allow logins through Microsoft's single sign-on functionality."
+
+#. js-lingui-id: U6bnfj
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Allow Support Team Access"
+msgstr "Allow Support Team Access"
 
 #. js-lingui-id: wMg43c
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -889,10 +892,7 @@ msgid "Compact view"
 msgstr "Compact view"
 
 #. js-lingui-id: s2QZS6
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Companies"
 msgstr "Companies"
 
@@ -968,6 +968,7 @@ msgstr "Context"
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
@@ -988,6 +989,11 @@ msgstr "Continue with Google"
 #: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx
 msgid "Continue with Microsoft"
 msgstr "Continue with Microsoft"
+
+#. js-lingui-id: FxVG/l
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Copied to clipboard"
+msgstr "Copied to clipboard"
 
 #. js-lingui-id: u+VWhB
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
@@ -1038,6 +1044,11 @@ msgstr "Core"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Correct the issues and fill the missing data."
 msgstr "Correct the issues and fill the missing data."
+
+#. js-lingui-id: s8lFtq
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Couldn't copy to clipboard"
+msgstr "Couldn't copy to clipboard"
 
 #. js-lingui-id: wBMjJ2
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -1093,10 +1104,14 @@ msgid "Create API key"
 msgstr "Create API key"
 
 #. js-lingui-id: d0DCww
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Create new record"
 msgstr "Create new record"
+
+#. js-lingui-id: UDbEyl
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Create new workflow"
+msgstr "Create new workflow"
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -1333,11 +1348,9 @@ msgstr "Define what will be visible to other users in your workspace"
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Delete"
 msgstr "Delete"
 
@@ -1365,7 +1378,7 @@ msgstr "Delete API key"
 #~ msgstr "Delete record"
 
 #. js-lingui-id: kf0A63
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Delete records"
 msgstr "Delete records"
 
@@ -1423,24 +1436,24 @@ msgstr "Deleted"
 #~ msgstr "Deleted {objectNamePlural}"
 
 #. js-lingui-id: WH/5rN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Deleted records"
 msgstr "Deleted records"
 
 #. js-lingui-id: /TC7qI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-msgid "Deleted runs"
-msgstr "Deleted runs"
+#~ msgid "Deleted runs"
+#~ msgstr "Deleted runs"
 
 #. js-lingui-id: Wj5mzm
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-msgid "Deleted versions"
-msgstr "Deleted versions"
+#~ msgid "Deleted versions"
+#~ msgstr "Deleted versions"
 
 #. js-lingui-id: gw3Tlm
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-msgid "Deleted workflows"
-msgstr "Deleted workflows"
+#~ msgid "Deleted workflows"
+#~ msgstr "Deleted workflows"
 
 #. js-lingui-id: Cko536
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1457,10 +1470,8 @@ msgid "Description"
 msgstr "Description"
 
 #. js-lingui-id: 2xxBws
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Destroy"
 msgstr "Destroy"
 
@@ -1923,20 +1934,11 @@ msgstr "Expires in"
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
 #: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Export"
 msgstr "Export"
 
@@ -1946,7 +1948,7 @@ msgstr "Export"
 #~ msgstr "Export record"
 
 #. js-lingui-id: ep2rbf
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Export records"
 msgstr "Export records"
 
@@ -1961,7 +1963,7 @@ msgid "Export runs"
 msgstr "Export runs"
 
 #. js-lingui-id: q46CjD
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Export to PDF"
 msgstr "Export to PDF"
 
@@ -1976,10 +1978,9 @@ msgid "Export versions"
 msgstr "Export versions"
 
 #. js-lingui-id: DaGxE0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Export view"
 msgstr "Export view"
 
@@ -2153,26 +2154,17 @@ msgid "Global"
 msgstr "Global"
 
 #. js-lingui-id: mUbv8L
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to Companies"
 msgstr "Go to Companies"
 
 #. js-lingui-id: buPcNi
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to Opportunities"
 msgstr "Go to Opportunities"
 
 #. js-lingui-id: MrE/Qb
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to People"
 msgstr "Go to People"
 
@@ -2184,32 +2176,31 @@ msgstr "Go to runs"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to Settings"
 msgstr "Go to Settings"
 
 #. js-lingui-id: BM24SF
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to Tasks"
 msgstr "Go to Tasks"
 
 #. js-lingui-id: A5WHZY
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to workflows"
 msgstr "Go to workflows"
 
+#. js-lingui-id: 6eo66Q
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Grant access to your workspace so we can troubleshoot problems."
+msgstr "Grant access to your workspace so we can troubleshoot problems."
+
 #. js-lingui-id: hWp1MY
 #: src/pages/settings/SettingsWorkspace.tsx
-msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-msgstr "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+#~ msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+#~ msgstr "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2271,15 +2262,12 @@ msgid "Hide"
 msgstr "Hide"
 
 #. js-lingui-id: OlbYor
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Hide deleted"
 msgstr "Hide deleted"
 
 #. js-lingui-id: FHhlye
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Hide deleted records"
 msgstr "Hide deleted records"
 
@@ -2290,8 +2278,8 @@ msgstr "Hide deleted runs"
 
 #. js-lingui-id: Jc6FrI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-msgid "Hide deleted versions"
-msgstr "Hide deleted versions"
+#~ msgid "Hide deleted versions"
+#~ msgstr "Hide deleted versions"
 
 #. js-lingui-id: aOZAIB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -2361,13 +2349,12 @@ msgid "Impersonate"
 msgstr "Impersonate"
 
 #. js-lingui-id: l3s5ri
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Import"
 msgstr "Import"
 
 #. js-lingui-id: eECp4f
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Import records"
 msgstr "Import records"
 
@@ -2745,6 +2732,11 @@ msgstr "Manage Members"
 msgid "Manage security policies"
 msgstr "Manage security policies"
 
+#. js-lingui-id: 49MfD1
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Manage support access settings"
+msgstr "Manage support access settings"
+
 #. js-lingui-id: 4cjU2u
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage the members of your space here"
@@ -2892,14 +2884,14 @@ msgid "Name of your workspace"
 msgstr "Name of your workspace"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Navigate to next record"
 msgstr "Navigate to next record"
 
 #. js-lingui-id: UX6+vb
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-msgid "Navigate to next run"
-msgstr "Navigate to next run"
+#~ msgid "Navigate to next run"
+#~ msgstr "Navigate to next run"
 
 #. js-lingui-id: veSA19
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2912,14 +2904,14 @@ msgid "Navigate to next workflow"
 msgstr "Navigate to next workflow"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Navigate to previous record"
 msgstr "Navigate to previous record"
 
 #. js-lingui-id: HddE65
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-msgid "Navigate to previous run"
-msgstr "Navigate to previous run"
+#~ msgid "Navigate to previous run"
+#~ msgstr "Navigate to previous run"
 
 #. js-lingui-id: I+Pm5V
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2979,8 +2971,7 @@ msgstr "New Password"
 #. js-lingui-id: BcCzLv
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "New record"
 msgstr "New record"
 
@@ -3233,10 +3224,7 @@ msgid "Opened"
 msgstr "Opened"
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Opportunities"
 msgstr "Opportunities"
 
@@ -3306,10 +3294,7 @@ msgid "Password reset link has been sent to the email"
 msgstr "Password reset link has been sent to the email"
 
 #. js-lingui-id: 1wdjme
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "People"
 msgstr "People"
 
@@ -3346,15 +3331,19 @@ msgid "Percentage"
 msgstr "Percentage"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Permanently destroy record"
 msgstr "Permanently destroy record"
 
 #. js-lingui-id: xjWlSJ
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Permanently destroy records"
 msgstr "Permanently destroy records"
+
+#. js-lingui-id: 0bQ5ba
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Permanently destroy workflow"
+msgstr "Permanently destroy workflow"
 
 #. js-lingui-id: uKWXhB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -3596,14 +3585,8 @@ msgid "Remove as default"
 msgstr "Remove as default"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Remove from favorites"
 msgstr "Remove from favorites"
 
@@ -3634,18 +3617,18 @@ msgid "REST"
 msgstr "REST"
 
 #. js-lingui-id: yKu/3Y
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Restore"
 msgstr "Restore"
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Restore record"
 msgstr "Restore record"
 
 #. js-lingui-id: Vw369F
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Restore records"
 msgstr "Restore records"
 
@@ -3796,7 +3779,7 @@ msgid "See active version"
 msgstr "See active version"
 
 #. js-lingui-id: BxIUpp
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "See deleted records"
 msgstr "See deleted records"
 
@@ -3807,8 +3790,8 @@ msgstr "See deleted runs"
 
 #. js-lingui-id: 91fiCe
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-msgid "See deleted versions"
-msgstr "See deleted versions"
+#~ msgid "See deleted versions"
+#~ msgstr "See deleted versions"
 
 #. js-lingui-id: 5jZIe5
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -3859,7 +3842,7 @@ msgstr "See workflow"
 #. js-lingui-id: XThiR2
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "See workflows"
 msgstr "See workflows"
 
@@ -3995,12 +3978,14 @@ msgstr "Set the name of your subdomain"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Settings"
 msgstr "Settings"
+
+#. js-lingui-id: uXW4pg
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Settings All Access"
+msgstr "Settings All Access"
 
 #. js-lingui-id: p8fNBm
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
@@ -4165,7 +4150,7 @@ msgid "Sum"
 msgstr "Sum"
 
 #. js-lingui-id: XYLcNv
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Support"
 msgstr "Support"
 
@@ -4238,10 +4223,7 @@ msgid "Table"
 msgstr "Table"
 
 #. js-lingui-id: GtycJ/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Tasks"
 msgstr "Tasks"
 
@@ -4705,6 +4687,7 @@ msgstr "Webhooks"
 #~ msgstr "Welcome to"
 
 #. js-lingui-id: ke0EDP
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
 msgstr "Welcome to {workspaceName}"
@@ -4869,6 +4852,7 @@ msgid "Your name as it will be displayed on the app"
 msgstr "Your name as it will be displayed on the app"
 
 #. js-lingui-id: YQK8fJ
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Your Workspace"

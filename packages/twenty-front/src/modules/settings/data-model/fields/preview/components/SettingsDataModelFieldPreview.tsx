@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useIcons } from 'twenty-ui';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -15,6 +14,7 @@ import { SettingsDataModelSetPreviewRecordEffect } from '@/settings/data-model/f
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useIcons } from 'twenty-ui/display';
 
 export type SettingsDataModelFieldPreviewProps = {
   fieldMetadataItem: Pick<
@@ -146,6 +146,7 @@ export const SettingsDataModelFieldPreview = ({
                 defaultValue: fieldMetadataItem.defaultValue,
               },
               hotkeyScope: 'field-preview',
+              isReadOnly: false,
             }}
           >
             {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (

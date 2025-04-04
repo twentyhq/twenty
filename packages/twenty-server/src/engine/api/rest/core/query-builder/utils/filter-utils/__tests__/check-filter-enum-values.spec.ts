@@ -56,4 +56,24 @@ describe('checkFilterEnumValues', () => {
       `'filter' enum value 'MISSING_OPTION' not available in '${fieldSelectMock.name}' enum. Available enum values are ['OPTION_1', 'OPTION_2']`,
     );
   });
+
+  it('should allow filter by NULL or NOT_NULL values', () => {
+    expect(() =>
+      checkFilterEnumValues(
+        FieldMetadataType.SELECT,
+        fieldSelectMock.name,
+        'NULL',
+        mockObjectMetadataWithFieldMaps,
+      ),
+    ).not.toThrow();
+
+    expect(() =>
+      checkFilterEnumValues(
+        FieldMetadataType.SELECT,
+        fieldSelectMock.name,
+        'NOT_NULL',
+        mockObjectMetadataWithFieldMaps,
+      ),
+    ).not.toThrow();
+  });
 });

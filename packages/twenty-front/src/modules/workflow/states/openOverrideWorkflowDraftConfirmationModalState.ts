@@ -1,5 +1,4 @@
-import { createState } from '@ui/utilities/state/utils/createState';
-
+import { createState } from 'twenty-ui/utilities';
 export const openOverrideWorkflowDraftConfirmationModalState =
   createState<boolean>({
     key: 'openOverrideWorkflowDraftConfirmationModalState',

@@ -1,5 +1,4 @@
-import { createState } from '@ui/utilities/state/utils/createState';
-
+import { createState } from 'twenty-ui/utilities';
 export const workflowRunIdState = createState<string | undefined>({
   key: 'workflowRunIdState',
   defaultValue: undefined,

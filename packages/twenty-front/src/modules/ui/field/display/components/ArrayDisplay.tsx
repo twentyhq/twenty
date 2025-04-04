@@ -1,7 +1,6 @@
-import { Chip, ChipVariant } from 'twenty-ui';
-
 import { FieldArrayValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { Chip, ChipVariant } from 'twenty-ui/components';
 
 type ArrayDisplayProps = {
   value: FieldArrayValue;
