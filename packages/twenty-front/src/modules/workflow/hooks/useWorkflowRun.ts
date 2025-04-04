@@ -2,6 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { WorkflowRun } from '@/workflow/types/Workflow';
 import { workflowRunSchema } from '@/workflow/validation-schemas/workflowSchema';
+import { useOnDbEvent } from '@/object-record/hooks/useOnDbEvent';
 
 export const useWorkflowRun = ({
   workflowRunId,
@@ -14,6 +15,13 @@ export const useWorkflowRun = ({
   });
 
   const { success, data: record } = workflowRunSchema.safeParse(rawRecord);
+
+  useOnDbEvent({
+    recordId: workflowRunId,
+    onData: ({ data }) => {
+      console.log('data received', data);
+    },
+  });
 
   if (!success) {
     return undefined;

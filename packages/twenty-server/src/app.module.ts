@@ -27,6 +27,7 @@ import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware'
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
+import { SubscriptionGraphqlApiModule } from 'src/engine/api/graphql/subscription-graphql-api.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
@@ -61,6 +62,7 @@ const MIGRATED_REST_METHODS = [
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
+    SubscriptionGraphqlApiModule,
     RestApiModule,
     DataSourceModule,
     MiddlewareModule,
@@ -104,6 +106,10 @@ export class AppModule {
     consumer
       .apply(GraphQLHydrateRequestFromTokenMiddleware)
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
+
+    consumer
+      .apply(GraphQLHydrateRequestFromTokenMiddleware)
+      .forRoutes({ path: 'subscription', method: RequestMethod.ALL });
 
     for (const method of MIGRATED_REST_METHODS) {
       consumer.apply(RestCoreMiddleware).forRoutes({ path: 'rest/*', method });
