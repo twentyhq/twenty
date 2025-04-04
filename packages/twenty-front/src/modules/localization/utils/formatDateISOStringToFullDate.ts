@@ -1,7 +1,7 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { formatInTimeZone } from 'date-fns-tz';
 
-export const formatDateISOStringToDate = (
+export const formatDateISOStringToFullDate = (
   date: string,
   timeZone: string,
   dateFormat: DateFormat,
