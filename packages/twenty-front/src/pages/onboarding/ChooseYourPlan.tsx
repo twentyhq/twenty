@@ -181,10 +181,6 @@ export const ChooseYourPlan = () => {
       ? BillingPlanKey.ENTERPRISE
       : BillingPlanKey.PRO;
 
-  const alternatePlanName = plans?.plans.find(
-    (plan) => plan.planKey === alternatePlan,
-  )?.baseProduct.name;
-
   return (
     <>
       {isDefined(baseProductPrice) && isDefined(billing) ? (
