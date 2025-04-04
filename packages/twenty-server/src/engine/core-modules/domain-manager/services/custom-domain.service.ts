@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 
 import Cloudflare from 'cloudflare';
 import { isDefined } from 'twenty-shared/utils';
-import { makeEvent } from 'twenty-analytics';
 
 import {
   DomainManagerException,
@@ -13,8 +12,6 @@ import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager
 import { domainManagerValidator } from 'src/engine/core-modules/domain-manager/validator/cloudflare.validate';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
-import { AnalyticsContext } from 'src/engine/core-modules/analytics/types/analytics.type';
 
 @Injectable()
 export class CustomDomainService {
@@ -22,7 +19,6 @@ export class CustomDomainService {
 
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly analyticsService: AnalyticsService,
     private readonly domainManagerService: DomainManagerService,
   ) {
     if (this.environmentService.get('CLOUDFLARE_API_KEY')) {
@@ -32,10 +28,7 @@ export class CustomDomainService {
     }
   }
 
-  async registerCustomDomain(
-    customDomain: string,
-    analytics: AnalyticsContext,
-  ) {
+  async registerCustomDomain(customDomain: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     if (isDefined(await this.getCustomDomainDetails(customDomain))) {
@@ -45,7 +38,7 @@ export class CustomDomainService {
       );
     }
 
-    const response = await this.cloudflareClient.customHostnames.create({
+    return await this.cloudflareClient.customHostnames.create({
       zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
       hostname: customDomain,
       ssl: {
@@ -62,14 +55,6 @@ export class CustomDomainService {
         wildcard: false,
       },
     });
-
-    analytics.sendEvent(
-      makeEvent({
-        action: 'customDomain.created',
-      }),
-    );
-
-    return response;
   }
 
   async getCustomDomainDetails(
@@ -158,11 +143,7 @@ export class CustomDomainService {
     throw new Error('More than one custom hostname found in cloudflare');
   }
 
-  async updateCustomDomain(
-    fromHostname: string,
-    toHostname: string,
-    analytics: AnalyticsContext,
-  ) {
+  async updateCustomDomain(fromHostname: string, toHostname: string) {
     domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const fromCustomHostname = await this.getCustomDomainDetails(fromHostname);
@@ -171,7 +152,7 @@ export class CustomDomainService {
       await this.deleteCustomHostname(fromCustomHostname.id);
     }
 
-    return this.registerCustomDomain(toHostname, analytics);
+    return this.registerCustomDomain(toHostname);
   }
 
   async deleteCustomHostnameByHostnameSilently(customDomain: string) {

@@ -143,24 +143,22 @@ export class ServerlessFunctionService {
       version,
     );
 
-    const eventInput = {
-      action: 'serverlessFunction.executed',
-      payload: {
-        duration: resultServerlessFunction.duration,
-        status: resultServerlessFunction.status,
-        ...(resultServerlessFunction.error && {
-          errorType: resultServerlessFunction.error.errorType,
-        }),
-        functionId: functionToExecute.id,
-        functionName: functionToExecute.name,
-      },
-    };
-
-    this.analyticsService.create(
-      eventInput,
-      'serverless-function',
-      workspaceId,
-    );
+    this.analyticsService
+      .createAnalyticsContext({
+        workspaceId,
+      })
+      .sendEvent({
+        action: 'serverlessFunction.executed',
+        payload: {
+          duration: resultServerlessFunction.duration,
+          status: resultServerlessFunction.status,
+          ...(resultServerlessFunction.error && {
+            errorType: resultServerlessFunction.error.errorType,
+          }),
+          functionId: functionToExecute.id,
+          functionName: functionToExecute.name,
+        },
+      });
 
     return resultServerlessFunction;
   }

@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { ClickHouseClient, createClient } from '@clickhouse/client';
-import { Pageview, Event } from 'twenty-analytics';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
+import { AnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
+
 @Injectable()
 export class ClickhouseService {
   private clickhouseClient: ClickHouseClient | undefined;
@@ -17,11 +19,12 @@ export class ClickhouseService {
     }
   }
 
-  async insert(data: Pageview | Event) {
+  async insert(data: AnalyticsPageview | AnalyticsEvent) {
     try {
       if (!this.clickhouseClient) {
         return { success: true };
       }
+
       await this.clickhouseClient.insert({
         table: 'action' in data ? 'events' : 'pageview',
         values: {

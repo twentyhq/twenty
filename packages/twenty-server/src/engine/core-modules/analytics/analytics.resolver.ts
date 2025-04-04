@@ -1,11 +1,13 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { makePageview, makeUnsafeEvent } from 'twenty-analytics';
-
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import {
+  makePageview,
+  makeUnknownEvent,
+} from 'src/engine/core-modules/analytics/utils/analytics.utils';
 
 import { AnalyticsService } from './services/analytics.service';
 import { CreateAnalyticsInput } from './dtos/create-analytics.input';
@@ -21,10 +23,10 @@ export class AnalyticsResolver {
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
-    const analyticsContext = this.analyticsService.createAnalyticsContext(
-      user?.id,
-      workspace?.id,
-    );
+    const analyticsContext = this.analyticsService.createAnalyticsContext({
+      workspaceId: workspace?.id,
+      userId: user?.id,
+    });
 
     if (createAnalyticsInput.action === 'pageview') {
       return analyticsContext.sendPageview(
@@ -32,8 +34,8 @@ export class AnalyticsResolver {
       );
     }
 
-    return analyticsContext.sendEvent(
-      makeUnsafeEvent(createAnalyticsInput.payload),
+    return analyticsContext.sendUnknownEvent(
+      makeUnknownEvent(createAnalyticsInput.payload),
     );
   }
 }

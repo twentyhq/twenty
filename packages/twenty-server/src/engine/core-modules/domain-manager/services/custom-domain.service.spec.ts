@@ -7,8 +7,7 @@ import { CustomDomainService } from 'src/engine/core-modules/domain-manager/serv
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerException } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
-
-jest.mock('cloudflare');
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
 describe('CustomDomainService', () => {
   let customDomainService: CustomDomainService;
@@ -24,6 +23,10 @@ describe('CustomDomainService', () => {
           useValue: {
             get: jest.fn(),
           },
+        },
+        {
+          provide: AnalyticsService,
+          useValue: {},
         },
         {
           provide: DomainManagerService,

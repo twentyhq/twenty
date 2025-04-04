@@ -116,22 +116,18 @@ export class WorkspaceResolver {
     @AuthApiKey() apiKey?: string,
   ) {
     try {
-      const analytics = this.analyticsService.createAnalyticsContext(
-        undefined,
-        workspace.id,
-      );
+      const analytics = this.analyticsService.createAnalyticsContext({
+        workspaceId: workspace.id,
+      });
 
-      return await this.workspaceService.updateWorkspaceById(
-        {
-          payload: {
-            ...data,
-            id: workspace.id,
-          },
-          userWorkspaceId,
-          apiKey,
+      return await this.workspaceService.updateWorkspaceById({
+        payload: {
+          ...data,
+          id: workspace.id,
         },
-        analytics,
-      );
+        userWorkspaceId,
+        apiKey,
+      });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }

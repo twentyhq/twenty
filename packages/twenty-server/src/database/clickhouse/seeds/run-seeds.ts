@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import { createClient } from '@clickhouse/client';
 import { config } from 'dotenv';
-import { fixtures } from 'twenty-analytics';
+
+import { fixtures } from 'src/engine/core-modules/analytics/utils/fixtures/fixtures';
 
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
