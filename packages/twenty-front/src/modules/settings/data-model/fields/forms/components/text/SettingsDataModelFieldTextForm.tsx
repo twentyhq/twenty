@@ -4,8 +4,9 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
 import { z } from 'zod';
-import { t } from '@lingui/core/macro';
 import { IconTextWrap } from 'twenty-ui/display';
+import { getTextFieldDefaultValueSelectOptions } from '@/settings/data-model/fields/forms/text/constants/TextFieldDefaultValueSelectOptions';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsDataModelFieldTextFormProps = {
   disabled?: boolean;
@@ -31,6 +32,8 @@ export const SettingsDataModelFieldTextForm = ({
   disabled,
   fieldMetadataItem,
 }: SettingsDataModelFieldTextFormProps) => {
+  const { t } = useLingui();
+
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
   return (
     <Controller
@@ -54,28 +57,7 @@ export const SettingsDataModelFieldTextForm = ({
                 value={displayedMaxRows}
                 onChange={(value) => onChange({ displayedMaxRows: value })}
                 disabled={disabled}
-                options={[
-                  {
-                    label: t`Deactivated`,
-                    value: 0,
-                  },
-                  {
-                    label: t`First 2 lines`,
-                    value: 2,
-                  },
-                  {
-                    label: t`First 5 lines`,
-                    value: 5,
-                  },
-                  {
-                    label: t`First 10 lines`,
-                    value: 10,
-                  },
-                  {
-                    label: t`All lines`,
-                    value: 99,
-                  },
-                ]}
+                options={getTextFieldDefaultValueSelectOptions(t)}
                 selectSizeVariant="small"
               />
             </SettingsOptionCardContentSelect>

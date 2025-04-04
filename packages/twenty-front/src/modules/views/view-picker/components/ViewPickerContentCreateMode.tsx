@@ -23,6 +23,7 @@ import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/Vi
 import { ViewPickerSelectContainer } from '@/views/view-picker/components/ViewPickerSelectContainer';
 import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerKanbanFieldDropdownId';
 import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
+import { getViewPickerTypeSelectOptions } from '@/views/view-picker/constants/ViewPickerTypeSelectOptions';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -163,18 +164,7 @@ export const ViewPickerContentCreateMode = () => {
               setViewPickerIsDirty(true);
               setViewPickerType(value);
             }}
-            options={[
-              {
-                value: ViewType.Table,
-                label: t`Table`,
-                Icon: viewTypeIconMapping(ViewType.Table),
-              },
-              {
-                value: ViewType.Kanban,
-                label: t`Kanban`,
-                Icon: viewTypeIconMapping(ViewType.Kanban),
-              },
-            ]}
+            options={getViewPickerTypeSelectOptions(t)}
             dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
           />
         </ViewPickerSelectContainer>
