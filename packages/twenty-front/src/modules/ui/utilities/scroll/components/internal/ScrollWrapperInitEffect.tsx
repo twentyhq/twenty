@@ -1,5 +1,4 @@
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
-import 'overlayscrollbars/overlayscrollbars.css';
 import { useEffect } from 'react';
 
 export type ScrollWrapperInitEffectProps = {

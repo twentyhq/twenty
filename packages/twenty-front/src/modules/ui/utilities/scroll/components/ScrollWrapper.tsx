@@ -6,7 +6,6 @@ import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/s
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import 'overlayscrollbars/overlayscrollbars.css';
 
 const StyledScrollWrapper = styled.div`
   &.scroll-wrapper-x-enabled {
