@@ -20,19 +20,10 @@ import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkey
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Key } from 'ts-key-enum';
 
-const StyledTableWithHeader = styled.div`
-  height: 100%;
-`;
-
 const StyledTableContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
   position: relative;
-`;
-
-const StyledTableInternalContainer = styled.div`
-  height: 100%;
 `;
 
 type RecordTableWithWrappersProps = {
@@ -105,13 +96,9 @@ export const RecordTableWithWrappers = ({
             componentInstanceId={`record-table-scroll-${recordTableId}`}
           >
             <RecordUpdateContext.Provider value={updateRecordMutation}>
-              <StyledTableWithHeader>
-                <StyledTableContainer>
-                  <StyledTableInternalContainer>
-                    <RecordTable />
-                  </StyledTableInternalContainer>
-                </StyledTableContainer>
-              </StyledTableWithHeader>
+              <StyledTableContainer>
+                <RecordTable />
+              </StyledTableContainer>
             </RecordUpdateContext.Provider>
           </ScrollWrapper>
         </EntityDeleteContext.Provider>

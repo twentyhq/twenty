@@ -19,11 +19,6 @@ const StyledScrollWrapper = styled.div`
   height: 100%;
 `;
 
-const StyledInnerContainer = styled.div`
-  height: 100%;
-  width: 100%;
-`;
-
 export type ScrollWrapperProps = {
   children: React.ReactNode;
   className?: string;
@@ -76,7 +71,7 @@ export const ScrollWrapper = ({
         className={className}
         onScroll={handleScroll}
       >
-        <StyledInnerContainer>{children}</StyledInnerContainer>
+        {children}
       </StyledScrollWrapper>
     </ScrollWrapperComponentInstanceContext.Provider>
   );
