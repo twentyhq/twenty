@@ -4,9 +4,9 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import styled from '@emotion/styled';
 import { FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconComponent, TablerIconsProps } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { isDefined } from 'twenty-shared/utils';
+import { IconComponent, TablerIconsProps } from 'twenty-ui/display';
 
 type NavigationDrawerInputProps = {
   className?: string;

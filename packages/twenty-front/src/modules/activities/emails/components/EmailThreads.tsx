@@ -1,15 +1,4 @@
 import styled from '@emotion/styled';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  H1Title,
-  H1TitleFontColor,
-  Section,
-} from 'twenty-ui';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -22,6 +11,16 @@ import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TimelineThread, TimelineThreadsWithTotal } from '~/generated/graphql';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+  Section,
+} from 'twenty-ui/layout';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   display: flex;

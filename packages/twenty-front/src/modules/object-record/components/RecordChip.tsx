@@ -1,11 +1,3 @@
-import {
-  AvatarChip,
-  AvatarChipVariant,
-  ChipSize,
-  LinkAvatarChip,
-  isModifiedEvent,
-} from 'twenty-ui';
-
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
@@ -13,6 +5,14 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilValue } from 'recoil';
+import {
+  AvatarChip,
+  AvatarChipVariant,
+  ChipSize,
+  LinkAvatarChip,
+} from 'twenty-ui/components';
+import { isModifiedEvent } from 'twenty-ui/utilities';
+
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;

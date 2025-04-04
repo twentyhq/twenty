@@ -13,7 +13,8 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 import { useSetRecoilState } from 'recoil';
-import { MenuItemCommand, useIcons } from 'twenty-ui';
+import { MenuItemCommand } from 'twenty-ui/navigation';
+import { useIcons } from 'twenty-ui/display';
 
 export const RightDrawerWorkflowSelectTriggerTypeContent = ({
   workflow,

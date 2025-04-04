@@ -11,15 +11,6 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  Button,
-  H2Title,
-  IconId,
-  IconMail,
-  IconSearch,
-  IconUser,
-  Section,
-} from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated/graphql';
 
@@ -30,6 +21,15 @@ import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-p
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
+import {
+  H2Title,
+  IconId,
+  IconMail,
+  IconSearch,
+  IconUser,
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
   align-items: center;

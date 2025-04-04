@@ -3,15 +3,15 @@ import { Select, SelectValue } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import {
-  ComponentDecorator,
   IconLanguage,
   IconLayoutKanban,
   IconList,
   IconNotes,
   IconTable,
   IconUsers,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   width: 480px;

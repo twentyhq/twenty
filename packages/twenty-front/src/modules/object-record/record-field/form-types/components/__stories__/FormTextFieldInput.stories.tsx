@@ -7,11 +7,11 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
-import { getUserDevice } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormTextFieldInput } from '../FormTextFieldInput';
+import { getUserDevice } from 'twenty-ui/utilities';
 
 const meta: Meta<typeof FormTextFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormTextFieldInput',

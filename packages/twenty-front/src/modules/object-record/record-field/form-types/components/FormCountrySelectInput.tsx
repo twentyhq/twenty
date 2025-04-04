@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
-import { IconCircleOff, IconComponentProps, SelectOption } from 'twenty-ui';
 
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { IconCircleOff, IconComponentProps } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 export const FormCountrySelectInput = ({
   selectedCountryName,

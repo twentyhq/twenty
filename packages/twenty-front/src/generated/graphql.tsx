@@ -526,8 +526,7 @@ export enum FeatureFlagKey {
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
   IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsWorkflowEnabled = 'IsWorkflowEnabled',
-  IsWorkflowFormActionEnabled = 'IsWorkflowFormActionEnabled'
+  IsWorkflowEnabled = 'IsWorkflowEnabled'
 }
 
 export type Field = {

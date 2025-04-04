@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { MouseEvent, useCallback } from 'react';
-import { IconPlus, MenuItem } from 'twenty-ui';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
@@ -22,6 +21,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
+import { IconPlus } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};

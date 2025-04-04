@@ -8,6 +8,7 @@ import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/types
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
+import { SettingPermissionType } from '~/generated-metadata/graphql';
 import {
   H2Title,
   IconCode,
@@ -21,9 +22,8 @@ import {
   IconTrash,
   IconTrashX,
   IconUsers,
-  Section,
-} from 'twenty-ui';
-import { SettingPermissionType } from '~/generated-metadata/graphql';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledRolePermissionsContainer = styled.div`
   display: flex;

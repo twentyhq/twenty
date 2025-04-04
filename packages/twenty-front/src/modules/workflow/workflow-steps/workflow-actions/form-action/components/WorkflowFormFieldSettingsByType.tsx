@@ -1,3 +1,4 @@
+import { WorkflowFormFieldSettingsDate } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate';
 import { WorkflowFormFieldSettingsRecordPicker } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker';
 import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -28,6 +29,15 @@ export const WorkflowFormFieldSettingsByType = ({
         <WorkflowFormFieldSettingsNumber
           label={field.label}
           placeholder={field.placeholder}
+          onChange={(fieldName, value) => {
+            onChange(fieldName, value);
+          }}
+        />
+      );
+    case FieldMetadataType.DATE:
+      return (
+        <WorkflowFormFieldSettingsDate
+          label={field.label}
           onChange={(fieldName, value) => {
             onChange(fieldName, value);
           }}

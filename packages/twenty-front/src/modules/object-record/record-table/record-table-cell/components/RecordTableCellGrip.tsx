@@ -4,7 +4,7 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { css } from '@emotion/react';
-import { IconListViewGrip } from 'twenty-ui';
+import { IconListViewGrip } from 'twenty-ui/input';
 
 export const TABLE_CELL_GRIP_WIDTH = '16px';
 

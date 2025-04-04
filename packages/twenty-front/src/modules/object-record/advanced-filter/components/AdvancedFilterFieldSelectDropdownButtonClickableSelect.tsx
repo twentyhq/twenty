@@ -4,7 +4,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 type AdvancedFilterFieldSelectDropdownButtonClickableSelectProps = {
   recordFilterId: string;

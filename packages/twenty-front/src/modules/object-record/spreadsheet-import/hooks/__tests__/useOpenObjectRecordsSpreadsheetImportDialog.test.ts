@@ -124,6 +124,7 @@ const companyMocks = [
             }
             id
             idealCustomerProfile
+            internalCompetitions
             introVideo {
               primaryLinkUrl
               primaryLinkLabel

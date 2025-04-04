@@ -13,8 +13,9 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemMultiSelectTag, SelectOption } from 'twenty-ui';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { SelectOption } from 'twenty-ui/input';
 
 type MultiSelectInputProps = {
   selectableListComponentInstanceId: string;

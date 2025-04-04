@@ -7,9 +7,9 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
-import { IconCurrencyDollar } from 'twenty-ui';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { useLingui } from '@lingui/react/macro';
+import { IconCurrencyDollar } from 'twenty-ui/display';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: currencyFieldDefaultValueSchema,

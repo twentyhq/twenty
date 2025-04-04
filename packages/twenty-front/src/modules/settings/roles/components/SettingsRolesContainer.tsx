@@ -1,5 +1,3 @@
-import { H3Title } from 'twenty-ui';
-
 import { SettingsPath } from '@/types/SettingsPath';
 
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -13,6 +11,7 @@ import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRol
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
+import { H3Title } from 'twenty-ui/display';
 
 export const SettingsRolesContainer = () => {
   const { t } = useLingui();

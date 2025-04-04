@@ -1,12 +1,13 @@
 import { SuggestionMenuProps } from '@blocknote/react';
 import styled from '@emotion/styled';
-import { IconComponent, MenuItemSuggestion } from 'twenty-ui';
 
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useFloating } from '@floating-ui/react';
 import { createPortal } from 'react-dom';
+import { IconComponent } from 'twenty-ui/display';
+import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
 export type SuggestionItem = {
   title: string;

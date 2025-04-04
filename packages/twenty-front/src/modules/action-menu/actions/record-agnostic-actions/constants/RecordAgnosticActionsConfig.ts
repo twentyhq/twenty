@@ -7,7 +7,7 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
-import { IconSearch } from 'twenty-ui';
+import { IconSearch } from 'twenty-ui/display';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
   string,

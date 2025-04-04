@@ -1,3 +1,4 @@
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -31,7 +32,7 @@ const StyledModalDiv = styled(motion.div)<{
   }};
   overflow-x: hidden;
   overflow-y: auto;
-  z-index: 10000; // should be higher than Backdrop's z-index
+  z-index: ${RootStackingContextZIndices.RootModal}; // should be higher than Backdrop's z-index
 
   width: ${({ isMobile, size, theme }) => {
     if (isMobile) return theme.modal.size.fullscreen;
@@ -109,7 +110,7 @@ const StyledBackDrop = styled(motion.div)<{
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 9999;
+  z-index: ${RootStackingContextZIndices.RootModalBackDrop};
   user-select: none;
 `;
 

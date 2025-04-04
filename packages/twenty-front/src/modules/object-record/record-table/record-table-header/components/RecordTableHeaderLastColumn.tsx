@@ -1,12 +1,13 @@
 import { Theme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { IconPlus, ThemeContext } from 'twenty-ui';
 
 import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/constants/HiddenTableColumnDropdownId';
 import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
+import { IconPlus } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledPlusIconHeaderCell = styled.th<{
   theme: Theme;

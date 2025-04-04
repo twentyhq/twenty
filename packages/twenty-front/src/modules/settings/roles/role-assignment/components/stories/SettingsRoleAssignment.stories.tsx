@@ -3,10 +3,10 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui';
 import { PENDING_ROLE_ID } from '~/pages/settings/roles/SettingsRoleCreate';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getRolesMock } from '~/testing/mock-data/roles';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const SettingsRoleAssignmentWrapper = (
   args: React.ComponentProps<typeof SettingsRoleAssignment>,

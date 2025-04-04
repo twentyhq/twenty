@@ -6,11 +6,11 @@ import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
-} from './DateTimeFieldInput';
+} from '@/object-record/record-field/types/FieldInputEvent';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type CurrencyFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;

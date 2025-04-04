@@ -3,8 +3,12 @@ import { workflowIdComponentState } from '@/command-menu/pages/workflow/states/w
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
-import { IconBolt, IconComponent, IconSettingsAutomation } from 'twenty-ui';
 import { v4 } from 'uuid';
+import {
+  IconBolt,
+  IconComponent,
+  IconSettingsAutomation,
+} from 'twenty-ui/display';
 
 export const useWorkflowCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
