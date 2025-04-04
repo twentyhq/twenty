@@ -1,10 +1,11 @@
+import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const RemoveFromFavoritesSingleRecordActionEffect = () => {
+export const RemoveFromFavoritesSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
   const { sortedFavorites: favorites } = useFavorites();
@@ -15,7 +16,7 @@ export const RemoveFromFavoritesSingleRecordActionEffect = () => {
     (favorite) => favorite.recordId === recordId,
   );
 
-  useActionEffect(() => {
+  const onClick = useCallback(() => {
     if (!isDefined(foundFavorite)) {
       return;
     }
@@ -23,5 +24,5 @@ export const RemoveFromFavoritesSingleRecordActionEffect = () => {
     deleteFavorite(foundFavorite.id);
   }, [deleteFavorite, foundFavorite]);
 
-  return null;
+  return <Action onClick={onClick} />;
 };

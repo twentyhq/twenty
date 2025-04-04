@@ -1,23 +1,22 @@
+import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const AddToFavoritesSingleRecordActionEffect = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const AddToFavoritesSingleRecordAction = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const recordId = useSelectedRecordIdOrThrow();
 
   const { createFavorite } = useCreateFavorite();
 
   const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-  useActionEffect(() => {
+  const onClick = useCallback(() => {
     if (!isDefined(selectedRecord)) {
       return;
     }
@@ -25,5 +24,5 @@ export const AddToFavoritesSingleRecordActionEffect = ({
     createFavorite(selectedRecord, objectMetadataItem.nameSingular);
   }, [selectedRecord, objectMetadataItem.nameSingular, createFavorite]);
 
-  return null;
+  return <Action onClick={onClick} />;
 };

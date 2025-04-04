@@ -8,13 +8,13 @@ import { HideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions
 import { ImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/ImportRecordsNoSelectionRecordActionEffect';
 import { SeeDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/SeeDeletedRecordsNoSelectionRecordActionEffect';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
-import { AddToFavoritesSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordActionEffect';
+import { AddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordActionEffect';
 import { DeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction';
 import { DestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction';
-import { ExportNoteActionSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/ExportNoteActionSingleRecordActionEffect';
-import { NavigateToNextRecordSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/NavigateToNextRecordSingleRecordActionEffect';
-import { NavigateToPreviousRecordSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/NavigateToPreviousRecordSingleRecordActionEffect';
-import { RemoveFromFavoritesSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/components/RemoveFromFavoritesSingleRecordActionEffect';
+import { ExportNoteActionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/ExportNoteActionSingleRecordActionEffect';
+import { NavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/NavigateToNextRecordSingleRecordActionEffect';
+import { NavigateToPreviousRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/NavigateToPreviousRecordSingleRecordActionEffect';
+import { RemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/RemoveFromFavoritesSingleRecordActionEffect';
 import { RestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
@@ -76,7 +76,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isNoteOrTask &&
       isNonEmptyString(selectedRecord?.bodyV2?.blocknote),
     availableOn: [ActionViewType.SHOW_PAGE],
-    component: ExportNoteActionSingleRecordActionEffect,
+    component: <ExportNoteActionSingleRecordAction />,
   },
   [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
     type: ActionMenuEntryType.Standard,
@@ -93,7 +93,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    component: AddToFavoritesSingleRecordActionEffect,
+    component: <AddToFavoritesSingleRecordAction />,
   },
   [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
     type: ActionMenuEntryType.Standard,
@@ -113,7 +113,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    component: RemoveFromFavoritesSingleRecordActionEffect,
+    component: <RemoveFromFavoritesSingleRecordAction />,
   },
   [SingleRecordActionKeys.EXPORT]: {
     type: ActionMenuEntryType.Standard,
@@ -269,7 +269,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    component: DestroySingleRecordAction,
+    component: <DestroySingleRecordAction />,
   },
   [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
     type: ActionMenuEntryType.Standard,
@@ -281,7 +281,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconChevronUp,
     shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
     availableOn: [ActionViewType.SHOW_PAGE],
-    component: NavigateToPreviousRecordSingleRecordActionEffect,
+    component: <NavigateToPreviousRecordSingleRecordAction />,
   },
   [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
     type: ActionMenuEntryType.Standard,
@@ -293,7 +293,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconChevronDown,
     shouldBeRegistered: ({ isInRightDrawer }) => !isInRightDrawer,
     availableOn: [ActionViewType.SHOW_PAGE],
-    component: NavigateToNextRecordSingleRecordActionEffect,
+    component: <NavigateToNextRecordSingleRecordAction />,
   },
   [MultipleRecordsActionKeys.DESTROY]: {
     type: ActionMenuEntryType.Standard,

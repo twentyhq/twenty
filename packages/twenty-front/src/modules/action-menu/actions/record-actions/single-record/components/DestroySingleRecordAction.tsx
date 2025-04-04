@@ -1,5 +1,6 @@
+import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { AppPath } from '@/types/AppPath';
@@ -7,11 +8,9 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useCallback, useState } from 'react';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const DestroySingleRecordAction = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const DestroySingleRecordAction = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const recordId = useSelectedRecordIdOrThrow();
 
   const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
@@ -43,17 +42,18 @@ export const DestroySingleRecordAction = ({
   ]);
 
   return (
-    <ConfirmationModal
-      isOpen={isDestroyRecordsModalOpen}
-      setIsOpen={setIsDestroyRecordsModalOpen}
-      title={'Permanently Destroy Record'}
-      subtitle={
-        'Are you sure you want to destroy this record? It cannot be recovered anymore.'
-      }
-      onConfirmClick={async () => {
-        await handleDeleteClick();
-      }}
-      confirmButtonText={'Permanently Destroy Record'}
-    />
+    <>
+      <Action onClick={() => setIsDestroyRecordsModalOpen(true)} />
+      <ConfirmationModal
+        isOpen={isDestroyRecordsModalOpen}
+        setIsOpen={setIsDestroyRecordsModalOpen}
+        title={'Permanently Destroy Record'}
+        subtitle={
+          'Are you sure you want to destroy this record? It cannot be recovered anymore.'
+        }
+        onConfirmClick={handleDeleteClick}
+        confirmButtonText={'Permanently Destroy Record'}
+      />
+    </>
   );
 };

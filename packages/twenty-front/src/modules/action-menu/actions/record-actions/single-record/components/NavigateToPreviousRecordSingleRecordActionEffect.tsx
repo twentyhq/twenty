@@ -1,13 +1,11 @@
+import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 
-export const NavigateToPreviousRecordSingleRecordActionEffect = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const NavigateToPreviousRecordSingleRecordAction = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const recordId = useSelectedRecordIdOrThrow();
 
   const { navigateToPreviousRecord } = useRecordShowPagePagination(
@@ -15,9 +13,5 @@ export const NavigateToPreviousRecordSingleRecordActionEffect = ({
     recordId,
   );
 
-  useActionEffect(() => {
-    navigateToPreviousRecord();
-  }, [navigateToPreviousRecord]);
-
-  return null;
+  return <Action onClick={navigateToPreviousRecord} />;
 };
