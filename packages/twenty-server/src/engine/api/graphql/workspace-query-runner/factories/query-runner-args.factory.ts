@@ -264,7 +264,7 @@ export class QueryRunnerArgsFactory {
         } else if (key === 'not') {
           acc[key] = overrideFilter(value);
         } else {
-          acc[key] = this.transformValueByType(
+          acc[key] = this.transformFilterValueByType(
             key,
             value,
             fieldMetadataMapByName,
@@ -278,7 +278,7 @@ export class QueryRunnerArgsFactory {
     return overrideFilter(filter);
   }
 
-  private transformValueByType(
+  private transformFilterValueByType(
     key: string,
     value: any,
     fieldMetadataMapByName: FieldMetadataMap,

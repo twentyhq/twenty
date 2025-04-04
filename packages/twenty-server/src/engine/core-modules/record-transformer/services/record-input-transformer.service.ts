@@ -13,6 +13,7 @@ import {
 import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 @Injectable()
 export class RecordInputTransformerService {
@@ -36,19 +37,28 @@ export class RecordInputTransformerService {
       {} as Record<string, FieldMetadataInterface>,
     );
 
-    const transformedEntries = await Promise.all(
-      Object.entries(recordInput).map(async ([key, value]) => {
-        const fieldMetadata = fieldMetadataByFieldName[key];
+    let transformedEntries = {};
 
-        if (!fieldMetadata) {
-          return [key, value];
-        }
+    for (const [key, value] of Object.entries(recordInput)) {
+      const fieldMetadata = fieldMetadataByFieldName[key];
 
-        return [key, await this.transformFieldValue(fieldMetadata.type, value)];
-      }),
-    );
+      if (!fieldMetadata) {
+        transformedEntries = { ...transformedEntries, [key]: value };
+        continue;
+      }
 
-    return Object.fromEntries(transformedEntries);
+      const transformedValue = this.parseSubFields(
+        fieldMetadata.type,
+        await this.transformFieldValue(
+          fieldMetadata.type,
+          this.stringifySubFields(fieldMetadata.type, value),
+        ),
+      );
+
+      transformedEntries = { ...transformedEntries, [key]: transformedValue };
+    }
+
+    return transformedEntries;
   }
 
   async transformFieldValue(
@@ -163,5 +173,61 @@ export class RecordInputTransformerService {
       primaryEmail,
       additionalEmails,
     };
+  }
+
+  private stringifySubFields(fieldMetadataType: FieldMetadataType, value: any) {
+    const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
+
+    if (!compositeType) {
+      return value;
+    }
+
+    return Object.entries(value).reduce(
+      (acc, [subFieldName, subFieldValue]) => {
+        const subFieldType = compositeType.properties.find(
+          (property) => property.name === subFieldName,
+        )?.type;
+
+        if (subFieldType === FieldMetadataType.RAW_JSON) {
+          return {
+            ...acc,
+            [subFieldName]: subFieldValue
+              ? JSON.stringify(subFieldValue)
+              : subFieldValue,
+          };
+        }
+
+        return { ...acc, [subFieldName]: subFieldValue };
+      },
+      {},
+    );
+  }
+
+  private parseSubFields(fieldMetadataType: FieldMetadataType, value: any) {
+    const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
+
+    if (!compositeType) {
+      return value;
+    }
+
+    return Object.entries(value).reduce(
+      (acc, [subFieldName, subFieldValue]: [string, any]) => {
+        const subFieldType = compositeType.properties.find(
+          (property) => property.name === subFieldName,
+        )?.type;
+
+        if (subFieldType === FieldMetadataType.RAW_JSON) {
+          return {
+            ...acc,
+            [subFieldName]: subFieldValue
+              ? JSON.parse(subFieldValue)
+              : subFieldValue,
+          };
+        }
+
+        return { ...acc, [subFieldName]: subFieldValue };
+      },
+      {},
+    );
   }
 }
