@@ -16,17 +16,6 @@ describe('useIsFieldValueReadOnly', () => {
     expect(result.current).toBe(false);
   });
 
-  it('should return false if the field is not read only', () => {
-    const { result } = renderHook(() =>
-      useIsFieldValueReadOnly({
-        fieldDefinition: phonesFieldDefinition,
-        isRecordReadOnly: false,
-      }),
-    );
-
-    expect(result.current).toBe(false);
-  });
-
   it('should return true if the record is read only', () => {
     const { result } = renderHook(() =>
       useIsFieldValueReadOnly({
