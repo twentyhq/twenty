@@ -44,17 +44,6 @@ const StyledReceivedAt = styled.div`
   margin-left: auto;
 `;
 
-// // Call API with twilio node package
-// import twilio from 'twilio';
-// const client = twilio(accountSid, authToken);
-// const smsTextDataSelector = selectorFamily({
-//   key: 'smsTextDataSelector',
-//   get: (targetableObject) => async () => {
-//     const messages = await client.messages.list({ limit: 3 });
-//     messages.forEach((m) => console.log(m.body));
-//   },
-// });
-
 export const SMSTexts = ({
   targetableObject,
 }: {
@@ -88,34 +77,51 @@ export const SMSTexts = ({
 // //     },
 // //   ];
 
-  const [textData, setTextData] = useState([]);
+  const [textData, setTextData] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchTexts() {
+
         const apiUrl = process.env.REACT_APP_TWILIO_API_URL;
         const accountSid = process.env.REACT_APP_TWILIO_ACCOUNT_SID as string;
         const authToken = process.env.REACT_APP_TWILIO_AUTH_TOKEN as string;
     
         try {
-          const response = await axios.get(
-            // doesn't filter by user's phone number yet
-            `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json`,
-            {
-              auth: {
-                username: accountSid,
-                password: authToken,
-              },
-            },
-          );
-        //   console.log('Twilio messages:', response.data.messages);
-          setTextData(response.data.messages);
+            const [toResponse, fromResponse] = await Promise.all([
+                // user's phone number hardcoded
+                await axios.get(
+                    `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?To=+16179997801`,
+                    {
+                      auth: {
+                        username: accountSid,
+                        password: authToken,
+                      },
+                    },
+                  ),
+                  await axios.get(
+                    `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?From=+16179997801`,
+                    {
+                      auth: {
+                        username: accountSid,
+                        password: authToken,
+                      },
+                    },
+                  )
+            ]);
+
+          const texts = [...toResponse.data.messages, ...fromResponse.data.messages];
+          const textsSortedByDateDescending = texts.sort((a,b) => new Date(b.date_sent).valueOf() - new Date(a.date_sent).valueOf());
+        //   console.log('Twilio response sorted:', textsSortedByDateDescending);
+          setTextData(textsSortedByDateDescending);
+
         } catch (error) {
           console.error('Error fetching Twilio messages:', error);
           throw error;
         }
+        
     }
     fetchTexts();
-  });
+  }, []);
 
   const transformedTexts = textData.map((text: TwilioMessage) => ({
     id: text.sid,
@@ -124,7 +130,7 @@ export const SMSTexts = ({
     date: new Date(text.date_sent),
   }));
 
-//   console.log('transformed', transformedTexts);
+//   console.log('Twilio texts formatted: ', transformedTexts);
 
   return (
     <StyledContainer>
