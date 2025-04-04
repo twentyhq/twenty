@@ -4,8 +4,6 @@ import { ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
-import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
-import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -61,12 +59,12 @@ export const CommandMenuList = ({
   loading = false,
   noResults = false,
 }: CommandMenuListProps) => {
-  const { onItemClick } = useCommandMenuOnItemClick();
+  // const { onItemClick } = useCommandMenuOnItemClick();
 
-  const commands = commandGroups.flatMap((group) => group.items ?? []);
+  // const commands = commandGroups.flatMap((group) => group.items ?? []);
 
-  const { resetPreviousCommandMenuContext } =
-    useResetPreviousCommandMenuContext();
+  // const { resetPreviousCommandMenuContext } =
+  //   useResetPreviousCommandMenuContext();
 
   const setHasUserSelectedCommand = useSetRecoilState(
     hasUserSelectedCommandState,

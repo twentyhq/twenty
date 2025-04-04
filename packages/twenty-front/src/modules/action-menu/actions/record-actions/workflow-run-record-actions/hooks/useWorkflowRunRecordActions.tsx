@@ -1,4 +1,3 @@
-import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -12,8 +11,8 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { msg } from '@lingui/core/macro';
 
 import { useRecoilValue } from 'recoil';
-import { IconSettingsAutomation } from 'twenty-ui';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { IconSettingsAutomation } from 'twenty-ui';
 
 export const useWorkflowRunRecordActions = ({
   objectMetadataItem,

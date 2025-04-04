@@ -1,9 +1,9 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
-import { Button } from '@react-email/components';
 import {
   AppTooltip,
+  Button,
   IconButton,
   TooltipDelay,
   TooltipPosition,
@@ -34,6 +34,7 @@ export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
             size="small"
             variant="secondary"
             accent="default"
+            onClick={action.onClick}
             ariaLabel={i18n._(action.label)}
           />
           <StyledWrapper>
