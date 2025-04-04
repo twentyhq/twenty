@@ -46,7 +46,7 @@ describe('AnalyticsService', () => {
     };
     const commonProperties = {
       version: '1',
-      workspaceId: new Date().toISOString(),
+      timestamp: new Date().getTime().toString(),
     };
 
     it('should create a valid context object', () => {
@@ -67,10 +67,14 @@ describe('AnalyticsService', () => {
 
       await context.sendEvent(testEvent);
 
-      expect(insertSpy).toHaveBeenCalledWith({
-        ...testEvent,
-        ...commonProperties,
-      });
+      expect(insertSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...testEvent,
+          ...mockUserIdAndWorkspaceId,
+          timestamp: expect.any(String),
+          payload: {},
+        }),
+      );
     });
 
     it('should call sendPageview with merged properties', async () => {
@@ -91,10 +95,14 @@ describe('AnalyticsService', () => {
 
       await context.sendPageview(testPageview);
 
-      expect(insertSpy).toHaveBeenCalledWith({
-        ...testPageview,
-        ...commonProperties,
-      });
+      expect(insertSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...testPageview,
+          ...commonProperties,
+          ...mockUserIdAndWorkspaceId,
+          timestamp: expect.any(String),
+        }),
+      );
     });
 
     it('should return success when analytics are disabled', async () => {
@@ -122,7 +130,13 @@ describe('AnalyticsService', () => {
 
       await context.sendEvent(testEvent);
 
-      expect(insertSpy).toHaveBeenCalledWith(testEvent);
+      expect(insertSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...testEvent,
+          timestamp: expect.any(String),
+          payload: {},
+        }),
+      );
     });
   });
 });
