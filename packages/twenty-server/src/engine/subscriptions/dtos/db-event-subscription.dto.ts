@@ -13,6 +13,12 @@ registerEnumType(DatabaseEventAction, {
 
 @ObjectType()
 export class DbEventSubscriptionDTO {
+  @Field(() => String)
+  eventId: string;
+
+  @Field()
+  emittedAt: string;
+
   @Field(() => DatabaseEventAction)
   action: DatabaseEventAction;
 

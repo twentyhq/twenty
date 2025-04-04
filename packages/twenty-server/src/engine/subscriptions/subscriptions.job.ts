@@ -2,6 +2,7 @@ import { Inject, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { v4 } from 'uuid';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -35,6 +36,8 @@ export class SubscriptionsJob {
 
       await this.pubSub.publish('onDbEvent', {
         onDbEvent: {
+          eventId: v4(),
+          emittedAt: new Date().toISOString(),
           action: operation,
           objectNameSingular,
           record,
