@@ -18,6 +18,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos/outputs/billing-subscription-item.output';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
@@ -72,6 +73,7 @@ export class BillingSubscription {
   })
   interval: Stripe.Price.Recurring.Interval;
 
+  @Field(() => [BillingSubscriptionItemDTO], { nullable: true })
   @OneToMany(
     () => BillingSubscriptionItem,
     (billingSubscriptionItem) => billingSubscriptionItem.billingSubscription,

@@ -11,16 +11,16 @@ import { billingState } from '@/client-config/states/billingState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
+import { CardPicker, MainButton } from 'twenty-ui/input';
+import { ActionLink, CAL_LINK } from 'twenty-ui/navigation';
 import {
   BillingPlanKey,
   BillingPriceLicensedDto,
   SubscriptionInterval,
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
-import { ActionLink, CAL_LINK } from 'twenty-ui/navigation';
-import { CardPicker, MainButton } from 'twenty-ui/input';
-import { Loader } from 'twenty-ui/feedback';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
@@ -121,7 +121,7 @@ export const ChooseYourPlan = () => {
     (plan) => plan.planKey === currentPlan,
   )?.baseProduct;
 
-  const baseProductPrice = baseProduct?.prices.find(
+  const baseProductPrice = baseProduct?.prices?.find(
     (price): price is BillingPriceLicensedDto =>
       isBillingPriceLicensed(price) &&
       price.recurringInterval === SubscriptionInterval.Month,
