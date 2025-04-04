@@ -481,12 +481,10 @@ export class AuthService {
     loginToken,
     workspace,
     billingCheckoutSessionState,
-    disableDataLoad,
   }: {
     loginToken: string;
     workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
     billingCheckoutSessionState?: string;
-    disableDataLoad?: boolean;
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({
       workspace,
@@ -494,7 +492,6 @@ export class AuthService {
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
-        ...(disableDataLoad ? { disableDataLoad } : {}),
       },
     });
 

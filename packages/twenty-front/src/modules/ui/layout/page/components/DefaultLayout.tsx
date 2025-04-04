@@ -74,7 +74,7 @@ export const DefaultLayout = () => {
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
   const [searchParams] = useSearchParams();
-  const animateModal = searchParams.get('animateModal') ?? true;
+  const animateModal = searchParams.get('animateModal') !== 'false';
 
   return (
     <>
@@ -99,7 +99,7 @@ export const DefaultLayout = () => {
                   : 0,
             }}
             transition={{
-              duration: animateModal ? theme.animation.duration.normal : 0,
+              duration: theme.animation.duration.normal,
             }}
           >
             {!showAuthModal && (
@@ -115,26 +115,14 @@ export const DefaultLayout = () => {
             )}
             {showAuthModal ? (
               <>
-                {animateModal ? (
-                  <>
-                    <p>animateModal</p>
-                    <SignInBackgroundMockPage />
-                    <AnimatePresence mode="wait">
-                      <LayoutGroup>
-                        <AuthModal>
-                          <Outlet />
-                        </AuthModal>
-                      </LayoutGroup>
-                    </AnimatePresence>
-                  </>
-                ) : (
+                <SignInBackgroundMockPage />
+                <AnimatePresence mode="wait">
                   <LayoutGroup>
-                    <p>Nooooo animateModal false</p>
-                    <AuthModal>
+                    <AuthModal isOpenAnimated={animateModal}>
                       <Outlet />
                     </AuthModal>
                   </LayoutGroup>
-                )}
+                </AnimatePresence>
               </>
             ) : (
               <StyledMainContainer>

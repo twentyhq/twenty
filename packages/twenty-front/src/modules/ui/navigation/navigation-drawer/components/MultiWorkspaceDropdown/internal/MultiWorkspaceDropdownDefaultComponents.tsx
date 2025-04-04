@@ -77,7 +77,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           AppPath.Verify,
           {
             loginToken: data.signUpInNewWorkspace.loginToken.token,
-            disableDataLoad: true,
             animateModal: false,
           },
           '_blank',

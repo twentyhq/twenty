@@ -50,7 +50,6 @@ export const VerifyEmailEffect = () => {
         if (workspaceUrl.slice(0, -1) !== window.location.origin) {
           return redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
             loginToken: loginToken.token,
-            disableDataLoad: true,
             animateModal: false,
           });
         }

@@ -76,6 +76,9 @@ export const SignInUpLoading = () => {
       workspacePublicData={workspacePublicData}
       signInUpForm={
         <>
+          <p style={{ color: 'red', backgroundColor: 'blue' }}>
+            SignInUpLoading
+          </p>
           <StyledContentContainer>
             <StyledForm>
               <MainButton

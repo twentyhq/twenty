@@ -17,7 +17,7 @@ import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogMan
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
-import { UserThemeProviderContainer } from '@/ui/theme/components/UserThemeProviderContainer';
+import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ServerPreconnect } from '@/ui/utilities/server-preconnect/components/ServerPreconnect';
@@ -48,7 +48,7 @@ export const AppRouterProviders = () => {
                     <ObjectMetadataItemsProvider>
                       <ObjectMetadataItemsGater>
                         <PrefetchDataProvider>
-                          <UserThemeProviderContainer />
+                          <UserThemeProviderEffect />
                           <SnackBarProvider>
                             <DialogManagerScope dialogManagerScopeId="dialog-manager">
                               <DialogManager>

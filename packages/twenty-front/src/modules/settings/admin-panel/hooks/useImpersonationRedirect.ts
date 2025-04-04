@@ -13,7 +13,7 @@ export const useImpersonationRedirect = () => {
     return redirectToWorkspaceDomain(
       getWorkspaceUrl(workspaceUrls),
       AppPath.Verify,
-      { loginToken, disableDataLoad: true, animateModal: false },
+      { loginToken, animateModal: false },
     );
   };
 

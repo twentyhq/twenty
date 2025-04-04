@@ -4,6 +4,7 @@ import {
   useLocation,
   useNavigate,
   useParams,
+  useSearchParams,
 } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -13,6 +14,7 @@ import {
 } from '@/analytics/hooks/useEventTracker';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
+import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -21,10 +23,9 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { isDefined } from 'twenty-shared/utils';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
-import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
-import { isDefined } from 'twenty-shared/utils';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -58,11 +59,18 @@ export const PageChangeEffect = () => {
     }
   }, [location, previousLocation]);
 
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
     if (isDefined(pageChangeEffectNavigateLocation)) {
-      navigate(pageChangeEffectNavigateLocation);
+      navigate({
+        pathname: pageChangeEffectNavigateLocation,
+        search: searchParams.get('animateModal')
+          ? `animateModal=${searchParams.get('animateModal')}`
+          : '',
+      });
     }
-  }, [navigate, pageChangeEffectNavigateLocation]);
+  }, [navigate, pageChangeEffectNavigateLocation, searchParams]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(
