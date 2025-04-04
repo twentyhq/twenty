@@ -26,6 +26,7 @@ export const RecordShowActionMenu = () => {
         <ActionMenuContext.Provider
           value={{
             isInRightDrawer: false,
+            displayType: 'button',
             onActionExecutedCallback: () => {},
           }}
         >

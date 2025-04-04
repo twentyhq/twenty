@@ -18,6 +18,7 @@ export const RecordShowRightDrawerActionMenu = () => {
         <ActionMenuContext.Provider
           value={{
             isInRightDrawer: true,
+            displayType: 'dropdownItem',
             onActionExecutedCallback: ({ key }) => {
               if (
                 key === SingleRecordActionKeys.DELETE ||

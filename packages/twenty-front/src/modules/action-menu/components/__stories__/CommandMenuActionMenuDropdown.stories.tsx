@@ -3,7 +3,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import {
   ActionMenuEntry,
@@ -53,13 +52,6 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
           );
 
           const map = new Map<string, ActionMenuEntry>();
-
-          set(
-            actionMenuEntriesComponentState.atomFamily({
-              instanceId: 'story-action-menu',
-            }),
-            map,
-          );
 
           map.set('addToFavorites', {
             type: ActionMenuEntryType.Standard,

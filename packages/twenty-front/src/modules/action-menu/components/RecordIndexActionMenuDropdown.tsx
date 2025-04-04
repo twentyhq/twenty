@@ -1,3 +1,4 @@
+import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
@@ -78,16 +79,8 @@ export const RecordIndexActionMenuDropdown = () => {
       dropdownComponents={
         <StyledDropdownMenuContainer className="action-menu-dropdown">
           <DropdownMenuItemsContainer>
-            {recordIndexActions.map((item) => (
-              <MenuItem
-                key={item.key}
-                LeftIcon={item.Icon}
-                onClick={() => {
-                  closeDropdown();
-                }}
-                accent={item.accent}
-                text={i18n._(item.label)}
-              />
+            {recordIndexActions.map((action) => (
+              <ActionDisplayer action={action} />
             ))}
             <MenuItem
               key="more-actions"

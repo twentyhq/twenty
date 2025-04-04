@@ -1,6 +1,5 @@
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
-import { SeeWorkflowsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeWorkflowsNoSelectionRecordActionEffect';
-import { SearchRecordsRecordAgnosticActionEffect } from '@/action-menu/actions/record-agnostic-actions/components/SearchRecordsRecordAgnosticActionEffect';
+import { SearchRecordsRecordAgnosticAction } from '@/action-menu/actions/record-agnostic-actions/components/SearchRecordsRecordAgnosticAction';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
@@ -21,10 +20,7 @@ import {
   IconUser,
 } from 'twenty-ui';
 
-export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
-  string,
-  ActionConfig
-> = {
+export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
   [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.Global,
@@ -35,7 +31,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     isPinned: false,
     Icon: IconSearch,
     availableOn: [ActionViewType.GLOBAL],
-    component: SearchRecordsRecordAgnosticActionEffect,
+    component: <SearchRecordsRecordAgnosticAction />,
     hotKeys: ['/'],
     shouldBeRegistered: () => true,
   },
@@ -49,7 +45,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     isPinned: false,
     Icon: IconSearch,
     availableOn: [ActionViewType.GLOBAL],
-    component: SearchRecordsRecordAgnosticActionEffect,
+    component: <SearchRecordsRecordAgnosticAction />,
     hotKeys: ['/'],
     shouldBeRegistered: () => true,
   },
@@ -65,7 +61,12 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    component: SeeWorkflowsNoSelectionRecordActionEffect,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Workflow }}
+      />
+    ),
     hotKeys: ['G', 'W'],
   },
   [RecordAgnosticActionsKeys.GO_TO_PEOPLE]: {

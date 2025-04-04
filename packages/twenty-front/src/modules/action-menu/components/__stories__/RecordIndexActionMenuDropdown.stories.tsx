@@ -4,7 +4,6 @@ import { userEvent, within } from '@storybook/testing-library';
 import { RecoilRoot } from 'recoil';
 
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import {
@@ -44,13 +43,6 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
           );
 
           const map = new Map<string, ActionMenuEntry>();
-
-          set(
-            actionMenuEntriesComponentState.atomFamily({
-              instanceId: 'story-action-menu',
-            }),
-            map,
-          );
 
           map.set('delete', {
             type: ActionMenuEntryType.Standard,

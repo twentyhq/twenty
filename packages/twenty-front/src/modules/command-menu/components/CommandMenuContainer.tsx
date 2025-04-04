@@ -22,14 +22,12 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCommandMenu = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};
@@ -92,10 +90,6 @@ export const CommandMenuContainer = ({
 
   const theme = useTheme();
 
-  const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
-  );
-
   const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
 
   const objectMetadataItemId = useRecoilComponentValueV2(
@@ -138,6 +132,7 @@ export const CommandMenuContainer = ({
               <ActionMenuContext.Provider
                 value={{
                   isInRightDrawer: true,
+                  displayType: 'listItem',
                   onActionExecutedCallback: ({ key }) => {
                     if (
                       key !== RecordAgnosticActionsKeys.SEARCH_RECORDS &&
