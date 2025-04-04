@@ -60,7 +60,7 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
-      displayFormat: 'full_date'
+      displayFormat: 'full_date',
     });
 
     expect(result).toBe(mockFormattedDate);

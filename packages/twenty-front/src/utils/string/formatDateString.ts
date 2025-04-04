@@ -18,21 +18,21 @@ export const formatDateString = ({
   displayFormat?: FieldDateDisplayFormat;
 }): string => {
   if (!value) {
-    return ''
+    return '';
   }
 
   switch (displayFormat) {
-    case ('relative_date'):
-      return formatDateISOStringToRelativeDate(value)
-    case ('year'):
-      return formatDateISOStringToYear(value)
-    case ('time'):
-      return formatDateISOStringToTime(value, timeZone)
-    case ('full_date'):
-      return formatDateISOStringToFullDate(value, timeZone, dateFormat)
-    case ('date'):
-      return formatDateISOStringToDate(value, timeZone)
+    case 'relative_date':
+      return formatDateISOStringToRelativeDate(value);
+    case 'year':
+      return formatDateISOStringToYear(value);
+    case 'time':
+      return formatDateISOStringToTime(value, timeZone);
+    case 'full_date':
+      return formatDateISOStringToFullDate(value, timeZone, dateFormat);
+    case 'date':
+      return formatDateISOStringToDate(value, timeZone);
     default:
-      return formatDateISOStringToFullDate(value, timeZone, dateFormat)
+      return formatDateISOStringToFullDate(value, timeZone, dateFormat);
   }
 };

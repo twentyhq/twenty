@@ -63,7 +63,7 @@ export const computeAggregateValueAndLabel = ({
 
   let value;
 
-  const displayFormat = field?.settings?.displayFormat
+  const displayFormat = field?.settings?.displayFormat;
 
   if (
     COUNT_AGGREGATE_OPERATION_OPTIONS.includes(

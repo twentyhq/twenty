@@ -10,15 +10,17 @@ import { useLingui } from '@lingui/react/macro';
 import { IconSlash } from 'twenty-ui/display';
 
 const displayFormatsToLabelMap: Record<FieldDateDisplayFormat, string> = {
-  'full_date': 'Full Date',
-  'relative_date': 'Relative Date',
-  'date': 'Date',
-  'time': 'Time',
-  'year': 'Year',
-  'custom': 'Custom'
-} as const
+  full_date: 'Full Date',
+  relative_date: 'Relative Date',
+  date: 'Date',
+  time: 'Time',
+  year: 'Year',
+  custom: 'Custom',
+} as const;
 
-const displayFormats = Object.keys(displayFormatsToLabelMap) as [keyof typeof displayFormatsToLabelMap];
+const displayFormats = Object.keys(displayFormatsToLabelMap) as [
+  keyof typeof displayFormatsToLabelMap,
+];
 
 export const settingsDataModelFieldDateFormSchema = z.object({
   settings: z
@@ -45,10 +47,9 @@ export const SettingsDataModelFieldDateForm = ({
 
   const { control } = useFormContext<SettingsDataModelFieldDateFormValues>();
 
-  const { initialDisplayFormat } =
-    useDateSettingsFormInitialValues({
-      fieldMetadataItem,
-    });
+  const { initialDisplayFormat } = useDateSettingsFormInitialValues({
+    fieldMetadataItem,
+  });
 
   return (
     <Controller
@@ -63,18 +64,19 @@ export const SettingsDataModelFieldDateForm = ({
           description={t`Choose the format used to display date value`}
         >
           <Select<FieldDateDisplayFormat>
-              disabled={disabled}
-              selectSizeVariant="small"
-              dropdownWidth={120}
-              dropdownId="selectFieldDateDisplayFormat"
-              value={value}
-              onChange={onChange}
-              options={Object.entries(displayFormatsToLabelMap).map((format) => (
-                {
-                  label: t`${format[1]}`,
-                  value: format[0] as FieldDateDisplayFormat
-                }
-              ))} 
+            disabled={disabled}
+            selectSizeVariant="small"
+            dropdownWidth={120}
+            dropdownId="selectFieldDateDisplayFormat"
+            value={value}
+            onChange={onChange}
+            options={Object.entries(displayFormatsToLabelMap).map((format) => {
+              const label = format[1];
+              return {
+                label: t`${label}`,
+                value: format[0] as FieldDateDisplayFormat,
+              };
+            })}
           />
         </SettingsOptionCardContentSelect>
       )}

@@ -28,7 +28,13 @@ export type FieldTextMetadata = {
   };
 };
 
-export type FieldDateDisplayFormat = 'full_date' | 'relative_date' | 'date' | 'time' | 'year' | 'custom'
+export type FieldDateDisplayFormat =
+  | 'full_date'
+  | 'relative_date'
+  | 'date'
+  | 'time'
+  | 'year'
+  | 'custom';
 
 export type FieldDateTimeMetadata = {
   objectMetadataNameSingular?: string;

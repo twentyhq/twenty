@@ -22,9 +22,14 @@ export const formatDateTimeString = ({
   }
 
   switch (displayFormat) {
-    case ('relative_date'):
+    case 'relative_date':
       return formatDateISOStringToRelativeDate(value);
     default:
-      return formatDateISOStringToDateTime(value, timeZone, dateFormat, timeFormat);
+      return formatDateISOStringToDateTime(
+        value,
+        timeZone,
+        dateFormat,
+        timeFormat,
+      );
   }
 };

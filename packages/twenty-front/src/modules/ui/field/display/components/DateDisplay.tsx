@@ -9,10 +9,7 @@ type DateDisplayProps = {
   displayFormat?: FieldDateDisplayFormat;
 };
 
-export const DateDisplay = ({
-  value,
-  displayFormat,
-}: DateDisplayProps) => {
+export const DateDisplay = ({ value, displayFormat }: DateDisplayProps) => {
   const { dateFormat, timeZone } = useContext(UserContext);
 
   const formattedDate = formatDateString({
