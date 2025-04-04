@@ -7,6 +7,7 @@ import { SelectOption } from 'twenty-ui/input';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
+// TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;
