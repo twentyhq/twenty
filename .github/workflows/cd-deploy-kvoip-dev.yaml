@@ -1,4 +1,4 @@
-name: Deploy to Production VPS KVOIP
+name: KVOIP Deploy to TEST VPS
 
 on:
   push:
@@ -30,7 +30,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            set -e
             echo "Changing to project directory and pulling changes"
             cd ${{ env.PROJECT_ROOT }}
             git checkout dev
