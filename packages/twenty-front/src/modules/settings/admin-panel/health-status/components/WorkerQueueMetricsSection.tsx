@@ -2,12 +2,13 @@ import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { H2Title, Section } from 'twenty-ui';
 import {
   AdminPanelWorkerQueueHealth,
   QueueMetricsTimeRange,
 } from '~/generated/graphql';
 import { WorkerMetricsGraph } from './WorkerMetricsGraph';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 type WorkerQueueMetricsSectionProps = {
   queue: AdminPanelWorkerQueueHealth;

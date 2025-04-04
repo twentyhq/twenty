@@ -14,13 +14,11 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
@@ -39,8 +37,6 @@ export class BillingSubscriptionService {
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingProduct, 'core')
-    private readonly billingProductRepository: Repository<BillingProduct>,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
@@ -198,51 +194,5 @@ export class BillingSubscriptionService {
       });
 
     return subscriptionItemsToUpdate;
-  }
-
-  async convertTrialSubscriptionToSubscriptionWithMeteredProducts(
-    billingSubscription: BillingSubscription,
-  ) {
-    const meteredProducts = (
-      await this.billingProductRepository.find({
-        where: {
-          active: true,
-        },
-        relations: ['billingPrices'],
-      })
-    ).filter(
-      (product) =>
-        product.metadata.priceUsageBased === BillingUsageType.METERED,
-    );
-
-    // subscription update to enable metered product billing
-    await this.stripeSubscriptionService.updateSubscription(
-      billingSubscription.stripeSubscriptionId,
-      {
-        trial_settings: {
-          end_behavior: {
-            missing_payment_method: 'cancel',
-          },
-        },
-      },
-    );
-
-    for (const meteredProduct of meteredProducts) {
-      const meteredProductPrice = meteredProduct.billingPrices.find(
-        (price) => price.active,
-      );
-
-      if (!meteredProductPrice) {
-        throw new BillingException(
-          `Cannot find active price for product ${meteredProduct.id}`,
-          BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
-        );
-      }
-
-      await this.stripeSubscriptionItemService.createSubscriptionItem(
-        billingSubscription.stripeSubscriptionId,
-        meteredProductPrice.stripePriceId,
-      );
-    }
   }
 }

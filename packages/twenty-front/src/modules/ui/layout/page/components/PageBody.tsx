@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { PagePanel } from './PagePanel';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 type PageBodyProps = {
   children: ReactNode;

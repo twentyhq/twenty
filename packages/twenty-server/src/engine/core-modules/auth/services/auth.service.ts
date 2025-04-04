@@ -9,9 +9,9 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
-import { Repository } from 'typeorm';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
@@ -442,8 +442,8 @@ export class AuthService {
       locale,
     });
 
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     i18n.activate(locale);
 

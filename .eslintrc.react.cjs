@@ -10,10 +10,7 @@ module.exports = {
   plugins: ['react-hooks', 'react-refresh'],
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
-      parserOptions: {
-        project: ['./tsconfig.base.{json,*.json}'],
-      },
+      files: ['**/*.ts', '**/*.tsx'],
       rules: {
         'no-restricted-imports': [
           'error',

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconForbid, IconPencil, IconPlus, LightIconButton } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -37,6 +36,9 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
+import { IconForbid, IconPencil, IconPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+
 type RecordDetailRelationSectionProps = {
   loading: boolean;
 };

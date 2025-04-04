@@ -4,11 +4,11 @@ import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVe
 import { useApolloClient, useMutation } from '@apollo/client';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconSettingsAutomation } from 'twenty-ui';
 import {
   RunWorkflowVersionMutation,
   RunWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
+import { IconSettingsAutomation } from 'twenty-ui/display';
 
 export const useRunWorkflowVersion = () => {
   const apolloClient = useApolloClient();

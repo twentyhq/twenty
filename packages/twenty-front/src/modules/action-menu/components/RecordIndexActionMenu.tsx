@@ -11,8 +11,8 @@ import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/recor
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(

@@ -7,8 +7,6 @@ export const useGoToOpportunitiesNoSelectionRecordAction: ActionHookWithoutObjec
   () => {
     const navigateApp = useNavigateApp();
 
-    const shouldBeRegistered = true;
-
     const onClick = () => {
       navigateApp(AppPath.RecordIndexPage, {
         objectNamePlural: CoreObjectNamePlural.Opportunity,
@@ -16,7 +14,6 @@ export const useGoToOpportunitiesNoSelectionRecordAction: ActionHookWithoutObjec
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

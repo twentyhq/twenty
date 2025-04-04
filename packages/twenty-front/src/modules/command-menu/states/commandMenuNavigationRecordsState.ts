@@ -1,6 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { createState } from '@ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui/utilities';
 
 export const commandMenuNavigationRecordsState = createState<
   {

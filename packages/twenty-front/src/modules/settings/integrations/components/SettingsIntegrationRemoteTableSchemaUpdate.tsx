@@ -1,8 +1,9 @@
 import { FetchResult } from '@apollo/client';
 import styled from '@emotion/styled';
-import { Button, IconReload } from 'twenty-ui';
 
 import { SyncRemoteTableSchemaChangesMutation } from '~/generated-metadata/graphql';
+import { Button } from 'twenty-ui/input';
+import { IconReload } from 'twenty-ui/display';
 
 const StyledText = styled.h3`
   color: ${({ theme }) => theme.font.color.tertiary};

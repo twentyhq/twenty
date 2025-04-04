@@ -5,9 +5,9 @@ import { useDatabaseConnection } from '@/settings/integrations/database-connecti
 import { SettingsPath } from '@/types/SettingsPath';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { Section } from '@react-email/components';
-import { H2Title } from 'twenty-ui';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { H2Title } from 'twenty-ui/display';
 
 export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
   const navigate = useNavigateSettings();

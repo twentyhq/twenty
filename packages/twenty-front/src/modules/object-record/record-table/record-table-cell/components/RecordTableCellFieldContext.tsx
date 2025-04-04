@@ -1,5 +1,4 @@
 import { ReactNode, useContext } from 'react';
-import { useIsMobile } from 'twenty-ui';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -18,6 +17,7 @@ import { isRecordTableScrolledLeftComponentState } from '../../states/isRecordTa
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordTableCellFieldContext = ({
   children,

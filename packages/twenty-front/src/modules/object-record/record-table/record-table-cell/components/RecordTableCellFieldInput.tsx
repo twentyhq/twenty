@@ -1,7 +1,9 @@
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from '@/object-record/record-field/types/FieldInputEvent';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';

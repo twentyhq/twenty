@@ -5,7 +5,7 @@ import {
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 type EventRowMainObjectProps = EventRowDynamicComponentProps;
 

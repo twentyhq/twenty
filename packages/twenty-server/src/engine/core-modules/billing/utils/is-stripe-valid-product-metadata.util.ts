@@ -3,6 +3,7 @@
 import Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 
@@ -12,32 +13,22 @@ export function isStripeValidProductMetadata(
   if (Object.keys(metadata).length === 0) {
     return true;
   }
-  const hasBillingPlanKey = isValidBillingPlanKey(metadata.planKey);
-  const hasPriceUsageBased = isValidPriceUsageBased(metadata.priceUsageBased);
-  const hasIsBaseProduct =
-    metadata.isBaseProduct === 'true' || metadata.isBaseProduct === 'false';
+  const hasBillingPlanKey = isValidEnumValue(metadata.planKey, BillingPlanKey);
+  const hasPriceUsageBased = isValidEnumValue(
+    metadata.priceUsageBased,
+    BillingUsageType,
+  );
+  const hasProductKey = isValidEnumValue(
+    metadata.productKey,
+    BillingProductKey,
+  );
 
-  return hasBillingPlanKey && hasPriceUsageBased && hasIsBaseProduct;
+  return hasBillingPlanKey && hasPriceUsageBased && hasProductKey;
 }
 
-const isValidBillingPlanKey = (planKey?: string) => {
-  switch (planKey) {
-    case BillingPlanKey.ENTERPRISE:
-      return true;
-    case BillingPlanKey.PRO:
-      return true;
-    default:
-      return false;
-  }
-};
-
-const isValidPriceUsageBased = (priceUsageBased?: string) => {
-  switch (priceUsageBased) {
-    case BillingUsageType.METERED:
-      return true;
-    case BillingUsageType.LICENSED:
-      return true;
-    default:
-      return false;
-  }
+const isValidEnumValue = <T>(
+  value: string | undefined,
+  enumObject: Record<string, T>,
+): boolean => {
+  return Object.values(enumObject).includes(value as T);
 };

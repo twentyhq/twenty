@@ -1,10 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { IconArrowUpRight, IconComponent, MenuItemCommand } from 'twenty-ui';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { ReactNode } from 'react';
+import { IconArrowUpRight, IconComponent } from 'twenty-ui/display';
+import { MenuItemCommand } from 'twenty-ui/navigation';
 
 export type CommandMenuItemProps = {
   label: string;

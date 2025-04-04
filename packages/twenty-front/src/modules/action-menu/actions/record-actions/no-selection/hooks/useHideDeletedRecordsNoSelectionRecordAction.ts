@@ -52,7 +52,6 @@ export const useHideDeletedRecordsNoSelectionRecordAction: ActionHookWithObjectM
     }, [deletedFilter, removeRecordFilter, toggleSoftDeleteFilterState]);
 
     return {
-      shouldBeRegistered: isDefined(deletedFilter),
       onClick,
     };
   };

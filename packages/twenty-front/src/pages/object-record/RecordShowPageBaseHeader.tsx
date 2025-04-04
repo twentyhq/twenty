@@ -5,7 +5,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
-import { useIsMobile } from 'twenty-ui';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type RecordShowPageBaseHeaderProps = {
   isFavorite: boolean;

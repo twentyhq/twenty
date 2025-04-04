@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import styled from '@emotion/styled';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type InputProps = {
   value?: string;

@@ -3,10 +3,9 @@ import { FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-
-import { RGBA } from 'twenty-ui';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
+import { RGBA } from 'twenty-ui/theme';
 
 const MAX_ROWS = 5;
 

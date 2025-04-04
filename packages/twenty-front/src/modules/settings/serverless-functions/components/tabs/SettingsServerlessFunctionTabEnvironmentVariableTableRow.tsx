@@ -13,10 +13,10 @@ import {
   IconPencil,
   IconTrash,
   IconX,
-  LightIconButton,
-  MenuItem,
   OverflowingTextWithTooltip,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledEditModeTableRow = styled(TableRow)`
   grid-template-columns: 180px auto 56px;

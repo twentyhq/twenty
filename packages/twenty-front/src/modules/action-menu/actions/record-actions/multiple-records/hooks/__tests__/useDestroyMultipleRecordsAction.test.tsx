@@ -75,8 +75,6 @@ const getWrapper = (
     ...overrides,
   });
 
-const defaultWrapper = getWrapper();
-
 describe('useDestroyMultipleRecordsAction', () => {
   it('should call destroyManyRecords on click if records are filtered by deletedAt', async () => {
     const { result } = renderHook(
@@ -120,25 +118,5 @@ describe('useDestroyMultipleRecordsAction', () => {
       expect(resetTableRowSelectionMock).toHaveBeenCalled();
       expect(destroyManyRecordsMock).toHaveBeenCalledWith(expectedParams);
     });
-  });
-
-  it('should not call destroyManyRecords on click if records are not filtered by deletedAt', async () => {
-    const { result } = renderHook(
-      () =>
-        useDestroyMultipleRecordsAction({
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
-      {
-        wrapper: defaultWrapper,
-      },
-    );
-
-    expect(result.current.ConfirmationModal?.props?.isOpen).toBeFalsy();
-
-    act(() => {
-      result.current.onClick();
-    });
-
-    expect(result.current.ConfirmationModal?.props?.isOpen).toBeFalsy();
   });
 });

@@ -2,13 +2,8 @@ import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionM
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
-import {
-  AppTooltip,
-  Button,
-  IconButton,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui';
+import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
+import { Button, IconButton } from 'twenty-ui/input';
 
 const StyledWrapper = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};

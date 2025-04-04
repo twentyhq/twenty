@@ -1,11 +1,13 @@
-import { RegisterAgnosticRecordActionEffect } from '@/action-menu/actions/record-agnostic-actions/components/RegisterAgnosticRecordActionEffect';
-import { RECORD_AGNOSTIC_ACTIONS_CONFIG } from '@/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig';
+import { RegisterAgnosticActionEffect } from '@/action-menu/actions/record-agnostic-actions/components/RegisterAgnosticActionEffect';
+import { useRegisteredRecordAgnosticActions } from '@/action-menu/hooks/useRegisteredRecordAgnosticActions';
 
 export const RecordAgnosticActionMenuEntriesSetter = () => {
+  const actionsToRegister = useRegisteredRecordAgnosticActions();
+
   return (
     <>
-      {Object.values(RECORD_AGNOSTIC_ACTIONS_CONFIG).map((action) => (
-        <RegisterAgnosticRecordActionEffect key={action.key} action={action} />
+      {actionsToRegister.map((action) => (
+        <RegisterAgnosticActionEffect key={action.key} action={action} />
       ))}
     </>
   );

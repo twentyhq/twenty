@@ -1,7 +1,9 @@
-import { v4 } from 'uuid';
+import { WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
-export const getDefaultFormFieldSettings = (type: FieldMetadataType) => {
+export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
   switch (type) {
     case FieldMetadataType.TEXT:
       return {
@@ -17,12 +19,24 @@ export const getDefaultFormFieldSettings = (type: FieldMetadataType) => {
         label: 'Number',
         placeholder: '1000',
       };
-    default:
+    case FieldMetadataType.DATE:
       return {
         id: v4(),
-        name: '',
-        label: type.charAt(0).toUpperCase() + type.slice(1),
-        placeholder: 'Enter your value',
+        name: 'date',
+        label: 'Date',
+        placeholder: 'mm/dd/yyyy',
       };
+    case 'RECORD':
+      return {
+        id: v4(),
+        name: 'record',
+        label: 'Record',
+        placeholder: 'Select a record',
+        settings: {
+          objectName: 'company',
+        },
+      };
+    default:
+      assertUnreachable(type);
   }
 };

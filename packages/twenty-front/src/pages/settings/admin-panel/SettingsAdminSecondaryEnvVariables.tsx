@@ -5,9 +5,9 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui';
 import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { H2Title } from 'twenty-ui/display';
 
 const StyledGroupContainer = styled.div``;
 

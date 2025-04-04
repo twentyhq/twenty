@@ -8,7 +8,6 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
-import { iconsState } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -65,6 +64,7 @@ import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { iconsState } from 'twenty-ui/display';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
