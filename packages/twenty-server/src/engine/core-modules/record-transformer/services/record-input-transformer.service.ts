@@ -70,6 +70,8 @@ export class RecordInputTransformerService {
     }
 
     switch (fieldType) {
+      case FieldMetadataType.UUID:
+        return value || null;
       case FieldMetadataType.NUMBER:
         return value === null ? null : Number(value);
       case FieldMetadataType.RICH_TEXT:
