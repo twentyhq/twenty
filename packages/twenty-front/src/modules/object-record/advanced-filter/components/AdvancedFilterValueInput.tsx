@@ -1,5 +1,4 @@
 import { AdvancedFilterDropdownFilterInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownFilterInput';
-import { AdvancedFilterDropdownNumberInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownNumberInput';
 import { AdvancedFilterDropdownTextInput } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownTextInput';
 import { AdvancedFilterValueInputDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
@@ -65,10 +64,10 @@ export const AdvancedFilterValueInput = ({
         <AdvancedFilterValueInputDropdownButtonClickableSelect
           recordFilterId={recordFilterId}
         />
-      ) : isDefined(filterType) && TEXT_FILTER_TYPES.includes(filterType) ? (
+      ) : isDefined(filterType) &&
+        (TEXT_FILTER_TYPES.includes(filterType) ||
+          NUMBER_FILTER_TYPES.includes(filterType)) ? (
         <AdvancedFilterDropdownTextInput />
-      ) : isDefined(filterType) && NUMBER_FILTER_TYPES.includes(filterType) ? (
-        <AdvancedFilterDropdownNumberInput />
       ) : (
         <Dropdown
           dropdownId={dropdownId}

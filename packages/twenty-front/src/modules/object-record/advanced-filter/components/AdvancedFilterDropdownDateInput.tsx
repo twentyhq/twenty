@@ -49,16 +49,16 @@ export const AdvancedFilterDropdownDateInput = () => {
 
     if (!fieldMetadataItemUsedInDropdown || !selectedOperandInDropdown) return;
 
+    const newDisplayValue = isDefined(newDate)
+      ? newDate.toLocaleDateString()
+      : '';
+
     applyRecordFilter({
       id: selectedFilter?.id ? selectedFilter.id : v4(),
       fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
       value: newDate?.toISOString() ?? '',
       operand: selectedOperandInDropdown,
-      displayValue: isDefined(newDate)
-        ? isDateTimeInput
-          ? newDate.toLocaleString()
-          : newDate.toLocaleDateString()
-        : '',
+      displayValue: newDisplayValue,
       recordFilterGroupId: selectedFilter?.recordFilterGroupId,
       positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
       type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
