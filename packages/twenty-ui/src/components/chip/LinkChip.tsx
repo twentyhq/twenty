@@ -21,6 +21,9 @@ export type LinkChipProps = Omit<
 // but it led to a bug probably linked to circular dependencies, which was hard to solve
 const StyledLink = styled(Link)`
   text-decoration: none;
+  --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
+  display: inline-flex;
+  width: calc(100% - 2 * var(--chip-horizontal-padding));
 `;
 
 export const LinkChip = ({
