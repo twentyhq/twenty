@@ -6,5 +6,5 @@ export const formatDateISOStringToFullDate = (
   timeZone: string,
   dateFormat: DateFormat,
 ) => {
-  return formatInTimeZone(new Date(date), timeZone, `${dateFormat}`);
+  return formatInTimeZone(new Date(date), timeZone, dateFormat);
 };
