@@ -1,8 +1,8 @@
 import {
-  DynamicModule,
-  MiddlewareConsumer,
-  Module,
-  RequestMethod,
+    DynamicModule,
+    MiddlewareConsumer,
+    Module,
+    RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';

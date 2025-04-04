@@ -206,6 +206,7 @@ export class EnvironmentVariables {
     sensitive: true,
     description:
       'Legacy variable to be deprecated when all API Keys expire. Replaced by APP_KEY',
+    isEnvOnly: true,
   })
   @IsOptional()
   @IsString()
@@ -683,6 +684,7 @@ export class EnvironmentVariables {
     group: EnvironmentVariablesGroup.ServerConfig,
     sensitive: true,
     description: 'Database connection URL',
+    isEnvOnly: true,
   })
   @IsDefined()
   @IsUrl({
@@ -714,6 +716,7 @@ export class EnvironmentVariables {
     group: EnvironmentVariablesGroup.ServerConfig,
     sensitive: true,
     description: 'URL for cache storage (e.g., Redis connection URL)',
+    isEnvOnly: true,
   })
   @IsOptional()
   @IsUrl({
@@ -752,6 +755,7 @@ export class EnvironmentVariables {
     group: EnvironmentVariablesGroup.ServerConfig,
     sensitive: true,
     description: 'Secret key for the application',
+    isEnvOnly: true,
   })
   @IsString()
   APP_SECRET: string;
@@ -980,6 +984,15 @@ export class EnvironmentVariables {
   @IsOptionalOrEmptyString()
   @IsTwentySemVer()
   APP_VERSION?: string;
+
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.ServerConfig,
+    description: 'Enable or disable database configuration storage',
+  })
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_CONFIG_VAR_IN_DB_ENABLED = false;
 }
 
 export const validate = (

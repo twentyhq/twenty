@@ -21,8 +21,8 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { useGetClientConfigQuery } from '~/generated/graphql';
 
 export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
