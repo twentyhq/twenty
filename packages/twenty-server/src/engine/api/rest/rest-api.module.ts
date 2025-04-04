@@ -7,7 +7,9 @@ import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/c
 import { RestApiCoreServiceV2 } from 'src/engine/api/rest/core/rest-api-core-v2.service';
 import { RestApiCoreService } from 'src/engine/api/rest/core/rest-api-core.service';
 import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
+import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
 import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
+import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
 import { MetadataQueryBuilderModule } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.module';
 import { RestApiMetadataController } from 'src/engine/api/rest/metadata/rest-api-metadata.controller';
@@ -40,6 +42,8 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
     StartingAfterInputFactory,
     EndingBeforeInputFactory,
     LimitInputFactory,
+    FilterInputFactory,
+    OrderByInputFactory,
     ApiEventEmitterService,
   ],
   exports: [RestApiMetadataService],
