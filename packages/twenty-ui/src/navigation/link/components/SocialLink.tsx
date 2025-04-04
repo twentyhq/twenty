@@ -1,7 +1,7 @@
 import * as React from 'react';
 
+import { RoundedLink } from '@ui/navigation/link/components/RoundedLink';
 import { getDisplayValueByUrlType } from '@ui/utilities';
-import { RoundedLink } from './RoundedLink';
 
 export enum LinkType {
   Url = 'url',

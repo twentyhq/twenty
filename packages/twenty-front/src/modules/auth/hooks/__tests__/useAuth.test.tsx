@@ -4,7 +4,6 @@ import { expect } from '@storybook/test';
 import { ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import { iconsState } from 'twenty-ui';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
@@ -15,6 +14,7 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { renderHook } from '@testing-library/react';
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
+import { iconsState } from 'twenty-ui/display';
 
 const redirectSpy = jest.fn();
 

@@ -15,8 +15,8 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui';
 import { getOperandLabel } from '../utils/getOperandLabel';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   background-color: ${({ theme }) => theme.background.primary};
@@ -73,6 +73,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
         value: '',
         type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
         label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
       return;
     }
@@ -100,6 +101,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
         value,
         type: filterType,
         label: fieldMetadataItemUsedInDropdown.label,
+        subFieldName: subFieldNameUsedInDropdown,
       });
     }
   };

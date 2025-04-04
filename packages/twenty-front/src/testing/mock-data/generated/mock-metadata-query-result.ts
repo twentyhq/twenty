@@ -3878,6 +3878,42 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
             },
             {
               __typename: "Field",
+              id: "c6dfcc2d-dc84-4553-94df-3b75cccee53c",
+              type: "SELECT",
+              name: "internalCompetitions",
+              icon: "IconHome",
+              isCustom: true,
+              isActive: true,
+              isSystem: false,
+              isNullable: true,
+              isUnique: false,
+              createdAt: "2025-02-11T09:14:38.892Z",
+              updatedAt: "2025-02-11T09:14:38.892Z",
+              defaultValue: null,
+              options: [
+                {
+                  id: "ee1b741b-0359-4ffd-b866-506e7b9c0cd9",
+                  color: "green",
+                  label: "Best employy",
+                  value: "BEST_EMPLOYEE",
+                  position: 0
+                },
+                {
+                  id: "3b2ed882-ec07-43fd-96e6-0fca8669c1f5",
+                  color: "turquoise",
+                  label: "Ultimate debugger",
+                  value: "ULTIMATE_DEBUGGER",
+                  position: 1
+                },
+              ],
+              settings: null,
+              isLabelSyncedWithName: false,
+              relationDefinition: null,
+              label: "Internal competitions",
+              description: "Internal competitions"
+            },
+            {
+              __typename: "Field",
               id: "8b1b88c0-a802-4c5d-8632-a4e343f3c8f1",
               type: "BOOLEAN",
               name: "visaSponsorship",

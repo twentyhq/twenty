@@ -1,10 +1,9 @@
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
 
+import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRatingField } from '../../hooks/useRatingField';
-
-import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type RatingFieldInputProps = {
   onSubmit?: FieldInputEvent;

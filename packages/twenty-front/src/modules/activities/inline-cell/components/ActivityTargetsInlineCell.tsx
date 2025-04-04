@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { IconArrowUpRight, IconPencil } from 'twenty-ui';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
@@ -15,6 +14,7 @@ import { RecordInlineCellContext } from '@/object-record/record-inline-cell/comp
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
+import { IconArrowUpRight, IconPencil } from 'twenty-ui/display';
 
 type ActivityTargetsInlineCellProps = {
   activityRecordId: string;

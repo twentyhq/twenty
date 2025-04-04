@@ -11,7 +11,9 @@ import { RecordGroupDefinitionType } from '@/object-record/record-group/types/Re
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
+import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { Tag } from 'twenty-ui/components';
 
 const StyledHeader = styled.div`
   align-items: center;

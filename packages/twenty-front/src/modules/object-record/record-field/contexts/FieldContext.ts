@@ -35,6 +35,7 @@ export type GenericFieldContextType = {
   isReadOnly: boolean;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
+  isLabelHidden?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

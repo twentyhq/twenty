@@ -9,9 +9,6 @@ export const useImportRecordsNoSelectionRecordAction: ActionHookWithObjectMetada
       );
 
     return {
-      shouldBeRegistered: true,
-      onClick: () => {
-        openObjectRecordsSpreadsheetImportDialog();
-      },
+      onClick: openObjectRecordsSpreadsheetImportDialog,
     };
   };

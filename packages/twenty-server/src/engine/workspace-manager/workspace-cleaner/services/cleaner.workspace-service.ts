@@ -121,8 +121,8 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     i18n.activate(workspaceMember.locale);
 
@@ -197,8 +197,8 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       to: workspaceMember.userEmail,
@@ -326,32 +326,35 @@ export class CleanerWorkspaceService {
 
     for (const workspace of workspaces) {
       try {
+        const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
+
+        if (isSoftDeletedWorkspace) {
+          const daysSinceSoftDeleted = workspace.deletedAt
+            ? differenceInDays(new Date(), workspace.deletedAt)
+            : 0;
+
+          if (
+            daysSinceSoftDeleted >
+              this.inactiveDaysBeforeDelete -
+                this.inactiveDaysBeforeSoftDelete &&
+            deletedWorkspacesCount <
+              this.maxNumberOfWorkspacesDeletedPerExecution
+          ) {
+            this.logger.log(
+              `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
+            );
+            if (!dryRun) {
+              await this.workspaceService.deleteWorkspace(workspace.id);
+            }
+            deletedWorkspacesCount++;
+          }
+          continue;
+        }
+
         const workspaceInactivity =
           await this.computeWorkspaceBillingInactivity(workspace);
 
-        const daysSinceSoftDeleted = workspace.deletedAt
-          ? differenceInDays(new Date(), workspace.deletedAt)
-          : 0;
-
-        if (
-          daysSinceSoftDeleted >
-            this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete &&
-          deletedWorkspacesCount < this.maxNumberOfWorkspacesDeletedPerExecution
-        ) {
-          this.logger.log(
-            `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id} ${workspace.displayName}`,
-          );
-          if (!dryRun) {
-            await this.workspaceService.deleteWorkspace(workspace.id);
-          }
-          deletedWorkspacesCount++;
-
-          continue;
-        }
-        if (
-          workspaceInactivity > this.inactiveDaysBeforeSoftDelete &&
-          !isDefined(workspace.deletedAt)
-        ) {
+        if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
             workspaceInactivity,

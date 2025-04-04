@@ -3,22 +3,17 @@ import { useCallback, useState } from 'react';
 import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
-import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useRestoreMultipleRecordsAction: ActionHookWithObjectMetadataItem =
   ({ objectMetadataItem }) => {
@@ -33,8 +28,6 @@ export const useRestoreMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       throw new Error('Current view ID is not defined');
     }
 
-    const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
     const { resetTableRowSelection } = useRecordTable({
       recordTableId: getRecordIndexIdFromObjectNamePluralAndViewId(
         objectMetadataItem.namePlural,
@@ -45,10 +38,6 @@ export const useRestoreMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     const { restoreManyRecords } = useRestoreManyRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
-
-    const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
-      contextStoreNumberOfSelectedRecordsComponentState,
-    );
 
     const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
       contextStoreTargetedRecordsRuleComponentState,
@@ -74,12 +63,6 @@ export const useRestoreMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       ...deletedAtFilter,
     };
 
-    const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
-
-    const isDeletedFilterActive = contextStoreFilters.some(
-      checkIsSoftDeleteFilter,
-    );
-
     const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
       filter: graphqlFilter,
@@ -98,21 +81,7 @@ export const useRestoreMultipleRecordsAction: ActionHookWithObjectMetadataItem =
       });
     }, [restoreManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
-    const isRemoteObject = objectMetadataItem.isRemote;
-
-    const shouldBeRegistered =
-      !hasObjectReadOnlyPermission &&
-      !isRemoteObject &&
-      isDeletedFilterActive &&
-      isDefined(contextStoreNumberOfSelectedRecords) &&
-      contextStoreNumberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
-      contextStoreNumberOfSelectedRecords > 0;
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
-        return;
-      }
-
       setIsRestoreRecordsModalOpen(true);
     };
 
@@ -128,7 +97,6 @@ export const useRestoreMultipleRecordsAction: ActionHookWithObjectMetadataItem =
     );
 
     return {
-      shouldBeRegistered,
       onClick,
       ConfirmationModal: confirmationModal,
     };

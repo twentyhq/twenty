@@ -73,10 +73,7 @@ export const FieldInput = ({
       ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
         <RelationFromManyFieldInput onSubmit={onSubmit} />
       ) : isFieldPhones(fieldDefinition) ? (
-        <PhonesFieldInput
-          onCancel={onCancel}
-          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-        />
+        <PhonesFieldInput onCancel={onCancel} onClickOutside={onClickOutside} />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
           onEnter={onEnter}

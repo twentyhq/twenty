@@ -73,7 +73,3 @@ const meterProvider = new MeterProvider({
 });
 
 opentelemetry.metrics.setGlobalMeterProvider(meterProvider);
-
-process.on('SIGTERM', async () => {
-  await meterProvider.shutdown();
-});

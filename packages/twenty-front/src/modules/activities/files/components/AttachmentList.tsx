@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { lazy, ReactElement, Suspense, useState } from 'react';
-import { IconButton, IconDownload, IconX } from 'twenty-ui';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -14,6 +13,8 @@ import { useRecoilValue } from 'recoil';
 import { ActivityList } from '@/activities/components/ActivityList';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AttachmentRow } from './AttachmentRow';
+import { IconButton } from 'twenty-ui/input';
+import { IconDownload, IconX } from 'twenty-ui/display';
 
 const DocumentViewer = lazy(() =>
   import('@/activities/files/components/DocumentViewer').then((module) => ({

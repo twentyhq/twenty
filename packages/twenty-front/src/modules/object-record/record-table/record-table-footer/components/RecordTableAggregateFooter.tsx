@@ -7,7 +7,7 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isUndefined } from '@sniptt/guards';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledTd = styled.td`
   background-color: ${({ theme }) => theme.background.primary};

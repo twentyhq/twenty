@@ -1,11 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import {
-  AppTooltip,
-  OverflowingTextWithTooltip,
-  TooltipDelay,
-} from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
@@ -16,6 +11,11 @@ import { assertFieldMetadata } from '@/object-record/record-field/types/guards/a
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
+import {
+  AppTooltip,
+  OverflowingTextWithTooltip,
+  TooltipDelay,
+} from 'twenty-ui/display';
 
 const StyledIconContainer = styled.div`
   align-items: center;

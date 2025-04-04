@@ -21,6 +21,7 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
+import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -28,6 +29,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
   constructor(
+    private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingProductService: BillingProductService,

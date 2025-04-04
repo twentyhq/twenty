@@ -1,6 +1,6 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useNumberField } from '../../hooks/useNumberField';
 

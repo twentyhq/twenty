@@ -4,8 +4,8 @@ import { useSetRecoilState } from 'recoil';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
-  LightIconButton,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 const StyledCollapseButton = styled.div`
   align-items: center;

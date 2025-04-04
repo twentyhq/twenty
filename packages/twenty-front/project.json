@@ -52,10 +52,6 @@
     "typecheck": {},
     "lint": {
       "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/src/**/*.{ts,tsx,json}",
-          "{projectRoot}/package.json"
-        ],
         "maxWarnings": 0,
         "reportUnusedDisableDirectives": "error"
       },

@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
@@ -26,6 +25,7 @@ import { RecordTableRowDraggableContextProvider } from '@/object-record/record-t
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockPerformance } from './mock';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const RelationFieldValueSetterEffect = () => {
   const setEntity = useSetRecoilState(

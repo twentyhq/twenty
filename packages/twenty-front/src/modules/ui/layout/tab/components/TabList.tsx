@@ -7,8 +7,8 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import styled from '@emotion/styled';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { IconComponent } from 'twenty-ui';
 import { Tab } from './Tab';
+import { IconComponent } from 'twenty-ui/display';
 
 export type SingleTabProps<T extends string = string> = {
   title: string;

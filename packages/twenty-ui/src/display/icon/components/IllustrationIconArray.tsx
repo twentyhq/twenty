@@ -1,5 +1,5 @@
+import IllustrationIconArrayRaw from '@assets/icons/illustration-array.svg?react';
 import { useTheme } from '@emotion/react';
-import IllustrationIconArrayRaw from '@ui/display/icon/assets/illustration-array.svg?react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 type IllustrationIconArrayProps = Pick<IconComponentProps, 'size'>;

@@ -1,14 +1,6 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
-import {
-  CardContent,
-  CardFooter,
-  IconPlus,
-  IconPoint,
-  LightButton,
-  MAIN_COLORS,
-} from 'twenty-ui';
 import { z } from 'zod';
 
 import {
@@ -33,6 +25,10 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
+import { CardContent, CardFooter } from 'twenty-ui/layout';
+import { IconPlus, IconPoint } from 'twenty-ui/display';
+import { LightButton } from 'twenty-ui/input';
+import { MAIN_COLORS } from 'twenty-ui/theme';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),

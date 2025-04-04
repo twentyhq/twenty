@@ -80,6 +80,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       'isLabelSyncedWithName',
       'options',
       'settings',
+      'defaultValue',
     ];
     const overridableFields = ['label', 'icon', 'description'];
 
@@ -102,7 +103,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
 
     if (nonUpdatableFields.length > 0) {
       throw new BadRequestException(
-        `Only isActive, isLabelSyncedWithName, label, icon and description fields can be updated for standard fields. Invalid fields: ${nonUpdatableFields.join(', ')}`,
+        `Only isActive, isLabelSyncedWithName, label, icon, description and defaultValue fields can be updated for standard fields. Invalid fields: ${nonUpdatableFields.join(', ')}`,
       );
     }
 
@@ -116,11 +117,23 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     this.handleStandardOverrides(instance, fieldMetadata, update, locale);
     this.handleOptionsField(instance, update);
     this.handleSettingsField(instance, update);
+    this.handleDefaultValueField(instance, update);
 
     return {
       id: instance.id,
       update: update as T,
     };
+  }
+
+  private handleDefaultValueField(
+    instance: UpdateOneInputType<T>,
+    update: StandardFieldUpdate,
+  ): void {
+    if (!isDefined(instance.update.defaultValue)) {
+      return;
+    }
+
+    update.defaultValue = instance.update.defaultValue;
   }
 
   private handleOptionsField(

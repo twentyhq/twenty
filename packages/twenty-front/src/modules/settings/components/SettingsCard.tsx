@@ -1,8 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Card, CardContent, IconChevronRight, Pill } from 'twenty-ui';
 
 import { ReactNode } from 'react';
+import { Card, CardContent } from 'twenty-ui/layout';
+import { IconChevronRight } from 'twenty-ui/display';
+import { Pill } from 'twenty-ui/components';
 
 type SettingsCardProps = {
   description?: string;

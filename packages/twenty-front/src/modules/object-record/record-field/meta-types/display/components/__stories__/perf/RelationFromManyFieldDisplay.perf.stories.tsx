@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
@@ -21,6 +20,7 @@ import {
   otherPersonMock,
   relationFromManyFieldDisplayMock,
 } from './relationFromManyFieldDisplayMock';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const RelationFieldValueSetterEffect = () => {
   const setEntity = useSetRecoilState(

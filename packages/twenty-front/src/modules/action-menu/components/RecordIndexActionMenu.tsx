@@ -3,7 +3,7 @@ import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { RecordIndexActionMenuButtons } from '@/action-menu/components/RecordIndexActionMenuButtons';
+import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -11,8 +11,8 @@ import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/recor
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
@@ -48,7 +48,7 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
             },
           }}
         >
-          {!isMobile && <RecordIndexActionMenuButtons />}
+          {!isMobile && <PageHeaderActionMenuButtons />}
           <RecordIndexActionMenuDropdown />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
