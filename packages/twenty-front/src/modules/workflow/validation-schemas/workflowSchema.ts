@@ -257,6 +257,7 @@ export const workflowRunSchema = z
     __typename: z.literal('WorkflowRun'),
     id: z.string(),
     workflowVersionId: z.string(),
+    workflowId: z.string(),
     output: workflowRunOutputSchema.nullable(),
     context: workflowRunContextSchema.nullable(),
     status: workflowRunStatusSchema,
