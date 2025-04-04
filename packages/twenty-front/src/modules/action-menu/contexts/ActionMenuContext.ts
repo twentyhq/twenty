@@ -4,12 +4,12 @@ type ActionMenuContextType = {
   isInRightDrawer: boolean;
   onActionStartedCallback?: (action: { key: string }) => Promise<void> | void;
   onActionExecutedCallback?: (action: { key: string }) => Promise<void> | void;
-  display: 'button' | 'listItem' | 'dropdownItem';
+  displayType: 'button' | 'listItem' | 'dropdownItem';
 };
 
 export const ActionMenuContext = createContext<ActionMenuContextType>({
   isInRightDrawer: false,
-  display: 'button',
+  displayType: 'button',
   onActionStartedCallback: () => {},
   onActionExecutedCallback: () => {},
 });

@@ -13,26 +13,27 @@ export type ActionDisplayProps = {
   shortLabel?: MessageDescriptor;
   Icon: IconComponent;
   accent?: MenuItemAccent;
+  to?: string;
   onClick?: (event?: React.MouseEvent<HTMLAnchorElement>) => void;
   hotKeys?: string[];
 };
 
 export const ActionDisplay = ({ action }: { action: ActionDisplayProps }) => {
-  const { display } = useContext(ActionMenuContext);
+  const { displayType } = useContext(ActionMenuContext);
 
   if (!action) {
     return null;
   }
 
-  if (display === 'button') {
+  if (displayType === 'button') {
     return <ActionButton action={action} />;
   }
 
-  if (display === 'listItem') {
+  if (displayType === 'listItem') {
     return <ActionListItem action={action} />;
   }
 
-  if (display === 'dropdownItem') {
+  if (displayType === 'dropdownItem') {
     return <ActionDropdownItem action={action} />;
   }
 };
