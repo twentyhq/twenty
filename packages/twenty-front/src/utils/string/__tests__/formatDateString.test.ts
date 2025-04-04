@@ -82,7 +82,7 @@ describe('formatDateString', () => {
     expect(result).toBe(mockFormattedDate);
   });
 
-  it('should format date as year when displayFormat is set to year', () => {
+  it('should return only year from date value when displayFormat is set to year', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = '2023';
 
@@ -96,6 +96,26 @@ describe('formatDateString', () => {
       ...defaultParams,
       value: mockDate,
       displayFormat: 'year'
+    });
+
+    expect(result).toBe(mockFormattedDate);
+  });
+
+  it('should return only time from date value when displayFormat is set to time', () => {
+    const mockDate = '2023-01-01T12:00:00Z';
+    const mockFormattedDate = '06:00:00';
+
+    jest.mock('@/localization/utils/formatDateISOStringToTime', () => ({
+      formatDateISOStringToDateTime: jest
+        .fn()
+        .mockReturnValue(mockFormattedDate),
+    }));
+
+    const result = formatDateString({
+      ...defaultParams,
+      timeZone: 'CST',
+      value: mockDate,
+      displayFormat: 'time'
     });
 
     expect(result).toBe(mockFormattedDate);

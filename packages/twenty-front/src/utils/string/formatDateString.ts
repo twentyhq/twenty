@@ -1,6 +1,7 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
+import { formatDateISOStringToTime } from '@/localization/utils/formatDateISOStringToTime';
 import { formatDateISOStringToYear } from '@/localization/utils/formatDateISOStringToYear';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
 
@@ -24,6 +25,8 @@ export const formatDateString = ({
       return formatDateISOStringToRelativeDate(value)
     case ('year'):
       return formatDateISOStringToYear(value)
+    case ('time'):
+      return formatDateISOStringToTime(value, timeZone)
     default:
       return formatDateISOStringToDate(value, timeZone, dateFormat)
   }
