@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { Brackets, ObjectLiteral } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
+import { Brackets, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { RESULTS_LIMIT_BY_OBJECT_WITHOUT_SEARCH_TERMS } from 'src/engine/core-modules/search/constants/results-limit-by-object-without-search-terms';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/search/constants/standard-objects-by-priority-rank';
 import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
@@ -24,6 +25,8 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 
 @Injectable()
 export class SearchService {
+  constructor(private readonly fileService: FileService) {}
+
   filterObjectMetadataItems({
     objectMetadataItemWithFieldMaps,
     includedObjectNameSingulars,
@@ -185,6 +188,10 @@ export class SearchService {
       return 'domainNamePrimaryLinkUrl';
     }
 
+    if (objectMetadataItem.nameSingular === 'workspaceMember') {
+      return 'avatarUrl';
+    }
+
     if (!objectMetadataItem.imageIdentifierFieldMetadataId) {
       return null;
     }
@@ -194,10 +201,24 @@ export class SearchService {
     ].name;
   }
 
-  getImageIdentifierValue(
+  private async getImageUrlWithToken(
+    avatarUrl: string,
+    workspaceMemberId: string,
+    workspaceId: string,
+  ): Promise<string> {
+    const avatarUrlToken = await this.fileService.encodeFileToken({
+      workspaceMemberId,
+      workspaceId,
+    });
+
+    return `${avatarUrl}?token=${avatarUrlToken}`;
+  }
+
+  async getImageIdentifierValue(
     record: ObjectRecord,
     objectMetadataItem: ObjectMetadataItemWithFieldMaps,
-  ): string {
+    workspaceId: string,
+  ): Promise<string> {
     const imageIdentifierField =
       this.getImageIdentifierColumn(objectMetadataItem);
 
@@ -205,29 +226,48 @@ export class SearchService {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
+    if (objectMetadataItem.nameSingular === 'workspaceMember') {
+      return record.avatarUrl
+        ? await this.getImageUrlWithToken(
+            record.avatarUrl,
+            record.id,
+            workspaceId,
+          )
+        : '';
+    }
+
     return imageIdentifierField ? record[imageIdentifierField] : '';
   }
 
-  computeSearchObjectResults(
+  async computeSearchObjectResults(
     recordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[],
     limit: number,
+    workspaceId: string,
   ) {
-    const searchRecords = recordsWithObjectMetadataItems.flatMap(
-      ({ objectMetadataItem, records }) => {
-        return records.map((record) => {
-          return {
-            recordId: record.id,
-            objectNameSingular: objectMetadataItem.nameSingular,
-            label: this.getLabelIdentifierValue(record, objectMetadataItem),
-            imageUrl: this.getImageIdentifierValue(record, objectMetadataItem),
-            tsRankCD: record.tsRankCD,
-            tsRank: record.tsRank,
-          };
-        });
-      },
+    const searchRecords = await Promise.all(
+      recordsWithObjectMetadataItems.flatMap(
+        async ({ objectMetadataItem, records }) => {
+          return Promise.all(
+            records.map(async (record) => {
+              return {
+                recordId: record.id,
+                objectNameSingular: objectMetadataItem.nameSingular,
+                label: this.getLabelIdentifierValue(record, objectMetadataItem),
+                imageUrl: await this.getImageIdentifierValue(
+                  record,
+                  objectMetadataItem,
+                  workspaceId,
+                ),
+                tsRankCD: record.tsRankCD,
+                tsRank: record.tsRank,
+              };
+            }),
+          );
+        },
+      ),
     );
 
-    return this.sortSearchObjectResults(searchRecords).slice(0, limit);
+    return this.sortSearchObjectResults(searchRecords.flat()).slice(0, limit);
   }
 
   sortSearchObjectResults(searchObjectResultsWithRank: SearchRecordDTO[]) {
