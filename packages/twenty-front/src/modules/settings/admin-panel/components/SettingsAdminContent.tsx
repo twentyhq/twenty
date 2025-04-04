@@ -5,11 +5,12 @@ import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/Setting
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-<<<<<<< HEAD
-import { IconCode, IconHeart, IconSettings2, IconVariable } from 'twenty-ui';
-=======
-import { IconHeart, IconSettings2, IconVariable } from 'twenty-ui/display';
->>>>>>> upstream/main
+import {
+  IconCode,
+  IconHeart,
+  IconSettings2,
+  IconVariable,
+} from 'twenty-ui/display';
 
 export const SettingsAdminContent = () => {
   const currentUser = useRecoilValue(currentUserState);
