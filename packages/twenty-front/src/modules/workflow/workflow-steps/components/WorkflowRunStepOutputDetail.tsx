@@ -15,13 +15,13 @@ import {
   isTwoFirstDepths,
   JsonTree,
 } from 'twenty-ui/json-visualizer';
-import { useCopyJsonValue } from '~/hooks/useCopyJsonValue';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const { copyJsonValue } = useCopyJsonValue();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
@@ -75,7 +75,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
               ? setRedHighlightingForEveryNode
               : undefined
           }
-          onNodeValueClick={copyJsonValue}
+          onNodeValueClick={copyToClipboard}
         />
       </WorkflowRunStepJsonContainer>
     </>

@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { Section } from 'twenty-ui/layout';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
-import { useCopyJsonValue } from '~/hooks/useCopyJsonValue';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledDetailsContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -24,7 +24,7 @@ const StyledErrorMessage = styled.div`
 
 export const JsonDataIndicatorHealthStatus = () => {
   const { t } = useLingui();
-  const { copyJsonValue } = useCopyJsonValue();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
 
@@ -56,7 +56,7 @@ export const JsonDataIndicatorHealthStatus = () => {
             emptyStringLabel={t`[empty string]`}
             arrowButtonCollapsedLabel={t`Expand`}
             arrowButtonExpandedLabel={t`Collapse`}
-            onNodeValueClick={copyJsonValue}
+            onNodeValueClick={copyToClipboard}
           />
         </StyledDetailsContainer>
       )}

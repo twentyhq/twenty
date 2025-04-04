@@ -19,13 +19,13 @@ import {
   JsonTreeContextProvider,
   ShouldExpandNodeInitiallyProps,
 } from 'twenty-ui/json-visualizer';
-import { useCopyJsonValue } from '~/hooks/useCopyJsonValue';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
   const { getIcon } = useIcons();
   const theme = useTheme();
-  const { copyJsonValue } = useCopyJsonValue();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
@@ -125,7 +125,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
             arrowButtonExpandedLabel: t`Collapse`,
             getNodeHighlighting,
             shouldExpandNodeInitially: isFirstNodeDepthOfPreviousStep,
-            onNodeValueClick: copyJsonValue,
+            onNodeValueClick: copyToClipboard,
           }}
         >
           <JsonNestedNode
