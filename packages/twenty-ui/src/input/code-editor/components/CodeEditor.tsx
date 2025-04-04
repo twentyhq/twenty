@@ -7,19 +7,21 @@ import { editor } from 'monaco-editor';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+type CodeEditorVariant = 'default' | 'with-header' | 'borderless';
+
 type CodeEditorProps = Pick<
   EditorProps,
   'value' | 'language' | 'onMount' | 'onValidate' | 'height' | 'options'
 > & {
   onChange?: (value: string) => void;
   setMarkers?: (value: string) => editor.IMarkerData[];
-  withHeader?: boolean;
+  variant?: CodeEditorVariant;
   isLoading?: boolean;
 };
 
 const StyledEditorLoader = styled.div<{
   height: string | number;
-  withHeader?: boolean;
+  variant: CodeEditorVariant;
 }>`
   align-items: center;
   display: flex;
@@ -27,35 +29,60 @@ const StyledEditorLoader = styled.div<{
   justify-content: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  ${({ withHeader, theme }) =>
-    withHeader
-      ? css`
+  ${({ variant, theme }) => {
+    switch (variant) {
+      case 'default':
+        return css`
+          border-radius: ${theme.border.radius.sm};
+        `;
+      // case 'borderless':
+      //   return css`
+      //     border: none;
+      //   `;
+      case 'with-header':
+        return css`
           border-radius: 0 0 ${theme.border.radius.sm} ${theme.border.radius.sm};
           border-top: none;
-        `
-      : css`
-          border-radius: ${theme.border.radius.sm};
-        `}
+        `;
+    }
+  }}
 `;
 
-const StyledEditor = styled(Editor)<{ withHeader: boolean }>`
+const StyledEditor = styled(Editor)<{
+  variant: CodeEditorVariant;
+}>`
   .monaco-editor {
-    border-radius: ${({ theme }) => theme.border.radius.sm};
     outline-width: 0;
-  }
-  .overflow-guard {
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
-    box-sizing: border-box;
-    ${({ withHeader, theme }) =>
-      withHeader
+
+    ${({ variant, theme }) =>
+      variant !== 'borderless'
         ? css`
+            border-radius: ${theme.border.radius.sm};
+          `
+        : undefined}
+  }
+
+  .overflow-guard {
+    box-sizing: border-box;
+
+    ${({ variant, theme }) => {
+      switch (variant) {
+        case 'default': {
+          return css`
+            border: 1px solid ${theme.border.color.medium};
+            border-radius: ${theme.border.radius.sm};
+          `;
+        }
+        case 'with-header': {
+          return css`
+            border: 1px solid ${theme.border.color.medium};
             border-radius: 0 0 ${theme.border.radius.sm}
               ${theme.border.radius.sm};
             border-top: none;
-          `
-        : css`
-            border-radius: ${theme.border.radius.sm};
-          `}
+          `;
+        }
+      }
+    }}
   }
 `;
 
@@ -67,7 +94,7 @@ export const CodeEditor = ({
   setMarkers,
   onValidate,
   height = 450,
-  withHeader = false,
+  variant = 'default',
   isLoading = false,
   options,
 }: CodeEditorProps) => {
@@ -92,13 +119,13 @@ export const CodeEditor = ({
   };
 
   return isLoading ? (
-    <StyledEditorLoader height={height} withHeader={withHeader}>
+    <StyledEditorLoader height={height} variant={variant}>
       <Loader />
     </StyledEditorLoader>
   ) : (
     <StyledEditor
       height={height}
-      withHeader={withHeader}
+      variant={variant}
       value={isLoading ? '' : value}
       language={language}
       loading=""

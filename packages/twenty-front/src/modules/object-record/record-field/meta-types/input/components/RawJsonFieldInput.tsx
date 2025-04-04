@@ -4,13 +4,13 @@ import { useJsonField } from '../../hooks/useJsonField';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useTheme } from '@emotion/react';
 import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import {
   CodeEditor,
   FloatingIconButton,
-  IconEye,
   IconPencil,
   isTwoFirstDepths,
   JsonTree,
@@ -28,30 +28,39 @@ type RawJsonFieldInputProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-const StyledJsonTreeContainer = styled.div`
+const CONTAINER_HEIGHT = 300;
+
+const StyledContainer = styled.div`
   box-sizing: border-box;
-  height: 300px;
+  height: ${CONTAINER_HEIGHT}px;
   width: 400px;
-  max-width: 100vw;
-  padding: ${({ theme }) => theme.spacing(2)};
   position: relative;
   overflow-y: auto;
 `;
 
 const StyledSwitchModeButtonContainer = styled.div`
   position: fixed;
-  top: ${({ theme }) => theme.spacing(2)};
-  right: ${({ theme }) => theme.spacing(2)};
-  z-index: 10;
+  top: ${({ theme }) => theme.spacing(1)};
+  right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledCodeEditorContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledJsonTreeContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: min-content;
 `;
 
 export const RawJsonFieldInput = ({
-  onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
 }: RawJsonFieldInputProps) => {
+  const theme = useTheme();
+
   const { draftValue, hotkeyScope, setDraftValue, persistJsonField } =
     useJsonField();
 
@@ -59,15 +68,7 @@ export const RawJsonFieldInput = ({
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const parsedDraftJsonValue = isDefined(draftValue)
-    ? JSON.parse(draftValue)
-    : undefined;
-
-  const showEditButton = true;
-
-  const handleEnter = (newText: string) => {
-    // onEnter?.(() => persistJsonField(newText));
-  };
+  const showEditButton = !isEditing;
 
   const handleEscape = (newText: string) => {
     onEscape?.(() => persistJsonField(newText));
@@ -100,15 +101,6 @@ export const RawJsonFieldInput = ({
     listenerId: hotkeyScope,
   });
 
-  // useScopedHotkeys(
-  //   Key.Enter,
-  //   () => {
-  //     handleEnter(draftValue ?? '');
-  //   },
-  //   hotkeyScope,
-  //   [handleEnter, draftValue],
-  // );
-
   useScopedHotkeys(
     [Key.Escape],
     () => {
@@ -136,42 +128,50 @@ export const RawJsonFieldInput = ({
     [handleShiftTab, draftValue],
   );
 
-  const handleToggleEditing = () => {
-    setIsEditing(!isEditing);
+  const handleStartEditing = () => {
+    setIsEditing(true);
   };
 
   return (
-    <StyledJsonTreeContainer ref={containerRef}>
-      {showEditButton && (
-        <StyledSwitchModeButtonContainer>
-          <FloatingIconButton
-            Icon={isEditing ? IconEye : IconPencil}
-            onClick={handleToggleEditing}
-          />
-        </StyledSwitchModeButtonContainer>
-      )}
-
+    <StyledContainer ref={containerRef}>
       {isEditing ? (
-        <CodeEditor
-          value={draftValue}
-          language="application/json"
-          height={284}
-          options={{
-            lineNumbers: 'off',
-          }}
-          onChange={handleChange}
-        />
+        <StyledCodeEditorContainer>
+          <CodeEditor
+            value={draftValue}
+            language="application/json"
+            height={CONTAINER_HEIGHT - 8}
+            variant="borderless"
+            options={{
+              lineNumbers: 'off',
+              folding: false,
+              overviewRulerBorder: false,
+              lineDecorationsWidth: 0,
+            }}
+            onChange={handleChange}
+          />
+        </StyledCodeEditorContainer>
       ) : (
-        <JsonTree
-          value={parsedDraftJsonValue ?? ''}
-          arrowButtonCollapsedLabel=""
-          arrowButtonExpandedLabel=""
-          emptyArrayLabel=""
-          emptyObjectLabel=""
-          emptyStringLabel=""
-          shouldExpandNodeInitially={isTwoFirstDepths}
-        />
+        <>
+          <StyledSwitchModeButtonContainer>
+            <FloatingIconButton
+              Icon={IconPencil}
+              onClick={handleStartEditing}
+            />
+          </StyledSwitchModeButtonContainer>
+
+          <StyledJsonTreeContainer>
+            <JsonTree
+              value={isDefined(draftValue) ? JSON.parse(draftValue) : ''}
+              arrowButtonCollapsedLabel=""
+              arrowButtonExpandedLabel=""
+              emptyArrayLabel=""
+              emptyObjectLabel=""
+              emptyStringLabel=""
+              shouldExpandNodeInitially={isTwoFirstDepths}
+            />
+          </StyledJsonTreeContainer>
+        </>
       )}
-    </StyledJsonTreeContainer>
+    </StyledContainer>
   );
 };

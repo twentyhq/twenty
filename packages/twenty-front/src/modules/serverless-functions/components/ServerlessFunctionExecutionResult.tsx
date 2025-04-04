@@ -4,12 +4,12 @@ import { LightCopyIconButton } from '@/object-record/record-field/components/Lig
 import { ServerlessFunctionTestData } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { useTheme } from '@emotion/react';
 import {
+  AnimatedCircleLoading,
   CodeEditor,
   CoreEditorHeader,
+  IconLoader,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
-  IconLoader,
-  AnimatedCircleLoading,
 } from 'twenty-ui';
 import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
 
@@ -107,7 +107,7 @@ export const ServerlessFunctionExecutionResult = ({
         height={serverlessFunctionTestData.height}
         options={{ readOnly: true, domReadOnly: true }}
         isLoading={isTesting}
-        withHeader
+        variant="with-header"
       />
     </StyledContainer>
   );

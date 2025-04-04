@@ -23,7 +23,7 @@ export const codeEditorTheme = (theme: ThemeType) => {
       },
     ],
     colors: {
-      'editor.background': theme.background.secondary,
+      'editor.background': '#00000000',
       'editorCursor.foreground': theme.font.color.primary,
       'editorLineNumber.foreground': theme.font.color.extraLight,
       'editorLineNumber.activeForeground': theme.font.color.light,

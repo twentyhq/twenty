@@ -85,7 +85,7 @@ export const SettingsServerlessFunctionTestTab = ({
             language="json"
             height={200}
             onChange={onChange}
-            withHeader
+            variant="with-header"
           />
         </StyledCodeEditorContainer>
         <ServerlessFunctionExecutionResult
