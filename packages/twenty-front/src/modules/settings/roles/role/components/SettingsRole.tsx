@@ -102,7 +102,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     },
   ];
 
-  console.log(settingsDraftRole, settingsPersistedRole);
   const isDirty = !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
   const handleSave = async () => {
