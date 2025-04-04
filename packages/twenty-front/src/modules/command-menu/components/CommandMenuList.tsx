@@ -1,10 +1,9 @@
+import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandGroupConfig } from '@/command-menu/components/CommandMenu';
+import { ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
-import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
@@ -14,13 +13,12 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
 export type CommandMenuListProps = {
-  commandGroups: CommandGroupConfig[];
+  commandGroups: ActionGroupConfig[];
   selectableItemIds: string[];
   children?: React.ReactNode;
   loading?: boolean;
@@ -89,23 +87,20 @@ export const CommandMenuList = ({
             hotkeyScope={AppHotkeyScope.CommandMenuOpen}
             selectableItemIdArray={selectableItemIds}
             onEnter={(itemId) => {
-              if (itemId === RESET_CONTEXT_TO_SELECTION) {
-                resetPreviousCommandMenuContext();
-                return;
-              }
-
-              const command = commands.find((item) => item.id === itemId);
-
-              if (isDefined(command)) {
-                const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
-                  command;
-
-                onItemClick({
-                  shouldCloseCommandMenuOnClick,
-                  onClick: onCommandClick,
-                  to,
-                });
-              }
+              // if (itemId === RESET_CONTEXT_TO_SELECTION) {
+              //   resetPreviousCommandMenuContext();
+              //   return;
+              // }
+              // const command = commands.find((item) => item.id === itemId);
+              // if (isDefined(command)) {
+              //   const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
+              //     command;
+              //   onItemClick({
+              //     shouldCloseCommandMenuOnClick,
+              //     onClick: onCommandClick,
+              //     to,
+              //   });
+              // }
             }}
             onSelect={() => {
               setHasUserSelectedCommand(true);
@@ -117,19 +112,8 @@ export const CommandMenuList = ({
                 <CommandGroup heading={heading} key={heading}>
                   {items.map((item) => {
                     return (
-                      <SelectableItem itemId={item.id} key={item.id}>
-                        <CommandMenuItem
-                          id={item.id}
-                          Icon={item.Icon}
-                          label={item.label}
-                          description={item.description}
-                          to={item.to}
-                          onClick={item.onCommandClick}
-                          hotKeys={item.hotKeys}
-                          shouldCloseCommandMenuOnClick={
-                            item.shouldCloseCommandMenuOnClick
-                          }
-                        />
+                      <SelectableItem itemId={item.key} key={item.key}>
+                        <ActionDisplayer action={item} />
                       </SelectableItem>
                     );
                   })}

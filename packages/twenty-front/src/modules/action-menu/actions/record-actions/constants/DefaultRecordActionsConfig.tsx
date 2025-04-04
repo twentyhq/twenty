@@ -17,8 +17,8 @@ import { NavigateToPreviousRecordSingleRecordAction } from '@/action-menu/action
 import { RemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/RemoveFromFavoritesSingleRecordActionEffect';
 import { RestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
+import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -46,7 +46,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | NoSelectionRecordActionKeys
   | SingleRecordActionKeys
   | MultipleRecordsActionKeys,
-  RecordConfigAction
+  ActionConfig
 > = {
   [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
     type: ActionMenuEntryType.Standard,

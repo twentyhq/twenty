@@ -1,59 +1,57 @@
-import { useCommandMenuCommands } from '@/command-menu/hooks/useCommandMenuCommands';
-import { useMatchCommands } from '@/command-menu/hooks/useMatchCommands';
+import { useCommandMenuActions } from '@/command-menu/hooks/useCommandMenuCommands';
+import { useMatchActions } from '@/command-menu/hooks/useMatchActions';
 
 export const useMatchingCommandMenuCommands = ({
   commandMenuSearch,
 }: {
   commandMenuSearch: string;
 }) => {
-  const { matchCommands } = useMatchCommands({ commandMenuSearch });
+  const { matchActions } = useMatchActions({ commandMenuSearch });
 
   const {
-    navigateCommands,
-    actionRecordSelectionCommands,
-    actionObjectCommands,
-    actionGlobalCommands,
-    workflowRunRecordSelectionCommands,
-    workflowRunGlobalCommands,
-    fallbackCommands,
-  } = useCommandMenuCommands();
+    navigateActions,
+    actionRecordSelectionActions,
+    actionObjectActions,
+    actionGlobalActions,
+    workflowRunRecordSelectionActions,
+    workflowRunGlobalActions,
+    fallbackActions,
+  } = useCommandMenuActions();
 
-  const matchingNavigateCommands = matchCommands(navigateCommands);
+  const matchingNavigateActions = matchActions(navigateActions);
 
-  const matchingStandardActionRecordSelectionCommands = matchCommands(
-    actionRecordSelectionCommands,
+  const matchingStandardActionRecordSelectionActions = matchActions(
+    actionRecordSelectionActions,
   );
 
-  const matchingStandardActionObjectCommands =
-    matchCommands(actionObjectCommands);
+  const matchingStandardActionObjectActions = matchActions(actionObjectActions);
 
-  const matchingStandardActionGlobalCommands =
-    matchCommands(actionGlobalCommands);
+  const matchingStandardActionGlobalActions = matchActions(actionGlobalActions);
 
-  const matchingWorkflowRunRecordSelectionCommands = matchCommands(
-    workflowRunRecordSelectionCommands,
+  const matchingWorkflowRunRecordSelectionActions = matchActions(
+    workflowRunRecordSelectionActions,
   );
 
-  const matchingWorkflowRunGlobalCommands = matchCommands(
-    workflowRunGlobalCommands,
+  const matchingWorkflowRunGlobalActions = matchActions(
+    workflowRunGlobalActions,
   );
 
   const noResults =
-    !matchingStandardActionRecordSelectionCommands.length &&
-    !matchingWorkflowRunRecordSelectionCommands.length &&
-    !matchingStandardActionGlobalCommands.length &&
-    !matchingWorkflowRunGlobalCommands.length &&
-    !matchingStandardActionObjectCommands.length &&
-    !matchingNavigateCommands.length;
+    !matchingStandardActionRecordSelectionActions.length &&
+    !matchingWorkflowRunRecordSelectionActions.length &&
+    !matchingStandardActionGlobalActions.length &&
+    !matchingWorkflowRunGlobalActions.length &&
+    !matchingStandardActionObjectActions.length &&
+    !matchingNavigateActions.length;
 
   return {
     noResults,
-    matchingStandardActionRecordSelectionCommands,
-    matchingStandardActionObjectCommands,
-    matchingWorkflowRunRecordSelectionCommands,
-    matchingStandardActionGlobalCommands,
-    matchingWorkflowRunGlobalCommands,
-    matchingNavigateCommands,
-    fallbackCommands: noResults ? fallbackCommands : [],
+    matchingStandardActionRecordSelectionActions,
+    matchingStandardActionObjectActions,
+    matchingWorkflowRunRecordSelectionActions,
+    matchingStandardActionGlobalActions,
+    matchingWorkflowRunGlobalActions,
+    matchingNavigateActions,
+    fallbackActions: noResults ? fallbackActions : [],
   };
 };

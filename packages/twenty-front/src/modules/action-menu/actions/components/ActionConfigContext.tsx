@@ -1,7 +1,6 @@
-import { RecordAgnosticConfigAction } from '@/action-menu/actions/types/RecordAgnosticConfigAction';
-import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
+import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { createContext } from 'react';
 
 export const ActionConfigContext = createContext<
-  RecordConfigAction | RecordAgnosticConfigAction | null
+  ActionConfig | ActionConfig | null
 >(null);

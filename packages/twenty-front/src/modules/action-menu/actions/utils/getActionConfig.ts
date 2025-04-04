@@ -2,14 +2,14 @@ import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-acti
 import { WORKFLOW_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowActionsConfig';
 import { WORKFLOW_RUNS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig';
 import { WORKFLOW_VERSIONS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig';
-import { RecordConfigAction } from '@/action-menu/actions/types/RecordConfigAction';
+import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getActionConfig = (
   objectMetadataItem?: ObjectMetadataItem,
-): Record<string, RecordConfigAction> => {
+): Record<string, ActionConfig> => {
   if (!isDefined(objectMetadataItem)) {
     return {};
   }

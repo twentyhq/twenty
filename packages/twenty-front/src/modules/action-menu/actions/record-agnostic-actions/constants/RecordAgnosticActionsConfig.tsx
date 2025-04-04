@@ -2,8 +2,8 @@ import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { SeeWorkflowsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeWorkflowsNoSelectionRecordActionEffect';
 import { SearchRecordsRecordAgnosticActionEffect } from '@/action-menu/actions/record-agnostic-actions/components/SearchRecordsRecordAgnosticActionEffect';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
+import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { RecordAgnosticConfigAction } from '@/action-menu/actions/types/RecordAgnosticConfigAction';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -23,7 +23,7 @@ import {
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<
   string,
-  RecordAgnosticConfigAction
+  ActionConfig
 > = {
   [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
     type: ActionMenuEntryType.Standard,

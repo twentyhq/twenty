@@ -1,10 +1,10 @@
+import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { ResetContextToSelectionCommandButton } from '@/command-menu/components/ResetContextToSelectionCommandButton';
 import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
 import { useMatchingCommandMenuCommands } from '@/command-menu/hooks/useMatchingCommandMenuCommands';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { Command } from '@/command-menu/types/Command';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -13,9 +13,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export type CommandGroupConfig = {
+export type ActionGroupConfig = {
   heading: string;
-  items?: Command[];
+  items?: ActionConfig[];
 };
 
 export const CommandMenu = () => {
@@ -26,13 +26,13 @@ export const CommandMenu = () => {
 
   const {
     noResults,
-    matchingStandardActionRecordSelectionCommands,
-    matchingStandardActionObjectCommands,
-    matchingWorkflowRunRecordSelectionCommands,
-    matchingStandardActionGlobalCommands,
-    matchingWorkflowRunGlobalCommands,
-    matchingNavigateCommands,
-    fallbackCommands,
+    matchingStandardActionRecordSelectionActions,
+    matchingStandardActionObjectActions,
+    matchingWorkflowRunRecordSelectionActions,
+    matchingStandardActionGlobalActions,
+    matchingWorkflowRunGlobalActions,
+    matchingNavigateActions,
+    fallbackActions,
   } = useMatchingCommandMenuCommands({
     commandMenuSearch,
   });
@@ -50,34 +50,32 @@ export const CommandMenu = () => {
     (item) => item.id === objectMetadataItemId,
   );
 
-  const commandGroups: CommandGroupConfig[] = [
+  const commandGroups: ActionGroupConfig[] = [
     {
       heading: t`Record Selection`,
-      items: matchingStandardActionRecordSelectionCommands.concat(
-        matchingWorkflowRunRecordSelectionCommands,
+      items: matchingStandardActionRecordSelectionActions.concat(
+        matchingWorkflowRunRecordSelectionActions,
       ),
     },
     {
       heading: currentObjectMetadataItem?.labelPlural ?? t`Object`,
-      items: matchingStandardActionObjectCommands,
+      items: matchingStandardActionObjectActions,
     },
     {
       heading: t`Global`,
-      items: matchingStandardActionGlobalCommands
-        .concat(matchingWorkflowRunGlobalCommands)
-        .concat(matchingNavigateCommands),
+      items: matchingStandardActionGlobalActions
+        .concat(matchingWorkflowRunGlobalActions)
+        .concat(matchingNavigateActions),
     },
     {
       heading: t`Search ''${commandMenuSearch}'' with...`,
-      items: fallbackCommands,
+      items: fallbackActions,
     },
   ];
 
-  const selectableItems: Command[] = commandGroups.flatMap(
-    (group) => group.items ?? [],
-  );
+  const selectableItems = commandGroups.flatMap((group) => group.items ?? []);
 
-  const selectableItemIds = selectableItems.map((item) => item.id);
+  const selectableItemIds = selectableItems.map((item) => item.key);
 
   if (isDefined(previousContextStoreCurrentObjectMetadataItemId)) {
     selectableItemIds.unshift(RESET_CONTEXT_TO_SELECTION);

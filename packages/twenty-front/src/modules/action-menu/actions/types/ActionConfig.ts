@@ -7,7 +7,7 @@ import {
 import { MessageDescriptor } from '@lingui/core';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
-export type RecordConfigAction = {
+export type ActionConfig = {
   type: ActionMenuEntryType;
   scope: ActionMenuEntryScope;
   key: string;
