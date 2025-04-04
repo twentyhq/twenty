@@ -1,15 +1,15 @@
+import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { SeeRunsNoSelectionRecordActionEffect } from '@/action-menu/actions/record-actions/no-selection/components/SeeRunsNoSelectionRecordActionEffect';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { NoSelectionWorkflowRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/workflow-actions/types/NoSelectionWorkflowRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { ActivateWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/ActivateWorkflowSingleRecordActionEffect';
-import { DeactivateWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DeactivateWorkflowSingleRecordActionEffect';
-import { DiscardDraftWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DiscardDraftWorkflowSingleRecordActionEffect';
-import { SeeActiveVersionWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeActiveVersionWorkflowSingleRecordActionEffect';
-import { SeeRunsWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeRunsWorkflowSingleRecordActionEffect';
-import { SeeVersionsWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeVersionsWorkflowSingleRecordActionEffect';
-import { TestWorkflowSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/TestWorkflowSingleRecordActionEffect';
+import { ActivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/ActivateWorkflowSingleRecordActionEffect';
+import { DeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DeactivateWorkflowSingleRecordActionEffect';
+import { DiscardDraftWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DiscardDraftWorkflowSingleRecordActionEffect';
+import { SeeActiveVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeActiveVersionWorkflowSingleRecordActionEffect';
+import { SeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeRunsWorkflowSingleRecordActionEffect';
+import { SeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeVersionsWorkflowSingleRecordActionEffect';
+import { TestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/TestWorkflowSingleRecordActionEffect';
 import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
@@ -17,6 +17,8 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { AppPath } from '@/types/AppPath';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -27,7 +29,6 @@ import {
   IconPower,
   IconVersions,
 } from 'twenty-ui';
-
 export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
     [WorkflowSingleRecordActionKeys.ACTIVATE]: {
@@ -51,7 +52,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      component: ActivateWorkflowSingleRecordActionEffect,
+      component: <ActivateWorkflowSingleRecordAction />,
     },
     [WorkflowSingleRecordActionKeys.DEACTIVATE]: {
       key: WorkflowSingleRecordActionKeys.DEACTIVATE,
@@ -69,7 +70,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      component: DeactivateWorkflowSingleRecordActionEffect,
+      component: <DeactivateWorkflowSingleRecordAction />,
     },
     [WorkflowSingleRecordActionKeys.DISCARD_DRAFT]: {
       key: WorkflowSingleRecordActionKeys.DISCARD_DRAFT,
@@ -88,7 +89,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      component: DiscardDraftWorkflowSingleRecordActionEffect,
+      component: <DiscardDraftWorkflowSingleRecordAction />,
     },
     [WorkflowSingleRecordActionKeys.SEE_ACTIVE_VERSION]: {
       key: WorkflowSingleRecordActionKeys.SEE_ACTIVE_VERSION,
@@ -106,7 +107,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      component: SeeActiveVersionWorkflowSingleRecordActionEffect,
+      component: <SeeActiveVersionWorkflowSingleRecordAction />,
     },
     [WorkflowSingleRecordActionKeys.SEE_RUNS]: {
       key: WorkflowSingleRecordActionKeys.SEE_RUNS,
@@ -123,7 +124,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      component: SeeRunsWorkflowSingleRecordActionEffect,
+      component: <SeeRunsWorkflowSingleRecordAction />,
     },
     [WorkflowSingleRecordActionKeys.SEE_VERSIONS]: {
       key: WorkflowSingleRecordActionKeys.SEE_VERSIONS,
@@ -140,7 +141,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      component: SeeVersionsWorkflowSingleRecordActionEffect,
+      component: <SeeVersionsWorkflowSingleRecordAction />,
     },
     [WorkflowSingleRecordActionKeys.TEST]: {
       key: WorkflowSingleRecordActionKeys.TEST,
@@ -163,7 +164,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      component: TestWorkflowSingleRecordActionEffect,
+      component: <TestWorkflowSingleRecordAction />,
     },
     [NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS]: {
       type: ActionMenuEntryType.Navigation,
@@ -177,7 +178,12 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       shouldBeRegistered: () => true,
       availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-      component: SeeRunsNoSelectionRecordActionEffect,
+      component: (
+        <ActionLink
+          to={AppPath.RecordIndexPage}
+          params={{ objectNamePlural: CoreObjectNamePlural.WorkflowRun }}
+        />
+      ),
     },
   },
   actionKeys: [

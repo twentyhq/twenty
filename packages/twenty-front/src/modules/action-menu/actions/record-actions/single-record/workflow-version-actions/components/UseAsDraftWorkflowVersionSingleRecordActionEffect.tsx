@@ -1,5 +1,5 @@
+import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AppPath } from '@/types/AppPath';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
@@ -29,7 +29,7 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
   const hasAlreadyDraftVersion =
     workflow?.versions.some((version) => version.status === 'DRAFT') || false;
 
-  useActionEffect(() => {
+  const onClick = () => {
     if (!isDefined(workflowVersion) || !isDefined(workflow) || hasNavigated) {
       return;
     }
@@ -53,20 +53,15 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
 
       executeAction();
     }
-  }, [
-    workflowVersion,
-    workflow,
-    hasAlreadyDraftVersion,
-    createDraftFromWorkflowVersion,
-    navigate,
-    setOpenOverrideWorkflowDraftConfirmationModal,
-    hasNavigated,
-  ]);
+  };
 
   return isDefined(workflowVersion) ? (
-    <OverrideWorkflowDraftConfirmationModal
-      workflowId={workflowVersion.workflow.id}
-      workflowVersionIdToCopy={workflowVersion.id}
-    />
+    <>
+      <Action onClick={onClick} />
+      <OverrideWorkflowDraftConfirmationModal
+        workflowId={workflowVersion.workflow.id}
+        workflowVersionIdToCopy={workflowVersion.id}
+      />
+    </>
   ) : null;
 };

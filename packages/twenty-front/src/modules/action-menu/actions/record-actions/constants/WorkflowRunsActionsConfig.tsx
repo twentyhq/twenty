@@ -1,8 +1,8 @@
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { SeeVersionWorkflowRunSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeVersionWorkflowRunSingleRecordActionEffect';
-import { SeeWorkflowWorkflowRunSingleRecordActionEffect } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeWorkflowWorkflowRunSingleRecordActionEffect';
+import { SeeVersionWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeVersionWorkflowRunSingleRecordActionEffect';
+import { SeeWorkflowWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeWorkflowWorkflowRunSingleRecordActionEffect';
 import { WorkflowRunSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/types/WorkflowRunSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
@@ -29,7 +29,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      component: SeeWorkflowWorkflowRunSingleRecordActionEffect,
+      component: <SeeWorkflowWorkflowRunSingleRecordAction />,
     },
     [WorkflowRunSingleRecordActionKeys.SEE_VERSION]: {
       key: WorkflowRunSingleRecordActionKeys.SEE_VERSION,
@@ -45,7 +45,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
-      component: SeeVersionWorkflowRunSingleRecordActionEffect,
+      component: <SeeVersionWorkflowRunSingleRecordAction />,
     },
   },
   actionKeys: [
