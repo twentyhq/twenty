@@ -54,6 +54,7 @@ export const EventFieldDiffValue = ({
               defaultValue: fieldMetadataItem.defaultValue,
             },
             hotkeyScope: 'field-event-diff',
+            isReadOnly: false,
           }}
         >
           <FieldDisplay />

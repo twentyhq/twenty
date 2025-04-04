@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
@@ -29,7 +28,7 @@ export type OpenTableCellArgs = {
 
 export const useOpenRecordTableCellFromCell = () => {
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
-  const { recordId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition, isReadOnly } = useContext(FieldContext);
 
   const { pathToShowPage, objectNameSingular } =
     useRecordTableRowContextOrThrow();
@@ -37,8 +36,6 @@ export const useOpenRecordTableCellFromCell = () => {
   const { onOpenTableCell } = useRecordTableBodyContextOrThrow();
 
   const cellPosition = useCurrentTableCellPosition();
-
-  const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const openTableCell = (
     initialValue?: string,
@@ -50,7 +47,7 @@ export const useOpenRecordTableCellFromCell = () => {
       customCellHotkeyScope,
       recordId,
       fieldDefinition,
-      isReadOnly: isFieldReadOnly,
+      isReadOnly,
       pathToShowPage,
       objectNameSingular,
       initialValue,

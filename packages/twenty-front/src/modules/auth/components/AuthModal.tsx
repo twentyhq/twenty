@@ -22,10 +22,7 @@ export const AuthModal = ({
     modalVariant="primary"
     isOpenAnimated={isOpenAnimated}
   >
-    <ScrollWrapper
-      contextProviderName="modalContent"
-      componentInstanceId="scroll-wrapper-modal-content"
-    >
+    <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
       <StyledContent>{children}</StyledContent>
     </ScrollWrapper>
   </Modal>
