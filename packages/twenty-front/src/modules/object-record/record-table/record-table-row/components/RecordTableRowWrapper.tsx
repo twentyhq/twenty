@@ -1,4 +1,4 @@
-import { ReactNode, useContext, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -6,7 +6,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useInView } from 'react-intersection-observer';
 
@@ -34,14 +34,10 @@ export const RecordTableRowWrapper = ({
 
   const { onIndexRecordsLoaded } = useRecordIndexContextOrThrow();
 
-  const scrollWrapperRef = useContext(
-    RecordTableWithWrappersScrollWrapperContext,
-  );
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const { ref: elementRef, inView } = useInView({
-    root: scrollWrapperRef.ref.current?.querySelector(
-      '[data-overlayscrollbars-viewport]',
-    ),
+    root: scrollWrapperHTMLElement,
     rootMargin: '1000px',
   });
 

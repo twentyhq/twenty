@@ -138,8 +138,6 @@
     "next-mdx-remote": "^4.4.1",
     "nodemailer": "^6.9.8",
     "openapi-types": "^12.1.3",
-    "overlayscrollbars": "^2.6.1",
-    "overlayscrollbars-react": "^0.5.4",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",

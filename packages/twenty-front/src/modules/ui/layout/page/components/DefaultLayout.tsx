@@ -30,17 +30,7 @@ const StyledLayout = styled.div`
   scrollbar-width: 4px;
   width: 100%;
 
-  *::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
-  }
-
-  *::-webkit-scrollbar-corner {
-    background-color: transparent;
-  }
-
   *::-webkit-scrollbar-thumb {
-    background-color: transparent;
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;

@@ -137,6 +137,7 @@ const meta: Meta = {
                               ...mockPerformance.fieldDefinition,
                             },
                             hotkeyScope: 'hotkey-scope',
+                            isReadOnly: false,
                           }}
                         >
                           <RelationFieldValueSetterEffect />

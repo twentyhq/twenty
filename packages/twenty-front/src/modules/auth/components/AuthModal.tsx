@@ -12,10 +12,7 @@ type AuthModalProps = { children: React.ReactNode };
 
 export const AuthModal = ({ children }: AuthModalProps) => (
   <Modal padding={'none'} modalVariant="primary">
-    <ScrollWrapper
-      contextProviderName="modalContent"
-      componentInstanceId="scroll-wrapper-modal-content"
-    >
+    <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
       <StyledContent>{children}</StyledContent>
     </ScrollWrapper>
   </Modal>
