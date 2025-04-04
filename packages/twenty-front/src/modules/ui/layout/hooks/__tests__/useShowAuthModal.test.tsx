@@ -56,16 +56,16 @@ const getResult = (isDefaultLayoutAuthModalVisible = true) =>
 
 // prettier-ignore
 const testCases = [
-  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: false },
-  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
-  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
-  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
-  { loc: AppPath.Verify, isLogged: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: false },
-  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: false },
-  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: false },
-  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: false },
-  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: false },
-  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
+  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: true },
+  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
+  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
+  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
+  { loc: AppPath.Verify, isLogged: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: true },
+  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: true },
+  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: true },
+  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: true },
+  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: true },
+  { loc: AppPath.Verify, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
 
   { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: true },
   { loc: AppPath.VerifyEmail, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
