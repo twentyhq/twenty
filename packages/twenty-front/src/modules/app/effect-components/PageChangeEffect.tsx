@@ -60,17 +60,15 @@ export const PageChangeEffect = () => {
   }, [location, previousLocation]);
 
   const [searchParams] = useSearchParams();
+  const navigationParams = searchParams.get('animateModal')
+    ? `?animateModal=${searchParams.get('animateModal')}`
+    : '';
 
   useEffect(() => {
     if (isDefined(pageChangeEffectNavigateLocation)) {
-      navigate({
-        pathname: pageChangeEffectNavigateLocation,
-        search: searchParams.get('animateModal')
-          ? `animateModal=${searchParams.get('animateModal')}`
-          : '',
-      });
+      navigate(pageChangeEffectNavigateLocation + navigationParams);
     }
-  }, [navigate, pageChangeEffectNavigateLocation, searchParams]);
+  }, [navigate, pageChangeEffectNavigateLocation, navigationParams]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(
