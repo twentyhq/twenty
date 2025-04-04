@@ -106,7 +106,7 @@ export const ServerlessFunctionExecutionResult = ({
         height={serverlessFunctionTestData.height}
         options={{ readOnly: true, domReadOnly: true }}
         isLoading={isTesting}
-        withHeader
+        variant="with-header"
       />
     </StyledContainer>
   );
