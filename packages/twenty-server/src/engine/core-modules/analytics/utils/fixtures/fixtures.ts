@@ -1,4 +1,3 @@
-
 export const fixtures = [
   {
     action: 'customDomain.activated',
