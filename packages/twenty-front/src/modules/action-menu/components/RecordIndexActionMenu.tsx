@@ -23,25 +23,44 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
   return (
     <>
       {contextStoreCurrentObjectMetadataItemId && (
-        <ActionMenuContext.Provider
-          value={{
-            isInRightDrawer: false,
-            displayType: 'button',
-            onActionStartedCallback: (action) => {
-              if (action.key === MultipleRecordsActionKeys.DELETE) {
-                setIsLoadMoreLocked(true);
-              }
-            },
-            onActionExecutedCallback: (action) => {
-              if (action.key === MultipleRecordsActionKeys.DELETE) {
-                setIsLoadMoreLocked(false);
-              }
-            },
-          }}
-        >
-          {!isMobile && <PageHeaderActionMenuButtons />}
-          <RecordIndexActionMenuDropdown />
-        </ActionMenuContext.Provider>
+        <>
+          <ActionMenuContext.Provider
+            value={{
+              isInRightDrawer: false,
+              displayType: 'button',
+              onActionStartedCallback: (action) => {
+                if (action.key === MultipleRecordsActionKeys.DELETE) {
+                  setIsLoadMoreLocked(true);
+                }
+              },
+              onActionExecutedCallback: (action) => {
+                if (action.key === MultipleRecordsActionKeys.DELETE) {
+                  setIsLoadMoreLocked(false);
+                }
+              },
+            }}
+          >
+            {!isMobile && <PageHeaderActionMenuButtons />}
+          </ActionMenuContext.Provider>
+          <ActionMenuContext.Provider
+            value={{
+              isInRightDrawer: false,
+              displayType: 'dropdownItem',
+              onActionStartedCallback: (action) => {
+                if (action.key === MultipleRecordsActionKeys.DELETE) {
+                  setIsLoadMoreLocked(true);
+                }
+              },
+              onActionExecutedCallback: (action) => {
+                if (action.key === MultipleRecordsActionKeys.DELETE) {
+                  setIsLoadMoreLocked(false);
+                }
+              },
+            }}
+          >
+            <RecordIndexActionMenuDropdown />
+          </ActionMenuContext.Provider>
+        </>
       )}
     </>
   );
