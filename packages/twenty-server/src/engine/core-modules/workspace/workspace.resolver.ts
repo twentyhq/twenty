@@ -53,7 +53,6 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
 import { Workspace } from './workspace.entity';
 
@@ -73,7 +72,6 @@ export class WorkspaceResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly analyticsService: AnalyticsService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly roleService: RoleService,
     @InjectRepository(BillingSubscription, 'core')
@@ -116,10 +114,6 @@ export class WorkspaceResolver {
     @AuthApiKey() apiKey?: string,
   ) {
     try {
-      const analytics = this.analyticsService.createAnalyticsContext({
-        workspaceId: workspace.id,
-      });
-
       return await this.workspaceService.updateWorkspaceById({
         payload: {
           ...data,

@@ -1,6 +1,5 @@
-import { AnalyticsEvent } from '../../types/event.type';
 
-export const fixtures: Array<AnalyticsEvent> = [
+export const fixtures = [
   {
     action: 'customDomain.activated',
     timestamp: '2024-10-24T15:55:35.177',
