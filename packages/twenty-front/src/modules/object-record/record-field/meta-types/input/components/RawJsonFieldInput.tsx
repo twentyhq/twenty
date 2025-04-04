@@ -4,9 +4,17 @@ import { useJsonField } from '../../hooks/useJsonField';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { CodeEditor } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  CodeEditor,
+  FloatingIconButton,
+  IconEye,
+  IconPencil,
+  isTwoFirstDepths,
+  JsonTree,
+} from 'twenty-ui';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
@@ -27,6 +35,14 @@ const StyledJsonTreeContainer = styled.div`
   max-width: 100vw;
   padding: ${({ theme }) => theme.spacing(2)};
   position: relative;
+  overflow-y: auto;
+`;
+
+const StyledSwitchModeButtonContainer = styled.div`
+  position: fixed;
+  top: ${({ theme }) => theme.spacing(2)};
+  right: ${({ theme }) => theme.spacing(2)};
+  z-index: 10;
 `;
 
 export const RawJsonFieldInput = ({
@@ -40,6 +56,14 @@ export const RawJsonFieldInput = ({
     useJsonField();
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const parsedDraftJsonValue = isDefined(draftValue)
+    ? JSON.parse(draftValue)
+    : undefined;
+
+  const showEditButton = true;
 
   const handleEnter = (newText: string) => {
     // onEnter?.(() => persistJsonField(newText));
@@ -112,17 +136,42 @@ export const RawJsonFieldInput = ({
     [handleShiftTab, draftValue],
   );
 
+  const handleToggleEditing = () => {
+    setIsEditing(!isEditing);
+  };
+
   return (
     <StyledJsonTreeContainer ref={containerRef}>
-      <CodeEditor
-        value={draftValue}
-        language="application/json"
-        height={284}
-        options={{
-          lineNumbers: 'off',
-        }}
-        onChange={handleChange}
-      />
+      {showEditButton && (
+        <StyledSwitchModeButtonContainer>
+          <FloatingIconButton
+            Icon={isEditing ? IconEye : IconPencil}
+            onClick={handleToggleEditing}
+          />
+        </StyledSwitchModeButtonContainer>
+      )}
+
+      {isEditing ? (
+        <CodeEditor
+          value={draftValue}
+          language="application/json"
+          height={284}
+          options={{
+            lineNumbers: 'off',
+          }}
+          onChange={handleChange}
+        />
+      ) : (
+        <JsonTree
+          value={parsedDraftJsonValue ?? ''}
+          arrowButtonCollapsedLabel=""
+          arrowButtonExpandedLabel=""
+          emptyArrayLabel=""
+          emptyObjectLabel=""
+          emptyStringLabel=""
+          shouldExpandNodeInitially={isTwoFirstDepths}
+        />
+      )}
     </StyledJsonTreeContainer>
   );
 };
