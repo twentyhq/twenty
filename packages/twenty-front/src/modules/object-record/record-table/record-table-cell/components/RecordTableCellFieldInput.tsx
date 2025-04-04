@@ -1,15 +1,22 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+import { RichTextInput } from '@/object-record/record-field/components/RichTextInput';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
+import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
+  const { fieldDefinition, recordId } = useContext(FieldContext);
+
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
 
   const isFieldReadOnly = useIsFieldValueReadOnly();
@@ -68,7 +75,20 @@ export const RecordTableCellFieldInput = () => {
     onMoveFocus('left');
   };
 
-  return (
+  return isFieldRichTextV2(fieldDefinition) ? (
+    <RichTextInput
+      targetableObject={{
+        id: recordId,
+        targetObjectNameSingular: fieldDefinition.metadata
+          .objectMetadataNameSingular as
+          | CoreObjectNameSingular.Note
+          | CoreObjectNameSingular.Task,
+      }}
+      onCancel={handleCancel}
+      onClickOutside={handleClickOutside}
+      onEscape={handleEscape}
+    />
+  ) : (
     <FieldInput
       onCancel={handleCancel}
       onClickOutside={handleClickOutside}

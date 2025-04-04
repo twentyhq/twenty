@@ -1,0 +1,56 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useCallback } from 'react';
+import { useRecoilCallback } from 'recoil';
+import { IconPencil } from 'twenty-ui/display';
+
+export const useRichTextCommandMenu = () => {
+  const { navigateCommandMenu, openCommandMenu } = useCommandMenu();
+
+  const openRichTextInCommandMenu = useRecoilCallback(
+    ({ set }) =>
+      ({
+        activityId: id,
+        activityObjectNameSingular,
+      }: {
+        activityId: string;
+        activityObjectNameSingular:
+          | CoreObjectNameSingular.Note
+          | CoreObjectNameSingular.Task
+          | null;
+      }) => {
+        set(viewableRichTextComponentState, {
+          activityId: id,
+          activityObjectNameSingular,
+        });
+
+        openCommandMenu();
+        navigateCommandMenu({
+          page: CommandMenuPages.EditRichText,
+          pageTitle: 'Rich Text',
+          pageIcon: IconPencil,
+          resetNavigationStack: true,
+        });
+      },
+    [navigateCommandMenu, openCommandMenu],
+  );
+
+  const editRichText = useCallback(
+    (
+      activityId: string,
+      activityObjectNameSingular:
+        | CoreObjectNameSingular.Note
+        | CoreObjectNameSingular.Task
+        | null,
+    ) => {
+      openRichTextInCommandMenu({ activityId, activityObjectNameSingular });
+    },
+    [openRichTextInCommandMenu],
+  );
+
+  return {
+    editRichText,
+  };
+};
