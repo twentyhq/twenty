@@ -20,7 +20,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             echo "Successfully connected to VPS"
-            echo "PROJECT_ROOT: ${{ env.PROJECT_ROOT }}"
+            echo "PROJECT_ROOT: ${{ vars.PROJECT_ROOT }}"
 
       - name: SSH - Pull latest code
         uses: appleboy/ssh-action@v1
@@ -31,7 +31,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             echo "Changing to project directory and pulling changes"
-            cd ${{ env.PROJECT_ROOT }}
+            cd ${{ vars.PROJECT_ROOT }}
             git checkout dev
             git pull origin dev
             echo "Code updated successfully"
@@ -39,14 +39,13 @@ jobs:
       - name: SSH - Build canary Docker image
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ env.SSH_HOST }}
-          port: ${{ env.SSH_PORT }}
-          username: ${{ env.SSH_USER }}
-          password: ${{ env.SSH_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            set -e
             echo "Building canary image"
-            cd ${{env.PROJECT_ROOT}}/${{ env.DOCKER_DIR }}
+            cd ${{vars.PROJECT_ROOT}}/${{ vars.DOCKER_DIR }}
             make kvoip-prod-build
             echo "Canary image built successfully"
 
@@ -58,9 +57,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            set -e
             echo "Starting containers"
-            cd ${{env.PROJECT_ROOT}}/${{ env.DOCKER_DIR }}
+            cd ${{vars.PROJECT_ROOT}}/${{ vars.DOCKER_DIR }}
             docker compose up -d --build
             echo "Containers started"
 
@@ -72,12 +70,11 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            set -e
-            echo "Checking health of required containers: ${{ env.REQUIRED_CONTAINERS }}"
+            echo "Checking health of required containers: ${{ vars.REQUIRED_CONTAINERS }}"
 
             # Check each required container
             all_ok=true
-            for container in ${{ env.REQUIRED_CONTAINERS }}; do
+            for container in ${{ vars.REQUIRED_CONTAINERS }}; do
               if ! docker inspect --format '{{.State.Health.Status}}' "$container" | grep -q 'healthy'; then
                 echo "::error::Container $container is not healthy"
                 docker logs "$container"
@@ -125,9 +122,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            set -e
             echo "Migration files changed - running migrations"
-            cd ${{env.PROJECT_ROOT}}/${{ env.DOCKER_DIR }}
+            cd ${{vars.PROJECT_ROOT}}/${{ vars.DOCKER_DIR }}
             make prod-migrate-kvoipv2-db
             echo "Migrations completed successfully"
 
@@ -135,4 +131,4 @@ jobs:
         run: |
           echo "Deployment completed successfully"
           echo "Migrations were ${{ steps.changed-files.outputs.any_changed == 'true' && 'executed' || 'not needed' }}"
-          echo "All required containers (${{ env.REQUIRED_CONTAINERS }}) are healthy"
+          echo "All required containers (${{ vars.REQUIRED_CONTAINERS }}) are healthy"
