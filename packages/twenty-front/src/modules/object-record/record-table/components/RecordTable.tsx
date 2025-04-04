@@ -76,7 +76,14 @@ export const RecordTable = () => {
       )}
       <RecordTableBodyUnselectEffect tableBodyRef={tableBodyRef} />
       {recordTableIsEmpty ? (
-        <RecordTableEmptyState />
+        hasRecordGroups ? (
+          <RecordTableRecordGroupsBody />
+        ) : (
+          <>
+            <RecordTableHeader />
+            <RecordTableEmptyState />
+          </>
+        )
       ) : (
         <>
           <StyledTable ref={tableBodyRef}>
