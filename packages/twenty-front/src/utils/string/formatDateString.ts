@@ -1,4 +1,5 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
+import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { formatDateISOStringToFullDate } from '@/localization/utils/formatDateISOStringToFullDate';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
 import { formatDateISOStringToTime } from '@/localization/utils/formatDateISOStringToTime';
@@ -29,6 +30,8 @@ export const formatDateString = ({
       return formatDateISOStringToTime(value, timeZone)
     case ('full_date'):
       return formatDateISOStringToFullDate(value, timeZone, dateFormat)
+    case ('date'):
+      return formatDateISOStringToDate(value, timeZone)
     default:
       return formatDateISOStringToFullDate(value, timeZone, dateFormat)
   }

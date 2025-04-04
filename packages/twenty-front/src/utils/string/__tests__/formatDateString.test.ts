@@ -120,4 +120,24 @@ describe('formatDateString', () => {
 
     expect(result).toBe(mockFormattedDate);
   });
+
+  it('should return only date from date value when displayFormat is set to time', () => {
+    const mockDate = '2023-01-01T12:00:00Z';
+    const mockFormattedDate = 'January 2';
+    
+    jest.mock('@/localization/utils/formatDateISOStringToDate', () => ({
+      formatDateISOStringToDateTime: jest
+        .fn()
+        .mockReturnValue(mockFormattedDate),
+    }));
+
+    const result = formatDateString({
+      ...defaultParams,
+      timeZone: 'Pacific/Kiritimati',
+      value: mockDate,
+      displayFormat: 'date'
+    });
+
+    expect(result).toBe(mockFormattedDate);
+  });
 });
