@@ -1,5 +1,4 @@
 import { useTheme } from '@emotion/react';
-import { IconChevronDown } from 'twenty-ui';
 
 import { ObjectFilterDropdownRecordRemoveFilterMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordRemoveFilterMenuItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -14,6 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from './ObjectFilterDropdownSearchInput';
+import { IconChevronDown } from 'twenty-ui/display';
 
 const SINGLE_ENTITY_FILTER_DROPDOWN_ID = 'single-entity-filter-dropdown';
 

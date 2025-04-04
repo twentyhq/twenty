@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -15,6 +14,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const companiesMock = getCompaniesMock();
 

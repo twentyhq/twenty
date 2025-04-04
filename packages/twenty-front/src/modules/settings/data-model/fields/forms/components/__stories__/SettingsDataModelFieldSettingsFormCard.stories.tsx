@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
@@ -11,6 +10,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { SettingsDataModelFieldSettingsFormCard } from '../SettingsDataModelFieldSettingsFormCard';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',

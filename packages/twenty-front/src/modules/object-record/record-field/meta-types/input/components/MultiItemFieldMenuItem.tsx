@@ -7,8 +7,8 @@ import {
   IconBookmarkPlus,
   IconPencil,
   IconTrash,
-  MenuItem,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;

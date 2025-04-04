@@ -1,12 +1,3 @@
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconEyeOff,
-  IconFilter,
-  IconSortDescending,
-  MenuItem,
-} from 'twenty-ui';
-
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -19,6 +10,14 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useLingui } from '@lingui/react/macro';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { ColumnDefinition } from '../../types/ColumnDefinition';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconEyeOff,
+  IconFilter,
+  IconSortDescending,
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;

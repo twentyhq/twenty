@@ -7,8 +7,8 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { Button } from 'twenty-ui';
 import { useLingui } from '@lingui/react/macro';
+import { Button } from 'twenty-ui/input';
 
 export const ViewPickerCreateButton = () => {
   const { t } = useLingui();

@@ -3,14 +3,9 @@ import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/inte
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import styled from '@emotion/styled';
-import {
-  IconDotsVertical,
-  IconPencil,
-  IconTrash,
-  LightIconButton,
-  MenuItem,
-  UndecoratedLink,
-} from 'twenty-ui';
+import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 type SettingsIntegrationDatabaseConnectionSummaryCardProps = {
   databaseLogoUrl: string;

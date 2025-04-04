@@ -10,7 +10,7 @@ import {
   SideMenuController,
 } from '@blocknote/react';
 import styled from '@emotion/styled';
-import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui';
+import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
 
 type CustomSideMenuProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;

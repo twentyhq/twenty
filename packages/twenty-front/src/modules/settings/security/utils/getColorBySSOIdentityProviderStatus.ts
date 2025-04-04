@@ -1,7 +1,5 @@
-/* @license Enterprise */
-
-import { ThemeColor } from 'twenty-ui';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
+import { ThemeColor } from 'twenty-ui/theme';
 
 export const getColorBySSOIdentityProviderStatus: Record<
   SsoIdentityProviderStatus,

@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
-import { AvatarType } from 'twenty-ui';
 
 import { Favorite } from '@/favorites/types/Favorite';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { AvatarType } from 'twenty-ui/display';
 
 export const mockId = '8f3b2121-f194-4ba4-9fbf-2d5a37126806';
 export const favoriteId = 'f088c8c9-05d2-4276-b065-b863cc7d0b33';
@@ -42,7 +42,6 @@ export const initialFavorites: Favorite[] = [
     company: { id: '4', name: 'Company Test' },
     forWorkspaceMemberId: '1',
     favoriteFolderId: '1',
-
   },
   {
     __typename: 'Favorite',
@@ -101,374 +100,371 @@ export const sortedFavorites = [
   },
 ];
 
-const UPDATE_ONE_FAVORITE_MUTATION =  gql`
-mutation UpdateOneFavorite(
-  $idToUpdate: ID!
-  $input: FavoriteUpdateInput!
-) {
-  updateFavorite(id: $idToUpdate, data: $input) {
-    __typename
-    company {
+const UPDATE_ONE_FAVORITE_MUTATION = gql`
+  mutation UpdateOneFavorite($idToUpdate: ID!, $input: FavoriteUpdateInput!) {
+    updateFavorite(id: $idToUpdate, data: $input) {
       __typename
-      accountOwnerId
-      address {
-        addressStreet1
-        addressStreet2
-        addressCity
-        addressState
-        addressCountry
-        addressPostcode
-        addressLat
-        addressLng
-      }
-      annualRecurringRevenue {
-        amountMicros
-        currencyCode
-      }
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
+      company {
+        __typename
+        accountOwnerId
+        address {
+          addressStreet1
+          addressStreet2
+          addressCity
+          addressState
+          addressCountry
+          addressPostcode
+          addressLat
+          addressLng
+        }
+        annualRecurringRevenue {
+          amountMicros
+          currencyCode
+        }
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        domainName {
+          primaryLinkUrl
+          primaryLinkLabel
+          secondaryLinks
+        }
+        employees
+        id
+        idealCustomerProfile
+        internalCompetitions
+        introVideo {
+          primaryLinkUrl
+          primaryLinkLabel
+          secondaryLinks
+        }
+        linkedinLink {
+          primaryLinkUrl
+          primaryLinkLabel
+          secondaryLinks
+        }
         name
-        context
+        position
+        tagline
+        updatedAt
+        visaSponsorship
+        workPolicy
+        xLink {
+          primaryLinkUrl
+          primaryLinkLabel
+          secondaryLinks
+        }
       }
-      deletedAt
-      domainName {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      employees
-      id
-      idealCustomerProfile
-      internalCompetitions
-      introVideo {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      linkedinLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      name
-      position
-      tagline
-      updatedAt
-      visaSponsorship
-      workPolicy
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-    }
-    companyId
-    createdAt
-    deletedAt
-    favoriteFolder {
-      __typename
-      createdAt
-      deletedAt
-      id
-      name
-      position
-      updatedAt
-    }
-    favoriteFolderId
-    forWorkspaceMember {
-      __typename
-      avatarUrl
-      colorScheme
-      createdAt
-      dateFormat
-      deletedAt
-      id
-      locale
-      name {
-        firstName
-        lastName
-      }
-      timeFormat
-      timeZone
-      updatedAt
-      userEmail
-      userId
-    }
-    forWorkspaceMemberId
-    id
-    note {
-      __typename
-      body
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
-        name
-        context
-      }
-      deletedAt
-      id
-      position
-      title
-      updatedAt
-    }
-    noteId
-    opportunity {
-      __typename
-      amount {
-        amountMicros
-        currencyCode
-      }
-      closeDate
       companyId
       createdAt
-      createdBy {
-        source
-        workspaceMemberId
+      deletedAt
+      favoriteFolder {
+        __typename
+        createdAt
+        deletedAt
+        id
         name
-        context
+        position
+        updatedAt
       }
-      deletedAt
+      favoriteFolderId
+      forWorkspaceMember {
+        __typename
+        avatarUrl
+        colorScheme
+        createdAt
+        dateFormat
+        deletedAt
+        id
+        locale
+        name {
+          firstName
+          lastName
+        }
+        timeFormat
+        timeZone
+        updatedAt
+        userEmail
+        userId
+      }
+      forWorkspaceMemberId
       id
-      name
-      pointOfContactId
-      position
-      stage
-      updatedAt
-    }
-    opportunityId
-    person {
-      __typename
-      avatarUrl
-      city
-      companyId
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
+      note {
+        __typename
+        body
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        id
+        position
+        title
+        updatedAt
+      }
+      noteId
+      opportunity {
+        __typename
+        amount {
+          amountMicros
+          currencyCode
+        }
+        closeDate
+        companyId
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        id
         name
-        context
+        pointOfContactId
+        position
+        stage
+        updatedAt
       }
-      deletedAt
-      emails {
-        primaryEmail
-        additionalEmails
+      opportunityId
+      person {
+        __typename
+        avatarUrl
+        city
+        companyId
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        emails {
+          primaryEmail
+          additionalEmails
+        }
+        id
+        intro
+        jobTitle
+        linkedinLink {
+          primaryLinkUrl
+          primaryLinkLabel
+          secondaryLinks
+        }
+        name {
+          firstName
+          lastName
+        }
+        performanceRating
+        phones {
+          primaryPhoneNumber
+          primaryPhoneCountryCode
+          primaryPhoneCallingCode
+          additionalPhones
+        }
+        position
+        updatedAt
+        whatsapp {
+          primaryPhoneNumber
+          primaryPhoneCountryCode
+          primaryPhoneCallingCode
+          additionalPhones
+        }
+        workPreference
+        xLink {
+          primaryLinkUrl
+          primaryLinkLabel
+          secondaryLinks
+        }
       }
-      id
-      intro
-      jobTitle
-      linkedinLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      name {
-        firstName
-        lastName
-      }
-      performanceRating
-      phones {
-        primaryPhoneNumber
-        primaryPhoneCountryCode
-        primaryPhoneCallingCode
-        additionalPhones
-      }
-      position
-      updatedAt
-      whatsapp {
-        primaryPhoneNumber
-        primaryPhoneCountryCode
-        primaryPhoneCallingCode
-        additionalPhones
-      }
-      workPreference
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-    }
-    personId
-    pet {
-      __typename
-      age
-      averageCostOfKibblePerMonth {
-        amountMicros
-        currencyCode
-      }
-      bio
-      birthday
-      comments
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
+      personId
+      pet {
+        __typename
+        age
+        averageCostOfKibblePerMonth {
+          amountMicros
+          currencyCode
+        }
+        bio
+        birthday
+        comments
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        extraData
+        id
+        interestingFacts
+        isGoodWithKids
+        location {
+          addressStreet1
+          addressStreet2
+          addressCity
+          addressState
+          addressCountry
+          addressPostcode
+          addressLat
+          addressLng
+        }
+        makesOwnerThinkOf {
+          firstName
+          lastName
+        }
         name
-        context
+        pictures {
+          primaryLinkUrl
+          primaryLinkLabel
+          secondaryLinks
+        }
+        position
+        soundSwag
+        species
+        traits
+        updatedAt
+        vetEmail {
+          primaryEmail
+          additionalEmails
+        }
+        vetPhone {
+          primaryPhoneNumber
+          primaryPhoneCountryCode
+          primaryPhoneCallingCode
+          additionalPhones
+        }
       }
-      deletedAt
-      extraData
-      id
-      interestingFacts
-      isGoodWithKids
-      location {
-        addressStreet1
-        addressStreet2
-        addressCity
-        addressState
-        addressCountry
-        addressPostcode
-        addressLat
-        addressLng
-      }
-      makesOwnerThinkOf {
-        firstName
-        lastName
-      }
-      name
-      pictures {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
+      petId
       position
-      soundSwag
-      species
-      traits
-      updatedAt
-      vetEmail {
-        primaryEmail
-        additionalEmails
-      }
-      vetPhone {
-        primaryPhoneNumber
-        primaryPhoneCountryCode
-        primaryPhoneCallingCode
-        additionalPhones
-      }
-    }
-    petId
-    position
-    surveyResult {
-      __typename
-      averageEstimatedNumberOfAtomsInTheUniverse
-      comments
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
+      surveyResult {
+        __typename
+        averageEstimatedNumberOfAtomsInTheUniverse
+        comments
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        id
         name
-        context
+        participants
+        percentageOfCompletion
+        position
+        score
+        shortNotes
+        updatedAt
       }
-      deletedAt
-      id
-      name
-      participants
-      percentageOfCompletion
-      position
-      score
-      shortNotes
+      surveyResultId
+      task {
+        __typename
+        assigneeId
+        body
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        dueAt
+        id
+        position
+        status
+        title
+        updatedAt
+      }
+      taskId
       updatedAt
-    }
-    surveyResultId
-    task {
-      __typename
-      assigneeId
-      body
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
+      view {
+        __typename
+        createdAt
+        deletedAt
+        icon
+        id
+        isCompact
+        kanbanAggregateOperation
+        kanbanAggregateOperationFieldMetadataId
+        kanbanFieldMetadataId
+        key
         name
-        context
+        objectMetadataId
+        position
+        type
+        updatedAt
       }
-      deletedAt
-      dueAt
-      id
-      position
-      status
-      title
-      updatedAt
-    }
-    taskId
-    updatedAt
-    view {
-      __typename
-      createdAt
-      deletedAt
-      icon
-      id
-      isCompact
-      kanbanAggregateOperation
-      kanbanAggregateOperationFieldMetadataId
-      kanbanFieldMetadataId
-      key
-      name
-      objectMetadataId
-      position
-      type
-      updatedAt
-    }
-    viewId
-    workflow {
-      __typename
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
+      viewId
+      workflow {
+        __typename
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        id
+        lastPublishedVersionId
         name
-        context
+        position
+        statuses
+        updatedAt
       }
-      deletedAt
-      id
-      lastPublishedVersionId
-      name
-      position
-      statuses
-      updatedAt
-    }
-    workflowId
-    workflowRun {
-      __typename
-      context
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
-        name
-        context
-      }
-      deletedAt
-      endedAt
-      id
-      name
-      output
-      position
-      startedAt
-      status
-      updatedAt
       workflowId
+      workflowRun {
+        __typename
+        context
+        createdAt
+        createdBy {
+          source
+          workspaceMemberId
+          name
+          context
+        }
+        deletedAt
+        endedAt
+        id
+        name
+        output
+        position
+        startedAt
+        status
+        updatedAt
+        workflowId
+        workflowVersionId
+      }
+      workflowRunId
+      workflowVersion {
+        __typename
+        createdAt
+        deletedAt
+        id
+        name
+        position
+        status
+        steps
+        trigger
+        updatedAt
+        workflowId
+      }
       workflowVersionId
     }
-    workflowRunId
-    workflowVersion {
-      __typename
-      createdAt
-      deletedAt
-      id
-      name
-      position
-      status
-      steps
-      trigger
-      updatedAt
-      workflowId
-    }
-    workflowVersionId
   }
-}
 `;
 
 export const mocks = [
@@ -897,7 +893,7 @@ export const mocks = [
       data: {
         updateFavorite: {
           __typename: 'Favorite',
-          id: favoriteId,  
+          id: favoriteId,
           position: 3,
         },
       },

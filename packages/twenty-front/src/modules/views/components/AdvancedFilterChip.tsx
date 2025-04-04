@@ -1,5 +1,3 @@
-import { IconFilter } from 'twenty-ui';
-
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
@@ -18,6 +16,7 @@ import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDro
 import { plural } from 'pluralize';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { IconFilter } from 'twenty-ui/display';
 
 export const AdvancedFilterChip = () => {
   const { closeDropdown } = useDropdown(ADVANCED_FILTER_DROPDOWN_ID);

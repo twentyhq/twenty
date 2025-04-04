@@ -1,7 +1,8 @@
-import { Avatar, AvatarProps, IconComponent, LightIconButton } from 'twenty-ui';
 import { MouseEvent, ReactElement } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
+import { Avatar, AvatarProps, IconComponent } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 const StyledNonClickableStartIcon = styled.div`
   align-items: center;

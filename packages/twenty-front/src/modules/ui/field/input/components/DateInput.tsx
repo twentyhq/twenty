@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { Nullable } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import {
@@ -9,6 +8,7 @@ import {
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { Nullable } from 'twenty-ui/utilities';
 
 export type DateInputProps = {
   value: Nullable<Date>;

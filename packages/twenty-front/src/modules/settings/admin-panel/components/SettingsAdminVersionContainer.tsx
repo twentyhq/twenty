@@ -2,7 +2,7 @@ import { SettingsAdminTableCard } from '@/settings/admin-panel/components/Settin
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { TWENTY_DOCKER_HUB_LINK } from 'twenty-shared/constants';
-import { IconCircleDot, IconStatusChange } from 'twenty-ui';
+import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
 import { useGetVersionInfoQuery } from '~/generated/graphql';
 import packageJson from '../../../../../package.json';
 

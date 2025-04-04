@@ -3,15 +3,6 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { PlayFunction } from '@storybook/types';
 import { useState } from 'react';
-import {
-  Avatar,
-  Button,
-  ComponentDecorator,
-  IconChevronLeft,
-  MenuItem,
-  MenuItemMultiSelectAvatar,
-  MenuItemSelectAvatar,
-} from 'twenty-ui';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
@@ -23,6 +14,14 @@ import { DropdownMenuSearchInput } from '../DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { Avatar, IconChevronLeft } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import {
+  MenuItem,
+  MenuItemMultiSelectAvatar,
+  MenuItemSelectAvatar,
+} from 'twenty-ui/navigation';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
