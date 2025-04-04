@@ -44,16 +44,18 @@ export const DestroySingleRecordAction = () => {
   return (
     <>
       <Action onClick={() => setIsDestroyRecordsModalOpen(true)} />
-      <ConfirmationModal
-        isOpen={isDestroyRecordsModalOpen}
-        setIsOpen={setIsDestroyRecordsModalOpen}
-        title={'Permanently Destroy Record'}
-        subtitle={
-          'Are you sure you want to destroy this record? It cannot be recovered anymore.'
-        }
-        onConfirmClick={handleDeleteClick}
-        confirmButtonText={'Permanently Destroy Record'}
-      />
+      {isDestroyRecordsModalOpen && (
+        <ConfirmationModal
+          isOpen={isDestroyRecordsModalOpen}
+          setIsOpen={setIsDestroyRecordsModalOpen}
+          title={'Permanently Destroy Record'}
+          subtitle={
+            'Are you sure you want to destroy this record? It cannot be recovered anymore.'
+          }
+          onConfirmClick={handleDeleteClick}
+          confirmButtonText={'Permanently Destroy Record'}
+        />
+      )}
     </>
   );
 };

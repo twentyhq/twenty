@@ -78,14 +78,16 @@ export const DeleteMultipleRecordsAction = () => {
   return (
     <>
       <Action onClick={() => setIsDeleteRecordsModalOpen(true)} />
-      <ConfirmationModal
-        isOpen={isDeleteRecordsModalOpen}
-        setIsOpen={setIsDeleteRecordsModalOpen}
-        title={'Delete Records'}
-        subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
-        onConfirmClick={handleDeleteClick}
-        confirmButtonText={'Delete Records'}
-      />
+      {isDeleteRecordsModalOpen && (
+        <ConfirmationModal
+          isOpen={isDeleteRecordsModalOpen}
+          setIsOpen={setIsDeleteRecordsModalOpen}
+          title={'Delete Records'}
+          subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
+          onConfirmClick={handleDeleteClick}
+          confirmButtonText={'Delete Records'}
+        />
+      )}
     </>
   );
 };

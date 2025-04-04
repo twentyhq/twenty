@@ -52,14 +52,16 @@ export const DeleteSingleRecordAction = () => {
   return (
     <>
       <Action onClick={() => setIsDeleteRecordsModalOpen(true)} />
-      <ConfirmationModal
-        isOpen={isDeleteRecordsModalOpen}
-        setIsOpen={setIsDeleteRecordsModalOpen}
-        title={'Delete Record'}
-        subtitle={t`Are you sure you want to delete this record? It can be recovered from the Command menu.`}
-        onConfirmClick={handleDeleteClick}
-        confirmButtonText={'Delete Record'}
-      />
+      {isDeleteRecordsModalOpen && (
+        <ConfirmationModal
+          isOpen={isDeleteRecordsModalOpen}
+          setIsOpen={setIsDeleteRecordsModalOpen}
+          title={'Delete Record'}
+          subtitle={t`Are you sure you want to delete this record? It can be recovered from the Command menu.`}
+          onConfirmClick={handleDeleteClick}
+          confirmButtonText={'Delete Record'}
+        />
+      )}
     </>
   );
 };

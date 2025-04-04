@@ -84,14 +84,16 @@ export const RestoreMultipleRecordsAction = () => {
   return (
     <>
       <Action onClick={() => setIsRestoreRecordsModalOpen(true)} />
-      <ConfirmationModal
-        isOpen={isRestoreRecordsModalOpen}
-        setIsOpen={setIsRestoreRecordsModalOpen}
-        title={'Restore Records'}
-        subtitle={`Are you sure you want to restore these records?`}
-        onConfirmClick={handleRestoreClick}
-        confirmButtonText={'Restore Records'}
-      />
+      {isRestoreRecordsModalOpen && (
+        <ConfirmationModal
+          isOpen={isRestoreRecordsModalOpen}
+          setIsOpen={setIsRestoreRecordsModalOpen}
+          title={'Restore Records'}
+          subtitle={`Are you sure you want to restore these records?`}
+          onConfirmClick={handleRestoreClick}
+          confirmButtonText={'Restore Records'}
+        />
+      )}
     </>
   );
 };

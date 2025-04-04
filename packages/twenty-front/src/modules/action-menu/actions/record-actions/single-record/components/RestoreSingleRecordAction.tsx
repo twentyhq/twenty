@@ -37,14 +37,16 @@ export const RestoreSingleRecordAction = () => {
   return (
     <>
       <Action onClick={() => setIsRestoreRecordModalOpen(true)} />
-      <ConfirmationModal
-        isOpen={isRestoreRecordModalOpen}
-        setIsOpen={setIsRestoreRecordModalOpen}
-        title={'Restore Record'}
-        subtitle={'Are you sure you want to restore this record?'}
-        onConfirmClick={handleConfirmClick}
-        confirmButtonText={'Restore Record'}
-      />
+      {isRestoreRecordModalOpen && (
+        <ConfirmationModal
+          isOpen={isRestoreRecordModalOpen}
+          setIsOpen={setIsRestoreRecordModalOpen}
+          title={'Restore Record'}
+          subtitle={'Are you sure you want to restore this record?'}
+          onConfirmClick={handleConfirmClick}
+          confirmButtonText={'Restore Record'}
+        />
+      )}
     </>
   );
 };
