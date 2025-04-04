@@ -1,15 +1,15 @@
+import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-shared/utils';
 
-export const TestWorkflowSingleRecordActionEffect = () => {
+export const TestWorkflowSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
   const { runWorkflowVersion } = useRunWorkflowVersion();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-  useActionEffect(() => {
+  const onClick = () => {
     if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }
@@ -17,7 +17,7 @@ export const TestWorkflowSingleRecordActionEffect = () => {
     runWorkflowVersion({
       workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
     });
-  }, [runWorkflowVersion, workflowWithCurrentVersion]);
+  };
 
-  return null;
+  return <Action onClick={onClick} />;
 };

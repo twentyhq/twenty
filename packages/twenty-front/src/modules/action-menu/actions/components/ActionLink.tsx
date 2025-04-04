@@ -12,7 +12,7 @@ export const ActionLink = <T extends AppPath>({
 }: {
   to: T;
   params?: { [key in PathParam<T>]: string | null };
-  queryParams?: Record<string, string>;
+  queryParams?: Record<string, any>;
 }) => {
   const actionConfig = useContext(ActionConfigContext);
 

@@ -1,15 +1,16 @@
+import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useActionEffect } from '@/action-menu/hooks/useActionEffect';
 import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const DiscardDraftWorkflowSingleRecordActionEffect = () => {
+export const DiscardDraftWorkflowSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
   const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-  useActionEffect(() => {
+  const onClick = useCallback(() => {
     if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }
@@ -19,5 +20,5 @@ export const DiscardDraftWorkflowSingleRecordActionEffect = () => {
     });
   }, [deleteOneWorkflowVersion, workflowWithCurrentVersion]);
 
-  return null;
+  return <Action onClick={onClick} />;
 };
