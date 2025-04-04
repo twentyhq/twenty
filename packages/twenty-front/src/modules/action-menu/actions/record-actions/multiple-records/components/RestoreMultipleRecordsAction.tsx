@@ -18,7 +18,7 @@ import { useState } from 'react';
 export const RestoreMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const [isRestoreRecordsModalOpen, setIsRestoreRecordsModalOpen] =
-    useState(true);
+    useState(false);
 
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,

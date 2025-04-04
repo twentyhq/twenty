@@ -14,7 +14,7 @@ export const DestroySingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
   const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
-    useState(true);
+    useState(false);
 
   const navigateApp = useNavigateApp();
 

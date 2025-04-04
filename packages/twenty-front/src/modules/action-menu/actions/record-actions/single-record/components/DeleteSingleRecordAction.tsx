@@ -16,7 +16,7 @@ export const DeleteSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
-    useState(true);
+    useState(false);
 
   const { resetTableRowSelection } = useRecordTable({
     recordTableId: objectMetadataItem.namePlural,

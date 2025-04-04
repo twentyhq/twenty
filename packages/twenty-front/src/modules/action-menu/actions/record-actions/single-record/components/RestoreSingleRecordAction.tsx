@@ -12,7 +12,7 @@ export const RestoreSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
   const [isRestoreRecordModalOpen, setIsRestoreRecordModalOpen] =
-    useState(true);
+    useState(false);
 
   const { resetTableRowSelection } = useRecordTable({
     recordTableId: objectMetadataItem.namePlural,

@@ -19,7 +19,7 @@ export const DeleteMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
-    useState(true);
+    useState(false);
 
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
