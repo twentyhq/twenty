@@ -16,6 +16,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledInnerContainer = styled.div`
   height: 100%;
+  width: 100%;
 `;
 
 export const SettingsNavigationDrawerItems = () => {
