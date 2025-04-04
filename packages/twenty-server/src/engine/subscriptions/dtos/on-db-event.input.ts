@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @InputType()
-export class DbEventSubscriptionInput {
+export class OnDbEventInput {
   @Field(() => DatabaseEventAction, { nullable: true })
   action?: DatabaseEventAction;
 

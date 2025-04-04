@@ -2,7 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { WorkflowRun } from '@/workflow/types/Workflow';
 import { workflowRunSchema } from '@/workflow/validation-schemas/workflowSchema';
-import { useOnDbEvent } from '@/object-record/hooks/useOnDbEvent';
+import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
 
 export const useWorkflowRun = ({
   workflowRunId,

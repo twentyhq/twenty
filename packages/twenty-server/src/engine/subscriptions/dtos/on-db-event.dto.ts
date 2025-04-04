@@ -12,7 +12,7 @@ registerEnumType(DatabaseEventAction, {
 });
 
 @ObjectType()
-export class DbEventSubscriptionDTO {
+export class OnDbEventDTO {
   @Field(() => String)
   eventId: string;
 

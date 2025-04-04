@@ -383,6 +383,8 @@ export type DateFilter = {
 export type DbEventSubscriptionDto = {
   __typename?: 'DbEventSubscriptionDTO';
   action: DatabaseEventAction;
+  emittedAt: Scalars['String'];
+  eventId: Scalars['String'];
   objectNameSingular: Scalars['String'];
   record: Scalars['JSON'];
   updatedFields?: Maybe<Array<Scalars['String']>>;

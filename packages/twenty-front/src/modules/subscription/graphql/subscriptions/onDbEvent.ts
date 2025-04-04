@@ -1,12 +1,14 @@
 import { gql } from '@apollo/client';
 
 export const ON_DB_EVENT = gql`
-  subscription OnDbEvent($input: DbEventSubscriptionInput!) {
+  subscription OnDbEvent($input: OnDbEventInput!) {
     onDbEvent(input: $input) {
+      eventId
+      emittedAt
       action
       objectNameSingular
-      record
       updatedFields
+      record
     }
   }
 `;

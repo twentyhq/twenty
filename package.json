@@ -103,6 +103,7 @@
     "graphql-tag": "^2.12.6",
     "graphql-type-json": "^0.3.2",
     "graphql-upload": "^13.0.0",
+    "graphql-ws": "^6.0.4",
     "graphql-yoga": "^4.0.4",
     "hex-rgb": "^5.0.0",
     "iframe-resizer-react": "^1.1.0",

@@ -4,19 +4,19 @@ import { Inject, UseGuards } from '@nestjs/common';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 
-import { DbEventSubscriptionDTO } from 'src/engine/subscriptions/dtos/db-event-subscription.dto';
+import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { DbEventSubscriptionInput } from 'src/engine/subscriptions/dtos/db-event-subscription.input';
+import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard)
 export class SubscriptionsResolver {
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
 
-  @Subscription(() => DbEventSubscriptionDTO, {
+  @Subscription(() => OnDbEventDTO, {
     filter: (
-      payload: { onDbEvent: DbEventSubscriptionDTO },
-      variables: { input: DbEventSubscriptionInput },
+      payload: { onDbEvent: OnDbEventDTO },
+      variables: { input: OnDbEventInput },
     ) => {
       const isActionMatching =
         !isDefined(variables.input.action) ||
@@ -36,7 +36,7 @@ export class SubscriptionsResolver {
       );
     },
   })
-  onDbEvent(@Args('input') _: DbEventSubscriptionInput) {
+  onDbEvent(@Args('input') _: OnDbEventInput) {
     return this.pubSub.asyncIterator('onDbEvent');
   }
 }

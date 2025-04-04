@@ -36245,6 +36245,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"graphql-ws@npm:^6.0.4":
+  version: 6.0.4
+  resolution: "graphql-ws@npm:6.0.4"
+  peerDependencies:
+    "@fastify/websocket": ^10 || ^11
+    graphql: ^15.10.1 || ^16
+    uWebSockets.js: ^20
+    ws: ^8
+  peerDependenciesMeta:
+    "@fastify/websocket":
+      optional: true
+    uWebSockets.js:
+      optional: true
+    ws:
+      optional: true
+  checksum: 10c0/ed17502300c702d42820ca2acc593d82acbcbec91fa93e588dc008d07d7b6914b4b22062f1ee181cff6ac62f69ea0052555ee75f270601311b943a6b7ef709dc
+  languageName: node
+  linkType: hard
+
 "graphql-yoga@npm:^4.0.4":
   version: 4.0.5
   resolution: "graphql-yoga@npm:4.0.5"
@@ -55427,6 +55446,7 @@ __metadata:
     graphql-tag: "npm:^2.12.6"
     graphql-type-json: "npm:^0.3.2"
     graphql-upload: "npm:^13.0.0"
+    graphql-ws: "npm:^6.0.4"
     graphql-yoga: "npm:^4.0.4"
     hex-rgb: "npm:^5.0.0"
     http-server: "npm:^14.1.1"
