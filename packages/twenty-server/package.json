@@ -15,6 +15,7 @@
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
   "dependencies": {
+    "@clickhouse/client": "^1.11.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
     "@langchain/mistralai": "^0.0.24",
@@ -57,6 +58,7 @@
     "redis": "^4.7.0",
     "ts-morph": "^24.0.0",
     "tsconfig-paths": "^4.2.0",
+    "twenty-analytics": "workspace:*",
     "typeorm": "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch",
     "unzipper": "^0.12.3",
     "zod-to-json-schema": "^3.23.1"

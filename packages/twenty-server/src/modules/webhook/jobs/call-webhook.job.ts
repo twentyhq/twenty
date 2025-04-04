@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 
 import crypto from 'crypto';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -46,6 +46,9 @@ export class CallWebhookJob {
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
+    const analytics = this.analyticsService.createAnalyticsContext({
+      workspaceId: data.workspaceId,
+    });
 
     try {
       const headers: Record<string, string> = {
@@ -73,27 +76,24 @@ export class CallWebhookJob {
       );
 
       const success = response.status >= 200 && response.status < 300;
-      const eventInput = {
+
+      analytics.sendEvent({
         action: 'webhook.response',
         payload: {
           status: response.status,
           success,
           ...commonPayload,
         },
-      };
-
-      this.analyticsService.create(eventInput, 'webhook', data.workspaceId);
+      });
     } catch (err) {
-      const eventInput = {
+      analytics.sendEvent({
         action: 'webhook.response',
         payload: {
           success: false,
           ...commonPayload,
           ...(err.response && { status: err.response.status }),
         },
-      };
-
-      this.analyticsService.create(eventInput, 'webhook', data.workspaceId);
+      });
       this.logger.error(
         `Error calling webhook on targetUrl '${data.targetUrl}': ${err}`,
       );

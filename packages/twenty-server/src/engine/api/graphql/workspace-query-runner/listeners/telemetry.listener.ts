@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
@@ -19,16 +19,16 @@ export class TelemetryListener {
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   async handleAllCreate(payload: WorkspaceEventBatch<ObjectRecordCreateEvent>) {
     await Promise.all(
-      payload.events.map((eventPayload) =>
-        this.analyticsService.create(
-          {
-            action: payload.name,
-            payload: {},
-          },
-          eventPayload.userId,
-          payload.workspaceId,
-        ),
-      ),
+      payload.events.map((eventPayload) => {
+        const analytics = this.analyticsService.createAnalyticsContext({
+          userId: eventPayload.userId,
+          workspaceId: payload.workspaceId,
+        });
+
+        analytics.sendUnknownEvent({
+          action: payload.name,
+        });
+      }),
     );
   }
 
@@ -38,14 +38,14 @@ export class TelemetryListener {
   ) {
     await Promise.all(
       payload.events.map(async (eventPayload) => {
-        this.analyticsService.create(
-          {
+        await this.analyticsService
+          .createAnalyticsContext({
+            userId: eventPayload.userId,
+            workspaceId: payload.workspaceId,
+          })
+          .sendUnknownEvent({
             action: USER_SIGNUP_EVENT_NAME,
-            payload: {},
-          },
-          eventPayload.userId,
-          payload.workspaceId,
-        );
+          });
 
         this.telemetryService.create(
           {

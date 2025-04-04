@@ -463,6 +463,22 @@ export class EnvironmentVariables {
   @IsBoolean()
   ANALYTICS_ENABLED = false;
 
+  @IsString()
+  @IsOptional()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.AnalyticsConfig,
+    description: 'Clickhouse host for analytics',
+  })
+  CLICKHOUSE_URL: string;
+
+  @IsOptional()
+  @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.AnalyticsConfig,
+    description: 'Clickhouse database for analytics',
+  })
+  CLICKHOUSE_DB = 'default';
+
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
     description: 'Enable or disable telemetry logging',

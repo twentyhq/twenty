@@ -18,3 +18,6 @@ postgres-on-docker:
 
 redis-on-docker:
 	docker run -d --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
+
+clickhouse-on-docker:
+	docker run -d --name twenty_clickhouse -p 8123:8123 -p 9000:9000 -e CLICKHOUSE_PASSWORD=devPassword clickhouse/clickhouse-server:latest

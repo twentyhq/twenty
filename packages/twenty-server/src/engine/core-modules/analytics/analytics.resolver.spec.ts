@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AnalyticsResolver } from './analytics.resolver';
-import { AnalyticsService } from './analytics.service';
+
+import { AnalyticsService } from './services/analytics.service';
 
 describe('AnalyticsResolver', () => {
   let resolver: AnalyticsResolver;

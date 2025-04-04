@@ -24,6 +24,7 @@ import { handleException } from 'src/engine/core-modules/exception-handler/http-
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/domain-manager/guards/cloudflare-secret.guard';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
 @Controller('cloudflare')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -34,6 +35,7 @@ export class CloudflareController {
     private readonly domainManagerService: DomainManagerService,
     private readonly customDomainService: CustomDomainService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   @Post('custom-hostname-webhooks')
@@ -56,6 +58,10 @@ export class CloudflareController {
     });
 
     if (!workspace) return;
+
+    const analytics = this.analyticsService.createAnalyticsContext({
+      workspaceId: workspace.id,
+    });
 
     const customDomainDetails =
       await this.customDomainService.getCustomDomainDetails(
@@ -82,6 +88,10 @@ export class CloudflareController {
       await this.workspaceRepository.save({
         ...workspace,
         ...workspaceUpdated,
+      });
+
+      await analytics.sendEvent({
+        action: 'customDomain.activated',
       });
     }
 

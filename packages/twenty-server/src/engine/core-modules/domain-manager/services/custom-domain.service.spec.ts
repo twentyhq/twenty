@@ -2,11 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import Cloudflare from 'cloudflare';
+import { AnalyticsContextMock } from 'test/utils/analytics-context.mock';
 
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerException } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 
 jest.mock('cloudflare');
 
@@ -23,6 +25,12 @@ describe('CustomDomainService', () => {
           provide: EnvironmentService,
           useValue: {
             get: jest.fn(),
+          },
+        },
+        {
+          provide: AnalyticsService,
+          useValue: {
+            createAnalyticsContext: AnalyticsContextMock,
           },
         },
         {

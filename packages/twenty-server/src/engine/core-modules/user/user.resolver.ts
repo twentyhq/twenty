@@ -19,7 +19,7 @@ import { In, Repository } from 'typeorm';
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsService } from 'src/engine/core-modules/analytics/services/analytics.service';
 import {
   AuthException,
   AuthExceptionCode,
