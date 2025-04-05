@@ -125,7 +125,7 @@ export const ChooseYourPlan = () => {
     (plan) => plan.planKey === currentPlan,
   )?.baseProduct;
 
-  const baseProductPrice = baseProduct?.prices.find(
+  const baseProductPrice = baseProduct?.prices?.find(
     (price): price is BillingPriceLicensedDto =>
       isBillingPriceLicensed(price) &&
       price.recurringInterval === SubscriptionInterval.Month,

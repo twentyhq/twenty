@@ -32,4 +32,11 @@ export class StripeCustomerService {
       metadata: { workspaceId: workspaceId },
     });
   }
+
+  async hasPaymentMethod(stripeCustomerId: string) {
+    const { data: paymentMethods } =
+      await this.stripe.customers.listPaymentMethods(stripeCustomerId);
+
+    return paymentMethods.length > 0;
+  }
 }

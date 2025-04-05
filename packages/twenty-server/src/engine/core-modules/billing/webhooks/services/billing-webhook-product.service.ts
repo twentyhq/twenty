@@ -7,9 +7,6 @@ import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
-import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/utils/is-stripe-valid-product-metadata.util';
 import { transformStripeProductEventToDatabaseProduct } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-product-event-to-database-product.util';
 @Injectable()
@@ -39,29 +36,5 @@ export class BillingWebhookProductService {
     return {
       stripeProductId: data.object.id,
     };
-  }
-
-  isStripeValidProductMetadata(
-    metadata: Stripe.Metadata,
-  ): metadata is BillingProductMetadata {
-    if (Object.keys(metadata).length === 0) {
-      return true;
-    }
-    const hasBillingPlanKey = this.isValidBillingPlanKey(metadata?.planKey);
-    const hasPriceUsageBased = this.isValidPriceUsageBased(
-      metadata?.priceUsageBased,
-    );
-
-    return hasBillingPlanKey && hasPriceUsageBased;
-  }
-
-  isValidBillingPlanKey(planKey?: string) {
-    return Object.values(BillingPlanKey).includes(planKey as BillingPlanKey);
-  }
-
-  isValidPriceUsageBased(priceUsageBased?: string) {
-    return Object.values(BillingUsageType).includes(
-      priceUsageBased as BillingUsageType,
-    );
   }
 }
