@@ -5,7 +5,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { Select } from '@/ui/input/components/Select';
 import { z } from 'zod';
 import { IconTextWrap } from 'twenty-ui/display';
-import { getTextFieldDefaultValueSelectOptions } from '@/settings/data-model/fields/forms/text/constants/TextFieldDefaultValueSelectOptions';
+import { getTextDataModelSelectOptions } from '@/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions';
 import { useLingui } from '@lingui/react/macro';
 
 type SettingsDataModelFieldTextFormProps = {
@@ -57,7 +57,7 @@ export const SettingsDataModelFieldTextForm = ({
                 value={displayedMaxRows}
                 onChange={(value) => onChange({ displayedMaxRows: value })}
                 disabled={disabled}
-                options={getTextFieldDefaultValueSelectOptions(t)}
+                options={getTextDataModelSelectOptions(t)}
                 selectSizeVariant="small"
               />
             </SettingsOptionCardContentSelect>

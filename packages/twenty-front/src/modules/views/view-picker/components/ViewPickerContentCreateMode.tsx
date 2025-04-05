@@ -22,8 +22,8 @@ import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/V
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
 import { ViewPickerSelectContainer } from '@/views/view-picker/components/ViewPickerSelectContainer';
 import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerKanbanFieldDropdownId';
-import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
 import { getViewPickerTypeSelectOptions } from '@/views/view-picker/constants/ViewPickerTypeSelectOptions';
+import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
