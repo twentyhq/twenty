@@ -15,6 +15,7 @@ import {
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
+import { Email } from 'src/engine/core-modules/user/value-objects/email.vo';
 
 describe('ApprovedAccessDomainService', () => {
   let service: ApprovedAccessDomainService;
@@ -78,8 +79,7 @@ describe('ApprovedAccessDomainService', () => {
         isCustomDomainEnabled: false,
       } as Workspace;
       const fromUser = {
-        email: 'user@custom-domain.com',
-        isEmailVerified: true,
+        email: new Email('user@custom-domain.com'),
       } as User;
 
       const expectedApprovedAccessDomain = {
@@ -118,7 +118,7 @@ describe('ApprovedAccessDomainService', () => {
         service.createApprovedAccessDomain(
           'gmail.com',
           { id: 'workspace-id' } as Workspace,
-          { email: 'user@gmail.com', isEmailVerified: true } as User,
+          { email: new Email('user@gmail.com') } as User,
           'user@gmail.com',
         ),
       ).rejects.toThrowError(

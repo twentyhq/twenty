@@ -62,10 +62,6 @@ export class User {
   @Column({ nullable: true })
   defaultAvatarUrl: string;
 
-  @Field()
-  @Column({ default: false })
-  isEmailVerified: boolean;
-
   @Field({ nullable: true })
   @Column({ default: false })
   disabled: boolean;

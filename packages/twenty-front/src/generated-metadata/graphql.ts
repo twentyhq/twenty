@@ -2280,7 +2280,6 @@ export type User = {
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
-  isEmailVerified: Scalars['Boolean']['output'];
   lastName: Scalars['String']['output'];
   locale: Scalars['String']['output'];
   onboardingStatus?: Maybe<OnboardingStatus>;
@@ -2305,7 +2304,6 @@ export type UserExists = {
   __typename?: 'UserExists';
   availableWorkspaces: Array<AvailableWorkspaceOutput>;
   exists: Scalars['Boolean']['output'];
-  isEmailVerified: Scalars['Boolean']['output'];
 };
 
 export type UserExistsOutput = UserExists | UserNotExists;

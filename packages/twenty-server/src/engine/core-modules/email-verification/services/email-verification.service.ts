@@ -107,13 +107,6 @@ export class EmailVerificationService {
 
     const user = await this.userService.getUserByEmail(email);
 
-    if (user.isEmailVerified) {
-      throw new EmailVerificationException(
-        'Email already verified',
-        EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED,
-      );
-    }
-
     const existingToken = await this.appTokenRepository.findOne({
       where: {
         userId: user.id,

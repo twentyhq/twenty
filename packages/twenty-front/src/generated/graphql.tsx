@@ -2067,7 +2067,6 @@ export type User = {
   email: Scalars['String'];
   firstName: Scalars['String'];
   id: Scalars['UUID'];
-  isEmailVerified: Scalars['Boolean'];
   lastName: Scalars['String'];
   locale: Scalars['String'];
   onboardingStatus?: Maybe<OnboardingStatus>;
@@ -2092,7 +2091,6 @@ export type UserExists = {
   __typename?: 'UserExists';
   availableWorkspaces: Array<AvailableWorkspaceOutput>;
   exists: Scalars['Boolean'];
-  isEmailVerified: Scalars['Boolean'];
 };
 
 export type UserExistsOutput = UserExists | UserNotExists;
@@ -2488,7 +2486,7 @@ export type CheckUserExistsQueryVariables = Exact<{
 }>;
 
 
-export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, isEmailVerified: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
+export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
 
 export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3887,7 +3885,6 @@ export const CheckUserExistsDocument = gql`
           status
         }
       }
-      isEmailVerified
     }
     ... on UserNotExists {
       exists

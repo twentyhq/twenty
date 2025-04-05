@@ -168,13 +168,6 @@ export class AuthService {
       'IS_EMAIL_VERIFICATION_REQUIRED',
     );
 
-    if (isEmailVerificationRequired && !user.isEmailVerified) {
-      throw new AuthException(
-        'Email is not verified',
-        AuthExceptionCode.EMAIL_NOT_VERIFIED,
-      );
-    }
-
     return user;
   }
 
@@ -295,7 +288,6 @@ export class AuthService {
         exists: true,
         availableWorkspaces:
           await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
-        isEmailVerified: user.isEmailVerified,
       };
     }
 
