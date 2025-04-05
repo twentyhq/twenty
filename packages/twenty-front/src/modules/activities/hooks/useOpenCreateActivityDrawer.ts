@@ -62,12 +62,18 @@ export const useOpenCreateActivityDrawer = ({
     setViewableRecordId(null);
     setViewableRecordNameSingular(activityObjectNameSingular);
 
+    const groupByField =
+      targetableObjects.length > 0
+        ? `${targetableObjects[0].targetObjectNameSingular}Id`
+        : null;
+
     const activity = await createOneActivity({
       ...(activityObjectNameSingular === CoreObjectNameSingular.Task
         ? {
             assigneeId: customAssignee?.id,
           }
         : {}),
+      ...(groupByField ? { [groupByField]: targetableObjects[0].id } : {}),
       position: 'last',
     });
 
