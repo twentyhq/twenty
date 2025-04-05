@@ -1,6 +1,11 @@
 #!/bin/sh
 set -e
 
+# Warn if deprecated STORAGE_LOCAL_PATH is set
+if [ -n "$STORAGE_LOCAL_PATH" ]; then
+  echo "WARNING: The STORAGE_LOCAL_PATH environment variable is deprecated and no longer used. The local storage path is fixed to /app/packages/twenty-server/.local-storage."
+fi
+
 # Check if the initialization has already been done and that we enabled automatic migration
 if [ "${DISABLE_DB_MIGRATIONS}" != "true" ] && [ ! -f /app/docker-data/db_status ]; then
     echo "Running database setup and migrations..."
