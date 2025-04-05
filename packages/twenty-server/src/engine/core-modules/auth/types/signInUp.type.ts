@@ -4,6 +4,7 @@ import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { Email} from 'src/engine/core-modules/user/value-objects/email.vo';
 
 export type SignInUpBaseParams = {
   invitation?: AppToken;
@@ -12,7 +13,7 @@ export type SignInUpBaseParams = {
 };
 
 export type SignInUpNewUserPayload = {
-  email: string;
+  email: Email;
   firstName?: string | null;
   lastName?: string | null;
   picture?: string | null;

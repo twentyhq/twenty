@@ -26,7 +26,7 @@ export class WorkspaceMember {
   @Field(() => FullName)
   name: FullName;
 
-  @Field({ nullable: false })
+  @Field(() => String, { nullable: false })
   userEmail: string;
 
   @Field({ nullable: false })

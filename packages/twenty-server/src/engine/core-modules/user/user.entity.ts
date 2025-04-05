@@ -20,6 +20,7 @@ import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboa
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { Email } from 'src/engine/core-modules/user/value-objects/email.vo';
 
 registerEnumType(OnboardingStatus, {
   name: 'OnboardingStatus',
@@ -45,9 +46,17 @@ export class User {
   @Column({ default: '' })
   lastName: string;
 
-  @Field()
-  @Column()
-  email: string;
+  @Field(() => String)
+  @Column({ name: 'email', type: 'varchar', nullable: false })
+  private _email: string;
+
+  get email(): Email {
+    return new Email(this._email);
+  }
+
+  set email(email: Email) {
+    this._email = email.toString();
+  }
 
   @Field({ nullable: true })
   @Column({ nullable: true })

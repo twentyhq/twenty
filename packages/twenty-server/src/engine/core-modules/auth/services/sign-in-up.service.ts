@@ -185,8 +185,6 @@ export class SignInUpService {
       email,
     );
 
-    await this.userService.markEmailAsVerified(updatedUser.id);
-
     return updatedUser;
   }
 

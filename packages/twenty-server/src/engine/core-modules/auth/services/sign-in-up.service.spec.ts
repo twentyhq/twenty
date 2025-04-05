@@ -28,6 +28,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { Email } from 'src/engine/core-modules/user/value-objects/email.vo';
 
 jest.mock('src/utils/image', () => {
   return {
@@ -104,16 +105,6 @@ describe('SignInUpService', () => {
           },
         },
         {
-          provide: UserService,
-          useValue: {
-            markEmailAsVerified: jest.fn().mockReturnValue({
-              id: 'test-user-id',
-              email: 'test@test.com',
-              isEmailVerified: true,
-            } as User),
-          },
-        },
-        {
           provide: DomainManagerService,
           useValue: {
             generateSubdomain: jest.fn(),
@@ -160,7 +151,7 @@ describe('SignInUpService', () => {
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'test@example.com' } as User,
+        existingUser: { email: new Email('test@example.com') } as User,
       },
     };
 
@@ -187,7 +178,7 @@ describe('SignInUpService', () => {
       workspaceInvitationService.validatePersonalInvitation,
     ).toHaveBeenCalledWith({
       workspacePersonalInviteToken: 'invitationToken',
-      email: 'test@example.com',
+      email: new Email('test@example.com'),
     });
     expect(
       workspaceInvitationService.invalidateWorkspaceInvitation,
@@ -211,7 +202,7 @@ describe('SignInUpService', () => {
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'test@example.com' } as User,
+        existingUser: { email: new Email('test@example.com') } as User,
       },
     };
 
@@ -236,7 +227,7 @@ describe('SignInUpService', () => {
       userData: {
         type: 'newUserWithPicture',
         newUserWithPicture: {
-          email: 'newuser@example.com',
+          email: new Email('newuser@example.com'),
           picture: 'pictureUrl',
         },
       },
@@ -288,7 +279,7 @@ describe('SignInUpService', () => {
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'test@example.com' } as User,
+        existingUser: { email: new Email('test@example.com') } as User,
       },
     };
 
@@ -320,7 +311,7 @@ describe('SignInUpService', () => {
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'test@example.com' } as User,
+        existingUser: { email: new Email('test@example.com') } as User,
       },
     };
 
@@ -345,7 +336,7 @@ describe('SignInUpService', () => {
       authParams: { provider: 'password', password: 'validPassword' },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'existinguser@example.com' } as User,
+        existingUser: { email: new Email('existinguser@example.com') } as User,
       },
     };
 

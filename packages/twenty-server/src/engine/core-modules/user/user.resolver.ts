@@ -276,7 +276,7 @@ export class UserResolver {
     }
     const key = this.environmentService.get('SUPPORT_FRONT_HMAC_KEY');
 
-    return getHMACKey(parent.email, key);
+    return getHMACKey(parent.email.toString(), key);
   }
 
   @Mutation(() => String)

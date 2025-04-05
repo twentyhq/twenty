@@ -173,8 +173,6 @@ export class AuthResolver {
       )) ??
       (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
 
-    await this.userService.markEmailAsVerified(user.id);
-
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
