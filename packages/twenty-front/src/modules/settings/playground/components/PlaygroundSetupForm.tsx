@@ -1,3 +1,4 @@
+import { getPlaygroundSetupSelectOptions } from '@/settings/playground/constants/PlaygroundSetupSelectOptions';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
@@ -9,16 +10,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
+import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button } from 'twenty-ui/input';
-import {
-  IconApi,
-  IconBracketsAngle,
-  IconBrandGraphql,
-  IconFolderRoot,
-} from 'twenty-ui/display';
 
 const playgroundSetupFormSchema = z.object({
   apiKeyForPlayground: z.string(),
@@ -139,18 +135,7 @@ export const PlaygroundSetupForm = () => {
           <Select
             dropdownId="schema"
             label={t`Schema`}
-            options={[
-              {
-                value: PlaygroundSchemas.CORE,
-                label: t`Core`,
-                Icon: IconFolderRoot,
-              },
-              {
-                value: PlaygroundSchemas.METADATA,
-                label: t`Metadata`,
-                Icon: IconBracketsAngle,
-              },
-            ]}
+            options={getPlaygroundSetupSelectOptions(t)}
             value={value}
             onChange={onChange}
           />
