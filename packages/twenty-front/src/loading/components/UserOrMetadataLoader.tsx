@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
+import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
@@ -23,6 +24,12 @@ const StyledContainer = styled.div`
 `;
 
 export const UserOrMetadataLoader = () => {
+  const isShowFullscreen = useShowFullscreen();
+
+  if (isShowFullscreen) {
+    return <></>;
+  }
+
   return (
     <StyledContainer>
       <LeftPanelSkeletonLoader />
