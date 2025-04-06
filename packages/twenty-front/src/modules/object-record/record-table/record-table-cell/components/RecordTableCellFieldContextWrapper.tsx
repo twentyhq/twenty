@@ -1,10 +1,10 @@
-import { ReactNode, useContext } from 'react';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableCellFieldContext } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContext';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { ReactNode, useContext } from 'react';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { RecordTableCellFieldContext } from './RecordTableCellFieldContext';
 
 export const RecordTableCellFieldContextWrapper = ({
   children,
@@ -12,6 +12,7 @@ export const RecordTableCellFieldContextWrapper = ({
   children: ReactNode;
 }) => {
   const { columnDefinition } = useContext(RecordTableCellContext);
+
   const { recordId } = useRecordTableRowContextOrThrow();
 
   if (isUndefinedOrNull(columnDefinition)) {

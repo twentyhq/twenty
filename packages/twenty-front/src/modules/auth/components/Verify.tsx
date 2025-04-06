@@ -6,10 +6,11 @@ import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isDefined } from 'twenty-shared/utils';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { SignInUpLoading } from '~/pages/auth/SignInUpLoading';
 
-export const VerifyEffect = () => {
+export const Verify = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
   const errorMessage = searchParams.get('errorMessage');
@@ -36,5 +37,5 @@ export const VerifyEffect = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <></>;
+  return <SignInUpLoading />;
 };

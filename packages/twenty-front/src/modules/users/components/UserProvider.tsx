@@ -15,6 +15,8 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const dateTimeFormat = useRecoilValue(dateTimeFormatState);
 
   return !isCurrentUserLoaded &&
+    !isMatchingLocation(AppPath.Verify) &&
+    !isMatchingLocation(AppPath.VerifyEmail) &&
     !isMatchingLocation(AppPath.CreateWorkspace) ? (
     <UserOrMetadataLoader />
   ) : (

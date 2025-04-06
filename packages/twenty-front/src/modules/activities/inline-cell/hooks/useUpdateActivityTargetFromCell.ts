@@ -11,16 +11,17 @@ import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/typ
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isNull } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
-type UpdateActivityTargetFromInlineCellProps = {
+type UpdateActivityTargetFromCellProps = {
   recordPickerInstanceId: string;
   morphItem: RecordPickerPickableMorphItem;
   activityTargetWithTargetRecords: ActivityTargetWithTargetRecord[];
 };
 
-export const useUpdateActivityTargetFromInlineCell = ({
+// TODO: deprecate this hook once we implement one-to-many relation through
+export const useUpdateActivityTargetFromCell = ({
   activityObjectNameSingular,
   activityId,
 }: {
@@ -29,27 +30,37 @@ export const useUpdateActivityTargetFromInlineCell = ({
     | CoreObjectNameSingular.Task;
   activityId: string;
 }) => {
+  const joinObjectNameSingular = getJoinObjectNameSingular(
+    activityObjectNameSingular,
+  );
+
   const { createOneRecord: createOneActivityTarget } = useCreateOneRecord<
     NoteTarget | TaskTarget
   >({
-    objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
+    objectNameSingular:
+      joinObjectNameSingular === ''
+        ? activityObjectNameSingular
+        : joinObjectNameSingular,
   });
 
   const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord({
-    objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
+    objectNameSingular:
+      joinObjectNameSingular === ''
+        ? activityObjectNameSingular
+        : joinObjectNameSingular,
   });
 
   const setActivityFromStore = useSetRecoilState(
     recordStoreFamilyState(activityId),
   );
 
-  const updateActivityTargetFromInlineCell = useRecoilCallback(
+  const updateActivityTargetFromCell = useRecoilCallback(
     ({ snapshot }) =>
       async ({
         morphItem,
         activityTargetWithTargetRecords,
         recordPickerInstanceId,
-      }: UpdateActivityTargetFromInlineCellProps) => {
+      }: UpdateActivityTargetFromCellProps) => {
         const targetObjectName =
           activityObjectNameSingular === CoreObjectNameSingular.Task
             ? 'task'
@@ -179,5 +190,5 @@ export const useUpdateActivityTargetFromInlineCell = ({
     ],
   );
 
-  return { updateActivityTargetFromInlineCell };
+  return { updateActivityTargetFromCell };
 };

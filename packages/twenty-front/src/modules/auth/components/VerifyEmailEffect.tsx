@@ -3,14 +3,14 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
+import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
 
 export const VerifyEmailEffect = () => {
   const { getLoginTokenFromEmailVerificationToken } = useAuth();
@@ -50,6 +50,7 @@ export const VerifyEmailEffect = () => {
         if (workspaceUrl.slice(0, -1) !== window.location.origin) {
           return redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
             loginToken: loginToken.token,
+            animateModal: false,
           });
         }
         verifyLoginToken(loginToken.token);

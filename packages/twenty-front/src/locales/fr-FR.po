@@ -155,6 +155,11 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Un environnement partagé où vous pourrez gérer vos relations clients avec votre équipe."
 
+#. js-lingui-id: JE9zuL
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Ability to edit all settings"
+msgstr ""
+
 #. js-lingui-id: 09tRFp
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Ability to interact with each object"
@@ -207,7 +212,6 @@ msgid "Action"
 msgstr "Action"
 
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Actions"
 msgstr "Actions"
@@ -963,6 +967,7 @@ msgstr "Contexte"
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
@@ -983,6 +988,11 @@ msgstr "Continuer avec Google"
 #: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx
 msgid "Continue with Microsoft"
 msgstr "Continuer avec Microsoft"
+
+#. js-lingui-id: FxVG/l
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: u+VWhB
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
@@ -1032,6 +1042,11 @@ msgstr "Noyau"
 #. js-lingui-id: w5Stxm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Correct the issues and fill the missing data."
+msgstr ""
+
+#. js-lingui-id: s8lFtq
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Couldn't copy to clipboard"
 msgstr ""
 
 #. js-lingui-id: wBMjJ2
@@ -3944,6 +3959,11 @@ msgstr "Définir le nom de votre sous-domaine"
 msgid "Settings"
 msgstr "Paramètres"
 
+#. js-lingui-id: uXW4pg
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Settings All Access"
+msgstr ""
+
 #. js-lingui-id: p8fNBm
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Settings permissions"
@@ -4644,6 +4664,7 @@ msgstr "Webhooks"
 #~ msgstr "Welcome to"
 
 #. js-lingui-id: ke0EDP
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
 msgstr "Bienvenue sur {workspaceName}"
@@ -4808,6 +4829,7 @@ msgid "Your name as it will be displayed on the app"
 msgstr "Votre nom tel qu'il sera affiché sur l'application"
 
 #. js-lingui-id: YQK8fJ
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Votre espace de travail"

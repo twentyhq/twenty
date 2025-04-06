@@ -5,22 +5,23 @@ import { useSnackBarManagerScopedStates } from '@/ui/feedback/snack-bar-manager/
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { SnackBar } from './SnackBar';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledSnackBarContainer = styled.div`
+  bottom: ${({ theme }) => theme.spacing(3)};
   display: flex;
   flex-direction: column;
   position: fixed;
   right: ${({ theme }) => theme.spacing(3)};
-  bottom: ${({ theme }) => theme.spacing(3)};
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
+  z-index: ${RootStackingContextZIndices.SnackBar};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    top: 0;
     bottom: auto;
     left: 0;
     right: 0;
+    top: 0;
   }
 `;
 

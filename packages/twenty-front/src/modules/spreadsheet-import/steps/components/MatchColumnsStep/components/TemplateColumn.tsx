@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { IconForbid } from 'twenty-ui/display';
@@ -75,7 +75,7 @@ export const TemplateColumn = <T extends string>({
         value={isIgnored ? ignoreValue : selectValue}
         onChange={(value) => onChange(value?.value as T, column.index)}
         options={selectOptions}
-        name={column.header}
+        columnIndex={column.index.toString()}
       />
     </StyledContainer>
   );

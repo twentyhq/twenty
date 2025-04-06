@@ -9,8 +9,8 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
-import { IsNull, MoreThan, Repository } from 'typeorm';
 import { APP_LOCALES } from 'twenty-shared/translations';
+import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
   AppToken,
@@ -158,8 +158,8 @@ export class ResetPasswordService {
 
     const emailTemplate = PasswordResetLinkEmail(emailData);
 
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     i18n.activate(locale);
 

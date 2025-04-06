@@ -12,7 +12,4 @@ export class SettingPermissionDTO {
 
   @Field({ nullable: false })
   setting: SettingPermissionType;
-
-  @Field({ nullable: true })
-  canUpdateSetting?: boolean;
 }
