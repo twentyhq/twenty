@@ -67,6 +67,7 @@ export const RecordTableActionRow = ({
     <StyledRecordTableDraggableTr
       draggableId={draggableId}
       draggableIndex={draggableIndex}
+      focusIndex={draggableIndex}
       onClick={onClick}
       isDragDisabled
     >
