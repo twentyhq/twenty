@@ -9,7 +9,7 @@ const StyledWorkflowStepBody = styled.div`
   overflow-y: scroll;
   padding-block: ${({ theme }) => theme.spacing(4)};
   padding-inline: ${({ theme }) => theme.spacing(3)};
-  row-gap: ${({ theme }) => theme.spacing(6)};
+  row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 export { StyledWorkflowStepBody as WorkflowStepBody };
