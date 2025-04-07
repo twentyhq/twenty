@@ -8,7 +8,6 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 export class BillingEndTrialPeriodOutput {
   @Field(() => SubscriptionStatus, {
     description: 'Updated subscription status',
-    nullable: true,
   })
   status: SubscriptionStatus | undefined;
 
