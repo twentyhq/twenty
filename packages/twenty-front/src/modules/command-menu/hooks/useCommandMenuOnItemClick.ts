@@ -1,30 +1,13 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuOnItemClick = () => {
-  const { toggleCommandMenu } = useCommandMenu();
   const navigate = useNavigate();
 
   const onItemClick = useCallback(
-    ({
-      shouldCloseCommandMenuOnClick,
-      onClick,
-      to,
-    }: {
-      shouldCloseCommandMenuOnClick?: boolean;
-      onClick?: () => void;
-      to?: string;
-    }) => {
-      if (
-        isDefined(shouldCloseCommandMenuOnClick) &&
-        shouldCloseCommandMenuOnClick
-      ) {
-        toggleCommandMenu();
-      }
-
+    ({ onClick, to }: { onClick?: () => void; to?: string }) => {
       if (isDefined(onClick)) {
         onClick();
       }
@@ -32,7 +15,7 @@ export const useCommandMenuOnItemClick = () => {
         navigate(to);
       }
     },
-    [navigate, toggleCommandMenu],
+    [navigate],
   );
 
   return { onItemClick };

@@ -14,7 +14,7 @@ export type ActionDisplayProps = {
   Icon: IconComponent;
   accent?: MenuItemAccent;
   to?: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void;
   hotKeys?: string[];
 };
 

@@ -5,7 +5,6 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
@@ -24,7 +23,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
 
 const StyledCommandMenu = styled(motion.div)`
@@ -87,8 +86,6 @@ export const CommandMenuContainer = ({
     : 'normal';
 
   const theme = useTheme();
-
-  const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
 
   const objectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,

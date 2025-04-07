@@ -4,8 +4,9 @@ import { ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
+import { RESET_CONTEXT_TO_SELECTION } from '@/command-menu/constants/ResetContextToSelection';
+import { useResetPreviousCommandMenuContext } from '@/command-menu/hooks/useResetPreviousCommandMenuContext';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -59,12 +60,8 @@ export const CommandMenuList = ({
   loading = false,
   noResults = false,
 }: CommandMenuListProps) => {
-  // const { onItemClick } = useCommandMenuOnItemClick();
-
-  // const commands = commandGroups.flatMap((group) => group.items ?? []);
-
-  // const { resetPreviousCommandMenuContext } =
-  //   useResetPreviousCommandMenuContext();
+  const { resetPreviousCommandMenuContext } =
+    useResetPreviousCommandMenuContext();
 
   const setHasUserSelectedCommand = useSetRecoilState(
     hasUserSelectedCommandState,
@@ -85,20 +82,10 @@ export const CommandMenuList = ({
             hotkeyScope={AppHotkeyScope.CommandMenuOpen}
             selectableItemIdArray={selectableItemIds}
             onEnter={(itemId) => {
-              // if (itemId === RESET_CONTEXT_TO_SELECTION) {
-              //   resetPreviousCommandMenuContext();
-              //   return;
-              // }
-              // const command = commands.find((item) => item.id === itemId);
-              // if (isDefined(command)) {
-              //   const { to, onCommandClick, shouldCloseCommandMenuOnClick } =
-              //     command;
-              //   onItemClick({
-              //     shouldCloseCommandMenuOnClick,
-              //     onClick: onCommandClick,
-              //     to,
-              //   });
-              // }
+              if (itemId === RESET_CONTEXT_TO_SELECTION) {
+                resetPreviousCommandMenuContext();
+                return;
+              }
             }}
             onSelect={() => {
               setHasUserSelectedCommand(true);
@@ -108,13 +95,9 @@ export const CommandMenuList = ({
             {commandGroups.map(({ heading, items }) =>
               items?.length ? (
                 <CommandGroup heading={heading} key={heading}>
-                  {items.map((item) => {
-                    return (
-                      <SelectableItem itemId={item.key} key={item.key}>
-                        <ActionDisplayer action={item} />
-                      </SelectableItem>
-                    );
-                  })}
+                  {items.map((item) => (
+                    <ActionDisplayer action={item} />
+                  ))}
                 </CommandGroup>
               ) : null,
             )}
