@@ -51,62 +51,62 @@ export const SMSTexts = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-
   const [textData, setTextData] = useState<any[]>([]);
 
-  const {    
-    record: person,
-    loading,
-    } =  useFindOneRecord<Person>({
+  const { record: person, loading } = useFindOneRecord<Person>({
     objectNameSingular: targetableObject.targetObjectNameSingular,
     objectRecordId: targetableObject.id,
     recordGqlFields: {
-        phones: true,
-    }
-    });
+      phones: true,
+    },
+  });
 
   useEffect(() => {
+    // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     async function fetchTexts() {
+      if (!person || loading) return;
 
-        if(!person || loading ) return;
+      const apiUrl = process.env.REACT_APP_TWILIO_API_URL;
+      const accountSid = process.env.REACT_APP_TWILIO_ACCOUNT_SID as string;
+      const authToken = process.env.REACT_APP_TWILIO_AUTH_TOKEN as string;
+      const personPhoneNumber = `${person.phones.primaryPhoneCallingCode}${person.phones.primaryPhoneNumber}`;
 
-        const apiUrl = process.env.REACT_APP_TWILIO_API_URL;
-        const accountSid = process.env.REACT_APP_TWILIO_ACCOUNT_SID as string;
-        const authToken = process.env.REACT_APP_TWILIO_AUTH_TOKEN as string;
-        const personPhoneNumber = `${person.phones.primaryPhoneCallingCode}${person.phones.primaryPhoneNumber}`;
-    
-        try {
-            const [toResponse, fromResponse] = await Promise.all([
-                await axios.get(
-                    `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?To=${personPhoneNumber}`,
-                    {
-                      auth: {
-                        username: accountSid,
-                        password: authToken,
-                      },
-                    },
-                  ),
-                  await axios.get(
-                    `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?From=${personPhoneNumber}`,
-                    {
-                      auth: {
-                        username: accountSid,
-                        password: authToken,
-                      },
-                    },
-                  )
-            ]);
+      try {
+        const [toResponse, fromResponse] = await Promise.all([
+          await axios.get(
+            `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?To=${personPhoneNumber}`,
+            {
+              auth: {
+                username: accountSid,
+                password: authToken,
+              },
+            },
+          ),
+          await axios.get(
+            `${apiUrl}/2010-04-01/Accounts/${accountSid}/Messages.json?From=${personPhoneNumber}`,
+            {
+              auth: {
+                username: accountSid,
+                password: authToken,
+              },
+            },
+          ),
+        ]);
 
-          const texts = [...toResponse.data.messages, ...fromResponse.data.messages];
-          const textsSortedByDateDescending = texts.sort((a,b) => new Date(b.date_sent).valueOf() - new Date(a.date_sent).valueOf());
-          setTextData(textsSortedByDateDescending);
+        const texts = [
+          ...toResponse.data.messages,
+          ...fromResponse.data.messages,
+        ];
+        const textsSortedByDateDescending = texts.sort(
+          (a, b) =>
+            new Date(a.date_sent).valueOf() - new Date(b.date_sent).valueOf(),
+        );
+        setTextData(textsSortedByDateDescending);
         //   console.log('Twilio response sorted:', textsSortedByDateDescending);
-
-        } catch (error) {
-          console.error('Error fetching Twilio messages:', error);
-          throw error;
-        }
-        
+      } catch (error) {
+        console.error('Error fetching Twilio messages:', error);
+        throw error;
+      }
     }
     fetchTexts();
   }, [person, loading]);
@@ -117,7 +117,6 @@ export const SMSTexts = ({
     body: text.body,
     date: new Date(text.date_sent),
   }));
-//   console.log('Twilio texts formatted: ', transformedTexts);
 
   return (
     <StyledContainer>
@@ -133,7 +132,7 @@ export const SMSTexts = ({
         />
 
         <ActivityList>
-          {transformedTexts?.map((text : SMSText) => (
+          {transformedTexts?.map((text: SMSText) => (
             // can't click on each text
             <ActivityRow onClick={() => {}} key={text.id}>
               <StyledSenderNames>{text.sender}</StyledSenderNames>
