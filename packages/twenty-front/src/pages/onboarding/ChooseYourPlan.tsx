@@ -181,10 +181,6 @@ export const ChooseYourPlan = () => {
       ? BillingPlanKey.ENTERPRISE
       : BillingPlanKey.PRO;
 
-  const alternatePlanName = plans?.plans.find(
-    (plan) => plan.planKey === alternatePlan,
-  )?.baseProduct.name;
-
   return (
     <>
       {isDefined(baseProductPrice) && isDefined(billing) ? (
@@ -256,7 +252,7 @@ export const ChooseYourPlan = () => {
             </ActionLink>
             <span />
             <ActionLink onClick={handleSwitchPlan(alternatePlan)}>
-              <Trans>Switch to {alternatePlanName}</Trans>
+              <Trans>Switch Plan</Trans>
             </ActionLink>
             <span />
             <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
