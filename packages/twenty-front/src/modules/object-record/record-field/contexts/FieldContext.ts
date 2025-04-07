@@ -32,8 +32,10 @@ export type GenericFieldContextType = {
   overridenIsFieldEmpty?: boolean;
   displayedMaxRows?: number;
   isDisplayModeFixHeight?: boolean;
+  isReadOnly: boolean;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
+  isLabelHidden?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

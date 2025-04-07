@@ -51,51 +51,6 @@ const draftWorkflowMock = {
   ],
 };
 
-const activeWorkflowMock = {
-  ...baseWorkflowMock,
-  currentVersion: {
-    ...baseWorkflowMock.currentVersion,
-    status: 'ACTIVE',
-  },
-  versions: [
-    {
-      __typename: 'WorkflowVersion',
-      id: 'currentVersionId',
-      status: 'ACTIVE',
-    },
-  ],
-};
-
-const noStepsWorkflowMock = {
-  ...baseWorkflowMock,
-  currentVersion: {
-    ...baseWorkflowMock.currentVersion,
-    steps: [],
-  },
-  versions: [
-    {
-      __typename: 'WorkflowVersion',
-      id: 'currentVersionId',
-      status: 'ACTIVE',
-    },
-  ],
-};
-
-const noTriggerWorkflowMock = {
-  ...baseWorkflowMock,
-  currentVersion: {
-    ...baseWorkflowMock.currentVersion,
-    trigger: undefined,
-  },
-  versions: [
-    {
-      __typename: 'WorkflowVersion',
-      id: 'currentVersionId',
-      status: 'ACTIVE',
-    },
-  ],
-};
-
 jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
   useWorkflowWithCurrentVersion: jest.fn(),
 }));
@@ -138,66 +93,6 @@ describe('useActivateWorkflowSingleRecordAction', () => {
     jest.clearAllMocks();
   });
 
-  it('should be registered when workflow has trigger and steps and is not active', () => {
-    (useWorkflowWithCurrentVersion as jest.Mock).mockReturnValue(
-      draftWorkflowMock,
-    );
-
-    const { result } = renderHook(
-      () => useActivateWorkflowSingleRecordAction(),
-      {
-        wrapper: createWrapper(draftWorkflowMock),
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(true);
-  });
-
-  it('should not be registered when workflow is already active', () => {
-    (useWorkflowWithCurrentVersion as jest.Mock).mockReturnValue(
-      activeWorkflowMock,
-    );
-
-    const { result } = renderHook(
-      () => useActivateWorkflowSingleRecordAction(),
-      {
-        wrapper: createWrapper(activeWorkflowMock),
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(false);
-  });
-
-  it('should not be registered when workflow has no steps', () => {
-    (useWorkflowWithCurrentVersion as jest.Mock).mockReturnValue(
-      noStepsWorkflowMock,
-    );
-
-    const { result } = renderHook(
-      () => useActivateWorkflowSingleRecordAction(),
-      {
-        wrapper: createWrapper(noStepsWorkflowMock),
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(false);
-  });
-
-  it('should not be registered when workflow has no trigger', () => {
-    (useWorkflowWithCurrentVersion as jest.Mock).mockReturnValue(
-      noTriggerWorkflowMock,
-    );
-
-    const { result } = renderHook(
-      () => useActivateWorkflowSingleRecordAction(),
-      {
-        wrapper: createWrapper(noTriggerWorkflowMock),
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(false);
-  });
-
   it('should call activateWorkflowVersion on click', () => {
     (useWorkflowWithCurrentVersion as jest.Mock).mockReturnValue(
       draftWorkflowMock,
@@ -218,24 +113,5 @@ describe('useActivateWorkflowSingleRecordAction', () => {
       workflowId: draftWorkflowMock.id,
       workflowVersionId: draftWorkflowMock.currentVersion.id,
     });
-  });
-
-  it('should not call activateWorkflowVersion when not registered', () => {
-    (useWorkflowWithCurrentVersion as jest.Mock).mockReturnValue(
-      activeWorkflowMock,
-    );
-
-    const { result } = renderHook(
-      () => useActivateWorkflowSingleRecordAction(),
-      {
-        wrapper: createWrapper(activeWorkflowMock),
-      },
-    );
-
-    act(() => {
-      result.current.onClick();
-    });
-
-    expect(activateWorkflowVersionMock).not.toHaveBeenCalled();
   });
 });

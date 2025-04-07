@@ -1,6 +1,6 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import styled from '@emotion/styled';
-import { useIsMobile } from 'twenty-ui';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledSection = styled.div<{ isSettingsDrawer?: boolean }>`
   margin-bottom: ${({ theme, isSettingsDrawer }) =>

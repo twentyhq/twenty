@@ -15,10 +15,10 @@ export const useSeeWorkflowWorkflowRunSingleRecordAction: ActionHookWithoutObjec
 
     const navigateApp = useNavigateApp();
 
-    const shouldBeRegistered = isDefined(workflowRun?.workflow?.id);
-
     const onClick = () => {
-      if (!shouldBeRegistered || !workflowRun?.workflow?.id) return;
+      if (!isDefined(workflowRun) || !isDefined(workflowRun?.workflow?.id)) {
+        return;
+      }
 
       navigateApp(AppPath.RecordShowPage, {
         objectNameSingular: CoreObjectNameSingular.Workflow,
@@ -27,7 +27,6 @@ export const useSeeWorkflowWorkflowRunSingleRecordAction: ActionHookWithoutObjec
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

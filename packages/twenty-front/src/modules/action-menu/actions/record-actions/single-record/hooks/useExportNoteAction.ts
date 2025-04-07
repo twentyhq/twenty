@@ -1,33 +1,19 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockNoteEditor } from '@blocknote/core';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useExportNoteAction: ActionHookWithObjectMetadataItem = ({
-  objectMetadataItem,
-}) => {
+export const useExportNoteAction: ActionHookWithoutObjectMetadataItem = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
   const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
   const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 
-  const isNoteOrTask =
-    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
-    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
-
-  const shouldBeRegistered =
-    isDefined(objectMetadataItem) &&
-    isDefined(selectedRecord) &&
-    isNoteOrTask &&
-    isNonEmptyString(selectedRecord.bodyV2?.blocknote);
-
   const onClick = async () => {
-    if (!shouldBeRegistered || !selectedRecord.bodyV2.blocknote) {
+    if (!isDefined(selectedRecord)) {
       return;
     }
 
@@ -65,7 +51,6 @@ export const useExportNoteAction: ActionHookWithObjectMetadataItem = ({
   };
 
   return {
-    shouldBeRegistered,
     onClick,
   };
 };

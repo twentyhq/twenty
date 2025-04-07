@@ -1,18 +1,20 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { WorkflowSingleRecordPicker } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSingleRecordPicker';
 import { useEffect, useState } from 'react';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator, SelectOption, useIcons } from 'twenty-ui';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 type WorkflowEditActionDeleteRecordProps = {
   action: WorkflowDeleteRecordAction;
@@ -154,7 +156,7 @@ export const WorkflowEditActionDeleteRecord = ({
 
         <HorizontalSeparator noMargin />
 
-        <WorkflowSingleRecordPicker
+        <FormSingleRecordPicker
           label="Record"
           onChange={(objectRecordId) =>
             handleFieldChange('objectRecordId', objectRecordId)
@@ -163,6 +165,7 @@ export const WorkflowEditActionDeleteRecord = ({
           defaultValue={formData.objectRecordId}
           testId="workflow-edit-action-record-delete-object-record-id"
           disabled={isFormDisabled}
+          VariablePicker={WorkflowVariablePicker}
         />
       </WorkflowStepBody>
     </>

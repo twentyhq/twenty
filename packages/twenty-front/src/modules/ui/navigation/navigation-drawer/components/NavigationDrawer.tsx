@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -12,6 +11,7 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export type NavigationDrawerProps = {
   children?: ReactNode;

@@ -1,20 +1,4 @@
 import {
-  IconComponent,
-  IllustrationIconArray,
-  IllustrationIconCalendarEvent,
-  IllustrationIconCalendarTime,
-  IllustrationIconJson,
-  IllustrationIconNumbers,
-  IllustrationIconOneToMany,
-  IllustrationIconStar,
-  IllustrationIconTag,
-  IllustrationIconTags,
-  IllustrationIconText,
-  IllustrationIconToggle,
-  IllustrationIconUid,
-} from 'twenty-ui';
-
-import {
   FieldArrayValue,
   FieldBooleanValue,
   FieldDateTimeValue,
@@ -32,6 +16,21 @@ import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateV
 import { SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
 import { SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  IconComponent,
+  IllustrationIconArray,
+  IllustrationIconCalendarEvent,
+  IllustrationIconCalendarTime,
+  IllustrationIconJson,
+  IllustrationIconNumbers,
+  IllustrationIconOneToMany,
+  IllustrationIconStar,
+  IllustrationIconTag,
+  IllustrationIconTags,
+  IllustrationIconText,
+  IllustrationIconToggle,
+  IllustrationIconUid,
+} from 'twenty-ui/display';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);
 

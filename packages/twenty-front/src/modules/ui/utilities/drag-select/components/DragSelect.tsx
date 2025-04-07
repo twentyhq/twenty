@@ -4,9 +4,9 @@ import {
 } from '@air/react-drag-to-select';
 import { useTheme } from '@emotion/react';
 import { RefObject } from 'react';
-import { RGBA } from 'twenty-ui';
 
 import { useDragSelect } from '../hooks/useDragSelect';
+import { RGBA } from 'twenty-ui/theme';
 
 type DragSelectProps = {
   dragSelectable: RefObject<HTMLElement>;

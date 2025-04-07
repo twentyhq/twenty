@@ -4,9 +4,9 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useCallback, useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
-import { isDefined } from 'twenty-shared/utils';
 
 type EmailsFieldInputProps = {
   onCancel?: () => void;
@@ -59,7 +59,10 @@ export const EmailsFieldInput = ({
       items={emails}
       onPersist={handlePersistEmails}
       onCancel={onCancel}
-      onClickOutside={onClickOutside}
+      onClickOutside={(persist, event) => {
+        onClickOutside?.(event);
+        persist();
+      }}
       placeholder="Email"
       fieldMetadataType={FieldMetadataType.EMAILS}
       validateInput={validateInput}

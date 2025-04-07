@@ -1,3 +1,4 @@
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -6,6 +7,7 @@ import {
   useListenClickOutside,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import React, { useEffect, useRef } from 'react';
@@ -31,7 +33,7 @@ const StyledModalDiv = styled(motion.div)<{
   }};
   overflow-x: hidden;
   overflow-y: auto;
-  z-index: 10000; // should be higher than Backdrop's z-index
+  z-index: ${RootStackingContextZIndices.RootModal}; // should be higher than Backdrop's z-index
 
   width: ${({ isMobile, size, theme }) => {
     if (isMobile) return theme.modal.size.fullscreen;
@@ -109,7 +111,7 @@ const StyledBackDrop = styled(motion.div)<{
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 9999;
+  z-index: ${RootStackingContextZIndices.RootModalBackDrop};
   user-select: none;
 `;
 
@@ -147,6 +149,7 @@ export type ModalProps = React.PropsWithChildren & {
   className?: string;
   hotkeyScope?: ModalHotkeyScope;
   onEnter?: () => void;
+  isOpenAnimated?: boolean;
   modalVariant?: ModalVariants;
 } & (
     | { isClosable: true; onClose: () => void }
@@ -169,6 +172,7 @@ export const Modal = ({
   isClosable = false,
   onClose,
   modalVariant = 'primary',
+  isOpenAnimated = true,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -222,6 +226,8 @@ export const Modal = ({
     e.stopPropagation();
   };
 
+  const theme = useTheme();
+
   return (
     <StyledBackDrop
       className="modal-backdrop"
@@ -232,12 +238,13 @@ export const Modal = ({
         ref={modalRef}
         size={size}
         padding={padding}
-        initial="hidden"
+        initial={isOpenAnimated ? 'hidden' : 'visible'}
         animate="visible"
         exit="exit"
         layout
         modalVariant={modalVariant}
         variants={modalAnimation}
+        transition={{ duration: theme.animation.duration.normal }}
         className={className}
         isMobile={isMobile}
       >

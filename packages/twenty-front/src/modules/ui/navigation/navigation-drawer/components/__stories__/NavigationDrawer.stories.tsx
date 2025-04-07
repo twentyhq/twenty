@@ -3,24 +3,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import {
-  GithubVersionLink,
-  IconAt,
-  IconBell,
-  IconBuildingSkyscraper,
-  IconCalendarEvent,
-  IconCheckbox,
-  IconColorSwatch,
-  IconMail,
-  IconSearch,
-  IconServer,
-  IconSettings,
-  IconTargetArrow,
-  IconUser,
-  IconUserCircle,
-  IconUsers,
-  getOsControlSymbol,
-} from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -36,6 +18,24 @@ import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
+import {
+  IconAt,
+  IconBell,
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
+  IconCheckbox,
+  IconColorSwatch,
+  IconMail,
+  IconSearch,
+  IconServer,
+  IconSettings,
+  IconTargetArrow,
+  IconUser,
+  IconUserCircle,
+  IconUsers,
+} from 'twenty-ui/display';
+import { GithubVersionLink } from 'twenty-ui/navigation';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import jsonPage from '../../../../../../../package.json';

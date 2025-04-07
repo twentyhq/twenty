@@ -3,7 +3,8 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
+
 const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};

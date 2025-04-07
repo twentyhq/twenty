@@ -2,16 +2,17 @@ import { SelectSizeVariant } from '@/ui/input/components/Select';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronDown,
-  OverflowingTextWithTooltip,
-  SelectOption,
-} from 'twenty-ui';
+import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
+export type SelectControlTextAccent = 'default' | 'placeholder';
+
+// TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;
   selectSizeVariant?: SelectSizeVariant;
+  textAccent: SelectControlTextAccent;
 }>`
   display: grid;
   grid-template-columns: ${({ hasIcon }) =>
@@ -26,8 +27,12 @@ const StyledControlContainer = styled.div<{
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.tertiary : theme.font.color.primary};
+  color: ${({ disabled, theme, textAccent }) =>
+    disabled
+      ? theme.font.color.tertiary
+      : textAccent === 'default'
+        ? theme.font.color.primary
+        : theme.font.color.secondary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   text-align: left;
 `;
@@ -43,12 +48,14 @@ type SelectControlProps = {
   selectedOption: SelectOption<string | number | boolean | null>;
   isDisabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
+  textAccent?: SelectControlTextAccent;
 };
 
 export const SelectControl = ({
   selectedOption,
   isDisabled,
   selectSizeVariant,
+  textAccent = 'default',
 }: SelectControlProps) => {
   const theme = useTheme();
 
@@ -57,6 +64,7 @@ export const SelectControl = ({
       disabled={isDisabled}
       hasIcon={isDefined(selectedOption.Icon)}
       selectSizeVariant={selectSizeVariant}
+      textAccent={textAccent}
     >
       {isDefined(selectedOption.Icon) ? (
         <selectedOption.Icon

@@ -7,7 +7,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import 'react-phone-number-input/style.css';
-import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui';
+import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 const StyledIconContainer = styled.div`
   align-items: center;

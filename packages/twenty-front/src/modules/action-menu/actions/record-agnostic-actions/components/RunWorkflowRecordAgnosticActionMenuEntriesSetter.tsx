@@ -1,4 +1,4 @@
-import { RegisterAgnosticRecordActionEffect } from '@/action-menu/actions/record-agnostic-actions/components/RegisterAgnosticRecordActionEffect';
+import { RegisterAgnosticActionEffect } from '@/action-menu/actions/record-agnostic-actions/components/RegisterAgnosticActionEffect';
 import { useRunWorkflowActions } from '@/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowActions';
 
 export const RunWorkflowRecordAgnosticActionMenuEntriesSetter = () => {
@@ -7,7 +7,7 @@ export const RunWorkflowRecordAgnosticActionMenuEntriesSetter = () => {
   return (
     <>
       {runWorkflowActions.map((action) => (
-        <RegisterAgnosticRecordActionEffect key={action.key} action={action} />
+        <RegisterAgnosticActionEffect key={action.key} action={action} />
       ))}
     </>
   );

@@ -6,9 +6,9 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { isDefined } from 'twenty-shared/utils';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useShowAuthModal = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
@@ -21,8 +21,11 @@ export const useShowAuthModal = () => {
   );
 
   return useMemo(() => {
-    if (isMatchingLocation(AppPath.Verify)) {
-      return false;
+    if (
+      isMatchingLocation(AppPath.Verify) ||
+      isMatchingLocation(AppPath.VerifyEmail)
+    ) {
+      return true;
     }
 
     if (

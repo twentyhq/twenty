@@ -1,7 +1,13 @@
 import { useContext } from 'react';
 
+import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
+import { useUpdateActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromCell';
+import { NoteTarget } from '@/activities/types/NoteTarget';
+import { TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
@@ -22,10 +28,33 @@ export const RelationFromManyFieldInput = ({
   const recordPickerInstanceId = `relation-from-many-field-input-${recordId}`;
 
   const { updateRelation } = useUpdateRelationFromManyFieldInput();
+  const fieldName = fieldDefinition.metadata.fieldName;
+  const objectMetadataNameSingular =
+    fieldDefinition.metadata.objectMetadataNameSingular;
+
+  const { updateActivityTargetFromCell } = useUpdateActivityTargetFromCell({
+    activityObjectNameSingular: objectMetadataNameSingular as
+      | CoreObjectNameSingular.Note
+      | CoreObjectNameSingular.Task,
+    activityId: recordId,
+  });
+
+  const { fieldValue } = useRelationField();
 
   const handleSubmit = () => {
     onSubmit?.(() => {});
   };
+
+  const isRelationFromActivityTargets =
+    (fieldName === 'noteTargets' &&
+      objectMetadataNameSingular === CoreObjectNameSingular.Note) ||
+    (fieldName === 'taskTargets' &&
+      objectMetadataNameSingular === CoreObjectNameSingular.Task);
+
+  const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
+    recordId,
+    fieldValue as NoteTarget[] | TaskTarget[],
+  );
 
   const relationFieldDefinition =
     fieldDefinition as FieldDefinition<FieldRelationMetadata>;
@@ -57,8 +86,22 @@ export const RelationFromManyFieldInput = ({
     <MultipleRecordPicker
       componentInstanceId={recordPickerInstanceId}
       onSubmit={handleSubmit}
-      onChange={updateRelation}
-      onCreate={createNewRecordAndOpenRightDrawer}
+      onChange={(morphItem) => {
+        if (isRelationFromActivityTargets) {
+          updateActivityTargetFromCell({
+            morphItem,
+            activityTargetWithTargetRecords: activityTargetObjectRecords,
+            recordPickerInstanceId,
+          });
+        } else {
+          updateRelation(morphItem);
+        }
+      }}
+      onCreate={
+        !isRelationFromActivityTargets
+          ? createNewRecordAndOpenRightDrawer
+          : undefined
+      }
       onClickOutside={handleSubmit}
       layoutDirection={
         layoutDirection === 'downward'

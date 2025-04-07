@@ -1,7 +1,7 @@
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { useRecoilCallback } from 'recoil';
-import { IconComponent, IconDotsVertical } from 'twenty-ui';
+import { IconComponent, IconDotsVertical } from 'twenty-ui/display';
 
 export const useUpdateCommandMenuPageInfo = () => {
   const updateCommandMenuPageInfo = useRecoilCallback(
