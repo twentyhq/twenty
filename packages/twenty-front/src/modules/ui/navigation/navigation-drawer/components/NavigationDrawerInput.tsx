@@ -4,9 +4,9 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import styled from '@emotion/styled';
 import { FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { isDefined } from 'twenty-shared/utils';
 import { IconComponent, TablerIconsProps } from 'twenty-ui/display';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type NavigationDrawerInputProps = {
   className?: string;
@@ -21,7 +21,10 @@ type NavigationDrawerInputProps = {
 };
 
 const StyledInput = styled(TextInputV2)`
-  background-color: white;
+  background-color: ${({ theme }) =>
+    theme.name === 'light' ? 'white' : theme.background.transparent.lighter};
+  color: ${({ theme }) => theme.font.color.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
 `;
 
 export const NavigationDrawerInput = ({
