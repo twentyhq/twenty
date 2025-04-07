@@ -1,4 +1,4 @@
-import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/types/SettingsRolePermissionsObjectPermission';
+import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';

@@ -145,6 +145,14 @@ export type Billing = {
   trialPeriods: Array<BillingTrialPeriodDto>;
 };
 
+export type BillingEndTrialPeriodOutput = {
+  __typename?: 'BillingEndTrialPeriodOutput';
+  /** Boolean that confirms if a payment method was found */
+  hasPaymentMethod: Scalars['Boolean']['output'];
+  /** Updated subscription status */
+  status?: Maybe<SubscriptionStatus>;
+};
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
@@ -153,9 +161,9 @@ export enum BillingPlanKey {
 
 export type BillingPlanOutput = {
   __typename?: 'BillingPlanOutput';
-  baseProduct: BillingProductDto;
-  meteredProducts: Array<BillingProductDto>;
-  otherLicensedProducts: Array<BillingProductDto>;
+  baseProduct: BillingProduct;
+  meteredProducts: Array<BillingProduct>;
+  otherLicensedProducts: Array<BillingProduct>;
   planKey: BillingPlanKey;
 };
 
@@ -191,13 +199,26 @@ export enum BillingPriceTiersMode {
 
 export type BillingPriceUnionDto = BillingPriceLicensedDto | BillingPriceMeteredDto;
 
-export type BillingProductDto = {
-  __typename?: 'BillingProductDTO';
+export type BillingProduct = {
+  __typename?: 'BillingProduct';
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
+  metadata: BillingProductMetadata;
   name: Scalars['String']['output'];
-  prices: Array<BillingPriceUnionDto>;
-  type: BillingUsageType;
+  prices?: Maybe<Array<BillingPriceUnionDto>>;
+};
+
+/** The different billing products available */
+export enum BillingProductKey {
+  BASE_PRODUCT = 'BASE_PRODUCT',
+  WORKFLOW_NODE_EXECUTION = 'WORKFLOW_NODE_EXECUTION'
+}
+
+export type BillingProductMetadata = {
+  __typename?: 'BillingProductMetadata';
+  planKey: BillingPlanKey;
+  priceUsageBased: BillingUsageType;
+  productKey: BillingProductKey;
 };
 
 export type BillingSessionOutput = {
@@ -207,9 +228,17 @@ export type BillingSessionOutput = {
 
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
+  billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
   id: Scalars['UUID']['output'];
   interval?: Maybe<SubscriptionInterval>;
   status: SubscriptionStatus;
+};
+
+export type BillingSubscriptionItem = {
+  __typename?: 'BillingSubscriptionItem';
+  billingProduct?: Maybe<BillingProduct>;
+  hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
+  id: Scalars['UUID']['output'];
 };
 
 export type BillingTrialPeriodDto = {
@@ -908,6 +937,7 @@ export type Mutation = {
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
+  endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
@@ -1849,6 +1879,7 @@ export type Role = {
   id: Scalars['String']['output'];
   isEditable: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
+  objectPermissions?: Maybe<Array<ObjectPermission>>;
   settingPermissions?: Maybe<Array<SettingPermission>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
