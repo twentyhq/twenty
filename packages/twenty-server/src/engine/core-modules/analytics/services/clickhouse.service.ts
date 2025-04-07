@@ -5,16 +5,28 @@ import { ClickHouseClient, createClient } from '@clickhouse/client';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
 import { AnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 @Injectable()
 export class ClickhouseService {
   private clickhouseClient: ClickHouseClient | undefined;
 
-  constructor(private readonly environmentService: EnvironmentService) {
+  constructor(
+    private readonly environmentService: EnvironmentService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
+  ) {
     if (environmentService.get('ANALYTICS_ENABLED')) {
       this.clickhouseClient = createClient({
         url: environmentService.get('CLICKHOUSE_URL'),
         database: environmentService.get('CLICKHOUSE_DB'),
+        compression: {
+          response: true,
+          request: true,
+        },
+        clickhouse_settings: {
+          async_insert: 1,
+          wait_for_async_insert: 1,
+        },
       });
     }
   }
@@ -38,6 +50,8 @@ export class ClickhouseService {
 
       return { success: true };
     } catch (err) {
+      this.exceptionHandlerService.captureExceptions([err]);
+
       return { success: false };
     }
   }
