@@ -12,8 +12,8 @@ export type ActionConfig = {
   type: ActionMenuEntryType;
   scope: ActionMenuEntryScope;
   key: string;
-  label: MessageDescriptor;
-  shortLabel?: MessageDescriptor;
+  label: MessageDescriptor | string;
+  shortLabel?: MessageDescriptor | string;
   position: number;
   Icon: IconComponent;
   isPinned?: boolean;

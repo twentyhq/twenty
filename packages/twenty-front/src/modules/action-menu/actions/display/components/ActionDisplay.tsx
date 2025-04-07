@@ -9,8 +9,8 @@ import { MenuItemAccent } from 'twenty-ui/navigation';
 
 export type ActionDisplayProps = {
   key: string;
-  label: MessageDescriptor;
-  shortLabel?: MessageDescriptor;
+  label: MessageDescriptor | string;
+  shortLabel?: MessageDescriptor | string;
   Icon: IconComponent;
   accent?: MenuItemAccent;
   to?: string;

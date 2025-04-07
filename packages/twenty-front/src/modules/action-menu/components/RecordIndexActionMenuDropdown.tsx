@@ -15,7 +15,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
-import { i18n } from '@lingui/core';
 import { useRecoilValue } from 'recoil';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -55,14 +54,6 @@ export const RecordIndexActionMenuDropdown = () => {
 
   const { openCommandMenu } = useCommandMenu();
 
-  //TODO: remove this
-  const width = recordIndexActions.some(
-    (actionMenuEntry) =>
-      i18n._(actionMenuEntry.label) === 'Remove from favorites',
-  )
-    ? 200
-    : undefined;
-
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -70,7 +61,6 @@ export const RecordIndexActionMenuDropdown = () => {
         scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
       }}
       data-select-disable
-      dropdownMenuWidth={width}
       dropdownPlacement="bottom-start"
       dropdownStrategy="absolute"
       dropdownOffset={{

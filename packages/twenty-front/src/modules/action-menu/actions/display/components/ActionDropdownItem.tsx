@@ -1,5 +1,5 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
-import { i18n } from '@lingui/core';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export const ActionDropdownItem = ({
@@ -12,7 +12,7 @@ export const ActionDropdownItem = ({
       key={action.key}
       LeftIcon={action.Icon}
       onClick={action?.onClick}
-      text={i18n._(action.label)}
+      text={getActionLabel(action.label)}
     />
   );
 };

@@ -1,3 +1,5 @@
+import { Action } from '@/action-menu/actions/components/Action';
+import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -6,6 +8,7 @@ import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { AppPath } from '@/types/AppPath';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -30,16 +33,13 @@ export const useCommandMenuSearchRecords = () => {
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const actionItems = useMemo(() => {
-    return (searchData?.search ?? []).map((searchRecord) => {
+    return (searchData?.search ?? []).map((searchRecord, index) => {
       const baseAction = {
         type: ActionMenuEntryType.Navigation,
         scope: ActionMenuEntryScope.Global,
         key: searchRecord.recordId,
-        label: {
-          id: searchRecord.recordId,
-          defaultMessage: searchRecord.label,
-        },
-        position: 0,
+        label: searchRecord.label,
+        position: index,
         Icon: () => (
           <Avatar
             type={
@@ -53,7 +53,6 @@ export const useCommandMenuSearchRecords = () => {
           />
         ),
         shouldBeRegistered: () => true,
-        component: null,
         description: capitalize(searchRecord.objectNameSingular),
         shouldCloseCommandMenuOnClick: true,
       };
@@ -65,23 +64,36 @@ export const useCommandMenuSearchRecords = () => {
       ) {
         return {
           ...baseAction,
-          onClick: () => {
-            searchRecord.objectNameSingular === 'task'
-              ? openRecordInCommandMenu({
-                  recordId: searchRecord.recordId,
-                  objectNameSingular: CoreObjectNameSingular.Task,
-                })
-              : openRecordInCommandMenu({
-                  recordId: searchRecord.recordId,
-                  objectNameSingular: CoreObjectNameSingular.Note,
-                });
-          },
+          component: (
+            <Action
+              onClick={() => {
+                searchRecord.objectNameSingular === 'task'
+                  ? openRecordInCommandMenu({
+                      recordId: searchRecord.recordId,
+                      objectNameSingular: CoreObjectNameSingular.Task,
+                    })
+                  : openRecordInCommandMenu({
+                      recordId: searchRecord.recordId,
+                      objectNameSingular: CoreObjectNameSingular.Note,
+                    });
+              }}
+              preventCommandMenuClosing
+            />
+          ),
         };
       }
 
       return {
         ...baseAction,
-        to: `object/${searchRecord.objectNameSingular}/${searchRecord.recordId}`,
+        component: (
+          <ActionLink
+            to={AppPath.RecordShowPage}
+            params={{
+              objectNameSingular: searchRecord.objectNameSingular,
+              objectRecordId: searchRecord.recordId,
+            }}
+          />
+        ),
       };
     });
   }, [searchData, openRecordInCommandMenu]);

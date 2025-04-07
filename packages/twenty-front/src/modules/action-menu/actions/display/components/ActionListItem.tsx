@@ -1,9 +1,9 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useOnSelectableListEnter } from '@/ui/layout/selectable-list/hooks/useOnSelectableListEnter';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { i18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,7 +25,7 @@ export const ActionListItem = ({ action }: { action: ActionDisplayProps }) => {
       <CommandMenuItem
         id={action.key}
         Icon={action.Icon}
-        label={action?.label ? i18n._(action.label) : ''}
+        label={getActionLabel(action.label)}
         to={action.to}
         onClick={action.onClick}
         hotKeys={action.hotKeys}

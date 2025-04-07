@@ -1,6 +1,7 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import styled from '@emotion/styled';
-import { i18n } from '@lingui/core';
+import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 
@@ -9,6 +10,12 @@ const StyledWrapper = styled.div`
 `;
 
 export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
+  const label = getActionLabel(action.label);
+
+  const shortLabel = isDefined(action.shortLabel)
+    ? getActionLabel(action.shortLabel)
+    : undefined;
+
   return (
     <>
       {action.shortLabel ? (
@@ -20,8 +27,8 @@ export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
           accent="default"
           to={action.to}
           onClick={action.onClick}
-          title={action.shortLabel ? i18n._(action.shortLabel) : ''}
-          ariaLabel={i18n._(action.label)}
+          title={shortLabel}
+          ariaLabel={label}
         />
       ) : (
         <div id={`action-menu-entry-${action.key}`} key={action.key}>
@@ -32,13 +39,13 @@ export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
             accent="default"
             to={action.to}
             onClick={action.onClick}
-            ariaLabel={i18n._(action.label)}
+            ariaLabel={label}
           />
           <StyledWrapper>
             <AppTooltip
               // eslint-disable-next-line
               anchorSelect={`#action-menu-entry-${action.key}`}
-              content={i18n._(action.label)}
+              content={label}
               delay={TooltipDelay.longDelay}
               place={TooltipPosition.Bottom}
               offset={5}

@@ -2,6 +2,7 @@ import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -10,7 +11,6 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useTheme } from '@emotion/react';
-import { i18n } from '@lingui/core';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
@@ -74,7 +74,7 @@ export const CommandMenuActionMenuDropdown = () => {
                     ),
                   );
                 }}
-                text={i18n._(actionMenuEntry.label)}
+                text={getActionLabel(actionMenuEntry.label)}
               />
             ))}
         </DropdownMenuItemsContainer>
