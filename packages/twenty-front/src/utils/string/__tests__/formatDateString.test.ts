@@ -87,9 +87,7 @@ describe('formatDateString', () => {
     const mockFormattedDate = '2023';
 
     jest.mock('@/localization/utils/formatDateISOStringToYear', () => ({
-      formatDateISOStringToYear: jest
-        .fn()
-        .mockReturnValue(mockFormattedDate),
+      formatDateISOStringToYear: jest.fn().mockReturnValue(mockFormattedDate),
     }));
 
     const result = formatDateString({
@@ -106,9 +104,7 @@ describe('formatDateString', () => {
     const mockFormattedDate = '06:00:00';
 
     jest.mock('@/localization/utils/formatDateISOStringToTime', () => ({
-      formatDateISOStringToTime: jest
-        .fn()
-        .mockReturnValue(mockFormattedDate),
+      formatDateISOStringToTime: jest.fn().mockReturnValue(mockFormattedDate),
     }));
 
     const result = formatDateString({
@@ -126,9 +122,7 @@ describe('formatDateString', () => {
     const mockFormattedDate = 'January 2';
 
     jest.mock('@/localization/utils/formatDateISOStringToDate', () => ({
-      formatDateISOStringToDate: jest
-        .fn()
-        .mockReturnValue(mockFormattedDate),
+      formatDateISOStringToDate: jest.fn().mockReturnValue(mockFormattedDate),
     }));
 
     const result = formatDateString({
