@@ -47,7 +47,10 @@ export class BillingSubscriptionService {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
-        relations: ['billingSubscriptionItems'],
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       });
 
     assert(
