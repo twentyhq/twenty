@@ -6,7 +6,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { Person } from '@/people/types/Person';
 import styled from '@emotion/styled';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { H1Title, H1TitleFontColor, Section } from 'twenty-ui';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
@@ -17,6 +17,11 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(6)};
   padding: ${({ theme }) => theme.spacing(6, 6, 2)};
   height: 100%;
+  overflow: auto;
+`;
+
+const StyledScrollableContainer = styled.div`
+  max-height: 70vh;
   overflow: auto;
 `;
 const StyledH1Title = styled(H1Title)`
@@ -60,6 +65,8 @@ export const SMSTexts = ({
       phones: true,
     },
   });
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
@@ -111,6 +118,12 @@ export const SMSTexts = ({
     fetchTexts();
   }, [person, loading]);
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [textData]);
+
   const transformedTexts = textData.map((text: TwilioMessage) => ({
     id: text.sid,
     sender: text.from,
@@ -131,18 +144,20 @@ export const SMSTexts = ({
           fontColor={H1TitleFontColor.Primary}
         />
 
-        <ActivityList>
-          {transformedTexts?.map((text: SMSText) => (
-            // can't click on each text
-            <ActivityRow onClick={() => {}} key={text.id}>
-              <StyledSenderNames>{text.sender}</StyledSenderNames>
-              <StyledBody>{text.body}</StyledBody>
-              <StyledReceivedAt>
-                {formatToHumanReadableDate(text.date)}
-              </StyledReceivedAt>
-            </ActivityRow>
-          ))}
-        </ActivityList>
+        <StyledScrollableContainer ref={scrollRef}>
+          <ActivityList>
+            {transformedTexts?.map((text: SMSText) => (
+              // can't click on each text
+              <ActivityRow onClick={() => {}} key={text.id}>
+                <StyledSenderNames>{text.sender}</StyledSenderNames>
+                <StyledBody>{text.body}</StyledBody>
+                <StyledReceivedAt>
+                  {formatToHumanReadableDate(text.date)}
+                </StyledReceivedAt>
+              </ActivityRow>
+            ))}
+          </ActivityList>
+        </StyledScrollableContainer>
       </Section>
     </StyledContainer>
   );
