@@ -14,8 +14,8 @@ import { isFieldPhones } from '@/object-record/record-field/types/guards/isField
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RichTextInput } from '@/object-record/record-field/components/RichTextInput';
 import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
+import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
@@ -166,7 +166,7 @@ export const FieldInput = ({
           onClickOutside={(event) => onClickOutside?.(() => {}, event)}
         />
       ) : isFieldRichTextV2(fieldDefinition) ? (
-        <RichTextInput
+        <RichTextFieldInput
           targetableObject={{
             id: recordId,
             targetObjectNameSingular: (

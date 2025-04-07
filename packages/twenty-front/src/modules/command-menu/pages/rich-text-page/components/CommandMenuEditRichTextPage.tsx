@@ -9,8 +9,7 @@ const StyledContainer = styled.div`
 `;
 
 export const CommandMenuEditRichTextPage = () => {
-  const { activityId } = useRecoilValue(viewableRichTextComponentState);
-  const { activityObjectNameSingular } = useRecoilValue(
+  const { activityId, activityObjectNameSingular } = useRecoilValue(
     viewableRichTextComponentState,
   );
 

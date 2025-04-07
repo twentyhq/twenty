@@ -1,0 +1,114 @@
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { useEffect } from 'react';
+
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { RichTextFieldInput } from '../RichTextFieldInput';
+
+// Mock the useRichTextCommandMenu hook
+jest.mock('@/modules/command-menu/hooks/useRichTextCommandMenu', () => ({
+  useRichTextCommandMenu: () => ({
+    editRichText: jest.fn(),
+  }),
+}));
+
+// Mock ActivityRichTextEditor component
+jest.mock('@/modules/activities/components/ActivityRichTextEditor', () => ({
+  ActivityRichTextEditor: () => (
+    <div data-testid="activity-rich-text-editor">Rich Text Editor</div>
+  ),
+}));
+
+const clickOutsideJestFn = fn();
+const escapeJestFn = fn();
+
+type RichTextFieldInputWithContextProps = {
+  targetableObjectId?: string;
+  onClickOutside?: typeof clickOutsideJestFn;
+  onEscape?: typeof escapeJestFn;
+};
+
+const clearMocksDecorator: Decorator = (Story, context) => {
+  if (context.parameters.clearMocks !== false) {
+    clickOutsideJestFn.mockClear();
+    escapeJestFn.mockClear();
+  }
+  return <Story />;
+};
+
+const RichTextFieldInputWithContext = ({
+  targetableObjectId = 'test-id',
+  onClickOutside,
+  onEscape,
+}: RichTextFieldInputWithContextProps) => {
+  const setHotKeyScope = useSetHotkeyScope();
+
+  useEffect(() => {
+    setHotKeyScope('rich-text-field-input');
+  }, [setHotKeyScope]);
+
+  return (
+    <>
+      <RichTextFieldInput
+        targetableObject={{
+          id: targetableObjectId,
+          targetObjectNameSingular: CoreObjectNameSingular.Note,
+        }}
+        onClickOutside={onClickOutside}
+        onEscape={onEscape}
+      />
+      <div data-testid="click-outside-element" />
+    </>
+  );
+};
+
+const meta: Meta = {
+  title: 'UI/Data/Field/Input/RichTextFieldInput',
+  component: RichTextFieldInputWithContext,
+  args: {
+    targetableObjectId: 'test-id',
+    onClickOutside: clickOutsideJestFn,
+    onEscape: escapeJestFn,
+  },
+  argTypes: {
+    onClickOutside: { control: false },
+    onEscape: { control: false },
+  },
+  decorators: [clearMocksDecorator, SnackBarDecorator, I18nFrontDecorator],
+  parameters: {
+    clearMocks: true,
+  },
+};
+
+export default meta;
+
+type Story = StoryObj<typeof RichTextFieldInputWithContext>;
+
+export const Default: Story = {};
+
+export const Escape: Story = {
+  play: async () => {
+    expect(escapeJestFn).toHaveBeenCalledTimes(0);
+
+    await waitFor(() => {
+      userEvent.keyboard('{esc}');
+      expect(escapeJestFn).toHaveBeenCalledTimes(1);
+    });
+  },
+};
+
+export const ClickOutside: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
+
+    await waitFor(() => {
+      const outsideElement = canvas.getByTestId('click-outside-element');
+      userEvent.click(outsideElement);
+      expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
+    });
+  },
+};

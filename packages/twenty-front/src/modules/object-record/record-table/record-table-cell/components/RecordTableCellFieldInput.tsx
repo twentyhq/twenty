@@ -12,9 +12,8 @@ import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
-  const { isReadOnly } = useContext(FieldContext);
-
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
+  const { isReadOnly } = useContext(FieldContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
