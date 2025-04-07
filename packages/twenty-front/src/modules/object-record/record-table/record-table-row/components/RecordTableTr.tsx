@@ -49,7 +49,6 @@ export const RecordTableTr = forwardRef<
           }) + recordId,
         objectNameSingular: objectMetadataItem.nameSingular,
         isSelected: currentRowSelected,
-        isPendingRow: false,
         inView: isRowVisible,
       }}
     >

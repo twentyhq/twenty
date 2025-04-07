@@ -9,21 +9,18 @@ type RecordTableRowProps = {
   recordId: string;
   rowIndexForFocus: number;
   rowIndexForDrag: number;
-  isPendingRow?: boolean;
 };
 
 export const RecordTableRow = ({
   recordId,
   rowIndexForFocus,
   rowIndexForDrag,
-  isPendingRow,
 }: RecordTableRowProps) => {
   return (
     <RecordTableDraggableTr
       recordId={recordId}
       draggableIndex={rowIndexForDrag}
       focusIndex={rowIndexForFocus}
-      isDragDisabled={isPendingRow}
     >
       <RecordTableCellGrip />
       <RecordTableCellCheckbox />
