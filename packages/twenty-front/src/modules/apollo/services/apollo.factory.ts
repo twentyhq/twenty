@@ -72,9 +72,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         ? new GraphQLWsLink(
             createClient({
               url: wsUri,
-              /*connectionParams: {
-                authToken: this.tokenPair?.accessToken.token || '',
-              },*/
+              connectionParams: {
+                authorization: this.tokenPair?.accessToken.token || '',
+              },
             }),
           )
         : undefined;
