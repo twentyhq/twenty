@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 import { AnalyticsService } from './analytics.service';
 
@@ -25,6 +26,12 @@ describe('AnalyticsService', () => {
           provide: ClickhouseService,
           useValue: {
             pushEvent: jest.fn(),
+          },
+        },
+        {
+          provide: ExceptionHandlerService,
+          useValue: {
+            captureExceptions: jest.fn(),
           },
         },
       ],
