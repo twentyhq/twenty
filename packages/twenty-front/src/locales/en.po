@@ -4167,10 +4167,15 @@ msgstr "Switch {to}"
 msgid "Switch billing {to}"
 msgstr "Switch billing {to}"
 
+#. js-lingui-id: E4rPXj
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Switch Plan"
+msgstr "Switch Plan"
+
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Switch to {alternatePlanName}"
-msgstr "Switch to {alternatePlanName}"
+#~ msgid "Switch to {alternatePlanName}"
+#~ msgstr "Switch to {alternatePlanName}"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
