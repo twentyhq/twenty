@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
+const StyledItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
@@ -28,13 +28,13 @@ export const NavigationDrawerScrollableContent = ({
   const isMobile = useIsMobile();
 
   return (
-    <StyledItemsContainer isSettings={isSettingsDrawer}>
-      <ScrollWrapper
-        componentInstanceId={`scroll-wrapper-${
-          isSettingsDrawer ? 'settings-' : ''
-        }navigation-drawer`}
-        defaultEnableXScroll={false}
-      >
+    <ScrollWrapper
+      componentInstanceId={`scroll-wrapper-${
+        isSettingsDrawer ? 'settings-' : ''
+      }navigation-drawer`}
+      defaultEnableXScroll={false}
+    >
+      <StyledItemsContainer>
         {isSettingsDrawer ? (
           <StyledScrollableInnerContainer isMobile={isMobile}>
             {children}
@@ -42,7 +42,7 @@ export const NavigationDrawerScrollableContent = ({
         ) : (
           <>{children}</>
         )}
-      </ScrollWrapper>
-    </StyledItemsContainer>
+      </StyledItemsContainer>
+    </ScrollWrapper>
   );
 };

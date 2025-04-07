@@ -7,7 +7,8 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconSearch, IconSettings, useIsMobile } from 'twenty-ui';
+import { IconSearch, IconSettings } from 'twenty-ui/display';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const MainNavigationDrawerFixedItems = () => {

@@ -5,7 +5,7 @@ import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-dr
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { AdvancedSettingsToggle } from 'twenty-ui';
+import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 
 export const SettingsNavigationDrawer = ({
   className,
