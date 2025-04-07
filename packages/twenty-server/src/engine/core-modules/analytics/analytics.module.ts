@@ -1,15 +1,24 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
+import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
+import { EventBufferService } from 'src/engine/core-modules/analytics/services/event-buffer.service';
 
 import { AnalyticsResolver } from './analytics.resolver';
 
 import { AnalyticsService } from './services/analytics.service';
 
 @Module({
-  providers: [AnalyticsResolver, AnalyticsService, ClickhouseService],
-  imports: [JwtModule],
+  providers: [AnalyticsResolver, AnalyticsService, ClickhouseService, EventBufferService],
+  imports: [
+    JwtModule,
+    ScheduleModule.forRoot(),
+    EnvironmentModule,
+    ExceptionHandlerModule,
+  ],
   exports: [AnalyticsService],
 })
 export class AnalyticsModule {}

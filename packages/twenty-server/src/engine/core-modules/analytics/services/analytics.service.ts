@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 import {
   AnalyticsEvent,
   AnalyticsEventType,
@@ -12,6 +11,7 @@ import {
   makeEvent,
   makeUnknownEvent,
 } from 'src/engine/core-modules/analytics/utils/analytics.utils';
+import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 
 @Injectable()
 export class AnalyticsService {
@@ -76,11 +76,11 @@ export class AnalyticsService {
 
   // use the method makeEvent to create data params
   private async sendEvent(data: AnalyticsEvent) {
-    return this.clickhouseService.insert(data);
+    return this.clickhouseService.pushEvent(data);
   }
 
   // use the method makePageview to create data params
   private async sendPageview(data: AnalyticsPageview) {
-    return this.clickhouseService.insert(data);
+    return this.clickhouseService.pushEvent(data);
   }
 }
