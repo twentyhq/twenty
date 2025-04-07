@@ -4,6 +4,7 @@ import { functionExecuteSchema } from 'src/engine/core-modules/analytics/utils/e
 import { serverlessFunctionExecutedSchema } from 'src/engine/core-modules/analytics/utils/event/serverless-function/serverless-function-executed';
 import { webhookResponseSchema } from 'src/engine/core-modules/analytics/utils/event/webhook/webhook-response';
 import { eventSchema } from 'src/engine/core-modules/analytics/utils/event/common/base-schemas';
+import { AnalyticsCommonPropertiesType } from 'src/engine/core-modules/analytics/types/common.type';
 
 export type AnalyticsEvent = z.infer<typeof eventSchema>;
 
@@ -21,3 +22,8 @@ export type AnalyticsEventType<T extends keyof KnownAnalyticsEventMap> =
   KnownAnalyticsEventMap[T] extends never
     ? { action: T }
     : { action: T; payload: KnownAnalyticsEventMap[T] };
+
+export type UnknownAnalyticsEvent = Omit<
+  AnalyticsEvent,
+  AnalyticsCommonPropertiesType
+>;

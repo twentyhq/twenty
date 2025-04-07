@@ -41,7 +41,6 @@ import { SearchModule } from 'src/engine/core-modules/search/search.module';
 import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serverless-module.factory';
 import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
-import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
@@ -75,7 +74,6 @@ import { FileModule } from './file/file.module';
     WorkflowApiModule,
     WorkspaceEventEmitterModule,
     ActorModule,
-    TelemetryModule,
     AdminPanelModule,
     LabModule,
     RoleModule,

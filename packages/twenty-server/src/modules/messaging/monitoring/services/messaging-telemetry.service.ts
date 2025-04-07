@@ -32,8 +32,6 @@ export class MessagingTelemetryService {
         action: 'monitoring',
         payload: {
           eventName: `messaging.${eventName}`,
-          workspaceId,
-          userId,
           connectedAccountId,
           messageChannelId,
           message,

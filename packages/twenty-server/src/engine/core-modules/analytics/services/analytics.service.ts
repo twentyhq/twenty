@@ -5,6 +5,7 @@ import {
   AnalyticsEvent,
   AnalyticsEventType,
   KnownAnalyticsEventMap,
+  UnknownAnalyticsEvent,
 } from 'src/engine/core-modules/analytics/types/event.type';
 import { AnalyticsPageview as AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
 import {
@@ -34,7 +35,7 @@ export class AnalyticsService {
       : {};
 
     return {
-      sendUnknownEvent: (data: Record<string, unknown>) =>
+      sendUnknownEvent: (data: UnknownAnalyticsEvent) =>
         this.preventAnalyticsIfDisabled(() =>
           this.sendEvent(
             makeUnknownEvent({

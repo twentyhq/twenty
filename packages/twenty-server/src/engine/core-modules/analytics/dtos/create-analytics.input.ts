@@ -3,6 +3,8 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
+import { UnknownAnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
+
 @ArgsType()
 export class CreateAnalyticsInput {
   @Field({ description: 'Type of the event' })
@@ -12,5 +14,5 @@ export class CreateAnalyticsInput {
 
   @Field(() => graphqlTypeJson, { description: 'Event payload in JSON format' })
   @IsObject()
-  payload: Record<string, unknown>;
+  payload: UnknownAnalyticsEvent['payload'];
 }

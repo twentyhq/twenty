@@ -5,6 +5,7 @@ import { pageviewSchema } from 'src/engine/core-modules/analytics/utils/pageview
 import {
   AnalyticsEventType,
   KnownAnalyticsEventMap,
+  UnknownAnalyticsEvent,
 } from 'src/engine/core-modules/analytics/types/event.type';
 
 const commonProperties = (): Record<AnalyticsCommonPropertiesType, string> => ({
@@ -13,7 +14,7 @@ const commonProperties = (): Record<AnalyticsCommonPropertiesType, string> => ({
 });
 
 // Use this function when you can't properly type the event. Instead prefer makeEvent
-const makeUnknownEvent = (data: Record<string, unknown>) => {
+const makeUnknownEvent = (data: UnknownAnalyticsEvent) => {
   return eventSchema.parse({
     ...data,
     ...commonProperties(),
