@@ -214,7 +214,7 @@ export class BillingSubscriptionService {
     );
 
     if (!hasPaymentMethod) {
-      return { success: false, hasPaymentMethod: false };
+      return { hasPaymentMethod: false, status: undefined };
     }
 
     const updatedSubscription =
@@ -226,7 +226,6 @@ export class BillingSubscriptionService {
       );
 
     return {
-      success: true,
       status: getSubscriptionStatus(updatedSubscription.status),
       hasPaymentMethod: true,
     };

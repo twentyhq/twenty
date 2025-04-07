@@ -132,7 +132,10 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingEndTrialPeriodOutput)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
   async endSubscriptionTrialPeriod(
     @AuthWorkspace() workspace: Workspace,
   ): Promise<BillingEndTrialPeriodOutput> {
