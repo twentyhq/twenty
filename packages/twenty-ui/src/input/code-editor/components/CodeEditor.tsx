@@ -17,6 +17,7 @@ type CodeEditorProps = Pick<
   setMarkers?: (value: string) => editor.IMarkerData[];
   variant?: CodeEditorVariant;
   isLoading?: boolean;
+  transparentBackground?: boolean;
 };
 
 const StyledEditorLoader = styled.div<{
@@ -35,10 +36,10 @@ const StyledEditorLoader = styled.div<{
         return css`
           border-radius: ${theme.border.radius.sm};
         `;
-      // case 'borderless':
-      //   return css`
-      //     border: none;
-      //   `;
+      case 'borderless':
+        return css`
+          border: none;
+        `;
       case 'with-header':
         return css`
           border-radius: 0 0 ${theme.border.radius.sm} ${theme.border.radius.sm};
@@ -95,6 +96,7 @@ export const CodeEditor = ({
   onValidate,
   height = 450,
   variant = 'default',
+  transparentBackground,
   isLoading = false,
   options,
 }: CodeEditorProps) => {
@@ -132,7 +134,13 @@ export const CodeEditor = ({
       onMount={(editor, monaco) => {
         setMonaco(monaco);
         setEditor(editor);
-        monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
+        monaco.editor.defineTheme(
+          'codeEditorTheme',
+          codeEditorTheme({
+            theme,
+            transparentBackground,
+          }),
+        );
         monaco.editor.setTheme('codeEditorTheme');
         onMount?.(editor, monaco);
         setModelMarkers(editor, monaco);

@@ -134,6 +134,7 @@ export const RawJsonFieldInput = ({
             language="application/json"
             height={CONTAINER_HEIGHT - 8}
             variant="borderless"
+            transparentBackground
             options={{
               lineNumbers: 'off',
               folding: false,
