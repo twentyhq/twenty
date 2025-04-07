@@ -5,7 +5,7 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 const StyledTr = styled.tr<{ isDragging: boolean }>`
   position: relative;
@@ -23,12 +23,10 @@ type RecordTableTrProps = {
   isDragging?: boolean;
 } & React.ComponentProps<typeof StyledTr>;
 
-export const RecordTableTr = ({
-  children,
-  recordId,
-  focusIndex,
-  isDragging = false,
-}: RecordTableTrProps) => {
+export const RecordTableTr = forwardRef<
+  HTMLTableRowElement,
+  RecordTableTrProps
+>(({ children, recordId, focusIndex, isDragging = false, ...props }, ref) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const currentRowSelected = useRecoilComponentFamilyValueV2(
     isRowSelectedComponentFamilyState,
@@ -55,9 +53,15 @@ export const RecordTableTr = ({
         inView: isRowVisible,
       }}
     >
-      <StyledTr data-virtualized-id={recordId} isDragging={isDragging}>
+      <StyledTr
+        data-virtualized-id={recordId}
+        isDragging={isDragging}
+        ref={ref}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...props}
+      >
         {children}
       </StyledTr>
     </RecordTableRowContextProvider>
   );
-};
+});
