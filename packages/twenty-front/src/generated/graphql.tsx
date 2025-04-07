@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -140,11 +140,9 @@ export type Billing = {
 export type BillingEndTrialPeriodOutput = {
   __typename?: 'BillingEndTrialPeriodOutput';
   /** Boolean that confirms if a payment method was found */
-  hasPaymentMethod?: Maybe<Scalars['Boolean']>;
+  hasPaymentMethod: Scalars['Boolean'];
   /** Updated subscription status */
   status?: Maybe<SubscriptionStatus>;
-  /** Boolean that confirms query was successful */
-  success: Scalars['Boolean'];
 };
 
 /** The different billing plans available */
@@ -2560,7 +2558,7 @@ export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession
 export type EndSubscriptionTrialPeriodMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endSubscriptionTrialPeriod: { __typename?: 'BillingEndTrialPeriodOutput', success: boolean, status?: SubscriptionStatus | null, hasPaymentMethod?: boolean | null } };
+export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endSubscriptionTrialPeriod: { __typename?: 'BillingEndTrialPeriodOutput', status?: SubscriptionStatus | null, hasPaymentMethod: boolean } };
 
 export type UpdateBillingSubscriptionMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -4171,7 +4169,6 @@ export type CheckoutSessionMutationOptions = Apollo.BaseMutationOptions<Checkout
 export const EndSubscriptionTrialPeriodDocument = gql`
     mutation EndSubscriptionTrialPeriod {
   endSubscriptionTrialPeriod {
-    success
     status
     hasPaymentMethod
   }
