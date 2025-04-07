@@ -82,11 +82,13 @@ export const ViewPickerListContent = () => {
         toIndex: result.destination.index,
       });
 
-      for (const [index, view] of viewsReordered.entries()) {
-        if (view.position !== index) {
-          await updateView({ ...view, position: index });
-        }
-      }
+      Promise.all(
+        viewsReordered.map(async (view, index) => {
+          if (view.position !== index) {
+            await updateView({ ...view, position: index });
+          }
+        }),
+      );
     },
     [updateView, viewsOnCurrentObject],
   );
