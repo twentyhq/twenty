@@ -78,14 +78,18 @@ const StyledTableHead = styled.thead`
   }
 `;
 
-export const RecordTableHeader = () => {
+export const RecordTableHeader = ({
+  isEmpty = false,
+}: {
+  isEmpty?: boolean;
+}) => {
   const { visibleTableColumns } = useRecordTableContextOrThrow();
 
   return (
     <StyledTableHead id="record-table-header" data-select-disable>
       <tr>
         <RecordTableHeaderDragDropColumn />
-        <RecordTableHeaderCheckboxColumn />
+        <RecordTableHeaderCheckboxColumn disabled={isEmpty} />
         {visibleTableColumns.map((column) => (
           <RecordTableHeaderCell key={column.fieldMetadataId} column={column} />
         ))}

@@ -77,7 +77,7 @@ export const RecordTable = () => {
       <RecordTableBodyUnselectEffect tableBodyRef={tableBodyRef} />
       {recordTableIsEmpty ? (
         <>
-          <RecordTableHeader />
+          <RecordTableHeader isEmpty={recordTableIsEmpty} />
           {hasRecordGroups ? (
             <RecordTableRecordGroupsBody />
           ) : (
