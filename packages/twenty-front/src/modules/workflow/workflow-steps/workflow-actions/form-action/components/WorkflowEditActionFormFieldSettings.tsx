@@ -122,7 +122,6 @@ export const WorkflowEditActionFormFieldSettings = ({
               });
             }}
             defaultValue={field.type}
-            preventDisplayPadding
           />
         </FormFieldInputContainer>
         <WorkflowFormFieldSettingsByType
