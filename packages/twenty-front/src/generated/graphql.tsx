@@ -155,9 +155,9 @@ export enum BillingPlanKey {
 
 export type BillingPlanOutput = {
   __typename?: 'BillingPlanOutput';
-  baseProduct: BillingProductDto;
-  meteredProducts: Array<BillingProductDto>;
-  otherLicensedProducts: Array<BillingProductDto>;
+  baseProduct: BillingProduct;
+  meteredProducts: Array<BillingProduct>;
+  otherLicensedProducts: Array<BillingProduct>;
   planKey: BillingPlanKey;
 };
 
@@ -193,8 +193,8 @@ export enum BillingPriceTiersMode {
 
 export type BillingPriceUnionDto = BillingPriceLicensedDto | BillingPriceMeteredDto;
 
-export type BillingProductDto = {
-  __typename?: 'BillingProductDTO';
+export type BillingProduct = {
+  __typename?: 'BillingProduct';
   description: Scalars['String'];
   images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;

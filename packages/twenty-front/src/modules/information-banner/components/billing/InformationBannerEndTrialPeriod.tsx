@@ -10,8 +10,11 @@ export const InformationBannerEndTrialPeriod = () => {
 
   const endSubscriptionTrialPeriod = async () => {
     setIsLoading(true);
-    await endTrialPeriod();
-    setIsLoading(false);
+    try {
+      await endTrialPeriod();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

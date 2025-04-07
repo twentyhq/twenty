@@ -7,7 +7,7 @@ import { BillingPriceMeteredDTO } from 'src/engine/core-modules/billing/dtos/bil
 import { BillingPriceUnionDTO } from 'src/engine/core-modules/billing/dtos/billing-price-union.dto';
 import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 
-@ObjectType()
+@ObjectType('BillingProduct')
 export class BillingProductDTO {
   @Field(() => String)
   name: string;
