@@ -4,8 +4,8 @@ import dotenv from 'dotenv';
 import { editor, MarkerSeverity } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useParams } from 'react-router-dom';
-import { CodeEditor } from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { CodeEditor } from 'twenty-ui/input';
 
 export type File = {
   language: string;

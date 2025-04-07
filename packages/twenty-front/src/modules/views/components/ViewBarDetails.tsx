@@ -29,7 +29,7 @@ import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpande
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui';
+import { LightButton } from 'twenty-ui/input';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -60,7 +60,6 @@ const StyledChipcontainer = styled.div`
   flex-direction: row;
   overflow: scroll;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
   z-index: 1;
 `;
 
@@ -68,7 +67,6 @@ const StyledActionButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledFilterContainer = styled.div`

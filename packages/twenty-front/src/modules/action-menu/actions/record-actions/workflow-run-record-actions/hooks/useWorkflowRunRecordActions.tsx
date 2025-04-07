@@ -12,7 +12,7 @@ import { msg } from '@lingui/core/macro';
 
 import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { IconSettingsAutomation } from 'twenty-ui';
+import { IconSettingsAutomation } from 'twenty-ui/display';
 
 export const useWorkflowRunRecordActions = ({
   objectMetadataItem,

@@ -155,6 +155,11 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Un entorno compartido donde podrás gestionar tus relaciones con clientes junto a tu equipo."
 
+#. js-lingui-id: JE9zuL
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Ability to edit all settings"
+msgstr ""
+
 #. js-lingui-id: 09tRFp
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Ability to interact with each object"
@@ -207,7 +212,6 @@ msgid "Action"
 msgstr "Acción"
 
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Actions"
 msgstr "Acciones"
@@ -216,6 +220,7 @@ msgstr "Acciones"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Activate"
 msgstr "Activar"
@@ -963,6 +968,7 @@ msgstr "Contexto"
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
@@ -983,6 +989,11 @@ msgstr "Continuar con Google"
 #: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx
 msgid "Continue with Microsoft"
 msgstr "Continuar con Microsoft"
+
+#. js-lingui-id: FxVG/l
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: u+VWhB
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
@@ -1032,6 +1043,11 @@ msgstr "Núcleo"
 #. js-lingui-id: w5Stxm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Correct the issues and fill the missing data."
+msgstr ""
+
+#. js-lingui-id: s8lFtq
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Couldn't copy to clipboard"
 msgstr ""
 
 #. js-lingui-id: wBMjJ2
@@ -1790,6 +1806,11 @@ msgstr "Error al regenerar la clave API: {err}"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "Error al reenviar la invitación"
+
+#. js-lingui-id: QmR+2U
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact Twenty team."
+msgstr ""
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
@@ -2993,6 +3014,11 @@ msgstr ""
 msgid "No data found"
 msgstr ""
 
+#. js-lingui-id: xlUOps
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
@@ -3038,6 +3064,11 @@ msgstr "No hay datos de métricas disponibles"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "No hay más miembros para asignar"
+
+#. js-lingui-id: 5pSj4j
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "No payment method found. Please update your billing details."
+msgstr ""
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -3944,6 +3975,11 @@ msgstr "Configura el nombre de tu subdominio"
 msgid "Settings"
 msgstr "Configuración"
 
+#. js-lingui-id: uXW4pg
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Settings All Access"
+msgstr ""
+
 #. js-lingui-id: p8fNBm
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Settings permissions"
@@ -4093,6 +4129,11 @@ msgstr "El asunto, el cuerpo y los archivos adjuntos se compartirán con tu equi
 #. js-lingui-id: hQRttt
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Submit"
+msgstr ""
+
+#. js-lingui-id: uvY7Wk
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Subscription activated."
 msgstr ""
 
 #. js-lingui-id: B5jRKH
@@ -4644,6 +4685,7 @@ msgstr "Webhooks"
 #~ msgstr "Welcome to"
 
 #. js-lingui-id: ke0EDP
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
 msgstr "Bienvenido a {workspaceName}"
@@ -4808,6 +4850,7 @@ msgid "Your name as it will be displayed on the app"
 msgstr "Tu nombre tal y como será mostrado en la aplicación"
 
 #. js-lingui-id: YQK8fJ
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Tu espacio de trabajo"

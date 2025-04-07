@@ -40,7 +40,7 @@ import {
   IconRotate2,
   IconTrash,
   IconTrashX,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | NoSelectionRecordActionKeys

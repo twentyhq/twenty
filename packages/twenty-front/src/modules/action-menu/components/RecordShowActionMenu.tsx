@@ -3,7 +3,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useIsMobile } from 'twenty-ui';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordShowActionMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(

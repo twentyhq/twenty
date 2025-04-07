@@ -12,10 +12,10 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  Button,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  IconPlus,
-} from 'twenty-ui';
+} from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui/display';
 
 const StyledNotesContainer = styled.div`
   display: flex;

@@ -13,8 +13,8 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  MOBILE_VIEWPORT,
-} from 'twenty-ui';
+} from 'twenty-ui/layout';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;

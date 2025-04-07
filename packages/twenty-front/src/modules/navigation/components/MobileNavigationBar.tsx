@@ -4,15 +4,15 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilState } from 'recoil';
+import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
+import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 import {
   IconComponent,
   IconList,
   IconSearch,
   IconSettings,
-  NavigationBar,
-} from 'twenty-ui';
-import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
+} from 'twenty-ui/display';
+import { NavigationBar } from 'twenty-ui/navigation';
 
 type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 

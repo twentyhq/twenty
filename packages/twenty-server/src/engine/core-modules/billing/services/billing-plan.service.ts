@@ -3,7 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { JsonContains, Repository } from 'typeorm';
 
 import {
   BillingException,
@@ -11,6 +11,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
@@ -27,19 +28,19 @@ export class BillingPlanService {
   async getProductsByProductMetadata({
     planKey,
     priceUsageBased,
-    isBaseProduct,
+    productKey,
   }: {
     planKey: BillingPlanKey;
     priceUsageBased: BillingUsageType;
-    isBaseProduct: 'true' | 'false';
+    productKey: BillingProductKey;
   }): Promise<BillingProduct[]> {
     const products = await this.billingProductRepository.find({
       where: {
-        metadata: {
-          planKey,
+        metadata: JsonContains({
           priceUsageBased,
-          isBaseProduct,
-        },
+          planKey,
+          productKey,
+        }),
         active: true,
       },
       relations: ['billingPrices'],
@@ -52,7 +53,7 @@ export class BillingPlanService {
     const [baseProduct] = await this.getProductsByProductMetadata({
       planKey,
       priceUsageBased: BillingUsageType.LICENSED,
-      isBaseProduct: 'true',
+      productKey: BillingProductKey.BASE_PRODUCT,
     });
 
     return baseProduct;
@@ -80,7 +81,8 @@ export class BillingPlanService {
           };
         });
       const baseProduct = planProducts.find(
-        (product) => product.metadata.isBaseProduct === 'true',
+        (product) =>
+          product.metadata.productKey === BillingProductKey.BASE_PRODUCT,
       );
 
       if (!baseProduct) {
@@ -97,7 +99,7 @@ export class BillingPlanService {
       const otherLicensedProducts = planProducts.filter(
         (product) =>
           product.metadata.priceUsageBased === BillingUsageType.LICENSED &&
-          product.metadata.isBaseProduct === 'false',
+          product.metadata.productKey !== BillingProductKey.BASE_PRODUCT,
       );
 
       return {

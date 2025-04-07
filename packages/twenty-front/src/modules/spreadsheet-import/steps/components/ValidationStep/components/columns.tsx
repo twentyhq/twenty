@@ -2,17 +2,18 @@ import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
-import { AppTooltip, Checkbox, CheckboxVariant, Toggle } from 'twenty-ui';
 
-import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import {
   ImportedStructuredRow,
   SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
 import { TextInput } from '@/ui/input/components/TextInput';
 
+import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { isDefined } from 'twenty-shared/utils';
 import { ImportedStructuredRowMetadata } from '../types';
+import { AppTooltip } from 'twenty-ui/display';
+import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;
@@ -147,6 +148,7 @@ export const generateColumns = <T extends string>(
                   onRowChange({ ...row, [columnKey]: value?.value }, true);
                 }}
                 options={column.fieldType.options}
+                columnIndex={column.key}
               />
             );
             break;

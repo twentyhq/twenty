@@ -1,13 +1,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
-import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui/display';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;

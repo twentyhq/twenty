@@ -14,24 +14,22 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
-import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
+import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { getSubscriptionStatus } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
   constructor(
-    private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingProductService: BillingProductService,
@@ -39,8 +37,7 @@ export class BillingSubscriptionService {
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingProduct, 'core')
-    private readonly billingProductRepository: Repository<BillingProduct>,
+    private readonly stripeCustomerService: StripeCustomerService,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
@@ -50,7 +47,10 @@ export class BillingSubscriptionService {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
-        relations: ['billingSubscriptionItems'],
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       });
 
     assert(
@@ -200,49 +200,37 @@ export class BillingSubscriptionService {
     return subscriptionItemsToUpdate;
   }
 
-  async convertTrialSubscriptionToSubscriptionWithMeteredProducts(
-    billingSubscription: BillingSubscription,
-  ) {
-    const meteredProducts = (
-      await this.billingProductRepository.find({
-        where: {
-          active: true,
-        },
-        relations: ['billingPrices'],
-      })
-    ).filter(
-      (product) =>
-        product.metadata.priceUsageBased === BillingUsageType.METERED,
+  async endTrialPeriod(workspace: Workspace) {
+    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
+      { workspaceId: workspace.id },
     );
 
-    // subscription update to enable metered product billing
-    await this.stripeSubscriptionService.updateSubscription(
-      billingSubscription.stripeSubscriptionId,
-      {
-        trial_settings: {
-          end_behavior: {
-            missing_payment_method: 'cancel',
-          },
-        },
-      },
-    );
-
-    for (const meteredProduct of meteredProducts) {
-      const meteredProductPrice = meteredProduct.billingPrices.find(
-        (price) => price.active,
-      );
-
-      if (!meteredProductPrice) {
-        throw new BillingException(
-          `Cannot find active price for product ${meteredProduct.id}`,
-          BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
-        );
-      }
-
-      await this.stripeSubscriptionItemService.createSubscriptionItem(
-        billingSubscription.stripeSubscriptionId,
-        meteredProductPrice.stripePriceId,
+    if (billingSubscription.status !== SubscriptionStatus.Trialing) {
+      throw new BillingException(
+        'Billing subscription is not in trial period',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD,
       );
     }
+
+    const hasPaymentMethod = await this.stripeCustomerService.hasPaymentMethod(
+      billingSubscription.stripeCustomerId,
+    );
+
+    if (!hasPaymentMethod) {
+      return { hasPaymentMethod: false, status: undefined };
+    }
+
+    const updatedSubscription =
+      await this.stripeSubscriptionService.updateSubscription(
+        billingSubscription.stripeSubscriptionId,
+        {
+          trial_end: 'now',
+        },
+      );
+
+    return {
+      status: getSubscriptionStatus(updatedSubscription.status),
+      hasPaymentMethod: true,
+    };
   }
 }

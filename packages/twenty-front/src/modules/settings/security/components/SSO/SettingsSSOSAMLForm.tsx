@@ -9,18 +9,18 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
 import {
-  Button,
   H2Title,
   HorizontalSeparator,
   IconCheck,
   IconCopy,
   IconDownload,
   IconUpload,
-  Section,
-} from 'twenty-ui';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isDefined } from 'twenty-shared/utils';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;

@@ -6,7 +6,7 @@ import {
   StyledSettingsOptionCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
 
 type SettingsOptionCardContentCounterProps = {
   Icon?: IconComponent;

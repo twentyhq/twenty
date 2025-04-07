@@ -2,8 +2,9 @@ import {
   SpreadsheetImportFieldType,
   SpreadsheetImportFieldValidationDefinition,
 } from '@/spreadsheet-import/types';
-import { IconComponent } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { IconComponent } from 'twenty-ui/display';
+
 export type AvailableFieldForImport = {
   Icon: IconComponent;
   label: string;

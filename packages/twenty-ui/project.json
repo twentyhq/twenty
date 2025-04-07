@@ -3,18 +3,60 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-ui/src",
   "projectType": "library",
-  "tags": ["scope:frontend"],
+  "tags": [
+    "scope:frontend"
+  ],
   "targets": {
     "build": {
-      "dependsOn": ["^build", "generateBarrels"]
+      "dependsOn": [
+        "^build",
+        "generateBarrels"
+      ],
+      "outputs": [
+        "{projectRoot}/dist",
+        "{projectRoot}/accessibility/package.json",
+        "{projectRoot}/accessibility/dist",
+        "{projectRoot}/components/package.json",
+        "{projectRoot}/components/dist",
+        "{projectRoot}/display/package.json",
+        "{projectRoot}/display/dist",
+        "{projectRoot}/feedback/package.json",
+        "{projectRoot}/feedback/dist",
+        "{projectRoot}/input/package.json",
+        "{projectRoot}/input/dist",
+        "{projectRoot}/json-visualizer/package.json",
+        "{projectRoot}/json-visualizer/dist",
+        "{projectRoot}/layout/package.json",
+        "{projectRoot}/layout/dist",
+        "{projectRoot}/navigation/package.json",
+        "{projectRoot}/navigation/dist",
+        "{projectRoot}/testing/package.json",
+        "{projectRoot}/testing/dist",
+        "{projectRoot}/theme/package.json",
+        "{projectRoot}/theme/dist",
+        "{projectRoot}/utilities/package.json",
+        "{projectRoot}/utilities/dist"
+      ]
     },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.js"],
-      "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
+      "inputs": [
+        "production",
+        "{projectRoot}/scripts/generateBarrels.ts"
+      ],
+      "outputs": [
+        "{projectRoot}/src/**/*/index.ts",
+        "{projectRoot}/package.json"
+      ],
       "options": {
-        "command": "node {projectRoot}/scripts/generateBarrels.js"
+        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
+      }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "rimraf {projectRoot}/dist"
       }
     },
     "lint": {
@@ -44,7 +86,9 @@
       }
     },
     "storybook:serve:dev": {
-      "options": { "port": 6007 }
+      "options": {
+        "port": 6007
+      }
     },
     "storybook:serve:static": {
       "options": {
@@ -57,10 +101,14 @@
     },
     "storybook:coverage": {},
     "storybook:test": {
-      "options": { "port": 6007 }
+      "options": {
+        "port": 6007
+      }
     },
     "storybook:serve-and-test:static": {
-      "options": { "port": 6007 }
+      "options": {
+        "port": 6007
+      }
     }
   }
 }

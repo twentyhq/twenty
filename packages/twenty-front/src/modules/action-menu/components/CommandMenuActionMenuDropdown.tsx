@@ -11,7 +11,9 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useTheme } from '@emotion/react';
 import { i18n } from '@lingui/core';
-import { Button, MenuItem, getOsControlSymbol } from 'twenty-ui';
+import { Button } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 export const CommandMenuActionMenuDropdown = () => {
   const actionMenuEntries = useRegisteredActions();

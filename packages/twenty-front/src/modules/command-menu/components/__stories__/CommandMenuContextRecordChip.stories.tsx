@@ -6,10 +6,10 @@ import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/Pre
 import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ComponentDecorator } from 'twenty-ui';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const FIND_MANY_COMPANIES = gql`
   query FindManyCompanies(

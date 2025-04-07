@@ -12,7 +12,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
@@ -72,10 +72,7 @@ export const CommandMenuList = ({
       <CommandMenuDefaultSelectionEffect
         selectableItemIds={selectableItemIds}
       />
-      <ScrollWrapper
-        contextProviderName="commandMenu"
-        componentInstanceId={`scroll-wrapper-command-menu`}
-      >
+      <ScrollWrapper componentInstanceId={`scroll-wrapper-command-menu`}>
         <StyledInnerList>
           <SelectableList
             selectableListId="command-menu-list"
