@@ -151,7 +151,7 @@ export class BillingResolver {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        _setting: SettingPermissionType.WORKSPACE,
+        setting: SettingPermissionType.WORKSPACE,
         isExecutedByApiKey,
       });
 
