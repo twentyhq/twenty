@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRef } from 'react';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -19,7 +20,6 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useRef } from 'react';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -34,9 +34,7 @@ const StyledTable = styled.table`
 
 export const RecordTable = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
-
   const tableBodyRef = useRef<HTMLTableElement>(null);
-
   const { toggleClickOutsideListener } = useClickOutsideListener(
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
@@ -67,6 +65,41 @@ export const RecordTable = () => {
     return <></>;
   }
 
+  const handleDragSelectionStart = () => {
+    resetTableRowSelection();
+    toggleClickOutsideListener(false);
+  };
+
+  const handleDragSelectionEnd = () => {
+    toggleClickOutsideListener(true);
+  };
+
+  const renderTableContent = () => (
+    <StyledTable ref={tableBodyRef}>
+      <RecordTableHeader />
+      {!hasRecordGroups ? (
+        <RecordTableNoRecordGroupBody />
+      ) : (
+        <RecordTableRecordGroupsBody />
+      )}
+      <RecordTableStickyEffect />
+      <RecordTableStickyBottomEffect />
+    </StyledTable>
+  );
+
+  const renderEmptyTable = () => (
+    <>
+      <StyledTable ref={tableBodyRef}>
+        <RecordTableHeader />
+      </StyledTable>
+      {hasRecordGroups ? (
+        <RecordTableRecordGroupsBody />
+      ) : (
+        <RecordTableEmptyState />
+      )}
+    </>
+  );
+
   return (
     <>
       {!hasRecordGroups ? (
@@ -75,37 +108,17 @@ export const RecordTable = () => {
         <RecordTableRecordGroupBodyEffects />
       )}
       <RecordTableBodyUnselectEffect tableBodyRef={tableBodyRef} />
+
       {recordTableIsEmpty ? (
-        <>
-          <RecordTableHeader />
-          {hasRecordGroups ? (
-            <RecordTableRecordGroupsBody />
-          ) : (
-            <RecordTableEmptyState />
-          )}
-        </>
+        renderEmptyTable()
       ) : (
         <>
-          <StyledTable ref={tableBodyRef}>
-            <RecordTableHeader />
-            {!hasRecordGroups ? (
-              <RecordTableNoRecordGroupBody />
-            ) : (
-              <RecordTableRecordGroupsBody />
-            )}
-            <RecordTableStickyEffect />
-            <RecordTableStickyBottomEffect />
-          </StyledTable>
+          {renderTableContent()}
           <DragSelect
             dragSelectable={tableBodyRef}
-            onDragSelectionStart={() => {
-              resetTableRowSelection();
-              toggleClickOutsideListener(false);
-            }}
+            onDragSelectionStart={handleDragSelectionStart}
             onDragSelectionChange={setRowSelected}
-            onDragSelectionEnd={() => {
-              toggleClickOutsideListener(true);
-            }}
+            onDragSelectionEnd={handleDragSelectionEnd}
           />
         </>
       )}
