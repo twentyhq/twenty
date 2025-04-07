@@ -54,7 +54,7 @@ export const sortFavorites = (
           labelIdentifier: view?.name,
           link: getAppPath(
             AppPath.RecordIndexPage,
-            { objectNamePlural: namePlural.toLowerCase() },
+            { objectNamePlural: namePlural },
             favorite.viewId ? { viewId: favorite.viewId } : undefined,
           ),
           forWorkspaceMemberId: favorite.forWorkspaceMemberId,
