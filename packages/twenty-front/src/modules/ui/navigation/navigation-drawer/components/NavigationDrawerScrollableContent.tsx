@@ -2,7 +2,7 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { useIsMobile } from 'twenty-ui';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
   display: flex;
@@ -30,12 +30,9 @@ export const NavigationDrawerScrollableContent = ({
   return (
     <StyledItemsContainer isSettings={isSettingsDrawer}>
       <ScrollWrapper
-        contextProviderName="navigationDrawer"
         componentInstanceId={`scroll-wrapper-${
           isSettingsDrawer ? 'settings-' : ''
         }navigation-drawer`}
-        scrollbarVariant="no-padding"
-        heightMode="fit-content"
         defaultEnableXScroll={false}
       >
         {isSettingsDrawer ? (
