@@ -8,6 +8,7 @@ export const ActionListItem = ({ action }: { action: ActionDisplayProps }) => {
       id={action.key}
       Icon={action.Icon}
       label={action?.label ? i18n._(action.label) : ''}
+      to={action.to}
       onClick={action.onClick}
       hotKeys={action.hotKeys}
     />

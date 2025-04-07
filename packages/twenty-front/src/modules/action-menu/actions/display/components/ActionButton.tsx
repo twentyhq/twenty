@@ -23,6 +23,7 @@ export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
           size="small"
           variant="secondary"
           accent="default"
+          to={action.to}
           onClick={action.onClick}
           title={action.shortLabel ? i18n._(action.shortLabel) : ''}
           ariaLabel={i18n._(action.label)}
@@ -34,6 +35,7 @@ export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
             size="small"
             variant="secondary"
             accent="default"
+            to={action.to}
             onClick={action.onClick}
             ariaLabel={i18n._(action.label)}
           />
