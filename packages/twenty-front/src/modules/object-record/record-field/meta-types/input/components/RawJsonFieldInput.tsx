@@ -6,7 +6,7 @@ import {
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useTheme } from '@emotion/react';
+import { useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -54,7 +54,7 @@ export const RawJsonFieldInput = ({
   onTab,
   onShiftTab,
 }: RawJsonFieldInputProps) => {
-  const theme = useTheme();
+  const { t } = useLingui();
 
   const { draftValue, hotkeyScope, setDraftValue, persistJsonField } =
     useJsonField();
@@ -62,8 +62,6 @@ export const RawJsonFieldInput = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
-
-  const showEditButton = !isEditing;
 
   const handleEscape = (newText: string) => {
     onEscape?.(() => persistJsonField(newText));
@@ -162,11 +160,11 @@ export const RawJsonFieldInput = ({
           <StyledJsonTreeContainer>
             <JsonTree
               value={isDefined(draftValue) ? JSON.parse(draftValue) : ''}
-              arrowButtonCollapsedLabel=""
-              arrowButtonExpandedLabel=""
-              emptyArrayLabel=""
-              emptyObjectLabel=""
-              emptyStringLabel=""
+              emptyArrayLabel={t`Empty Array`}
+              emptyObjectLabel={t`Empty Object`}
+              emptyStringLabel={t`[empty string]`}
+              arrowButtonCollapsedLabel={t`Expand`}
+              arrowButtonExpandedLabel={t`Collapse`}
               shouldExpandNodeInitially={isTwoFirstDepths}
             />
           </StyledJsonTreeContainer>
