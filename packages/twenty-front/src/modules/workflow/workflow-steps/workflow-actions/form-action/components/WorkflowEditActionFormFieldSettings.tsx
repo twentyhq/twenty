@@ -43,7 +43,7 @@ const StyledSettingsHeader = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(3)};
   grid-template-columns: 1fr 24px;
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -110,7 +110,7 @@ export const WorkflowEditActionFormFieldSettings = ({
               }
 
               const type = newType as WorkflowFormFieldType;
-              const { name, label, placeholder, settings } =
+              const { name, label, settings } =
                 getDefaultFormFieldSettings(type);
 
               onChange({
@@ -118,12 +118,10 @@ export const WorkflowEditActionFormFieldSettings = ({
                 type,
                 name,
                 label,
-                placeholder,
                 settings,
               });
             }}
             defaultValue={field.type}
-            preventDisplayPadding
           />
         </FormFieldInputContainer>
         <WorkflowFormFieldSettingsByType

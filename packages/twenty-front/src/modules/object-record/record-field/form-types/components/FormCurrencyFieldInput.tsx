@@ -8,6 +8,7 @@ import { FormFieldCurrencyValue } from '@/object-record/record-field/types/Field
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useMemo } from 'react';
+import { IconCircleOff } from 'twenty-ui/display';
 
 type FormCurrencyFieldInputProps = {
   label?: string;
@@ -25,13 +26,22 @@ export const FormCurrencyFieldInput = ({
   readonly,
 }: FormCurrencyFieldInputProps) => {
   const currencies = useMemo(() => {
-    return Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
+    const currencies = Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
       ([key, { Icon, label }]) => ({
         value: key,
-        icon: Icon,
+        Icon,
         label: `${label} (${key})`,
       }),
     );
+
+    return [
+      {
+        label: 'No currency',
+        value: '',
+        Icon: IconCircleOff,
+      },
+      ...currencies,
+    ];
   }, []);
 
   const handleAmountMicrosChange = (
@@ -59,11 +69,8 @@ export const FormCurrencyFieldInput = ({
           defaultValue={defaultValue?.currencyCode ?? ''}
           onChange={handleCurrencyCodeChange}
           options={currencies}
-          clearLabel={'Currency Code'}
           VariablePicker={VariablePicker}
           readonly={readonly}
-          placeholder="Select a currency"
-          preventDisplayPadding
         />
         <FormNumberFieldInput
           label="Amount Micros"
