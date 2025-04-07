@@ -1,3 +1,4 @@
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import {
   DataSource,
   DataSourceOptions,
@@ -27,8 +28,9 @@ export class WorkspaceDataSource extends DataSource {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
+    objectRecordsPermissions?: Record<PermissionsOnAllObjectRecords, boolean>,
   ): WorkspaceRepository<Entity> {
-    return this.manager.getRepository(target);
+    return this.manager.getRepository(target, objectRecordsPermissions);
   }
 
   override createEntityManager(

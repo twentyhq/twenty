@@ -21,9 +21,11 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { deduceRelationDirection } from 'src/engine/utils/deduce-relation-direction.util';
 
@@ -32,6 +34,7 @@ export class ProcessNestedRelationsHelper {
   constructor(
     private readonly processNestedRelationsV2Helper: ProcessNestedRelationsV2Helper,
     private readonly processAggregateHelper: ProcessAggregateHelper,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
@@ -54,7 +57,7 @@ export class ProcessNestedRelationsHelper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: DataSource;
+    dataSource: WorkspaceDataSource;
     isNewRelationEnabled: boolean;
   }): Promise<void> {
     if (isNewRelationEnabled) {
@@ -166,7 +169,7 @@ export class ProcessNestedRelationsHelper {
     aggregate: Record<string, AggregationField>;
     limit: number;
     authContext: any;
-    dataSource: DataSource;
+    dataSource: WorkspaceDataSource;
     isNewRelationEnabled: boolean;
   }): Promise<void> {
     const { inverseRelationName, referenceObjectMetadata } =
@@ -175,8 +178,17 @@ export class ProcessNestedRelationsHelper {
         parentObjectMetadataItem,
         relationName,
       });
+
+    // TODO cache objectRecordsPermissions or use roleId to get repository ?
+    const { objectRecordsPermissions } =
+      await this.permissionsService.getUserWorkspacePermissions({
+        userWorkspaceId: authContext.userWorkspaceId ?? '',
+        workspaceId: authContext.workspace.id,
+      });
+
     const relationRepository = dataSource.getRepository(
       referenceObjectMetadata.nameSingular,
+      objectRecordsPermissions,
     );
 
     const referenceQueryBuilder = relationRepository.createQueryBuilder(
@@ -262,7 +274,7 @@ export class ProcessNestedRelationsHelper {
     aggregate: Record<string, AggregationField>;
     limit: number;
     authContext: any;
-    dataSource: DataSource;
+    dataSource: WorkspaceDataSource;
     isNewRelationEnabled: boolean;
   }): Promise<void> {
     const { referenceObjectMetadata } = this.getRelationMetadata({
@@ -270,8 +282,16 @@ export class ProcessNestedRelationsHelper {
       parentObjectMetadataItem,
       relationName,
     });
+
+    const { objectRecordsPermissions } =
+      await this.permissionsService.getUserWorkspacePermissions({
+        userWorkspaceId: authContext.userWorkspaceId ?? '',
+        workspaceId: authContext.workspace.id,
+      });
+
     const relationRepository = dataSource.getRepository(
       referenceObjectMetadata.nameSingular,
+      objectRecordsPermissions,
     );
 
     const referenceQueryBuilder = relationRepository.createQueryBuilder(

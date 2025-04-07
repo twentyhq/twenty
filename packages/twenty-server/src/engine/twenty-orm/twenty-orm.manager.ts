@@ -2,6 +2,7 @@ import { Injectable, Type } from '@nestjs/common';
 
 import { ObjectLiteral } from 'typeorm';
 
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -12,6 +13,7 @@ export class TwentyORMManager {
   constructor(
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
@@ -25,7 +27,7 @@ export class TwentyORMManager {
   async getRepository<T extends ObjectLiteral>(
     workspaceEntityOrobjectMetadataName: Type<T> | string,
   ): Promise<WorkspaceRepository<T>> {
-    const { workspaceId, workspaceMetadataVersion } =
+    const { workspaceId, workspaceMetadataVersion, userWorkspaceId } =
       this.scopedWorkspaceContextFactory.create();
 
     let objectMetadataName: string;
@@ -47,7 +49,16 @@ export class TwentyORMManager {
       workspaceMetadataVersion,
     );
 
-    return workspaceDataSource.getRepository<T>(objectMetadataName);
+    const { objectRecordsPermissions } =
+      await this.permissionsService.getUserWorkspacePermissions({
+        userWorkspaceId: userWorkspaceId ?? '',
+        workspaceId,
+      });
+
+    return workspaceDataSource.getRepository<T>(
+      objectMetadataName,
+      objectRecordsPermissions,
+    );
   }
 
   async getDatasource() {

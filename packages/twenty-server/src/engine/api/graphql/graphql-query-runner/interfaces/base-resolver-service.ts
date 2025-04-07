@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import graphqlFields from 'graphql-fields';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { DataSource, ObjectLiteral } from 'typeorm';
+import { ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
@@ -34,13 +34,14 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
   options: WorkspaceQueryRunnerOptions;
-  dataSource: DataSource;
+  dataSource: WorkspaceDataSource;
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
@@ -87,13 +88,17 @@ export abstract class GraphqlQueryBaseResolverService<
           authContext.workspace.id,
         );
 
+      const isPermissionsV2Enabled =
+        featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
+
       if (objectMetadataItemWithFieldMaps.isSystem === true) {
         await this.validateSystemObjectPermissionsOrThrow(options);
       } else {
-        await this.validateObjectRecordPermissionsOrThrow({
-          operationName,
-          options,
-        });
+        if (!isPermissionsV2Enabled)
+          await this.validateObjectRecordPermissionsOrThrow({
+            operationName,
+            options,
+          });
       }
 
       const hookedArgs =
@@ -115,8 +120,15 @@ export abstract class GraphqlQueryBaseResolverService<
           authContext.workspace.id,
         );
 
+      const { objectRecordsPermissions } =
+        await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId: authContext.userWorkspaceId ?? '',
+          workspaceId: authContext.workspace.id,
+        });
+
       const repository = dataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
+        objectRecordsPermissions,
       );
 
       const graphqlQueryParser = new GraphqlQueryParser(

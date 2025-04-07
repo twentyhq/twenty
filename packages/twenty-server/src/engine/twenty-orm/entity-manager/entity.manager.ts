@@ -1,3 +1,4 @@
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import {
   DataSource,
   EntityManager,
@@ -24,13 +25,18 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
+    objectRecordsPermissions?: Record<PermissionsOnAllObjectRecords, boolean>,
   ): WorkspaceRepository<Entity> {
     // find already created repository instance and return it if found
 
-    const repoFromMap = this.repositories.get(target);
+    // Should we override to find a repo by target and roleId?
 
-    if (repoFromMap) {
-      return repoFromMap as WorkspaceRepository<Entity>;
+    if (!objectRecordsPermissions) {
+      const repoFromMap = this.repositories.get(target);
+
+      if (repoFromMap) {
+        return repoFromMap as WorkspaceRepository<Entity>;
+      }
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
@@ -38,6 +44,7 @@ export class WorkspaceEntityManager extends EntityManager {
       target,
       this,
       this.queryRunner,
+      objectRecordsPermissions,
     );
 
     this.repositories.set(target, newRepository);
