@@ -1,4 +1,4 @@
-import { Action } from '@/action-menu/actions/components/Action';
+import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -11,14 +11,10 @@ import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecor
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useState } from 'react';
 
 export const RestoreMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-  const [isRestoreRecordsModalOpen, setIsRestoreRecordsModalOpen] =
-    useState(false);
 
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
@@ -82,18 +78,12 @@ export const RestoreMultipleRecordsAction = () => {
   };
 
   return (
-    <>
-      <Action onClick={() => setIsRestoreRecordsModalOpen(true)} />
-      {isRestoreRecordsModalOpen && (
-        <ConfirmationModal
-          isOpen={isRestoreRecordsModalOpen}
-          setIsOpen={setIsRestoreRecordsModalOpen}
-          title={'Restore Records'}
-          subtitle={`Are you sure you want to restore these records?`}
-          onConfirmClick={handleRestoreClick}
-          confirmButtonText={'Restore Records'}
-        />
-      )}
-    </>
+    <ActionModal
+      title="Restore Records"
+      subtitle="Are you sure you want to restore these records?"
+      onConfirmClick={handleRestoreClick}
+      confirmButtonText="Restore Records"
+      confirmButtonAccent="default"
+    />
   );
 };

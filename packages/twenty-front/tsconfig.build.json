@@ -18,5 +18,5 @@
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx"
-  ]
+, "src/modules/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordActiontsx", "src/modules/action-menu/actions/record-actions/multiple-records/components/ExportMultipleRecordsAction.tsx"  ]
 }

@@ -1,20 +1,16 @@
-import { Action } from '@/action-menu/actions/components/Action';
+import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { AppPath } from '@/types/AppPath';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroySingleRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const recordId = useSelectedRecordIdOrThrow();
-
-  const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
-    useState(false);
 
   const navigateApp = useNavigateApp();
 
@@ -42,20 +38,11 @@ export const DestroySingleRecordAction = () => {
   ]);
 
   return (
-    <>
-      <Action onClick={() => setIsDestroyRecordsModalOpen(true)} />
-      {isDestroyRecordsModalOpen && (
-        <ConfirmationModal
-          isOpen={isDestroyRecordsModalOpen}
-          setIsOpen={setIsDestroyRecordsModalOpen}
-          title={'Permanently Destroy Record'}
-          subtitle={
-            'Are you sure you want to destroy this record? It cannot be recovered anymore.'
-          }
-          onConfirmClick={handleDeleteClick}
-          confirmButtonText={'Permanently Destroy Record'}
-        />
-      )}
-    </>
+    <ActionModal
+      title="Permanently Destroy Record"
+      subtitle="Are you sure you want to destroy this record? It cannot be recovered anymore."
+      onConfirmClick={handleDeleteClick}
+      confirmButtonText="Permanently Destroy Record"
+    />
   );
 };
