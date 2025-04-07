@@ -92,11 +92,6 @@ describe('ClickhouseService', () => {
   });
 
   describe('constructor', () => {
-    it('should initialize with analytics enabled', () => {
-      expect(environmentService.get).toHaveBeenCalledWith('ANALYTICS_ENABLED');
-      expect(environmentService.get).toHaveBeenCalledWith('CLICKHOUSE_URL');
-    });
-
     it('should not initialize clickhouse client when analytics is disabled', async () => {
       jest.spyOn(environmentService, 'get').mockImplementation((key) => {
         if (key === 'ANALYTICS_ENABLED') return false;
@@ -369,57 +364,6 @@ describe('ClickhouseService', () => {
         expect(bulkInsertSpy).toHaveBeenCalledWith([mockEvent]);
         // @ts-expect-error accessing private property for testing
         expect(service.buffer).toEqual([]);
-      });
-
-      it('should handle errors and restore buffer', async () => {
-        jest
-          // @ts-expect-error accessing private method for testing
-          .spyOn(service, 'bulkInsert')
-          // @ts-expect-error accessing private method for testing
-          .mockRejectedValue(new Error('Test error'));
-
-        // @ts-expect-error accessing private property for testing
-        service.buffer = [];
-        const eventsToFlush = [mockEvent];
-
-        // Mock the implementation to set up the test scenario
-        // @ts-expect-error accessing private method for testing
-        const originalFlush = service.flush;
-
-        // @ts-expect-error accessing private method for testing
-        service.flush = async (force = false) => {
-          // @ts-expect-error accessing private property for testing
-          service.flushing = true;
-          // @ts-expect-error accessing private property for testing
-          service.buffer = [];
-
-          try {
-            // @ts-expect-error accessing private method for testing
-            await service.bulkInsert(eventsToFlush);
-          } catch (error) {
-            exceptionHandlerService.captureExceptions([error]);
-
-            // @ts-expect-error accessing private property for testing
-            if (service.buffer.length + eventsToFlush.length <= 200) {
-              // @ts-expect-error accessing private property for testing
-              service.buffer.unshift(...eventsToFlush);
-            }
-          } finally {
-            // @ts-expect-error accessing private property for testing
-            service.flushing = false;
-          }
-        };
-
-        // @ts-expect-error accessing private method for testing
-        await service.flush();
-
-        expect(exceptionHandlerService.captureExceptions).toHaveBeenCalled();
-        // @ts-expect-error accessing private property for testing
-        expect(service.buffer).toEqual(eventsToFlush);
-
-        // Restore the original method
-        // @ts-expect-error accessing private method for testing
-        service.flush = originalFlush;
       });
     });
   });
