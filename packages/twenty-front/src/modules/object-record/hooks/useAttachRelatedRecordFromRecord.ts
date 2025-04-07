@@ -73,7 +73,7 @@ export const useAttachRelatedRecordFromRecord = ({
       getRelatedRecordFromCache<ObjectRecord>(relatedRecordId);
 
     if (!cachedRelatedRecord) {
-      throw new Error('could not find cached related record');
+      throw new Error('Could not find cached related record');
     }
 
     const previousRecordId = cachedRelatedRecord?.[`${fieldOnRelatedObject}Id`];

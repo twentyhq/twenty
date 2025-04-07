@@ -1,21 +1,23 @@
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useDefaultFieldMetadataItemForFilter';
+import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { v4 } from 'uuid';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
   recordFilterGroup: RecordFilterGroup;
@@ -45,6 +47,9 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const { defaultFieldMetadataItemForFilter } =
     useDefaultFieldMetadataItemForFilter();
 
+  const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
+    useSetRecordFilterUsedInAdvancedFilterDropdownRow();
+
   const handleAddFilter = () => {
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
       throw new Error('Missing default field metadata item for filter');
@@ -56,7 +61,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       defaultFieldMetadataItemForFilter.type,
     );
 
-    upsertRecordFilter({
+    const newRecordFilter: RecordFilter = {
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItemForFilter.id,
       type: filterType,
@@ -68,7 +73,11 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       recordFilterGroupId: recordFilterGroup.id,
       positionInRecordFilterGroup: newPositionInRecordFilterGroup,
       label: defaultFieldMetadataItemForFilter.label,
-    });
+    };
+
+    upsertRecordFilter(newRecordFilter);
+
+    setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
   };
 
   const handleAddFilterGroup = () => {
@@ -97,7 +106,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       defaultFieldMetadataItemForFilter.type,
     );
 
-    upsertRecordFilter({
+    const newRecordFilter: RecordFilter = {
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItemForFilter.id,
       type: filterType,
@@ -109,7 +118,11 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       recordFilterGroupId: newRecordFilterGroupId,
       positionInRecordFilterGroup: 1,
       label: defaultFieldMetadataItemForFilter.label,
-    });
+    };
+
+    upsertRecordFilter(newRecordFilter);
+
+    setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
   };
 
   const isFilterRuleGroupOptionVisible = !isDefined(

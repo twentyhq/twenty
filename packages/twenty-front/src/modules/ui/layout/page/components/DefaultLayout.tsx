@@ -17,7 +17,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useSearchParams } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -30,17 +30,7 @@ const StyledLayout = styled.div`
   scrollbar-width: 4px;
   width: 100%;
 
-  *::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
-  }
-
-  *::-webkit-scrollbar-corner {
-    background-color: transparent;
-  }
-
   *::-webkit-scrollbar-thumb {
-    background-color: transparent;
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 `;
@@ -73,6 +63,8 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const [searchParams] = useSearchParams();
+  const animateModal = searchParams.get('animateModal') !== 'false';
 
   return (
     <>
@@ -96,7 +88,9 @@ export const DefaultLayout = () => {
                     2
                   : 0,
             }}
-            transition={{ duration: theme.animation.duration.normal }}
+            transition={{
+              duration: theme.animation.duration.normal,
+            }}
           >
             {!showAuthModal && (
               <>
@@ -114,7 +108,7 @@ export const DefaultLayout = () => {
                 <SignInBackgroundMockPage />
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
-                    <AuthModal>
+                    <AuthModal isOpenAnimated={animateModal}>
                       <Outlet />
                     </AuthModal>
                   </LayoutGroup>

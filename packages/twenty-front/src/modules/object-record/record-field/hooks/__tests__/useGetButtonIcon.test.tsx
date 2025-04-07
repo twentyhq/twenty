@@ -23,6 +23,7 @@ const getWrapper =
         recordId,
         hotkeyScope: 'hotkeyScope',
         isLabelIdentifier: false,
+        isReadOnly: false,
       }}
     >
       <RecoilRoot>{children}</RecoilRoot>

@@ -144,6 +144,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 0,
       },
+      "selected": false,
     },
     {
       "data": {
@@ -157,6 +158,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 150,
       },
+      "selected": false,
     },
     {
       "data": {
@@ -170,6 +172,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 300,
       },
+      "selected": false,
     },
   ],
 }
@@ -319,6 +322,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 0,
       },
+      "selected": false,
     },
     {
       "data": {
@@ -332,6 +336,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 150,
       },
+      "selected": false,
     },
     {
       "data": {
@@ -345,6 +350,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 300,
       },
+      "selected": false,
     },
   ],
 }
@@ -479,6 +485,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 0,
       },
+      "selected": false,
     },
     {
       "data": {
@@ -492,6 +499,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 150,
       },
+      "selected": false,
     },
     {
       "data": {
@@ -505,6 +513,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 300,
       },
+      "selected": false,
     },
   ],
 }
@@ -672,6 +681,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 0,
       },
+      "selected": false,
     },
     {
       "data": {
@@ -685,6 +695,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 150,
       },
+      "selected": false,
     },
     {
       "data": {
@@ -698,6 +709,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 300,
       },
+      "selected": false,
     },
     {
       "data": {
@@ -711,6 +723,7 @@ describe('generateWorkflowRunDiagram', () => {
         "x": 0,
         "y": 450,
       },
+      "selected": false,
     },
   ],
 }

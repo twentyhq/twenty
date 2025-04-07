@@ -118,10 +118,7 @@ export const Releases = () => {
       ]}
     >
       <SettingsPageContainer>
-        <ScrollWrapper
-          contextProviderName="releases"
-          componentInstanceId="scroll-wrapper-releases"
-        >
+        <ScrollWrapper componentInstanceId="scroll-wrapper-releases">
           <StyledReleaseContainer>
             {releases.map((release) => (
               <React.Fragment key={release.slug}>

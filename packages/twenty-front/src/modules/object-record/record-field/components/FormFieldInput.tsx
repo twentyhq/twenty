@@ -92,9 +92,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       options={field.metadata.options}
-      clearLabel={field.label}
       readonly={readonly}
-      placeholder={placeholder}
     />
   ) : isFieldFullName(field) ? (
     <FormFullNameFieldInput
