@@ -3,9 +3,10 @@ import { DateInput } from '@/ui/field/input/components/DateInput';
 import { FieldInputEvent } from '@/object-record/record-field/meta-types/input/components/NumberFieldInput';
 
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { Nullable } from 'twenty-ui/utilities';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDateTimeField } from '../../hooks/useDateTimeField';
-import { Nullable } from 'twenty-ui/utilities';
 
 export type DateTimeFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
@@ -22,7 +23,7 @@ export const DateTimeFieldInput = ({
   onClear,
   onSubmit,
 }: DateTimeFieldInputProps) => {
-  const { fieldValue, setDraftValue, hotkeyScope } = useDateTimeField();
+  const { fieldValue, setDraftValue, fieldDefinition } = useDateTimeField();
 
   const persistField = usePersistField();
 
@@ -76,7 +77,7 @@ export const DateTimeFieldInput = ({
       isDateTimeInput
       onClear={handleClear}
       onSubmit={handleSubmit}
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

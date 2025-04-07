@@ -93,7 +93,6 @@ const RelationManyFieldInputWithContext = () => {
           value={{
             fieldDefinition,
             recordId: 'recordId',
-            hotkeyScope: 'hotkey-scope',
             isLabelIdentifier: false,
             isReadOnly: false,
           }}

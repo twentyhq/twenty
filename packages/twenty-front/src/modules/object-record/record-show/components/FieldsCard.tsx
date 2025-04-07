@@ -11,7 +11,6 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
@@ -112,7 +111,6 @@ export const FieldsCard = ({
                       labelWidth: 90,
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
-                    hotkeyScope: InlineCellHotkeyScope.InlineCell,
                     isDisplayModeFixHeight: true,
                     isReadOnly: isRecordReadOnly,
                   }}
@@ -150,7 +148,6 @@ export const FieldsCard = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   isDisplayModeFixHeight: true,
                   isReadOnly: isRecordReadOnly,
                 }}
@@ -187,7 +184,6 @@ export const FieldsCard = ({
               objectMetadataItem,
             }),
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isDisplayModeFixHeight: true,
             isReadOnly: isRecordReadOnly,
           }}

@@ -61,7 +61,6 @@ const TextFieldInputWithContext = ({
               objectMetadataNameSingular: 'person',
             },
           },
-          hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
           isReadOnly: false,
         }}

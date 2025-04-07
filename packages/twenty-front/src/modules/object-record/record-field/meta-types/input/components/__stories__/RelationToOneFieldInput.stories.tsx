@@ -21,11 +21,11 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import {
   RelationToOneFieldInput,
   RelationToOneFieldInputProps,
 } from '../RelationToOneFieldInput';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -86,7 +86,6 @@ const RelationToOneFieldInputWithContext = ({
             },
           },
           recordId: recordId,
-          hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
           isReadOnly: false,
         }}

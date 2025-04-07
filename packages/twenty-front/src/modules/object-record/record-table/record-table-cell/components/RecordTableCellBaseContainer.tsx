@@ -3,13 +3,9 @@ import { ReactNode, useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
-import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import {
-  DEFAULT_CELL_SCOPE,
-  useOpenRecordTableCellFromCell,
-} from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { BORDER_COMMON, ThemeContext } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
@@ -81,26 +77,20 @@ export const RecordTableCellBaseContainer = ({
     }
   };
 
-  const { hotkeyScope } = useContext(FieldContext);
-
-  const editHotkeyScope = { scope: hotkeyScope ?? DEFAULT_CELL_SCOPE };
-
   return (
-    <CellHotkeyScopeContext.Provider value={editHotkeyScope}>
-      <StyledBaseContainer
-        onMouseLeave={handleContainerMouseLeave}
-        onMouseMove={handleContainerMouseMove}
-        onClick={handleContainerClick}
-        backgroundColorTransparentSecondary={
-          theme.background.transparent.secondary
-        }
-        fontColorExtraLight={theme.font.color.extraLight}
-        fontColorMedium={theme.border.color.medium}
-        hasSoftFocus={hasSoftFocus}
-        isReadOnly={isReadOnly ?? false}
-      >
-        {children}
-      </StyledBaseContainer>
-    </CellHotkeyScopeContext.Provider>
+    <StyledBaseContainer
+      onMouseLeave={handleContainerMouseLeave}
+      onMouseMove={handleContainerMouseMove}
+      onClick={handleContainerClick}
+      backgroundColorTransparentSecondary={
+        theme.background.transparent.secondary
+      }
+      fontColorExtraLight={theme.font.color.extraLight}
+      fontColorMedium={theme.border.color.medium}
+      hasSoftFocus={hasSoftFocus}
+      isReadOnly={isReadOnly ?? false}
+    >
+      {children}
+    </StyledBaseContainer>
   );
 };
