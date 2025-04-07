@@ -9,6 +9,7 @@ import {
 } from '@/action-menu/types/ActionMenuEntry';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { msg } from '@lingui/core/macro';
 import {
   IconBuildingSkyscraper,
@@ -157,7 +158,14 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
       ActionViewType.SHOW_PAGE,
     ],
     shouldBeRegistered: () => true,
-    component: <ActionLink to={AppPath.Settings} />,
+    component: (
+      <ActionLink
+        to={AppPath.SettingsCatchAll}
+        params={{
+          '*': SettingsPath.ProfilePage,
+        }}
+      />
+    ),
     hotKeys: ['G', 'S'],
   },
   [RecordAgnosticActionsKeys.GO_TO_TASKS]: {
