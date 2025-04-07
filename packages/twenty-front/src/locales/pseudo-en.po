@@ -212,6 +212,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Activate"
 msgstr ""
@@ -1798,6 +1799,11 @@ msgstr ""
 msgid "Error resending invitation"
 msgstr ""
 
+#. js-lingui-id: QmR+2U
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact Twenty team."
+msgstr ""
+
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription {to}."
@@ -3000,6 +3006,11 @@ msgstr ""
 msgid "No data found"
 msgstr ""
 
+#. js-lingui-id: xlUOps
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
@@ -3044,6 +3055,11 @@ msgstr ""
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No more members to assign"
+msgstr ""
+
+#. js-lingui-id: 5pSj4j
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "No payment method found. Please update your billing details."
 msgstr ""
 
 #. js-lingui-id: EqGTpW
@@ -4105,6 +4121,11 @@ msgstr ""
 #. js-lingui-id: hQRttt
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Submit"
+msgstr ""
+
+#. js-lingui-id: uvY7Wk
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Subscription activated."
 msgstr ""
 
 #. js-lingui-id: B5jRKH
