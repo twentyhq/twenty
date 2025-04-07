@@ -883,7 +883,7 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   upsertOneObjectPermission: ObjectPermission;
-  upsertOneSettingPermission: SettingPermission;
+  upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
 };
@@ -1193,8 +1193,8 @@ export type MutationUpsertOneObjectPermissionArgs = {
 };
 
 
-export type MutationUpsertOneSettingPermissionArgs = {
-  upsertSettingPermissionInput: UpsertSettingPermissionInput;
+export type MutationUpsertSettingPermissionsArgs = {
+  upsertSettingPermissionsInput: UpsertSettingPermissionsInput;
 };
 
 
@@ -1663,6 +1663,7 @@ export type Role = {
   id: Scalars['String'];
   isEditable: Scalars['Boolean'];
   label: Scalars['String'];
+  settingPermissions?: Maybe<Array<SettingPermission>>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
@@ -1772,7 +1773,6 @@ export enum ServerlessFunctionSyncStatus {
 
 export type SettingPermission = {
   __typename?: 'SettingPermission';
-  canUpdateSetting?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
   roleId: Scalars['String'];
   setting: SettingPermissionType;
@@ -2068,10 +2068,9 @@ export type UpsertObjectPermissionInput = {
   roleId: Scalars['String'];
 };
 
-export type UpsertSettingPermissionInput = {
-  canUpdateSetting?: InputMaybe<Scalars['Boolean']>;
+export type UpsertSettingPermissionsInput = {
   roleId: Scalars['String'];
-  setting: SettingPermissionType;
+  settingPermissionKeys: Array<SettingPermissionType>;
 };
 
 export type User = {
@@ -2620,6 +2619,8 @@ export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', upda
 
 export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean };
 
+export type SettingPermissionFragmentFragment = { __typename?: 'SettingPermission', id: string, setting: SettingPermissionType, roleId: string };
+
 export type CreateOneRoleMutationVariables = Exact<{
   createRoleInput: CreateRoleInput;
 }>;
@@ -2642,10 +2643,17 @@ export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
 
 export type UpdateWorkspaceMemberRoleMutation = { __typename?: 'Mutation', updateWorkspaceMemberRole: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, roles?: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean }> | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } };
 
+export type UpsertSettingPermissionsMutationVariables = Exact<{
+  upsertSettingPermissionsInput: UpsertSettingPermissionsInput;
+}>;
+
+
+export type UpsertSettingPermissionsMutation = { __typename?: 'Mutation', upsertSettingPermissions: Array<{ __typename?: 'SettingPermission', id: string, setting: SettingPermissionType, roleId: string }> };
+
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, settingPermissions?: Array<{ __typename?: 'SettingPermission', id: string, setting: SettingPermissionType, roleId: string }> | null }> };
 
 export type CreateApprovedAccessDomainMutationVariables = Exact<{
   input: CreateApprovedAccessDomainInput;
@@ -2958,6 +2966,13 @@ export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
     id
     displayName
   }
+}
+    `;
+export const SettingPermissionFragmentFragmentDoc = gql`
+    fragment SettingPermissionFragment on SettingPermission {
+  id
+  setting
+  roleId
 }
     `;
 export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
@@ -4756,6 +4771,41 @@ export function useUpdateWorkspaceMemberRoleMutation(baseOptions?: Apollo.Mutati
 export type UpdateWorkspaceMemberRoleMutationHookResult = ReturnType<typeof useUpdateWorkspaceMemberRoleMutation>;
 export type UpdateWorkspaceMemberRoleMutationResult = Apollo.MutationResult<UpdateWorkspaceMemberRoleMutation>;
 export type UpdateWorkspaceMemberRoleMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceMemberRoleMutation, UpdateWorkspaceMemberRoleMutationVariables>;
+export const UpsertSettingPermissionsDocument = gql`
+    mutation UpsertSettingPermissions($upsertSettingPermissionsInput: UpsertSettingPermissionsInput!) {
+  upsertSettingPermissions(
+    upsertSettingPermissionsInput: $upsertSettingPermissionsInput
+  ) {
+    ...SettingPermissionFragment
+  }
+}
+    ${SettingPermissionFragmentFragmentDoc}`;
+export type UpsertSettingPermissionsMutationFn = Apollo.MutationFunction<UpsertSettingPermissionsMutation, UpsertSettingPermissionsMutationVariables>;
+
+/**
+ * __useUpsertSettingPermissionsMutation__
+ *
+ * To run a mutation, you first call `useUpsertSettingPermissionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertSettingPermissionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertSettingPermissionsMutation, { data, loading, error }] = useUpsertSettingPermissionsMutation({
+ *   variables: {
+ *      upsertSettingPermissionsInput: // value for 'upsertSettingPermissionsInput'
+ *   },
+ * });
+ */
+export function useUpsertSettingPermissionsMutation(baseOptions?: Apollo.MutationHookOptions<UpsertSettingPermissionsMutation, UpsertSettingPermissionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpsertSettingPermissionsMutation, UpsertSettingPermissionsMutationVariables>(UpsertSettingPermissionsDocument, options);
+      }
+export type UpsertSettingPermissionsMutationHookResult = ReturnType<typeof useUpsertSettingPermissionsMutation>;
+export type UpsertSettingPermissionsMutationResult = Apollo.MutationResult<UpsertSettingPermissionsMutation>;
+export type UpsertSettingPermissionsMutationOptions = Apollo.BaseMutationOptions<UpsertSettingPermissionsMutation, UpsertSettingPermissionsMutationVariables>;
 export const GetRolesDocument = gql`
     query GetRoles {
   getRoles {
@@ -4763,10 +4813,14 @@ export const GetRolesDocument = gql`
     workspaceMembers {
       ...WorkspaceMemberQueryFragment
     }
+    settingPermissions {
+      ...SettingPermissionFragment
+    }
   }
 }
     ${RoleFragmentFragmentDoc}
-${WorkspaceMemberQueryFragmentFragmentDoc}`;
+${WorkspaceMemberQueryFragmentFragmentDoc}
+${SettingPermissionFragmentFragmentDoc}`;
 
 /**
  * __useGetRolesQuery__

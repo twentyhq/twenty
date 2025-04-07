@@ -1,7 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
   expect,
+  fn,
   userEvent,
+  waitFor,
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
@@ -480,5 +482,34 @@ export const RedHighlighting: Story = {
 
     const ageElement = await canvas.findByText('age');
     expect(ageElement).toBeVisible();
+  },
+};
+
+export const CopyJsonNodeValue: Story = {
+  args: {
+    value: {
+      name: 'John Doe',
+      age: 30,
+    },
+    onNodeValueClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const nameValue = await canvas.findByText('John Doe');
+
+    await userEvent.click(nameValue);
+
+    await waitFor(() => {
+      expect(args.onNodeValueClick).toHaveBeenCalledWith('John Doe');
+    });
+
+    const ageValue = await canvas.findByText('30');
+
+    await userEvent.click(ageValue);
+
+    await waitFor(() => {
+      expect(args.onNodeValueClick).toHaveBeenCalledWith('30');
+    });
   },
 };

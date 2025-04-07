@@ -14,6 +14,7 @@ export const JsonTree = ({
   emptyStringLabel,
   arrowButtonCollapsedLabel,
   arrowButtonExpandedLabel,
+  onNodeValueClick,
 }: {
   value: JsonValue;
   getNodeHighlighting?: GetJsonNodeHighlighting;
@@ -25,6 +26,7 @@ export const JsonTree = ({
   emptyStringLabel: string;
   arrowButtonCollapsedLabel: string;
   arrowButtonExpandedLabel: string;
+  onNodeValueClick?: (valueAsString: string) => void;
 }) => {
   return (
     <JsonTreeContextProvider
@@ -36,6 +38,7 @@ export const JsonTree = ({
         emptyStringLabel,
         arrowButtonCollapsedLabel,
         arrowButtonExpandedLabel,
+        onNodeValueClick,
       }}
     >
       <JsonList depth={0}>

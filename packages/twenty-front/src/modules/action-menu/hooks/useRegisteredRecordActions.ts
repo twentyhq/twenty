@@ -1,7 +1,7 @@
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
-import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -10,13 +10,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useRegisteredRecordActions = ({
   objectMetadataItem,
+  shouldBeRegisteredParams,
 }: {
   objectMetadataItem: ObjectMetadataItem;
+  shouldBeRegisteredParams: ShouldBeRegisteredFunctionParams;
 }) => {
-  const params = useShouldActionBeRegisteredParams({
-    objectMetadataItem,
-  });
-
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
   );
@@ -41,7 +39,7 @@ export const useRegisteredRecordActions = ({
     : [];
 
   const actions = actionsToRegister.filter((action) =>
-    action.shouldBeRegistered(params),
+    action.shouldBeRegistered(shouldBeRegisteredParams),
   );
 
   return actions;

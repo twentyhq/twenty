@@ -7,21 +7,22 @@ import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { useRecoilCallback } from 'recoil';
 
-type OpenActivityTargetInlineCellEditModeProps = {
+type OpenActivityTargetCellEditModeProps = {
   recordPickerInstanceId: string;
   activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
 };
 
-export const useOpenActivityTargetInlineCellEditMode = () => {
+// TODO: deprecate this once we are supporting one to many through relations
+export const useOpenActivityTargetCellEditMode = () => {
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
 
-  const openActivityTargetInlineCellEditMode = useRecoilCallback(
+  const openActivityTargetCellEditMode = useRecoilCallback(
     ({ set, snapshot }) =>
       ({
         recordPickerInstanceId,
         activityTargetObjectRecords,
-      }: OpenActivityTargetInlineCellEditModeProps) => {
+      }: OpenActivityTargetCellEditModeProps) => {
         const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)
           .getValue()
@@ -82,5 +83,5 @@ export const useOpenActivityTargetInlineCellEditMode = () => {
     [multipleRecordPickerPerformSearch],
   );
 
-  return { openActivityTargetInlineCellEditMode };
+  return { openActivityTargetCellEditMode };
 };

@@ -3,11 +3,11 @@ import { View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
 
 type ReturnType = {
-  labelPlural: string;
+  namePlural: string;
   view: Pick<View, 'id' | 'name' | 'objectMetadataId'>;
 };
 
-export const getObjectMetadataLabelPluralFromViewId = (
+export const getObjectMetadataNamePluralFromViewId = (
   view: Pick<View, 'id' | 'name' | 'objectMetadataId'>,
   objectMetadataItems: ObjectMetadataItem[],
 ): ReturnType => {
@@ -21,10 +21,10 @@ export const getObjectMetadataLabelPluralFromViewId = (
     );
   }
 
-  const { labelPlural } = objectMetadataItem;
+  const { namePlural } = objectMetadataItem;
 
   return {
-    labelPlural,
+    namePlural,
     view,
   };
 };
