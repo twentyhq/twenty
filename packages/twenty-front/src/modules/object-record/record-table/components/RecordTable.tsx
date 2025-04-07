@@ -32,6 +32,78 @@ const StyledTable = styled.table`
   }
 `;
 
+interface TableContentProps {
+  tableBodyRef: React.RefObject<HTMLTableElement>;
+  handleDragSelectionStart: () => void;
+  handleDragSelectionEnd: () => void;
+  setRowSelected: (rowId: string, selected: boolean) => void;
+  hasRecordGroups: boolean;
+}
+
+const TableContent = ({
+  tableBodyRef,
+  handleDragSelectionStart,
+  handleDragSelectionEnd,
+  setRowSelected,
+  hasRecordGroups,
+}: TableContentProps) => (
+  <>
+    <StyledTable ref={tableBodyRef}>
+      <RecordTableHeader />
+      {hasRecordGroups ? (
+        <RecordTableRecordGroupsBody />
+      ) : (
+        <RecordTableNoRecordGroupBody />
+      )}
+      <RecordTableStickyEffect />
+      <RecordTableStickyBottomEffect />
+    </StyledTable>
+    <DragSelect
+      dragSelectable={tableBodyRef}
+      onDragSelectionStart={handleDragSelectionStart}
+      onDragSelectionChange={setRowSelected}
+      onDragSelectionEnd={handleDragSelectionEnd}
+    />
+  </>
+);
+
+interface EmptyTableProps {
+  tableBodyRef: React.RefObject<HTMLTableElement>;
+  hasRecordGroups: boolean;
+}
+
+const EmptyTable = ({ tableBodyRef, hasRecordGroups }: EmptyTableProps) => (
+  <>
+    <StyledTable ref={tableBodyRef}>
+      <RecordTableHeader />
+    </StyledTable>
+    {hasRecordGroups ? (
+      <RecordTableRecordGroupsBody />
+    ) : (
+      <RecordTableEmptyState />
+    )}
+  </>
+);
+
+interface RecordTableBodyEffectsProps {
+  hasRecordGroups: boolean;
+  tableBodyRef: React.RefObject<HTMLTableElement>;
+}
+
+const RecordTableBodyEffects = ({
+  hasRecordGroups,
+  tableBodyRef,
+}: RecordTableBodyEffectsProps) => (
+  <>
+    {hasRecordGroups ? (
+      <RecordTableRecordGroupBodyEffects />
+    ) : (
+      <RecordTableNoRecordGroupBodyEffect />
+    )}
+    <RecordTableBodyUnselectEffect tableBodyRef={tableBodyRef} />
+  </>
+);
+
 export const RecordTable = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
@@ -56,12 +128,12 @@ export const RecordTable = () => {
     recordTableId,
   );
 
-  const recordTableIsEmpty =
-    !isRecordTableInitialLoading && allRecordIds.length === 0;
-
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
   });
+
+  const recordTableIsEmpty =
+    !isRecordTableInitialLoading && allRecordIds.length === 0;
 
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
@@ -76,53 +148,26 @@ export const RecordTable = () => {
     toggleClickOutsideListener(true);
   };
 
-  const renderTableContent = () => (
-    <StyledTable ref={tableBodyRef}>
-      <RecordTableHeader />
-      {!hasRecordGroups ? (
-        <RecordTableNoRecordGroupBody />
-      ) : (
-        <RecordTableRecordGroupsBody />
-      )}
-      <RecordTableStickyEffect />
-      <RecordTableStickyBottomEffect />
-    </StyledTable>
-  );
-
-  const renderEmptyTable = () => (
-    <>
-      <StyledTable ref={tableBodyRef}>
-        <RecordTableHeader />
-      </StyledTable>
-      {hasRecordGroups ? (
-        <RecordTableRecordGroupsBody />
-      ) : (
-        <RecordTableEmptyState />
-      )}
-    </>
-  );
-
   return (
     <>
-      {!hasRecordGroups ? (
-        <RecordTableNoRecordGroupBodyEffect />
-      ) : (
-        <RecordTableRecordGroupBodyEffects />
-      )}
-      <RecordTableBodyUnselectEffect tableBodyRef={tableBodyRef} />
+      <RecordTableBodyEffects
+        hasRecordGroups={hasRecordGroups}
+        tableBodyRef={tableBodyRef}
+      />
 
       {recordTableIsEmpty ? (
-        renderEmptyTable()
+        <EmptyTable
+          tableBodyRef={tableBodyRef}
+          hasRecordGroups={hasRecordGroups}
+        />
       ) : (
-        <>
-          {renderTableContent()}
-          <DragSelect
-            dragSelectable={tableBodyRef}
-            onDragSelectionStart={handleDragSelectionStart}
-            onDragSelectionChange={setRowSelected}
-            onDragSelectionEnd={handleDragSelectionEnd}
-          />
-        </>
+        <TableContent
+          tableBodyRef={tableBodyRef}
+          handleDragSelectionStart={handleDragSelectionStart}
+          handleDragSelectionEnd={handleDragSelectionEnd}
+          setRowSelected={setRowSelected}
+          hasRecordGroups={hasRecordGroups}
+        />
       )}
     </>
   );
