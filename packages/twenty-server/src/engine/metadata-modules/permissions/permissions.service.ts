@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
@@ -17,17 +14,11 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
 export class PermissionsService {
-  constructor(
-    private readonly environmentService: EnvironmentService,
-    private readonly userRoleService: UserRoleService,
-    @InjectRepository(SettingPermissionEntity, 'metadata')
-    private readonly settingPermissionRepository: Repository<SettingPermissionEntity>,
-  ) {}
+  constructor(private readonly userRoleService: UserRoleService) {}
 
   public async getUserWorkspacePermissions({
     userWorkspaceId,
