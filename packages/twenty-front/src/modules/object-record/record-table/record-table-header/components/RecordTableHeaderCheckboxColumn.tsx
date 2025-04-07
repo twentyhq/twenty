@@ -20,11 +20,7 @@ const StyledColumnHeaderCell = styled.th`
   width: 30px;
 `;
 
-export const RecordTableHeaderCheckboxColumn = ({
-  disabled = false,
-}: {
-  disabled?: boolean;
-}) => {
+export const RecordTableHeaderCheckboxColumn = () => {
   const allRowsSelectedStatus = useRecoilComponentValueV2(
     allRowsSelectedStatusComponentSelector,
   );
@@ -52,7 +48,6 @@ export const RecordTableHeaderCheckboxColumn = ({
           checked={checked}
           onChange={onChange}
           indeterminate={indeterminate}
-          disabled={disabled}
         />
       </StyledContainer>
     </StyledColumnHeaderCell>
