@@ -14,11 +14,8 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ReactNode, useContext } from 'react';
-import { useIsMobile } from 'twenty-ui/utilities';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
-import { isRecordTableScrolledLeftComponentState } from '../../states/isRecordTableScrolledLeftComponentState';
 
 export const RecordTableCellFieldContext = ({
   children,
@@ -31,16 +28,6 @@ export const RecordTableCellFieldContext = ({
   const { recordId, isReadOnly: isTableRowReadOnly } =
     useRecordTableRowContextOrThrow();
   const updateRecord = useContext(RecordUpdateContext);
-  const isMobile = useIsMobile();
-
-  const isRecordTableScrolledLeft = useRecoilComponentValueV2(
-    isRecordTableScrolledLeftComponentState,
-  );
-
-  const isLabelHidden =
-    isMobile &&
-    columnDefinition?.isLabelIdentifier &&
-    !isRecordTableScrolledLeft;
 
   const computedHotkeyScope = (
     columnDefinition: ColumnDefinition<FieldMetadata>,
@@ -93,7 +80,6 @@ export const RecordTableCellFieldContext = ({
           objectMetadataItem,
         }),
         displayedMaxRows: 1,
-        isLabelHidden,
         isReadOnly: isFieldReadOnly,
       }}
     >

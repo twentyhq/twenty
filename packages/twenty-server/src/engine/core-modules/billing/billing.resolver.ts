@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingEndTrialPeriodOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-end-trial-period.output';
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
@@ -130,6 +131,17 @@ export class BillingResolver {
     return plans.map(formatBillingDatabaseProductToGraphqlDTO);
   }
 
+  @Mutation(() => BillingEndTrialPeriodOutput)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
+  async endSubscriptionTrialPeriod(
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<BillingEndTrialPeriodOutput> {
+    return await this.billingSubscriptionService.endTrialPeriod(workspace);
+  }
+
   private async validateCanCheckoutSessionPermissionOrThrow({
     workspaceId,
     userWorkspaceId,
@@ -151,7 +163,7 @@ export class BillingResolver {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        _setting: SettingPermissionType.WORKSPACE,
+        setting: SettingPermissionType.WORKSPACE,
         isExecutedByApiKey,
       });
 

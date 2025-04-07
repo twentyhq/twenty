@@ -125,7 +125,7 @@ export const ChooseYourPlan = () => {
     (plan) => plan.planKey === currentPlan,
   )?.baseProduct;
 
-  const baseProductPrice = baseProduct?.prices.find(
+  const baseProductPrice = baseProduct?.prices?.find(
     (price): price is BillingPriceLicensedDto =>
       isBillingPriceLicensed(price) &&
       price.recurringInterval === SubscriptionInterval.Month,
@@ -180,10 +180,6 @@ export const ChooseYourPlan = () => {
     currentPlan === BillingPlanKey.PRO
       ? BillingPlanKey.ENTERPRISE
       : BillingPlanKey.PRO;
-
-  const alternatePlanName = plans?.plans.find(
-    (plan) => plan.planKey === alternatePlan,
-  )?.baseProduct.name;
 
   return (
     <>
@@ -256,7 +252,7 @@ export const ChooseYourPlan = () => {
             </ActionLink>
             <span />
             <ActionLink onClick={handleSwitchPlan(alternatePlan)}>
-              <Trans>Switch to {alternatePlanName}</Trans>
+              <Trans>Switch Plan</Trans>
             </ActionLink>
             <span />
             <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
