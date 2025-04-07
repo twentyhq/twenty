@@ -10,10 +10,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { isDefined } from 'twenty-shared/utils';
-import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 import { IconComponent } from 'twenty-ui/display';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { SelectOption } from 'twenty-ui/input';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -43,6 +43,7 @@ export type SelectProps<Value extends SelectValue> = {
   needIconCheck?: boolean;
   callToActionButton?: CallToActionButton;
   dropdownOffset?: DropdownOffset;
+  hasRightElement?: boolean;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -75,6 +76,7 @@ export const Select = <Value extends SelectValue>({
   needIconCheck,
   callToActionButton,
   dropdownOffset,
+  hasRightElement,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -121,6 +123,7 @@ export const Select = <Value extends SelectValue>({
           selectedOption={selectedOption}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
+          hasRightElement={hasRightElement}
         />
       ) : (
         <Dropdown
@@ -133,6 +136,7 @@ export const Select = <Value extends SelectValue>({
               selectedOption={selectedOption}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
+              hasRightElement={hasRightElement}
             />
           }
           dropdownComponents={

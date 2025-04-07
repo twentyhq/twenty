@@ -63,6 +63,7 @@ const TextFieldInputWithContext = ({
           },
           hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
+          isReadOnly: false,
         }}
       >
         <StorybookFieldInputDropdownFocusIdSetterEffect />

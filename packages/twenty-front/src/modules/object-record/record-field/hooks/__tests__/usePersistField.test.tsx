@@ -105,6 +105,7 @@ const getWrapper =
             hotkeyScope: 'hotkeyScope',
             isLabelIdentifier: false,
             useUpdateRecord: useUpdateOneRecordMutation,
+            isReadOnly: false,
           }}
         >
           {children}

@@ -14,7 +14,6 @@ export const FieldContextProvider = ({
   fieldMetadataName,
   fieldPosition,
   isLabelIdentifier = false,
-  isLabelHidden,
   objectNameSingular,
   objectRecordId,
   customUseUpdateOneObjectHook,
@@ -25,7 +24,6 @@ export const FieldContextProvider = ({
   fieldMetadataName: string;
   fieldPosition: number;
   isLabelIdentifier?: boolean;
-  isLabelHidden?: boolean;
   objectNameSingular: string;
   objectRecordId: string;
   customUseUpdateOneObjectHook?: RecordUpdateHook;
@@ -65,7 +63,6 @@ export const FieldContextProvider = ({
       value={{
         recordId: objectRecordId,
         isLabelIdentifier,
-        isLabelHidden,
         fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
           field: fieldMetadataItem,
           showLabel: true,
@@ -78,6 +75,7 @@ export const FieldContextProvider = ({
         hotkeyScope: InlineCellHotkeyScope.InlineCell,
         clearable,
         overridenIsFieldEmpty,
+        isReadOnly: false,
       }}
     >
       {children}
