@@ -3,7 +3,7 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { MainNavigationDrawer } from '@/navigation/components/MainNavigationDrawer';
 import { SettingsNavigationDrawer } from '@/navigation/components/SettingsNavigationDrawer';
 
-type AppNavigationDrawerProps = {
+export type AppNavigationDrawerProps = {
   className?: string;
 };
 
