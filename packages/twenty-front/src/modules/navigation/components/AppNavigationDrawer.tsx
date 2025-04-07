@@ -3,11 +3,13 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { MainNavigationDrawer } from '@/navigation/components/MainNavigationDrawer';
 import { SettingsNavigationDrawer } from '@/navigation/components/SettingsNavigationDrawer';
 
-export type AppNavigationDrawerProps = {
+type AppNavigationDrawerProps = {
   className?: string;
 };
 
-export const AppNavigationDrawer = ({ className }: { className?: string }) => {
+export const AppNavigationDrawer = ({
+  className,
+}: AppNavigationDrawerProps) => {
   const isSettingsDrawer = useIsSettingsDrawer();
 
   return isSettingsDrawer ? (
