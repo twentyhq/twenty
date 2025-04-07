@@ -141,6 +141,11 @@ export const RawJsonFieldInput = ({
               folding: false,
               overviewRulerBorder: false,
               lineDecorationsWidth: 0,
+              scrollbar: {
+                useShadows: false,
+                vertical: 'hidden',
+                horizontal: 'hidden',
+              },
             }}
             onChange={handleChange}
           />
