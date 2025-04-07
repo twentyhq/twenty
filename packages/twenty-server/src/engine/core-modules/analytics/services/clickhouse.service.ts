@@ -26,7 +26,6 @@ export class ClickhouseService {
       this.flushIntervalMs = 5000;
       this.clickhouseClient = createClient({
         url: environmentService.get('CLICKHOUSE_URL'),
-        database: environmentService.get('CLICKHOUSE_DB'),
         compression: {
           response: true,
           request: true,
@@ -129,7 +128,7 @@ export class ClickhouseService {
 
       this.buffer = [];
 
-      if (eventsToFlush.length > 0) {
+      if (eventsToFlush.length > 0 || force) {
         await this.bulkInsert(eventsToFlush);
       }
     } catch (error) {
