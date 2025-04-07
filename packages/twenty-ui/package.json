@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "0.50.6",
+  "version": "0.50.7",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "style": "./dist/style.css",
