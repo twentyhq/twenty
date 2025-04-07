@@ -3,7 +3,7 @@ import { RecordTableCellCheckbox } from '@/object-record/record-table/record-tab
 import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
-import { RecordTableRowWrapper } from '@/object-record/record-table/record-table-row/components/RecordTableRowWrapper';
+import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 
 type RecordTableRowProps = {
   recordId: string;
@@ -19,17 +19,17 @@ export const RecordTableRow = ({
   isPendingRow,
 }: RecordTableRowProps) => {
   return (
-    <RecordTableRowWrapper
+    <RecordTableDraggableTr
       recordId={recordId}
-      rowIndexForFocus={rowIndexForFocus}
-      rowIndexForDrag={rowIndexForDrag}
-      isPendingRow={isPendingRow}
+      draggableIndex={rowIndexForDrag}
+      focusIndex={rowIndexForFocus}
+      isDragDisabled={isPendingRow}
     >
       <RecordTableCellGrip />
       <RecordTableCellCheckbox />
       <RecordTableCells />
       <RecordTableLastEmptyCell />
       <RecordValueSetterEffect recordId={recordId} />
-    </RecordTableRowWrapper>
+    </RecordTableDraggableTr>
   );
 };

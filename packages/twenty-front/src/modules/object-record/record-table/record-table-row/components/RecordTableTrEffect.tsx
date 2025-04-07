@@ -4,13 +4,11 @@ import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWr
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
 import { useEffect } from 'react';
 
-type RecordTableDraggableTrEffectProps = {
+type RecordTableTrEffectProps = {
   recordId: string;
 };
 
-export const RecordTableDraggableTrEffect = ({
-  recordId,
-}: RecordTableDraggableTrEffectProps) => {
+export const RecordTableTrEffect = ({ recordId }: RecordTableTrEffectProps) => {
   const { onIndexRecordsLoaded } = useRecordIndexContextOrThrow();
   const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
