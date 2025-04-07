@@ -14,6 +14,8 @@ const StyledScrollWrapper = styled.div`
   &.scroll-wrapper-y-enabled {
     overflow-y: scroll;
   }
+  overflow-x: hidden;
+  overflow-y: hidden;
   display: flex;
   width: 100%;
   height: 100%;

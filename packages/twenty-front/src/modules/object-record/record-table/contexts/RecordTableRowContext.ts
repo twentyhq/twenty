@@ -7,7 +7,6 @@ export type RecordTableRowContextValue = {
   rowIndex: number;
   isSelected: boolean;
   inView: boolean;
-  isPendingRow?: boolean;
   isReadOnly?: boolean;
 };
 
