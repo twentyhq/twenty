@@ -17,10 +17,7 @@ export const useWorkflowRun = ({
   const { success, data: record } = workflowRunSchema.safeParse(rawRecord);
 
   useOnDbEvent({
-    recordId: workflowRunId,
-    onData: ({ data }) => {
-      console.log('data received', data);
-    },
+    onData: ({ data }) => console.log('data received', data),
   });
 
   if (!success) {

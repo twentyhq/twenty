@@ -14,6 +14,9 @@ import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.modu
         return {
           path: '/subscription',
           autoSchemaFile: true,
+          subscriptions: {
+            'graphql-ws': true,
+          },
         };
       },
     }),

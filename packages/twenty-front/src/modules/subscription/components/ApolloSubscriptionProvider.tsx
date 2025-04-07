@@ -1,6 +1,6 @@
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ApolloSubscriptionClientContext } from '@/subscription/contexts/ApolloClientSubscriptionContext';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const ApolloSubscriptionProvider = ({
   children,
@@ -9,7 +9,7 @@ export const ApolloSubscriptionProvider = ({
 }) => {
   const apolloSubscriptionClient = useApolloFactory({
     uri: `${REACT_APP_SERVER_BASE_URL}/subscription`,
-    connectToDevTools: false,
+    wsUri: 'ws://localhost:3000/subscription', // use wss:// in production
   });
 
   return (
