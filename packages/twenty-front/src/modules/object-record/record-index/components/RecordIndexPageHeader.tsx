@@ -61,7 +61,7 @@ export const RecordIndexPageHeader = () => {
 
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
-      <RecordIndexActionMenu indexId={recordIndexId} />
+      <RecordIndexActionMenu />
       <PageHeaderToggleCommandMenuButton />
     </PageHeader>
   );

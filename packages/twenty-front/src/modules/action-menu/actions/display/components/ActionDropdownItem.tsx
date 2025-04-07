@@ -1,6 +1,6 @@
 import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
 import { i18n } from '@lingui/core';
-import { MenuItem } from 'twenty-ui';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const ActionDropdownItem = ({
   action,

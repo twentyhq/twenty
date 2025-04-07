@@ -2,10 +2,10 @@ import { ActionButton } from '@/action-menu/actions/display/components/ActionBut
 import { ActionDropdownItem } from '@/action-menu/actions/display/components/ActionDropdownItem';
 import { ActionListItem } from '@/action-menu/actions/display/components/ActionListItem';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-
 import { MessageDescriptor } from '@lingui/core';
 import { useContext } from 'react';
-import { IconComponent, MenuItemAccent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
+import { MenuItemAccent } from 'twenty-ui/navigation';
 
 export type ActionDisplayProps = {
   key: string;
@@ -14,7 +14,7 @@ export type ActionDisplayProps = {
   Icon: IconComponent;
   accent?: MenuItemAccent;
   to?: string;
-  onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   hotKeys?: string[];
 };
 

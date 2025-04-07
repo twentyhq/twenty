@@ -5,7 +5,7 @@ import { ActionConfigContext } from '@/action-menu/actions/components/ActionConf
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { ButtonAccent } from 'twenty-ui';
+import { ButtonAccent } from 'twenty-ui/input';
 
 export type ActionModalProps = {
   title: string;

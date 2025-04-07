@@ -19,7 +19,7 @@ import {
   IconSettingsAutomation,
   IconTargetArrow,
   IconUser,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
   [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {

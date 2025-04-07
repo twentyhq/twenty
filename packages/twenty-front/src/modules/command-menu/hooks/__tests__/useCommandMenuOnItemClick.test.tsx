@@ -42,7 +42,6 @@ describe('useCommandMenuOnItemClick', () => {
 
     act(() => {
       result.current.onItemClick({
-        shouldCloseCommandMenuOnClick: true,
         onClick: onClickMock,
         to: '/test',
       });
