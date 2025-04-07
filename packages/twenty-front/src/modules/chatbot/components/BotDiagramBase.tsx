@@ -12,7 +12,6 @@ import {
   Node,
   NodeTypes,
   OnConnect,
-  Panel,
   ReactFlow,
   ReactFlowInstance,
   useReactFlow,
@@ -65,10 +64,13 @@ const StyledResetReactflowStyles = styled.div`
 `;
 
 const StyledStatusTagContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
   left: 0;
-  top: 0;
-  position: absolute;
   padding: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
+  top: 0;
 `;
 
 const initialNodes: Node[] = [
@@ -80,8 +82,8 @@ const initialNodes: Node[] = [
   },
   {
     id: '2',
-    type: 'newNode',
-    data: { newNode: true },
+    type: 'condicionalNode',
+    data: { logic: {} },
     position: { x: 150, y: 150 },
   },
 ];
@@ -191,13 +193,11 @@ export const BotDiagramBase = ({
         // nodesDraggable={false}
       >
         <Background color={theme.border.color.medium} size={2} />
-        <Panel>
-          <Button accent="blue" title="Save" onClick={onSave} />
-        </Panel>
       </ReactFlow>
 
       <StyledStatusTagContainer data-testid={'tagContainerBotDiagram'}>
         <Tag color={tagColor} text={tagText} />
+        <Button accent="blue" title="Save" onClick={onSave} />
       </StyledStatusTagContainer>
     </StyledResetReactflowStyles>
   );

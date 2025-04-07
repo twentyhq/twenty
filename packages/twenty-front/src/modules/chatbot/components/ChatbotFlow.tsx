@@ -1,4 +1,5 @@
 import { BotDiagramBase } from '@/chatbot/components/BotDiagramBase';
+import CondicionalNode from '@/chatbot/components/ui/CondicionalNode';
 import TextNode from '@/chatbot/components/ui/TextNode';
 import { useGetChatbot } from '@/chatbot/hooks/useGetChatbot';
 import { chatbotStatusTagProps } from '@/chatbot/utils/chatbotStatusTagProps';
@@ -12,6 +13,7 @@ interface TargetableObject {
 
 const types: NodeTypes = {
   textInput: TextNode,
+  condicionalNode: CondicionalNode,
 };
 
 export const ChatbotFlow = ({
