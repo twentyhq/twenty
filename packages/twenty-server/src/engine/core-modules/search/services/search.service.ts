@@ -226,7 +226,10 @@ export class SearchService {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
-    if (objectMetadataItem.nameSingular === 'workspaceMember') {
+    if (
+      objectMetadataItem.nameSingular === 'workspaceMember' ||
+      objectMetadataItem.nameSingular === 'person'
+    ) {
       return record.avatarUrl
         ? await this.getImageUrlWithToken(
             record.avatarUrl,
