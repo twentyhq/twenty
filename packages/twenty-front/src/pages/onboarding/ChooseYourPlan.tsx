@@ -181,6 +181,10 @@ export const ChooseYourPlan = () => {
       ? BillingPlanKey.ENTERPRISE
       : BillingPlanKey.PRO;
 
+  const planName = plans?.plans.find(
+    (plan) => plan.planKey === currentPlan,
+  )?.baseProduct.name;
+
   return (
     <>
       {isDefined(baseProductPrice) && isDefined(billing) ? (
@@ -191,9 +195,7 @@ export const ChooseYourPlan = () => {
               : t`Get your subscription`}
           </Title>
           {hasWithoutCreditCardTrialPeriod ? (
-            <SubTitle>
-              <Trans>Cancel anytime</Trans>
-            </SubTitle>
+            <SubTitle>{planName}</SubTitle>
           ) : (
             withCreditCardTrialPeriod && (
               <SubTitle>
