@@ -59,11 +59,7 @@ export class PermissionsService {
       hasPermissionOnSettingFeature = true;
     }
 
-    const settingPermissions = await this.settingPermissionRepository.find({
-      where: {
-        roleId: roleOfUserWorkspace.id,
-      },
-    });
+    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
 
     const settingsPermissionsMap = Object.keys(SettingPermissionType).reduce(
       (acc, feature) => ({
@@ -137,14 +133,11 @@ export class PermissionsService {
       return true;
     }
 
-    const settingPermissions = await this.settingPermissionRepository.findOne({
-      where: {
-        roleId: roleOfUserWorkspace.id,
-        setting,
-      },
-    });
+    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
 
-    return isDefined(settingPermissions);
+    return settingPermissions.some(
+      (settingPermission) => settingPermission.setting === setting,
+    );
   }
 
   public async userHasObjectRecordsPermission({
