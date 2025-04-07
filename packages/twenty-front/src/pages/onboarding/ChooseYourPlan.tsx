@@ -181,9 +181,8 @@ export const ChooseYourPlan = () => {
       ? BillingPlanKey.ENTERPRISE
       : BillingPlanKey.PRO;
 
-  const planName = plans?.plans.find(
-    (plan) => plan.planKey === currentPlan,
-  )?.baseProduct.name;
+  const planName = plans?.plans.find((plan) => plan.planKey === currentPlan)
+    ?.baseProduct.name;
 
   return (
     <>
