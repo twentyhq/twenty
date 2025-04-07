@@ -1,8 +1,8 @@
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
+
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -10,41 +10,16 @@ type isFieldValueReadOnlyParams = {
   objectNameSingular?: string;
   fieldName?: string;
   fieldType?: FieldMetadataType;
-  isObjectRemote?: boolean;
-  isRecordDeleted?: boolean;
-  hasObjectReadOnlyPermission?: boolean;
-  contextStoreCurrentViewType: ContextStoreViewType | null;
+  isRecordReadOnly?: boolean;
 };
 
 export const isFieldValueReadOnly = ({
   objectNameSingular,
   fieldName,
   fieldType,
-  isObjectRemote = false,
-  isRecordDeleted = false,
-  hasObjectReadOnlyPermission = false,
-  contextStoreCurrentViewType,
+  isRecordReadOnly = false,
 }: isFieldValueReadOnlyParams) => {
-  const isTableViewOrKanbanView =
-    contextStoreCurrentViewType === ContextStoreViewType.Table ||
-    contextStoreCurrentViewType === ContextStoreViewType.Kanban;
-
-  const isTargetField =
-    fieldName === 'noteTargets' || fieldName === 'taskTargets';
-
-  if (isTableViewOrKanbanView && isTargetField) {
-    return true;
-  }
-
-  if (isObjectRemote) {
-    return true;
-  }
-
-  if (isRecordDeleted) {
-    return true;
-  }
-
-  if (hasObjectReadOnlyPermission) {
+  if (isRecordReadOnly) {
     return true;
   }
 
@@ -59,6 +34,20 @@ export const isFieldValueReadOnly = ({
   if (
     objectNameSingular === CoreObjectNameSingular.Workflow &&
     fieldName !== 'name'
+  ) {
+    return true;
+  }
+
+  if (
+    objectNameSingular !== CoreObjectNameSingular.Note &&
+    fieldName === 'noteTargets'
+  ) {
+    return true;
+  }
+
+  if (
+    objectNameSingular !== CoreObjectNameSingular.Task &&
+    fieldName === 'taskTargets'
   ) {
     return true;
   }

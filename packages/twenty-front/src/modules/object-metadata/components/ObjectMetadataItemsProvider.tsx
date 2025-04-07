@@ -10,7 +10,6 @@ export const ObjectMetadataItemsProvider = ({
   children,
 }: React.PropsWithChildren) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-
   const shouldDisplayChildren = objectMetadataItems.length > 0;
 
   return (

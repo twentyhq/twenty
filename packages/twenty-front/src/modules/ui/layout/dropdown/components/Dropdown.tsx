@@ -20,7 +20,6 @@ import { flushSync } from 'react-dom';
 import { Keys } from 'react-hotkeys-hook';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { sleep } from '~/utils/sleep';
 import { useDropdown } from '../hooks/useDropdown';
 
 const StyledDropdownFallbackAnchor = styled.div`
@@ -114,8 +113,6 @@ export const Dropdown = ({
           dropdownHotkeyComponentState({ scopeId: dropdownId }),
           dropdownHotkeyScope,
         );
-
-        await sleep(100);
 
         toggleDropdown();
         onClickOutside?.();

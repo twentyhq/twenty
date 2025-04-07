@@ -1,8 +1,8 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { RichTextInput } from '@/object-record/record-field/components/RichTextInput';
+
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
@@ -19,7 +19,7 @@ export const RecordTableCellFieldInput = () => {
 
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
 
-  const isFieldReadOnly = useIsFieldValueReadOnly();
+  const { isReadOnly } = useContext(FieldContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -97,7 +97,7 @@ export const RecordTableCellFieldInput = () => {
       onShiftTab={handleShiftTab}
       onSubmit={handleSubmit}
       onTab={handleTab}
-      isReadOnly={isFieldReadOnly}
+      isReadOnly={isReadOnly}
     />
   );
 };

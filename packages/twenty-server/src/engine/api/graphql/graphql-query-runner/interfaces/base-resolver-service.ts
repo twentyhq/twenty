@@ -190,7 +190,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId: authContext.userWorkspaceId,
-          _setting: permissionRequired,
+          setting: permissionRequired,
           workspaceId: authContext.workspace.id,
           isExecutedByApiKey: isDefined(authContext.apiKey),
         });

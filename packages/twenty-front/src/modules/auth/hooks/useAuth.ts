@@ -416,6 +416,7 @@ export const useAuth = () => {
           {
             ...(!isEmailVerificationRequired && {
               loginToken: signUpResult.data.signUp.loginToken.token,
+              animateModal: false,
             }),
             email,
           },

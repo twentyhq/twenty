@@ -11,7 +11,6 @@ import {
 } from '@/object-record/record-field/types/FieldInputEvent';
 
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
@@ -46,13 +45,12 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isDisplayModeFixHeight,
     onOpenEditMode,
     onCloseEditMode,
+    isReadOnly,
   } = useContext(FieldContext);
 
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
-
-  const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const { closeInlineCell } = useInlineCell();
 
@@ -134,7 +132,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   };
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    readonly: isFieldReadOnly,
+    readonly: isReadOnly,
     buttonIcon: buttonIcon,
     IconLabel: fieldDefinition.iconName
       ? getIcon(fieldDefinition.iconName)
@@ -152,7 +150,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         onTab={handleTab}
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
-        isReadOnly={isFieldReadOnly}
+        isReadOnly={isReadOnly}
       />
     ),
     displayModeContent: <FieldDisplay />,
