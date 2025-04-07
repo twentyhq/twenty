@@ -20,9 +20,9 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -74,17 +74,19 @@ export const ViewPickerListContent = () => {
   };
 
   const handleDragEnd = useCallback(
-    (result: DropResult) => {
+    async (result: DropResult) => {
       if (!result.destination) return;
 
-      moveArrayItem(viewsOnCurrentObject, {
+      const viewsReordered = moveArrayItem(viewsOnCurrentObject, {
         fromIndex: result.source.index,
         toIndex: result.destination.index,
-      }).forEach((view, index) => {
-        if (view.position !== index) {
-          updateView({ ...view, position: index });
-        }
       });
+
+      for (const [index, view] of viewsReordered.entries()) {
+        if (view.position !== index) {
+          await updateView({ ...view, position: index });
+        }
+      }
     },
     [updateView, viewsOnCurrentObject],
   );
