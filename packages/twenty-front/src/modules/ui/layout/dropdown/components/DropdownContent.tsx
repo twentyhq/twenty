@@ -4,6 +4,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
+import { dropdownMaxWidthComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxWidthComponentStateV2';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -70,6 +71,11 @@ export const DropdownContent = ({
     dropdownId,
   );
 
+  const dropdownMaxWidth = useRecoilComponentValueV2(
+    dropdownMaxWidthComponentStateV2,
+    dropdownId,
+  );
+
   useEffect(() => {
     setDropdownPlacement(dropdownPlacement);
   }, [dropdownPlacement, setDropdownPlacement]);
@@ -112,7 +118,10 @@ export const DropdownContent = ({
   const dropdownMenuStyles = {
     ...floatingStyles,
     maxHeight: dropdownMaxHeight,
+    maxWidth: dropdownMaxWidth,
   };
+
+  const givenWidth = dropdownMenuWidth ?? dropdownWidth;
 
   return (
     <>
@@ -129,7 +138,7 @@ export const DropdownContent = ({
           <OverlayContainer>
             <DropdownMenu
               className={className}
-              width={dropdownMenuWidth ?? dropdownWidth}
+              width={givenWidth}
               data-select-disable
             >
               {dropdownComponents}
@@ -148,7 +157,7 @@ export const DropdownContent = ({
               <DropdownMenu
                 id={dropdownId}
                 className={className}
-                width={dropdownMenuWidth ?? dropdownWidth}
+                width={givenWidth}
                 data-select-disable
               >
                 {dropdownComponents}

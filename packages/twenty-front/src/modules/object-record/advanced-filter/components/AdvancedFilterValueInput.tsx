@@ -45,11 +45,15 @@ export const AdvancedFilterValueInput = ({
   const operandHasNoInput =
     recordFilter && !configurableViewFilterOperands.has(recordFilter.operand);
 
+  if (!isDefined(recordFilter)) {
+    return null;
+  }
+
   const handleFilterValueDropdownClose = () => {
     setObjectFilterDropdownSearchInput('');
   };
 
-  const filterType = recordFilter?.type;
+  const filterType = recordFilter.type;
 
   const dropdownContentOffset =
     filterType === 'DATE' || filterType === 'DATE_TIME'
@@ -67,7 +71,7 @@ export const AdvancedFilterValueInput = ({
       ) : isDefined(filterType) &&
         (TEXT_FILTER_TYPES.includes(filterType) ||
           NUMBER_FILTER_TYPES.includes(filterType)) ? (
-        <AdvancedFilterDropdownTextInput />
+        <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
       ) : (
         <Dropdown
           dropdownId={dropdownId}
@@ -77,9 +81,7 @@ export const AdvancedFilterValueInput = ({
             />
           }
           dropdownComponents={
-            <AdvancedFilterDropdownFilterInput
-              recordFilterId={recordFilter.id}
-            />
+            <AdvancedFilterDropdownFilterInput recordFilter={recordFilter} />
           }
           dropdownHotkeyScope={{ scope: dropdownId }}
           dropdownOffset={dropdownContentOffset}

@@ -3,9 +3,12 @@ import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/Dropdown
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
+import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
+import { dropdownMaxWidthComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxWidthComponentStateV2';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
   Placement,
@@ -20,6 +23,7 @@ import { flushSync } from 'react-dom';
 import { Keys } from 'react-hotkeys-hook';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { sleep } from '~/utils/sleep';
 import { useDropdown } from '../hooks/useDropdown';
 
@@ -83,17 +87,39 @@ export const Dropdown = ({
       ]
     : [];
 
+  const setDropdownMaxHeight = useSetRecoilComponentStateV2(
+    dropdownMaxHeightComponentStateV2,
+    dropdownId,
+  );
+
+  const setDropdownMaxWidth = useSetRecoilComponentStateV2(
+    dropdownMaxWidthComponentStateV2,
+    dropdownId,
+  );
+
+  const isMobile = useIsMobile();
+  const bottomAutoresizePadding = isMobile ? 64 : 32;
+
   const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       ...offsetMiddleware,
       flip(),
       size({
-        padding: 32,
-        apply: () => {
+        padding: {
+          right: 32,
+          bottom: bottomAutoresizePadding,
+        },
+        /**
+         * DO NOT TOUCH THIS apply() MIDDLEWARE PLEASE
+         *  THIS IS MANDATORY FOR KEEPING AUTORESIZING FOR ALL DROPDOWNS
+         *  IT'S THE STANDARD WAY OF WORKING RECOMMENDED BY THE LIBRARY
+         *  See https://floating-ui.com/docs/size#usage
+         */
+        apply: ({ availableHeight, availableWidth }) => {
           flushSync(() => {
-            // TODO: I think this is not needed anymore let's remove it if not used for a few weeks
-            // setDropdownMaxHeight(availableHeight);
+            setDropdownMaxHeight(availableHeight);
+            setDropdownMaxWidth(availableWidth);
           });
         },
         boundary: document.querySelector('#root') ?? undefined,
