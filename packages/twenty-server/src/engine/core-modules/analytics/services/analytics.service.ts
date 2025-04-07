@@ -74,12 +74,10 @@ export class AnalyticsService {
     return sendEventOrPageviewFunction();
   }
 
-  // use the method makeEvent to create data params
   private async sendEvent(data: AnalyticsEvent) {
     return this.clickhouseService.pushEvent(data);
   }
 
-  // use the method makePageview to create data params
   private async sendPageview(data: AnalyticsPageview) {
     return this.clickhouseService.pushEvent(data);
   }

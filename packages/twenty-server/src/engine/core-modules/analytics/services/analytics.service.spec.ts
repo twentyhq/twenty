@@ -24,7 +24,7 @@ describe('AnalyticsService', () => {
         {
           provide: ClickhouseService,
           useValue: {
-            insert: jest.fn(),
+            pushEvent: jest.fn(),
           },
         },
       ],
@@ -58,7 +58,7 @@ describe('AnalyticsService', () => {
     });
 
     it('should call sendEvent with merged properties', async () => {
-      const insertSpy = jest.spyOn(clickhouseService, 'insert');
+      const insertSpy = jest.spyOn(clickhouseService, 'pushEvent');
       const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
 
       const testEvent = {
@@ -78,7 +78,7 @@ describe('AnalyticsService', () => {
     });
 
     it('should call sendPageview with merged properties', async () => {
-      const insertSpy = jest.spyOn(clickhouseService, 'insert');
+      const insertSpy = jest.spyOn(clickhouseService, 'pushEvent');
 
       const context = service.createAnalyticsContext(mockUserIdAndWorkspaceId);
       const testPageview: AnalyticsPageview = {
@@ -121,7 +121,7 @@ describe('AnalyticsService', () => {
     });
 
     it('should handle null userId and workspaceId correctly', async () => {
-      const insertSpy = jest.spyOn(clickhouseService, 'insert');
+      const insertSpy = jest.spyOn(clickhouseService, 'pushEvent');
 
       const context = service.createAnalyticsContext();
       const testEvent = {
