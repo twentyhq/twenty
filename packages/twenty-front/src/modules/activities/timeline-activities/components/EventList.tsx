@@ -45,7 +45,6 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
 
   return (
     <ScrollWrapper
-      contextProviderName="eventList"
       componentInstanceId={`scroll-wrapper-event-list-${targetableObject.id}`}
     >
       <StyledTimelineContainer>

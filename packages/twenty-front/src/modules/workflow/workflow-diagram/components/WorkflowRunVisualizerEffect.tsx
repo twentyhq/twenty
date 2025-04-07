@@ -29,11 +29,11 @@ export const WorkflowRunVisualizerEffect = ({
   }, [setWorkflowRunId, workflowRunId]);
 
   useEffect(() => {
-    if (!isDefined(workflowVersion)) {
+    if (!isDefined(workflowRun)) {
       return;
     }
-    setWorkflowId(workflowVersion.workflowId);
-  }, [setWorkflowId, workflowVersion]);
+    setWorkflowId(workflowRun.workflowId);
+  }, [setWorkflowId, workflowRun]);
 
   useEffect(() => {
     if (!isDefined(workflowRun?.output)) {

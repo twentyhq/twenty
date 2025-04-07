@@ -125,6 +125,7 @@ export {
   IconDotsVertical,
   IconDownload,
   IconEditCircle,
+  IconExclamationCircle,
   IconExternalLink,
   IconEye,
   IconEyeOff,

@@ -10,7 +10,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -67,11 +66,6 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    recordId,
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Workflow,
-  );
-
   return {
     isFavorite,
     isRemoteObject,
@@ -83,6 +77,5 @@ export const useShouldActionBeRegisteredParams = ({
     selectedRecord,
     isWorkflowsEnabled,
     numberOfSelectedRecords,
-    workflowWithCurrentVersion,
   };
 };

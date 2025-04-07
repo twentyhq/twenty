@@ -16,6 +16,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledInnerContainer = styled.div`
   height: 100%;
+  width: 100%;
 `;
 
 export const SettingsNavigationDrawerItems = () => {
@@ -41,10 +42,7 @@ export const SettingsNavigationDrawerItems = () => {
 
   return (
     <ScrollWrapper
-      contextProviderName="navigationDrawer"
       componentInstanceId={`scroll-wrapper-settings-navigation-drawer`}
-      scrollbarVariant="no-padding"
-      heightMode="fit-content"
       defaultEnableXScroll={false}
     >
       <StyledInnerContainer>

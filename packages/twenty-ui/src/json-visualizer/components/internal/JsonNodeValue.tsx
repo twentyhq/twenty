@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 
 const StyledText = styled.span<{
@@ -19,5 +20,15 @@ export const JsonNodeValue = ({
   valueAsString: string;
   highlighting?: JsonNodeHighlighting | undefined;
 }) => {
-  return <StyledText highlighting={highlighting}>{valueAsString}</StyledText>;
+  const { onNodeValueClick } = useJsonTreeContextOrThrow();
+
+  const handleClick = () => {
+    onNodeValueClick?.(valueAsString);
+  };
+
+  return (
+    <StyledText highlighting={highlighting} onClick={handleClick}>
+      {valueAsString}
+    </StyledText>
+  );
 };
