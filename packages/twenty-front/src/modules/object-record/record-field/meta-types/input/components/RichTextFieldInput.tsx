@@ -58,7 +58,7 @@ export const RichTextFieldInput = ({
 
   useRegisterInputEvents({
     inputRef: containerRef,
-    inputValue: null, // No draft value to pass here
+    inputValue: null,
     onClickOutside: handleClickOutside,
     onEscape: handleEscape,
     hotkeyScope: 'rich-text-field-input',

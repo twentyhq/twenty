@@ -27,7 +27,6 @@ export const useRichTextCommandMenu = () => {
           page: CommandMenuPages.EditRichText,
           pageTitle: 'Rich Text',
           pageIcon: IconPencil,
-          resetNavigationStack: true,
         });
       },
     [navigateCommandMenu, openCommandMenu],

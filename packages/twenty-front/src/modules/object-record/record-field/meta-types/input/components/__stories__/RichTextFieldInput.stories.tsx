@@ -8,14 +8,12 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { RichTextFieldInput } from '../RichTextFieldInput';
 
-// Mock the useRichTextCommandMenu hook
 jest.mock('@/modules/command-menu/hooks/useRichTextCommandMenu', () => ({
   useRichTextCommandMenu: () => ({
     editRichText: jest.fn(),
   }),
 }));
 
-// Mock ActivityRichTextEditor component
 jest.mock('@/modules/activities/components/ActivityRichTextEditor', () => ({
   ActivityRichTextEditor: () => (
     <div data-testid="activity-rich-text-editor">Rich Text Editor</div>
