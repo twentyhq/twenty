@@ -1,16 +1,3 @@
-import {
-  IconBaselineDensitySmall,
-  IconChevronLeft,
-  IconLayoutKanban,
-  IconLayoutList,
-  IconLayoutNavbar,
-  IconLayoutSidebarRight,
-  IconTable,
-  MenuItem,
-  MenuItemSelect,
-  MenuItemToggle,
-} from 'twenty-ui';
-
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
@@ -24,11 +11,21 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ViewType } from '@/views/types/ViewType';
+import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  IconBaselineDensitySmall,
+  IconChevronLeft,
+  IconLayoutList,
+  IconLayoutNavbar,
+  IconLayoutSidebarRight,
+  IconTable,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();
@@ -75,6 +72,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   };
 
   const isDefaultView = currentView?.key === 'INDEX';
+  const nbsp = '\u00A0';
 
   return (
     <>
@@ -101,15 +99,20 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             }}
           />
           <MenuItemSelect
-            LeftIcon={IconLayoutKanban}
+            LeftIcon={viewTypeIconMapping(ViewType.Kanban)}
             text={t`Kanban`}
             disabled={isDefaultView}
             contextualText={
-              isDefaultView
-                ? t`Not available for default view`
-                : availableFieldsForKanban.length === 0
-                  ? t`Create Select...`
-                  : undefined
+              isDefaultView ? (
+                <>
+                  {nbsp}·{nbsp}
+                  <OverflowingTextWithTooltip
+                    text={t`Not available for default view`}
+                  />
+                </>
+              ) : availableFieldsForKanban.length === 0 ? (
+                t`Create Select...`
+              ) : undefined
             }
             selected={currentView?.type === ViewType.Kanban}
             onClick={handleSelectKanbanViewType}

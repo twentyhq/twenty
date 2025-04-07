@@ -21,14 +21,15 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
-import { IconDotsVertical } from 'twenty-ui';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
+import { IconDotsVertical } from 'twenty-ui/display';
 
 const openTimeout = 50;
 
@@ -49,7 +50,11 @@ const ContextStoreDecorator: Decorator = (Story) => {
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
-              <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
+              <JestContextStoreSetter
+                contextStoreCurrentObjectMetadataNameSingular="company"
+                contextStoreCurrentViewId="1"
+                contextStoreCurrentViewType={ContextStoreViewType.Table}
+              >
                 <Story />
               </JestContextStoreSetter>
             </ActionMenuComponentInstanceContext.Provider>

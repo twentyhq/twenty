@@ -1,10 +1,10 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
-import { IconComponent, IconTwentyStar } from 'twenty-ui';
 
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
+import { IconComponent, IconTwentyStar } from 'twenty-ui/display';
 
 type SettingsObjectFieldDataTypeProps = {
   to?: string;

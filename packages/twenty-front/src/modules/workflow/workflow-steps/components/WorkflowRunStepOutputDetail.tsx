@@ -9,12 +9,19 @@ import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { isTwoFirstDepths, JsonTree, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
+import {
+  GetJsonNodeHighlighting,
+  isTwoFirstDepths,
+  JsonTree,
+} from 'twenty-ui/json-visualizer';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
@@ -42,6 +49,8 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   });
   const headerType = getActionHeaderTypeOrThrow(stepDefinition.definition.type);
 
+  const setRedHighlightingForEveryNode: GetJsonNodeHighlighting = () => 'red';
+
   return (
     <>
       <WorkflowStepHeader
@@ -61,6 +70,12 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
           emptyStringLabel={t`[empty string]`}
           arrowButtonCollapsedLabel={t`Expand`}
           arrowButtonExpandedLabel={t`Collapse`}
+          getNodeHighlighting={
+            isDefined(stepOutput.error)
+              ? setRedHighlightingForEveryNode
+              : undefined
+          }
+          onNodeValueClick={copyToClipboard}
         />
       </WorkflowRunStepJsonContainer>
     </>

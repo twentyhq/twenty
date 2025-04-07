@@ -15,12 +15,17 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
-import { IconChevronDown, IconPlus, IconTrash, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  IconChevronDown,
+  IconPlus,
+  IconTrash,
+  useIcons,
+} from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
 export type WorkflowEditActionFormBuilderProps = {
@@ -202,7 +207,7 @@ export const WorkflowEditActionFormBuilder = ({
                         ? field.placeholder
                         : getDefaultFormFieldSettings(field.type).placeholder}
                     </StyledPlaceholder>
-                    {!isFieldSelected(field.id) && (
+                    {field.type === 'RECORD' && (
                       <IconChevronDown
                         size={theme.icon.size.md}
                         color={theme.font.color.tertiary}
@@ -255,15 +260,15 @@ export const WorkflowEditActionFormBuilder = ({
                   <FormFieldInputInputContainer
                     hasRightElement={false}
                     onClick={() => {
-                      const { label, placeholder, name } =
-                        getDefaultFormFieldSettings(FieldMetadataType.TEXT);
+                      const { label, name } = getDefaultFormFieldSettings(
+                        FieldMetadataType.TEXT,
+                      );
 
                       const newField: WorkflowFormActionField = {
                         id: v4(),
                         name,
                         type: FieldMetadataType.TEXT,
                         label,
-                        placeholder,
                       };
 
                       setFormData([...formData, newField]);
@@ -275,6 +280,8 @@ export const WorkflowEditActionFormBuilder = ({
                           input: [...action.settings.input, newField],
                         },
                       });
+
+                      setSelectedField(newField.id);
                     }}
                   >
                     <StyledFieldContainer>

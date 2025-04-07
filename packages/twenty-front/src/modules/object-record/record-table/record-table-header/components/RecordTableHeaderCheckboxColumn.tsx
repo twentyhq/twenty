@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { Checkbox } from 'twenty-ui';
+import { Checkbox } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;

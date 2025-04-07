@@ -68,6 +68,9 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
       planKey: BillingPlanKey.PRO,
       baseProduct: {
         id: 'base-1',
+        metadata: {
+          priceUsageBased: BillingUsageType.LICENSED,
+        },
         name: 'Base Product',
         billingPrices: [
           {
@@ -77,7 +80,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
             priceUsageType: BillingUsageType.LICENSED,
           },
         ],
-        type: BillingUsageType.LICENSED,
         prices: [
           {
             recurringInterval: SubscriptionInterval.Month,
@@ -90,6 +92,9 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
       otherLicensedProducts: [
         {
           id: 'licensed-1',
+          metadata: {
+            priceUsageBased: BillingUsageType.LICENSED,
+          },
           name: 'Licensed Product',
           billingPrices: [
             {
@@ -99,7 +104,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
               priceUsageType: BillingUsageType.LICENSED,
             },
           ],
-          type: BillingUsageType.LICENSED,
           prices: [
             {
               recurringInterval: SubscriptionInterval.Year,
@@ -113,6 +117,9 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
       meteredProducts: [
         {
           id: 'metered-1',
+          metadata: {
+            priceUsageBased: BillingUsageType.METERED,
+          },
           name: 'Metered Product',
           billingPrices: [
             {
@@ -129,7 +136,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
               priceUsageType: BillingUsageType.METERED,
             },
           ],
-          type: BillingUsageType.METERED,
           prices: [
             {
               tiersMode: BillingPriceTiersMode.GRADUATED,
@@ -191,6 +197,9 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
       planKey: 'empty-plan',
       baseProduct: {
         id: 'base-1',
+        metadata: {
+          priceUsageBased: BillingUsageType.LICENSED,
+        },
         name: 'Base Product',
         billingPrices: [
           {
@@ -200,7 +209,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
             priceUsageType: BillingUsageType.LICENSED,
           },
         ],
-        type: BillingUsageType.LICENSED,
         prices: [
           {
             recurringInterval: SubscriptionInterval.Month,
@@ -214,6 +222,9 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
       meteredProducts: [
         {
           id: 'metered-1',
+          metadata: {
+            priceUsageBased: BillingUsageType.METERED,
+          },
           name: 'Metered Product',
           billingPrices: [
             {
@@ -224,7 +235,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
               priceUsageType: BillingUsageType.METERED,
             },
           ],
-          type: BillingUsageType.METERED,
           prices: [
             {
               tiersMode: null,

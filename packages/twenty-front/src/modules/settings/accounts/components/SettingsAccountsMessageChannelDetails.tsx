@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { Card, H2Title, IconBriefcase, IconUsers, Section } from 'twenty-ui';
 
 import {
   MessageChannel,
@@ -12,6 +11,8 @@ import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/compo
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
+import { Card, Section } from 'twenty-ui/layout';
+import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
 
 type SettingsAccountsMessageChannelDetailsProps = {
   messageChannel: Pick<

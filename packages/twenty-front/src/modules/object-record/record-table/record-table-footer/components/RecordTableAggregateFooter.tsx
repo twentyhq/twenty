@@ -4,10 +4,10 @@ import { RecordTableAggregateFooterCell } from '@/object-record/record-table/rec
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isUndefined } from '@sniptt/guards';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledTd = styled.td`
   background-color: ${({ theme }) => theme.background.primary};
@@ -86,14 +86,11 @@ export const RecordTableAggregateFooter = ({
     visibleTableColumnsComponentSelector,
   );
 
-  const overlayScrollbarsInstance = useRecoilComponentValueV2(
-    scrollWrapperInstanceComponentState,
-  );
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
-  const hasHorizontalOverflow = overlayScrollbarsInstance
-    ? overlayScrollbarsInstance.elements().scrollOffsetElement.scrollWidth >
-      overlayScrollbarsInstance.elements().scrollOffsetElement.clientWidth
-    : false;
+  const hasHorizontalOverflow =
+    (scrollWrapperHTMLElement?.scrollWidth ?? 0) >
+    (scrollWrapperHTMLElement?.clientWidth ?? 0);
 
   return (
     <StyledTableRow

@@ -5,12 +5,17 @@ import { Trans } from '@lingui/react/macro';
 import { ChangeEvent, ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, Avatar, AvatarType, IconComponent } from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import {
+  AppTooltip,
+  Avatar,
+  AvatarType,
+  IconComponent,
+} from 'twenty-ui/display';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import { Label } from 'twenty-ui';
+import { Label } from 'twenty-ui/display';
 
 const StyledGroupHeading = styled(Label)`
   align-items: center;

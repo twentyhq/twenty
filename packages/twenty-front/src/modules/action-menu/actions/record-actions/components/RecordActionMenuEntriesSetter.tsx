@@ -1,17 +1,16 @@
-import { RegisterRecordActionEffect } from '@/action-menu/actions/record-actions/components/RegisterRecordActionEffect';
+import { RegisterRecordActionEffects } from '@/action-menu/actions/record-actions/components/RegisterRecordActionEffects';
+import { RegisterWorkflowRecordActionEffects } from '@/action-menu/actions/record-actions/components/RegisterWorkflowRecordActionEffects';
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
-import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
-import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const RecordActionMenuEntriesSetter = () => {
   const localContextStoreCurrentObjectMetadataItemId =
@@ -43,10 +42,6 @@ export const RecordActionMenuEntriesSetter = () => {
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const contextStoreCurrentViewType = useRecoilComponentValueV2(
-    contextStoreCurrentViewTypeComponentState,
-  );
-
   const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsWorkflowEnabled,
   );
@@ -55,28 +50,20 @@ export const RecordActionMenuEntriesSetter = () => {
     return null;
   }
 
-  const viewType = getActionViewType(
-    contextStoreCurrentViewType,
-    contextStoreTargetedRecordsRule,
-  );
-
-  const actionConfig = getActionConfig(objectMetadataItem);
-
-  const actionsToRegister = isDefined(viewType)
-    ? Object.values(actionConfig ?? {}).filter((action) =>
-        action.availableOn?.includes(viewType),
-      )
-    : [];
+  const isWorkflowObject =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow ||
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkflowRun ||
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkflowVersion;
 
   return (
     <>
-      {actionsToRegister.map((action) => (
-        <RegisterRecordActionEffect
-          key={action.key}
-          action={action}
+      {isWorkflowObject ? (
+        <RegisterWorkflowRecordActionEffects
           objectMetadataItem={objectMetadataItem}
         />
-      ))}
+      ) : (
+        <RegisterRecordActionEffects objectMetadataItem={objectMetadataItem} />
+      )}
 
       {isWorkflowEnabled &&
         contextStoreTargetedRecordsRule?.mode === 'selection' &&

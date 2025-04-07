@@ -3,8 +3,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconCopy, OverflowingTextWithTooltip } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { IconCopy, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledEllipsisLabel = styled.div`
   white-space: nowrap;

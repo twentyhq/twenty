@@ -7,8 +7,8 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
-import { Repository } from 'typeorm';
 import { APP_LOCALES } from 'twenty-shared/translations';
+import { Repository } from 'typeorm';
 
 import {
   AppToken,
@@ -71,9 +71,8 @@ export class EmailVerificationService {
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
-    const html = render(emailTemplate);
-
-    const text = render(emailTemplate, {
+    const html = await render(emailTemplate);
+    const text = await render(emailTemplate, {
       plainText: true,
     });
 

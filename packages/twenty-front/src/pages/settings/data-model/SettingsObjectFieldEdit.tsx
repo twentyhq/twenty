@@ -4,13 +4,6 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import {
-  Button,
-  H2Title,
-  IconArchive,
-  IconArchiveOff,
-  Section,
-} from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -39,6 +32,9 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 //TODO: fix this type
 type SettingsDataModelFieldEditFormValues = z.infer<

@@ -9,7 +9,6 @@ export const recordTableRowContextValue: RecordTableRowContextValue = {
   recordId: 'recordId',
   pathToShowPage: '/',
   objectNameSingular: 'objectNameSingular',
-  isPendingRow: false,
   inView: true,
 };
 

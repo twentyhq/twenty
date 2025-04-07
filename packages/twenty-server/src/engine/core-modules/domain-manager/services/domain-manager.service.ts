@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
@@ -44,12 +44,10 @@ export class DomainManagerService {
 
   private appendSearchParams(
     url: URL,
-    searchParams: Record<string, string | number>,
+    searchParams: Record<string, string | number | boolean>,
   ) {
     Object.entries(searchParams).forEach(([key, value]) => {
-      if (isDefined(value)) {
-        url.searchParams.set(key, value.toString());
-      }
+      url.searchParams.set(key, value.toString());
     });
   }
 
@@ -80,7 +78,7 @@ export class DomainManagerService {
   }: {
     workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
     pathname?: string;
-    searchParams?: Record<string, string | number>;
+    searchParams?: Record<string, string | number | boolean>;
   }) {
     const workspaceUrls = this.getWorkspaceUrls(workspace);
 

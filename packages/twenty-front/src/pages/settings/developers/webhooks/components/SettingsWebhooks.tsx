@@ -5,9 +5,12 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
 import { v4 } from 'uuid';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconPlus } from 'twenty-ui/display';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { Section } from 'twenty-ui/layout';
 
 const StyledButtonContainer = styled.div`
   display: flex;

@@ -1,14 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  Button,
-  H2Title,
-  IconCalendarEvent,
-  IconCircleX,
-  IconCreditCard,
-  Section,
-} from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
@@ -28,6 +20,14 @@ import {
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
+import {
+  H2Title,
+  IconCalendarEvent,
+  IconCircleX,
+  IconCreditCard,
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;

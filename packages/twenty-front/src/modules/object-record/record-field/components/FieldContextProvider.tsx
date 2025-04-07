@@ -75,6 +75,7 @@ export const FieldContextProvider = ({
         hotkeyScope: InlineCellHotkeyScope.InlineCell,
         clearable,
         overridenIsFieldEmpty,
+        isReadOnly: false,
       }}
     >
       {children}

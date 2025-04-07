@@ -7,7 +7,8 @@ import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { memo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { HorizontalSeparator, IconGoogle, MainButton } from 'twenty-ui';
+import { HorizontalSeparator, IconGoogle } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
 
 const GoogleIcon = memo(() => {
   const theme = useTheme();

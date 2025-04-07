@@ -1,11 +1,11 @@
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { ActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
+import { ActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/ActionHook';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRemoveFromFavoritesSingleRecordAction: ActionHookWithObjectMetadataItem =
-  ({ objectMetadataItem }) => {
+export const useRemoveFromFavoritesSingleRecordAction: ActionHookWithoutObjectMetadataItem =
+  () => {
     const recordId = useSelectedRecordIdOrThrow();
 
     const { sortedFavorites: favorites } = useFavorites();
@@ -16,15 +16,8 @@ export const useRemoveFromFavoritesSingleRecordAction: ActionHookWithObjectMetad
       (favorite) => favorite.recordId === recordId,
     );
 
-    const isFavorite = !!foundFavorite;
-
-    const shouldBeRegistered =
-      isDefined(objectMetadataItem) &&
-      !objectMetadataItem.isRemote &&
-      isFavorite;
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
+      if (!isDefined(foundFavorite)) {
         return;
       }
 
@@ -32,7 +25,6 @@ export const useRemoveFromFavoritesSingleRecordAction: ActionHookWithObjectMetad
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

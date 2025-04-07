@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkflowCreateManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.post-query.hook';
 import { WorkflowCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.pre-query.hook';
 import { WorkflowCreateOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.post-query.hook';
@@ -25,12 +27,12 @@ import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/comm
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
-import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 
 @Module({
   imports: [
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     ServerlessFunctionModule,
+    RecordPositionModule,
   ],
   providers: [
     WorkflowCreateOnePreQueryHook,

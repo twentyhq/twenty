@@ -62,11 +62,10 @@ export class BillingPortalWorkspaceService {
 
     const stripeCustomerId = subscription?.stripeCustomerId;
 
-    const stripeSubscriptionLineItems =
-      await this.getStripeSubscriptionLineItems({
-        quantity,
-        billingPricesPerPlan,
-      });
+    const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
+      quantity,
+      billingPricesPerPlan,
+    });
 
     const checkoutSession =
       await this.stripeCheckoutService.createCheckoutSession({

@@ -11,9 +11,10 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconCheck, MenuItem } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { IconCheck } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
   const {

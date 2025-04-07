@@ -4,7 +4,7 @@ import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
 const StyledItemsContainer = styled.div`
   width: 100%;

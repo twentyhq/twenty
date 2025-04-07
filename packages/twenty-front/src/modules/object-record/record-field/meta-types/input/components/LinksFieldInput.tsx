@@ -62,7 +62,10 @@ export const LinksFieldInput = ({
       items={links}
       onPersist={handlePersistLinks}
       onCancel={onCancel}
-      onClickOutside={onClickOutside}
+      onClickOutside={(persist, event) => {
+        onClickOutside?.(event);
+        persist();
+      }}
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => ({

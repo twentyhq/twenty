@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { Button, IconCheckbox, IconNotes, IconPlus, MenuItem } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -12,6 +11,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { Dropdown } from '../../dropdown/components/Dropdown';
+import { Button } from 'twenty-ui/input';
+import { IconCheckbox, IconNotes, IconPlus } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledContainer = styled.div`
   z-index: 1;

@@ -27,7 +27,10 @@ export const ArrayFieldInput = ({
       items={arrayItems}
       onPersist={persistArrayField}
       onCancel={onCancel}
-      onClickOutside={onClickOutside}
+      onClickOutside={(persist, event) => {
+        onClickOutside?.(event);
+        persist();
+      }}
       placeholder="Enter value"
       fieldMetadataType={FieldMetadataType.ARRAY}
       renderItem={({ value, index, handleEdit, handleDelete }) => (

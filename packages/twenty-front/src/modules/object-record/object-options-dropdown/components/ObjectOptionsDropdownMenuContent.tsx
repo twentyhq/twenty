@@ -1,14 +1,4 @@
 import { Key } from 'ts-key-enum';
-import {
-  AppTooltip,
-  IconCopy,
-  IconLayoutKanban,
-  IconLayoutList,
-  IconListDetails,
-  IconTable,
-  IconTrash,
-  MenuItem,
-} from 'twenty-ui';
 
 import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -23,12 +13,21 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewType } from '@/views/types/ViewType';
+import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  AppTooltip,
+  IconCopy,
+  IconLayoutList,
+  IconListDetails,
+  IconTrash,
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
+
 export const ObjectOptionsDropdownMenuContent = () => {
   const { t } = useLingui();
   const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
@@ -85,9 +84,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
       <DropdownMenuItemsContainer scrollable={false}>
         <MenuItem
           onClick={() => onContentChange('layout')}
-          LeftIcon={
-            currentView?.type === ViewType.Table ? IconTable : IconLayoutKanban
-          }
+          LeftIcon={viewTypeIconMapping(currentView?.type ?? ViewType.Table)}
           text={t`Layout`}
           contextualText={`${capitalize(currentView?.type ?? '')}`}
           hasSubMenu

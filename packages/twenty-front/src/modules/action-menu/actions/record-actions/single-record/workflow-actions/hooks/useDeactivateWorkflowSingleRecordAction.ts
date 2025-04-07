@@ -12,12 +12,8 @@ export const useDeactivateWorkflowSingleRecordAction: ActionHookWithoutObjectMet
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-    const shouldBeRegistered =
-      isDefined(workflowWithCurrentVersion) &&
-      workflowWithCurrentVersion.currentVersion.status === 'ACTIVE';
-
     const onClick = () => {
-      if (!shouldBeRegistered) {
+      if (!isDefined(workflowWithCurrentVersion)) {
         return;
       }
 
@@ -27,7 +23,6 @@ export const useDeactivateWorkflowSingleRecordAction: ActionHookWithoutObjectMet
     };
 
     return {
-      shouldBeRegistered,
       onClick,
     };
   };

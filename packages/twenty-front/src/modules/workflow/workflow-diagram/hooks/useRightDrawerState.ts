@@ -1,7 +1,7 @@
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { useRecoilValue } from 'recoil';
-import { useIsMobile } from 'twenty-ui';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const useRightDrawerState = (): {
   rightDrawerState: CommandMenuAnimationVariant;

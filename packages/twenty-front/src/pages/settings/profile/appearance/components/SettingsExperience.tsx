@@ -1,5 +1,3 @@
-import { ColorSchemePicker, H2Title, Section } from 'twenty-ui';
-
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -9,6 +7,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { ColorSchemePicker } from 'twenty-ui/input';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();

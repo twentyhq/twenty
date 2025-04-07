@@ -1,7 +1,8 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { ComponentDecorator, IconMailCog } from 'twenty-ui';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { IconMailCog } from 'twenty-ui/display';
 
 const meta: Meta<typeof SettingsCard> = {
   title: 'Modules/Settings/SettingsCard',
