@@ -764,8 +764,8 @@ msgstr "Annuler"
 
 #. js-lingui-id: 0TllC8
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Cancel anytime"
-msgstr "Annuler à tout moment"
+#~ msgid "Cancel anytime"
+#~ msgstr "Annuler à tout moment"
 
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/SettingsBilling.tsx

@@ -756,8 +756,8 @@ msgstr ""
 
 #. js-lingui-id: 0TllC8
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Cancel anytime"
-msgstr ""
+#~ msgid "Cancel anytime"
+#~ msgstr ""
 
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/SettingsBilling.tsx
