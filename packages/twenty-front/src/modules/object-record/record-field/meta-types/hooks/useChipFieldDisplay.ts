@@ -8,17 +8,23 @@ import { isFieldText } from '@/object-record/record-field/types/guards/isFieldTe
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
-import { FieldContext } from '../../contexts/FieldContext';
+import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
+import { FieldContext } from '../../contexts/FieldContext';
 
 export const useChipFieldDisplay = () => {
-  const {
-    recordId,
-    fieldDefinition,
-    isLabelIdentifier,
-    labelIdentifierLink,
-    isLabelHidden,
-  } = useContext(FieldContext);
+  const { recordId, fieldDefinition, isLabelIdentifier, labelIdentifierLink } =
+    useContext(FieldContext);
+
+  const isMobile = useIsMobile();
+  const isRecordTableScrolledLeftComponent = useRecoilComponentValueV2(
+    isRecordTableScrolledLeftComponentState,
+  );
+
+  const isLabelHidden =
+    isMobile && isLabelIdentifier && !isRecordTableScrolledLeftComponent;
 
   const { chipGeneratorPerObjectPerField } = useContext(
     PreComputedChipGeneratorsContext,
