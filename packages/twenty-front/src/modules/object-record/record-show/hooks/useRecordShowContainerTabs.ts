@@ -8,6 +8,8 @@ import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { SingleTabProps } from '@/ui/layout/tab/components/TabList';
 import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+// eslint-disable-next-line no-restricted-imports
+import { IconCar } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
@@ -130,6 +132,20 @@ export const useRecordShowContainerTabs = (
             position: 700,
             Icon: IconCalendarEvent,
             cards: [{ type: CardType.CalendarCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+          pets: {
+            title: 'Reccomendations',
+            position: 700,
+            Icon: IconCar,
+            cards: [{ type: CardType.RecCard }],
             hide: {
               ifMobile: false,
               ifDesktop: false,

@@ -20,7 +20,8 @@ export const useOpenCreateActivityDrawer = ({
 }: {
   activityObjectNameSingular:
     | CoreObjectNameSingular.Note
-    | CoreObjectNameSingular.Task;
+    | CoreObjectNameSingular.Task
+    | CoreObjectNameSingular.Vehicle;
 }) => {
   const { createOneRecord: createOneActivity } = useCreateOneRecord<
     (Task | Note) & { position: 'first' | 'last' }

@@ -96,6 +96,7 @@ export const ShowPageSubContainer = ({
     if (!activeTab?.cards?.length) return null;
 
     return activeTab.cards.map((card, index) => {
+      // console.log('card: ', card);
       const CardComponent = CardComponents[card.type];
       return CardComponent ? (
         <CardComponent
@@ -112,18 +113,22 @@ export const ShowPageSubContainer = ({
   const displaySummaryAndFields =
     layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
 
+  // console.log('summary card: ', summaryCard);
+
   return (
     <TabListComponentInstanceContext.Provider
       value={{ instanceId: tabListComponentId }}
     >
       {displaySummaryAndFields && (
         <ShowPageLeftContainer forceMobile={isMobile}>
+          {/* this is the portion of the card you see when you open in full view */}
           {summaryCard}
           {fieldsCard}
         </ShowPageLeftContainer>
       )}
       <StyledShowPageRightContainer isMobile={isMobile}>
         <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
+          {/* this is the tabs in the right drawer */}
           <StyledTabList
             behaveAsLinks={!isInRightDrawer}
             loading={loading}
@@ -134,6 +139,7 @@ export const ShowPageSubContainer = ({
         </StyledTabListContainer>
         {(isMobile || isInRightDrawer) && summaryCard}
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+          {/* this is the active content in the right drawer */}
           {renderActiveTabContent()}
         </StyledContentContainer>
         {isInRightDrawer && (

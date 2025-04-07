@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import {
   DocumentNode,
   OperationVariables,
   TypedDocumentNode,
   useQuery,
 } from '@apollo/client';
+import { useState } from 'react';
 
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
