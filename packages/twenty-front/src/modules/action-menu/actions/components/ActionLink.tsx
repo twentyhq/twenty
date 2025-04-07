@@ -1,5 +1,6 @@
 import { ActionConfigContext } from '@/action-menu/actions/components/ActionConfigContext';
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
+import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { AppPath } from '@/types/AppPath';
 import { useContext } from 'react';
 import { PathParam } from 'react-router-dom';
@@ -16,11 +17,17 @@ export const ActionLink = <T extends AppPath>({
 }) => {
   const actionConfig = useContext(ActionConfigContext);
 
+  const { closeActionMenu } = useCloseActionMenu();
+
   if (!actionConfig) {
     return null;
   }
 
   const path = getAppPath(to, params, queryParams);
 
-  return <ActionDisplay action={{ ...actionConfig, to: path }} />;
+  return (
+    <ActionDisplay
+      action={{ ...actionConfig, to: path, onClick: closeActionMenu }}
+    />
+  );
 };

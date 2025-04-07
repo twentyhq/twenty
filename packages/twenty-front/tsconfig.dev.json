@@ -10,5 +10,5 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "lingui.config.ts"
-, "src/modules/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordActiontsx", "src/modules/action-menu/actions/record-actions/multiple-records/components/ExportMultipleRecordsAction.tsx"  ]
+  ]
 }

@@ -1,5 +1,3 @@
-import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
-import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
@@ -133,22 +131,7 @@ export const CommandMenuContainer = ({
                 value={{
                   isInRightDrawer: true,
                   displayType: 'listItem',
-                  onActionExecutedCallback: ({ key }) => {
-                    if (
-                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS &&
-                      key !==
-                        RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK &&
-                      key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
-                    ) {
-                      toggleCommandMenu();
-                    }
-
-                    if (
-                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK
-                    ) {
-                      setCommandMenuSearch('');
-                    }
-                  },
+                  actionMenuType: 'command-menu',
                 }}
               >
                 <AnimatePresence

@@ -27,11 +27,9 @@ export const useCommandMenuOnItemClick = () => {
 
       if (isDefined(onClick)) {
         onClick();
-        return;
       }
       if (isNonEmptyString(to)) {
         navigate(to);
-        return;
       }
     },
     [navigate, toggleCommandMenu],

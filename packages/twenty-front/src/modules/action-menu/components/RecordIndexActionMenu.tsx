@@ -1,4 +1,3 @@
-import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -28,16 +27,7 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
             value={{
               isInRightDrawer: false,
               displayType: 'button',
-              onActionStartedCallback: (action) => {
-                if (action.key === MultipleRecordsActionKeys.DELETE) {
-                  setIsLoadMoreLocked(true);
-                }
-              },
-              onActionExecutedCallback: (action) => {
-                if (action.key === MultipleRecordsActionKeys.DELETE) {
-                  setIsLoadMoreLocked(false);
-                }
-              },
+              actionMenuType: 'index-page-action-menu',
             }}
           >
             {!isMobile && <PageHeaderActionMenuButtons />}
@@ -46,16 +36,7 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
             value={{
               isInRightDrawer: false,
               displayType: 'dropdownItem',
-              onActionStartedCallback: (action) => {
-                if (action.key === MultipleRecordsActionKeys.DELETE) {
-                  setIsLoadMoreLocked(true);
-                }
-              },
-              onActionExecutedCallback: (action) => {
-                if (action.key === MultipleRecordsActionKeys.DELETE) {
-                  setIsLoadMoreLocked(false);
-                }
-              },
+              actionMenuType: 'index-page-action-menu-dropdown',
             }}
           >
             <RecordIndexActionMenuDropdown />

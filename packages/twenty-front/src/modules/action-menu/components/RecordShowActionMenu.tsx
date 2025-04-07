@@ -27,7 +27,7 @@ export const RecordShowActionMenu = () => {
           value={{
             isInRightDrawer: false,
             displayType: 'button',
-            onActionExecutedCallback: () => {},
+            actionMenuType: 'show-page-action-menu',
           }}
         >
           {!isMobile && <PageHeaderActionMenuButtons />}

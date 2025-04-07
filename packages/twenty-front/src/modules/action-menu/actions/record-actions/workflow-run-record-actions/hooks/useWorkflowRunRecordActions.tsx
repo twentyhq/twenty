@@ -19,8 +19,6 @@ export const useWorkflowRunRecordActions = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
-
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
   );

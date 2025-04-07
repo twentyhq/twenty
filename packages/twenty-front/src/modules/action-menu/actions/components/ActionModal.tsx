@@ -1,7 +1,9 @@
-import { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { Action } from '@/action-menu/actions/components/Action';
+import { ActionConfigContext } from '@/action-menu/actions/components/ActionConfigContext';
+import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
+import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { ButtonAccent } from 'twenty-ui';
 
@@ -28,14 +30,23 @@ export const ActionModal = ({
     setIsOpen(true);
   }, []);
 
+  const { closeActionMenu } = useCloseActionMenu();
+
   const handleConfirmClick = useCallback(() => {
+    closeActionMenu();
     onConfirmClick();
     setIsOpen(false);
-  }, [onConfirmClick]);
+  }, [closeActionMenu, onConfirmClick]);
+
+  const actionConfig = useContext(ActionConfigContext);
+
+  if (!actionConfig) {
+    return null;
+  }
 
   return (
     <>
-      <Action onClick={handleOpen} />
+      <ActionDisplay action={{ ...actionConfig, onClick: handleOpen }} />
       {isOpen &&
         createPortal(
           <ConfirmationModal
