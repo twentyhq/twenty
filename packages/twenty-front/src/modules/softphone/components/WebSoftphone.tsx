@@ -29,7 +29,7 @@ import {
   SessionDescriptionHandler,
   SessionManager,
 } from 'sip.js/lib/platform/web';
-import { IconArrowLeft, IconPhone, useIcons } from 'twenty-ui';
+import { IconArrowLeft, IconPhone, useIcons } from 'twenty-ui/display';
 import defaultCallState from '../constants/defaultCallState';
 import { useRingTone } from '../hooks/useRingTone';
 import { CallState } from '../types/callState';

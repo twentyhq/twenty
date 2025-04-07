@@ -1,10 +1,11 @@
-import { useContext, useState } from 'react';
-import styled from '@emotion/styled';
-import { MenuItem, useIcons } from 'twenty-ui';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useRecoilValue } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import styled from '@emotion/styled';
+import { useContext, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { useIcons } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { ChatContext } from '../context/chatContext';
 import { ChatContextType } from '../types/chat';
 

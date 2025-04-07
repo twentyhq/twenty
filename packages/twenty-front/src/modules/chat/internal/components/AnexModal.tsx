@@ -1,10 +1,10 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useIcons } from 'twenty-ui';
+import { useContext } from 'react';
+import { useIcons } from 'twenty-ui/display';
 import { ChatContext } from '../context/chatContext';
 import { ChatContextType } from '../types/chat';
-import { useContext } from 'react';
 
 const StyledMainContainer = styled.div`
   background-color: ${({ theme }) => theme.background.primary};

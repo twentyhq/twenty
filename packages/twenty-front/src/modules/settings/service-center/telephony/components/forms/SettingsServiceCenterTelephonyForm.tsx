@@ -18,7 +18,8 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Section, Toggle } from 'twenty-ui';
+import { Toggle } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 
 const TelephonyMetadataFormSchema = z.object({

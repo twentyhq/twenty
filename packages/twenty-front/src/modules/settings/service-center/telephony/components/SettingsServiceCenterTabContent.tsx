@@ -4,7 +4,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { Section, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type ServiceCenterTabContentProps = {

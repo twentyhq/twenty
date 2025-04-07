@@ -1,12 +1,12 @@
-import styled from '@emotion/styled';
-import { SettingsPath } from '@/types/SettingsPath';
-import { useNavigate } from 'react-router-dom';
-import { Agent } from '@/settings/service-center/agents/types/Agent';
-import { Section } from 'twenty-ui';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useToggleAgentStatus } from '@/settings/service-center/agents/hooks/useToggleAgentStatus';
-import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/agents/components/SettingsServiceCenterItemTableRow';
 import { SettingsServiceCenterFieldActionDropdown } from '@/settings/service-center/agents/components/SettingsServiceCenterFieldActionDropdown';
+import { SettingsServiceCenterItemTableRow } from '@/settings/service-center/agents/components/SettingsServiceCenterItemTableRow';
+import { useToggleAgentStatus } from '@/settings/service-center/agents/hooks/useToggleAgentStatus';
+import { Agent } from '@/settings/service-center/agents/types/Agent';
+import { SettingsPath } from '@/types/SettingsPath';
+import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+import { Section } from 'twenty-ui/layout';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type ServiceCenterTabContentProps = {
   agents: Agent[];

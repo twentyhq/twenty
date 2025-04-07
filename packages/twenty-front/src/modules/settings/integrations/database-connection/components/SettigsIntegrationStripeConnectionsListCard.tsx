@@ -1,24 +1,22 @@
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
+import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
+import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import {
-  IconChevronRight,
-  IconTrash,
-} from '@ui/display/icon/components/TablerIcons';
-import { IconButton } from '@ui/input/button/components/IconButton';
+
+import { IconChevronRight, IconTrash } from 'twenty-ui/display';
+import { IconButton, LightIconButton } from 'twenty-ui/input';
+
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import StripeAccountConnectedContainer from '~/pages/settings/integrations/stripe/components/StripeAccountConnectedContainer';
 import { useCreateCheckoutSession } from '~/pages/settings/integrations/stripe/hooks/useCreateCheckoutSession';
 import { useFindAllStripeIntegrations } from '~/pages/settings/integrations/stripe/hooks/useFindAllStripeIntegrations';
 import { useRemoveStripeIntegration } from '~/pages/settings/integrations/stripe/hooks/useRemoveStripeIntegrations';
-import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { LightIconButton } from 'twenty-ui';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsPath } from '@/types/SettingsPath';
-import { useParams } from 'react-router-dom';
-import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
 
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledIsActiveContainer = styled.div`

@@ -6,7 +6,7 @@ import { IconBrandWechat } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { IconBriefcase, IconHeadphones } from 'twenty-ui';
+import { IconBriefcase, IconHeadphones } from 'twenty-ui/display';
 
 const navItemsAnimationVariants = (theme: Theme) => ({
   hidden: {

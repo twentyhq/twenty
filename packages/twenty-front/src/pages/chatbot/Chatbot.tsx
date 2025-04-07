@@ -4,7 +4,7 @@ import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useRecoilValue } from 'recoil';
-import { IconRobot } from 'twenty-ui';
+import { IconRobot } from 'twenty-ui/display';
 import { REACT_APP_CHATBOT_BASE_URL } from '~/config';
 
 export const Chatbot = () => {

@@ -1,18 +1,17 @@
-import {
-  IconArchive,
-  IconDotsVertical,
-  IconPencil,
-  IconTextSize,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useState } from 'react';
+import {
+  IconArchive,
+  IconDotsVertical,
+  IconPencil,
+  IconTextSize,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type ServiceCenterFieldActionDropdownProps = {
   modalMessage: {
@@ -120,7 +119,7 @@ export const ServiceCenterFieldActionDropdown = ({
         title={modalMessage.title}
         subtitle={modalMessage.subtitle}
         onConfirmClick={onDelete ? handleDelete : handleDeactivate}
-        deleteButtonText="Continue"
+        confirmButtonText="Continue"
       />
     </>
   );

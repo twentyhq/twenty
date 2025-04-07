@@ -2,7 +2,7 @@ import { Template } from '@/chat/call-center/types/WhatsappTemplate';
 import styled from '@emotion/styled';
 // eslint-disable-next-line no-restricted-imports
 import { IconArrowForwardUp } from '@tabler/icons-react';
-import { IconMessage } from 'twenty-ui';
+import { IconMessage } from 'twenty-ui/display';
 
 type TemplateMessageProps = {
   templates: Template[] | undefined;

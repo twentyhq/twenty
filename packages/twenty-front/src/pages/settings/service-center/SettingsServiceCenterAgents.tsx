@@ -1,9 +1,11 @@
-import { Button, H2Title, IconPlus, Section, UndecoratedLink } from 'twenty-ui';
-
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ServiceCenterTabs } from '@/settings/service-center/agents/components/ServiceCenterTab';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { H2Title, IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsServiceCenterAgents = () => {

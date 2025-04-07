@@ -1,13 +1,13 @@
-import { useIcons } from 'twenty-ui';
-import styled from '@emotion/styled';
-import { PageContainer } from '@/ui/layout/page/components/PageContainer';
-import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { ChatsAndActions } from '@/chat/internal/components/ChatsAndActions';
 import { OpenChat } from '@/chat/internal/components/OpenChat';
-import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { useContext } from 'react';
 import { ChatContext } from '@/chat/internal/context/chatContext';
 import { ChatContextType } from '@/chat/internal/types/chat';
+import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { useIcons } from 'twenty-ui/display';
 
 const StyledMainContainer = styled.div`
   display: flex;

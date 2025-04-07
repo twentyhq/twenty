@@ -4,7 +4,8 @@ import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContex
 import { statusEnum } from '@/chat/types/WhatsappDocument';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
-import { IconButton, IconChevronDown, IconChevronUp } from 'twenty-ui';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 const StyledDiv = styled.div`
   display: flex;

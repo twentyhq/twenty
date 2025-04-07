@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Avatar } from 'twenty-ui';
+import { Avatar } from 'twenty-ui/display';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import WhatsappIcon from '/images/integrations/whatsapp-logo.svg';

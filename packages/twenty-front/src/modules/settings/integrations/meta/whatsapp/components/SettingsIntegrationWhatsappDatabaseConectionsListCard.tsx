@@ -4,7 +4,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card, CardFooter, IconButton } from 'twenty-ui';
 
 import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
 import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
@@ -13,7 +12,9 @@ import { SettingsIntegration } from '@/settings/integrations/types/SettingsInteg
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useEffect, useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
-import { IconPencil, IconPlus, IconPointFilled } from '@tabler/icons-react';
+import { IconPencil, IconPlus, IconPointFilled } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { Card, CardFooter } from 'twenty-ui/layout';
 
 type SettingsIntegrationWhatsappDatabaseConectionsListCardProps = {
   integration: SettingsIntegration;
@@ -199,7 +200,7 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
           <>{`This will disabled this inbox and all chat conversations.`}</>
         }
         onConfirmClick={handleConfirmChange}
-        deleteButtonText={'Continue'}
+        confirmButtonText="Continue"
       />
     </>
   );

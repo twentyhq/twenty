@@ -4,7 +4,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconFilter, LightIconButton, MenuItem, useIcons } from 'twenty-ui';
+import { IconFilter, useIcons } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type SettingsServiceCenterFilterOptionsProps = {
   label: string;

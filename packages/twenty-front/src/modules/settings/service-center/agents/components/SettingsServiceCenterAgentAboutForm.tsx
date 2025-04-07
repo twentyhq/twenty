@@ -10,7 +10,10 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, Section, Toggle, useIcons } from 'twenty-ui';
+import { H2Title, useIcons } from 'twenty-ui/display';
+import { Toggle } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+
 import { z } from 'zod';
 
 const agentMetadataFormSchema = z.object({

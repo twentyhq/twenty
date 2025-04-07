@@ -4,26 +4,26 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
 import styled from '@emotion/styled';
 
-import { InfoSection } from '@/chat/internal/components/InfoSection';
 import { Timeline } from '@/chat/call-center/components/Timeline';
+import { InfoSection } from '@/chat/internal/components/InfoSection';
 // eslint-disable-next-line no-restricted-imports
-import { IconHelp, IconIdBadge2 } from '@tabler/icons-react';
+import { TicketDataType } from '@/chat/types/TicketDataType';
+import { ITimeline } from '@/chat/types/WhatsappDocument';
+import { formatDate } from '@/chat/utils/formatDate';
 import { format, parse } from 'date-fns';
 import { useEffect, useState } from 'react';
 import {
-  Button,
-  IconButton,
+  IconHelp,
+  IconIdBadge2,
   IconMail,
   IconPhone,
   IconPlus,
   IconProgressCheck,
   IconUser,
   IconX,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { Button, IconButton } from 'twenty-ui/input';
 import { v4 } from 'uuid';
-import { TicketDataType } from '@/chat/types/TicketDataType';
-import { ITimeline } from '@/chat/types/WhatsappDocument';
-import { formatDate } from '@/chat/utils/formatDate';
 
 type DetailsProps = {
   ticketData: TicketDataType;

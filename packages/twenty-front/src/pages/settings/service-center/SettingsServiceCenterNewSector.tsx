@@ -2,7 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { ThemeColor } from 'twenty-ui';
+import { ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
