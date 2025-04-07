@@ -4172,10 +4172,15 @@ msgstr "Перейти {to}"
 msgid "Switch billing {to}"
 msgstr "Змінити біллінг {to}"
 
+#. js-lingui-id: E4rPXj
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Switch Plan"
+msgstr ""
+
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Switch to {alternatePlanName}"
-msgstr "Перейти на {alternatePlanName}"
+#~ msgid "Switch to {alternatePlanName}"
+#~ msgstr "Перейти на {alternatePlanName}"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
