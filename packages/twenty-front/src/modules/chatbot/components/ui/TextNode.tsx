@@ -35,7 +35,9 @@ function TextNode({
   id,
   data,
   isConnectable,
-}: NodeProps<Node<{ text: string; nodeStart: boolean }>>) {
+}: NodeProps<
+  Node<{ icon: string; title: string; text?: string; nodeStart: boolean }>
+>) {
   const { updateNodeData } = useReactFlow();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -55,11 +57,7 @@ function TextNode({
   }, [data.text]);
 
   return (
-    <BaseNode
-      icon={'IconTextSize'}
-      title={'Mensagem Inicial'}
-      nodeStart={data.nodeStart}
-    >
+    <BaseNode icon={data.icon} title={data.title} nodeStart={data.nodeStart}>
       {!data.nodeStart && (
         <Handle
           type="target"
