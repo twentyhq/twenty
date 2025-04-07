@@ -6,8 +6,9 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-export const useCloseActionMenu = () => {
+export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
   const { actionMenuType } = useContext(ActionMenuContext);
 
   const { closeCommandMenu } = useCommandMenu();
@@ -24,8 +25,10 @@ export const useCloseActionMenu = () => {
     : getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
   const closeActionMenu = () => {
-    console.log(actionMenuType);
     if (actionMenuType === 'command-menu') {
+      if (isDefined(preventCommandMenuClosing) && preventCommandMenuClosing) {
+        return;
+      }
       closeCommandMenu();
     }
 

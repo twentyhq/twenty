@@ -15,6 +15,7 @@ export const SearchRecordsRecordAgnosticAction = () => {
           pageIcon: IconSearch,
         });
       }}
+      preventCommandMenuClosing
     />
   );
 };

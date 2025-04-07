@@ -3,10 +3,16 @@ import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDi
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { useContext } from 'react';
 
-export const Action = ({ onClick }: { onClick: () => void }) => {
+export const Action = ({
+  onClick,
+  preventCommandMenuClosing,
+}: {
+  onClick: () => void;
+  preventCommandMenuClosing?: boolean;
+}) => {
   const actionConfig = useContext(ActionConfigContext);
 
-  const { closeActionMenu } = useCloseActionMenu();
+  const { closeActionMenu } = useCloseActionMenu(preventCommandMenuClosing);
 
   if (!actionConfig) {
     return null;

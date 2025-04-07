@@ -47,7 +47,7 @@ export const CommandMenuContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
+  const { closeCommandMenu } = useCommandMenu();
 
   const { commandMenuCloseAnimationCompleteCleanup } =
     useCommandMenuCloseAnimationCompleteCleanup();
