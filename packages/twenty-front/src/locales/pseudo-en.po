@@ -962,7 +962,6 @@ msgstr ""
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/auth/SignInUpLoading.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
@@ -4702,7 +4701,6 @@ msgstr ""
 #~ msgstr ""
 
 #. js-lingui-id: ke0EDP
-#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
 msgstr ""
@@ -4867,7 +4865,6 @@ msgid "Your name as it will be displayed on the app"
 msgstr ""
 
 #. js-lingui-id: YQK8fJ
-#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr ""
