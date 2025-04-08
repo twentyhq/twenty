@@ -20,7 +20,6 @@ export const ActionButton = ({ action }: { action: ActionDisplayProps }) => {
     <>
       {action.shortLabel ? (
         <Button
-          key={action.key}
           Icon={action.Icon}
           size="small"
           variant="secondary"
