@@ -27,7 +27,6 @@ export const MobileNavigationBar = () => {
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useRecoilState(currentMobileNavigationDrawerState);
   const { openSettingsMenu } = useOpenSettingsMenu();
-  const isLogged = useIsLogged(); // Check if the user is authenticated
 
   const activeItemName = isNavigationDrawerExpanded
     ? currentMobileNavigationDrawer
@@ -67,11 +66,6 @@ export const MobileNavigationBar = () => {
       },
     },
   ];
-
-  // Check if the user is logged in
-  if (!isLogged) {
-    return null; // Do not render the navigation bar if the user is not logged in
-  }
 
   return <NavigationBar activeItemName={activeItemName} items={items} />;
 };
