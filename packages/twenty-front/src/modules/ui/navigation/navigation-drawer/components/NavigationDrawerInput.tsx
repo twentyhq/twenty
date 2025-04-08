@@ -1,7 +1,6 @@
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import styled from '@emotion/styled';
 import { FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,13 +18,6 @@ type NavigationDrawerInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, value: string) => void;
   hotkeyScope: string;
 };
-
-const StyledInput = styled(TextInputV2)`
-  background-color: ${({ theme }) =>
-    theme.name === 'light' ? 'white' : theme.background.transparent.lighter};
-  color: ${({ theme }) => theme.font.color.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-`;
 
 export const NavigationDrawerInput = ({
   className,
@@ -74,7 +66,7 @@ export const NavigationDrawerInput = ({
   };
 
   return (
-    <StyledInput
+    <TextInputV2
       className={className}
       LeftIcon={Icon}
       ref={inputRef}
