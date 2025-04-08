@@ -8,10 +8,11 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { v4 } from 'uuid';
 
 const StyledCreateObjectOverrideSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
@@ -39,7 +40,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
   roleId,
   isEditable,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
-  const settingsDraftRole = useRecoilValue(
+  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
 
@@ -47,8 +48,14 @@ export const SettingsRolePermissionsObjectLevelSection = ({
 
   const objectPermissions = settingsDraftRole.objectPermissions;
 
-  const handleSelectObjectMetadata = (_objectMetadataId: string) => {
-    // TODO: Add new object level permission to draft role
+  const handleSelectObjectMetadata = (objectMetadataId: string) => {
+    setSettingsDraftRole((draftRole) => ({
+      ...draftRole,
+      objectPermissions: [
+        ...(draftRole.objectPermissions ?? []),
+        { objectMetadataId, roleId, id: v4() },
+      ],
+    }));
   };
 
   return (

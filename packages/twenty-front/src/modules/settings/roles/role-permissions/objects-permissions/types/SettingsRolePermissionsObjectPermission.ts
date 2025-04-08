@@ -6,4 +6,6 @@ export type SettingsRolePermissionsObjectPermission = {
   value: boolean;
   Icon: IconComponent;
   setValue: (value: boolean) => void;
+  overridenBy?: number;
+  IconOverride?: IconComponent;
 };

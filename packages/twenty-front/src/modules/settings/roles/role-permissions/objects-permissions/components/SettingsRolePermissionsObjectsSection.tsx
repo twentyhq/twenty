@@ -10,8 +10,11 @@ import { useRecoilState } from 'recoil';
 import {
   H2Title,
   IconEye,
+  IconEyeOff,
   IconPencil,
+  IconPencilOff,
   IconTrash,
+  IconTrashOff,
   IconTrashX,
 } from 'twenty-ui/display';
 
@@ -35,11 +38,18 @@ export const SettingsRolePermissionsObjectsSection = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
+  const objectPermissions = settingsDraftRole.objectPermissions;
+
   const objectPermissionsConfig: SettingsRolePermissionsObjectPermission[] = [
     {
       key: 'seeRecords',
       label: t`See Records on All Objects`,
       Icon: IconEye,
+      IconOverride: IconEyeOff,
+      overridenBy:
+        objectPermissions?.filter(
+          (permission) => permission.canReadObjectRecords === false,
+        )?.length ?? 0,
       value: settingsDraftRole.canReadAllObjectRecords,
       setValue: (value: boolean) => {
         setSettingsDraftRole({
@@ -52,6 +62,11 @@ export const SettingsRolePermissionsObjectsSection = ({
       key: 'editRecords',
       label: t`Edit Records on All Objects`,
       Icon: IconPencil,
+      IconOverride: IconPencilOff,
+      overridenBy:
+        objectPermissions?.filter(
+          (permission) => permission.canUpdateObjectRecords === false,
+        )?.length ?? 0,
       value: settingsDraftRole.canUpdateAllObjectRecords,
       setValue: (value: boolean) => {
         setSettingsDraftRole({
@@ -64,6 +79,11 @@ export const SettingsRolePermissionsObjectsSection = ({
       key: 'deleteRecords',
       label: t`Delete Records on All Objects`,
       Icon: IconTrash,
+      IconOverride: IconTrashOff,
+      overridenBy:
+        objectPermissions?.filter(
+          (permission) => permission.canSoftDeleteObjectRecords === false,
+        )?.length ?? 0,
       value: settingsDraftRole.canSoftDeleteAllObjectRecords,
       setValue: (value: boolean) => {
         setSettingsDraftRole({
@@ -76,6 +96,11 @@ export const SettingsRolePermissionsObjectsSection = ({
       key: 'destroyRecords',
       label: t`Destroy Records on All Objects`,
       Icon: IconTrashX,
+      IconOverride: IconTrashX,
+      overridenBy:
+        objectPermissions?.filter(
+          (permission) => permission.canDestroyObjectRecords === false,
+        )?.length ?? 0,
       value: settingsDraftRole.canDestroyAllObjectRecords,
       setValue: (value: boolean) => {
         setSettingsDraftRole({
