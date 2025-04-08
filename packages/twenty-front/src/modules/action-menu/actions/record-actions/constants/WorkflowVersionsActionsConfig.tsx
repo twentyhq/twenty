@@ -9,11 +9,9 @@ import { SeeWorkflowWorkflowVersionSingleRecordAction } from '@/action-menu/acti
 import { UseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/components/UseAsDraftWorkflowVersionSingleRecordAction';
 import { WorkflowVersionSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/types/WorkflowVersionSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath } from '@/types/AppPath';
 import { msg } from '@lingui/core/macro';
@@ -34,8 +32,8 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         shortLabel: msg`Use as draft`,
         position: 1,
         isPinned: true,
-        type: ActionMenuEntryType.Standard,
-        scope: ActionMenuEntryScope.RecordSelection,
+        type: ActionType.Standard,
+        scope: ActionScope.RecordSelection,
         Icon: IconPencil,
         shouldBeRegistered: ({ selectedRecord }) =>
           isDefined(selectedRecord) && selectedRecord.status !== 'DRAFT',
@@ -51,8 +49,8 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         shortLabel: msg`See workflow`,
         position: 2,
         isPinned: true,
-        type: ActionMenuEntryType.Standard,
-        scope: ActionMenuEntryScope.RecordSelection,
+        type: ActionType.Standard,
+        scope: ActionScope.RecordSelection,
         Icon: IconSettingsAutomation,
         shouldBeRegistered: ({ selectedRecord }) =>
           isDefined(selectedRecord?.workflow?.id),
@@ -68,8 +66,8 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         shortLabel: msg`See runs`,
         position: 3,
         isPinned: true,
-        type: ActionMenuEntryType.Standard,
-        scope: ActionMenuEntryScope.RecordSelection,
+        type: ActionType.Standard,
+        scope: ActionScope.RecordSelection,
         Icon: IconHistoryToggle,
         shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
           isDefined(workflowWithCurrentVersion),
@@ -84,8 +82,8 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         label: msg`See versions history`,
         shortLabel: msg`See versions`,
         position: 4,
-        type: ActionMenuEntryType.Standard,
-        scope: ActionMenuEntryScope.RecordSelection,
+        type: ActionType.Standard,
+        scope: ActionScope.RecordSelection,
         Icon: IconVersions,
         shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
           isDefined(workflowWithCurrentVersion),
@@ -96,8 +94,8 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
         component: <SeeVersionsWorkflowVersionSingleRecordAction />,
       },
       [NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS]: {
-        type: ActionMenuEntryType.Navigation,
-        scope: ActionMenuEntryScope.Global,
+        type: ActionType.Navigation,
+        scope: ActionScope.Global,
         key: NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS,
         label: msg`Go to runs`,
         shortLabel: msg`See runs`,

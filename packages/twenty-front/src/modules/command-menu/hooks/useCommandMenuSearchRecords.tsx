@@ -1,9 +1,7 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -35,8 +33,8 @@ export const useCommandMenuSearchRecords = () => {
   const actionItems = useMemo(() => {
     return (searchData?.search ?? []).map((searchRecord, index) => {
       const baseAction = {
-        type: ActionMenuEntryType.Navigation,
-        scope: ActionMenuEntryScope.Global,
+        type: ActionType.Navigation,
+        scope: ActionScope.Global,
         key: searchRecord.recordId,
         label: searchRecord.label,
         position: index,

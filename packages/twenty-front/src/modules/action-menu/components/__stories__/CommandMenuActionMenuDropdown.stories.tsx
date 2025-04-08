@@ -2,24 +2,22 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
+import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import {
-  ActionMenuEntry,
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { msg } from '@lingui/core/macro';
 import { userEvent, waitFor, within } from '@storybook/test';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { IconFileExport, IconHeart, IconTrash } from 'twenty-ui/display';
+import { MenuItemAccent } from 'twenty-ui/navigation';
 import {
   ComponentDecorator,
   getCanvasElementForDropdownTesting,
 } from 'twenty-ui/testing';
-import { IconFileExport, IconHeart, IconTrash } from 'twenty-ui/display';
-import { MenuItemAccent } from 'twenty-ui/navigation';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();
@@ -49,11 +47,11 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
             1,
           );
 
-          const map = new Map<string, ActionMenuEntry>();
+          const map = new Map<string, ActionConfig>();
 
           map.set('addToFavorites', {
-            type: ActionMenuEntryType.Standard,
-            scope: ActionMenuEntryScope.RecordSelection,
+            type: ActionType.Standard,
+            scope: ActionScope.RecordSelection,
             key: 'addToFavorites',
             label: msg`Add to favorites`,
             position: 0,
@@ -62,8 +60,8 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
           });
 
           map.set('export', {
-            type: ActionMenuEntryType.Standard,
-            scope: ActionMenuEntryScope.RecordSelection,
+            type: ActionType.Standard,
+            scope: ActionScope.RecordSelection,
             key: 'export',
             label: msg`Export`,
             position: 1,
@@ -72,8 +70,8 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
           });
 
           map.set('delete', {
-            type: ActionMenuEntryType.Standard,
-            scope: ActionMenuEntryScope.RecordSelection,
+            type: ActionType.Standard,
+            scope: ActionScope.RecordSelection,
             key: 'delete',
             label: msg`Delete`,
             position: 2,

@@ -5,11 +5,9 @@ import { SeeVersionWorkflowRunSingleRecordAction } from '@/action-menu/actions/r
 import { SeeWorkflowWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeWorkflowWorkflowRunSingleRecordAction';
 import { WorkflowRunSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/types/WorkflowRunSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
 import { msg } from '@lingui/core/macro';
 import { IconSettingsAutomation, IconVersions } from 'twenty-ui/display';
 
@@ -21,8 +19,8 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       shortLabel: msg`See workflow`,
       position: 0,
       isPinned: true,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
       Icon: IconSettingsAutomation,
       shouldBeRegistered: () => true,
       availableOn: [
@@ -37,8 +35,8 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       shortLabel: msg`See version`,
       position: 1,
       isPinned: true,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
       Icon: IconVersions,
       shouldBeRegistered: () => true,
       availableOn: [

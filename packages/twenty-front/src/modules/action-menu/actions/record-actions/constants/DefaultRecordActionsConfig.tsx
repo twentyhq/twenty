@@ -19,11 +19,9 @@ import { RemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/rec
 import { RestoreSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
@@ -60,8 +58,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   ActionConfig
 > = {
   [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.Object,
+    type: ActionType.Standard,
+    scope: ActionScope.Object,
     key: NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
     label: msg`Create new record`,
     shortLabel: msg`New record`,
@@ -74,8 +72,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <CreateNewTableRecordNoSelectionRecordAction />,
   },
   [SingleRecordActionKeys.EXPORT_NOTE_TO_PDF]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.EXPORT_NOTE_TO_PDF,
     label: msg`Export to PDF`,
     shortLabel: msg`Export`,
@@ -90,8 +88,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <ExportNoteActionSingleRecordAction />,
   },
   [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.ADD_TO_FAVORITES,
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
@@ -107,8 +105,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <AddToFavoritesSingleRecordAction />,
   },
   [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     label: msg`Remove from favorites`,
     shortLabel: msg`Remove from favorites`,
@@ -127,8 +125,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <RemoveFromFavoritesSingleRecordAction />,
   },
   [SingleRecordActionKeys.EXPORT]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.EXPORT,
     label: msg`Export`,
     shortLabel: msg`Export`,
@@ -145,8 +143,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <ExportMultipleRecordsAction />,
   },
   [MultipleRecordsActionKeys.EXPORT]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: MultipleRecordsActionKeys.EXPORT,
     label: msg`Export records`,
     shortLabel: msg`Export`,
@@ -159,8 +157,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <ExportMultipleRecordsAction />,
   },
   [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.Object,
+    type: ActionType.Standard,
+    scope: ActionScope.Object,
     key: NoSelectionRecordActionKeys.EXPORT_VIEW,
     label: msg`Export view`,
     shortLabel: msg`Export`,
@@ -173,8 +171,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <ExportMultipleRecordsAction />,
   },
   [SingleRecordActionKeys.DELETE]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.DELETE,
     label: msg`Delete`,
     shortLabel: msg`Delete`,
@@ -191,8 +189,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <DeleteSingleRecordAction />,
   },
   [MultipleRecordsActionKeys.DELETE]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: MultipleRecordsActionKeys.DELETE,
     label: msg`Delete records`,
     shortLabel: msg`Delete`,
@@ -215,8 +213,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <DeleteMultipleRecordsAction />,
   },
   [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.Object,
+    type: ActionType.Standard,
+    scope: ActionScope.Object,
     key: NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
     label: msg`See deleted records`,
     shortLabel: msg`Deleted records`,
@@ -230,8 +228,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <SeeDeletedRecordsNoSelectionRecordAction />,
   },
   [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.Object,
+    type: ActionType.Standard,
+    scope: ActionScope.Object,
     key: NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
     label: msg`Hide deleted records`,
     shortLabel: msg`Hide deleted`,
@@ -245,8 +243,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <HideDeletedRecordsNoSelectionRecordAction />,
   },
   [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.Object,
+    type: ActionType.Standard,
+    scope: ActionScope.Object,
     key: NoSelectionRecordActionKeys.IMPORT_RECORDS,
     label: msg`Import records`,
     shortLabel: msg`Import`,
@@ -259,8 +257,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <ImportRecordsNoSelectionRecordAction />,
   },
   [SingleRecordActionKeys.DESTROY]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.DESTROY,
     label: msg`Permanently destroy record`,
     shortLabel: msg`Destroy`,
@@ -283,8 +281,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <DestroySingleRecordAction />,
   },
   [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     label: msg`Navigate to previous record`,
     position: 13,
@@ -295,8 +293,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <NavigateToPreviousRecordSingleRecordAction />,
   },
   [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
     label: msg`Navigate to next record`,
     position: 14,
@@ -307,8 +305,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <NavigateToNextRecordSingleRecordAction />,
   },
   [MultipleRecordsActionKeys.DESTROY]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: MultipleRecordsActionKeys.DESTROY,
     label: msg`Permanently destroy records`,
     shortLabel: msg`Destroy`,
@@ -332,8 +330,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <DestroyMultipleRecordsAction />,
   },
   [SingleRecordActionKeys.RESTORE]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: SingleRecordActionKeys.RESTORE,
     label: msg`Restore record`,
     shortLabel: msg`Restore`,
@@ -360,8 +358,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <RestoreSingleRecordAction />,
   },
   [MultipleRecordsActionKeys.RESTORE]: {
-    type: ActionMenuEntryType.Standard,
-    scope: ActionMenuEntryScope.RecordSelection,
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
     key: MultipleRecordsActionKeys.RESTORE,
     label: msg`Restore records`,
     shortLabel: msg`Restore`,
@@ -385,8 +383,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     component: <RestoreMultipleRecordsAction />,
   },
   [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
     label: msg`Go to workflows`,
     shortLabel: msg`See workflows`,
@@ -407,8 +405,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'W'],
   },
   [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
     label: msg`Go to People`,
     shortLabel: msg`People`,
@@ -433,8 +431,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'P'],
   },
   [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
     label: msg`Go to Companies`,
     shortLabel: msg`Companies`,
@@ -459,8 +457,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'C'],
   },
   [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
     label: msg`Go to Opportunities`,
     shortLabel: msg`Opportunities`,
@@ -485,8 +483,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'O'],
   },
   [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     label: msg`Go to Settings`,
     shortLabel: msg`Settings`,
@@ -511,8 +509,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'S'],
   },
   [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
     label: msg`Go to Tasks`,
     shortLabel: msg`Tasks`,
@@ -537,8 +535,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     hotKeys: ['G', 'T'],
   },
   [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
-    type: ActionMenuEntryType.Navigation,
-    scope: ActionMenuEntryScope.Global,
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_NOTES,
     label: msg`Go to Notes`,
     shortLabel: msg`Notes`,

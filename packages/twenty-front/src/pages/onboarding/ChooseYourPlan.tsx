@@ -14,7 +14,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import { ActionLink, CAL_LINK } from 'twenty-ui/navigation';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import {
   BillingPlanKey,
   BillingPriceLicensedDto,
@@ -248,17 +248,17 @@ export const ChooseYourPlan = () => {
             disabled={isSubmitting}
           />
           <StyledLinkGroup>
-            <ActionLink onClick={signOut}>
+            <ClickToActionLink onClick={signOut}>
               <Trans>Log out</Trans>
-            </ActionLink>
+            </ClickToActionLink>
             <span />
-            <ActionLink onClick={handleSwitchPlan(alternatePlan)}>
+            <ClickToActionLink onClick={handleSwitchPlan(alternatePlan)}>
               <Trans>Switch Plan</Trans>
-            </ActionLink>
+            </ClickToActionLink>
             <span />
-            <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
+            <ClickToActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
               <Trans>Book a Call</Trans>
-            </ActionLink>
+            </ClickToActionLink>
           </StyledLinkGroup>
         </>
       ) : (

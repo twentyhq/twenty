@@ -12,11 +12,9 @@ import { SeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/rec
 import { TestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/TestWorkflowSingleRecordAction';
 import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath } from '@/types/AppPath';
 import { msg } from '@lingui/core/macro';
@@ -39,8 +37,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 1,
       Icon: IconPower,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
         isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
@@ -62,8 +60,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 2,
       Icon: IconPlayerPause,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
         workflowWithCurrentVersion.currentVersion.status === 'ACTIVE',
@@ -80,8 +78,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 3,
       Icon: IconNoteOff,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
         workflowWithCurrentVersion.versions.length > 1 &&
@@ -99,8 +97,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: false,
       position: 4,
       Icon: IconVersions,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
         (workflowWithCurrentVersion?.statuses?.includes('ACTIVE') || false) &&
         (workflowWithCurrentVersion?.statuses?.includes('DRAFT') || false),
@@ -117,8 +115,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 5,
       Icon: IconHistoryToggle,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion),
       availableOn: [
@@ -134,8 +132,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: false,
       position: 6,
       Icon: IconVersions,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion),
       availableOn: [
@@ -151,8 +149,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       isPinned: true,
       position: 7,
       Icon: IconPlayerPlay,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
         ((workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
@@ -168,8 +166,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       component: <TestWorkflowSingleRecordAction />,
     },
     [NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS]: {
-      type: ActionMenuEntryType.Navigation,
-      scope: ActionMenuEntryScope.Global,
+      type: ActionType.Navigation,
+      scope: ActionScope.Global,
       key: NoSelectionWorkflowRecordActionKeys.GO_TO_RUNS,
       label: msg`Go to runs`,
       shortLabel: msg`See runs`,

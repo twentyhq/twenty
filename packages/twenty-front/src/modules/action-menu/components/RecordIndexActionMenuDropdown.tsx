@@ -1,12 +1,10 @@
 import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -35,8 +33,8 @@ export const RecordIndexActionMenuDropdown = () => {
 
   const recordIndexActions = actions.filter(
     (action) =>
-      action.type === ActionMenuEntryType.Standard &&
-      action.scope === ActionMenuEntryScope.RecordSelection,
+      action.type === ActionType.Standard &&
+      action.scope === ActionScope.RecordSelection,
   );
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(

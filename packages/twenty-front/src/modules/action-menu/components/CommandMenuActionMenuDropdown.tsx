@@ -1,7 +1,7 @@
 import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -59,9 +59,7 @@ export const CommandMenuActionMenuDropdown = () => {
       dropdownComponents={
         <DropdownMenuItemsContainer>
           {actions
-            .filter(
-              (action) => action.scope === ActionMenuEntryScope.RecordSelection,
-            )
+            .filter((action) => action.scope === ActionScope.RecordSelection)
             .map((action) => (
               <ActionDisplayer action={action} key={action.key} />
             ))}

@@ -1,8 +1,6 @@
 import { Action } from '@/action-menu/actions/components/Action';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -52,9 +50,9 @@ export const useWorkflowRunRecordActions = ({
       const name = capitalize(activeWorkflowVersion.workflow.name);
 
       return {
-        type: ActionMenuEntryType.WorkflowRun,
+        type: ActionType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
-        scope: ActionMenuEntryScope.RecordSelection,
+        scope: ActionScope.RecordSelection,
         label: msg`${name}`,
         position: index,
         Icon: IconSettingsAutomation,

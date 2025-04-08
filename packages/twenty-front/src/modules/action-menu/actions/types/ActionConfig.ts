@@ -1,16 +1,14 @@
+import { ActionScope } from '@/action-menu/actions/types/ActionScope';
+import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
 import { MessageDescriptor } from '@lingui/core';
 import { IconComponent } from 'twenty-ui/display';
 import { MenuItemAccent } from 'twenty-ui/navigation';
 
 export type ActionConfig = {
-  type: ActionMenuEntryType;
-  scope: ActionMenuEntryScope;
+  type: ActionType;
+  scope: ActionScope;
   key: string;
   label: MessageDescriptor | string;
   shortLabel?: MessageDescriptor | string;
