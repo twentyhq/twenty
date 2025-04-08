@@ -79,27 +79,26 @@ const initialNodes: Node[] = [
     type: 'textInput',
     data: {
       nodeStart: true,
-      icon: 'IconTextSize',
       title: 'Mensagem Inicial',
     },
     position: { x: 0, y: 0 },
   },
   {
     id: '2',
-    type: 'condicionalNode',
+    type: 'logicInput',
     data: { logic: {} },
     position: { x: 150, y: 150 },
   },
   {
     id: '3',
     type: 'textInput',
-    data: { nodeStart: false, icon: 'IconTextSize', title: 'Mensagem' },
+    data: { nodeStart: false, title: 'Mensagem' },
     position: { x: 300, y: 300 },
   },
   {
     id: '4',
     type: 'textInput',
-    data: { nodeStart: false, icon: 'IconTextSize', title: 'Mensagem' },
+    data: { nodeStart: false, title: 'Mensagem' },
     position: { x: 300, y: 300 },
   },
 ];

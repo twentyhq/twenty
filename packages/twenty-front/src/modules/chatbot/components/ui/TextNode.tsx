@@ -57,7 +57,11 @@ function TextNode({
   }, [data.text]);
 
   return (
-    <BaseNode icon={data.icon} title={data.title} nodeStart={data.nodeStart}>
+    <BaseNode
+      icon={'IconTextSize'}
+      title={data.title}
+      nodeStart={data.nodeStart}
+    >
       {!data.nodeStart && (
         <Handle
           type="target"

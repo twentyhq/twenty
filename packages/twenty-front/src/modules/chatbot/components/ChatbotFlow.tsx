@@ -13,7 +13,7 @@ interface TargetableObject {
 
 const types: NodeTypes = {
   textInput: TextNode,
-  condicionalNode: CondicionalNode,
+  logicInput: CondicionalNode,
 };
 
 export const ChatbotFlow = ({
