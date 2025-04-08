@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
@@ -58,8 +59,13 @@ export const RawJsonFieldInput = ({
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { draftValue, precomputedDraftValue, setDraftValue, persistJsonField } =
-    useJsonField();
+  const {
+    draftValue,
+    precomputedDraftValue,
+    setDraftValue,
+    persistJsonField,
+    fieldDefinition,
+  } = useJsonField();
 
   const hotkeyScope = DEFAULT_CELL_SCOPE.scope;
 
@@ -125,6 +131,13 @@ export const RawJsonFieldInput = ({
     [handleShiftTab, draftValue],
   );
 
+  const isWorkflowRunOutputField =
+    fieldDefinition.metadata.objectMetadataNameSingular ===
+      CoreObjectNameSingular.WorkflowRun &&
+    fieldDefinition.metadata.fieldName === 'output';
+
+  const showEditingButton = !isWorkflowRunOutputField;
+
   const handleStartEditing = () => {
     setIsEditing(true);
   };
@@ -155,12 +168,14 @@ export const RawJsonFieldInput = ({
         </StyledCodeEditorContainer>
       ) : (
         <>
-          <StyledSwitchModeButtonContainer>
-            <FloatingIconButton
-              Icon={IconPencil}
-              onClick={handleStartEditing}
-            />
-          </StyledSwitchModeButtonContainer>
+          {showEditingButton && (
+            <StyledSwitchModeButtonContainer>
+              <FloatingIconButton
+                Icon={IconPencil}
+                onClick={handleStartEditing}
+              />
+            </StyledSwitchModeButtonContainer>
+          )}
 
           <StyledJsonTreeContainer>
             <JsonTree
