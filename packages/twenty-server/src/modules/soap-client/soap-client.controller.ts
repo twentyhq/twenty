@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+import { ClienteEstrutura } from 'src/modules/soap-client/interfaces/cliente.interface';
+
 import { SoapClientService } from './soap-client.service';
 
 import { IpDeOrigemEstrutura } from './interfaces/ip-de-origem.interface';
@@ -44,5 +46,15 @@ export class SoapClientController {
     @Body() ipData: IpDeOrigemEstrutura,
   ): Promise<RetornoEstrutura> {
     return this.soapClientService.insereIpDeOrigem(ipData);
+  }
+
+  /**
+   * Endpoint specifically for inserting a new client
+   */
+  @Post('insere-cliente')
+  async insereCliente(
+    @Body() clienteData: ClienteEstrutura,
+  ): Promise<RetornoEstrutura> {
+    return this.soapClientService.insereCliente(clienteData);
   }
 }

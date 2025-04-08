@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import * as soap from 'soap';
 
 import { AuthEstrutura } from './interfaces/auth.interface';
+import { ClienteEstrutura } from './interfaces/cliente.interface';
 import { IpDeOrigemEstrutura } from './interfaces/ip-de-origem.interface';
 import { RetornoEstrutura } from './interfaces/return.interface';
 
@@ -41,11 +42,6 @@ export class SoapClientService {
     };
   }
 
-  /**
-   * Convenience method to call InsereIpDeOrigem SOAP method
-   * @param ipData The IP origin data to insert
-   * @returns The result of the operation
-   */
   async insereIpDeOrigem(
     ipData: IpDeOrigemEstrutura,
   ): Promise<RetornoEstrutura> {
@@ -62,6 +58,26 @@ export class SoapClientService {
       return result.return as RetornoEstrutura;
     } catch (error) {
       this.logger.error('Error inserting IP de origem:', error);
+      throw error;
+    }
+  }
+
+  async insereCliente(
+    clienteData: ClienteEstrutura,
+  ): Promise<RetornoEstrutura> {
+    const auth = this.createAuthStruct();
+
+    const params = {
+      auth,
+      obj: clienteData,
+    };
+
+    try {
+      const result = await this.callMethod('InsereCliente', params);
+
+      return result.return as RetornoEstrutura;
+    } catch (error) {
+      this.logger.error('Error inserting cliente:', error);
       throw error;
     }
   }

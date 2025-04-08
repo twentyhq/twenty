@@ -1,0 +1,35 @@
+export interface ClienteEstrutura {
+  id?: number;
+  nome: string;
+  login: string;
+  senha: string;
+  endereco?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
+  telefone?: string;
+  email?: string;
+  cpf?: string;
+  cnpj?: string;
+  inscricao_estadual?: string;
+  inscricao_municipal?: string;
+  revenda: number;
+  max_cps: number;
+  max_chamadas_simult: number;
+  prepaid_mode: number;
+  cota_diaria_limite: number;
+  cota_mensal_limite: number;
+  franquia_minima: number;
+  cobranca_extra_mensal: number;
+  cep?: string;
+  cota_diaria_consumo: number;
+  cota_mensal_consumo: number;
+  tipo_cobranca: number;
+  dia_cobranca: number;
+  bloqueia_prejuizo: number;
+  expira_saldo: number;
+  bloqueia_fixo: number;
+  bloqueia_movel: number;
+  bloqueia_internacional: number;
+  id_externo_cliente?: string;
+}
