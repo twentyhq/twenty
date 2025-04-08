@@ -50,43 +50,20 @@ export class WorkspaceDatasourceFactory {
     const featureFlagsMap =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const isPermissionsV2Enabled =
-      featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
-
     const cachedWorkspaceMetadataVersion =
       await this.getWorkspaceMetadataVersionFromCache(
         workspaceId,
         shouldFailIfMetadataNotFound,
       );
 
-    let cachedRolesPermissionsVersion: string | undefined;
-    let cachedRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
+    const isPermissionsV2Enabled =
+      featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
 
-    if (isPermissionsV2Enabled) {
-      cachedRolesPermissions =
-        await this.workspaceCacheStorageService.getRolesPermissions(
-          workspaceId,
-        );
-
-      cachedRolesPermissionsVersion =
-        await this.getRolesVersionFromCache(workspaceId);
-
-      if (!cachedRolesPermissions || !cachedRolesPermissionsVersion) {
-        await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
-          {
-            workspaceId,
-          },
-        );
-
-        cachedRolesPermissions =
-          await this.workspaceCacheStorageService.getRolesPermissions(
-            workspaceId,
-          );
-
-        cachedRolesPermissionsVersion =
-          await this.getRolesVersionFromCache(workspaceId);
-      }
-    }
+    const { cachedRolesPermissionsVersion, cachedRolesPermissions } =
+      await this.getRolesPermissionsFromCache(
+        workspaceId,
+        isPermissionsV2Enabled,
+      );
 
     if (
       workspaceMetadataVersion !== null &&
@@ -212,21 +189,11 @@ export class WorkspaceDatasourceFactory {
     }
 
     if (isPermissionsV2Enabled) {
-      if (
-        isDefined(cachedRolesPermissionsVersion) &&
-        isDefined(cachedRolesPermissions)
-      ) {
-        if (
-          workspaceDataSource.rolesPermissionsVersion !==
-          cachedRolesPermissionsVersion
-        ) {
-          workspaceDataSource.manager.repositories.clear();
-          workspaceDataSource.setRolesPermissionsVersion(
-            cachedRolesPermissionsVersion,
-          );
-          workspaceDataSource.setRolesPermissions(cachedRolesPermissions);
-        }
-      }
+      await this.updateWorkspaceDataSourceRolesPermissionsIfNeeded(
+        workspaceDataSource,
+        cachedRolesPermissionsVersion,
+        cachedRolesPermissions,
+      );
     }
 
     return workspaceDataSource;
@@ -265,6 +232,67 @@ export class WorkspaceDatasourceFactory {
     }
 
     return latestWorkspaceMetadataVersion;
+  }
+
+  private async updateWorkspaceDataSourceRolesPermissionsIfNeeded(
+    workspaceDataSource: WorkspaceDataSource,
+    cachedRolesPermissionsVersion: string | undefined,
+    cachedRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined,
+  ) {
+    if (
+      isDefined(cachedRolesPermissionsVersion) &&
+      isDefined(cachedRolesPermissions)
+    ) {
+      if (
+        workspaceDataSource.rolesPermissionsVersion !==
+        cachedRolesPermissionsVersion
+      ) {
+        workspaceDataSource.manager.repositories.clear();
+        workspaceDataSource.setRolesPermissionsVersion(
+          cachedRolesPermissionsVersion,
+        );
+        workspaceDataSource.setRolesPermissions(cachedRolesPermissions);
+      }
+    }
+  }
+
+  private async getRolesPermissionsFromCache(
+    workspaceId: string,
+    isPermissionsV2Enabled: boolean,
+  ): Promise<{
+    cachedRolesPermissionsVersion: string | undefined;
+    cachedRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
+  }> {
+    let cachedRolesPermissionsVersion: string | undefined;
+    let cachedRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
+
+    if (isPermissionsV2Enabled) {
+      cachedRolesPermissions =
+        await this.workspaceCacheStorageService.getRolesPermissions(
+          workspaceId,
+        );
+
+      cachedRolesPermissionsVersion =
+        await this.getRolesVersionFromCache(workspaceId);
+
+      if (!cachedRolesPermissions || !cachedRolesPermissionsVersion) {
+        await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+          {
+            workspaceId,
+          },
+        );
+
+        cachedRolesPermissions =
+          await this.workspaceCacheStorageService.getRolesPermissions(
+            workspaceId,
+          );
+
+        cachedRolesPermissionsVersion =
+          await this.getRolesVersionFromCache(workspaceId);
+      }
+    }
+
+    return { cachedRolesPermissionsVersion, cachedRolesPermissions };
   }
 
   private async getRolesVersionFromCache(workspaceId: string): Promise<string> {
