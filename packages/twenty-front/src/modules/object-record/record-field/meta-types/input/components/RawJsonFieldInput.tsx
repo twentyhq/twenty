@@ -131,6 +131,7 @@ export const RawJsonFieldInput = ({
     [handleShiftTab, draftValue],
   );
 
+  // FIXME: This is temporary. We'll soon introduce a new display mode for all fields and we'll have to remove this code.
   const isWorkflowRunOutputField =
     fieldDefinition.metadata.objectMetadataNameSingular ===
       CoreObjectNameSingular.WorkflowRun &&
