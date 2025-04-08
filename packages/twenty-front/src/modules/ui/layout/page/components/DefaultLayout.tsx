@@ -26,13 +26,14 @@ const StyledLayout = styled.div`
   flex-direction: column;
   height: 100dvh;
   position: relative;
-  scrollbar-color: ${({ theme }) => theme.border.color.medium};
+  scrollbar-color: ${({ theme }) => theme.border.color.medium} transparent;
   scrollbar-width: 4px;
   width: 100%;
 
   *::-webkit-scrollbar-thumb {
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
+
 `;
 
 const StyledPageContainer = styled(motion.div)`
