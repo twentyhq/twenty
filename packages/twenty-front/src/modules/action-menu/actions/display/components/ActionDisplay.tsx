@@ -36,4 +36,6 @@ export const ActionDisplay = ({ action }: { action: ActionDisplayProps }) => {
   if (displayType === 'dropdownItem') {
     return <ActionDropdownItem action={action} />;
   }
+
+  throw new Error(`Unsupported display type: ${displayType}`);
 };
