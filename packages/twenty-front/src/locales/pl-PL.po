@@ -68,6 +68,7 @@ msgstr ": Dziś"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "[empty string]"
 msgstr "[pusty ciąg]"
 
@@ -873,6 +874,7 @@ msgstr "Kod"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Collapse"
 msgstr "Zwiń"
 
@@ -1717,6 +1719,7 @@ msgstr "Puste"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Array"
 msgstr "Pusta tablica"
 
@@ -1724,6 +1727,7 @@ msgstr "Pusta tablica"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "Pusty obiekt"
 
@@ -1888,6 +1892,7 @@ msgstr "Wyjdź z ustawień"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Expand"
 msgstr "Rozwiń"
 

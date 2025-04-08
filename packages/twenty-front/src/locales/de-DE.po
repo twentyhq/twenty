@@ -68,6 +68,7 @@ msgstr ": Heute"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "[empty string]"
 msgstr "[leere Zeichenfolge]"
 
@@ -873,6 +874,7 @@ msgstr "Code"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Collapse"
 msgstr "Einklappen"
 
@@ -1717,6 +1719,7 @@ msgstr "Leer"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Array"
 msgstr "Leeres Array"
 
@@ -1724,6 +1727,7 @@ msgstr "Leeres Array"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "Leeres Objekt"
 
@@ -1888,6 +1892,7 @@ msgstr "Einstellungen verlassen"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Expand"
 msgstr "Expandieren"
 

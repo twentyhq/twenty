@@ -68,6 +68,7 @@ msgstr ": 今天"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "[empty string]"
 msgstr "[空字串]"
 
@@ -873,6 +874,7 @@ msgstr "代碼"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Collapse"
 msgstr "收起"
 
@@ -1717,6 +1719,7 @@ msgstr "空"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Array"
 msgstr "空陣列"
 
@@ -1724,6 +1727,7 @@ msgstr "空陣列"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "空對象"
 
@@ -1888,6 +1892,7 @@ msgstr "退出設置"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Expand"
 msgstr "展開"
 
