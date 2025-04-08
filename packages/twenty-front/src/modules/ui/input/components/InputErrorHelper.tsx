@@ -11,12 +11,9 @@ export const InputErrorHelper = ({
   children,
 }: {
   children?: React.ReactNode;
-}) => (
-  <div>
-    {children && (
-      <StyledInputErrorHelper aria-live="polite">
-        {children}
-      </StyledInputErrorHelper>
-    )}
-  </div>
-);
+}) =>
+  children ? (
+    <StyledInputErrorHelper aria-live="polite">
+      {children}
+    </StyledInputErrorHelper>
+  ) : null;

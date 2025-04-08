@@ -37,11 +37,9 @@ const StyledForm = styled.form`
 `;
 
 const StyledLaunchButtonWrapper = styled.div`
-  align-items: flex-start;
-  display: flex;
-  height: 100%;
-  padding-top: ${({ theme }) => theme.spacing(4.5)};
+  margin-top: ${({ theme }) => theme.spacing(4.5)};
 `;
+
 export const PlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
