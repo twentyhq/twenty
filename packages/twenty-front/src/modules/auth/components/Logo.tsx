@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type LogoProps = {
   primaryLogo?: string | null;
@@ -9,12 +9,12 @@ type LogoProps = {
 };
 
 const StyledContainer = styled.div`
-  height: ${({ theme }) => theme.spacing(12)};
+  height: ${({ theme }) => theme.spacing(14)};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
 
   position: relative;
-  width: ${({ theme }) => theme.spacing(12)};
+  width: ${({ theme }) => theme.spacing(48)};
 `;
 
 const StyledSecondaryLogo = styled.img`
@@ -45,13 +45,10 @@ const StyledPrimaryLogo = styled.div<{ src: string }>`
 `;
 
 export const Logo = (props: LogoProps) => {
-  const defaultPrimaryLogoUrl = '/icons/windows11/Woulz-logo.png';
+  const defaultPrimaryLogoUrl = `${window.location.origin}/icons/windows11/Woulz-logo.png`;
 
   const primaryLogoUrl = getImageAbsoluteURI({
-    imageUrl:
-      props.primaryLogo && props.primaryLogo.trim() !== ''
-        ? props.primaryLogo
-        : defaultPrimaryLogoUrl,
+    imageUrl: props.primaryLogo ?? defaultPrimaryLogoUrl,
     baseUrl: REACT_APP_SERVER_BASE_URL,
   });
 
