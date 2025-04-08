@@ -37,7 +37,7 @@ export enum FieldDateDisplayFormat {
 export type FieldDateMetadataSettings =
   | {
       displayFormat?: FieldDateDisplayFormat.CUSTOM;
-      customISODateFormatString: string;
+      customUnicode35DateFormat: string;
     }
   | {
       displayFormat?: Exclude<

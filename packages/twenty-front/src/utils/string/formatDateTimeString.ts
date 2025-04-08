@@ -36,7 +36,7 @@ export const formatDateTimeString = ({
       return formatDateISOStringToCustom(
         value,
         timeZone,
-        dateFieldSettings.customISODateFormatString,
+        dateFieldSettings.customUnicode35DateFormat,
       );
     default:
       return formatDateISOStringToDateTime(

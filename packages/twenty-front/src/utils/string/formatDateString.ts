@@ -28,7 +28,7 @@ export const formatDateString = ({
       return formatDateISOStringToCustom(
         value,
         timeZone,
-        dateFieldSettings.customISODateFormatString,
+        dateFieldSettings.customUnicode35DateFormat,
       );
     default:
       return formatDateISOStringToDate(value, timeZone, dateFormat);
