@@ -230,6 +230,8 @@ export {
   IconHistoryToggle,
   IconHome,
   IconHours24,
+  IconHttpGet,
+  IconHttpPost,
   IconId,
   IconInbox,
   IconInfoCircle,
