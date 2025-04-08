@@ -528,15 +528,6 @@ export class EnvironmentVariables {
   BILLING_STRIPE_WEBHOOK_SECRET: string;
 
   @EnvironmentVariablesMetadata({
-    group: EnvironmentVariablesGroup.BillingConfig,
-    sensitive: true,
-    description: 'Base plan product ID for Stripe billing',
-  })
-  @IsString()
-  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_STRIPE_BASE_PLAN_PRODUCT_ID: string;
-
-  @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.ServerConfig,
     description: 'Url for the frontend application',
   })
