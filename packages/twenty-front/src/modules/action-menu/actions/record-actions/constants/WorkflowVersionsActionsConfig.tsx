@@ -125,6 +125,13 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
       NoSelectionRecordActionKeys.EXPORT_VIEW,
       NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
       NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
+      NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
+      NoSelectionRecordActionKeys.GO_TO_PEOPLE,
+      NoSelectionRecordActionKeys.GO_TO_COMPANIES,
+      NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
+      NoSelectionRecordActionKeys.GO_TO_SETTINGS,
+      NoSelectionRecordActionKeys.GO_TO_TASKS,
+      NoSelectionRecordActionKeys.GO_TO_NOTES,
     ],
     propertiesToOverwrite: {
       [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
@@ -159,6 +166,28 @@ export const WORKFLOW_VERSIONS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig(
       [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
         position: 13,
         label: msg`Navigate to next version`,
+      },
+      [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+        position: 14,
+        isPinned: true,
+      },
+      [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
+        position: 15,
+      },
+      [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
+        position: 16,
+      },
+      [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+        position: 17,
+      },
+      [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+        position: 18,
+      },
+      [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+        position: 19,
+      },
+      [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+        position: 20,
       },
     },
   },

@@ -201,6 +201,12 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     MultipleRecordsActionKeys.EXPORT,
     NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
     NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
+    NoSelectionRecordActionKeys.GO_TO_PEOPLE,
+    NoSelectionRecordActionKeys.GO_TO_COMPANIES,
+    NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
+    NoSelectionRecordActionKeys.GO_TO_SETTINGS,
+    NoSelectionRecordActionKeys.GO_TO_TASKS,
+    NoSelectionRecordActionKeys.GO_TO_NOTES,
   ],
   propertiesToOverwrite: {
     [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
@@ -260,6 +266,24 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     [NoSelectionRecordActionKeys.IMPORT_RECORDS]: {
       position: 21,
       label: msg`Import workflows`,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
+      position: 22,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
+      position: 23,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+      position: 24,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+      position: 25,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+      position: 26,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 27,
     },
   },
 });

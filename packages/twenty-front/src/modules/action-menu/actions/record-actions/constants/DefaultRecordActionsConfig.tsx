@@ -1,3 +1,4 @@
+import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { DeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction';
 import { DestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction';
 import { ExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/ExportMultipleRecordsAction';
@@ -23,11 +24,17 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconBuildingSkyscraper,
+  IconCheckbox,
   IconChevronDown,
   IconChevronUp,
   IconEyeOff,
@@ -38,8 +45,12 @@ import {
   IconPlus,
   IconRefresh,
   IconRotate2,
+  IconSettings,
+  IconSettingsAutomation,
+  IconTargetArrow,
   IconTrash,
   IconTrashX,
+  IconUser,
 } from 'twenty-ui/display';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
@@ -372,5 +383,183 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <RestoreMultipleRecordsAction />,
+  },
+  [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
+    label: msg`Go to workflows`,
+    shortLabel: msg`See workflows`,
+    position: 18,
+    Icon: IconSettingsAutomation,
+    accent: 'default',
+    isPinned: false,
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Workflow ||
+      viewType === ActionViewType.SHOW_PAGE,
+    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Workflow }}
+      />
+    ),
+    hotKeys: ['G', 'W'],
+  },
+  [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
+    label: msg`Go to People`,
+    shortLabel: msg`People`,
+    position: 19,
+    Icon: IconUser,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
+      viewType === ActionViewType.SHOW_PAGE,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Person }}
+      />
+    ),
+    hotKeys: ['G', 'P'],
+  },
+  [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_COMPANIES,
+    label: msg`Go to Companies`,
+    shortLabel: msg`Companies`,
+    position: 20,
+    Icon: IconBuildingSkyscraper,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Company ||
+      viewType === ActionViewType.SHOW_PAGE,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Company }}
+      />
+    ),
+    hotKeys: ['G', 'C'],
+  },
+  [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
+    label: msg`Go to Opportunities`,
+    shortLabel: msg`Opportunities`,
+    position: 21,
+    Icon: IconTargetArrow,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Opportunity ||
+      viewType === ActionViewType.SHOW_PAGE,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Opportunity }}
+      />
+    ),
+    hotKeys: ['G', 'O'],
+  },
+  [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
+    label: msg`Go to Settings`,
+    shortLabel: msg`Settings`,
+    position: 22,
+    Icon: IconSettings,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: () => true,
+    component: (
+      <ActionLink
+        to={AppPath.SettingsCatchAll}
+        params={{
+          '*': SettingsPath.ProfilePage,
+        }}
+      />
+    ),
+    hotKeys: ['G', 'S'],
+  },
+  [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_TASKS,
+    label: msg`Go to Tasks`,
+    shortLabel: msg`Tasks`,
+    position: 23,
+    Icon: IconCheckbox,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Task ||
+      viewType === ActionViewType.SHOW_PAGE,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Task }}
+      />
+    ),
+    hotKeys: ['G', 'T'],
+  },
+  [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+    type: ActionMenuEntryType.Navigation,
+    scope: ActionMenuEntryScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_NOTES,
+    label: msg`Go to Notes`,
+    shortLabel: msg`Notes`,
+    position: 24,
+    Icon: IconCheckbox,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Note ||
+      viewType === ActionViewType.SHOW_PAGE,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Note }}
+      />
+    ),
+    hotKeys: ['G', 'N'],
   },
 };

@@ -1,3 +1,5 @@
+import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
+import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -19,7 +21,7 @@ export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
-}) => {
+}): ShouldBeRegisteredFunctionParams => {
   const { sortedFavorites: favorites } = useFavorites();
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
@@ -39,8 +41,6 @@ export const useShouldActionBeRegisteredParams = ({
 
   const selectedRecord =
     useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
-
-  const isRemoteObject = objectMetadataItem?.isRemote;
 
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
@@ -66,9 +66,18 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
+  const contextStoreCurrentViewType = useRecoilComponentValueV2(
+    contextStoreCurrentViewTypeComponentState,
+  );
+
+  const viewType = getActionViewType(
+    contextStoreCurrentViewType,
+    contextStoreTargetedRecordsRule,
+  );
+
   return {
+    objectMetadataItem,
     isFavorite,
-    isRemoteObject,
     hasObjectReadOnlyPermission,
     isNoteOrTask,
     isInRightDrawer,
@@ -77,5 +86,6 @@ export const useShouldActionBeRegisteredParams = ({
     selectedRecord,
     isWorkflowsEnabled,
     numberOfSelectedRecords,
+    viewType: viewType ?? undefined,
   };
 };
