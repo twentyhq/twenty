@@ -16,7 +16,7 @@ export const SettingsAdminVersionContainer = () => {
         <SettingsAdminVersionDisplay
           version={currentVersion}
           loading={loading}
-          noVersionMessage={t`No APP_VERSION defined in environment variables`}
+          noVersionMessage={t`Unknown`}
         />
       ),
     },
