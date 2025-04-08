@@ -1529,11 +1529,6 @@ export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
 };
 
-
-export type QueryVersionInfoArgs = {
-  currentVersion: Scalars['String'];
-};
-
 export type QueueMetricsData = {
   __typename?: 'QueueMetricsData';
   data: Array<QueueMetricsSeries>;
@@ -2184,7 +2179,7 @@ export type ValidatePasswordResetToken = {
 
 export type VersionInfo = {
   __typename?: 'VersionInfo';
-  currentVersionExists: Scalars['Boolean'];
+  currentVersion?: Maybe<Scalars['String']>;
   latestVersion: Scalars['String'];
 };
 
@@ -2618,12 +2613,10 @@ export type GetEnvironmentVariablesGroupedQueryVariables = Exact<{ [key: string]
 
 export type GetEnvironmentVariablesGroupedQuery = { __typename?: 'Query', getEnvironmentVariablesGrouped: { __typename?: 'EnvironmentVariablesOutput', groups: Array<{ __typename?: 'EnvironmentVariablesGroupData', name: EnvironmentVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'EnvironmentVariable', name: string, description: string, value: string, sensitive: boolean }> }> } };
 
-export type GetVersionInfoQueryVariables = Exact<{
-  currentVersion: Scalars['String'];
-}>;
+export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetVersionInfoQuery = { __typename?: 'Query', versionInfo: { __typename?: 'VersionInfo', latestVersion: string, currentVersionExists: boolean } };
+export type GetVersionInfoQuery = { __typename?: 'Query', versionInfo: { __typename?: 'VersionInfo', currentVersion?: string | null, latestVersion: string } };
 
 export type GetIndicatorHealthStatusQueryVariables = Exact<{
   indicatorId: HealthIndicatorId;
@@ -4575,10 +4568,10 @@ export type GetEnvironmentVariablesGroupedQueryHookResult = ReturnType<typeof us
 export type GetEnvironmentVariablesGroupedLazyQueryHookResult = ReturnType<typeof useGetEnvironmentVariablesGroupedLazyQuery>;
 export type GetEnvironmentVariablesGroupedQueryResult = Apollo.QueryResult<GetEnvironmentVariablesGroupedQuery, GetEnvironmentVariablesGroupedQueryVariables>;
 export const GetVersionInfoDocument = gql`
-    query GetVersionInfo($currentVersion: String!) {
-  versionInfo(currentVersion: $currentVersion) {
+    query GetVersionInfo {
+  versionInfo {
+    currentVersion
     latestVersion
-    currentVersionExists
   }
 }
     `;
@@ -4595,11 +4588,10 @@ export const GetVersionInfoDocument = gql`
  * @example
  * const { data, loading, error } = useGetVersionInfoQuery({
  *   variables: {
- *      currentVersion: // value for 'currentVersion'
  *   },
  * });
  */
-export function useGetVersionInfoQuery(baseOptions: Apollo.QueryHookOptions<GetVersionInfoQuery, GetVersionInfoQueryVariables>) {
+export function useGetVersionInfoQuery(baseOptions?: Apollo.QueryHookOptions<GetVersionInfoQuery, GetVersionInfoQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetVersionInfoQuery, GetVersionInfoQueryVariables>(GetVersionInfoDocument, options);
       }

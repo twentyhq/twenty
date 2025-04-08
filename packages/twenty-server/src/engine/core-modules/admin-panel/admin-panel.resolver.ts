@@ -118,9 +118,7 @@ export class AdminPanelResolver {
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Query(() => VersionInfo)
-  async versionInfo(
-    @Args('currentVersion') currentVersion: string,
-  ): Promise<VersionInfo> {
-    return this.adminService.getVersionInfo(currentVersion);
+  async versionInfo(): Promise<VersionInfo> {
+    return this.adminService.getVersionInfo();
   }
 }

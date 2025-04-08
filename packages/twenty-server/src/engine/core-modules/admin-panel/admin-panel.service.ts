@@ -167,7 +167,9 @@ export class AdminPanelService {
     return { groups };
   }
 
-  async getVersionInfo(currentVersion: string): Promise<VersionInfo> {
+  async getVersionInfo(): Promise<VersionInfo> {
+    const currentVersion = this.environmentService.get('APP_VERSION');
+
     try {
       const response = await axios.get(
         'https://hub.docker.com/v2/repositories/twentycrm/twenty/tags?page_size=100',
@@ -179,21 +181,15 @@ export class AdminPanelService {
         .filter((version) => version !== undefined);
 
       if (versions.length === 0) {
-        return { latestVersion: 'latest', currentVersionExists: false };
+        return { currentVersion, latestVersion: 'latest' };
       }
 
       versions.sort((a, b) => semver.compare(b, a));
-
       const latestVersion = versions[0];
 
-      const normalizedCurrent = semver.coerce(currentVersion)?.version;
-      const currentVersionExists = normalizedCurrent
-        ? versions.includes(normalizedCurrent)
-        : false;
-
-      return { latestVersion, currentVersionExists };
+      return { currentVersion, latestVersion };
     } catch (error) {
-      return { latestVersion: 'latest', currentVersionExists: false };
+      return { currentVersion, latestVersion: 'latest' };
     }
   }
 }
