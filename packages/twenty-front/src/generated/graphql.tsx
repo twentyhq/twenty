@@ -145,6 +145,17 @@ export type BillingEndTrialPeriodOutput = {
   status?: Maybe<SubscriptionStatus>;
 };
 
+export type BillingMeteredProductUsageOutput = {
+  __typename?: 'BillingMeteredProductUsageOutput';
+  includedFreeQuantity: Scalars['Float'];
+  periodEnd: Scalars['DateTime'];
+  periodStart: Scalars['DateTime'];
+  productKey: BillingProductKey;
+  totalCostCents: Scalars['Float'];
+  unitPriceCents: Scalars['Float'];
+  usageQuantity: Scalars['Float'];
+};
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
@@ -1419,6 +1430,7 @@ export type Query = {
   getAvailablePackages: Scalars['JSON'];
   getEnvironmentVariablesGrouped: EnvironmentVariablesOutput;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getQueueMetrics: QueueMetricsData;
@@ -2565,6 +2577,11 @@ export type EndSubscriptionTrialPeriodMutationVariables = Exact<{ [key: string]:
 
 
 export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endSubscriptionTrialPeriod: { __typename?: 'BillingEndTrialPeriodOutput', status?: SubscriptionStatus | null, hasPaymentMethod: boolean } };
+
+export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usageQuantity: number, includedFreeQuantity: number, unitPriceCents: number, totalCostCents: number }> };
 
 export type UpdateBillingSubscriptionMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -4226,6 +4243,44 @@ export function useEndSubscriptionTrialPeriodMutation(baseOptions?: Apollo.Mutat
 export type EndSubscriptionTrialPeriodMutationHookResult = ReturnType<typeof useEndSubscriptionTrialPeriodMutation>;
 export type EndSubscriptionTrialPeriodMutationResult = Apollo.MutationResult<EndSubscriptionTrialPeriodMutation>;
 export type EndSubscriptionTrialPeriodMutationOptions = Apollo.BaseMutationOptions<EndSubscriptionTrialPeriodMutation, EndSubscriptionTrialPeriodMutationVariables>;
+export const GetMeteredProductsUsageDocument = gql`
+    query GetMeteredProductsUsage {
+  getMeteredProductsUsage {
+    productKey
+    usageQuantity
+    includedFreeQuantity
+    unitPriceCents
+    totalCostCents
+  }
+}
+    `;
+
+/**
+ * __useGetMeteredProductsUsageQuery__
+ *
+ * To run a query within a React component, call `useGetMeteredProductsUsageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMeteredProductsUsageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMeteredProductsUsageQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMeteredProductsUsageQuery(baseOptions?: Apollo.QueryHookOptions<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>(GetMeteredProductsUsageDocument, options);
+      }
+export function useGetMeteredProductsUsageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>(GetMeteredProductsUsageDocument, options);
+        }
+export type GetMeteredProductsUsageQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageQuery>;
+export type GetMeteredProductsUsageLazyQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageLazyQuery>;
+export type GetMeteredProductsUsageQueryResult = Apollo.QueryResult<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>;
 export const UpdateBillingSubscriptionDocument = gql`
     mutation UpdateBillingSubscription {
   updateBillingSubscription {

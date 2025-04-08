@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingEndTrialPeriodOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-end-trial-period.output';
+import { BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-metered-product-usage.output';
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
@@ -15,10 +16,10 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -44,8 +45,8 @@ export class BillingResolver {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly billingPlanService: BillingPlanService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly billingService: BillingService,
+    private readonly billingUsageService: BillingUsageService,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -140,6 +141,17 @@ export class BillingResolver {
     @AuthWorkspace() workspace: Workspace,
   ): Promise<BillingEndTrialPeriodOutput> {
     return await this.billingSubscriptionService.endTrialPeriod(workspace);
+  }
+
+  @Query(() => [BillingMeteredProductUsageOutput])
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
+  async getMeteredProductsUsage(
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<BillingMeteredProductUsageOutput[]> {
+    return await this.billingUsageService.getMeteredProductsUsage(workspace);
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({

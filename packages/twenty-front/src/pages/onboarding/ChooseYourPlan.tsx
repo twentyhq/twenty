@@ -104,7 +104,7 @@ export const ChooseYourPlan = () => {
         t`Email integration`,
         t`Custom objects`,
         t`API & Webhooks`,
-        t`20 000 workflow node executions`,
+        t`20,000 workflow node executions`,
         t`SSO (SAML / OIDC)`,
       ];
     }
@@ -115,7 +115,7 @@ export const ChooseYourPlan = () => {
       t`Email integration`,
       t`Custom objects`,
       t`API & Webhooks`,
-      t`10 000 workflow node executions`,
+      t`10,000 workflow node executions`,
     ];
   };
 

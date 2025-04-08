@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
+import { SettingsBillingMonthlyCreditsSection } from '@/billing/components/SettingsBillingMonthlyCreditsSection';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -11,23 +11,25 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import {
-  SubscriptionInterval,
-  SubscriptionStatus,
-  useBillingPortalSessionQuery,
-  useUpdateBillingSubscriptionMutation,
-} from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import {
   H2Title,
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
 } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import {
+  FeatureFlagKey,
+  SubscriptionInterval,
+  SubscriptionStatus,
+  useBillingPortalSessionQuery,
+  useUpdateBillingSubscriptionMutation,
+} from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SwitchInfo = {
   newInterval: SubscriptionInterval;
@@ -127,6 +129,10 @@ export const SettingsBilling = () => {
     }
   };
 
+  const isMeteredProductBillingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsMeteredProductBillingEnabled,
+  );
+
   return (
     <SubMenuTopBarContainer
       title={t`Billing`}
@@ -139,7 +145,9 @@ export const SettingsBilling = () => {
       ]}
     >
       <SettingsPageContainer>
-        <SettingsBillingCoverImage />
+        {isMeteredProductBillingEnabled && (
+          <SettingsBillingMonthlyCreditsSection />
+        )}
         <Section>
           <H2Title
             title={t`Manage your subscription`}
