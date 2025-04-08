@@ -68,6 +68,8 @@ jobs:
         run: npx nx reset:env twenty-server
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
+      - name: Run ClickHouse seeds
+        run: npx nx clickhouse:seed twenty-server
       - name: Save clickhouse setup
         uses: ./.github/workflows/actions/save-cache
         with:
