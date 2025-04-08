@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { JsonObject, JsonValue } from 'type-fest';
 import { parseJson } from '~/utils/parseJson';
 
-export const usePrecomputeJsonDraftValue = ({
+export const usePrecomputedJsonDraftValue = ({
   draftValue,
 }: {
   draftValue: string | undefined;

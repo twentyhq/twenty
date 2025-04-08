@@ -7,7 +7,7 @@ import { FieldJsonValue } from '@/object-record/record-field/types/FieldMetadata
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { usePrecomputeJsonDraftValue } from '@/object-record/record-field/meta-types/hooks/usePrecomputeJsonDraftValue';
+import { usePrecomputedJsonDraftValue } from '@/object-record/record-field/meta-types/hooks/usePrecomputedJsonDraftValue';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRawJson } from '../../types/guards/isFieldRawJson';
@@ -47,7 +47,7 @@ export const useJsonField = () => {
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
-  const precomputedDraftValue = usePrecomputeJsonDraftValue({
+  const precomputedDraftValue = usePrecomputedJsonDraftValue({
     draftValue,
   });
 
