@@ -3,9 +3,10 @@ export type InterIntegration = {
   integrationName: string;
   clientId: string;
   clientSecret: string;
-  privateKey: string;
-  certificate: string;
+  privateKey?: string | null;
+  certificate?: string | null;
   status: string;
+  workspaceId: string;
   expirationDate?: Date;
   workspace: {
     id: string;

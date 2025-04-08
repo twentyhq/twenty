@@ -5,9 +5,8 @@ import { Repository } from 'typeorm';
 
 import { CreateInterIntegrationInput } from 'src/engine/core-modules/inter/integration/dtos/create-inter-integration.input';
 import { UpdateInterIntegrationInput } from 'src/engine/core-modules/inter/integration/dtos/update-inter-integration.input';
+import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
-import { InterIntegration } from './inter-integration.entity';
 
 @Injectable()
 export class InterIntegrationService {
@@ -29,13 +28,16 @@ export class InterIntegrationService {
       throw new NotFoundException('Workspace not found');
     }
 
-    const integration = this.interIntegrationRepository.create({
+    const createIntegration = this.interIntegrationRepository.create({
       ...createInput,
       workspace,
-      status: 'active',
+      status: createInput.status ?? 'active',
     });
 
-    return await this.interIntegrationRepository.save(integration);
+    const savedIntegration =
+      await this.interIntegrationRepository.save(createIntegration);
+
+    return savedIntegration;
   }
 
   async findAll(workspaceId: string): Promise<InterIntegration[]> {
@@ -65,7 +67,12 @@ export class InterIntegrationService {
 
     const updatedIntegration = this.interIntegrationRepository.merge(
       integration,
-      updateInput,
+      {
+        ...updateInput,
+        status: updateInput.status ?? integration.status,
+        expirationDate:
+          updateInput.expirationDate ?? integration.expirationDate,
+      },
     );
 
     return await this.interIntegrationRepository.save(updatedIntegration);
@@ -86,11 +93,6 @@ export class InterIntegrationService {
 
   /*async delete(id: string): Promise<boolean> {
     const result = await this.interIntegrationRepository.delete(id);
-
-    if (result) {
-      return result.affected > 0;
-    } else {
-      return 0;
-    }
+    return result.affected > 0;
   }*/
 }

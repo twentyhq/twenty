@@ -80,7 +80,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
             render={({ field: { onChange, value } }) => (
               <TextInputV2
                 label={integrationNameField.label}
-                value={value}
+                value={value as string}
                 onChange={onChange}
                 fullWidth
                 type={integrationNameField.type}
@@ -102,7 +102,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
               <TextInputV2
                 autoComplete="new-password"
                 label={clientIdField.label}
-                value={value}
+                value={value as string}
                 onChange={onChange}
                 fullWidth
                 type={clientIdField.type}
@@ -121,7 +121,7 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
               <TextInputV2
                 autoComplete="new-password"
                 label={clientSecretField.label}
-                value={value}
+                value={value as string}
                 onChange={onChange}
                 fullWidth
                 type={clientSecretField.type}

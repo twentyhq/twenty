@@ -369,11 +369,13 @@ export type CreateFieldInput = {
 };
 
 export type CreateInterIntegrationInput = {
-  certificate: Scalars['String'];
+  certificate?: InputMaybe<Scalars['String']>;
   clientId: Scalars['String'];
   clientSecret: Scalars['String'];
+  expirationDate: Scalars['DateTime'];
   integrationName: Scalars['String'];
-  privateKey: Scalars['String'];
+  privateKey?: InputMaybe<Scalars['String']>;
+  status?: Scalars['String'];
   workspaceId: Scalars['ID'];
 };
 
@@ -924,13 +926,13 @@ export enum IntegrationType {
 
 export type InterIntegration = {
   __typename?: 'InterIntegration';
-  certificate: Scalars['String'];
+  certificate?: Maybe<Scalars['String']>;
   clientId: Scalars['String'];
   clientSecret: Scalars['String'];
-  expirationDate?: Maybe<Scalars['DateTime']>;
-  id: Scalars['ID'];
+  expirationDate: Scalars['DateTime'];
+  id: Scalars['UUID'];
   integrationName: Scalars['String'];
-  privateKey: Scalars['String'];
+  privateKey?: Maybe<Scalars['String']>;
   status: Scalars['String'];
   workspace: Workspace;
 };
@@ -1056,7 +1058,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   syncInterData: Scalars['Boolean'];
   toggleAgentStatus: Scalars['Boolean'];
-  toggleInterIntegrationStatus: Scalars['Boolean'];
+  toggleInterIntegrationStatus: Scalars['String'];
   toggleWhatsappIntegrationStatus: Scalars['Boolean'];
   track: Analytics;
   updateAgent: Agent;
@@ -2593,6 +2595,7 @@ export type UpdateInterIntegrationInput = {
   certificate?: InputMaybe<Scalars['String']>;
   clientId?: InputMaybe<Scalars['String']>;
   clientSecret?: InputMaybe<Scalars['String']>;
+  expirationDate?: InputMaybe<Scalars['DateTime']>;
   id: Scalars['String'];
   integrationName?: InputMaybe<Scalars['String']>;
   privateKey?: InputMaybe<Scalars['String']>;
@@ -3381,19 +3384,33 @@ export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; 
 
 export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
 
+export type CreateInterIntegrationMutationVariables = Exact<{
+  createInput: CreateInterIntegrationInput;
+}>;
+
+
+export type CreateInterIntegrationMutation = { __typename?: 'Mutation', createInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, status: string, expirationDate: string, workspace: { __typename?: 'Workspace', id: any } } };
+
 export type ToggleInterIntegrationStatusMutationVariables = Exact<{
   integrationId: Scalars['String'];
 }>;
 
 
-export type ToggleInterIntegrationStatusMutation = { __typename?: 'Mutation', toggleInterIntegrationStatus: boolean };
+export type ToggleInterIntegrationStatusMutation = { __typename?: 'Mutation', toggleInterIntegrationStatus: string };
+
+export type UpdateInterIntegrationMutationVariables = Exact<{
+  updateInput: UpdateInterIntegrationInput;
+}>;
+
+
+export type UpdateInterIntegrationMutation = { __typename?: 'Mutation', updateInterIntegration: { __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, status: string, expirationDate: string } };
 
 export type InterIntegrationsByWorkspaceQueryVariables = Exact<{
   workspaceId: Scalars['String'];
 }>;
 
 
-export type InterIntegrationsByWorkspaceQuery = { __typename?: 'Query', interIntegrationsByWorkspace: Array<{ __typename?: 'InterIntegration', id: string, integrationName: string, clientId: string, clientSecret: string, privateKey: string, certificate: string, status: string, expirationDate?: string | null, workspace: { __typename?: 'Workspace', id: any } }> };
+export type InterIntegrationsByWorkspaceQuery = { __typename?: 'Query', interIntegrationsByWorkspace: Array<{ __typename?: 'InterIntegration', id: any, integrationName: string, clientId: string, clientSecret: string, privateKey?: string | null, certificate?: string | null, status: string, expirationDate: string, workspace: { __typename?: 'Workspace', id: any } }> };
 
 export type CreateWhatsappIntegrationMutationVariables = Exact<{
   createInput: CreateWhatsappIntegrationInput;
@@ -5882,6 +5899,47 @@ export function useGetSystemHealthStatusLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetSystemHealthStatusQueryHookResult = ReturnType<typeof useGetSystemHealthStatusQuery>;
 export type GetSystemHealthStatusLazyQueryHookResult = ReturnType<typeof useGetSystemHealthStatusLazyQuery>;
 export type GetSystemHealthStatusQueryResult = Apollo.QueryResult<GetSystemHealthStatusQuery, GetSystemHealthStatusQueryVariables>;
+export const CreateInterIntegrationDocument = gql`
+    mutation CreateInterIntegration($createInput: CreateInterIntegrationInput!) {
+  createInterIntegration(createInput: $createInput) {
+    id
+    integrationName
+    clientId
+    clientSecret
+    status
+    expirationDate
+    workspace {
+      id
+    }
+  }
+}
+    `;
+export type CreateInterIntegrationMutationFn = Apollo.MutationFunction<CreateInterIntegrationMutation, CreateInterIntegrationMutationVariables>;
+
+/**
+ * __useCreateInterIntegrationMutation__
+ *
+ * To run a mutation, you first call `useCreateInterIntegrationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateInterIntegrationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createInterIntegrationMutation, { data, loading, error }] = useCreateInterIntegrationMutation({
+ *   variables: {
+ *      createInput: // value for 'createInput'
+ *   },
+ * });
+ */
+export function useCreateInterIntegrationMutation(baseOptions?: Apollo.MutationHookOptions<CreateInterIntegrationMutation, CreateInterIntegrationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateInterIntegrationMutation, CreateInterIntegrationMutationVariables>(CreateInterIntegrationDocument, options);
+      }
+export type CreateInterIntegrationMutationHookResult = ReturnType<typeof useCreateInterIntegrationMutation>;
+export type CreateInterIntegrationMutationResult = Apollo.MutationResult<CreateInterIntegrationMutation>;
+export type CreateInterIntegrationMutationOptions = Apollo.BaseMutationOptions<CreateInterIntegrationMutation, CreateInterIntegrationMutationVariables>;
 export const ToggleInterIntegrationStatusDocument = gql`
     mutation ToggleInterIntegrationStatus($integrationId: String!) {
   toggleInterIntegrationStatus(integrationId: $integrationId)
@@ -5913,6 +5971,46 @@ export function useToggleInterIntegrationStatusMutation(baseOptions?: Apollo.Mut
 export type ToggleInterIntegrationStatusMutationHookResult = ReturnType<typeof useToggleInterIntegrationStatusMutation>;
 export type ToggleInterIntegrationStatusMutationResult = Apollo.MutationResult<ToggleInterIntegrationStatusMutation>;
 export type ToggleInterIntegrationStatusMutationOptions = Apollo.BaseMutationOptions<ToggleInterIntegrationStatusMutation, ToggleInterIntegrationStatusMutationVariables>;
+export const UpdateInterIntegrationDocument = gql`
+    mutation UpdateInterIntegration($updateInput: UpdateInterIntegrationInput!) {
+  updateInterIntegration(updateInput: $updateInput) {
+    id
+    integrationName
+    clientId
+    clientSecret
+    privateKey
+    certificate
+    status
+    expirationDate
+  }
+}
+    `;
+export type UpdateInterIntegrationMutationFn = Apollo.MutationFunction<UpdateInterIntegrationMutation, UpdateInterIntegrationMutationVariables>;
+
+/**
+ * __useUpdateInterIntegrationMutation__
+ *
+ * To run a mutation, you first call `useUpdateInterIntegrationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateInterIntegrationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateInterIntegrationMutation, { data, loading, error }] = useUpdateInterIntegrationMutation({
+ *   variables: {
+ *      updateInput: // value for 'updateInput'
+ *   },
+ * });
+ */
+export function useUpdateInterIntegrationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateInterIntegrationMutation, UpdateInterIntegrationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateInterIntegrationMutation, UpdateInterIntegrationMutationVariables>(UpdateInterIntegrationDocument, options);
+      }
+export type UpdateInterIntegrationMutationHookResult = ReturnType<typeof useUpdateInterIntegrationMutation>;
+export type UpdateInterIntegrationMutationResult = Apollo.MutationResult<UpdateInterIntegrationMutation>;
+export type UpdateInterIntegrationMutationOptions = Apollo.BaseMutationOptions<UpdateInterIntegrationMutation, UpdateInterIntegrationMutationVariables>;
 export const InterIntegrationsByWorkspaceDocument = gql`
     query InterIntegrationsByWorkspace($workspaceId: String!) {
   interIntegrationsByWorkspace(workspaceId: $workspaceId) {

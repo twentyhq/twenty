@@ -2,6 +2,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { SettingsIntegrationInterDatabaseConnectionForm } from '@/settings/integrations/inter/components/SettingsIntegrationInterDatabaseConnectionForm';
+import { useCreateInterIntegration } from '@/settings/integrations/inter/hooks/useCreateInterIntegration';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -20,6 +21,8 @@ export const settingsIntegrationInterConnectionFormSchema = z.object({
   integrationName: z.string().min(1),
   clientId: z.string(),
   clientSecret: z.string(),
+  status: z.string().optional(),
+  expirationDate: z.string().datetime({ offset: true }).optional(),
   privateKey: z.instanceof(File).optional(),
   certificate: z.instanceof(File).optional(),
 });
@@ -36,7 +39,7 @@ export const SettingsIntegrationInterNewDatabaseConnection = () => {
     SettingsPath.Integrations,
   );
 
-  //const { createInterIntegration } = useCreateWhatsappIntegration();
+  const { createInterIntegration } = useCreateInterIntegration();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
@@ -66,6 +69,16 @@ export const SettingsIntegrationInterNewDatabaseConnection = () => {
     const formValues = formConfig.getValues();
 
     try {
+      await createInterIntegration({
+        clientId: formValues.clientId,
+        integrationName: formValues.integrationName,
+        clientSecret: formValues.clientSecret,
+        status: 'active',
+        expirationDate: new Date(),
+        certificate: null,
+        privateKey: null,
+      });
+
       navigate(SettingsPath.IntegrationInterDatabase);
     } catch (error) {
       enqueueSnackBar((error as Error).message, {

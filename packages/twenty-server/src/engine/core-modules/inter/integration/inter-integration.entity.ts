@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -9,42 +9,43 @@ import {
   Relation,
 } from 'typeorm';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'interIntegration', schema: 'core' })
 @ObjectType('InterIntegration')
 export class InterIntegration {
-  @IDField(() => ID)
+  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
+  @Field(() => String)
   @Column({ nullable: false })
   integrationName: string;
 
-  @Field()
+  @Field(() => String)
   @Column({ nullable: false })
   clientId: string;
 
-  @Field()
+  @Field(() => String)
   @Column({ nullable: false })
   clientSecret: string;
 
-  @Field()
-  @Column({ type: 'text', nullable: false })
-  privateKey: string;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'text', nullable: true })
+  privateKey?: string | null;
 
-  @Field()
-  @Column({ type: 'text', nullable: false })
-  certificate: string;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'text', nullable: true })
+  certificate?: string | null;
 
-  @Field({ defaultValue: 'active' })
+  @Field(() => String, { defaultValue: 'active' })
   @Column({ default: 'active' })
   status: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  expirationDate?: Date;
+  @Field(() => Date)
+  @Column({ nullable: false })
+  expirationDate: Date;
 
   @Field(() => Workspace)
   @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })

@@ -3,8 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateInterIntegrationInput } from 'src/engine/core-modules/inter/integration/dtos/create-inter-integration.input';
 import { UpdateInterIntegrationInput } from 'src/engine/core-modules/inter/integration/dtos/update-inter-integration.input';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
-
-import { InterIntegrationService } from './inter-integration.service';
+import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
 
 @Resolver(() => InterIntegration)
 export class InterIntegrationResolver {
@@ -13,9 +12,11 @@ export class InterIntegrationResolver {
   ) {}
 
   @Mutation(() => InterIntegration)
-  createInterIntegration(
+  async createInterIntegration(
     @Args('createInput') createInput: CreateInterIntegrationInput,
   ): Promise<InterIntegration> {
+    console.log('CHEGOU NO RESOLVER VANESA');
+
     return this.interIntegrationService.create(createInput);
   }
 
@@ -27,24 +28,27 @@ export class InterIntegrationResolver {
   }
 
   @Query(() => InterIntegration, { nullable: true })
-  interIntegrationById(
+  async interIntegrationById(
     @Args('integrationId') integrationId: string,
   ): Promise<InterIntegration | null> {
     return this.interIntegrationService.findById(integrationId);
   }
 
   @Mutation(() => InterIntegration)
-  updateInterIntegration(
+  async updateInterIntegration(
     @Args('updateInput') updateInput: UpdateInterIntegrationInput,
   ): Promise<InterIntegration> {
     return this.interIntegrationService.update(updateInput);
   }
 
-  @Mutation(() => Boolean)
-  toggleInterIntegrationStatus(
+  @Mutation(() => String) // Alterado para retornar apenas o status
+  async toggleInterIntegrationStatus(
     @Args('integrationId') integrationId: string,
-  ): Promise<InterIntegration> {
-    return this.interIntegrationService.toggleStatus(integrationId);
+  ): Promise<string> {
+    const integration =
+      await this.interIntegrationService.toggleStatus(integrationId);
+
+    return integration.status;
   }
 
   /*@Mutation(() => Boolean)

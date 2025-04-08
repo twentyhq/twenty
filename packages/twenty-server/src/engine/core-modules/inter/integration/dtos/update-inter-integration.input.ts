@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsOptional, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class UpdateInterIntegrationInput {
@@ -37,4 +37,9 @@ export class UpdateInterIntegrationInput {
   @IsString()
   @IsOptional()
   status?: string;
+
+  @Field({ nullable: true })
+  @IsDate()
+  @IsOptional()
+  expirationDate?: Date;
 }
