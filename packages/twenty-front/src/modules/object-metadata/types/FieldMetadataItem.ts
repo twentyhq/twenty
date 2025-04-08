@@ -1,4 +1,4 @@
-import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
 
 import { ThemeColor } from 'twenty-ui/theme';
 import {
@@ -37,8 +37,6 @@ export type FieldMetadataItem = Omit<
       'id' | 'nameSingular' | 'namePlural'
     >;
   } | null;
-  settings?: {
-    displayFormat?: FieldDateDisplayFormat;
-  };
+  settings?: FieldDateMetadataSettings,
   isLabelSyncedWithName?: boolean | null;
 };

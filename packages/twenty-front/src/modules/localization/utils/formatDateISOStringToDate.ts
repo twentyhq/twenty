@@ -1,8 +1,10 @@
+import { DateFormat } from '@/localization/constants/DateFormat';
 import { formatInTimeZone } from 'date-fns-tz';
 
 export const formatDateISOStringToDate = (
   date: string,
   timeZone: string,
-): string => {
-  return formatInTimeZone(new Date(date), timeZone, 'MMMM d');
+  dateFormat: DateFormat,
+) => {
+  return formatInTimeZone(new Date(date), timeZone, dateFormat);
 };

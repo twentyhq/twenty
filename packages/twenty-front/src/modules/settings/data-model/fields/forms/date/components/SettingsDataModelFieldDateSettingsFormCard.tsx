@@ -31,7 +31,7 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldDateSettingsFormCardProps) => {
-  const { initialDisplayFormat } = useDateSettingsFormInitialValues({
+  const { initialDisplayFormat, initialCustomISOString } = useDateSettingsFormInitialValues({
     fieldMetadataItem,
   });
 
@@ -49,6 +49,10 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
                 'settings.displayFormat',
                 initialDisplayFormat,
               ),
+              customISODateFormatString: watchFormValue(
+                'settings.customISODateFormatString',
+                initialCustomISOString,
+              )
             },
           }}
           objectMetadataItem={objectMetadataItem}

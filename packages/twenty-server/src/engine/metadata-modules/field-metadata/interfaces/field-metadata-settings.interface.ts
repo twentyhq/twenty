@@ -14,12 +14,9 @@ export type FieldMetadataDefaultSettings = {
 };
 
 export enum DateDisplayFormat {
-  FULL_DATE = 'full_date',
-  RELATIVE_DATE = 'relative_date',
-  DATE = 'date',
-  TIME = 'time',
-  YEAR = 'year',
-  CUSTOM = 'custom',
+  RELATIVE = 'RELATIVE',
+  USER_SETTINGS = 'USER_SETTINGS',
+  CUSTOM = 'CUSTOM'
 }
 
 export type FieldNumberVariant = 'number' | 'percentage';

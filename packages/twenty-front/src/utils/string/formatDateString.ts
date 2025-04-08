@@ -1,38 +1,32 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
+import { formatDateISOStringToCustom } from '@/localization/utils/formatDateISOStringToCustom';
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
-import { formatDateISOStringToFullDate } from '@/localization/utils/formatDateISOStringToFullDate';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
-import { formatDateISOStringToTime } from '@/localization/utils/formatDateISOStringToTime';
-import { formatDateISOStringToYear } from '@/localization/utils/formatDateISOStringToYear';
-import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
 
 export const formatDateString = ({
   value,
   timeZone,
   dateFormat,
-  displayFormat,
+  dateFieldSettings,
 }: {
   timeZone: string;
   dateFormat: DateFormat;
   value?: string | null;
-  displayFormat?: FieldDateDisplayFormat;
+  dateFieldSettings?: FieldDateMetadataSettings;
 }): string => {
   if (!value) {
     return '';
   }
 
-  switch (displayFormat) {
-    case 'relative_date':
+  switch (dateFieldSettings?.displayFormat) {
+    case 'RELATIVE':
       return formatDateISOStringToRelativeDate(value);
-    case 'year':
-      return formatDateISOStringToYear(value);
-    case 'time':
-      return formatDateISOStringToTime(value, timeZone);
-    case 'full_date':
-      return formatDateISOStringToFullDate(value, timeZone, dateFormat);
-    case 'date':
-      return formatDateISOStringToDate(value, timeZone);
+    case 'USER_SETTINGS':
+      return formatDateISOStringToDate(value, timeZone, dateFormat);
+    case 'CUSTOM':
+      return formatDateISOStringToCustom(value, timeZone, dateFieldSettings.customISODateFormatString)
     default:
-      return formatDateISOStringToFullDate(value, timeZone, dateFormat);
+      return formatDateISOStringToDate(value, timeZone, dateFormat);
   }
 };

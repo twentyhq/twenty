@@ -30,7 +30,7 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendar',
     defaultValue: 'now',
     settings: {
-      displayFormat: DateDisplayFormat.RELATIVE_DATE,
+      displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
   createdAt: string;
@@ -43,7 +43,7 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendarClock',
     defaultValue: 'now',
     settings: {
-      displayFormat: DateDisplayFormat.RELATIVE_DATE,
+      displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
   updatedAt: string;
@@ -55,7 +55,7 @@ export abstract class BaseWorkspaceEntity {
     description: msg`Date when the record was deleted`,
     icon: 'IconCalendarMinus',
     settings: {
-      displayFormat: DateDisplayFormat.RELATIVE_DATE,
+      displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
   @WorkspaceIsNullable()

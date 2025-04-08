@@ -82,8 +82,8 @@ export class UpgradeDateAndDateTimeFieldsSettingsJsonCommand extends ActiveOrSus
       ...field,
       settings: {
         displayFormat: settings.displayAsRelativeDate
-          ? DateDisplayFormat.RELATIVE_DATE
-          : DateDisplayFormat.FULL_DATE,
+          ? DateDisplayFormat.RELATIVE
+          : DateDisplayFormat.USER_SETTINGS,
       },
     };
   }

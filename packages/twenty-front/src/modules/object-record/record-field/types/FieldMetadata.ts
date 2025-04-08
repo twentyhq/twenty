@@ -2,10 +2,10 @@ import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ThemeColor } from 'twenty-ui/theme';
 import * as z from 'zod';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
-import { ThemeColor } from 'twenty-ui/theme';
 
 export type FieldUuidMetadata = {
   objectMetadataNameSingular?: string;
@@ -28,30 +28,31 @@ export type FieldTextMetadata = {
   };
 };
 
-export type FieldDateDisplayFormat =
-  | 'full_date'
-  | 'relative_date'
-  | 'date'
-  | 'time'
-  | 'year'
-  | 'custom';
+export enum FieldDateDisplayFormat {
+  RELATIVE = 'RELATIVE',
+  USER_SETTINGS = 'USER_SETTINGS',
+  CUSTOM = 'CUSTOM'
+}
+
+export type FieldDateMetadataSettings = {
+  displayFormat?: FieldDateDisplayFormat.CUSTOM,
+  customISODateFormatString: string;
+} | {
+  displayFormat?: Exclude<FieldDateDisplayFormat, FieldDateDisplayFormat.CUSTOM>
+}
 
 export type FieldDateTimeMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
-  settings?: {
-    displayFormat?: FieldDateDisplayFormat;
-  };
+  settings?: FieldDateMetadataSettings
 };
 
 export type FieldDateMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
-  settings?: {
-    displayFormat?: FieldDateDisplayFormat;
-  };
+  settings?: FieldDateMetadataSettings
 };
 
 export type FieldNumberVariant = 'number' | 'percentage';

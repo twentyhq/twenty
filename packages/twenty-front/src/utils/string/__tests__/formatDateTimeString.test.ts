@@ -1,5 +1,6 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
 import { DateTime } from 'luxon';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
@@ -28,7 +29,7 @@ describe('formatDateTimeString', () => {
     expect(result).toBe('');
   });
 
-  it('should format date as relative when displayFormat is relative_date', () => {
+  it('should format date as relative when displayFormat is RELATIVE', () => {
     const mockDate = DateTime.now().minus({ months: 2 }).toISO();
     const mockRelativeDate = 'about 2 months ago';
 
@@ -41,13 +42,15 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
-      displayFormat: 'relative_date',
+      dateFieldSettings: {
+        displayFormat: FieldDateDisplayFormat.RELATIVE
+      }
     });
 
     expect(result).toBe(mockRelativeDate);
   });
 
-  it('should format date as datetime when displayFormat is full_date', () => {
+  it('should format date as datetime when displayFormat is USER_SETTINGS', () => {
     const mockDate = '2023-01-01T12:00:00Z';
     const mockFormattedDate = '1 Jan, 2023 12:00';
 
@@ -60,7 +63,9 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
-      displayFormat: 'full_date',
+      dateFieldSettings: {
+        displayFormat: FieldDateDisplayFormat.USER_SETTINGS
+      }
     });
 
     expect(result).toBe(mockFormattedDate);

@@ -63,7 +63,7 @@ export const computeAggregateValueAndLabel = ({
 
   let value;
 
-  const displayFormat = field?.settings?.displayFormat;
+  const dateFieldSettings = field?.settings
 
   if (
     COUNT_AGGREGATE_OPERATION_OPTIONS.includes(
@@ -101,10 +101,10 @@ export const computeAggregateValueAndLabel = ({
         value = aggregateValue as string;
         value = formatDateTimeString({
           value,
-          displayFormat,
           timeZone,
           dateFormat,
           timeFormat,
+          dateFieldSettings
         });
         break;
       }
@@ -113,9 +113,9 @@ export const computeAggregateValueAndLabel = ({
         value = aggregateValue as string;
         value = formatDateString({
           value,
-          displayFormat,
           timeZone,
           dateFormat,
+          dateFieldSettings,
         });
         break;
       }
