@@ -48,7 +48,7 @@ export const AttachmentDropdown = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
-      dropdownMenuWidth={160}
+      initialDropdownWidth={160}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <MenuItem

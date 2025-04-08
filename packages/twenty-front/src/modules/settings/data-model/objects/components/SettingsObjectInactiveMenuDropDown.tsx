@@ -42,7 +42,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
           accent="tertiary"
         />
       }
-      dropdownMenuWidth={160}
+      initialDropdownWidth={160}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <MenuItem

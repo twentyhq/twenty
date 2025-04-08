@@ -33,7 +33,7 @@ export const ObjectOptionsDropdown = ({
     <Dropdown
       dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
       dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-      dropdownMenuWidth={DROPDOWN_WIDTH}
+      initialDropdownWidth={DROPDOWN_WIDTH}
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
       clickableComponent={
         <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>

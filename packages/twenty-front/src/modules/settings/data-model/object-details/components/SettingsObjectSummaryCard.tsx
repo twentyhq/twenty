@@ -77,7 +77,7 @@ export const SettingsObjectSummaryCard = ({
                 accent="tertiary"
               />
             }
-            dropdownMenuWidth={160}
+            initialDropdownWidth={160}
             dropdownComponents={
               <DropdownMenuItemsContainer>
                 <MenuItem

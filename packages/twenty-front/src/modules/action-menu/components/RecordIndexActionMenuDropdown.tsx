@@ -72,7 +72,7 @@ export const RecordIndexActionMenuDropdown = () => {
         scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
       }}
       data-select-disable
-      dropdownMenuWidth={width}
+      initialDropdownWidth={width}
       dropdownPlacement="bottom-start"
       dropdownStrategy="absolute"
       dropdownOffset={{

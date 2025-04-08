@@ -78,7 +78,7 @@ export const RecordIndexAddRecordInGroupDropdown = ({
 
   return (
     <Dropdown
-      dropdownMenuWidth="200px"
+      initialDropdownWidth="200px"
       dropdownPlacement="bottom-start"
       clickableComponent={clickableComponent}
       dropdownId={dropdownId}
