@@ -56,6 +56,7 @@ import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useL
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useSearchParams } from 'react-router-dom';
@@ -80,6 +81,8 @@ export const useAuth = () => {
   const isEmailVerificationRequired = useRecoilValue(
     isEmailVerificationRequiredState,
   );
+
+  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -346,9 +349,15 @@ export const useAuth = () => {
         getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
       );
 
+      await refreshObjectMetadataItems();
       await loadCurrentUser();
     },
-    [getAuthTokensFromLoginToken, setTokenPair, loadCurrentUser],
+    [
+      getAuthTokensFromLoginToken,
+      setTokenPair,
+      refreshObjectMetadataItems,
+      loadCurrentUser,
+    ],
   );
 
   const handleCredentialsSignIn = useCallback(

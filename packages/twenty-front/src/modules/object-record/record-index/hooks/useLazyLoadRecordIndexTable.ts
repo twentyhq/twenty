@@ -1,6 +1,3 @@
-import { useRecoilValue } from 'recoil';
-
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
@@ -19,8 +16,6 @@ export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
 
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
-
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
