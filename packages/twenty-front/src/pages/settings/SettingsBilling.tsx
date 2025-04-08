@@ -31,36 +31,10 @@ import {
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
-type SwitchInfo = {
-  newInterval: SubscriptionInterval;
-  to: string;
-  from: string;
-  impact: string;
-};
-
 export const SettingsBilling = () => {
   const { t } = useLingui();
 
   const { redirect } = useRedirect();
-
-  const MONTHLY_SWITCH_INFO: SwitchInfo = {
-    newInterval: SubscriptionInterval.Year,
-    to: t`to yearly`,
-    from: t`from monthly to yearly`,
-    impact: t`You will be charged immediately for the full year.`,
-  };
-
-  const YEARLY_SWITCH_INFO: SwitchInfo = {
-    newInterval: SubscriptionInterval.Month,
-    to: t`to monthly`,
-    from: t`from yearly to monthly`,
-    impact: t`Your credit balance will be used to pay the monthly bills.`,
-  };
-
-  const SWITCH_INFOS = {
-    year: YEARLY_SWITCH_INFO,
-    month: MONTHLY_SWITCH_INFO,
-  };
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -74,11 +48,7 @@ export const SettingsBilling = () => {
     subscriptionStatus !== SubscriptionStatus.Canceled;
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const switchingInfo =
-    currentWorkspace?.currentBillingSubscription?.interval ===
-    SubscriptionInterval.Year
-      ? SWITCH_INFOS.year
-      : SWITCH_INFOS.month;
+
   const [isSwitchingIntervalModalOpen, setIsSwitchingIntervalModalOpen] =
     useState(false);
   const [updateBillingSubscription] = useUpdateBillingSubscriptionMutation();
@@ -102,10 +72,6 @@ export const SettingsBilling = () => {
     setIsSwitchingIntervalModalOpen(true);
   };
 
-  const from = switchingInfo.from;
-  const to = switchingInfo.to;
-  const impact = switchingInfo.impact;
-
   const switchInterval = async () => {
     try {
       await updateBillingSubscription();
@@ -114,16 +80,16 @@ export const SettingsBilling = () => {
           ...currentWorkspace,
           currentBillingSubscription: {
             ...currentWorkspace?.currentBillingSubscription,
-            interval: switchingInfo.newInterval,
+            interval: SubscriptionInterval.Year,
           },
         };
         setCurrentWorkspace(newCurrentWorkspace);
       }
-      enqueueSnackBar(t`Subscription has been switched ${to}`, {
+      enqueueSnackBar(t`Subscription has been switched to yearly.`, {
         variant: SnackBarVariant.Success,
       });
     } catch (error: any) {
-      enqueueSnackBar(t`Error while switching subscription ${to}.`, {
+      enqueueSnackBar(t`Error while switching subscription to yearly.`, {
         variant: SnackBarVariant.Error,
       });
     }
@@ -161,19 +127,22 @@ export const SettingsBilling = () => {
             disabled={billingPortalButtonDisabled}
           />
         </Section>
-        <Section>
-          <H2Title
-            title={t`Edit billing interval`}
-            description={t`Switch ${from}`}
-          />
-          <Button
-            Icon={IconCalendarEvent}
-            title={t`Switch ${to}`}
-            variant="secondary"
-            onClick={openSwitchingIntervalModal}
-            disabled={!hasNotCanceledCurrentSubscription}
-          />
-        </Section>
+        {currentWorkspace?.currentBillingSubscription?.interval ===
+          SubscriptionInterval.Month && (
+          <Section>
+            <H2Title
+              title={t`Edit billing interval`}
+              description={t`Switch from monthly to yearly`}
+            />
+            <Button
+              Icon={IconCalendarEvent}
+              title={t`Switch to yearly`}
+              variant="secondary"
+              onClick={openSwitchingIntervalModal}
+              disabled={!hasNotCanceledCurrentSubscription}
+            />
+          </Section>
+        )}
         <Section>
           <H2Title
             title={t`Cancel your subscription`}
@@ -192,13 +161,10 @@ export const SettingsBilling = () => {
       <ConfirmationModal
         isOpen={isSwitchingIntervalModalOpen}
         setIsOpen={setIsSwitchingIntervalModalOpen}
-        title={t`Switch billing ${to}`}
-        subtitle={
-          t`Are you sure that you want to change your billing interval?` +
-          ` ${impact}`
-        }
+        title={t`Switch billing to yearly`}
+        subtitle={t`Are you sure that you want to change your billing interval? You will be charged immediately for the full year.`}
         onConfirmClick={switchInterval}
-        confirmButtonText={t`Change ${to}`}
+        confirmButtonText={t`Change to yearly`}
         confirmButtonAccent={'blue'}
       />
     </SubMenuTopBarContainer>
