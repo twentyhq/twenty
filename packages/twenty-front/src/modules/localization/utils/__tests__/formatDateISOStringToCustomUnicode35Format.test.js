@@ -1,6 +1,4 @@
 import { formatDateISOStringToCustomUnicode35Format } from '@/localization/utils/formatDateISOStringToCustomUnicode35Format';
-// Mock the imported modules
-// jest.mock('date-fns-tz');
 
 describe('formatDateISOStringToCustomUnicode35Format', () => {
   const mockDate = '2023-08-15T10:30:00Z';
