@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 import { AnalyticsCommonPropertiesType } from 'src/engine/core-modules/analytics/types/common.type';
 import { eventSchema } from 'src/engine/core-modules/analytics/utils/event/common/base-schemas';
 import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
@@ -9,7 +11,7 @@ import {
 } from 'src/engine/core-modules/analytics/types/event.type';
 
 const commonProperties = (): Record<AnalyticsCommonPropertiesType, string> => ({
-  timestamp: new Date().toISOString(),
+  timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
   version: '1',
 });
 

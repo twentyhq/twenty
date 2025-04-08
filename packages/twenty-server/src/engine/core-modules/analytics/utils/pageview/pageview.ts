@@ -7,7 +7,7 @@ export const pageviewSchema = z.object({
   referrer: z.string(),
   sessionId: z.string(),
   timeZone: z.string(),
-  timestamp: z.string().datetime(),
+  timestamp: z.string(),
   userAgent: z.string(),
   version: z.string(),
   userId: z.string().nullish(),

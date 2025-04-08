@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const eventSchema = z
   .object({
     action: z.string(),
-    timestamp: z.string().datetime({ local: true }),
+    timestamp: z.string(),
     version: z.string(),
     userId: z.string().nullish(),
     workspaceId: z.string().nullish(),
