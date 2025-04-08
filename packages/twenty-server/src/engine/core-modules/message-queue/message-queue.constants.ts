@@ -19,4 +19,5 @@ export enum MessageQueue {
   workflowQueue = 'workflow-queue',
   serverlessFunctionQueue = 'serverless-function-queue',
   deleteCascadeQueue = 'delete-cascade-queue',
+  subscriptionsQueue = 'subscriptions-queue',
 }

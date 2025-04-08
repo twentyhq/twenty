@@ -389,6 +389,15 @@ export type CustomDomainValidRecords = {
   records: Array<CustomDomainRecord>;
 };
 
+/** Database Event Action */
+export enum DatabaseEventAction {
+  CREATED = 'CREATED',
+  DELETED = 'DELETED',
+  DESTROYED = 'DESTROYED',
+  RESTORED = 'RESTORED',
+  UPDATED = 'UPDATED'
+}
+
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']>;
   gt?: InputMaybe<Scalars['Date']>;
@@ -398,6 +407,16 @@ export type DateFilter = {
   lt?: InputMaybe<Scalars['Date']>;
   lte?: InputMaybe<Scalars['Date']>;
   neq?: InputMaybe<Scalars['Date']>;
+};
+
+export type DbEventSubscriptionDto = {
+  __typename?: 'DbEventSubscriptionDTO';
+  action: DatabaseEventAction;
+  emittedAt: Scalars['String'];
+  eventId: Scalars['String'];
+  objectNameSingular: Scalars['String'];
+  record: Scalars['JSON'];
+  updatedFields?: Maybe<Array<Scalars['String']>>;
 };
 
 export type DeleteApprovedAccessDomainInput = {
