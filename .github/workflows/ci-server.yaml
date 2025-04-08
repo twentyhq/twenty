@@ -204,7 +204,7 @@ jobs:
           echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
           echo "ANALYTICS_FLUSH_INTERVAL_MS=10" >> .env.test
           echo "ANALYTICS_ENABLED=true" >> .env.test
-          echo "CLICKHOUSE_URL=\"http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test"" >> .env.test
+          echo "CLICKHOUSE_URL=http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test" >> .env.test
       - name: Restore server setup
         uses: ./.github/workflows/actions/restore-cache
         with:
@@ -220,6 +220,8 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
+      - name: Run ClickHouse seeds
+        run: npx nx clickhouse:seed twenty-server
       - name: Server / Run Integration Tests
         uses: ./.github/workflows/actions/nx-affected
         with:
