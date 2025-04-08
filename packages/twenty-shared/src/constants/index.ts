@@ -11,4 +11,5 @@ export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountA
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
+export { TWENTY_DOCKER_HUB_LINK } from './TwentyDockerHubLink';
 export { TWENTY_ICONS_BASE_URL } from './TwentyIconsBaseUrl';
