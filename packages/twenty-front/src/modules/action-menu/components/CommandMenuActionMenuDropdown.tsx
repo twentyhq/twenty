@@ -1,8 +1,8 @@
+import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
-import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -13,7 +13,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useTheme } from '@emotion/react';
 import { useContext } from 'react';
 import { Button } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 export const CommandMenuActionMenuDropdown = () => {
@@ -63,19 +62,8 @@ export const CommandMenuActionMenuDropdown = () => {
             .filter(
               (action) => action.scope === ActionMenuEntryScope.RecordSelection,
             )
-            .map((action, index) => (
-              <MenuItem
-                key={index}
-                LeftIcon={action.Icon}
-                onClick={() => {
-                  toggleDropdown(
-                    getRightDrawerActionMenuDropdownIdFromActionMenuId(
-                      actionMenuId,
-                    ),
-                  );
-                }}
-                text={getActionLabel(action.label)}
-              />
+            .map((action) => (
+              <ActionDisplayer action={action} key={action.key} />
             ))}
         </DropdownMenuItemsContainer>
       }
