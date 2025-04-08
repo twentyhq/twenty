@@ -474,7 +474,8 @@ export class EnvironmentVariables {
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.AnalyticsConfig,
-    description: 'Flush interval in milliseconds for Clickhouse analytics buffer',
+    description:
+      'Flush interval in milliseconds for Clickhouse analytics buffer',
   })
   @CastToPositiveNumber()
   @IsNumber()

@@ -76,7 +76,7 @@ describe('Pageview Registration (integration)', () => {
         FROM pageview
         WHERE userId = '${testPageview.userId}'
         AND workspaceId = '${testPageview.workspaceId}'
-        AND url = '${testPageview.url}'
+        AND href = '${testPageview.href}'
       `,
       format: 'JSONEachRow',
     });
@@ -96,6 +96,8 @@ describe('Pageview Registration (integration)', () => {
       {
         userId: '12345',
         workspaceId: '67890',
+        href: 'https://example.com/test-page',
+        locale: 'en-US',
         pathname: '/test-page',
         referrer: 'https://example.com',
         sessionId: 'session123',
@@ -108,7 +110,9 @@ describe('Pageview Registration (integration)', () => {
       {
         userId: '12345',
         workspaceId: '67890',
-        pathname: '/test-page',
+        pathname: '/test-page-1',
+        href: 'https://example.com/test-page-1',
+        locale: 'en-US',
         referrer: 'https://example.com',
         sessionId: 'session123',
         timeZone: 'America/New_York',
@@ -120,7 +124,9 @@ describe('Pageview Registration (integration)', () => {
       {
         userId: '12345',
         workspaceId: '67890',
-        pathname: '/test-page',
+        pathname: '/test-page-2',
+        href: 'https://example.com/test-page-2',
+        locale: 'en-US',
         referrer: 'https://example.com',
         sessionId: 'session123',
         timeZone: 'America/New_York',
@@ -138,10 +144,7 @@ describe('Pageview Registration (integration)', () => {
           userId: pageview.userId,
           workspaceId: pageview.workspaceId,
         })
-        .sendPageview({
-          pathname: pageview.pathname,
-          referrer: pageview.referrer,
-        });
+        .sendPageview(pageview);
     }
 
     // Wait for the pageviews to be flushed to ClickHouse (the service has a buffer)
@@ -166,7 +169,7 @@ describe('Pageview Registration (integration)', () => {
     // Verify each pageview was registered
     for (let i = 0; i < testPageviews.length; i++) {
       const pageview = testPageviews[i];
-      const row = rows.find((r) => r.url === pageview.url);
+      const row = rows.find((r) => r.href === pageview.href);
 
       expect(row).toBeDefined();
       expect(row.userId).toBe(pageview.userId);

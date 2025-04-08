@@ -24,7 +24,6 @@ export class CreateAuditLogFromInternalEvent {
   async handle(
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<void> {
-    console.log('>>>>>>>>>>>>>>', workspaceEventBatch.events);
     for (const eventData of workspaceEventBatch.events) {
       let workspaceMemberId: string | null = null;
 
