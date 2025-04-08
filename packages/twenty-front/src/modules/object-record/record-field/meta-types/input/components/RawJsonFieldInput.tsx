@@ -5,6 +5,7 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { workflowRunOutputSchema } from '@/workflow/validation-schemas/workflowSchema';
@@ -66,13 +67,10 @@ export const RawJsonFieldInput = ({
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
-  const {
-    draftValue,
-    hotkeyScope,
-    setDraftValue,
-    persistJsonField,
-    fieldDefinition,
-  } = useJsonField();
+  const { draftValue, setDraftValue, persistJsonField, fieldDefinition } =
+    useJsonField();
+
+  const hotkeyScope = DEFAULT_CELL_SCOPE.scope;
 
   const containerRef = useRef<HTMLDivElement>(null);
 

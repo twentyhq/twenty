@@ -54,7 +54,7 @@ export class WorkspaceMemberPreQueryHookService {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        _setting: SettingPermissionType.WORKSPACE_MEMBERS,
+        setting: SettingPermissionType.WORKSPACE_MEMBERS,
         isExecutedByApiKey: isDefined(apiKey),
       })
     ) {

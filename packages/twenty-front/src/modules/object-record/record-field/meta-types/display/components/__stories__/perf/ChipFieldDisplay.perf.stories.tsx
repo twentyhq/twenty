@@ -4,12 +4,13 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ChipFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ChipFieldDisplay';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
-import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/ChipFieldDisplay',
@@ -22,18 +23,25 @@ const meta: Meta = {
       )!;
 
       return (
-        <RecordIndexContextProvider
+        <RecordTableComponentInstanceContext.Provider
           value={{
-            indexIdentifierUrl: () => '',
-            onIndexRecordsLoaded: () => {},
-            objectNamePlural: CoreObjectNamePlural.Company,
-            objectNameSingular: CoreObjectNameSingular.Company,
-            objectMetadataItem: companyObjectMetadataItem,
-            recordIndexId: instanceId,
+            instanceId,
+            onColumnsChange: () => {},
           }}
         >
-          <Story />
-        </RecordIndexContextProvider>
+          <RecordIndexContextProvider
+            value={{
+              indexIdentifierUrl: () => '',
+              onIndexRecordsLoaded: () => {},
+              objectNamePlural: CoreObjectNamePlural.Company,
+              objectNameSingular: CoreObjectNameSingular.Company,
+              objectMetadataItem: companyObjectMetadataItem,
+              recordIndexId: instanceId,
+            }}
+          >
+            <Story />
+          </RecordIndexContextProvider>
+        </RecordTableComponentInstanceContext.Provider>
       );
     },
     MemoryRouterDecorator,

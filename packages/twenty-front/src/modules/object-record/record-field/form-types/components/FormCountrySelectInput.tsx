@@ -24,8 +24,7 @@ export const FormCountrySelectInput = ({
       ({ countryName, Flag }) => ({
         label: countryName,
         value: countryName,
-        color: 'transparent',
-        icon: (props: IconComponentProps) =>
+        Icon: (props: IconComponentProps) =>
           Flag({ width: props.size, height: props.size }),
       }),
     );
@@ -33,7 +32,7 @@ export const FormCountrySelectInput = ({
       {
         label: 'No country',
         value: '',
-        icon: IconCircleOff,
+        Icon: IconCircleOff,
       },
       ...countryList,
     ];
@@ -59,8 +58,6 @@ export const FormCountrySelectInput = ({
       defaultValue={selectedCountryName}
       readonly={readonly}
       VariablePicker={VariablePicker}
-      placeholder="Select a country"
-      preventDisplayPadding
     />
   );
 };
