@@ -68,7 +68,7 @@ export const SettingsIntegrationPreview = ({
           <StyledIntegrationLogo alt="" src={integrationLogoUrl} />
         </StyledIntegrationLogoContainer>
         <StyledSyncImage />
-        <StyledTwentyLogo alt="" src="/images/integrations/twenty-logo.svg" />
+        <StyledTwentyLogo alt="" src="/icons/windows11/Woulz-logo.png" />
       </StyledLogosContainer>
       <StyledLabel>Import your tables as remote objects</StyledLabel>
     </StyledCardContent>
