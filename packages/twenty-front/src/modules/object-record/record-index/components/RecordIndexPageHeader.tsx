@@ -9,8 +9,7 @@ import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { isUndefined } from '@sniptt/guards';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 const StyledTitleWithSelectedRecords = styled.div`
@@ -67,14 +66,14 @@ export const RecordIndexPageHeader = () => {
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  if (isUndefined(contextStoreCurrentViewId)) {
-    return <></>;
-  }
-
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
-      <RecordIndexActionMenu indexId={recordIndexId} />
-      <PageHeaderToggleCommandMenuButton />
+      {isDefined(contextStoreCurrentViewId) && (
+        <>
+          <RecordIndexActionMenu indexId={recordIndexId} />
+          <PageHeaderToggleCommandMenuButton />
+        </>
+      )}
     </PageHeader>
   );
 };
