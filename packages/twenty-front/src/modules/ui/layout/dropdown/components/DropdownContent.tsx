@@ -3,8 +3,8 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
-import { dropdownMaxWidthComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxWidthComponentStateV2';
+import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
+import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -41,7 +41,7 @@ export type DropdownContentProps = {
     scope: string;
   };
   onHotkeyTriggered?: () => void;
-  dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
+  initialDropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownComponents: React.ReactNode;
   parentDropdownId?: string;
   avoidPortal?: boolean;
@@ -57,7 +57,7 @@ export const DropdownContent = ({
   floatingStyles,
   hotkey,
   onHotkeyTriggered,
-  dropdownMenuWidth,
+  initialDropdownWidth,
   dropdownComponents,
   avoidPortal,
 }: DropdownContentProps) => {
@@ -67,12 +67,12 @@ export const DropdownContent = ({
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
   const dropdownMaxHeight = useRecoilComponentValueV2(
-    dropdownMaxHeightComponentStateV2,
+    dropdownMaxHeightComponentState,
     dropdownId,
   );
 
   const dropdownMaxWidth = useRecoilComponentValueV2(
-    dropdownMaxWidthComponentStateV2,
+    dropdownMaxWidthComponentState,
     dropdownId,
   );
 
@@ -121,7 +121,7 @@ export const DropdownContent = ({
     maxWidth: dropdownMaxWidth,
   };
 
-  const givenWidth = dropdownMenuWidth ?? dropdownWidth;
+  const givenWidth = dropdownWidth ?? initialDropdownWidth;
 
   return (
     <>

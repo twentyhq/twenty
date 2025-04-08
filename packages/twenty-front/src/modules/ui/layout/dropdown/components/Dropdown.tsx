@@ -3,8 +3,8 @@ import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/Dropdown
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
-import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
-import { dropdownMaxWidthComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxWidthComponentStateV2';
+import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
+import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
@@ -47,7 +47,7 @@ export type DropdownProps = {
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
   dropdownPlacement?: Placement;
-  dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
+  initialDropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: DropdownOffset;
   dropdownStrategy?: 'fixed' | 'absolute';
   onClickOutside?: () => void;
@@ -60,7 +60,7 @@ export const Dropdown = ({
   className,
   clickableComponent,
   dropdownComponents,
-  dropdownMenuWidth,
+  initialDropdownWidth,
   hotkey,
   dropdownId,
   dropdownHotkeyScope,
@@ -87,12 +87,12 @@ export const Dropdown = ({
     : [];
 
   const setDropdownMaxHeight = useSetRecoilComponentStateV2(
-    dropdownMaxHeightComponentStateV2,
+    dropdownMaxHeightComponentState,
     dropdownId,
   );
 
   const setDropdownMaxWidth = useSetRecoilComponentStateV2(
-    dropdownMaxWidthComponentStateV2,
+    dropdownMaxWidthComponentState,
     dropdownId,
   );
 
@@ -170,7 +170,7 @@ export const Dropdown = ({
             <DropdownContent
               className={className}
               floatingStyles={floatingStyles}
-              dropdownMenuWidth={dropdownMenuWidth}
+              initialDropdownWidth={initialDropdownWidth}
               dropdownComponents={dropdownComponents}
               dropdownId={dropdownId}
               dropdownPlacement={placement}
