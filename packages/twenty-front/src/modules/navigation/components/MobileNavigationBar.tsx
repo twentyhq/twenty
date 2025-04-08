@@ -1,11 +1,10 @@
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilState } from 'recoil';
-import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 import {
   IconComponent,
   IconList,
@@ -13,6 +12,8 @@ import {
   IconSettings,
 } from 'twenty-ui/display';
 import { NavigationBar } from 'twenty-ui/navigation';
+import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
+import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
 type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 
@@ -25,8 +26,8 @@ export const MobileNavigationBar = () => {
     useRecoilState(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useRecoilState(currentMobileNavigationDrawerState);
-
   const { openSettingsMenu } = useOpenSettingsMenu();
+  const isLogged = useIsLogged(); // Check if the user is authenticated
 
   const activeItemName = isNavigationDrawerExpanded
     ? currentMobileNavigationDrawer
@@ -66,6 +67,11 @@ export const MobileNavigationBar = () => {
       },
     },
   ];
+
+  // Check if the user is logged in
+  if (!isLogged) {
+    return null; // Do not render the navigation bar if the user is not logged in
+  }
 
   return <NavigationBar activeItemName={activeItemName} items={items} />;
 };
