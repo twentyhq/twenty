@@ -92,7 +92,7 @@ export const WorkflowVariablesDropdown = ({
 
   return (
     <Dropdown
-      initialDropdownWidth={320}
+      dropdownWidth={320}
       dropdownId={dropdownId}
       dropdownHotkeyScope={{
         scope: dropdownId,

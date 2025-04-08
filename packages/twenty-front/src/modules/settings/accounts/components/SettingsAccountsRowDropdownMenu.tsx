@@ -55,7 +55,7 @@ export const SettingsAccountsRowDropdownMenu = ({
         clickableComponent={
           <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
         }
-        initialDropdownWidth={160}
+        dropdownWidth={160}
         dropdownComponents={
           <DropdownMenuItemsContainer>
             <MenuItem

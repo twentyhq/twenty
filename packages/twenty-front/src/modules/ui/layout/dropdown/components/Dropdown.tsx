@@ -47,7 +47,7 @@ export type DropdownProps = {
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
   dropdownPlacement?: Placement;
-  initialDropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
+  dropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: DropdownOffset;
   dropdownStrategy?: 'fixed' | 'absolute';
   onClickOutside?: () => void;
@@ -60,7 +60,7 @@ export const Dropdown = ({
   className,
   clickableComponent,
   dropdownComponents,
-  initialDropdownWidth,
+  dropdownWidth,
   hotkey,
   dropdownId,
   dropdownHotkeyScope,
@@ -170,7 +170,7 @@ export const Dropdown = ({
             <DropdownContent
               className={className}
               floatingStyles={floatingStyles}
-              initialDropdownWidth={initialDropdownWidth}
+              dropdownWidth={dropdownWidth}
               dropdownComponents={dropdownComponents}
               dropdownId={dropdownId}
               dropdownPlacement={placement}

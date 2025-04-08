@@ -30,6 +30,8 @@ export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
   'date-picker-month-and-year-dropdown-year-select';
 
 const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
+  width: 280px;
+
   & .react-datepicker {
     border-color: ${({ theme }) => theme.border.color.light};
     background: transparent;

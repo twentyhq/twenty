@@ -46,7 +46,7 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
           dropdownHotkeyScope={{
             scope: RecordBoardColumnHotkeyScope.ColumnHeader,
           }}
-          initialDropdownWidth={DROPDOWN_WIDTH}
+          dropdownWidth={DROPDOWN_WIDTH}
           dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
           clickableComponent={
             <RecordBoardColumnHeaderAggregateDropdownButton

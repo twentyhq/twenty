@@ -10,10 +10,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { isDefined } from 'twenty-shared/utils';
-import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 import { IconComponent } from 'twenty-ui/display';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { SelectOption } from 'twenty-ui/input';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -30,7 +30,7 @@ export type SelectProps<Value extends SelectValue> = {
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
-  dropdownWidth?: `${string}px` | 'auto' | number;
+  dropdownWidth?: number;
   dropdownWidthAuto?: boolean;
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
@@ -125,7 +125,7 @@ export const Select = <Value extends SelectValue>({
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownMenuWidth={dropDownMenuWidth}
+          dropdownWidth={dropDownMenuWidth}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
           clickableComponent={
@@ -148,7 +148,10 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer
+                  hasMaxHeight
+                  width={dropDownMenuWidth}
+                >
                   {filteredOptions.map((option) => (
                     <MenuItemSelect
                       key={`${option.value}-${option.label}`}

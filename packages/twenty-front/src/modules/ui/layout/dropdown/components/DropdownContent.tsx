@@ -41,7 +41,7 @@ export type DropdownContentProps = {
     scope: string;
   };
   onHotkeyTriggered?: () => void;
-  initialDropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
+  dropdownWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownComponents: React.ReactNode;
   parentDropdownId?: string;
   avoidPortal?: boolean;
@@ -57,11 +57,11 @@ export const DropdownContent = ({
   floatingStyles,
   hotkey,
   onHotkeyTriggered,
-  initialDropdownWidth,
+  dropdownWidth,
   dropdownComponents,
   avoidPortal,
 }: DropdownContentProps) => {
-  const { isDropdownOpen, closeDropdown, dropdownWidth, setDropdownPlacement } =
+  const { isDropdownOpen, closeDropdown, setDropdownPlacement } =
     useDropdown(dropdownId);
 
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
@@ -121,8 +121,6 @@ export const DropdownContent = ({
     maxWidth: dropdownMaxWidth,
   };
 
-  const givenWidth = dropdownWidth ?? initialDropdownWidth;
-
   return (
     <>
       {hotkey && onHotkeyTriggered && (
@@ -138,7 +136,7 @@ export const DropdownContent = ({
           <OverlayContainer>
             <DropdownMenu
               className={className}
-              width={givenWidth}
+              width={dropdownWidth}
               data-select-disable
             >
               {dropdownComponents}
@@ -157,7 +155,7 @@ export const DropdownContent = ({
               <DropdownMenu
                 id={dropdownId}
                 className={className}
-                width={givenWidth}
+                width={dropdownWidth}
                 data-select-disable
               >
                 {dropdownComponents}
