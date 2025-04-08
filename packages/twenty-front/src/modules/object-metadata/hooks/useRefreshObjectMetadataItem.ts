@@ -39,7 +39,8 @@ export const useRefreshObjectMetadataItems = (
           !isDeeplyEqual(
             snapshot.getLoadable(objectMetadataItemsState).getValue(),
             toSetObjectMetadataItems,
-          )
+          ) &&
+          toSetObjectMetadataItems.length > 0
         ) {
           set(objectMetadataItemsState, toSetObjectMetadataItems);
           set(isAppWaitingForFreshObjectMetadataState, false);

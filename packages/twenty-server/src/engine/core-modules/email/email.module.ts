@@ -1,6 +1,9 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
-import { EmailModuleAsyncOptions } from 'src/engine/core-modules/email/interfaces/email.interface';
+import {
+  EmailDriver,
+  EmailModuleAsyncOptions,
+} from 'src/engine/core-modules/email/interfaces/email.interface';
 
 import { LoggerDriver } from 'src/engine/core-modules/email/drivers/logger.driver';
 import { SmtpDriver } from 'src/engine/core-modules/email/drivers/smtp.driver';
@@ -16,7 +19,9 @@ export class EmailModule {
       useFactory: (...args: any[]) => {
         const config = options.useFactory(...args);
 
-        return config ? new SmtpDriver(config) : new LoggerDriver();
+        return config.type === EmailDriver.Smtp
+          ? new SmtpDriver(config)
+          : new LoggerDriver();
       },
       inject: options.inject || [],
     };
