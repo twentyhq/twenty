@@ -453,7 +453,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          _setting: SettingPermissionType.SECURITY,
+          setting: SettingPermissionType.SECURITY,
           workspaceId: workspaceId,
           isExecutedByApiKey: isDefined(apiKey),
         });
@@ -492,7 +492,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
-          _setting: SettingPermissionType.WORKSPACE,
+          setting: SettingPermissionType.WORKSPACE,
           isExecutedByApiKey: isDefined(apiKey),
         });
 
