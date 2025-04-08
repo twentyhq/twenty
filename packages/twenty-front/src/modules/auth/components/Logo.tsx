@@ -45,10 +45,13 @@ const StyledPrimaryLogo = styled.div<{ src: string }>`
 `;
 
 export const Logo = (props: LogoProps) => {
-  const defaultPrimaryLogoUrl = `${window.location.origin}/icons/android/android-launchericon-192-192.png`;
+  const defaultPrimaryLogoUrl = '/icons/windows11/Woulz-logo.png';
 
   const primaryLogoUrl = getImageAbsoluteURI({
-    imageUrl: props.primaryLogo ?? defaultPrimaryLogoUrl,
+    imageUrl:
+      props.primaryLogo && props.primaryLogo.trim() !== ''
+        ? props.primaryLogo
+        : defaultPrimaryLogoUrl,
     baseUrl: REACT_APP_SERVER_BASE_URL,
   });
 
@@ -61,7 +64,7 @@ export const Logo = (props: LogoProps) => {
 
   return (
     <StyledContainer>
-      <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
+      <StyledPrimaryLogo src={primaryLogoUrl} />
       {secondaryLogoUrl && (
         <StyledSecondaryLogoContainer>
           <StyledSecondaryLogo src={secondaryLogoUrl} />
