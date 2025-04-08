@@ -72,7 +72,7 @@ export const RecordIndexActionMenuDropdown = () => {
         <StyledDropdownMenuContainer className="action-menu-dropdown">
           <DropdownMenuItemsContainer>
             {recordIndexActions.map((action) => (
-              <ActionDisplayer action={action} />
+              <ActionDisplayer action={action} key={action.key} />
             ))}
             <MenuItem
               key="more-actions"
