@@ -593,13 +593,12 @@ export class EnvironmentVariables {
   })
   @CastToMeterDriverArray()
   @IsOptional()
-  METER_DRIVER: MeterDriver[] = [MeterDriver.Console];
+  METER_DRIVER: MeterDriver[] = [];
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Metering,
     description: 'Endpoint URL for the OpenTelemetry collector',
   })
-  @ValidateIf((env) => env.METER_DRIVER.includes(MeterDriver.OpenTelemetry))
   @IsOptional()
   OTLP_COLLECTOR_ENDPOINT_URL: string;
 
