@@ -2670,6 +2670,11 @@ msgstr ""
 msgid "Loading metrics data..."
 msgstr ""
 
+#. js-lingui-id: Z3FXyt
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+msgid "Loading..."
+msgstr ""
+
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -3009,6 +3014,11 @@ msgstr ""
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
+#. js-lingui-id: OcMef3
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "No latest version found"
 msgstr ""
 
 #. js-lingui-id: UwvrGq
@@ -4469,6 +4479,11 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Unique"
+msgstr ""
+
+#. js-lingui-id: Ef7StM
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Unknown"
 msgstr ""
 
 #. js-lingui-id: 29VNqC

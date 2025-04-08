@@ -12,8 +12,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRawJson } from '../../types/guards/isFieldRawJson';
 
 export const useJsonField = () => {
-  const { recordId, fieldDefinition, hotkeyScope, maxWidth } =
-    useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.RAW_JSON,
@@ -54,7 +53,6 @@ export const useJsonField = () => {
     fieldDefinition,
     fieldValue,
     setFieldValue,
-    hotkeyScope,
     persistJsonField,
   };
 };

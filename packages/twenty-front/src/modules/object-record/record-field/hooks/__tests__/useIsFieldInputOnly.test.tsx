@@ -20,7 +20,6 @@ const getWrapper =
       value={{
         fieldDefinition,
         recordId,
-        hotkeyScope: 'hotkeyScope',
         isLabelIdentifier: false,
         isReadOnly: false,
       }}

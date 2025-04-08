@@ -140,7 +140,6 @@ export const getFieldDecorator =
                 position: 0,
                 objectMetadataItem,
               }),
-              hotkeyScope: 'hotkey-scope',
               isReadOnly: false,
             }}
           >
