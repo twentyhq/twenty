@@ -11,10 +11,10 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
+import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type CalendarEventDetailsProps = {
   calendarEvent: CalendarEvent;
@@ -97,7 +97,6 @@ export const CalendarEventDetails = ({
       <FieldContext.Provider
         value={{
           recordId: calendarEvent.id,
-          hotkeyScope: 'calendar-event-details',
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
             field: fieldsByName[fieldName],

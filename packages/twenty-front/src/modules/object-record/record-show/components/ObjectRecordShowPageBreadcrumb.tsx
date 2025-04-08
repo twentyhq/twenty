@@ -2,7 +2,6 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import styled from '@emotion/styled';
@@ -89,7 +88,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
               defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
             },
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isCentered: false,
             isDisplayModeFixHeight: true,
             isReadOnly: isRecordReadOnly,

@@ -181,9 +181,8 @@ export const ChooseYourPlan = () => {
       ? BillingPlanKey.ENTERPRISE
       : BillingPlanKey.PRO;
 
-  const alternatePlanName = plans?.plans.find(
-    (plan) => plan.planKey === alternatePlan,
-  )?.baseProduct.name;
+  const planName = plans?.plans.find((plan) => plan.planKey === currentPlan)
+    ?.baseProduct.name;
 
   return (
     <>
@@ -195,9 +194,7 @@ export const ChooseYourPlan = () => {
               : t`Get your subscription`}
           </Title>
           {hasWithoutCreditCardTrialPeriod ? (
-            <SubTitle>
-              <Trans>Cancel anytime</Trans>
-            </SubTitle>
+            <SubTitle>{planName}</SubTitle>
           ) : (
             withCreditCardTrialPeriod && (
               <SubTitle>
@@ -256,7 +253,7 @@ export const ChooseYourPlan = () => {
             </ActionLink>
             <span />
             <ActionLink onClick={handleSwitchPlan(alternatePlan)}>
-              <Trans>Switch to {alternatePlanName}</Trans>
+              <Trans>Switch Plan</Trans>
             </ActionLink>
             <span />
             <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">

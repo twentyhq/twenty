@@ -11,7 +11,6 @@ export type RecordInlineCellContextProps = {
   editModeContent?: ReactElement;
   editModeContentOnly?: boolean;
   displayModeContent?: ReactElement;
-  customEditHotkeyScope?: string;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
   loading?: boolean;
@@ -30,7 +29,6 @@ const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
   editModeContent: undefined,
   editModeContentOnly: false,
   displayModeContent: undefined,
-  customEditHotkeyScope: undefined,
   isDisplayModeFixHeight: false,
   disableHoverEffect: false,
   loading: false,

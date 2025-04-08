@@ -15,12 +15,12 @@ import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDeco
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
+import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   fieldValue,
   otherPersonMock,
   relationFromManyFieldDisplayMock,
 } from './relationFromManyFieldDisplayMock';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const RelationFieldValueSetterEffect = () => {
   const setEntity = useSetRecoilState(
@@ -69,7 +69,6 @@ const meta: Meta = {
             fieldDefinition: {
               ...relationFromManyFieldDisplayMock.fieldDefinition,
             } as unknown as FieldDefinition<FieldMetadata>,
-            hotkeyScope: 'hotkey-scope',
             isReadOnly: false,
           }}
         >
