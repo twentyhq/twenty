@@ -1,8 +1,8 @@
 import { ReactNode, useCallback, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { ActionConfigContext } from '@/action-menu/actions/components/ActionConfigContext';
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
+import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { ButtonAccent } from 'twenty-ui/input';
