@@ -7,8 +7,8 @@ import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuCl
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { useCallback } from 'react';
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { IconDotsVertical } from 'twenty-ui/display';
+import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();

@@ -93,7 +93,7 @@ export const CommandMenuList = ({
               items?.length ? (
                 <CommandGroup heading={heading} key={heading}>
                   {items.map((item) => (
-                    <ActionDisplayer action={item} />
+                    <ActionDisplayer action={item} key={item.key} />
                   ))}
                 </CommandGroup>
               ) : null,
