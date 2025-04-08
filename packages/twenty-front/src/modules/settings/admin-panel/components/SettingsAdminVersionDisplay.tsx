@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { TWENTY_DOCKER_HUB_LINK } from 'twenty-shared/constants';
 
 type SettingsAdminVersionDisplayProps = {
   version: string | undefined | null;
@@ -44,7 +43,7 @@ export const SettingsAdminVersionDisplay = ({
 
   return (
     <StyledActionLink
-      href={`${TWENTY_DOCKER_HUB_LINK}/tags?name=${version}`}
+      href={`https://hub.docker.com/r/twentycrm/twenty/tags?name=${version}`}
       target="_blank"
       rel="noreferrer"
     >
