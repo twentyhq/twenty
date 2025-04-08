@@ -1,13 +1,16 @@
 import { ActionMenuContextType } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuContextProviderWorkflowsEnabled } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowsEnabled';
+import { ActionMenuContextProviderWorkflowsEnabledSingleRecordSelection } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowsEnabledSingleRecordSelection';
 import { ActionMenuContextProviderWorkflowsNotEnabled } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowsNotEnabled';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ActionMenuContextProvider = ({
@@ -47,25 +50,39 @@ export const ActionMenuContextProvider = ({
   const objectMetadataItem =
     localContextStoreObjectMetadataItem ?? mainContextStoreObjectMetadataItem;
 
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const isSingleRecordSelection =
+    contextStoreTargetedRecordsRule.mode === 'selection' &&
+    contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
+
   const isWorkflowObject =
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Workflow ||
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.WorkflowRun ||
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.WorkflowVersion;
 
-  if (!isWorkflowEnabled || !isWorkflowObject) {
+  if (
+    isWorkflowEnabled &&
+    isSingleRecordSelection &&
+    isDefined(objectMetadataItem) &&
+    (actionMenuType === 'command-menu' ||
+      actionMenuType === 'command-menu-show-page-action-menu-dropdown')
+  ) {
     return (
-      <ActionMenuContextProviderWorkflowsNotEnabled
+      <ActionMenuContextProviderWorkflowsEnabledSingleRecordSelection
         isInRightDrawer={isInRightDrawer}
         displayType={displayType}
         actionMenuType={actionMenuType}
         objectMetadataItem={objectMetadataItem}
       >
         {children}
-      </ActionMenuContextProviderWorkflowsNotEnabled>
+      </ActionMenuContextProviderWorkflowsEnabledSingleRecordSelection>
     );
   }
 
-  return (
+  if (isWorkflowEnabled && isDefined(objectMetadataItem) && isWorkflowObject) {
     <ActionMenuContextProviderWorkflowsEnabled
       isInRightDrawer={isInRightDrawer}
       displayType={displayType}
@@ -73,6 +90,17 @@ export const ActionMenuContextProvider = ({
       objectMetadataItem={objectMetadataItem}
     >
       {children}
-    </ActionMenuContextProviderWorkflowsEnabled>
+    </ActionMenuContextProviderWorkflowsEnabled>;
+  }
+
+  return (
+    <ActionMenuContextProviderWorkflowsNotEnabled
+      isInRightDrawer={isInRightDrawer}
+      displayType={displayType}
+      actionMenuType={actionMenuType}
+      objectMetadataItem={objectMetadataItem}
+    >
+      {children}
+    </ActionMenuContextProviderWorkflowsNotEnabled>
   );
 };
