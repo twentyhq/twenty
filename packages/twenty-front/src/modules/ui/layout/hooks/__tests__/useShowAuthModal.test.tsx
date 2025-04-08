@@ -106,15 +106,15 @@ const testCases = [
   { loc: AppPath.ResetPassword, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
 
   { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: true },
-  { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
-  { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
-  { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
+  { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
+  { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
+  { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
   { loc: AppPath.CreateWorkspace, isLogged: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: true },
   { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: true },
   { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: true },
   { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: true },
   { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: true },
-  { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
+  { loc: AppPath.CreateWorkspace, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
 
   { loc: AppPath.CreateProfile, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: true },
   { loc: AppPath.CreateProfile, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
@@ -151,14 +151,14 @@ const testCases = [
 
   { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: true },
   { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
-  { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
-  { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
+  { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
+  { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
   { loc: AppPath.PlanRequired, isLogged: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: true },
   { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: true },
   { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: true },
   { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: true },
   { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: true },
-  { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
+  { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.COMPLETED, res: true },
 
   { loc: AppPath.PlanRequiredSuccess, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: true },
   { loc: AppPath.PlanRequiredSuccess, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.COMPLETED, res: false },
@@ -284,7 +284,7 @@ const testCases = [
 
 describe('useShowAuthModal', () => {
   testCases.forEach((testCase) => {
-    it(`testCase for location ${testCase.loc} with onboardingStatus ${testCase.onboardingStatus} should return ${testCase.res}`, () => {
+    it(`testCase for location ${testCase.loc} with onboardingStatus ${testCase.onboardingStatus} and subscriptionStatus ${testCase.subscriptionStatus} should return ${testCase.res}`, () => {
       setupMockOnboardingStatus(testCase.onboardingStatus);
       setupMockSubscriptionStatus(testCase.subscriptionStatus);
       setupMockIsMatchingLocation(testCase.loc);
@@ -305,7 +305,7 @@ describe('useShowAuthModal', () => {
       setupMockIsMatchingLocation(AppPath.Invite);
       setupMockIsLogged(true);
       const { result } = getResult();
-      expect(result.current).toBeFalsy();
+      expect(result.current).toBeTruthy();
     });
     it(`with appPath ${AppPath.ResetPassword} `, () => {
       setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
@@ -313,7 +313,7 @@ describe('useShowAuthModal', () => {
       setupMockIsMatchingLocation(AppPath.ResetPassword);
       setupMockIsLogged(true);
       const { result } = getResult();
-      expect(result.current).toBeFalsy();
+      expect(result.current).toBeTruthy();
     });
   });
 

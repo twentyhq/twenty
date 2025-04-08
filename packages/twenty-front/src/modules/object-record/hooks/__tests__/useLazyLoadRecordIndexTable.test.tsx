@@ -433,6 +433,17 @@ const HookMockWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: jest.fn().mockReturnValue({
+    pathname: '/',
+    search: '',
+    hash: '',
+    state: null,
+    key: 'default',
+  }),
+}));
+
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <HookMockWrapper>
