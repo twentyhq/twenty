@@ -14,7 +14,6 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { msg } from '@lingui/core/macro';
 import { userEvent, waitFor, within } from '@storybook/test';
-import { isDefined } from 'twenty-shared/utils';
 import { IconFileExport, IconHeart, IconTrash } from 'twenty-ui/display';
 import {
   ComponentDecorator,
@@ -70,8 +69,7 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
                   position: 2,
                   isPinned: true,
                   Icon: IconHeart,
-                  shouldBeRegistered: ({ selectedRecord, isFavorite }) =>
-                    !selectedRecord?.isRemote && !isFavorite,
+                  shouldBeRegistered: () => true,
                   availableOn: [
                     ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
                     ActionViewType.SHOW_PAGE,
@@ -88,8 +86,7 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
                   Icon: IconFileExport,
                   accent: 'default',
                   isPinned: false,
-                  shouldBeRegistered: ({ selectedRecord }) =>
-                    isDefined(selectedRecord) && !selectedRecord.isRemote,
+                  shouldBeRegistered: () => true,
                   availableOn: [
                     ActionViewType.SHOW_PAGE,
                     ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -106,8 +103,7 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
                   Icon: IconTrash,
                   accent: 'default',
                   isPinned: true,
-                  shouldBeRegistered: ({ selectedRecord }) =>
-                    isDefined(selectedRecord) && !selectedRecord.isRemote,
+                  shouldBeRegistered: () => true,
                   availableOn: [
                     ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
                     ActionViewType.SHOW_PAGE,
