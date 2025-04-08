@@ -17,8 +17,11 @@ export const useDateSettingsFormInitialValues = ({
   const { resetField } = useFormContext<SettingsDataModelFieldDateFormValues>();
 
   const resetDefaultValueField = () =>
-    resetField('settings.displayFormat', {
-      defaultValue: initialDisplayFormat,
+    resetField('settings', {
+      defaultValue: {
+        displayFormat: initialDisplayFormat,
+        customUnicode35DateFormat: initialCustomUnicode35DateFormat
+      }
     });
 
   return {
