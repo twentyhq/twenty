@@ -233,7 +233,7 @@ describe('useRecordData', () => {
                 relationType: undefined,
                 targetFieldMetadataName: '',
                 settings: {
-                  displayFormat: 'relative_date',
+                  displayFormat: 'RELATIVE',
                 },
               },
               position: 10,
