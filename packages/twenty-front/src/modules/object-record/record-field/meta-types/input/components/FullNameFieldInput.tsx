@@ -25,7 +25,7 @@ export const FullNameFieldInput = ({
   onTab,
   onShiftTab,
 }: FullNameFieldInputProps) => {
-  const { hotkeyScope, draftValue, setDraftValue, persistFullNameField } =
+  const { draftValue, setDraftValue, persistFullNameField, fieldDefinition } =
     useFullNameField();
 
   const convertToFullName = (newDoubleText: FieldDoubleText) => {
@@ -93,7 +93,7 @@ export const FullNameFieldInput = ({
       onShiftTab={handleShiftTab}
       onTab={handleTab}
       onPaste={handlePaste}
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={`full-name-field-input-${fieldDefinition.metadata.fieldName}`}
       onChange={handleChange}
     />
   );

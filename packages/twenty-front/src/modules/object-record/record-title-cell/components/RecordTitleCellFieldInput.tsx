@@ -27,7 +27,7 @@ export const RecordTitleCellFieldInput = ({
   onTab,
   onClickOutside,
 }: RecordTitleCellFieldInputProps) => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
 
   if (!isFieldText(fieldDefinition) && !isFieldFullName(fieldDefinition)) {
     throw new Error('Field definition is not a text or full name field');
@@ -43,6 +43,7 @@ export const RecordTitleCellFieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
           sizeVariant={sizeVariant}
+          hotkeyScope={`record-title-cell-text-field-input-${recordId}`}
         />
       ) : isFieldFullName(fieldDefinition) ? (
         <RecordTitleFullNameFieldInput
@@ -52,6 +53,7 @@ export const RecordTitleCellFieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
           sizeVariant={sizeVariant}
+          hotkeyScope={`record-title-cell-full-name-field-input-${recordId}`}
         />
       ) : null}
     </>

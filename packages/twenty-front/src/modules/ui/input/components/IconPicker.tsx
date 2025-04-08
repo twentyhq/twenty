@@ -14,7 +14,6 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { t } from '@lingui/core/macro';
-import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
 import {
   IconButton,
@@ -22,6 +21,7 @@ import {
   IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
+import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -172,7 +172,7 @@ export const IconPicker = ({
             size={size}
           />
         }
-        dropdownMenuWidth={176}
+        dropdownWidth={176}
         dropdownComponents={
           <SelectableList
             selectableListId="icon-list"
