@@ -9,16 +9,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
-import { z } from 'zod';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button } from 'twenty-ui/input';
 import {
   IconApi,
   IconBracketsAngle,
   IconBrandGraphql,
   IconFolderRoot,
 } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { z } from 'zod';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const playgroundSetupFormSchema = z.object({
   apiKeyForPlayground: z.string(),
@@ -31,10 +31,13 @@ type PlaygroundSetupFormValues = z.infer<typeof playgroundSetupFormSchema>;
 const StyledForm = styled.form`
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 0.5fr;
-  align-items: end;
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+`;
+
+const StyledLaunchButtonWrapper = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(4.5)};
 `;
 
 export const PlaygroundSetupForm = () => {
@@ -61,7 +64,6 @@ export const PlaygroundSetupForm = () => {
 
   const validateApiKey = async (values: PlaygroundSetupFormValues) => {
     try {
-      // Validate by fetching the schema (but not storing it)
       const response = await fetch(
         `${REACT_APP_SERVER_BASE_URL}/open-api/${values.schema}`,
         {
@@ -90,7 +92,6 @@ export const PlaygroundSetupForm = () => {
   const onSubmit = async (values: PlaygroundSetupFormValues) => {
     try {
       await validateApiKey(values);
-
       setPlaygroundApiKey(values.apiKeyForPlayground);
 
       const path =
@@ -181,13 +182,15 @@ export const PlaygroundSetupForm = () => {
           />
         )}
       />
-      <Button
-        title={t`Launch`}
-        variant="primary"
-        accent="blue"
-        type="submit"
-        disabled={isSubmitting}
-      />
+      <StyledLaunchButtonWrapper>
+        <Button
+          title={t`Launch`}
+          variant="primary"
+          accent="blue"
+          type="submit"
+          disabled={isSubmitting}
+        />
+      </StyledLaunchButtonWrapper>
     </StyledForm>
   );
 };
