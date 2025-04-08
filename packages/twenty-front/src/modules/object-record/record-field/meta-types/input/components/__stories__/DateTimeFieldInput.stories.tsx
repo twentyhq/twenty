@@ -7,6 +7,7 @@ import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
@@ -64,7 +65,7 @@ const DateFieldInputWithContext = ({
   const setHotkeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    setHotkeyScope('hotkey-scope');
+    setHotkeyScope(DEFAULT_CELL_SCOPE.scope);
   }, [setHotkeyScope]);
 
   return (

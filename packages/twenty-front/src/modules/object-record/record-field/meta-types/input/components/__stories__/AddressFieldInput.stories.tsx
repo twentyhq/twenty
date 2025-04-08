@@ -6,6 +6,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import {
   AddressInput,
@@ -45,7 +46,7 @@ const AddressInputWithContext = ({
   const setHotKeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    setHotKeyScope('hotkey-scope');
+    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
   }, [setHotKeyScope]);
 
   return (

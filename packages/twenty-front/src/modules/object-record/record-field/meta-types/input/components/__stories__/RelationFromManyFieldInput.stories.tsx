@@ -19,6 +19,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -70,7 +71,7 @@ const RelationManyFieldInputWithContext = () => {
   useEffect(() => {
     setRecordStoreFieldValue([]);
 
-    setHotKeyScope('hotkey-scope');
+    setHotKeyScope(MultipleRecordPickerHotkeyScope.MultipleRecordPicker);
     openFieldInput({
       fieldDefinition,
       recordId: 'recordId',

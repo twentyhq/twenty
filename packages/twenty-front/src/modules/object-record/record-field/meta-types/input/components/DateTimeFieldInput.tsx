@@ -23,7 +23,7 @@ export const DateTimeFieldInput = ({
   onClear,
   onSubmit,
 }: DateTimeFieldInputProps) => {
-  const { fieldValue, setDraftValue, fieldDefinition } = useDateTimeField();
+  const { fieldValue, setDraftValue } = useDateTimeField();
 
   const persistField = usePersistField();
 
