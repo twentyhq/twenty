@@ -1,6 +1,6 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { formatDateISOStringToCustom } from '@/localization/utils/formatDateISOStringToCustom';
+import { formatDateISOStringToCustomUnicode35Format } from '@/localization/utils/formatDateISOStringToCustomUnicode35Format';
 import { formatDateISOStringToDateTime } from '@/localization/utils/formatDateISOStringToDateTime';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
 import { FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
@@ -33,7 +33,7 @@ export const formatDateTimeString = ({
         timeFormat,
       );
     case 'CUSTOM':
-      return formatDateISOStringToCustom(
+      return formatDateISOStringToCustomUnicode35Format(
         value,
         timeZone,
         dateFieldSettings.customUnicode35DateFormat,
