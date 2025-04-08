@@ -2,7 +2,8 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
-import { codeEditorTheme } from '@ui/input';
+import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
+import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
 import { editor } from 'monaco-editor';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,9 +52,16 @@ const StyledEditorLoader = styled.div<{
 
 const StyledEditor = styled(Editor)<{
   variant: CodeEditorVariant;
+  transparentBackground?: boolean;
 }>`
   .monaco-editor {
     outline-width: 0;
+
+    ${({ theme, transparentBackground }) =>
+      !transparentBackground &&
+      css`
+        background-color: ${theme.background.secondary};
+      `}
 
     ${({ variant, theme }) =>
       variant !== 'borderless'
@@ -131,17 +139,19 @@ export const CodeEditor = ({
       value={isLoading ? '' : value}
       language={language}
       loading=""
+      transparentBackground={transparentBackground}
       onMount={(editor, monaco) => {
         setMonaco(monaco);
         setEditor(editor);
+
         monaco.editor.defineTheme(
-          'codeEditorTheme',
-          codeEditorTheme({
+          BASE_CODE_EDITOR_THEME_ID,
+          getBaseCodeEditorTheme({
             theme,
-            transparentBackground,
           }),
         );
-        monaco.editor.setTheme('codeEditorTheme');
+        monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
+
         onMount?.(editor, monaco);
         setModelMarkers(editor, monaco);
       }}
@@ -159,11 +169,9 @@ export const CodeEditor = ({
         scrollbar: {
           vertical: 'hidden',
           horizontal: 'hidden',
-          ...options?.scrollbar,
         },
         minimap: {
           enabled: false,
-          ...options?.minimap,
         },
         ...options,
       }}
