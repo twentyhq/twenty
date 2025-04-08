@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import axios from 'axios';
+
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import {
   AuthException,
@@ -273,6 +275,104 @@ describe('AdminPanelService', () => {
         value: 'test',
         description: undefined,
         sensitive: false,
+      });
+    });
+  });
+
+  describe('getVersionInfo', () => {
+    const mockEnvironmentGet = jest.fn();
+    const mockAxiosGet = jest.fn();
+
+    beforeEach(() => {
+      mockEnvironmentGet.mockReset();
+      mockAxiosGet.mockReset();
+      jest.spyOn(axios, 'get').mockImplementation(mockAxiosGet);
+      service['environmentService'].get = mockEnvironmentGet;
+    });
+
+    it('should return current and latest version when everything works', async () => {
+      mockEnvironmentGet.mockReturnValue('1.0.0');
+      mockAxiosGet.mockResolvedValue({
+        data: {
+          results: [
+            { name: '2.0.0' },
+            { name: '1.5.0' },
+            { name: '1.0.0' },
+            { name: 'latest' },
+          ],
+        },
+      });
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: '1.0.0',
+        latestVersion: '2.0.0',
+      });
+    });
+
+    it('should handle undefined APP_VERSION', async () => {
+      mockEnvironmentGet.mockReturnValue(undefined);
+      mockAxiosGet.mockResolvedValue({
+        data: {
+          results: [{ name: '2.0.0' }, { name: 'latest' }],
+        },
+      });
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: undefined,
+        latestVersion: '2.0.0',
+      });
+    });
+
+    it('should handle Docker Hub API error', async () => {
+      mockEnvironmentGet.mockReturnValue('1.0.0');
+      mockAxiosGet.mockRejectedValue(new Error('API Error'));
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: '1.0.0',
+        latestVersion: 'latest',
+      });
+    });
+
+    it('should handle empty Docker Hub tags', async () => {
+      mockEnvironmentGet.mockReturnValue('1.0.0');
+      mockAxiosGet.mockResolvedValue({
+        data: {
+          results: [],
+        },
+      });
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: '1.0.0',
+        latestVersion: 'latest',
+      });
+    });
+
+    it('should handle invalid semver tags', async () => {
+      mockEnvironmentGet.mockReturnValue('1.0.0');
+      mockAxiosGet.mockResolvedValue({
+        data: {
+          results: [
+            { name: '2.0.0' },
+            { name: 'invalid-version' },
+            { name: 'latest' },
+            { name: '1.0.0' },
+          ],
+        },
+      });
+
+      const result = await service.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: '1.0.0',
+        latestVersion: '2.0.0',
       });
     });
   });

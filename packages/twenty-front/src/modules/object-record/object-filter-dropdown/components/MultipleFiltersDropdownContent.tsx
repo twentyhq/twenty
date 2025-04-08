@@ -3,7 +3,6 @@ import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownFilterSelect } from './ObjectFilterDropdownFilterSelect';
 
 type MultipleFiltersDropdownContentProps = {
@@ -40,7 +39,6 @@ export const MultipleFiltersDropdownContent = ({
       ) : (
         <ObjectFilterDropdownFilterSelect isAdvancedFilterButtonVisible />
       )}
-      <MultipleFiltersDropdownFilterOnFilterChangedEffect />
     </>
   );
 };

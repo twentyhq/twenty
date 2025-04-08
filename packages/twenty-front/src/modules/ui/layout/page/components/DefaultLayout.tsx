@@ -130,7 +130,7 @@ export const DefaultLayout = () => {
               </StyledMainContainer>
             )}
           </StyledPageContainer>
-          {isMobile && <MobileNavigationBar />}
+          {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
       </StyledLayout>
       <StyledWebSoftphoneContainer>

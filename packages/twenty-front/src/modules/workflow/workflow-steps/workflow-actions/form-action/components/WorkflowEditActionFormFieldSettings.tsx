@@ -9,7 +9,6 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import camelCase from 'lodash.camelcase';
 import { IconSettingsAutomation, IconX } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -43,7 +42,7 @@ const StyledSettingsHeader = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(3)};
   grid-template-columns: 1fr 24px;
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -64,20 +63,6 @@ export const WorkflowEditActionFormFieldSettings = ({
   onClose,
 }: WorkflowEditActionFormFieldSettingsProps) => {
   const theme = useTheme();
-  const onSubFieldUpdate = (fieldName: string, value: any) => {
-    if (fieldName === 'label') {
-      onChange({
-        ...field,
-        name: camelCase(value),
-        label: value,
-      });
-    } else {
-      onChange({
-        ...field,
-        [fieldName]: value,
-      });
-    }
-  };
 
   return (
     <StyledFormFieldSettingsContainer>
@@ -110,7 +95,7 @@ export const WorkflowEditActionFormFieldSettings = ({
               }
 
               const type = newType as WorkflowFormFieldType;
-              const { name, label, placeholder, settings } =
+              const { name, label, settings } =
                 getDefaultFormFieldSettings(type);
 
               onChange({
@@ -118,18 +103,14 @@ export const WorkflowEditActionFormFieldSettings = ({
                 type,
                 name,
                 label,
-                placeholder,
                 settings,
+                placeholder: '',
               });
             }}
             defaultValue={field.type}
-            preventDisplayPadding
           />
         </FormFieldInputContainer>
-        <WorkflowFormFieldSettingsByType
-          field={field}
-          onChange={onSubFieldUpdate}
-        />
+        <WorkflowFormFieldSettingsByType field={field} onChange={onChange} />
       </StyledSettingsContent>
     </StyledFormFieldSettingsContainer>
   );

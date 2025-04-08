@@ -54,6 +54,19 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         status
         interval
+        billingSubscriptionItems {
+          id
+          hasReachedCurrentPeriodCap
+          billingProduct {
+            name
+            description
+            metadata {
+              planKey
+              priceUsageBased
+              productKey
+            }
+          }
+        }
       }
       billingSubscriptions {
         id

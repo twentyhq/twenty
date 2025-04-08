@@ -64,7 +64,6 @@ const BooleanFieldInputWithContext = ({
             },
           },
           recordId: recordId ?? '123',
-          hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
           isReadOnly: false,
         }}
