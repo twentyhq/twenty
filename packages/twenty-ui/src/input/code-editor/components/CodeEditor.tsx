@@ -64,11 +64,10 @@ const StyledEditor = styled(Editor)<{
       `}
 
     ${({ variant, theme }) =>
-      variant !== 'borderless'
-        ? css`
-            border-radius: ${theme.border.radius.sm};
-          `
-        : undefined}
+      variant !== 'borderless' &&
+      css`
+        border-radius: ${theme.border.radius.sm};
+      `}
   }
 
   .overflow-guard {
