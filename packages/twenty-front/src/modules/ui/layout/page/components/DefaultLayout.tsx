@@ -33,7 +33,6 @@ const StyledLayout = styled.div`
   *::-webkit-scrollbar-thumb {
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
-
 `;
 
 const StyledPageContainer = styled(motion.div)`
@@ -106,7 +105,9 @@ export const DefaultLayout = () => {
             )}
             {showAuthModal ? (
               <>
-                <SignInBackgroundMockPage />
+                <StyledMainContainer>
+                  <SignInBackgroundMockPage />
+                </StyledMainContainer>
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
                     <AuthModal isOpenAnimated={animateModal}>
