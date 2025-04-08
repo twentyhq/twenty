@@ -125,16 +125,16 @@ export const CommandMenuContainer = ({
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
-              <ActionMenuContextProvider
-                isInRightDrawer={true}
-                displayType="listItem"
-                actionMenuType="command-menu"
+              <AnimatePresence
+                mode="wait"
+                onExitComplete={commandMenuCloseAnimationCompleteCleanup}
               >
-                <AnimatePresence
-                  mode="wait"
-                  onExitComplete={commandMenuCloseAnimationCompleteCleanup}
-                >
-                  {isCommandMenuOpened && (
+                {isCommandMenuOpened && (
+                  <ActionMenuContextProvider
+                    isInRightDrawer={true}
+                    displayType="listItem"
+                    actionMenuType="command-menu"
+                  >
                     <StyledCommandMenu
                       data-testid="command-menu"
                       ref={commandMenuRef}
@@ -147,9 +147,9 @@ export const CommandMenuContainer = ({
                     >
                       {children}
                     </StyledCommandMenu>
-                  )}
-                </AnimatePresence>
-              </ActionMenuContextProvider>
+                  </ActionMenuContextProvider>
+                )}
+              </AnimatePresence>
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>
         </RecordSortsComponentInstanceContext.Provider>

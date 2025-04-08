@@ -83,14 +83,16 @@ export const ActionMenuContextProvider = ({
   }
 
   if (isWorkflowEnabled && isDefined(objectMetadataItem) && isWorkflowObject) {
-    <ActionMenuContextProviderWorkflowsEnabled
-      isInRightDrawer={isInRightDrawer}
-      displayType={displayType}
-      actionMenuType={actionMenuType}
-      objectMetadataItem={objectMetadataItem}
-    >
-      {children}
-    </ActionMenuContextProviderWorkflowsEnabled>;
+    return (
+      <ActionMenuContextProviderWorkflowsEnabled
+        isInRightDrawer={isInRightDrawer}
+        displayType={displayType}
+        actionMenuType={actionMenuType}
+        objectMetadataItem={objectMetadataItem}
+      >
+        {children}
+      </ActionMenuContextProviderWorkflowsEnabled>
+    );
   }
 
   return (
