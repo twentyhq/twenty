@@ -1,4 +1,4 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
@@ -125,12 +125,10 @@ export const CommandMenuContainer = ({
             <ActionMenuComponentInstanceContext.Provider
               value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
             >
-              <ActionMenuContext.Provider
-                value={{
-                  isInRightDrawer: true,
-                  displayType: 'listItem',
-                  actionMenuType: 'command-menu',
-                }}
+              <ActionMenuContextProvider
+                isInRightDrawer={true}
+                displayType="listItem"
+                actionMenuType="command-menu"
               >
                 <AnimatePresence
                   mode="wait"
@@ -151,7 +149,7 @@ export const CommandMenuContainer = ({
                     </StyledCommandMenu>
                   )}
                 </AnimatePresence>
-              </ActionMenuContext.Provider>
+              </ActionMenuContextProvider>
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>
         </RecordSortsComponentInstanceContext.Provider>

@@ -1,5 +1,5 @@
 import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -23,15 +23,13 @@ export const RecordShowActionMenu = () => {
   return (
     <>
       {hasSelectedRecord && contextStoreCurrentObjectMetadataItemId && (
-        <ActionMenuContext.Provider
-          value={{
-            isInRightDrawer: false,
-            displayType: 'button',
-            actionMenuType: 'show-page-action-menu',
-          }}
+        <ActionMenuContextProvider
+          isInRightDrawer={false}
+          displayType="button"
+          actionMenuType="show-page-action-menu"
         >
           {!isMobile && <PageHeaderActionMenuButtons />}
-        </ActionMenuContext.Provider>
+        </ActionMenuContextProvider>
       )}
     </>
   );

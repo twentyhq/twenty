@@ -1,12 +1,13 @@
 import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { useContext } from 'react';
 
 export const useCommandMenuActions = () => {
-  const actions = useRegisteredActions();
+  const { actions } = useContext(ActionMenuContext);
 
   const navigateActions = actions?.filter(
     (action) => action.type === ActionMenuEntryType.Navigation,
