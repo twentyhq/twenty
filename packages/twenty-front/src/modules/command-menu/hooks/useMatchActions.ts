@@ -18,10 +18,9 @@ export const useMatchActions = ({
   };
 
   const checkInLabels = (action: ActionConfig, search: string) => {
-    if (isNonEmptyString(getActionLabel(action.label))) {
-      return getActionLabel(action.label)
-        .toLowerCase()
-        .includes(search.toLowerCase());
+    const actionLabel = getActionLabel(action.label);
+    if (isNonEmptyString(actionLabel)) {
+      return actionLabel.toLowerCase().includes(search.toLowerCase());
     }
     return false;
   };
