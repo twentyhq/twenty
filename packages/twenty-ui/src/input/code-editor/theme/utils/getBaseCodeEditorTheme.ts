@@ -1,9 +1,13 @@
 import { ThemeType } from '@ui/theme';
 import { editor } from 'monaco-editor';
 
-export const codeEditorTheme = (theme: ThemeType) => {
+export const getBaseCodeEditorTheme = ({
+  theme,
+}: {
+  theme: ThemeType;
+}): editor.IStandaloneThemeData => {
   return {
-    base: 'vs' as editor.BuiltinTheme,
+    base: 'vs',
     inherit: true,
     rules: [
       {
@@ -23,7 +27,8 @@ export const codeEditorTheme = (theme: ThemeType) => {
       },
     ],
     colors: {
-      'editor.background': theme.background.secondary,
+      // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
+      'editor.background': '#00000000',
       'editorCursor.foreground': theme.font.color.primary,
       'editorLineNumber.foreground': theme.font.color.extraLight,
       'editorLineNumber.activeForeground': theme.font.color.light,

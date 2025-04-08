@@ -20,7 +20,7 @@ import { parseArrayEnvVar } from 'src/utils/parse-array-env-var';
 const meterDrivers = parseArrayEnvVar(
   process.env.METER_DRIVER,
   Object.values(MeterDriver),
-  [MeterDriver.Console],
+  [],
 );
 
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
