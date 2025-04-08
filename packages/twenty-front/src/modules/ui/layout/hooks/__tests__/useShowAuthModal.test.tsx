@@ -1,11 +1,10 @@
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
@@ -39,14 +38,9 @@ const setupMockIsMatchingLocation = (pathname: string) => {
   });
 };
 
-const getResult = (isDefaultLayoutAuthModalVisible = true) =>
+const getResult = () =>
   renderHook(
     () => {
-      const setIsDefaultLayoutAuthModalVisible = useSetRecoilState(
-        isDefaultLayoutAuthModalVisibleState,
-      );
-      setIsDefaultLayoutAuthModalVisible(isDefaultLayoutAuthModalVisible);
-
       return useShowAuthModal();
     },
     {
@@ -305,20 +299,20 @@ describe('useShowAuthModal', () => {
   });
 
   describe('test with token validation loading', () => {
-    it(`with appPath ${AppPath.Invite} and isDefaultLayoutAuthModalVisible=false`, () => {
+    it(`with appPath ${AppPath.Invite} `, () => {
       setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
       setupMockSubscriptionStatus(SubscriptionStatus.Active);
       setupMockIsMatchingLocation(AppPath.Invite);
       setupMockIsLogged(true);
-      const { result } = getResult(false);
+      const { result } = getResult();
       expect(result.current).toBeFalsy();
     });
-    it(`with appPath ${AppPath.ResetPassword} and isDefaultLayoutAuthModalVisible=false`, () => {
+    it(`with appPath ${AppPath.ResetPassword} `, () => {
       setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
       setupMockSubscriptionStatus(SubscriptionStatus.Active);
       setupMockIsMatchingLocation(AppPath.ResetPassword);
       setupMockIsLogged(true);
-      const { result } = getResult(false);
+      const { result } = getResult();
       expect(result.current).toBeFalsy();
     });
   });

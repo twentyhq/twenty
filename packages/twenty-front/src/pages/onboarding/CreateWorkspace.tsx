@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
@@ -15,14 +16,14 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Trans, useLingui } from '@lingui/react/macro';
-import {
-  OnboardingStatus,
-  useActivateWorkspaceMutation,
-} from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import {
+  OnboardingStatus,
+  useActivateWorkspaceMutation,
+} from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -42,6 +43,7 @@ export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
   const { loadCurrentUser } = useAuth();
   const [activateWorkspace] = useActivateWorkspaceMutation();
@@ -81,6 +83,8 @@ export const CreateWorkspace = () => {
         if (isDefined(result.errors)) {
           throw result.errors ?? new Error(t`Unknown error`);
         }
+
+        await refreshObjectMetadataItems();
         await loadCurrentUser();
         setNextOnboardingStatus();
       } catch (error: any) {
@@ -93,6 +97,7 @@ export const CreateWorkspace = () => {
       activateWorkspace,
       enqueueSnackBar,
       loadCurrentUser,
+      refreshObjectMetadataItems,
       setNextOnboardingStatus,
       t,
     ],

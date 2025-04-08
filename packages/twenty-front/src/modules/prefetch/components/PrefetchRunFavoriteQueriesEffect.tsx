@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
 import { Favorite } from '@/favorites/types/Favorite';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { findAllFavoritesFolderOperationSignatureFactory } from '@/prefetch/graphql/operation-signatures/factories/findAllFavoritesFolderOperationSignatureFactory';
 import { findAllFavoritesOperationSignatureFactory } from '@/prefetch/graphql/operation-signatures/factories/findAllFavoritesOperationSignatureFactory';
 import { prefetchFavoriteFoldersState } from '@/prefetch/states/prefetchFavoriteFoldersState';
@@ -14,12 +14,13 @@ import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {
-  const currentUser = useRecoilValue(currentUserState);
+  const onboardingStatus = useOnboardingStatus();
 
   const isWorkspaceActive = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.ACTIVE,
@@ -53,14 +54,14 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
     filter: findAllFavoritesOperationSignature.variables.filter,
     recordGqlFields: findAllFavoritesOperationSignature.fields,
-    skip: !currentUser || !isWorkspaceActive,
+    skip: onboardingStatus !== OnboardingStatus.COMPLETED || !isWorkspaceActive,
   });
 
   const { records: favoriteFolders } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
     filter: findAllFavoriteFoldersOperationSignature.variables.filter,
     recordGqlFields: findAllFavoriteFoldersOperationSignature.fields,
-    skip: !currentUser || !isWorkspaceActive,
+    skip: onboardingStatus !== OnboardingStatus.COMPLETED || !isWorkspaceActive,
   });
 
   const setPrefetchFavoritesState = useRecoilCallback(

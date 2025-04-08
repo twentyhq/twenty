@@ -1,10 +1,8 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
-import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isDefined } from 'twenty-shared/utils';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
@@ -16,25 +14,15 @@ export const useShowAuthModal = () => {
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
 
-  const isDefaultLayoutAuthModalVisible = useRecoilValue(
-    isDefaultLayoutAuthModalVisibleState,
-  );
-
   return useMemo(() => {
-    if (
-      isMatchingLocation(AppPath.Verify) ||
-      isMatchingLocation(AppPath.VerifyEmail)
-    ) {
-      return true;
-    }
-
     if (
       isMatchingLocation(AppPath.Invite) ||
       isMatchingLocation(AppPath.ResetPassword) ||
       isMatchingLocation(AppPath.VerifyEmail) ||
+      isMatchingLocation(AppPath.Verify) ||
       isMatchingLocation(AppPath.SignInUp)
     ) {
-      return isDefaultLayoutAuthModalVisible;
+      return true;
     }
 
     if (
@@ -57,11 +45,5 @@ export const useShowAuthModal = () => {
     }
 
     return false;
-  }, [
-    isLoggedIn,
-    isDefaultLayoutAuthModalVisible,
-    isMatchingLocation,
-    onboardingStatus,
-    subscriptionStatus,
-  ]);
+  }, [isLoggedIn, isMatchingLocation, onboardingStatus, subscriptionStatus]);
 };

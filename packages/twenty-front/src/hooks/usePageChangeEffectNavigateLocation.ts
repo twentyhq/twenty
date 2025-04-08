@@ -7,10 +7,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { isDefined } from 'twenty-shared/utils';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const { isMatchingLocation } = useIsMatchingLocation();

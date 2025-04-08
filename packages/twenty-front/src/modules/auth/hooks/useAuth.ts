@@ -56,15 +56,14 @@ import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useL
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useSearchParams } from 'react-router-dom';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { iconsState } from 'twenty-ui/display';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { iconsState } from 'twenty-ui/display';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -73,9 +72,7 @@ export const useAuth = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
-  const setIsAppWaitingForFreshObjectMetadataState = useSetRecoilState(
-    isAppWaitingForFreshObjectMetadataState,
-  );
+
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
   );
@@ -312,7 +309,6 @@ export const useAuth = () => {
 
       setWorkspaces(validWorkspaces);
     }
-    setIsAppWaitingForFreshObjectMetadataState(true);
 
     return {
       user,
@@ -328,7 +324,6 @@ export const useAuth = () => {
     setCurrentWorkspaceMember,
     setCurrentWorkspaceMembers,
     setDateTimeFormat,
-    setIsAppWaitingForFreshObjectMetadataState,
     setLastAuthenticateWorkspaceDomain,
     setWorkspaces,
   ]);

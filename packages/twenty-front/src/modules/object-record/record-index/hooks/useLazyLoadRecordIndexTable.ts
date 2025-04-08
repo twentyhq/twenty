@@ -6,13 +6,16 @@ import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRec
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const onboardingStatus = useOnboardingStatus();
 
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
@@ -44,9 +47,10 @@ export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
 
   return {
     findManyRecords,
-    records: isWorkspaceActiveOrSuspended(currentWorkspace)
-      ? records
-      : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
+    records:
+      onboardingStatus === OnboardingStatus.COMPLETED
+        ? records
+        : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
     totalCount: totalCount,
     loading,
     fetchMoreRecords,
