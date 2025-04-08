@@ -1,4 +1,3 @@
-import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { COMMAND_MENU_ANIMATION_VARIANTS } from '@/command-menu/constants/CommandMenuAnimationVariants';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
@@ -130,24 +129,18 @@ export const CommandMenuContainer = ({
                 onExitComplete={commandMenuCloseAnimationCompleteCleanup}
               >
                 {isCommandMenuOpened && (
-                  <ActionMenuContextProvider
-                    isInRightDrawer={true}
-                    displayType="listItem"
-                    actionMenuType="command-menu"
+                  <StyledCommandMenu
+                    data-testid="command-menu"
+                    ref={commandMenuRef}
+                    className="command-menu"
+                    animate={targetVariantForAnimation}
+                    initial="closed"
+                    exit="closed"
+                    variants={COMMAND_MENU_ANIMATION_VARIANTS}
+                    transition={{ duration: theme.animation.duration.normal }}
                   >
-                    <StyledCommandMenu
-                      data-testid="command-menu"
-                      ref={commandMenuRef}
-                      className="command-menu"
-                      animate={targetVariantForAnimation}
-                      initial="closed"
-                      exit="closed"
-                      variants={COMMAND_MENU_ANIMATION_VARIANTS}
-                      transition={{ duration: theme.animation.duration.normal }}
-                    >
-                      {children}
-                    </StyledCommandMenu>
-                  </ActionMenuContextProvider>
+                    {children}
+                  </StyledCommandMenu>
                 )}
               </AnimatePresence>
             </ActionMenuComponentInstanceContext.Provider>
