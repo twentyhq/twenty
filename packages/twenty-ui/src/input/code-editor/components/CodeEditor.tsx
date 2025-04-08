@@ -2,21 +2,28 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
-import { codeEditorTheme } from '@ui/input';
+import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
+import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
 import { editor } from 'monaco-editor';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
+type CodeEditorVariant = 'default' | 'with-header' | 'borderless';
+
+type CodeEditorProps = Pick<
+  EditorProps,
+  'value' | 'language' | 'onMount' | 'onValidate' | 'height' | 'options'
+> & {
   onChange?: (value: string) => void;
   setMarkers?: (value: string) => editor.IMarkerData[];
-  withHeader?: boolean;
+  variant?: CodeEditorVariant;
   isLoading?: boolean;
+  transparentBackground?: boolean;
 };
 
 const StyledEditorLoader = styled.div<{
   height: string | number;
-  withHeader?: boolean;
+  variant: CodeEditorVariant;
 }>`
   align-items: center;
   display: flex;
@@ -24,35 +31,66 @@ const StyledEditorLoader = styled.div<{
   justify-content: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  ${({ withHeader, theme }) =>
-    withHeader
-      ? css`
+  ${({ variant, theme }) => {
+    switch (variant) {
+      case 'default':
+        return css`
+          border-radius: ${theme.border.radius.sm};
+        `;
+      case 'borderless':
+        return css`
+          border: none;
+        `;
+      case 'with-header':
+        return css`
           border-radius: 0 0 ${theme.border.radius.sm} ${theme.border.radius.sm};
           border-top: none;
-        `
-      : css`
-          border-radius: ${theme.border.radius.sm};
-        `}
+        `;
+    }
+  }}
 `;
 
-const StyledEditor = styled(Editor)<{ withHeader: boolean }>`
+const StyledEditor = styled(Editor)<{
+  variant: CodeEditorVariant;
+  transparentBackground?: boolean;
+}>`
   .monaco-editor {
-    border-radius: ${({ theme }) => theme.border.radius.sm};
     outline-width: 0;
+
+    ${({ theme, transparentBackground }) =>
+      !transparentBackground &&
+      css`
+        background-color: ${theme.background.secondary};
+      `}
+
+    ${({ variant, theme }) =>
+      variant !== 'borderless' &&
+      css`
+        border-radius: ${theme.border.radius.sm};
+      `}
   }
+
   .overflow-guard {
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
     box-sizing: border-box;
-    ${({ withHeader, theme }) =>
-      withHeader
-        ? css`
+
+    ${({ variant, theme }) => {
+      switch (variant) {
+        case 'default': {
+          return css`
+            border: 1px solid ${theme.border.color.medium};
+            border-radius: ${theme.border.radius.sm};
+          `;
+        }
+        case 'with-header': {
+          return css`
+            border: 1px solid ${theme.border.color.medium};
             border-radius: 0 0 ${theme.border.radius.sm}
               ${theme.border.radius.sm};
             border-top: none;
-          `
-        : css`
-            border-radius: ${theme.border.radius.sm};
-          `}
+          `;
+        }
+      }
+    }}
   }
 `;
 
@@ -64,7 +102,8 @@ export const CodeEditor = ({
   setMarkers,
   onValidate,
   height = 450,
-  withHeader = false,
+  variant = 'default',
+  transparentBackground,
   isLoading = false,
   options,
 }: CodeEditorProps) => {
@@ -89,21 +128,29 @@ export const CodeEditor = ({
   };
 
   return isLoading ? (
-    <StyledEditorLoader height={height} withHeader={withHeader}>
+    <StyledEditorLoader height={height} variant={variant}>
       <Loader />
     </StyledEditorLoader>
   ) : (
     <StyledEditor
       height={height}
-      withHeader={withHeader}
+      variant={variant}
       value={isLoading ? '' : value}
       language={language}
       loading=""
+      transparentBackground={transparentBackground}
       onMount={(editor, monaco) => {
         setMonaco(monaco);
         setEditor(editor);
-        monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
-        monaco.editor.setTheme('codeEditorTheme');
+
+        monaco.editor.defineTheme(
+          BASE_CODE_EDITOR_THEME_ID,
+          getBaseCodeEditorTheme({
+            theme,
+          }),
+        );
+        monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
+
         onMount?.(editor, monaco);
         setModelMarkers(editor, monaco);
       }}
