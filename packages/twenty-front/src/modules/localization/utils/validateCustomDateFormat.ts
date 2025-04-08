@@ -1,10 +1,10 @@
-import { format } from "date-fns";
+import { format } from 'date-fns';
 
-export function validateCustomDateFormat(formatString: string): boolean {
-    try {
-      format(new Date(), formatString);
-      return true;
-    } catch {
-      return false;
-    }
+export const validateCustomDateFormat = (formatString: string): boolean => {
+  try {
+    format(new Date(), formatString);
+    return true;
+  } catch {
+    return false;
   }
+};

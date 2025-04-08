@@ -8,6 +8,6 @@ export const formatDateISOStringToCustom = (
   try {
     return formatInTimeZone(new Date(date), timeZone, dateFormat);
   } catch (e) {
-    return 'Invalid format string'
+    return 'Invalid format string';
   }
 };

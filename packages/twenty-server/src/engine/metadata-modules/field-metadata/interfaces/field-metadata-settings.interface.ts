@@ -16,7 +16,7 @@ export type FieldMetadataDefaultSettings = {
 export enum DateDisplayFormat {
   RELATIVE = 'RELATIVE',
   USER_SETTINGS = 'USER_SETTINGS',
-  CUSTOM = 'CUSTOM'
+  CUSTOM = 'CUSTOM',
 }
 
 export type FieldNumberVariant = 'number' | 'percentage';

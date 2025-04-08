@@ -37,6 +37,6 @@ export type FieldMetadataItem = Omit<
       'id' | 'nameSingular' | 'namePlural'
     >;
   } | null;
-  settings?: FieldDateMetadataSettings,
+  settings?: FieldDateMetadataSettings;
   isLabelSyncedWithName?: boolean | null;
 };

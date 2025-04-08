@@ -4,7 +4,9 @@ import { DateTimeDisplay } from '@/ui/field/display/components/DateTimeDisplay';
 export const DateTimeFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useDateTimeFieldDisplay();
 
-  const dateFieldSettings = fieldDefinition.metadata?.settings
+  const dateFieldSettings = fieldDefinition.metadata?.settings;
 
-  return <DateTimeDisplay value={fieldValue} dateFieldSettings={dateFieldSettings} />;
+  return (
+    <DateTimeDisplay value={fieldValue} dateFieldSettings={dateFieldSettings} />
+  );
 };

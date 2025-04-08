@@ -63,7 +63,7 @@ export const computeAggregateValueAndLabel = ({
 
   let value;
 
-  const dateFieldSettings = field?.settings
+  const dateFieldSettings = field?.settings;
 
   if (
     COUNT_AGGREGATE_OPERATION_OPTIONS.includes(
@@ -104,7 +104,7 @@ export const computeAggregateValueAndLabel = ({
           timeZone,
           dateFormat,
           timeFormat,
-          dateFieldSettings
+          dateFieldSettings,
         });
         break;
       }

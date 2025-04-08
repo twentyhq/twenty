@@ -41,8 +41,8 @@ describe('formatDateString', () => {
       ...defaultParams,
       value: mockDate,
       dateFieldSettings: {
-        displayFormat: FieldDateDisplayFormat.RELATIVE
-      }
+        displayFormat: FieldDateDisplayFormat.RELATIVE,
+      },
     });
 
     expect(result).toBe(mockRelativeDate);
@@ -62,8 +62,8 @@ describe('formatDateString', () => {
       ...defaultParams,
       value: mockDate,
       dateFieldSettings: {
-        displayFormat: FieldDateDisplayFormat.USER_SETTINGS
-      }
+        displayFormat: FieldDateDisplayFormat.USER_SETTINGS,
+      },
     });
 
     expect(result).toBe(mockFormattedDate);

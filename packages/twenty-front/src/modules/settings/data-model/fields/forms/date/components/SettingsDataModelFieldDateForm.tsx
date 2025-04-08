@@ -17,22 +17,30 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { typedKeys } from '~/types/TypedKeys';
 
 const displayFormatsToLabelMap: Record<FieldDateDisplayFormat, string> = {
-  'USER_SETTINGS': 'Default',
-  'RELATIVE': 'Relative',
-  'CUSTOM': 'Custom'
+  USER_SETTINGS: 'Default',
+  RELATIVE: 'Relative',
+  CUSTOM: 'Custom',
 } as const;
 
-const fieldDateSettings = z.discriminatedUnion("displayFormat", [
-  z.object({ displayFormat: z.enum([FieldDateDisplayFormat.RELATIVE, FieldDateDisplayFormat.USER_SETTINGS])}),
-  z.object({ displayFormat: z.literal(FieldDateDisplayFormat.CUSTOM), customISODateFormatString: z.string().refine(validateCustomDateFormat) })
+const fieldDateSettings = z.discriminatedUnion('displayFormat', [
+  z.object({
+    displayFormat: z.enum([
+      FieldDateDisplayFormat.RELATIVE,
+      FieldDateDisplayFormat.USER_SETTINGS,
+    ]),
+  }),
+  z.object({
+    displayFormat: z.literal(FieldDateDisplayFormat.CUSTOM),
+    customISODateFormatString: z.string().refine(validateCustomDateFormat),
+  }),
 ]);
 
 export const settingsDataModelFieldDateFormSchema = z.object({
-  settings: fieldDateSettings.optional()
+  settings: fieldDateSettings.optional(),
 });
 
 const StyledTextInput = styled(TextInput)`
-  padding: ${({ theme }) => theme.spacing(4)};;
+  padding: ${({ theme }) => theme.spacing(4)};
   padding-top: 0;
 `;
 
@@ -51,60 +59,63 @@ export const SettingsDataModelFieldDateForm = ({
 }: SettingsDataModelFieldDateFormProps) => {
   const { t } = useLingui();
 
-  const { control, watch, formState: { errors } } = useFormContext<SettingsDataModelFieldDateFormValues>();
+  const { control, watch } =
+    useFormContext<SettingsDataModelFieldDateFormValues>();
 
-  const { initialDisplayFormat, initialCustomISOString } = useDateSettingsFormInitialValues({
-    fieldMetadataItem,
-  });
+  const { initialDisplayFormat, initialCustomISOString } =
+    useDateSettingsFormInitialValues({
+      fieldMetadataItem,
+    });
 
-  const displayFormatFromForm = watch('settings.displayFormat')
+  const displayFormatFromForm = watch('settings.displayFormat');
 
-  const showCustomFormatTextInput = displayFormatFromForm 
-    ? isDateFieldCustomDisplayFormat(displayFormatFromForm) 
-    : isDateFieldCustomDisplayFormat(initialDisplayFormat)
+  const showCustomFormatTextInput = displayFormatFromForm
+    ? isDateFieldCustomDisplayFormat(displayFormatFromForm)
+    : isDateFieldCustomDisplayFormat(initialDisplayFormat);
 
   return (
     <>
-    <Controller
-      name="settings.displayFormat"
-      control={control}
-      defaultValue={initialDisplayFormat}
-      render={({ field: { onChange, value } }) => (
-        <SettingsOptionCardContentSelect
-          Icon={IconSlash}
-          title={t`Display Format`}
-          disabled={disabled}
-          description={t`Choose the format used to display date value`}
-        >
-          <Select<FieldDateDisplayFormat>
-            disabled={disabled}
-            selectSizeVariant="small"
-            dropdownWidth={120}
-            dropdownId="selectFieldDateDisplayFormat"
-            value={value}
-            onChange={onChange}
-            options={typedKeys(displayFormatsToLabelMap).map((key) => {
-              return {
-                label: t`${displayFormatsToLabelMap[key]}`,
-                value: key,
-              };
-            })}
-          />
-        </SettingsOptionCardContentSelect>
-      )}
-    />
-    <AnimatedExpandableContainer
-      isExpanded={showCustomFormatTextInput}
-      dimension={'height'}
-      animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
-      mode="scroll-height"
-      containAnimation={false}
-    >
       <Controller
-        name="settings.customISODateFormatString"
+        name="settings.displayFormat"
         control={control}
-        defaultValue={initialCustomISOString}
+        defaultValue={initialDisplayFormat}
         render={({ field: { onChange, value } }) => (
+          <SettingsOptionCardContentSelect
+            Icon={IconSlash}
+            title={t`Display Format`}
+            disabled={disabled}
+            description={t`Choose the format used to display date value`}
+          >
+            <Select<FieldDateDisplayFormat>
+              disabled={disabled}
+              selectSizeVariant="small"
+              dropdownWidth={120}
+              dropdownId="selectFieldDateDisplayFormat"
+              value={value}
+              onChange={onChange}
+              options={typedKeys(displayFormatsToLabelMap).map((key) => {
+                const label = displayFormatsToLabelMap[key];
+                return {
+                  label: t`${label}`,
+                  value: key,
+                };
+              })}
+            />
+          </SettingsOptionCardContentSelect>
+        )}
+      />
+      <AnimatedExpandableContainer
+        isExpanded={showCustomFormatTextInput}
+        dimension={'height'}
+        animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
+        mode="scroll-height"
+        containAnimation={false}
+      >
+        <Controller
+          name="settings.customISODateFormatString"
+          control={control}
+          defaultValue={initialCustomISOString}
+          render={({ field: { onChange, value } }) => (
             <StyledTextInput
               placeholder={t`Format e.g. %m/%d/%y`}
               value={value}
@@ -113,9 +124,9 @@ export const SettingsDataModelFieldDateForm = ({
               disabled={false}
               fullWidth
             />
-        )}
-      />
-    </AnimatedExpandableContainer>
+          )}
+        />
+      </AnimatedExpandableContainer>
     </>
   );
 };

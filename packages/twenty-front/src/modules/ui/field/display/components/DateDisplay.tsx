@@ -16,7 +16,7 @@ export const DateDisplay = ({ value, dateFieldSettings }: DateDisplayProps) => {
     value,
     timeZone,
     dateFormat,
-    dateFieldSettings
+    dateFieldSettings,
   });
 
   return <EllipsisDisplay>{formattedDate}</EllipsisDisplay>;
