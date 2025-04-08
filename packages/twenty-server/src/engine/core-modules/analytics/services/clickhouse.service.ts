@@ -23,7 +23,7 @@ export class ClickhouseService {
   ) {
     if (environmentService.get('ANALYTICS_ENABLED')) {
       this.maxBufferSize = 100;
-      this.flushIntervalMs = 5000;
+      this.flushIntervalMs = environmentService.get('ANALYTICS_FLUSH_INTERVAL_MS');
       this.clickhouseClient = createClient({
         url: environmentService.get('CLICKHOUSE_URL'),
         compression: {

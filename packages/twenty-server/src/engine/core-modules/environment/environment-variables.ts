@@ -473,6 +473,16 @@ export class EnvironmentVariables {
   CLICKHOUSE_URL: string;
 
   @EnvironmentVariablesMetadata({
+    group: EnvironmentVariablesGroup.AnalyticsConfig,
+    description: 'Flush interval in milliseconds for Clickhouse analytics buffer',
+  })
+  @CastToPositiveNumber()
+  @IsNumber()
+  @IsOptional()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
+  ANALYTICS_FLUSH_INTERVAL_MS = 5000;
+
+  @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.Logging,
     description: 'Enable or disable telemetry logging',
   })

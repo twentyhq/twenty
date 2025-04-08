@@ -56,6 +56,7 @@ describe('ClickhouseService', () => {
             get: jest.fn((key) => {
               if (key === 'ANALYTICS_ENABLED') return true;
               if (key === 'CLICKHOUSE_URL') return 'http://localhost:8123';
+              if (key === 'ANALYTICS_FLUSH_INTERVAL_MS') return 5000;
 
               return null;
             }),
