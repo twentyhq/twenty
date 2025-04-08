@@ -23,8 +23,8 @@ export type GenericFieldContextType = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   useUpdateRecord?: RecordUpdateHook;
   recordId: string;
-  hotkeyScope: string;
   isLabelIdentifier: boolean;
+  isLabelIdentifierCompact?: boolean;
   labelIdentifierLink?: string;
   clearable?: boolean;
   maxWidth?: number;

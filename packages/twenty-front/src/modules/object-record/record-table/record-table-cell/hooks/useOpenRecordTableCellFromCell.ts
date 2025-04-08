@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -27,7 +26,6 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellFromCell = () => {
-  const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
   const { recordId, fieldDefinition, isReadOnly } = useContext(FieldContext);
 
   const { pathToShowPage, objectNameSingular } =
@@ -44,7 +42,6 @@ export const useOpenRecordTableCellFromCell = () => {
   ) => {
     onOpenTableCell({
       cellPosition,
-      customCellHotkeyScope,
       recordId,
       fieldDefinition,
       isReadOnly,

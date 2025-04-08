@@ -13,7 +13,6 @@ import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/co
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { IconArrowUpRight, IconPencil } from 'twenty-ui/display';
 
 type ActivityTargetsInlineCellProps = {
@@ -65,8 +64,6 @@ export const ActivityTargetsInlineCell = ({
           <RecordInlineCellContext.Provider
             value={{
               buttonIcon: IconPencil,
-              customEditHotkeyScope:
-                MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
               IconLabel: showLabel ? IconArrowUpRight : undefined,
               showLabel: showLabel,
               readonly: isReadOnly,

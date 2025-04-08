@@ -4,6 +4,7 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useJsonField } from '../../hooks/useJsonField';
 
 type RawJsonFieldInputProps = {
@@ -21,13 +22,8 @@ export const RawJsonFieldInput = ({
   onTab,
   onShiftTab,
 }: RawJsonFieldInputProps) => {
-  const {
-    fieldDefinition,
-    draftValue,
-    hotkeyScope,
-    setDraftValue,
-    persistJsonField,
-  } = useJsonField();
+  const { fieldDefinition, draftValue, setDraftValue, persistJsonField } =
+    useJsonField();
 
   const handleEnter = (newText: string) => {
     onEnter?.(() => persistJsonField(newText));
@@ -66,7 +62,7 @@ export const RawJsonFieldInput = ({
       onEscape={handleEscape}
       onShiftTab={handleShiftTab}
       onTab={handleTab}
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
       onChange={handleChange}
       maxRows={25}
     />
