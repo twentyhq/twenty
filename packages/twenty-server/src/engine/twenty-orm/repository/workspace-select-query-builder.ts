@@ -1,4 +1,4 @@
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { ObjectLiteral, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -8,10 +8,10 @@ import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
 > extends SelectQueryBuilder<T> {
-  objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
+  objectRecordsPermissions: ObjectRecordsPermissions;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
-    objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>,
+    objectRecordsPermissions: ObjectRecordsPermissions,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;

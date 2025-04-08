@@ -1,8 +1,9 @@
 import { Injectable, Type } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { ObjectLiteral } from 'typeorm';
+import { ObjectLiteral, Repository } from 'typeorm';
 
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -11,9 +12,10 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 @Injectable()
 export class TwentyORMManager {
   constructor(
+    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    private readonly permissionsService: PermissionsService,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
@@ -49,16 +51,16 @@ export class TwentyORMManager {
       workspaceMetadataVersion,
     );
 
-    const { objectRecordsPermissions } =
-      await this.permissionsService.getUserWorkspacePermissions({
-        userWorkspaceId: userWorkspaceId ?? '',
-        workspaceId,
-      });
+    const roleId = await this.userWorkspaceRoleRepository
+      .findOne({
+        where: {
+          userWorkspaceId: userWorkspaceId ?? '',
+          workspaceId: workspaceId,
+        },
+      })
+      .then((userWorkspaceRole) => userWorkspaceRole?.roleId);
 
-    return workspaceDataSource.getRepository<T>(
-      objectMetadataName,
-      objectRecordsPermissions,
-    );
+    return workspaceDataSource.getRepository<T>(objectMetadataName, roleId);
   }
 
   async getDatasource() {

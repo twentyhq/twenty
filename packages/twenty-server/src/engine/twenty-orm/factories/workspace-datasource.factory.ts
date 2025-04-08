@@ -1,12 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-roles-permissions-cache/workspace-roles-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
   TwentyORMException,
@@ -21,6 +27,10 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 export class WorkspaceDatasourceFactory {
   private readonly logger = new Logger(WorkspaceDatasourceFactory.name);
   private promiseMemoizer = new PromiseMemoizer<WorkspaceDataSource>();
+  permissionsPerRoleId = new Map<
+    string,
+    Map<PermissionsOnAllObjectRecords, boolean>
+  >();
 
   constructor(
     private readonly dataSourceService: DataSourceService,
@@ -28,18 +38,55 @@ export class WorkspaceDatasourceFactory {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
+    private readonly workspaceRolesPermissionsCacheService: WorkspaceRolesPermissionsCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   public async create(
     workspaceId: string,
     workspaceMetadataVersion: number | null,
-    failOnMetadataCacheMiss = true,
+    shouldFailIfMetadataNotFound = true,
   ): Promise<WorkspaceDataSource> {
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+    const isPermissionsV2Enabled =
+      featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
+
     const cachedWorkspaceMetadataVersion =
       await this.getWorkspaceMetadataVersionFromCache(
         workspaceId,
-        failOnMetadataCacheMiss,
+        shouldFailIfMetadataNotFound,
       );
+
+    let cachedRolesPermissionsVersion: string | undefined;
+    let cachedRolesPermissions: ObjectRecordsPermissionsByRoleId | undefined;
+
+    if (isPermissionsV2Enabled) {
+      cachedRolesPermissions =
+        await this.workspaceCacheStorageService.getRolesPermissions(
+          workspaceId,
+        );
+
+      cachedRolesPermissionsVersion =
+        await this.getRolesVersionFromCache(workspaceId);
+
+      if (!cachedRolesPermissions || !cachedRolesPermissionsVersion) {
+        await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+          {
+            workspaceId,
+          },
+        );
+
+        cachedRolesPermissions =
+          await this.workspaceCacheStorageService.getRolesPermissions(
+            workspaceId,
+          );
+
+        cachedRolesPermissionsVersion =
+          await this.getRolesVersionFromCache(workspaceId);
+      }
+    }
 
     if (
       workspaceMetadataVersion !== null &&
@@ -139,6 +186,8 @@ export class WorkspaceDatasourceFactory {
                   }
                 : undefined,
             },
+            cachedRolesPermissionsVersion,
+            cachedRolesPermissions,
           );
 
           await workspaceDataSource.initialize();
@@ -162,28 +211,45 @@ export class WorkspaceDatasourceFactory {
       throw new Error(`Failed to create WorkspaceDataSource for ${cacheKey}`);
     }
 
+    if (isPermissionsV2Enabled) {
+      if (
+        isDefined(cachedRolesPermissionsVersion) &&
+        isDefined(cachedRolesPermissions)
+      ) {
+        if (
+          workspaceDataSource.rolesPermissionsVersion !==
+          cachedRolesPermissionsVersion
+        ) {
+          workspaceDataSource.manager.repositories.clear();
+          workspaceDataSource.setRolesPermissionsVersion(
+            cachedRolesPermissionsVersion,
+          );
+          workspaceDataSource.setRolesPermissions(cachedRolesPermissions);
+        }
+      }
+    }
+
     return workspaceDataSource;
   }
 
   private async getWorkspaceMetadataVersionFromCache(
     workspaceId: string,
-    failOnMetadataCacheMiss = true,
+    shouldFailIfMetadataNotFoundNotFound = true,
   ): Promise<number> {
     let latestWorkspaceMetadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
     if (latestWorkspaceMetadataVersion === undefined) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache({
-        workspaceId,
-        ignoreLock: !failOnMetadataCacheMiss,
-      });
-
-      if (failOnMetadataCacheMiss) {
+      if (shouldFailIfMetadataNotFoundNotFound) {
         throw new TwentyORMException(
           `Metadata version not found for workspace ${workspaceId}`,
           TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
         );
       } else {
+        await this.workspaceMetadataCacheService.recomputeMetadataCache({
+          workspaceId,
+          ignoreLock: !shouldFailIfMetadataNotFoundNotFound,
+        });
         latestWorkspaceMetadataVersion =
           await this.workspaceCacheStorageService.getMetadataVersion(
             workspaceId,
@@ -199,6 +265,34 @@ export class WorkspaceDatasourceFactory {
     }
 
     return latestWorkspaceMetadataVersion;
+  }
+
+  private async getRolesVersionFromCache(workspaceId: string): Promise<string> {
+    let latestRolesVersion =
+      await this.workspaceCacheStorageService.getRolesPermissionsVersionFromCache(
+        workspaceId,
+      );
+
+    if (latestRolesVersion === undefined) {
+      await this.workspaceRolesPermissionsCacheService.recomputeRolesPermissionsCache(
+        {
+          workspaceId,
+        },
+      );
+      latestRolesVersion =
+        await this.workspaceCacheStorageService.getRolesPermissionsVersionFromCache(
+          workspaceId,
+        );
+    }
+
+    if (!latestRolesVersion) {
+      throw new TwentyORMException(
+        `Roles permissions version not found after recompute for workspace ${workspaceId}`,
+        TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
+      );
+    }
+
+    return latestRolesVersion;
   }
 
   public async destroy(workspaceId: string) {

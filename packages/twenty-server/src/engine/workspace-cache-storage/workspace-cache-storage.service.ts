@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import { EntitySchemaOptions } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -17,6 +18,9 @@ export enum WorkspaceCacheKeys {
   MetadataObjectMetadataMaps = 'metadata:object-metadata-maps',
   MetadataObjectMetadataOngoingCachingLock = 'metadata:object-metadata-ongoing-caching-lock',
   MetadataVersion = 'metadata:workspace-metadata-version',
+  MetadataRolesPermissions = 'metadata:roles-permissions',
+  MetadataRolesPermissionsVersion = 'metadata:roles-permissions-version',
+  MetadataRolesPermissionsOngoingCachingLock = 'metadata:roles-permissions-ongoing-caching-lock',
 }
 
 const TTL_INFINITE = 0;
@@ -174,6 +178,74 @@ export class WorkspaceCacheStorageService {
     );
   }
 
+  getRolesPermissionsVersionFromCache(
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    return this.cacheStorageService.get<string>(
+      `${WorkspaceCacheKeys.MetadataRolesPermissionsVersion}:${workspaceId}`,
+    );
+  }
+
+  async setRolesPermissionsVersion(workspaceId: string): Promise<string> {
+    const rolesPermissionsVersion = crypto.randomUUID();
+
+    await this.cacheStorageService.set<string>(
+      `${WorkspaceCacheKeys.MetadataRolesPermissionsVersion}:${workspaceId}`,
+      rolesPermissionsVersion,
+      TTL_INFINITE,
+    );
+
+    return rolesPermissionsVersion;
+  }
+
+  async setRolesPermissions(
+    workspaceId: string,
+    permissions: ObjectRecordsPermissionsByRoleId,
+  ): Promise<{
+    newRolesPermissionsVersion: string;
+  }> {
+    const [, newRolesPermissionsVersion] = await Promise.all([
+      this.cacheStorageService.set<ObjectRecordsPermissionsByRoleId>(
+        `${WorkspaceCacheKeys.MetadataRolesPermissions}:${workspaceId}`,
+        permissions,
+        TTL_INFINITE,
+      ),
+      this.setRolesPermissionsVersion(workspaceId),
+    ]);
+
+    return { newRolesPermissionsVersion };
+  }
+
+  getRolesPermissions(
+    workspaceId: string,
+  ): Promise<ObjectRecordsPermissionsByRoleId | undefined> {
+    return this.cacheStorageService.get<ObjectRecordsPermissionsByRoleId>(
+      `${WorkspaceCacheKeys.MetadataRolesPermissions}:${workspaceId}`,
+    );
+  }
+
+  addRolesPermissionsOngoingCachingLock(workspaceId: string) {
+    return this.cacheStorageService.set<boolean>(
+      `${WorkspaceCacheKeys.MetadataRolesPermissionsOngoingCachingLock}:${workspaceId}`,
+      true,
+      1_000 * 60, // 1 minute
+    );
+  }
+
+  removeRolesPermissionsOngoingCachingLock(workspaceId: string) {
+    return this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataRolesPermissionsOngoingCachingLock}:${workspaceId}`,
+    );
+  }
+
+  getRolesPermissionsOngoingCachingLock(
+    workspaceId: string,
+  ): Promise<boolean | undefined> {
+    return this.cacheStorageService.get<boolean>(
+      `${WorkspaceCacheKeys.MetadataRolesPermissionsOngoingCachingLock}:${workspaceId}`,
+    );
+  }
+
   async flush(workspaceId: string, metadataVersion: number): Promise<void> {
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
@@ -192,6 +264,10 @@ export class WorkspaceCacheStorageService {
     );
     await this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
+    );
+
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataRolesPermissions}:${workspaceId}`,
     );
 
     // TODO: remove this after the feature flag is droped

@@ -34,6 +34,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -72,6 +73,8 @@ export abstract class GraphqlQueryBaseResolverService<
   protected readonly featureFlagService: FeatureFlagService;
   @Inject()
   protected readonly permissionsService: PermissionsService;
+  @Inject()
+  protected readonly userRoleService: UserRoleService;
 
   public async execute(
     args: Input,
@@ -120,15 +123,14 @@ export abstract class GraphqlQueryBaseResolverService<
           authContext.workspace.id,
         );
 
-      const { objectRecordsPermissions } =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId: authContext.userWorkspaceId ?? '',
-          workspaceId: authContext.workspace.id,
-        });
+      const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+        userWorkspaceId: authContext.userWorkspaceId ?? '',
+        workspaceId: authContext.workspace.id,
+      });
 
       const repository = dataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
-        objectRecordsPermissions,
+        roleId,
       );
 
       const graphqlQueryParser = new GraphqlQueryParser(

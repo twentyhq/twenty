@@ -1,16 +1,13 @@
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { ObjectLiteral, UpdateQueryBuilder, UpdateResult } from 'typeorm';
 
 export class WorkspaceUpdateQueryBuilder<
   Entity extends ObjectLiteral,
 > extends UpdateQueryBuilder<Entity> {
-  private objectRecordsPermissions: Record<
-    PermissionsOnAllObjectRecords,
-    boolean
-  >;
+  private objectRecordsPermissions: ObjectRecordsPermissions;
   constructor(
     queryBuilder: UpdateQueryBuilder<Entity>,
-    objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>,
+    objectRecordsPermissions: ObjectRecordsPermissions,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;

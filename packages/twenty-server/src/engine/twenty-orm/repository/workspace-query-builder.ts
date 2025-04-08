@@ -1,4 +1,4 @@
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
@@ -8,7 +8,7 @@ export class WorkspaceQueryBuilder<
 > extends WorkspaceSelectQueryBuilder<T> {
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
-    objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>,
+    objectRecordsPermissions: ObjectRecordsPermissions,
   ) {
     super(queryBuilder, objectRecordsPermissions);
     this.objectRecordsPermissions = objectRecordsPermissions;

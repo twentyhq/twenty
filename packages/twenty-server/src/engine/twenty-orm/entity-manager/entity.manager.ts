@@ -1,18 +1,20 @@
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import {
   DataSource,
   EntityManager,
   EntityTarget,
   ObjectLiteral,
   QueryRunner,
+  Repository,
 } from 'typeorm';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 export class WorkspaceEntityManager extends EntityManager {
   private readonly internalContext: WorkspaceInternalContext;
+  readonly repositories: Map<string, Repository<any>>;
 
   constructor(
     internalContext: WorkspaceInternalContext,
@@ -21,22 +23,27 @@ export class WorkspaceEntityManager extends EntityManager {
   ) {
     super(connection, queryRunner);
     this.internalContext = internalContext;
+    this.repositories = new Map();
   }
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    objectRecordsPermissions?: Record<PermissionsOnAllObjectRecords, boolean>,
+    roleId?: string,
   ): WorkspaceRepository<Entity> {
-    // find already created repository instance and return it if found
+    const dataSource = this.connection as WorkspaceDataSource;
+    const repositoryKey = `${target.toString()}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}`;
+    const repoFromMap = this.repositories.get(repositoryKey);
 
-    // Should we override to find a repo by target and roleId?
+    if (repoFromMap) {
+      return repoFromMap as WorkspaceRepository<Entity>;
+    }
 
-    if (!objectRecordsPermissions) {
-      const repoFromMap = this.repositories.get(target);
+    let objectPermissions = {};
 
-      if (repoFromMap) {
-        return repoFromMap as WorkspaceRepository<Entity>;
-      }
+    if (roleId) {
+      const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
+
+      objectPermissions = objectPermissionsByRoleId?.[roleId] ?? {};
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
@@ -44,10 +51,10 @@ export class WorkspaceEntityManager extends EntityManager {
       target,
       this,
       this.queryRunner,
-      objectRecordsPermissions,
+      objectPermissions,
     );
 
-    this.repositories.set(target, newRepository);
+    this.repositories.set(repositoryKey, newRepository);
 
     return newRepository;
   }

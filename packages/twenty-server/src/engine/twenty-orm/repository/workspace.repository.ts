@@ -1,4 +1,4 @@
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import {
   DeepPartial,
   DeleteResult,
@@ -34,17 +34,14 @@ export class WorkspaceRepository<
   T extends ObjectLiteral,
 > extends Repository<T> {
   private readonly internalContext: WorkspaceInternalContext;
-  private objectRecordsPermissions?: Record<
-    PermissionsOnAllObjectRecords,
-    boolean
-  >;
+  private objectRecordsPermissions?: ObjectRecordsPermissions;
 
   constructor(
     internalContext: WorkspaceInternalContext,
     target: EntityTarget<T>,
     manager: EntityManager,
     queryRunner?: QueryRunner,
-    objectRecordsPermissions?: Record<PermissionsOnAllObjectRecords, boolean>,
+    objectRecordsPermissions?: ObjectRecordsPermissions,
   ) {
     super(target, manager, queryRunner);
     this.internalContext = internalContext;

@@ -1,4 +1,4 @@
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMap';
 
 import {
@@ -19,18 +19,16 @@ const getTargetEntityAndOperationType = (expressionMap: QueryExpressionMap) => {
 
 export const validateQueryIsPermittedOrThrow = (
   expressionMap: QueryExpressionMap,
-  objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>,
+  objectRecordsPermissions: ObjectRecordsPermissions,
 ) => {
-  const { mainEntity: _mainEntity, operationType } =
+  const { mainEntity, operationType } =
     getTargetEntityAndOperationType(expressionMap);
+
+  const permissionsForEntity = objectRecordsPermissions[mainEntity];
 
   switch (operationType) {
     case 'select':
-      if (
-        !objectRecordsPermissions[
-          PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS
-        ]
-      ) {
+      if (!permissionsForEntity?.canRead) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -39,11 +37,7 @@ export const validateQueryIsPermittedOrThrow = (
       break;
     case 'insert':
     case 'update':
-      if (
-        !objectRecordsPermissions[
-          PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS
-        ]
-      ) {
+      if (!permissionsForEntity?.canUpdate) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -51,11 +45,7 @@ export const validateQueryIsPermittedOrThrow = (
       }
       break;
     case 'delete':
-      if (
-        !objectRecordsPermissions[
-          PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS
-        ]
-      ) {
+      if (!permissionsForEntity?.canDestroy) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -63,11 +53,7 @@ export const validateQueryIsPermittedOrThrow = (
       }
       break;
     case 'soft-delete':
-      if (
-        !objectRecordsPermissions[
-          PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS
-        ]
-      ) {
+      if (!permissionsForEntity?.canSoftDelete) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
