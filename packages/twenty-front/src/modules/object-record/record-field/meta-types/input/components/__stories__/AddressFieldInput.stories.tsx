@@ -84,7 +84,7 @@ const AddressInputWithContext = ({
             onEscape={onEscape}
             onClickOutside={onClickOutside}
             value={value}
-            hotkeyScope="hotkey-scope"
+            hotkeyScope={DEFAULT_CELL_SCOPE.scope}
             onTab={onTab}
             onShiftTab={onShiftTab}
           />
