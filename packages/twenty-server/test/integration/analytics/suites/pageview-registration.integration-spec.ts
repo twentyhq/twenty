@@ -28,7 +28,6 @@ describe('Pageview Registration (integration)', () => {
   });
 
   beforeEach(async () => {
-    // Clear the pageview table before each test
     await clickhouseClient.query({
       query: 'TRUNCATE TABLE pageview',
     });

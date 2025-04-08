@@ -33,20 +33,6 @@ jobs:
       CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
       CLICKHOUSE_URL: "http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test"
     services:
-      postgres:
-        image: twentycrm/twenty-postgres-spilo
-        env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
       clickhouse:
         image: clickhouse/clickhouse-server:latest
         ports:
@@ -86,5 +72,3 @@ jobs:
         uses: ./.github/workflows/actions/save-cache
         with:
           key: ${{ steps.restore-clickhouse-setup-cache.outputs.cache-primary-key }}
-      - name: Run ClickHouse integration tests
-        run: npx nx test:integration twenty-server --testPathPattern=analytics

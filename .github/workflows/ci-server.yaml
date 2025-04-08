@@ -168,9 +168,26 @@ jobs:
         image: redis
         ports:
           - 6379:6379
+      clickhouse:
+        image: clickhouse/clickhouse-server:latest
+        ports:
+          - 8123:8123
+          - 9000:9000
+        env:
+          CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
+          CLICKHOUSE_URL: "http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test"
+        options: >-
+          --health-cmd "clickhouse-client --password=$CLICKHOUSE_PASSWORD --query='SELECT 1'" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       NODE_ENV: test
+      ANALYTICS_FLUSH_INTERVAL_MS: 10
+      ANALYTICS_ENABLED: true
+      CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_CI_PASSWORD }}
+      CLICKHOUSE_URL: "http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test"
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
