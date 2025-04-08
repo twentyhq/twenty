@@ -1,4 +1,3 @@
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
