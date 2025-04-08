@@ -20,8 +20,8 @@ export const useDateSettingsFormInitialValues = ({
     resetField('settings', {
       defaultValue: {
         displayFormat: initialDisplayFormat,
-        customUnicode35DateFormat: initialCustomUnicode35DateFormat
-      }
+        customUnicode35DateFormat: initialCustomUnicode35DateFormat,
+      },
     });
 
   return {
