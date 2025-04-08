@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
@@ -8,20 +7,12 @@ import {
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { workflowRunOutputSchema } from '@/workflow/validation-schemas/workflowSchema';
 import { useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
-import { IconBrackets, IconPencil } from 'twenty-ui/display';
+import { IconPencil } from 'twenty-ui/display';
 import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
-import {
-  JsonNestedNode,
-  JsonTree,
-  JsonTreeContextProvider,
-  isTwoFirstDepths,
-} from 'twenty-ui/json-visualizer';
-import { JsonValue } from 'type-fest';
+import { JsonTree, isTwoFirstDepths } from 'twenty-ui/json-visualizer';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useJsonField } from '../../hooks/useJsonField';
 
@@ -67,7 +58,7 @@ export const RawJsonFieldInput = ({
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { draftValue, setDraftValue, persistJsonField, fieldDefinition } =
+  const { draftValue, precomputedDraftValue, setDraftValue, persistJsonField } =
     useJsonField();
 
   const hotkeyScope = DEFAULT_CELL_SCOPE.scope;
@@ -138,48 +129,6 @@ export const RawJsonFieldInput = ({
     setIsEditing(true);
   };
 
-  const isWorkflowRunOutputField =
-    fieldDefinition.metadata.objectMetadataNameSingular ===
-      CoreObjectNameSingular.WorkflowRun &&
-    fieldDefinition.metadata.fieldName === 'output';
-
-  const getWorkflowRunOutputElements = () => {
-    if (!isWorkflowRunOutputField) {
-      return [];
-    }
-
-    const parsedValue = workflowRunOutputSchema.safeParse(
-      JSON.parse(draftValue ?? ''),
-    );
-    if (!parsedValue.success) {
-      return [];
-    }
-
-    return [
-      isDefined(parsedValue.data.error)
-        ? {
-            id: 'error',
-            label: 'error',
-            value: parsedValue.data.error as JsonValue,
-          }
-        : undefined,
-      isDefined(parsedValue.data.stepsOutput)
-        ? {
-            id: 'stepsOutput',
-            label: 'stepsOutput',
-            value: parsedValue.data.stepsOutput as JsonValue,
-          }
-        : undefined,
-      isDefined(parsedValue.data.flow)
-        ? {
-            id: 'flow',
-            label: 'flow',
-            value: parsedValue.data.flow as JsonValue,
-          }
-        : undefined,
-    ].filter(isDefined);
-  };
-
   return (
     <StyledContainer ref={containerRef}>
       {isEditing ? (
@@ -214,40 +163,16 @@ export const RawJsonFieldInput = ({
           </StyledSwitchModeButtonContainer>
 
           <StyledJsonTreeContainer>
-            {isWorkflowRunOutputField ? (
-              <JsonTreeContextProvider
-                value={{
-                  emptyArrayLabel: t`Empty Array`,
-                  emptyObjectLabel: t`Empty Object`,
-                  emptyStringLabel: t`[empty string]`,
-                  arrowButtonCollapsedLabel: t`Expand`,
-                  arrowButtonExpandedLabel: t`Collapse`,
-                  getNodeHighlighting: (keyPath) =>
-                    keyPath === 'error' ? 'red' : undefined,
-                  shouldExpandNodeInitially: isTwoFirstDepths,
-                  onNodeValueClick: copyToClipboard,
-                }}
-              >
-                <JsonNestedNode
-                  elements={getWorkflowRunOutputElements()}
-                  Icon={IconBrackets}
-                  depth={0}
-                  keyPath=""
-                  emptyElementsText=""
-                />
-              </JsonTreeContextProvider>
-            ) : (
-              <JsonTree
-                value={isDefined(draftValue) ? JSON.parse(draftValue) : ''}
-                emptyArrayLabel={t`Empty Array`}
-                emptyObjectLabel={t`Empty Object`}
-                emptyStringLabel={t`[empty string]`}
-                arrowButtonCollapsedLabel={t`Expand`}
-                arrowButtonExpandedLabel={t`Collapse`}
-                shouldExpandNodeInitially={isTwoFirstDepths}
-                onNodeValueClick={copyToClipboard}
-              />
-            )}
+            <JsonTree
+              value={precomputedDraftValue}
+              emptyArrayLabel={t`Empty Array`}
+              emptyObjectLabel={t`Empty Object`}
+              emptyStringLabel={t`[empty string]`}
+              arrowButtonCollapsedLabel={t`Expand`}
+              arrowButtonExpandedLabel={t`Collapse`}
+              shouldExpandNodeInitially={isTwoFirstDepths}
+              onNodeValueClick={copyToClipboard}
+            />
           </StyledJsonTreeContainer>
         </>
       )}
