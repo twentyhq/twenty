@@ -23,6 +23,13 @@ export const isFieldValueReadOnly = ({
     return true;
   }
 
+  if (
+    objectNameSingular === CoreObjectNameSingular.WorkflowRun &&
+    fieldName === 'output'
+  ) {
+    return false;
+  }
+
   if (isWorkflowSubObjectMetadata(objectNameSingular)) {
     return true;
   }
