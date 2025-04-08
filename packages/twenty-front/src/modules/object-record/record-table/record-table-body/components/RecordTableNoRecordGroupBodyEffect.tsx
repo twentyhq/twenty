@@ -11,20 +11,19 @@ import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record
 import { tableEncounteredUnrecoverableErrorComponentState } from '@/object-record/record-table/states/tableEncounteredUnrecoverableErrorComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
   const { setIsRecordTableInitialLoading } = useRecordTable();
 
-  const onboardingStatus = useOnboardingStatus();
+  const showAuthModal = useShowAuthModal();
 
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
@@ -143,7 +142,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   ]);
 
   useEffect(() => {
-    if (onboardingStatus !== OnboardingStatus.COMPLETED) {
+    if (showAuthModal) {
       setIsRecordTableInitialLoading(false);
       return;
     }
@@ -155,8 +154,8 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   }, [
     findManyRecords,
     hasInitialized,
-    onboardingStatus,
     setIsRecordTableInitialLoading,
+    showAuthModal,
   ]);
 
   return <></>;

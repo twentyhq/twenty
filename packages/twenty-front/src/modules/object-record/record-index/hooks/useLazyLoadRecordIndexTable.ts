@@ -3,16 +3,15 @@ import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRec
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 
 export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
+  const showAuthModal = useShowAuthModal();
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-
-  const onboardingStatus = useOnboardingStatus();
 
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
@@ -42,10 +41,7 @@ export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
 
   return {
     findManyRecords,
-    records:
-      onboardingStatus === OnboardingStatus.COMPLETED
-        ? records
-        : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
+    records: !showAuthModal ? records : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
     totalCount: totalCount,
     loading,
     fetchMoreRecords,

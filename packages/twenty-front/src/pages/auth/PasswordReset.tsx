@@ -101,7 +101,7 @@ export const PasswordReset = () => {
     variables: {
       token: passwordResetToken ?? '',
     },
-    skip: !passwordResetToken,
+    skip: !passwordResetToken || isTokenValid,
     onError: (error) => {
       enqueueSnackBar(error?.message ?? 'Token Invalid', {
         variant: SnackBarVariant.Error,

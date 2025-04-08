@@ -47,10 +47,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
 
-  if (isMatchingOpenRoute) {
-    return;
-  }
-
   if (!isLoggedIn && !isMatchingOngoingUserCreationRoute) {
     return AppPath.SignInUp;
   }

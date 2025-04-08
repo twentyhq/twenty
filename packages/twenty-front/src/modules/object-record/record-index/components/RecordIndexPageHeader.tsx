@@ -1,4 +1,6 @@
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -7,6 +9,7 @@ import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { isUndefined } from '@sniptt/guards';
 import { capitalize } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -58,6 +61,15 @@ export const RecordIndexPageHeader = () => {
     ) : (
       label
     );
+
+  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+    contextStoreCurrentViewIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  if (isUndefined(contextStoreCurrentViewId)) {
+    return <></>;
+  }
 
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
