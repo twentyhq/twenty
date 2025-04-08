@@ -21,7 +21,7 @@ export const ActionListItem = ({ action }: { action: ActionDisplayProps }) => {
   });
 
   return (
-    <SelectableItem itemId={action.key} key={action.key}>
+    <SelectableItem itemId={action.key}>
       <CommandMenuItem
         id={action.key}
         Icon={action.Icon}
