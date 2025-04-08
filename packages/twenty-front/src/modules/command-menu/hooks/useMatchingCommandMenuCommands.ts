@@ -1,4 +1,4 @@
-import { useCommandMenuActions } from '@/command-menu/hooks/useCommandMenuCommands';
+import { useCommandMenuActions } from '@/command-menu/hooks/useCommandMenuActions';
 import { useMatchActions } from '@/command-menu/hooks/useMatchActions';
 
 export const useMatchingCommandMenuCommands = ({

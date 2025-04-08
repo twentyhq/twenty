@@ -1,4 +1,5 @@
 import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useDebounce } from 'use-debounce';
 
@@ -17,8 +18,10 @@ export const useMatchActions = ({
   };
 
   const checkInLabels = (action: ActionConfig, search: string) => {
-    if (isNonEmptyString(action.label)) {
-      return action.label.toLowerCase().includes(search.toLowerCase());
+    if (isNonEmptyString(getActionLabel(action.label))) {
+      return getActionLabel(action.label)
+        .toLowerCase()
+        .includes(search.toLowerCase());
     }
     return false;
   };
