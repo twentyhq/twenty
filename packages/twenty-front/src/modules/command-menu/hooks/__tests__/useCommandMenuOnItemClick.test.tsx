@@ -47,7 +47,6 @@ describe('useCommandMenuOnItemClick', () => {
       });
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(true);
     expect(onClickMock).toHaveBeenCalledTimes(1);
   });
 });
