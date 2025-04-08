@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
-  const { actionMenuType } = useContext(ActionMenuContext);
+  const { actionMenuType, isInRightDrawer } = useContext(ActionMenuContext);
 
   const { closeCommandMenu } = useCommandMenu();
 
@@ -18,7 +18,6 @@ export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
   );
-  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const dropdownId = isInRightDrawer
     ? getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId)
