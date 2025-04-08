@@ -3,16 +3,13 @@ import { useMemo } from 'react';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { isDefined } from 'twenty-shared/utils';
-import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 export const useShowAuthModal = () => {
   const { isMatchingLocation } = useIsMatchingLocation();
   const isLoggedIn = useIsLogged();
   const onboardingStatus = useOnboardingStatus();
-  const subscriptionStatus = useSubscriptionStatus();
 
   return useMemo(() => {
     if (
@@ -21,7 +18,8 @@ export const useShowAuthModal = () => {
       isMatchingLocation(AppPath.VerifyEmail) ||
       isMatchingLocation(AppPath.Verify) ||
       isMatchingLocation(AppPath.SignInUp) ||
-      isMatchingLocation(AppPath.CreateWorkspace)
+      isMatchingLocation(AppPath.CreateWorkspace) ||
+      isMatchingLocation(AppPath.PlanRequired)
     ) {
       return true;
     }
@@ -37,14 +35,6 @@ export const useShowAuthModal = () => {
       return true;
     }
 
-    if (isMatchingLocation(AppPath.PlanRequired)) {
-      return (
-        (onboardingStatus === OnboardingStatus.COMPLETED &&
-          !isDefined(subscriptionStatus)) ||
-        subscriptionStatus === SubscriptionStatus.Canceled
-      );
-    }
-
     return false;
-  }, [isLoggedIn, isMatchingLocation, onboardingStatus, subscriptionStatus]);
+  }, [isLoggedIn, isMatchingLocation, onboardingStatus]);
 };
