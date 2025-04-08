@@ -37,7 +37,7 @@ export class RoleService {
       where: {
         workspaceId,
       },
-      relations: ['userWorkspaceRoles'],
+      relations: ['userWorkspaceRoles', 'settingPermissions'],
     });
   }
 
@@ -50,7 +50,7 @@ export class RoleService {
         id,
         workspaceId,
       },
-      relations: ['userWorkspaceRoles'],
+      relations: ['userWorkspaceRoles', 'settingPermissions'],
     });
   }
 

@@ -1,3 +1,4 @@
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
@@ -21,6 +22,7 @@ export const SettingsRolesQueryEffect = () => {
         const roleIds = roles.map((role) => role.id);
         set(settingsRoleIdsState, roleIds);
         roles.forEach((role) => {
+          set(settingsDraftRoleFamilyState(role.id), role);
           set(settingsPersistedRoleFamilyState(role.id), role);
         });
       },

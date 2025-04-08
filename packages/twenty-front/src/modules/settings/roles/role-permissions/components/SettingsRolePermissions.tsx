@@ -1,3 +1,4 @@
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsRolePermissionsObjectsTableHeader } from '@/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader';
 import { SettingsRolePermissionsObjectsTableRow } from '@/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableRow';
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader';
@@ -5,10 +6,10 @@ import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-p
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/types/SettingsRolePermissionsObjectPermission';
 import { SettingsRolePermissionsSettingPermission } from '@/settings/roles/types/SettingsRolePermissionsSettingPermission';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import { SettingPermissionType } from '~/generated-metadata/graphql';
 import {
   H2Title,
   IconCode,
@@ -23,7 +24,11 @@ import {
   IconTrashX,
   IconUsers,
 } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { Card, Section } from 'twenty-ui/layout';
+import {
+  FeatureFlagKey,
+  SettingPermissionType,
+} from '~/generated-metadata/graphql';
 
 const StyledRolePermissionsContainer = styled.div`
   display: flex;
@@ -38,6 +43,10 @@ const StyledTable = styled.div`
 const StyledTableRows = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledCard = styled(Card)`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 type SettingsRolePermissionsProps = {
@@ -110,52 +119,49 @@ export const SettingsRolePermissions = ({
         key: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
         name: t`API Keys & Webhooks`,
         description: t`Manage API keys and webhooks`,
-        value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconCode,
       },
       {
         key: SettingPermissionType.WORKSPACE,
         name: t`Workspace`,
         description: t`Set global workspace preferences`,
-        value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconSettings,
       },
       {
         key: SettingPermissionType.WORKSPACE_MEMBERS,
         name: t`Users`,
         description: t`Add or remove users`,
-        value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconUsers,
       },
       {
         key: SettingPermissionType.ROLES,
         name: t`Roles`,
         description: t`Define user roles and access levels`,
-        value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconLockOpen,
       },
       {
         key: SettingPermissionType.DATA_MODEL,
         name: t`Data Model`,
         description: t`Edit CRM data structure and fields`,
-        value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconHierarchy,
       },
       {
         key: SettingPermissionType.ADMIN_PANEL,
         name: t`Admin Panel`,
         description: t`Admin settings and system tools`,
-        value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconServer,
       },
       {
         key: SettingPermissionType.SECURITY,
         name: t`Security`,
         description: t`Manage security policies`,
-        value: settingsDraftRole.canUpdateAllSettings,
         Icon: IconKey,
       },
     ];
+
+  const isPermissionsV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IsPermissionsV2Enabled,
+  );
 
   return (
     <StyledRolePermissionsContainer>
@@ -183,15 +189,32 @@ export const SettingsRolePermissions = ({
       </Section>
       <Section>
         <H2Title title={t`Settings`} description={t`Settings permissions`} />
+        {isPermissionsV2Enabled && (
+          <StyledCard rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconSettings}
+              title={t`Settings All Access`}
+              description={t`Ability to edit all settings`}
+              checked={settingsDraftRole.canUpdateAllSettings}
+              disabled={!isEditable}
+              onChange={() => {
+                setSettingsDraftRole({
+                  ...settingsDraftRole,
+                  canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
+                });
+              }}
+            />
+          </StyledCard>
+        )}
         <StyledTable>
-          <SettingsRolePermissionsSettingsTableHeader
-            allPermissions={settingsDraftRole.canUpdateAllSettings}
-          />
+          <SettingsRolePermissionsSettingsTableHeader />
           <StyledTableRows>
             {settingsPermissionsConfig.map((permission) => (
               <SettingsRolePermissionsSettingsTableRow
                 key={permission.key}
+                roleId={roleId}
                 permission={permission}
+                isEditable={isEditable}
               />
             ))}
           </StyledTableRows>
