@@ -75,6 +75,7 @@ const AddressInputWithContext = ({
             recordId: recordId ?? '123',
             hotkeyScope: 'hotkey-scope',
             isLabelIdentifier: false,
+            isReadOnly: false,
           }}
         >
           <AddressValueSetterEffect value={value} />

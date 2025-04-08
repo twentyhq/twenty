@@ -7,15 +7,14 @@ import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/c
 import { RestApiCoreServiceV2 } from 'src/engine/api/rest/core/rest-api-core-v2.service';
 import { RestApiCoreService } from 'src/engine/api/rest/core/rest-api-core.service';
 import { EndingBeforeInputFactory } from 'src/engine/api/rest/input-factories/ending-before-input.factory';
-import { FilterInputFactory } from 'src/engine/api/rest/input-factories/filter-input.factory';
 import { LimitInputFactory } from 'src/engine/api/rest/input-factories/limit-input.factory';
-import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { StartingAfterInputFactory } from 'src/engine/api/rest/input-factories/starting-after-input.factory';
 import { MetadataQueryBuilderModule } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.module';
 import { RestApiMetadataController } from 'src/engine/api/rest/metadata/rest-api-metadata.controller';
 import { RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-metadata.service';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
@@ -28,6 +27,7 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
     AuthModule,
     HttpModule,
     TwentyORMModule,
+    RecordTransformerModule,
   ],
   controllers: [
     RestApiMetadataController,
@@ -42,8 +42,6 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
     StartingAfterInputFactory,
     EndingBeforeInputFactory,
     LimitInputFactory,
-    FilterInputFactory,
-    OrderByInputFactory,
     ApiEventEmitterService,
   ],
   exports: [RestApiMetadataService],

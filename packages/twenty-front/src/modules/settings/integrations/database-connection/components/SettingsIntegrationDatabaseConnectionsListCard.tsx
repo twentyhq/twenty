@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { IconChevronRight, LightIconButton } from 'twenty-ui';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSyncStatus';
@@ -7,6 +6,8 @@ import { SettingsIntegration } from '@/settings/integrations/types/SettingsInteg
 import { SettingsPath } from '@/types/SettingsPath';
 import { RemoteServer } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { IconChevronRight } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 type SettingsIntegrationDatabaseConnectionsListCardProps = {
   integration: SettingsIntegration;

@@ -1,8 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
-import { ComponentWithRouterDecorator, IconCheckbox } from 'twenty-ui';
 
 import { TabList } from '../TabList';
+import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
+import { IconCheckbox } from 'twenty-ui/display';
 
 const tabs = [
   {

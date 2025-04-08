@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
@@ -24,6 +23,7 @@ import { RecordTableContextProvider } from '@/object-record/record-table/context
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockPerformance } from './mock';
 
@@ -110,7 +110,6 @@ const meta: Meta = {
                             mockPerformance.entityValue.__typename.toLocaleLowerCase(),
                         }) + mockPerformance.recordId,
                       isSelected: false,
-                      isPendingRow: false,
                       inView: true,
                     }}
                   >
@@ -137,6 +136,7 @@ const meta: Meta = {
                               ...mockPerformance.fieldDefinition,
                             },
                             hotkeyScope: 'hotkey-scope',
+                            isReadOnly: false,
                           }}
                         >
                           <RelationFieldValueSetterEffect />

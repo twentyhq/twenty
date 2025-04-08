@@ -1,5 +1,5 @@
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type TextDisplayProps = {
   text: string;

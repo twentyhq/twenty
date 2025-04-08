@@ -14,6 +14,7 @@ import crypto from 'crypto';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
@@ -106,11 +107,24 @@ export class UserResolver {
     if (!currentUserWorkspace) {
       throw new Error('Current user workspace not found');
     }
-    const { settingsPermissions, objectRecordsPermissions } =
-      await this.permissionsService.getUserWorkspacePermissions({
-        userWorkspaceId: currentUserWorkspace.id,
-        workspaceId: workspace.id,
-      });
+    let settingsPermissions = {};
+    let objectRecordsPermissions = {};
+
+    if (
+      ![
+        WorkspaceActivationStatus.PENDING_CREATION,
+        WorkspaceActivationStatus.ONGOING_CREATION,
+      ].includes(workspace.activationStatus)
+    ) {
+      const permissions =
+        await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId: currentUserWorkspace.id,
+          workspaceId: workspace.id,
+        });
+
+      settingsPermissions = permissions.settingsPermissions;
+      objectRecordsPermissions = permissions.objectRecordsPermissions;
+    }
 
     const grantedSettingsPermissions: SettingPermissionType[] = (
       Object.keys(settingsPermissions) as SettingPermissionType[]

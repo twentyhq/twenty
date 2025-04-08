@@ -6,9 +6,9 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { useSearchQuery } from '~/generated/graphql';
+import { Avatar } from 'twenty-ui/display';
 
 export const useCommandMenuSearchRecords = () => {
   const commandMenuSearch = useRecoilValue(commandMenuSearchState);

@@ -155,6 +155,11 @@ msgstr "24 saat ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Ekibinizle birlikte müşteri ilişkilerinizi yönetebileceğiniz paylaşılan bir ortam."
 
+#. js-lingui-id: JE9zuL
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Ability to edit all settings"
+msgstr ""
+
 #. js-lingui-id: 09tRFp
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
 msgid "Ability to interact with each object"
@@ -207,7 +212,6 @@ msgid "Action"
 msgstr "Eylem"
 
 #. js-lingui-id: 7L01XJ
-#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Actions"
 msgstr "Eylemler"
@@ -216,6 +220,7 @@ msgstr "Eylemler"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
 msgid "Activate"
 msgstr "Aktif Et"
@@ -301,14 +306,8 @@ msgstr "Sık Kullanılanlara Ekle"
 #. js-lingui-id: pBsoKL
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
 #: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Add to favorites"
 msgstr "Sık Kullanılanlara Ekle"
 
@@ -426,6 +425,11 @@ msgstr "Google'ın tekli oturum açma işlevselliği ile oturum açmayı kabul e
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Microsoft'un tekli oturum açma işlevselliği ile oturum açmayı kabul et."
+
+#. js-lingui-id: U6bnfj
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Allow Support Team Access"
+msgstr ""
 
 #. js-lingui-id: wMg43c
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -760,8 +764,8 @@ msgstr "İptal"
 
 #. js-lingui-id: 0TllC8
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Cancel anytime"
-msgstr "İstediğiniz zaman iptal edin"
+#~ msgid "Cancel anytime"
+#~ msgstr "İstediğiniz zaman iptal edin"
 
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/SettingsBilling.tsx
@@ -888,10 +892,7 @@ msgid "Compact view"
 msgstr "Kompakt Görünüm"
 
 #. js-lingui-id: s2QZS6
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Companies"
 msgstr ""
 
@@ -967,6 +968,7 @@ msgstr "Bağlam"
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
@@ -987,6 +989,11 @@ msgstr "Google ile Devam Et"
 #: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx
 msgid "Continue with Microsoft"
 msgstr "Microsoft ile devam et"
+
+#. js-lingui-id: FxVG/l
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: u+VWhB
 #: src/pages/settings/workspace/SettingsCustomDomainRecords.tsx
@@ -1036,6 +1043,11 @@ msgstr "Çekirdek"
 #. js-lingui-id: w5Stxm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Correct the issues and fill the missing data."
+msgstr ""
+
+#. js-lingui-id: s8lFtq
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Couldn't copy to clipboard"
 msgstr ""
 
 #. js-lingui-id: wBMjJ2
@@ -1092,10 +1104,14 @@ msgid "Create API key"
 msgstr "API anahtarı oluştur"
 
 #. js-lingui-id: d0DCww
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Create new record"
 msgstr "Yeni kayıt oluştur"
+
+#. js-lingui-id: UDbEyl
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Create new workflow"
+msgstr ""
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -1332,11 +1348,9 @@ msgstr "İş alanınızdaki diğer kullanıcılara neyin görünür olacağını
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuBarEntry.stories.tsx
 #: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Delete"
 msgstr "Sil"
 
@@ -1364,7 +1378,7 @@ msgstr "API anahtarını sil"
 #~ msgstr "Kaydı sil"
 
 #. js-lingui-id: kf0A63
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Delete records"
 msgstr "Kayıtları Sil"
 
@@ -1422,24 +1436,24 @@ msgstr "Silindi"
 #~ msgstr "Deleted {objectNamePlural}"
 
 #. js-lingui-id: WH/5rN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Deleted records"
 msgstr "Silinmiş kayıtlar"
 
 #. js-lingui-id: /TC7qI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-msgid "Deleted runs"
-msgstr "Silinmiş çalıştırmalar"
+#~ msgid "Deleted runs"
+#~ msgstr "Silinmiş çalıştırmalar"
 
 #. js-lingui-id: Wj5mzm
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-msgid "Deleted versions"
-msgstr "Silinmiş versiyonlar"
+#~ msgid "Deleted versions"
+#~ msgstr "Silinmiş versiyonlar"
 
 #. js-lingui-id: gw3Tlm
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-msgid "Deleted workflows"
-msgstr "Silinmiş iş akışları"
+#~ msgid "Deleted workflows"
+#~ msgstr "Silinmiş iş akışları"
 
 #. js-lingui-id: Cko536
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1456,10 +1470,8 @@ msgid "Description"
 msgstr "Açıklama"
 
 #. js-lingui-id: 2xxBws
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Destroy"
 msgstr "Yok Et"
 
@@ -1795,6 +1807,11 @@ msgstr "Api anahtarını yeniden oluştururken hata: {err}"
 msgid "Error resending invitation"
 msgstr "Davet yeniden gönderilirken hata"
 
+#. js-lingui-id: QmR+2U
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact Twenty team."
+msgstr ""
+
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription {to}."
@@ -1910,20 +1927,11 @@ msgstr "Bitiş süresi"
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useExportRecords.ts
 #: src/modules/action-menu/components/__stories__/CommandMenuActionMenuDropdown.stories.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Export"
 msgstr "Dışa Aktar"
 
@@ -1933,7 +1941,7 @@ msgstr "Dışa Aktar"
 #~ msgstr "Kaydı Dışa Aktar"
 
 #. js-lingui-id: ep2rbf
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Export records"
 msgstr "Kayıtları Dışa Aktar"
 
@@ -1948,7 +1956,7 @@ msgid "Export runs"
 msgstr "Çalıştırmaları Dışa Aktar"
 
 #. js-lingui-id: q46CjD
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Export to PDF"
 msgstr "PDF olarak dışa aktar"
 
@@ -1963,10 +1971,9 @@ msgid "Export versions"
 msgstr "Versiyonları Dışa Aktar"
 
 #. js-lingui-id: DaGxE0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Export view"
 msgstr "Görünümü Dışa Aktar"
 
@@ -2140,26 +2147,17 @@ msgid "Global"
 msgstr "Küresel"
 
 #. js-lingui-id: mUbv8L
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to Companies"
 msgstr ""
 
 #. js-lingui-id: buPcNi
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to Opportunities"
 msgstr ""
 
 #. js-lingui-id: MrE/Qb
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to People"
 msgstr ""
 
@@ -2171,32 +2169,31 @@ msgstr "Çalışmalara git"
 
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to Settings"
 msgstr "Ayarlar'a Git"
 
 #. js-lingui-id: BM24SF
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to Tasks"
 msgstr ""
 
 #. js-lingui-id: A5WHZY
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Go to workflows"
 msgstr "İş akışlarına git"
 
+#. js-lingui-id: 6eo66Q
+#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+msgid "Grant access to your workspace so we can troubleshoot problems."
+msgstr ""
+
 #. js-lingui-id: hWp1MY
 #: src/pages/settings/SettingsWorkspace.tsx
-msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-msgstr "Sorunları gidermemizi veya adınıza içerikleri kurtarmamızı sağlayacak şekilde Twenty destek ekibine çalışma alanınızda geçici olarak erişim izni verin. İstediğiniz zaman erişimi iptal edebilirsiniz."
+#~ msgid "Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+#~ msgstr "Sorunları gidermemizi veya adınıza içerikleri kurtarmamızı sağlayacak şekilde Twenty destek ekibine çalışma alanınızda geçici olarak erişim izni verin. İstediğiniz zaman erişimi iptal edebilirsiniz."
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2258,15 +2255,12 @@ msgid "Hide"
 msgstr "Gizle"
 
 #. js-lingui-id: OlbYor
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Hide deleted"
 msgstr "Silinenleri gizle"
 
 #. js-lingui-id: FHhlye
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Hide deleted records"
 msgstr "Silinen kayıtları gizle"
 
@@ -2277,8 +2271,8 @@ msgstr "Silinen çalıştırmaları gizle"
 
 #. js-lingui-id: Jc6FrI
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-msgid "Hide deleted versions"
-msgstr "Silinen sürümleri gizle"
+#~ msgid "Hide deleted versions"
+#~ msgstr "Silinen sürümleri gizle"
 
 #. js-lingui-id: aOZAIB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -2348,13 +2342,12 @@ msgid "Impersonate"
 msgstr "Kişileştir"
 
 #. js-lingui-id: l3s5ri
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Import"
 msgstr "İçe Aktar"
 
 #. js-lingui-id: eECp4f
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Import records"
 msgstr "Kayıtları İçe Aktar"
 
@@ -2727,6 +2720,11 @@ msgstr "Üyeleri Yönet"
 msgid "Manage security policies"
 msgstr ""
 
+#. js-lingui-id: 49MfD1
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Manage support access settings"
+msgstr ""
+
 #. js-lingui-id: 4cjU2u
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage the members of your space here"
@@ -2874,14 +2872,14 @@ msgid "Name of your workspace"
 msgstr "Çalışma alanınızın adı"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Navigate to next record"
 msgstr "Bir sonraki kayda geç"
 
 #. js-lingui-id: UX6+vb
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-msgid "Navigate to next run"
-msgstr "Sonraki çalıştırmaya git"
+#~ msgid "Navigate to next run"
+#~ msgstr "Sonraki çalıştırmaya git"
 
 #. js-lingui-id: veSA19
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2894,14 +2892,14 @@ msgid "Navigate to next workflow"
 msgstr "Sonraki iş akışına git"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Navigate to previous record"
 msgstr "Önceki kayda git"
 
 #. js-lingui-id: HddE65
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-msgid "Navigate to previous run"
-msgstr "Önceki çalıştırmaya git"
+#~ msgid "Navigate to previous run"
+#~ msgstr "Önceki çalıştırmaya git"
 
 #. js-lingui-id: I+Pm5V
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
@@ -2961,8 +2959,7 @@ msgstr "Yeni Parola"
 #. js-lingui-id: BcCzLv
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/ui/layout/page/components/PageAddButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "New record"
 msgstr "Yeni kayıt"
 
@@ -3017,6 +3014,11 @@ msgstr ""
 msgid "No data found"
 msgstr ""
 
+#. js-lingui-id: xlUOps
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
@@ -3062,6 +3064,11 @@ msgstr "Metrik verisi yok"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No more members to assign"
 msgstr "Atanacak başka üye yok"
+
+#. js-lingui-id: 5pSj4j
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "No payment method found. Please update your billing details."
+msgstr ""
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -3215,10 +3222,7 @@ msgid "Opened"
 msgstr "Açık"
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Opportunities"
 msgstr ""
 
@@ -3288,10 +3292,7 @@ msgid "Password reset link has been sent to the email"
 msgstr "Parola sıfırlama bağlantısı e-postaya gönderildi"
 
 #. js-lingui-id: 1wdjme
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "People"
 msgstr ""
 
@@ -3328,15 +3329,19 @@ msgid "Percentage"
 msgstr "Yüzde"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Permanently destroy record"
 msgstr "Kaydı kalıcı olarak yok et"
 
 #. js-lingui-id: xjWlSJ
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Permanently destroy records"
 msgstr "Kayıtları kalıcı olarak yok et"
+
+#. js-lingui-id: 0bQ5ba
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
+msgid "Permanently destroy workflow"
+msgstr ""
 
 #. js-lingui-id: uKWXhB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -3573,14 +3578,8 @@ msgid "Remove as default"
 msgstr "Varsayılan olarak kaldır"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Remove from favorites"
 msgstr "Favorilerden çıkar"
 
@@ -3611,18 +3610,18 @@ msgid "REST"
 msgstr "Dinlenme"
 
 #. js-lingui-id: yKu/3Y
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Restore"
 msgstr "Geri Yükle"
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Restore record"
 msgstr "Kaydı Geri Yükle"
 
 #. js-lingui-id: Vw369F
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Restore records"
 msgstr "Kayıtları Geri Yükle"
 
@@ -3773,7 +3772,7 @@ msgid "See active version"
 msgstr "Aktif sürümü gör"
 
 #. js-lingui-id: BxIUpp
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "See deleted records"
 msgstr "Silinmiş kayıtları gör"
 
@@ -3784,8 +3783,8 @@ msgstr "Silinmiş çalıştırmaları gör"
 
 #. js-lingui-id: 91fiCe
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-msgid "See deleted versions"
-msgstr "Silinmiş versiyonları gör"
+#~ msgid "See deleted versions"
+#~ msgstr "Silinmiş versiyonları gör"
 
 #. js-lingui-id: 5jZIe5
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
@@ -3836,7 +3835,7 @@ msgstr "İş akışını gör"
 #. js-lingui-id: XThiR2
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "See workflows"
 msgstr "İş akışlarını gör"
 
@@ -3972,12 +3971,14 @@ msgstr "Alt alan adınızın adını belirleyin"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/navigation/components/MainNavigationDrawerItems.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Settings"
 msgstr "Ayarlar"
+
+#. js-lingui-id: uXW4pg
+#: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
+msgid "Settings All Access"
+msgstr ""
 
 #. js-lingui-id: p8fNBm
 #: src/modules/settings/roles/role-permissions/components/SettingsRolePermissions.tsx
@@ -4130,6 +4131,11 @@ msgstr "Konu, gövde ve ekler ekibinizle paylaşılacak."
 msgid "Submit"
 msgstr ""
 
+#. js-lingui-id: uvY7Wk
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Subscription activated."
+msgstr ""
+
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Subscription has been switched {to}"
@@ -4142,7 +4148,7 @@ msgid "Sum"
 msgstr "Toplam"
 
 #. js-lingui-id: XYLcNv
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Support"
 msgstr "Destek"
 
@@ -4166,10 +4172,15 @@ msgstr "{to} değiştir"
 msgid "Switch billing {to}"
 msgstr "Faturalandırmayı {to} olarak değiştir"
 
+#. js-lingui-id: E4rPXj
+#: src/pages/onboarding/ChooseYourPlan.tsx
+msgid "Switch Plan"
+msgstr ""
+
 #. js-lingui-id: lz+f/E
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Switch to {alternatePlanName}"
-msgstr "{alternatePlanName} değiştir"
+#~ msgid "Switch to {alternatePlanName}"
+#~ msgstr "{alternatePlanName} değiştir"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -4215,10 +4226,7 @@ msgid "Table"
 msgstr "Tablo"
 
 #. js-lingui-id: GtycJ/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.ts
 msgid "Tasks"
 msgstr ""
 
@@ -4682,6 +4690,7 @@ msgstr "Web kancaları"
 #~ msgstr "Welcome to"
 
 #. js-lingui-id: ke0EDP
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
 msgstr "{workspaceName}'e Hoş Geldiniz"
@@ -4846,6 +4855,7 @@ msgid "Your name as it will be displayed on the app"
 msgstr "Uygulamada görüntülenecek adınız"
 
 #. js-lingui-id: YQK8fJ
+#: src/pages/auth/SignInUpLoading.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Çalışma Alanınız"

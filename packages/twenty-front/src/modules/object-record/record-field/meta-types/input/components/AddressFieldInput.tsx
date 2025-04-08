@@ -2,12 +2,11 @@ import { useAddressField } from '@/object-record/record-field/meta-types/hooks/u
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { AddressInput } from '@/ui/field/input/components/AddressInput';
 
-import { usePersistField } from '../../../hooks/usePersistField';
-
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
-} from './DateTimeFieldInput';
+} from '@/object-record/record-field/types/FieldInputEvent';
+import { usePersistField } from '../../../hooks/usePersistField';
 
 export type AddressFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;

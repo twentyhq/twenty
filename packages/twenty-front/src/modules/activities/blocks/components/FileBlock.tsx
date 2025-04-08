@@ -2,13 +2,13 @@ import { createReactBlockSpec } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ChangeEvent, useRef } from 'react';
-import { Button } from 'twenty-ui';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { AttachmentIcon } from '../../files/components/AttachmentIcon';
 import { AttachmentType } from '../../files/types/Attachment';
 import { getFileType } from '../../files/utils/getFileType';
 import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
 
 const StyledFileInput = styled.input`
   display: none;

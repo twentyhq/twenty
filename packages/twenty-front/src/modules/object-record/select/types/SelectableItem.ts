@@ -1,5 +1,4 @@
-import { AvatarType, IconComponent } from 'twenty-ui';
-
+import { AvatarType, IconComponent } from 'twenty-ui/display';
 export type SelectableItem<T = object> = T & {
   id: string;
   name: string;

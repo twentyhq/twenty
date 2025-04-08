@@ -7,7 +7,7 @@ import {
   EdgeProps,
   getStraightPath,
 } from '@xyflow/react';
-import { Label } from 'twenty-ui';
+import { Label } from 'twenty-ui/display';
 
 const StyledLabel = styled(Label)`
   color: ${({ theme }) => theme.tag.text.turquoise};

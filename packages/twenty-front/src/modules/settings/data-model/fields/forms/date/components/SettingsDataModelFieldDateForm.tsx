@@ -5,7 +5,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import { useLingui } from '@lingui/react/macro';
-import { IconSlash } from 'twenty-ui';
+import { IconSlash } from 'twenty-ui/display';
 
 export const settingsDataModelFieldDateFormSchema = z.object({
   settings: z

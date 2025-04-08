@@ -2,7 +2,8 @@ import { SupportButton } from '@/support/components/SupportButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { IconHelpCircle, IconMessage, MenuItem } from 'twenty-ui';
+import { IconHelpCircle, IconMessage } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const SupportDropdown = () => {
   const dropdownId = `support-field-active-action-dropdown`;

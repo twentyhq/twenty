@@ -18,15 +18,10 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  AvatarChipVariant,
-  Checkbox,
-  CheckboxVariant,
-  IconEye,
-  IconEyeOff,
-  LightIconButton,
-} from 'twenty-ui';
 import { isDefined } from 'twenty-shared/utils';
+import { AvatarChipVariant } from 'twenty-ui/components';
+import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
+import { IconEye, IconEyeOff } from 'twenty-ui/display';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;

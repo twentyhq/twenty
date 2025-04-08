@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { IconSettings, MenuItem, UndecoratedLink, useIcons } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -16,6 +15,8 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { useLingui } from '@lingui/react/macro';
+import { IconSettings, useIcons } from 'twenty-ui/display';
+import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();

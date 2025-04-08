@@ -1,6 +1,7 @@
 import { IconBrackets } from '@ui/display';
 import { JsonNestedNode } from '@ui/json-visualizer/components/JsonNestedNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
+import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 import { JsonArray } from 'type-fest';
 
 export const JsonArrayNode = ({
@@ -8,11 +9,13 @@ export const JsonArrayNode = ({
   value,
   depth,
   keyPath,
+  highlighting,
 }: {
   label?: string;
   value: JsonArray;
   depth: number;
   keyPath: string;
+  highlighting: JsonNodeHighlighting | undefined;
 }) => {
   const { emptyArrayLabel } = useJsonTreeContextOrThrow();
 
@@ -29,6 +32,7 @@ export const JsonArrayNode = ({
       depth={depth}
       emptyElementsText={emptyArrayLabel}
       keyPath={keyPath}
+      highlighting={highlighting}
     />
   );
 };

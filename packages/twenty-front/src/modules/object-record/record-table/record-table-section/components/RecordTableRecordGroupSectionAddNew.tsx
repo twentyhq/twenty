@@ -8,7 +8,7 @@ import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObj
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { IconPlus } from 'twenty-ui';
+import { IconPlus } from 'twenty-ui/display';
 
 export const RecordTableRecordGroupSectionAddNew = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();

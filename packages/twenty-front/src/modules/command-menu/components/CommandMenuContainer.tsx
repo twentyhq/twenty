@@ -1,8 +1,8 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
-import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKey';
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { RecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionMenuEntriesSetter';
 import { RunWorkflowRecordAgnosticActionMenuEntriesSetter } from '@/action-menu/actions/record-agnostic-actions/components/RunWorkflowRecordAgnosticActionMenuEntriesSetter';
-import { RecordAgnosticActionsKey } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKey';
+import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -23,6 +23,7 @@ import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/reco
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -32,8 +33,8 @@ import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useIsMobile } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledCommandMenu = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};
@@ -46,7 +47,7 @@ const StyledCommandMenu = styled(motion.div)`
   position: fixed;
   right: 0%;
   top: 0%;
-  z-index: 30;
+  z-index: ${RootStackingContextZIndices.CommandMenu};
   display: flex;
   flex-direction: column;
 `;
@@ -144,16 +145,16 @@ export const CommandMenuContainer = ({
                   isInRightDrawer: true,
                   onActionExecutedCallback: ({ key }) => {
                     if (
-                      key !== RecordAgnosticActionsKey.SEARCH_RECORDS &&
+                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS &&
                       key !==
-                        RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK &&
+                        RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK &&
                       key !== NoSelectionRecordActionKeys.CREATE_NEW_RECORD
                     ) {
                       toggleCommandMenu();
                     }
 
                     if (
-                      key !== RecordAgnosticActionsKey.SEARCH_RECORDS_FALLBACK
+                      key !== RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK
                     ) {
                       setCommandMenuSearch('');
                     }

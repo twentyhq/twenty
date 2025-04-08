@@ -4,8 +4,8 @@ import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatu
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Card } from 'twenty-ui';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { Card } from 'twenty-ui/layout';
 
 const StyledCardGrid = styled.div`
   display: grid;

@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.noisy};

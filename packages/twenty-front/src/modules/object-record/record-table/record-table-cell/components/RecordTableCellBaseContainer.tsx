@@ -1,10 +1,8 @@
 import { styled } from '@linaria/react';
 import { ReactNode, useContext } from 'react';
-import { BORDER_COMMON, ThemeContext } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -12,6 +10,7 @@ import {
   DEFAULT_CELL_SCOPE,
   useOpenRecordTableCellFromCell,
 } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import { BORDER_COMMON, ThemeContext } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
   hasSoftFocus: boolean;
@@ -52,11 +51,11 @@ export const RecordTableCellBaseContainer = ({
 }: {
   children: ReactNode;
 }) => {
+  const { isReadOnly } = useContext(FieldContext);
   const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);
 
-  const isReadOnly = useIsFieldValueReadOnly();
   const { hasSoftFocus, cellPosition } = useContext(RecordTableCellContext);
 
   const { onMoveSoftFocusToCurrentCell, onCellMouseEnter } =
@@ -98,7 +97,7 @@ export const RecordTableCellBaseContainer = ({
         fontColorExtraLight={theme.font.color.extraLight}
         fontColorMedium={theme.border.color.medium}
         hasSoftFocus={hasSoftFocus}
-        isReadOnly={isReadOnly}
+        isReadOnly={isReadOnly ?? false}
       >
         {children}
       </StyledBaseContainer>

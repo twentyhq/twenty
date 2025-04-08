@@ -1,6 +1,7 @@
 import { IconCube } from '@ui/display';
 import { JsonNestedNode } from '@ui/json-visualizer/components/JsonNestedNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
+import { JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 import { JsonObject } from 'type-fest';
 
 export const JsonObjectNode = ({
@@ -8,11 +9,13 @@ export const JsonObjectNode = ({
   value,
   depth,
   keyPath,
+  highlighting,
 }: {
   label?: string;
   value: JsonObject;
   depth: number;
   keyPath: string;
+  highlighting: JsonNodeHighlighting | undefined;
 }) => {
   const { emptyObjectLabel } = useJsonTreeContextOrThrow();
 
@@ -29,6 +32,7 @@ export const JsonObjectNode = ({
       depth={depth}
       emptyElementsText={emptyObjectLabel}
       keyPath={keyPath}
+      highlighting={highlighting}
     />
   );
 };

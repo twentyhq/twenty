@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type EmailThreadMessageReceiversProps = {
   receivers: EmailThreadMessageParticipant[];

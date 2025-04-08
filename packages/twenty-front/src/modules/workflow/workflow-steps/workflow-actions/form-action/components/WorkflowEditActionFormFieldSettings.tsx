@@ -2,20 +2,16 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
+import { FORM_SELECT_FIELD_TYPE_OPTIONS } from '@/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions';
 import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
-import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  IconSettingsAutomation,
-  IconX,
-  IllustrationIconNumbers,
-  IllustrationIconText,
-  LightIconButton,
-} from 'twenty-ui';
+import { IconSettingsAutomation, IconX } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 type WorkflowEditActionFormFieldSettingsProps = {
   field: WorkflowFormActionField;
@@ -47,7 +43,7 @@ const StyledSettingsHeader = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(3)};
   grid-template-columns: 1fr 24px;
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -95,6 +91,7 @@ export const WorkflowEditActionFormFieldSettings = ({
         </StyledTitleContainer>
         <StyledCloseButtonContainer>
           <LightIconButton
+            testId="close-button"
             Icon={IconX}
             size="small"
             accent="secondary"
@@ -106,39 +103,25 @@ export const WorkflowEditActionFormFieldSettings = ({
         <FormFieldInputContainer>
           <InputLabel>Type</InputLabel>
           <FormSelectFieldInput
-            options={[
-              {
-                label: getDefaultFormFieldSettings(FieldMetadataType.TEXT)
-                  .label,
-                value: FieldMetadataType.TEXT,
-                Icon: IllustrationIconText,
-              },
-              {
-                label: getDefaultFormFieldSettings(FieldMetadataType.NUMBER)
-                  .label,
-                value: FieldMetadataType.NUMBER,
-                Icon: IllustrationIconNumbers,
-              },
-            ]}
+            options={FORM_SELECT_FIELD_TYPE_OPTIONS}
             onChange={(newType: string | null) => {
               if (newType === null) {
                 return;
               }
 
-              const type = newType as
-                | FieldMetadataType.TEXT
-                | FieldMetadataType.NUMBER;
-              const { label, placeholder } = getDefaultFormFieldSettings(type);
+              const type = newType as WorkflowFormFieldType;
+              const { name, label, settings } =
+                getDefaultFormFieldSettings(type);
 
               onChange({
                 ...field,
                 type,
+                name,
                 label,
-                placeholder,
+                settings,
               });
             }}
             defaultValue={field.type}
-            preventDisplayPadding
           />
         </FormFieldInputContainer>
         <WorkflowFormFieldSettingsByType
