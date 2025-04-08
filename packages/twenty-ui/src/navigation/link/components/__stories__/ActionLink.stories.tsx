@@ -1,14 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ActionLink } from '@ui/navigation/link/components/ActionLink';
+import { ClickToActionLink } from '@ui/navigation/link/components/ActionLink';
 import { ComponentDecorator } from '@ui/testing';
 
-const meta: Meta<typeof ActionLink> = {
-  title: 'UI/navigation/link/ActionLink',
-  component: ActionLink,
+const meta: Meta<typeof ClickToActionLink> = {
+  title: 'UI/navigation/link/ClickToActionLink',
+  component: ClickToActionLink,
 };
 
 export default meta;
-type Story = StoryObj<typeof ActionLink>;
+type Story = StoryObj<typeof ClickToActionLink>;
 
 export const Default: Story = {
   args: {

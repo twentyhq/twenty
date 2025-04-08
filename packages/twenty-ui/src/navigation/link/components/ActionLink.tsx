@@ -17,11 +17,11 @@ const StyledButtonLink = styled.a`
   }
 `;
 
-type ActionLinkProps = React.ComponentProps<'a'> & {
+type ClickToActionLinkProps = React.ComponentProps<'a'> & {
   className?: string;
 };
 
-export const ActionLink = (props: ActionLinkProps) => {
+export const ClickToActionLink = (props: ClickToActionLinkProps) => {
   return (
     <StyledButtonLink
       className={props.className}
