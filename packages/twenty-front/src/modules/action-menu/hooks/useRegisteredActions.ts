@@ -70,9 +70,9 @@ export const useRegisteredActions = (
       )
     : [];
 
-  const actions = actionsToRegister.filter((action) =>
-    action.shouldBeRegistered(shouldBeRegisteredParams),
-  );
+  const actions = actionsToRegister
+    .filter((action) => action.shouldBeRegistered(shouldBeRegisteredParams))
+    .sort((a, b) => a.position - b.position);
 
   return actions;
 };
