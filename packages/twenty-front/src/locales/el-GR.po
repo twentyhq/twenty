@@ -764,8 +764,8 @@ msgstr "Ακύρωση"
 
 #. js-lingui-id: 0TllC8
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Cancel anytime"
-msgstr "Ακύρωση ανά πάσα στιγμή"
+#~ msgid "Cancel anytime"
+#~ msgstr "Ακύρωση ανά πάσα στιγμή"
 
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/SettingsBilling.tsx
@@ -2678,6 +2678,11 @@ msgstr "Καταχωρήσεις"
 msgid "Loading metrics data..."
 msgstr "Φόρτωση δεδομένων μετρήσεων..."
 
+#. js-lingui-id: Z3FXyt
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+msgid "Loading..."
+msgstr ""
+
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -3017,6 +3022,11 @@ msgstr ""
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
+#. js-lingui-id: OcMef3
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "No latest version found"
 msgstr ""
 
 #. js-lingui-id: UwvrGq
@@ -4478,6 +4488,11 @@ msgstr "Ουκρανικά"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Unique"
 msgstr "Μοναδικό"
+
+#. js-lingui-id: Ef7StM
+#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
+msgid "Unknown"
+msgstr ""
 
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx

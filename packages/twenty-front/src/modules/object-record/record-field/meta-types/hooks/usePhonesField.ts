@@ -13,7 +13,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
 export const usePhonesField = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.PHONES, isFieldPhones, fieldDefinition);
 
@@ -47,7 +47,6 @@ export const usePhonesField = () => {
     draftValue,
     setDraftValue,
     setFieldValue,
-    hotkeyScope,
     persistPhonesField,
   };
 };

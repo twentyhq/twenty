@@ -2,9 +2,10 @@ import { useDateField } from '@/object-record/record-field/meta-types/hooks/useD
 import { DateInput } from '@/ui/field/input/components/DateInput';
 
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { isDefined } from 'twenty-shared/utils';
-import { usePersistField } from '../../../hooks/usePersistField';
 import { Nullable } from 'twenty-ui/utilities';
+import { usePersistField } from '../../../hooks/usePersistField';
 
 type FieldInputEvent = (persist: () => void) => void;
 
@@ -23,7 +24,7 @@ export const DateFieldInput = ({
   onClear,
   onSubmit,
 }: DateFieldInputProps) => {
-  const { fieldValue, setDraftValue, hotkeyScope } = useDateField();
+  const { fieldValue, setDraftValue } = useDateField();
 
   const persistField = usePersistField();
 
@@ -80,7 +81,7 @@ export const DateFieldInput = ({
       onChange={handleChange}
       onClear={handleClear}
       onSubmit={handleSubmit}
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

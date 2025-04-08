@@ -10,6 +10,7 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type CurrencyFieldInputProps = {
@@ -27,13 +28,8 @@ export const CurrencyFieldInput = ({
   onTab,
   onShiftTab,
 }: CurrencyFieldInputProps) => {
-  const {
-    hotkeyScope,
-    draftValue,
-    persistCurrencyField,
-    setDraftValue,
-    defaultValue,
-  } = useCurrencyField();
+  const { draftValue, persistCurrencyField, setDraftValue, defaultValue } =
+    useCurrencyField();
 
   const defaultCurrencyCodeWithoutSQLQuotes = (
     defaultValue as FieldCurrencyValue
@@ -129,7 +125,7 @@ export const CurrencyFieldInput = ({
       onTab={handleTab}
       onChange={handleChange}
       onSelect={handleSelect}
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };
