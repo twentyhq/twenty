@@ -54,12 +54,12 @@ describe('isFieldValueReadOnly', () => {
       expect(result).toBe(true);
     });
 
-    it('should return true if fieldType is RICH_TEXT_V2', () => {
+    it('should return false if fieldType is RICH_TEXT_V2', () => {
       const result = isFieldValueReadOnly({
         fieldType: FieldMetadataType.RICH_TEXT_V2,
       });
 
-      expect(result).toBe(true);
+      expect(result).toBe(false);
     });
 
     it('should return true if fieldType is ACTOR', () => {
