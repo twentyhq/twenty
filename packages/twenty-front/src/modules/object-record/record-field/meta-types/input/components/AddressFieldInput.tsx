@@ -6,6 +6,7 @@ import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { usePersistField } from '../../../hooks/usePersistField';
 
 export type AddressFieldInputProps = {
@@ -23,7 +24,7 @@ export const AddressFieldInput = ({
   onTab,
   onShiftTab,
 }: AddressFieldInputProps) => {
-  const { hotkeyScope, draftValue, setDraftValue } = useAddressField();
+  const { draftValue, setDraftValue } = useAddressField();
 
   const persistField = usePersistField();
 
@@ -75,7 +76,7 @@ export const AddressFieldInput = ({
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
       onChange={handleChange}
       onTab={handleTab}
       onShiftTab={handleShiftTab}

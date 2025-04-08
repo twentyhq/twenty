@@ -9,7 +9,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useRichTextV2FieldDisplay = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.RICH_TEXT_V2,
@@ -27,6 +27,5 @@ export const useRichTextV2FieldDisplay = () => {
   return {
     fieldDefinition,
     fieldValue,
-    hotkeyScope,
   };
 };
