@@ -1,10 +1,11 @@
 import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
-import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
+import { useContext } from 'react';
 export const PageHeaderActionMenuButtons = () => {
-  const actionMenuEntries = useRegisteredActions();
+  const { actions } = useContext(ActionMenuContext);
 
-  const pinnedActions = actionMenuEntries.filter((entry) => entry.isPinned);
+  const pinnedActions = actions.filter((entry) => entry.isPinned);
 
   return pinnedActions.map((action) => (
     <ActionDisplayer key={action.key} action={action} />

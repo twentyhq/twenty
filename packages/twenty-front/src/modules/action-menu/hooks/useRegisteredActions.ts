@@ -1,8 +1,8 @@
 import { RECORD_AGNOSTIC_ACTIONS_CONFIG } from '@/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
-import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -12,7 +12,9 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRegisteredActions = () => {
+export const useRegisteredActions = (
+  shouldBeRegisteredParams: ShouldBeRegisteredFunctionParams,
+) => {
   const localContextStoreCurrentObjectMetadataItemId =
     useRecoilComponentValueV2(
       contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -42,10 +44,6 @@ export const useRegisteredActions = () => {
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const params = useShouldActionBeRegisteredParams({
-    objectMetadataItem,
-  });
-
   const contextStoreCurrentViewType = useRecoilComponentValueV2(
     contextStoreCurrentViewTypeComponentState,
   );
@@ -73,7 +71,7 @@ export const useRegisteredActions = () => {
     : [];
 
   const actions = actionsToRegister.filter((action) =>
-    action.shouldBeRegistered(params),
+    action.shouldBeRegistered(shouldBeRegisteredParams),
   );
 
   return actions;

@@ -1,5 +1,5 @@
 import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -11,15 +11,13 @@ export const RecordShowRightDrawerActionMenu = () => {
   return (
     <>
       {contextStoreCurrentObjectMetadataItemId && (
-        <ActionMenuContext.Provider
-          value={{
-            isInRightDrawer: true,
-            displayType: 'dropdownItem',
-            actionMenuType: 'command-menu-show-page-action-menu-dropdown',
-          }}
+        <ActionMenuContextProvider
+          isInRightDrawer={true}
+          displayType="dropdownItem"
+          actionMenuType="command-menu-show-page-action-menu-dropdown"
         >
           <CommandMenuActionMenuDropdown />
-        </ActionMenuContext.Provider>
+        </ActionMenuContextProvider>
       )}
     </>
   );

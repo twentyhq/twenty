@@ -1,6 +1,7 @@
+import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { createContext } from 'react';
 
-type ActionMenuContextType = {
+export type ActionMenuContextType = {
   isInRightDrawer: boolean;
   displayType: 'button' | 'listItem' | 'dropdownItem';
   actionMenuType:
@@ -9,10 +10,12 @@ type ActionMenuContextType = {
     | 'index-page-action-menu'
     | 'index-page-action-menu-dropdown'
     | 'command-menu-show-page-action-menu-dropdown';
+  actions: ActionConfig[];
 };
 
 export const ActionMenuContext = createContext<ActionMenuContextType>({
   isInRightDrawer: false,
   actionMenuType: 'command-menu',
   displayType: 'button',
+  actions: [],
 });

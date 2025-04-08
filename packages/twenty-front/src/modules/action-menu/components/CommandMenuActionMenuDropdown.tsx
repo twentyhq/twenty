@@ -1,4 +1,4 @@
-import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
@@ -11,12 +11,13 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 export const CommandMenuActionMenuDropdown = () => {
-  const actionMenuEntries = useRegisteredActions();
+  const { actions } = useContext(ActionMenuContext);
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
@@ -58,15 +59,14 @@ export const CommandMenuActionMenuDropdown = () => {
       dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          {actionMenuEntries
+          {actions
             .filter(
-              (actionMenuEntry) =>
-                actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
+              (action) => action.scope === ActionMenuEntryScope.RecordSelection,
             )
-            .map((actionMenuEntry, index) => (
+            .map((action, index) => (
               <MenuItem
                 key={index}
-                LeftIcon={actionMenuEntry.Icon}
+                LeftIcon={action.Icon}
                 onClick={() => {
                   toggleDropdown(
                     getRightDrawerActionMenuDropdownIdFromActionMenuId(
@@ -74,7 +74,7 @@ export const CommandMenuActionMenuDropdown = () => {
                     ),
                   );
                 }}
-                text={getActionLabel(actionMenuEntry.label)}
+                text={getActionLabel(action.label)}
               />
             ))}
         </DropdownMenuItemsContainer>

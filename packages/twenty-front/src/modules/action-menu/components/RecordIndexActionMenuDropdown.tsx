@@ -1,5 +1,5 @@
 import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
-import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
@@ -15,6 +15,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -30,12 +31,12 @@ const StyledDropdownMenuContainer = styled.div`
 `;
 
 export const RecordIndexActionMenuDropdown = () => {
-  const actionMenuEntries = useRegisteredActions();
+  const { actions } = useContext(ActionMenuContext);
 
-  const recordIndexActions = actionMenuEntries.filter(
-    (actionMenuEntry) =>
-      actionMenuEntry.type === ActionMenuEntryType.Standard &&
-      actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
+  const recordIndexActions = actions.filter(
+    (action) =>
+      action.type === ActionMenuEntryType.Standard &&
+      action.scope === ActionMenuEntryScope.RecordSelection,
   );
 
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(

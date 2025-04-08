@@ -1,3 +1,4 @@
+import { Action } from '@/action-menu/actions/components/Action';
 import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
@@ -43,48 +44,35 @@ export const useWorkflowRunRecordActions = ({
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
-  const registerWorkflowRunRecordActions = () => {
-    if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
-      return;
-    }
-
-    for (const [
-      index,
-      activeWorkflowVersion,
-    ] of activeWorkflowVersions.entries()) {
-      if (!isDefined(activeWorkflowVersion.workflow)) {
-        continue;
-      }
+  return activeWorkflowVersions
+    .filter((activeWorkflowVersion) =>
+      isDefined(activeWorkflowVersion.workflow),
+    )
+    .map((activeWorkflowVersion, index) => {
       const name = capitalize(activeWorkflowVersion.workflow.name);
-      addActionMenuEntry({
+
+      return {
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.RecordSelection,
         label: msg`${name}`,
         position: index,
         Icon: IconSettingsAutomation,
-        onClick: async () => {
-          if (!isDefined(selectedRecord)) {
-            return;
-          }
+        shouldBeRegistered: () => true,
+        component: (
+          <Action
+            onClick={async () => {
+              if (!isDefined(selectedRecord)) {
+                return;
+              }
 
-          await runWorkflowVersion({
-            workflowVersionId: activeWorkflowVersion.id,
-            payload: selectedRecord,
-          });
-        },
-      });
-    }
-  };
-
-  const unregisterWorkflowRunRecordActions = () => {
-    for (const activeWorkflowVersion of activeWorkflowVersions) {
-      removeActionMenuEntry(`workflow-run-${activeWorkflowVersion.id}`);
-    }
-  };
-
-  return {
-    registerWorkflowRunRecordActions,
-    unregisterWorkflowRunRecordActions,
-  };
+              await runWorkflowVersion({
+                workflowVersionId: activeWorkflowVersion.id,
+                payload: selectedRecord,
+              });
+            }}
+          />
+        ),
+      };
+    });
 };
