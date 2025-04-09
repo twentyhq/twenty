@@ -146,7 +146,7 @@ export const Chip = ({
       className={className}
       maxWidth={maxWidth}
     >
-      {leftComponent?.()}
+      {leftComponent}
       {!isLabelHidden && (
         <OverflowingTextWithTooltip size={size} text={label} />
       )}

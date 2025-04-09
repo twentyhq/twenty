@@ -127,7 +127,7 @@ export const CalendarEventDetails = ({
         size={ChipSize.Large}
         variant={ChipVariant.Highlighted}
         clickable={false}
-        leftComponent={() => <IconCalendarEvent size={theme.icon.size.md} />}
+        leftComponent={<IconCalendarEvent size={theme.icon.size.md} />}
         label="Event"
       />
       <StyledHeader>
