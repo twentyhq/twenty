@@ -4,7 +4,6 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { AppPath } from '@/types/AppPath';
-import { useCallback } from 'react';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroySingleRecordAction = () => {
@@ -22,20 +21,14 @@ export const DestroySingleRecordAction = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const handleDeleteClick = useCallback(async () => {
+  const handleDeleteClick = async () => {
     resetTableRowSelection();
 
     await destroyOneRecord(recordId);
     navigateApp(AppPath.RecordIndexPage, {
       objectNamePlural: objectMetadataItem.namePlural,
     });
-  }, [
-    resetTableRowSelection,
-    destroyOneRecord,
-    recordId,
-    navigateApp,
-    objectMetadataItem.namePlural,
-  ]);
+  };
 
   return (
     <ActionModal

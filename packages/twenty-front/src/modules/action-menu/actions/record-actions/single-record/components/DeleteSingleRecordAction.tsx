@@ -6,7 +6,6 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { t } from '@lingui/core/macro';
-import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteSingleRecordAction = () => {
@@ -25,7 +24,7 @@ export const DeleteSingleRecordAction = () => {
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
 
-  const handleDeleteClick = useCallback(async () => {
+  const handleDeleteClick = async () => {
     resetTableRowSelection();
 
     const foundFavorite = favorites?.find(
@@ -37,13 +36,7 @@ export const DeleteSingleRecordAction = () => {
     }
 
     await deleteOneRecord(recordId);
-  }, [
-    deleteFavorite,
-    deleteOneRecord,
-    favorites,
-    resetTableRowSelection,
-    recordId,
-  ]);
+  };
 
   return (
     <ActionModal

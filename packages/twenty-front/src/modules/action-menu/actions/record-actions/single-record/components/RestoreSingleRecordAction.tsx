@@ -3,7 +3,6 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { useCallback } from 'react';
 
 export const RestoreSingleRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
@@ -18,13 +17,13 @@ export const RestoreSingleRecordAction = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const handleRestoreClick = useCallback(async () => {
+  const handleRestoreClick = async () => {
     resetTableRowSelection();
 
     await restoreManyRecords({
       idsToRestore: [recordId],
     });
-  }, [restoreManyRecords, resetTableRowSelection, recordId]);
+  };
 
   return (
     <ActionModal

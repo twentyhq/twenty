@@ -2,7 +2,6 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DeactivateWorkflowSingleRecordAction = () => {
@@ -10,7 +9,7 @@ export const DeactivateWorkflowSingleRecordAction = () => {
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-  const onClick = useCallback(() => {
+  const onClick = () => {
     if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }
@@ -18,7 +17,7 @@ export const DeactivateWorkflowSingleRecordAction = () => {
     deactivateWorkflowVersion({
       workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
     });
-  }, [deactivateWorkflowVersion, workflowWithCurrentVersion]);
+  };
 
   return <Action onClick={onClick} />;
 };

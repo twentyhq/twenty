@@ -32,11 +32,11 @@ export const ActionModal = ({
 
   const { closeActionMenu } = useCloseActionMenu();
 
-  const handleConfirmClick = useCallback(() => {
+  const handleConfirmClick = () => {
     closeActionMenu();
     onConfirmClick();
     setIsOpen(false);
-  }, [closeActionMenu, onConfirmClick]);
+  };
 
   const actionConfig = useContext(ActionConfigContext);
 

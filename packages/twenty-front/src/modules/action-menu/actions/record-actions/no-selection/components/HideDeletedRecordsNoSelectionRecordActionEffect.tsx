@@ -7,7 +7,6 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const HideDeletedRecordsNoSelectionRecordAction = () => {
@@ -42,14 +41,14 @@ export const HideDeletedRecordsNoSelectionRecordAction = () => {
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  const onClick = useCallback(() => {
+  const onClick = () => {
     if (!isDefined(deletedFilter)) {
       return;
     }
 
     removeRecordFilter({ recordFilterId: deletedFilter.id });
     toggleSoftDeleteFilterState(false);
-  }, [deletedFilter, removeRecordFilter, toggleSoftDeleteFilterState]);
+  };
 
   return <Action onClick={onClick} />;
 };
