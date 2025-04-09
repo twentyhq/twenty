@@ -8,6 +8,7 @@ module.exports = {
     'plugin:storybook/recommended',
     'plugin:prettier/recommended',
     'plugin:lingui/recommended',
+    'plugin:@nx/typescript'
   ],
   plugins: ['react-hooks', 'react-refresh', '@nx', 'prefer-arrow', 'import', 'unused-imports', 'unicorn', 'lingui'],
   rules: {
@@ -73,10 +74,7 @@ module.exports = {
   overrides: [
     {
       files: ['**/*.ts', '**/*.tsx'],
-      extends: ['plugin:@nx/typescript'],
       rules: {
-        '@typescript-eslint/no-empty-function': 'off',
-        '@typescript-eslint/no-explicit-any': 'off',
         'no-restricted-imports': [
           'error',
           {
@@ -99,6 +97,14 @@ module.exports = {
             ],
           },
         ],
+        '@typescript-eslint/no-empty-interface': [
+          'error',
+          {
+            allowSingleExtends: true,
+          },
+        ],
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
         '@nx/workspace-effect-components': 'error',
         '@nx/workspace-no-hardcoded-colors': 'error',
         '@nx/workspace-matching-state-variable': 'error',
