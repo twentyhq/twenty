@@ -129,6 +129,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                       .then((tokens) => {
                         if (isDefined(tokens)) {
                           onTokenPairChange?.(tokens);
+                          cookieStorage.setItem(
+                            'tokenPair',
+                            JSON.stringify(tokens),
+                          );
                         }
                       })
                       .catch(() => {
