@@ -3,7 +3,7 @@ import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useDebounce } from 'use-debounce';
 
-export const useMatchActions = ({
+export const useFilterActionsWithCommandMenuSearch = ({
   commandMenuSearch,
 }: {
   commandMenuSearch: string;

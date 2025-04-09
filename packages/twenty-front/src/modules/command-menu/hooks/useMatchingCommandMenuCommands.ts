@@ -1,12 +1,14 @@
 import { useCommandMenuActions } from '@/command-menu/hooks/useCommandMenuActions';
-import { useMatchActions } from '@/command-menu/hooks/useMatchActions';
+import { useFilterActionsWithCommandMenuSearch } from '@/command-menu/hooks/useFilterActionsWithCommandMenuSearch';
 
 export const useMatchingCommandMenuCommands = ({
   commandMenuSearch,
 }: {
   commandMenuSearch: string;
 }) => {
-  const { matchActions } = useMatchActions({ commandMenuSearch });
+  const { matchActions } = useFilterActionsWithCommandMenuSearch({
+    commandMenuSearch,
+  });
 
   const {
     navigateActions,
