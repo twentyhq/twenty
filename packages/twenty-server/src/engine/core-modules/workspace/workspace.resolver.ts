@@ -13,7 +13,6 @@ import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -131,9 +130,7 @@ export class WorkspaceResolver {
   @Mutation(() => String)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE, [
-      WorkspaceActivationStatus.PENDING_CREATION,
-    ]),
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
   )
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,

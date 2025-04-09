@@ -20,7 +20,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 
 export const SettingsPermissionsGuard = (
   requiredPermission: SettingPermissionType,
-  exemptedActivationStatuses: WorkspaceActivationStatus[] = [],
 ): Type<CanActivate> => {
   @Injectable()
   class SettingsPermissionsMixin implements CanActivate {
@@ -33,14 +32,19 @@ export const SettingsPermissionsGuard = (
       const workspaceActivationStatus =
         ctx.getContext().req.workspace.activationStatus;
 
-      if (exemptedActivationStatuses.includes(workspaceActivationStatus)) {
+      if (
+        [
+          WorkspaceActivationStatus.PENDING_CREATION,
+          WorkspaceActivationStatus.ONGOING_CREATION,
+        ].includes(workspaceActivationStatus)
+      ) {
         return true;
       }
 
       const hasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          setting: requiredPermission,
+          _setting: requiredPermission,
           workspaceId,
           isExecutedByApiKey: isDefined(ctx.getContext().req.apiKey),
         });
