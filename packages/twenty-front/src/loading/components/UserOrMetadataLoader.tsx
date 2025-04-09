@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
@@ -27,12 +26,6 @@ const StyledContainer = styled.div`
 
 export const UserOrMetadataLoader = () => {
   const showAuthModal = useShowAuthModal();
-
-  const isShowFullscreen = useShowFullscreen();
-
-  if (isShowFullscreen) {
-    return <></>;
-  }
 
   return (
     <StyledContainer>
