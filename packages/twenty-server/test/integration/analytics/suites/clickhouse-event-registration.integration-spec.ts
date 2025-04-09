@@ -1,5 +1,7 @@
 import request from 'supertest';
 import { createClient, ClickHouseClient } from '@clickhouse/client';
+
+import { AnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
 describe('ClickHouse Event Registration (integration)', () => {
   let clickhouseClient: ClickHouseClient;
 
@@ -49,7 +51,7 @@ describe('ClickHouse Event Registration (integration)', () => {
     expect(response.status).toBe(200);
     expect(response.body.data.track.success).toBe(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 20));
 
     const queryResult = await clickhouseClient.query({
       query: `
@@ -60,10 +62,13 @@ describe('ClickHouse Event Registration (integration)', () => {
       format: 'JSONEachRow',
     });
 
-    const rows = await queryResult.json();
+    const rows = await queryResult.json<AnalyticsEvent>();
 
     expect(rows.length).toBe(1);
-
-    console.log('>>>>>>>>>>>>>>', rows);
+    expect(rows[0].payload).toEqual(JSON.stringify(variables.payload));
+    expect(rows[0].action).toEqual(variables.action);
+    expect(rows[0].workspaceId).toEqual('');
+    expect(rows[0].userId).toEqual('');
+    expect(rows[0].timestamp).toHaveLength(23);
   });
 });
