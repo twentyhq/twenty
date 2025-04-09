@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
 
-import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
+import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 
 class TestClass {
   @CastToLogLevelArray()

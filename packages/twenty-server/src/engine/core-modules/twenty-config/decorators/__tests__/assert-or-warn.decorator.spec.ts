@@ -1,19 +1,19 @@
-import 'reflect-metadata';
-import { IsString, validateSync } from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import { IsString, validateSync } from 'class-validator';
+import 'reflect-metadata';
 
-import { AssertOrWarn } from 'src/engine/core-modules/environment/decorators/assert-or-warn.decorator';
+import { AssertOrWarn } from 'src/engine/core-modules/twenty-config/decorators/assert-or-warn.decorator';
 
 describe('AssertOrWarn Decorator', () => {
   it('should pass validation if the condition is met', () => {
-    class EnvironmentVariables {
+    class ConfigVariables {
       @AssertOrWarn((object, value) => value > 10, {
         message: 'Value should be higher than 10',
       })
       someProperty!: number;
     }
 
-    const validatedConfig = plainToClass(EnvironmentVariables, {
+    const validatedConfig = plainToClass(ConfigVariables, {
       someProperty: 15,
     });
 
@@ -23,14 +23,14 @@ describe('AssertOrWarn Decorator', () => {
   });
 
   it('should provide a warning message if the condition is not met', () => {
-    class EnvironmentVariables {
+    class ConfigVariables {
       @AssertOrWarn((object, value) => value > 10, {
         message: 'Value should be higher than 10',
       })
       someProperty!: number;
     }
 
-    const validatedConfig = plainToClass(EnvironmentVariables, {
+    const validatedConfig = plainToClass(ConfigVariables, {
       someProperty: 9,
     });
 
@@ -43,7 +43,7 @@ describe('AssertOrWarn Decorator', () => {
   });
 
   it('should not impact errors if the condition is not met', () => {
-    class EnvironmentVariables {
+    class ConfigVariables {
       @IsString()
       unit: string;
 
@@ -56,7 +56,7 @@ describe('AssertOrWarn Decorator', () => {
       duration!: number;
     }
 
-    const validatedConfig = plainToClass(EnvironmentVariables, {
+    const validatedConfig = plainToClass(ConfigVariables, {
       duration: 1731944140876000,
       unit: 's',
     });

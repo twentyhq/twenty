@@ -1,10 +1,10 @@
 import { Scope } from '@nestjs/common';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -30,7 +30,7 @@ export class RunWorkflowJob {
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly throttlerService: ThrottlerService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -182,8 +182,8 @@ export class RunWorkflowJob {
     try {
       await this.throttlerService.throttle(
         `${workflowId}-workflow-execution`,
-        this.environmentService.get('WORKFLOW_EXEC_THROTTLE_LIMIT'),
-        this.environmentService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
+        this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_LIMIT'),
+        this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
       );
     } catch (error) {
       throw new WorkflowRunException(

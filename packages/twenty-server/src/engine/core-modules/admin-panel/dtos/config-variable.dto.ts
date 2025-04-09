@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class EnvironmentVariable {
+export class ConfigVariable {
   @Field()
   name: string;
 

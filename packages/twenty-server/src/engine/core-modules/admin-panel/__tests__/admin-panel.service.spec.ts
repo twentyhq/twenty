@@ -10,12 +10,12 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 
 const UserFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
-const EnvironmentServiceGetAllMock = jest.fn();
+const TwentyConfigServiceGetAllMock = jest.fn();
 
 jest.mock(
   '../../environment/constants/environment-variables-group-metadata',
@@ -69,9 +69,9 @@ describe('AdminPanelService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
-            getAll: EnvironmentServiceGetAllMock,
+            getAll: TwentyConfigServiceGetAllMock,
           },
         },
       ],
@@ -157,9 +157,9 @@ describe('AdminPanelService', () => {
     expect(UserFindOneMock).toHaveBeenCalled();
   });
 
-  describe('getEnvironmentVariablesGrouped', () => {
-    it('should correctly group and sort environment variables', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({
+  describe('getConfigVariablesGrouped', () => {
+    it('should correctly group and sort config variables', () => {
+      TwentyConfigServiceGetAllMock.mockReturnValue({
         SERVER_URL: {
           value: 'http://localhost',
           metadata: {
@@ -191,7 +191,7 @@ describe('AdminPanelService', () => {
         },
       });
 
-      const result = service.getEnvironmentVariablesGrouped();
+      const result = service.getConfigVariablesGrouped();
 
       expect(result).toEqual({
         groups: [
@@ -248,10 +248,10 @@ describe('AdminPanelService', () => {
       expect(result.groups[2].name).toBe('OTHER');
     });
 
-    it('should handle empty environment variables', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({});
+    it('should handle empty config variables', () => {
+      TwentyConfigServiceGetAllMock.mockReturnValue({});
 
-      const result = service.getEnvironmentVariablesGrouped();
+      const result = service.getConfigVariablesGrouped();
 
       expect(result).toEqual({
         groups: [],
@@ -259,7 +259,7 @@ describe('AdminPanelService', () => {
     });
 
     it('should handle variables with undefined metadata fields', () => {
-      EnvironmentServiceGetAllMock.mockReturnValue({
+      TwentyConfigServiceGetAllMock.mockReturnValue({
         TEST_VAR: {
           value: 'test',
           metadata: {
@@ -268,7 +268,7 @@ describe('AdminPanelService', () => {
         },
       });
 
-      const result = service.getEnvironmentVariablesGrouped();
+      const result = service.getConfigVariablesGrouped();
 
       expect(result.groups[0].variables[0]).toEqual({
         name: 'TEST_VAR',
@@ -287,7 +287,7 @@ describe('AdminPanelService', () => {
       mockEnvironmentGet.mockReset();
       mockAxiosGet.mockReset();
       jest.spyOn(axios, 'get').mockImplementation(mockAxiosGet);
-      service['environmentService'].get = mockEnvironmentGet;
+      service['twentyConfigService'].get = mockEnvironmentGet;
     });
 
     it('should return current and latest version when everything works', async () => {

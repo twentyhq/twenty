@@ -1,4 +1,4 @@
-export enum EnvironmentVariablesGroup {
+export enum ConfigVariablesGroup {
   ServerConfig = 'server-config',
   RateLimiting = 'rate-limiting',
   StorageConfig = 'storage-config',

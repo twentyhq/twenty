@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const GET_ENVIRONMENT_VARIABLES_GROUPED = gql`
-  query GetEnvironmentVariablesGrouped {
-    getEnvironmentVariablesGrouped {
+export const GET_CONFIG_VARIABLES_GROUPED = gql`
+  query GetConfigVariablesGrouped {
+    getConfigVariablesGrouped {
       groups {
         name
         description

@@ -5,9 +5,9 @@ import axios from 'axios';
 import semver from 'semver';
 import { Repository } from 'typeorm';
 
-import { EnvironmentVariable } from 'src/engine/core-modules/admin-panel/dtos/environment-variable.dto';
-import { EnvironmentVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/environment-variables-group.dto';
-import { EnvironmentVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/environment-variables.output';
+import { ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
+import { ConfigVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
+import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import {
@@ -16,11 +16,11 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { ENVIRONMENT_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/environment/constants/environment-variables-group-metadata';
-import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
+import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 
@@ -28,7 +28,7 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 export class AdminPanelService {
   constructor(
     private readonly loginTokenService: LoginTokenService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -123,17 +123,14 @@ export class AdminPanelService {
     };
   }
 
-  getEnvironmentVariablesGrouped(): EnvironmentVariablesOutput {
-    const rawEnvVars = this.environmentService.getAll();
-    const groupedData = new Map<
-      EnvironmentVariablesGroup,
-      EnvironmentVariable[]
-    >();
+  getConfigVariablesGrouped(): ConfigVariablesOutput {
+    const rawEnvVars = this.twentyConfigService.getAll();
+    const groupedData = new Map<ConfigVariablesGroup, ConfigVariable[]>();
 
     for (const [varName, { value, metadata }] of Object.entries(rawEnvVars)) {
       const { group, description } = metadata;
 
-      const envVar: EnvironmentVariable = {
+      const envVar: ConfigVariable = {
         name: varName,
         description,
         value: String(value),
@@ -147,20 +144,17 @@ export class AdminPanelService {
       groupedData.get(group)?.push(envVar);
     }
 
-    const groups: EnvironmentVariablesGroupData[] = Array.from(
-      groupedData.entries(),
-    )
+    const groups: ConfigVariablesGroupData[] = Array.from(groupedData.entries())
       .sort((a, b) => {
-        const positionA = ENVIRONMENT_VARIABLES_GROUP_METADATA[a[0]].position;
-        const positionB = ENVIRONMENT_VARIABLES_GROUP_METADATA[b[0]].position;
+        const positionA = CONFIG_VARIABLES_GROUP_METADATA[a[0]].position;
+        const positionB = CONFIG_VARIABLES_GROUP_METADATA[b[0]].position;
 
         return positionA - positionB;
       })
       .map(([name, variables]) => ({
         name,
-        description: ENVIRONMENT_VARIABLES_GROUP_METADATA[name].description,
-        isHiddenOnLoad:
-          ENVIRONMENT_VARIABLES_GROUP_METADATA[name].isHiddenOnLoad,
+        description: CONFIG_VARIABLES_GROUP_METADATA[name].description,
+        isHiddenOnLoad: CONFIG_VARIABLES_GROUP_METADATA[name].isHiddenOnLoad,
         variables: variables.sort((a, b) => a.name.localeCompare(b.name)),
       }));
 
@@ -168,7 +162,7 @@ export class AdminPanelService {
   }
 
   async getVersionInfo(): Promise<VersionInfo> {
-    const currentVersion = this.environmentService.get('APP_VERSION');
+    const currentVersion = this.twentyConfigService.get('APP_VERSION');
 
     try {
       const response = await axios.get(

@@ -1,29 +1,28 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
 
-import { EnvironmentVariablesGroup } from 'src/engine/core-modules/environment/enums/environment-variables-group.enum';
+import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export interface EnvironmentVariablesMetadataOptions {
-  group: EnvironmentVariablesGroup;
+export interface ConfigVariablesMetadataOptions {
+  group: ConfigVariablesGroup;
   description: string;
   sensitive?: boolean;
 }
 
-export type EnvironmentVariablesMetadataMap = {
-  [key: string]: EnvironmentVariablesMetadataOptions;
+export type ConfigVariablesMetadataMap = {
+  [key: string]: ConfigVariablesMetadataOptions;
 };
 
-export function EnvironmentVariablesMetadata(
-  options: EnvironmentVariablesMetadataOptions,
+export function ConfigVariablesMetadata(
+  options: ConfigVariablesMetadataOptions,
   validationOptions?: ValidationOptions,
 ): PropertyDecorator {
   return (target: object, propertyKey: string | symbol) => {
-    const existingMetadata: EnvironmentVariablesMetadataMap =
-      TypedReflect.getMetadata('environment-variables', target.constructor) ??
-      {};
+    const existingMetadata: ConfigVariablesMetadataMap =
+      TypedReflect.getMetadata('config-variables', target.constructor) ?? {};
 
     TypedReflect.defineMetadata(
-      'environment-variables',
+      'config-variables',
       {
         ...existingMetadata,
         [propertyKey.toString()]: options,

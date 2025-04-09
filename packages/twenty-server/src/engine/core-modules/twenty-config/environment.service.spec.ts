@@ -1,17 +1,17 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { EnvironmentVariables } from 'src/engine/core-modules/environment/environment-variables';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-describe('EnvironmentService', () => {
-  let service: EnvironmentService;
+describe('TwentyConfigService', () => {
+  let service: TwentyConfigService;
   let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        EnvironmentService,
+        TwentyConfigService,
         {
           provide: ConfigService,
           useValue: {
@@ -21,10 +21,10 @@ describe('EnvironmentService', () => {
       ],
     }).compile();
 
-    service = module.get<EnvironmentService>(EnvironmentService);
+    service = module.get<TwentyConfigService>(TwentyConfigService);
     configService = module.get<ConfigService>(ConfigService);
 
-    Reflect.defineMetadata('environment-variables', {}, EnvironmentVariables);
+    Reflect.defineMetadata('config-variables', {}, ConfigVariables);
   });
 
   it('should be defined', () => {
@@ -32,13 +32,13 @@ describe('EnvironmentService', () => {
   });
 
   describe('getAll()', () => {
-    it('should return empty object when no environment variables are defined', () => {
+    it('should return empty object when no config variables are defined', () => {
       const result = service.getAll();
 
       expect(result).toEqual({});
     });
 
-    it('should return environment variables with their metadata', () => {
+    it('should return config variables with their metadata', () => {
       const mockMetadata = {
         TEST_VAR: {
           title: 'Test Var',
@@ -46,11 +46,7 @@ describe('EnvironmentService', () => {
         },
       };
 
-      Reflect.defineMetadata(
-        'environment-variables',
-        mockMetadata,
-        EnvironmentVariables,
-      );
+      Reflect.defineMetadata('config-variables', mockMetadata, ConfigVariables);
 
       jest.spyOn(configService, 'get').mockReturnValue('test-value');
 
@@ -73,11 +69,7 @@ describe('EnvironmentService', () => {
         },
       };
 
-      Reflect.defineMetadata(
-        'environment-variables',
-        mockMetadata,
-        EnvironmentVariables,
-      );
+      Reflect.defineMetadata('config-variables', mockMetadata, ConfigVariables);
 
       jest.spyOn(configService, 'get').mockReturnValue('super-secret-value');
 
