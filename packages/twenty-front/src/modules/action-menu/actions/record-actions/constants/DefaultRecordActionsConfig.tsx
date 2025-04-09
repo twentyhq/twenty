@@ -392,10 +392,16 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconSettingsAutomation,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Workflow ||
-      viewType === ActionViewType.SHOW_PAGE,
-    availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
+    shouldBeRegistered: ({ objectMetadataItem, viewType, isWorkflowEnabled }) =>
+      (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Workflow ||
+        viewType === ActionViewType.SHOW_PAGE) &&
+      isWorkflowEnabled,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
     component: (
       <ActionLink
         to={AppPath.RecordIndexPage}

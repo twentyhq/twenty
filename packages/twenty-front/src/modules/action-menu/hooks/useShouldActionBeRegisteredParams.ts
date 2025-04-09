@@ -58,7 +58,7 @@ export const useShouldActionBeRegisteredParams = ({
     useRecoilComponentValueV2(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const isWorkflowsEnabled = useIsFeatureEnabled(
+  const isWorkflowEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IsWorkflowEnabled,
   );
 
@@ -84,7 +84,7 @@ export const useShouldActionBeRegisteredParams = ({
     isSoftDeleteFilterActive,
     isShowPage,
     selectedRecord,
-    isWorkflowsEnabled,
+    isWorkflowEnabled,
     numberOfSelectedRecords,
     viewType: viewType ?? undefined,
   };

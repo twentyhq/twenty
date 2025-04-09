@@ -7,7 +7,7 @@ import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;
   hasObjectReadOnlyPermission?: boolean;
-  isWorkflowsEnabled?: boolean;
+  isWorkflowEnabled: boolean;
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;
   isSoftDeleteFilterActive?: boolean;
