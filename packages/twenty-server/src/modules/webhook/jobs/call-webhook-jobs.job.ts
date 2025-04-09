@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 
-import { ArrayContains } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { ArrayContains } from 'typeorm';
 
 import { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -37,10 +37,13 @@ export class CallWebhookJobsJob {
     // Also change the openApi schema for webhooks
     // packages/twenty-server/src/engine/core-modules/open-api/utils/computeWebhooks.utils.ts
 
+    const shouldBypassPermissionChecks = true;
+
     const webhookRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WebhookWorkspaceEntity>(
         workspaceEventBatch.workspaceId,
         'webhook',
+        shouldBypassPermissionChecks,
       );
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');

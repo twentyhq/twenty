@@ -2,8 +2,8 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import snakeCase from 'lodash.snakecase';
-import { Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -50,6 +50,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
+    const shouldBypassPermissionChecks = true;
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
@@ -57,6 +58,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
             activeWorkspace.id,
             'messageChannel',
+            shouldBypassPermissionChecks,
           );
         const messageChannels = await messageChannelRepository.find({
           select: ['id', 'syncStatus', 'connectedAccountId'],

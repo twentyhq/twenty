@@ -13,6 +13,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -20,7 +21,6 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
@@ -652,7 +652,7 @@ describe('UserWorkspaceService', () => {
 
       expect(
         twentyORMGlobalManager.getRepositoryForWorkspace,
-      ).toHaveBeenCalledWith(workspaceId, 'workspaceMember');
+      ).toHaveBeenCalledWith(workspaceId, 'workspaceMember', true);
       expect(workspaceMemberRepository.findOne).toHaveBeenCalledWith({
         where: {
           id: workspaceMemberId,

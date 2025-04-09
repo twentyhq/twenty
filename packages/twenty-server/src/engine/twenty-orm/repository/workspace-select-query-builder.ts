@@ -9,12 +9,15 @@ export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
 > extends SelectQueryBuilder<T> {
   objectRecordsPermissions: ObjectRecordsPermissions;
+  shouldBypassPermissionChecks: boolean;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectRecordsPermissions,
+    shouldBypassPermissionChecks: boolean,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
+    this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
   }
 
   override update(): WorkspaceUpdateQueryBuilder<T>;
@@ -33,6 +36,7 @@ export class WorkspaceSelectQueryBuilder<
     return new WorkspaceUpdateQueryBuilder<T>(
       updateQueryBuilder,
       this.objectRecordsPermissions,
+      this.shouldBypassPermissionChecks,
     );
   }
 
@@ -40,6 +44,7 @@ export class WorkspaceSelectQueryBuilder<
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
+      this.shouldBypassPermissionChecks,
     );
 
     return super.execute();
@@ -49,6 +54,7 @@ export class WorkspaceSelectQueryBuilder<
     validateQueryIsPermittedOrThrow(
       this.expressionMap,
       this.objectRecordsPermissions,
+      this.shouldBypassPermissionChecks,
     );
 
     return super.getMany();

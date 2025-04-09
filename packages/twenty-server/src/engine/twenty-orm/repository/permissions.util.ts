@@ -20,7 +20,12 @@ const getTargetEntityAndOperationType = (expressionMap: QueryExpressionMap) => {
 export const validateQueryIsPermittedOrThrow = (
   expressionMap: QueryExpressionMap,
   objectRecordsPermissions: ObjectRecordsPermissions,
+  shouldBypassPermissionChecks: boolean,
 ) => {
+  if (shouldBypassPermissionChecks) {
+    return;
+  }
+
   const { mainEntity, operationType } =
     getTargetEntityAndOperationType(expressionMap);
 

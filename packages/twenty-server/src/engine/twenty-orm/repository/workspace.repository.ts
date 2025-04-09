@@ -34,18 +34,20 @@ export class WorkspaceRepository<
   T extends ObjectLiteral,
 > extends Repository<T> {
   private readonly internalContext: WorkspaceInternalContext;
+  private shouldBypassPermissionChecks: boolean;
   private objectRecordsPermissions?: ObjectRecordsPermissions;
-
   constructor(
     internalContext: WorkspaceInternalContext,
     target: EntityTarget<T>,
     manager: EntityManager,
     queryRunner?: QueryRunner,
     objectRecordsPermissions?: ObjectRecordsPermissions,
+    shouldBypassPermissionChecks = false,
   ) {
     super(target, manager, queryRunner);
     this.internalContext = internalContext;
     this.objectRecordsPermissions = objectRecordsPermissions;
+    this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
   }
 
   override createQueryBuilder<U extends T>(
@@ -68,6 +70,7 @@ export class WorkspaceRepository<
       return new WorkspaceQueryBuilder(
         queryBuilder,
         this.objectRecordsPermissions,
+        this.shouldBypassPermissionChecks,
       );
     }
   }

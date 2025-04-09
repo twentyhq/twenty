@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { addMilliseconds } from 'date-fns';
 import { Request } from 'express';
 import ms from 'ms';
-import { Repository } from 'typeorm';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -68,10 +68,12 @@ export class AccessTokenService {
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     if (isWorkspaceActiveOrSuspended(workspace)) {
+      const shouldBypassPermissionChecks = true;
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
+          shouldBypassPermissionChecks,
         );
 
       const workspaceMember = await workspaceMemberRepository.findOne({

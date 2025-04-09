@@ -175,10 +175,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           existingFieldMetadata,
         });
 
+        const shouldBypassPermissionChecksToUpdateViews = true;
         const viewsRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace(
             fieldMetadataInput.workspaceId,
             'view',
+            shouldBypassPermissionChecksToUpdateViews,
           );
 
         await viewsRepository.delete({

@@ -5,11 +5,11 @@ import { capitalize } from 'twenty-shared/utils';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class RestApiCoreServiceV2 {
@@ -133,10 +133,13 @@ export class RestApiCoreServiceV2 {
 
     const objectMetadataNameSingular =
       objectMetadata.objectMetadataMapItem.nameSingular;
+
+    const shouldBypassPermissionChecks = false;
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ObjectRecord>(
         workspace.id,
         objectMetadataNameSingular,
+        shouldBypassPermissionChecks,
       );
 
     return { objectMetadataNameSingular, objectMetadata, repository };

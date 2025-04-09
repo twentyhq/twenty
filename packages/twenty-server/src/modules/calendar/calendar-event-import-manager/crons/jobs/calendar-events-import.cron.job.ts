@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Equal, Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Equal, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -42,6 +42,7 @@ export class CalendarEventsImportCronJob {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
+    const shouldBypassPermissionChecks = true;
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
@@ -49,6 +50,7 @@ export class CalendarEventsImportCronJob {
           await this.twentyORMGlobalManager.getRepositoryForWorkspace(
             activeWorkspace.id,
             'calendarChannel',
+            shouldBypassPermissionChecks,
           );
 
         const calendarChannels = await calendarChannelRepository.find({

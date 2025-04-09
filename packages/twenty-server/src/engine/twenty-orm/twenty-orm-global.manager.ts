@@ -15,18 +15,21 @@ export class TwentyORMGlobalManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntity: Type<T>,
+    shouldBypassPermissionChecks: boolean,
     shouldFailIfMetadataNotFound?: boolean,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     objectMetadataName: string,
+    shouldBypassPermissionChecks: boolean,
     shouldFailIfMetadataNotFound?: boolean,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     workspaceEntityOrobjectMetadataName: Type<T> | string,
+    shouldBypassPermissionChecks = false,
     shouldFailIfMetadataNotFound = true,
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
@@ -45,7 +48,10 @@ export class TwentyORMGlobalManager {
       shouldFailIfMetadataNotFound,
     );
 
-    const repository = workspaceDataSource.getRepository<T>(objectMetadataName);
+    const repository = workspaceDataSource.getRepository<T>(
+      objectMetadataName,
+      shouldBypassPermissionChecks,
+    );
 
     return repository;
   }

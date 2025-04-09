@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { EntityManager, Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
@@ -73,10 +73,13 @@ export class GoogleAPIsService {
       'CALENDAR_PROVIDER_GOOGLE_ENABLED',
     );
 
+    const shouldBypassPermissionChecks = true;
+
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,
         'connectedAccount',
+        shouldBypassPermissionChecks,
       );
 
     const connectedAccount = await connectedAccountRepository.findOne({
@@ -90,12 +93,14 @@ export class GoogleAPIsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
         workspaceId,
         'calendarChannel',
+        shouldBypassPermissionChecks,
       );
 
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
         workspaceId,
         'messageChannel',
+        shouldBypassPermissionChecks,
       );
 
     const workspaceDataSource =
@@ -248,6 +253,7 @@ export class GoogleAPIsService {
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
             'workspaceMember',
+            shouldBypassPermissionChecks,
           );
 
         const workspaceMember = await workspaceMemberRepository.findOneOrFail({

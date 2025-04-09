@@ -12,6 +12,8 @@ export class ObjectMetadataRelatedRecordsService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
+  shouldBypassPermissionChecks = true;
+
   public async createObjectRelatedRecords(
     objectMetadata: ObjectMetadataEntity,
   ) {
@@ -28,6 +30,7 @@ export class ObjectMetadataRelatedRecordsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         objectMetadata.workspaceId,
         'view',
+        this.shouldBypassPermissionChecks,
       );
 
     return await viewRepository.save({
@@ -47,6 +50,7 @@ export class ObjectMetadataRelatedRecordsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
         objectMetadata.workspaceId,
         'viewField',
+        this.shouldBypassPermissionChecks,
       );
 
     const viewFields = objectMetadata.fields
@@ -70,6 +74,7 @@ export class ObjectMetadataRelatedRecordsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
         workspaceId,
         'favorite',
+        this.shouldBypassPermissionChecks,
       );
 
     const favoriteCount = await favoriteRepository.count();
@@ -90,6 +95,7 @@ export class ObjectMetadataRelatedRecordsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         workspaceId,
         'view',
+        this.shouldBypassPermissionChecks,
       );
 
     await viewRepository.update(
@@ -109,6 +115,7 @@ export class ObjectMetadataRelatedRecordsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         workspaceId,
         'view',
+        this.shouldBypassPermissionChecks,
       );
 
     await viewRepository.delete({

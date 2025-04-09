@@ -25,6 +25,8 @@ export class FieldMetadataRelatedRecordsService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
+  private shouldBypassPermissionChecksToUpdateViewGroups = true;
+
   public async updateRelatedViewGroups(
     oldFieldMetadata: FieldMetadataEntity,
     newFieldMetadata: FieldMetadataEntity,
@@ -48,6 +50,7 @@ export class FieldMetadataRelatedRecordsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewGroupWorkspaceEntity>(
         newFieldMetadata.workspaceId,
         'viewGroup',
+        this.shouldBypassPermissionChecksToUpdateViewGroups,
       );
 
     for (const view of views) {
@@ -176,6 +179,7 @@ export class FieldMetadataRelatedRecordsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         fieldMetadata.workspaceId,
         'view',
+        this.shouldBypassPermissionChecksToUpdateViewGroups,
       );
 
     return viewRepository.find({

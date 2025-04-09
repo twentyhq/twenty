@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
-import { DeepPartial, EntityManager, ILike } from 'typeorm';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { DeepPartial, EntityManager, ILike } from 'typeorm';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -44,11 +44,13 @@ export class CreateCompanyService {
     if (companies.length === 0) {
       return {};
     }
+    const shouldBypassPermissionChecks = true;
 
     const companyRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         CompanyWorkspaceEntity,
+        shouldBypassPermissionChecks,
       );
 
     // Avoid creating duplicate companies

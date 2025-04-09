@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { DeepPartial, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -77,11 +77,13 @@ export class CreateContactService {
     transactionManager?: EntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (contactsToCreate.length === 0) return [];
+    const shouldBypassPermissionChecks = true;
 
     const personRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         PersonWorkspaceEntity,
+        shouldBypassPermissionChecks,
       );
 
     const lastPersonPosition = await this.getLastPersonPosition(

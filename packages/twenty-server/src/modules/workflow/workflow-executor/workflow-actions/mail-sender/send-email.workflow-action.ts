@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import { z } from 'zod';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
@@ -55,10 +55,13 @@ export class SendEmailWorkflowAction implements WorkflowExecutor {
       );
     }
 
+    const shouldBypassPermissionChecks = true;
+
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,
         'connectedAccount',
+        shouldBypassPermissionChecks,
       );
     const connectedAccount = await connectedAccountRepository.findOneBy({
       id: connectedAccountId,

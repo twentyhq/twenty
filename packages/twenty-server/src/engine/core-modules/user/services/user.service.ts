@@ -49,6 +49,8 @@ export class UserService extends TypeOrmQueryService<User> {
     super(userRepository);
   }
 
+  private shouldBypassPermissionChecks = true;
+
   async loadWorkspaceMember(user: User, workspace: Workspace) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return null;
@@ -58,6 +60,7 @@ export class UserService extends TypeOrmQueryService<User> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        this.shouldBypassPermissionChecks,
       );
 
     return await workspaceMemberRepository.findOne({
@@ -76,6 +79,7 @@ export class UserService extends TypeOrmQueryService<User> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        this.shouldBypassPermissionChecks,
       );
 
     return workspaceMemberRepository.find();

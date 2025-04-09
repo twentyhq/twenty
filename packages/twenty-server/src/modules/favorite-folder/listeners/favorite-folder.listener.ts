@@ -20,11 +20,14 @@ export class FavoriteFolderDeletionListener {
       ObjectRecordDeleteEvent<FavoriteFolderWorkspaceEntity>
     >,
   ) {
+    const shouldBypassPermissionChecks = true;
+
     for (const eventPayload of payload.events) {
       const favoriteRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
           payload.workspaceId,
           'favorite',
+          shouldBypassPermissionChecks,
         );
 
       await favoriteRepository.update(

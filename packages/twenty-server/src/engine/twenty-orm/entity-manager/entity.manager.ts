@@ -28,10 +28,13 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
+    shouldBypassPermissionChecks = false,
     roleId?: string,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection as WorkspaceDataSource;
-    const repositoryKey = `${target.toString()}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}`;
+    const repositoryKey = shouldBypassPermissionChecks
+      ? `${target.toString()}_bypass`
+      : `${target.toString()}_${roleId ?? 'default'}${dataSource.rolesPermissionsVersion ? `_${dataSource.rolesPermissionsVersion}` : ''}`;
     const repoFromMap = this.repositories.get(repositoryKey);
 
     if (repoFromMap) {
@@ -52,6 +55,7 @@ export class WorkspaceEntityManager extends EntityManager {
       this,
       this.queryRunner,
       objectPermissions,
+      shouldBypassPermissionChecks,
     );
 
     this.repositories.set(repositoryKey, newRepository);

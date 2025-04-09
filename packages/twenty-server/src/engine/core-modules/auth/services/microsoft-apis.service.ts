@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { EntityManager, Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
@@ -54,6 +54,8 @@ export class MicrosoftAPIsService {
     private readonly environmentService: EnvironmentService,
   ) {}
 
+  private shouldBypassPermissionChecks = true;
+
   async refreshMicrosoftRefreshToken(input: {
     handle: string;
     workspaceMemberId: string;
@@ -75,6 +77,7 @@ export class MicrosoftAPIsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,
         'connectedAccount',
+        this.shouldBypassPermissionChecks,
       );
 
     const connectedAccount = await connectedAccountRepository.findOne({
@@ -88,18 +91,21 @@ export class MicrosoftAPIsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
         workspaceId,
         'calendarChannel',
+        this.shouldBypassPermissionChecks,
       );
 
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
         workspaceId,
         'messageChannel',
+        this.shouldBypassPermissionChecks,
       );
 
     const messageFolderRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
         workspaceId,
         'messageFolder',
+        this.shouldBypassPermissionChecks,
       );
 
     const workspaceDataSource =
@@ -276,6 +282,7 @@ export class MicrosoftAPIsService {
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
             'workspaceMember',
+            this.shouldBypassPermissionChecks,
           );
 
         const workspaceMember = await workspaceMemberRepository.findOneOrFail({

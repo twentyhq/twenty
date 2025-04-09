@@ -34,10 +34,19 @@ export class WorkspaceDataSource extends DataSource {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
+    shouldBypassPermissionChecks = false,
     roleId?: string,
   ): WorkspaceRepository<Entity> {
+    if (shouldBypassPermissionChecks === true) {
+      return this.manager.getRepository(target, shouldBypassPermissionChecks);
+    }
+
     if (roleId) {
-      return this.manager.getRepository(target, roleId);
+      return this.manager.getRepository(
+        target,
+        shouldBypassPermissionChecks,
+        roleId,
+      );
     }
 
     return this.manager.getRepository(target);

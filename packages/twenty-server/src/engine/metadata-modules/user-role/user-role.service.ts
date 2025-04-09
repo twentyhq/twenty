@@ -140,10 +140,13 @@ export class UserRoleService {
         userWorkspaces.map((userWorkspace) => userWorkspace.userId),
       );
 
+    const shouldBypassPermissionChecks = true;
+
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
+        shouldBypassPermissionChecks,
       );
 
     const workspaceMembers = await workspaceMemberRepository.find({

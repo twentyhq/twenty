@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { In, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -46,12 +46,15 @@ export class MessagingMessageListFetchCronJob {
       },
     });
 
+    const shouldBypassPermissionChecks = true;
+
     for (const activeWorkspace of activeWorkspaces) {
       try {
         const messageChannelRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
             activeWorkspace.id,
             'messageChannel',
+            shouldBypassPermissionChecks,
           );
 
         const messageChannels = await messageChannelRepository.find({

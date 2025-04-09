@@ -20,11 +20,13 @@ export class DeleteWorkspaceMemberConnectedAccountsCleanupJob {
     data: DeleteWorkspaceMemberConnectedAccountsCleanupJobData,
   ): Promise<void> {
     const { workspaceId, workspaceMemberId } = data;
+    const shouldBypassPermissionChecks = true;
 
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspaceId,
         'connectedAccount',
+        shouldBypassPermissionChecks,
       );
 
     await connectedAccountRepository.delete({
