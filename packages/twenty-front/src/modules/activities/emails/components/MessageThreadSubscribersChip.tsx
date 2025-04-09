@@ -1,8 +1,8 @@
 import { MessageThreadSubscriber } from '@/activities/emails/types/MessageThreadSubscriber';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { Avatar, AvatarGroup, IconChevronDown } from 'twenty-ui/display';
 import { Chip, ChipVariant } from 'twenty-ui/components';
+import { Avatar, AvatarGroup, IconChevronDown } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme';
 
 const MAX_NUMBER_OF_AVATARS = 3;
@@ -46,20 +46,16 @@ export const MessageThreadSubscribersChip = ({
     <Chip
       label={label}
       variant={ChipVariant.Highlighted}
-      leftComponent={() => {
-        if (isOnlyOneSubscriber) {
-          return (
-            <Avatar
-              avatarUrl={firstAvatarUrl}
-              placeholderColorSeed={firstAvatarColorSeed}
-              placeholder={firstAvatarPlaceholder}
-              size="md"
-              type={'rounded'}
-            />
-          );
-        }
-
-        return (
+      leftComponent={
+        isOnlyOneSubscriber ? (
+          <Avatar
+            avatarUrl={firstAvatarUrl}
+            placeholderColorSeed={firstAvatarColorSeed}
+            placeholder={firstAvatarPlaceholder}
+            size="md"
+            type={'rounded'}
+          />
+        ) : (
           <AvatarGroup
             avatars={subscriberNames.map((name, index) => (
               <Avatar
@@ -70,8 +66,8 @@ export const MessageThreadSubscribersChip = ({
               />
             ))}
           />
-        );
-      }}
+        )
+      }
       rightComponent={() => <IconChevronDown size={theme.icon.size.sm} />}
       clickable
     />
