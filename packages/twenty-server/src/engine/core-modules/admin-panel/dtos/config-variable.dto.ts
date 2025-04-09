@@ -12,5 +12,5 @@ export class ConfigVariable {
   value: string;
 
   @Field()
-  sensitive: boolean;
+  isSensitive: boolean;
 }

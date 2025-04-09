@@ -110,7 +110,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GoogleAuth,
-    sensitive: true,
+    isSensitive: true,
     description: 'Client ID for Google authentication',
   })
   @IsString()
@@ -119,7 +119,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GoogleAuth,
-    sensitive: true,
+    isSensitive: true,
     description: 'Client secret for Google authentication',
   })
   @IsString()
@@ -128,7 +128,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GoogleAuth,
-    sensitive: true,
+    isSensitive: true,
     description: 'Callback URL for Google authentication',
   })
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -153,7 +153,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
-    sensitive: true,
+    isSensitive: true,
     description: 'Client ID for Microsoft authentication',
   })
   @IsString()
@@ -162,7 +162,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
-    sensitive: true,
+    isSensitive: true,
     description: 'Client secret for Microsoft authentication',
   })
   @IsString()
@@ -171,7 +171,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
-    sensitive: true,
+    isSensitive: true,
     description: 'Callback URL for Microsoft authentication',
   })
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -180,7 +180,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
-    sensitive: true,
+    isSensitive: true,
     description: 'Callback URL for Microsoft APIs',
   })
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -203,7 +203,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
-    sensitive: true,
+    isSensitive: true,
     description:
       'Legacy variable to be deprecated when all API Keys expire. Replaced by APP_KEY',
   })
@@ -318,7 +318,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
-    sensitive: true,
+    isSensitive: true,
     description: 'SMTP password for authentication',
   })
   EMAIL_SMTP_PASSWORD: string;
@@ -366,7 +366,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
-    sensitive: true,
+    isSensitive: true,
     description:
       'S3 access key ID for authentication when using S3 storage type',
   })
@@ -377,7 +377,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
-    sensitive: true,
+    isSensitive: true,
     description:
       'S3 secret access key for authentication when using S3 storage type',
   })
@@ -436,7 +436,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'Access key ID for AWS Lambda functions',
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
@@ -446,7 +446,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'Secret access key for AWS Lambda functions',
   })
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
@@ -511,7 +511,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'Stripe API key for billing',
   })
   @IsString()
@@ -520,7 +520,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'Stripe webhook secret for billing',
   })
   @IsString()
@@ -653,7 +653,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SupportChatConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'Chat ID for the support front integration',
   })
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
@@ -662,7 +662,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SupportChatConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'HMAC key for the support front integration',
   })
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
@@ -671,7 +671,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'Database connection URL',
   })
   @IsDefined()
@@ -702,7 +702,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'URL for cache storage (e.g., Redis connection URL)',
   })
   @IsOptional()
@@ -740,7 +740,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'Secret key for the application',
   })
   @IsString()
@@ -789,7 +789,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CloudflareConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'API key for Cloudflare integration',
   })
   @IsString()
@@ -820,14 +820,14 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    sensitive: true,
+    isSensitive: true,
     description: 'API key for OpenAI integration',
   })
   OPENAI_API_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    sensitive: true,
+    isSensitive: true,
     description: 'Secret key for Langfuse integration',
   })
   LANGFUSE_SECRET_KEY: string;
@@ -920,7 +920,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CaptchaConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'Site key for captcha integration',
   })
   @IsString()
@@ -929,7 +929,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CaptchaConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'Secret key for captcha integration',
   })
   @IsString()
@@ -938,7 +938,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
-    sensitive: true,
+    isSensitive: true,
     description: 'License key for the Enterprise version',
   })
   @IsString()

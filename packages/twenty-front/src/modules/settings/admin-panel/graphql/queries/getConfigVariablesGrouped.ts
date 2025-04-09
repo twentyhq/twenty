@@ -11,7 +11,7 @@ export const GET_CONFIG_VARIABLES_GROUPED = gql`
           name
           description
           value
-          sensitive
+          isSensitive
         }
       }
     }

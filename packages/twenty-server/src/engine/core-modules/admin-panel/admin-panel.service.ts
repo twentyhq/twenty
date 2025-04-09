@@ -134,7 +134,7 @@ export class AdminPanelService {
         name: varName,
         description,
         value: String(value),
-        sensitive: metadata.sensitive ?? false,
+        isSensitive: metadata.isSensitive ?? false,
       };
 
       if (!groupedData.has(group)) {

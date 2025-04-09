@@ -315,8 +315,8 @@ export type ComputeStepOutputSchemaInput = {
 export type ConfigVariable = {
   __typename?: 'ConfigVariable';
   description: Scalars['String'];
+  isSensitive: Scalars['Boolean'];
   name: Scalars['String'];
-  sensitive: Scalars['Boolean'];
   value: Scalars['String'];
 };
 
@@ -2628,7 +2628,7 @@ export type UserLookupAdminPanelMutation = { __typename?: 'Mutation', userLookup
 export type GetConfigVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value: string, sensitive: boolean }> }> } };
+export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value: string, isSensitive: boolean }> }> } };
 
 export type GetVersionInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4589,7 +4589,7 @@ export const GetConfigVariablesGroupedDocument = gql`
         name
         description
         value
-        sensitive
+        isSensitive
       }
     }
   }

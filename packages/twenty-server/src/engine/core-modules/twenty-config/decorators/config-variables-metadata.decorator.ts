@@ -6,7 +6,7 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 export interface ConfigVariablesMetadataOptions {
   group: ConfigVariablesGroup;
   description: string;
-  sensitive?: boolean;
+  isSensitive?: boolean;
 }
 
 export type ConfigVariablesMetadataMap = {
