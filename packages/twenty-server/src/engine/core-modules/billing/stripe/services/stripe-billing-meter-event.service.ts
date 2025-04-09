@@ -42,4 +42,24 @@ export class StripeBillingMeterEventService {
       },
     });
   }
+
+  async sumMeterEvents(
+    stripeMeterId: string,
+    stripeCustomerId: string,
+    startTime: Date,
+    endTime: Date,
+  ) {
+    const eventSummaries = await this.stripe.billing.meters.listEventSummaries(
+      stripeMeterId,
+      {
+        customer: stripeCustomerId,
+        start_time: Math.floor(startTime.getTime() / (1000 * 60)) * 60,
+        end_time: Math.ceil(endTime.getTime() / (1000 * 60)) * 60,
+      },
+    );
+
+    return eventSummaries.data.reduce((acc, eventSummary) => {
+      return acc + eventSummary.aggregated_value;
+    }, 0);
+  }
 }
