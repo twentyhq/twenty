@@ -83,11 +83,11 @@ export const useDropdown = (dropdownId?: string) => {
     ],
   );
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (dropdownHotkeyScopeFromProps?: HotkeyScope) => {
     if (isDropdownOpen) {
       closeDropdown();
     } else {
-      openDropdown();
+      openDropdown(dropdownHotkeyScopeFromProps);
     }
   };
 
