@@ -15,7 +15,7 @@ export const ActionButton = ({
   to,
 }: {
   action: ActionDisplayProps;
-  onClick: (event?: React.MouseEvent<HTMLElement>) => void;
+  onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
 }) => {
   const label = getActionLabel(action.label);

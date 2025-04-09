@@ -24,7 +24,7 @@ export const ActionDisplay = ({
   to,
 }: {
   action: ActionDisplayProps;
-  onClick: (event?: React.MouseEvent<HTMLElement>) => void;
+  onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
 }) => {
   const { displayType } = useContext(ActionMenuContext);

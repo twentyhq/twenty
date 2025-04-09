@@ -10,7 +10,7 @@ export const ActionDropdownItem = ({
   to,
 }: {
   action: ActionDisplayProps;
-  onClick: (event?: React.MouseEvent<HTMLElement>) => void;
+  onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
 }) => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export const ActionDropdownItem = ({
       key={action.key}
       LeftIcon={action.Icon}
       onClick={() => {
-        onClick();
+        onClick?.();
         if (isDefined(to)) {
           navigate(to);
         }

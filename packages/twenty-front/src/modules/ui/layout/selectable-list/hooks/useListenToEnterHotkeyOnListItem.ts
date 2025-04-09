@@ -33,7 +33,7 @@ export const useListenToEnterHotkeyOnListItem = ({
       [itemId, onEnter, selectedItemIdState],
     ),
     hotkeyScope,
-    [],
+    [selectedItemIdState, itemId, onEnter],
     {
       preventDefault: false,
     },

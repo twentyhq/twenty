@@ -13,15 +13,16 @@ export const ActionListItem = ({
   to,
 }: {
   action: ActionDisplayProps;
-  onClick: (event?: React.MouseEvent<HTMLElement>) => void;
+  onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
 }) => {
   const navigate = useNavigate();
+
   useListenToEnterHotkeyOnListItem({
     hotkeyScope: AppHotkeyScope.CommandMenuOpen,
     itemId: action.key,
     onEnter: () => {
-      onClick();
+      onClick?.();
       if (isNonEmptyString(to)) {
         navigate(to);
       }
