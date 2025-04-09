@@ -15,6 +15,18 @@ const StyledContainer = styled.div`
   height: 100%;
   overflow-y: scroll;
   width: 100%;
+
+  .scalar-api-reference {
+    --scalar-background-1: ${({ theme }) => theme.background.primary};
+    --scalar-background-2: ${({ theme }) => theme.background.secondary};
+    --scalar-background-3: ${({ theme }) => theme.background.tertiary};
+    --scalar-background-accent: ${({ theme }) =>
+      theme.background.transparent.lighter};
+    --scalar-border-color: ${({ theme }) => theme.border.color.medium};
+    --scalar-color-1: ${({ theme }) => theme.font.color.primary};
+    --scalar-color-2: ${({ theme }) => theme.font.color.primary};
+    --scalar-color-3: ${({ theme }) => theme.font.color.primary};
+  }
 `;
 
 const ApiReferenceReact = lazy(() =>
@@ -66,7 +78,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
               },
             },
             baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
-            forceDarkModeState: theme.name === 'dark' ? 'dark' : 'light',
+            theme: 'none',
             hideClientButton: true,
             hideDarkModeToggle: true,
             pathRouting: {
