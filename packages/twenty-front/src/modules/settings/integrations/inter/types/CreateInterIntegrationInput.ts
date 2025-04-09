@@ -2,5 +2,5 @@ import { InterIntegration } from '@/settings/integrations/inter/types/InterInteg
 
 export type CreateInterIntegrationInput = Omit<
   InterIntegration,
-  'id' | 'workspaceId' | 'workspace'
+  'id' | 'workspace' | 'workspaceId' | 'disabled'
 >;

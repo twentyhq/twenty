@@ -7,6 +7,7 @@ import { useFindAllInterIntegrations } from '@/settings/integrations/inter/hooks
 import { useUpdateInterIntegration } from '@/settings/integrations/inter/hooks/useUpdateInterIntegration';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,15 +18,16 @@ import { H2Title, Section } from 'twenty-ui';
 import { z } from 'zod';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { settingsEditIntegrationWhatsappConnectionFormSchema } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const settingsIntegrationInterConnectionFormSchema = z.object({
+  id: z.string(),
   integrationName: z.string().min(1),
   clientId: z.string(),
   clientSecret: z.string(),
-  privateKey: z.instanceof(File).optional(),
-  certificate: z.instanceof(File).optional(),
+  status: z.string().optional(),
+  privateKey: z.any().optional(),
+  certificate: z.any().optional(),
 });
 
 export type SettingsEditIntegrationInterConnectionFormValues = z.infer<
@@ -33,7 +35,6 @@ export type SettingsEditIntegrationInterConnectionFormValues = z.infer<
 >;
 
 export const SettingsIntegrationInterEditDatabaseConnection = () => {
-  console.log('AQUIIII');
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { enqueueSnackBar } = useSnackBar();
@@ -55,8 +56,6 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
     (wa) => wa.id === connectionId,
   );
 
-  console.log('aquiii', activeConnection);
-
   const isIntegrationAvailable = !!integration;
 
   useEffect(() => {
@@ -69,9 +68,10 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
   if (!isIntegrationAvailable) return null;
 
   const formConfig = useForm<SettingsEditIntegrationInterConnectionFormValues>({
-    mode: 'onTouched',
-    resolver: zodResolver(settingsEditIntegrationWhatsappConnectionFormSchema),
+    mode: 'onChange',
+    resolver: zodResolver(settingsIntegrationInterConnectionFormSchema),
     defaultValues: {
+      id: activeConnection?.id,
       clientId: activeConnection?.clientId,
       clientSecret: activeConnection?.clientSecret,
       integrationName: activeConnection?.integrationName,
@@ -80,35 +80,18 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
 
   const canSave = formConfig.formState.isValid;
 
-  /*const handleSave = async () => {
+  const handleUpdate = async () => {
     const formValues = formConfig.getValues();
 
     try {
-      // Função para converter File para base64
-      const fileToBase64 = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = (error) => reject(error);
-        });
-      };
-
-      // Converter os arquivos se existirem
-      const privateKeyBase64 = formValues.privateKey
-        ? await fileToBase64(formValues.privateKey)
-        : null;
-
-      const certificateBase64 = formValues.certificate
-        ? await fileToBase64(formValues.certificate)
-        : null;
-
       await updateInterIntegration({
-        integrationName: formValues.integrationName,
+        id: formValues?.id,
         clientId: formValues.clientId,
+        integrationName: formValues.integrationName,
         clientSecret: formValues.clientSecret,
-        privateKey: privateKeyBase64,
-        certificate: certificateBase64,
+        status: 'active',
+        certificate: formValues.certificate,
+        privateKey: formValues.privateKey,
       });
 
       navigate(SettingsPath.IntegrationInterDatabase);
@@ -117,7 +100,7 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
         variant: SnackBarVariant.Error,
       });
     }
-  };*/
+  };
 
   return (
     <SubMenuTopBarContainer
@@ -141,7 +124,7 @@ export const SettingsIntegrationInterEditDatabaseConnection = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => navigate(SettingsPath.IntegrationInterDatabase)}
-          //onSave={handleSave}
+          onSave={handleUpdate}
         />
       }
     >

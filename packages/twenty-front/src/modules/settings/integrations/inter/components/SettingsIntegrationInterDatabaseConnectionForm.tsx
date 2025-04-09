@@ -1,10 +1,11 @@
-/* eslint-disable react/jsx-no-undef */
+/* eslint-disable prettier/prettier */
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { FileInput } from '@/settings/integrations/inter/components/FileInputProps';
+import { FileDropZone } from '@/settings/integrations/inter/components/FileDropZone';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { SettingsIntegrationInterConnectionFormValues } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
+
 const StyledFormContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -31,83 +32,49 @@ type SettingsIntegrationInterDatabaseConnectionFormProps = {
   disabled?: boolean;
 };
 
-const getFormFields = (): {
-  name: keyof SettingsIntegrationInterConnectionFormValues;
-  label: string;
-  type?: string;
-  placeholder: string;
-}[] => {
-  return [
-    {
-      name: 'integrationName',
-      label: 'Integration name',
-      placeholder: 'Banco Inter',
-      type: 'text',
-    },
-    {
-      name: 'clientId',
-      label: 'Cliente ID',
-      placeholder: '********_****_****_****_****',
-      type: 'text',
-    },
-    {
-      name: 'clientSecret',
-      label: 'Client Secret',
-      placeholder: '********_****_****_****_****',
-      type: 'text',
-    },
-  ];
-};
-
 export const SettingsIntegrationInterDatabaseConnectionForm = ({
   disabled,
 }: SettingsIntegrationInterDatabaseConnectionFormProps) => {
-  const { control } =
+  const { control, watch, setValue } =
     useFormContext<SettingsIntegrationInterConnectionFormValues>();
-  const formFields = getFormFields();
-
-  if (!formFields) return null;
-  const [integrationNameField, clientIdField, clientSecretField] = formFields;
 
   return (
     <StyledFormContainer>
-      {/* Primeira linha - Integration Name */}
-      <StyledRow>
-        <StyledFullWidthInput>
-          <Controller
-            name={integrationNameField.name}
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <TextInputV2
-                label={integrationNameField.label}
-                value={value as string}
-                onChange={onChange}
-                fullWidth
-                type={integrationNameField.type}
-                disabled={disabled}
-                placeholder={integrationNameField.placeholder}
-              />
-            )}
-          />
-        </StyledFullWidthInput>
-      </StyledRow>
-
-      {/* Segunda linha - Cliente ID e Cliente Secret */}
       <StyledRow>
         <StyledHalfWidthInput>
           <Controller
-            name={clientIdField.name}
+            name="integrationName"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextInputV2
+                label="Integration name"
+                value={value as string}
+                onChange={onChange}
+                type="text"
+                disabled={disabled}
+                placeholder="Banco Inter"
+                fullWidth
+              />
+            )}
+          />
+        </StyledHalfWidthInput>
+      </StyledRow>
+
+      <StyledRow>
+        <StyledHalfWidthInput>
+          <Controller
+            name="clientId"
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInputV2
                 autoComplete="new-password"
-                label={clientIdField.label}
+                label="Client ID"
                 value={value as string}
                 onChange={onChange}
                 fullWidth
-                type={clientIdField.type}
+                type="text"
                 disabled={disabled}
-                placeholder={clientIdField.placeholder}
+                placeholder="********_****_****_****_****"
               />
             )}
           />
@@ -115,44 +82,46 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
 
         <StyledHalfWidthInput>
           <Controller
-            name={clientSecretField.name}
+            name="clientSecret"
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInputV2
                 autoComplete="new-password"
-                label={clientSecretField.label}
+                label="Client Secret"
                 value={value as string}
                 onChange={onChange}
                 fullWidth
-                type={clientSecretField.type}
+                type="text"
                 disabled={disabled}
-                placeholder={clientSecretField.placeholder}
+                placeholder="********_****_****_****_****"
               />
             )}
           />
         </StyledHalfWidthInput>
       </StyledRow>
 
-      {/* Terceira linha - Private Key */}
       <StyledRow>
         <StyledFullWidthInput>
-          <FileInput
-            name="privateKey"
+          <FileDropZone
             label="Private Key"
-            disabled={disabled}
             accept=".pem,.key"
+            file={watch('privateKey') as File | null}
+            onFileSelected={(file) => setValue('privateKey', file)}
+            onFileRemoved={() => setValue('privateKey', undefined)}
+            disabled={disabled}
           />
         </StyledFullWidthInput>
       </StyledRow>
 
-      {/* Quarta linha - Certificate */}
       <StyledRow>
         <StyledFullWidthInput>
-          <FileInput
-            name="certificate"
+          <FileDropZone
             label="Certificate"
-            disabled={disabled}
             accept=".pem,.crt,.cer"
+            file={watch('certificate')}
+            onFileSelected={(file) => setValue('certificate', file)}
+            onFileRemoved={() => setValue('certificate', undefined)}
+            disabled={disabled}
           />
         </StyledFullWidthInput>
       </StyledRow>

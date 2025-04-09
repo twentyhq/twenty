@@ -7,8 +7,9 @@ export const CREATE_INTER_INTEGRATION = gql`
       integrationName
       clientId
       clientSecret
+      privateKey
+      certificate
       status
-      expirationDate
       workspace {
         id
       }

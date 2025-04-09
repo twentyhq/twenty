@@ -10,7 +10,6 @@ export const UPDATE_INTER_INTEGRATION = gql`
       privateKey
       certificate
       status
-      expirationDate
     }
   }
 `;

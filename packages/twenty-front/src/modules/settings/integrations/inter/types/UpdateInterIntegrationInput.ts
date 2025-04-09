@@ -2,5 +2,5 @@ import { InterIntegration } from '@/settings/integrations/inter/types/InterInteg
 
 export type UpdateInterIntegrationInput = Omit<
   InterIntegration,
-  'workspaceId' | 'workspace' | 'sla'
+  'workspaceId' | 'workspace' | 'sla' | 'disabled'
 >;

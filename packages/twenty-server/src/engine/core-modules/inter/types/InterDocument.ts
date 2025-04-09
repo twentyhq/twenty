@@ -6,6 +6,5 @@ export type InterDocument = {
   certificates: {
     privateKey: string;
     certificate: string;
-    expirationDate: Date;
   };
 };

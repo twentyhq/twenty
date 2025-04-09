@@ -70,8 +70,6 @@ export class InterIntegrationService {
       {
         ...updateInput,
         status: updateInput.status ?? integration.status,
-        expirationDate:
-          updateInput.expirationDate ?? integration.expirationDate,
       },
     );
 

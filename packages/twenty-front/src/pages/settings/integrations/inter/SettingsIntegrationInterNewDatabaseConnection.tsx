@@ -22,9 +22,8 @@ export const settingsIntegrationInterConnectionFormSchema = z.object({
   clientId: z.string(),
   clientSecret: z.string(),
   status: z.string().optional(),
-  expirationDate: z.string().datetime({ offset: true }).optional(),
-  privateKey: z.instanceof(File).optional(),
-  certificate: z.instanceof(File).optional(),
+  privateKey: z.any().optional(),
+  certificate: z.any().optional(),
 });
 
 export type SettingsIntegrationInterConnectionFormValues = z.infer<
@@ -59,7 +58,7 @@ export const SettingsIntegrationInterNewDatabaseConnection = () => {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const formConfig = useForm<SettingsIntegrationInterConnectionFormValues>({
-    mode: 'onTouched',
+    mode: 'onChange',
     resolver: zodResolver(settingsIntegrationInterConnectionFormSchema),
   });
 
@@ -74,9 +73,8 @@ export const SettingsIntegrationInterNewDatabaseConnection = () => {
         integrationName: formValues.integrationName,
         clientSecret: formValues.clientSecret,
         status: 'active',
-        expirationDate: new Date(),
-        certificate: null,
-        privateKey: null,
+        certificate: formValues.certificate,
+        privateKey: formValues.privateKey,
       });
 
       navigate(SettingsPath.IntegrationInterDatabase);
