@@ -1,19 +1,19 @@
-import { EnvironmentVariablesMaskingStrategies } from 'src/engine/core-modules/environment/enums/environment-variables-masking-strategies.enum';
+import { ConfigVariablesMaskingStrategies } from 'src/engine/core-modules/twenty-config/enums/config-variables-masking-strategies.enum';
 
-export const environmentVariableMaskSensitiveData = (
+export const configVariableMaskSensitiveData = (
   value: string,
-  strategy: EnvironmentVariablesMaskingStrategies,
+  strategy: ConfigVariablesMaskingStrategies,
   options?: { chars?: number; variableName?: string },
 ): string => {
   if (!value || typeof value !== 'string') return value;
   switch (strategy) {
-    case EnvironmentVariablesMaskingStrategies.LAST_N_CHARS: {
+    case ConfigVariablesMaskingStrategies.LAST_N_CHARS: {
       const n = Math.max(1, options?.chars ?? 5);
 
       return value.length > n ? `********${value.slice(-n)}` : '********';
     }
 
-    case EnvironmentVariablesMaskingStrategies.HIDE_PASSWORD: {
+    case ConfigVariablesMaskingStrategies.HIDE_PASSWORD: {
       try {
         const url = new URL(value);
 
@@ -27,7 +27,7 @@ export const environmentVariableMaskSensitiveData = (
         return url.toString();
       } catch {
         throw new Error(
-          `Invalid URL format for ${options?.variableName || 'environment variable'} in HIDE_PASSWORD masking strategy`,
+          `Invalid URL format for ${options?.variableName || 'config variable'} in HIDE_PASSWORD masking strategy`,
         );
       }
     }

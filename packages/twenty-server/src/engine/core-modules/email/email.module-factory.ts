@@ -3,12 +3,12 @@ import {
   EmailModuleOptions,
 } from 'src/engine/core-modules/email/interfaces/email.interface';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const emailModuleFactory = (
-  environmentService: EnvironmentService,
+  twentyConfigService: TwentyConfigService,
 ): EmailModuleOptions => {
-  const driver = environmentService.get('EMAIL_DRIVER');
+  const driver = twentyConfigService.get('EMAIL_DRIVER');
 
   switch (driver) {
     case EmailDriver.Logger:
@@ -21,11 +21,11 @@ export const emailModuleFactory = (
         type: EmailDriver.Smtp,
       };
 
-      const host = environmentService.get('EMAIL_SMTP_HOST');
-      const port = environmentService.get('EMAIL_SMTP_PORT');
-      const user = environmentService.get('EMAIL_SMTP_USER');
-      const pass = environmentService.get('EMAIL_SMTP_PASSWORD');
-      const noTLS = environmentService.get('EMAIL_SMTP_NO_TLS');
+      const host = twentyConfigService.get('EMAIL_SMTP_HOST');
+      const port = twentyConfigService.get('EMAIL_SMTP_PORT');
+      const user = twentyConfigService.get('EMAIL_SMTP_USER');
+      const pass = twentyConfigService.get('EMAIL_SMTP_PASSWORD');
+      const noTLS = twentyConfigService.get('EMAIL_SMTP_NO_TLS');
 
       if (!host || !port) {
         throw new Error(
