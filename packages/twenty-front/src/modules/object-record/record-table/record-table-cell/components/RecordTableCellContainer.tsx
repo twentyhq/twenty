@@ -3,7 +3,6 @@ import { ReactElement, useContext } from 'react';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableCellBaseContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellBaseContainer';
 
-import { RecordTableCellSoftFocusModeHotkeysSetterEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusModeHotkeysSetterEffect';
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
 import { RecordTableCellEditMode } from './RecordTableCellEditMode';
 
@@ -31,9 +30,9 @@ export const RecordTableCellContainer = ({
           {nonEditModeContent}
         </RecordTableCellDisplayMode>
       )}
-      {hasSoftFocus ? (
+      {/* {hasSoftFocus ? (
         <RecordTableCellSoftFocusModeHotkeysSetterEffect />
-      ) : null}
+      ) : null} */}
     </RecordTableCellBaseContainer>
   );
 };

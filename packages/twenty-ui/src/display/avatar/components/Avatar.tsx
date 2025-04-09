@@ -1,9 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
-import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useContext, useState } from 'react';
 
-import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
@@ -79,9 +77,7 @@ export const Avatar = ({
   backgroundColor,
 }: AvatarProps) => {
   const { theme } = useContext(ThemeContext);
-  const [invalidAvatarUrls, setInvalidAvatarUrls] = useRecoilState(
-    invalidAvatarUrlsState,
-  );
+  const [invalidAvatarUrls, setInvalidAvatarUrls] = useState<string[]>([]);
 
   const avatarImageURI = isNonEmptyString(avatarUrl)
     ? getImageAbsoluteURI({

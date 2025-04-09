@@ -29,7 +29,7 @@ export const RecordTableTrEffect = ({ recordId }: RecordTableTrEffectProps) => {
         const isIntersecting = entry.isIntersecting;
 
         if (isIntersecting) {
-          onIndexRecordsLoaded?.();
+          // onIndexRecordsLoaded?.();
           setIsRowVisible(true);
         }
 

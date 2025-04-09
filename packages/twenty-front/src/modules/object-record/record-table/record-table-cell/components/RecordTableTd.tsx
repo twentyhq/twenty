@@ -30,7 +30,7 @@ const StyledTd = styled.td<{
   text-align: left;
 
   background: ${({ backgroundColor }) => backgroundColor};
-  ${({ isDragging }) =>
+  /* ${({ isDragging }) =>
     isDragging
       ? `
       background-color: transparent;
@@ -44,7 +44,7 @@ const StyledTd = styled.td<{
       width: ${RECORD_TABLE_TD_WIDTH};
       max-width: ${RECORD_TABLE_TD_WIDTH};
     }`
-      : ''}
+      : ''} */
 `;
 
 export const RecordTableTd = ({

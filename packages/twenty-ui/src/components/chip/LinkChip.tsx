@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import {
   Chip,
   ChipAccent,
@@ -19,9 +18,9 @@ export type LinkChipProps = Omit<
 
 // Ideally we would use the UndecoratedLink component from @ui/navigation
 // but it led to a bug probably linked to circular dependencies, which was hard to solve
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
+// const StyledLink = styled(Link)`
+//   text-decoration: none;
+// `;
 
 export const LinkChip = ({
   to,
@@ -37,7 +36,7 @@ export const LinkChip = ({
   onClick,
 }: LinkChipProps) => {
   return (
-    <StyledLink to={to} onClick={onClick}>
+    <Link to={to} onClick={onClick}>
       <Chip
         size={size}
         label={label}
@@ -50,6 +49,6 @@ export const LinkChip = ({
         className={className}
         maxWidth={maxWidth}
       />
-    </StyledLink>
+    </Link>
   );
 };
