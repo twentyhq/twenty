@@ -75,6 +75,8 @@ module.exports = {
       files: ['**/*.ts', '**/*.tsx'],
       extends: ['plugin:@nx/typescript'],
       rules: {
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
         'no-restricted-imports': [
           'error',
           {
