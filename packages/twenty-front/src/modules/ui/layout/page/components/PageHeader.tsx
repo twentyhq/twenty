@@ -74,7 +74,7 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
 const StyledPageActionContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  flex: 1 0 1;
+  flex: 1 0 auto;
 `;
 
 const StyledTopBarButtonContainer = styled.div`

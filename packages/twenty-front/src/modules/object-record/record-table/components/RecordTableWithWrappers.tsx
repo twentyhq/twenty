@@ -10,14 +10,12 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
-import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
-import { useRecordTable } from '../hooks/useRecordTable';
-
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { Key } from 'ts-key-enum';
+import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
+import { useRecordTable } from '../hooks/useRecordTable';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -39,10 +37,9 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
-  const { resetTableRowSelection, selectAllRows, setHasUserSelectedAllRows } =
-    useRecordTable({
-      recordTableId,
-    });
+  const { selectAllRows, setHasUserSelectedAllRows } = useRecordTable({
+    recordTableId,
+  });
 
   const handleSelectAllRows = () => {
     setHasUserSelectedAllRows(true);
@@ -54,8 +51,6 @@ export const RecordTableWithWrappers = ({
     handleSelectAllRows,
     TableHotkeyScope.Table,
   );
-
-  useScopedHotkeys(Key.Escape, resetTableRowSelection, TableHotkeyScope.Table);
 
   const { saveViewFields } = useSaveCurrentViewFields();
 

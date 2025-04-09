@@ -18,7 +18,7 @@ import { isFieldRelationToOneObject } from '@/object-record/record-field/types/g
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -30,7 +30,7 @@ export const useOpenFieldInputEditMode = () => {
   const { openActivityTargetCellEditMode } =
     useOpenActivityTargetCellEditMode();
 
-  const setHotkeyScope = useSetHotkeyScope();
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 
   const openFieldInput = useRecoilCallback(
     ({ snapshot }) =>
@@ -102,7 +102,7 @@ export const useOpenFieldInputEditMode = () => {
           }
         }
 
-        setHotkeyScope(
+        setHotkeyScopeAndMemorizePreviousScope(
           DEFAULT_CELL_SCOPE.scope,
           DEFAULT_CELL_SCOPE.customScopes,
         );
@@ -111,7 +111,7 @@ export const useOpenFieldInputEditMode = () => {
       openActivityTargetCellEditMode,
       openRelationFromManyFieldInput,
       openRelationToOneFieldInput,
-      setHotkeyScope,
+      setHotkeyScopeAndMemorizePreviousScope,
     ],
   );
 
