@@ -9,9 +9,6 @@ import { MainButton } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  border: 1px dashed ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(4)};
   position: relative;
   width: 100%;
 `;
@@ -27,9 +24,9 @@ const StyledOverlay = styled.div`
 `;
 
 const StyledLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   text-align: left;
 `;

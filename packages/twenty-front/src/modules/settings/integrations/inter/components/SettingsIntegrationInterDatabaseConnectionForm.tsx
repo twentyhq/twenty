@@ -90,7 +90,6 @@ export const SettingsIntegrationInterDatabaseConnectionForm = ({
             control={control}
             render={({ field: { onChange, value } }) => (
               <TextInputV2
-                autoComplete="new-password"
                 label="Client ID"
                 value={value as string}
                 onChange={onChange}
