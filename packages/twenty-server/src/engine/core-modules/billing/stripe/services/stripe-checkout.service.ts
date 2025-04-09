@@ -6,7 +6,7 @@ import Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
@@ -15,14 +15,14 @@ export class StripeCheckoutService {
   private readonly stripe: Stripe;
 
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSDKService: StripeSDKService,
   ) {
-    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
     }
     this.stripe = this.stripeSDKService.getStripe(
-      this.environmentService.get('BILLING_STRIPE_API_KEY'),
+      this.twentyConfigService.get('BILLING_STRIPE_API_KEY'),
     );
   }
 
@@ -57,7 +57,7 @@ export class StripeCheckoutService {
         },
         ...(withTrialPeriod
           ? {
-              trial_period_days: this.environmentService.get(
+              trial_period_days: this.twentyConfigService.get(
                 requirePaymentMethod
                   ? 'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS'
                   : 'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',

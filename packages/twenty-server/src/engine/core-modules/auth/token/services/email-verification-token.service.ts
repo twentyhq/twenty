@@ -16,18 +16,18 @@ import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class EmailVerificationTokenService {
   constructor(
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async generateToken(userId: string, email: string): Promise<AuthToken> {
-    const expiresIn = this.environmentService.get(
+    const expiresIn = this.twentyConfigService.get(
       'EMAIL_VERIFICATION_TOKEN_EXPIRES_IN',
     );
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));

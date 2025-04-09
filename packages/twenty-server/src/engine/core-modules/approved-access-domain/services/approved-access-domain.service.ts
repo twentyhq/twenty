@@ -16,7 +16,7 @@ import {
 import { approvedAccessDomainValidator } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.validate';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { isWorkDomain } from 'src/utils/is-work-email';
@@ -28,7 +28,7 @@ export class ApprovedAccessDomainService {
     @InjectRepository(ApprovedAccessDomainEntity, 'core')
     private readonly approvedAccessDomainRepository: Repository<ApprovedAccessDomainEntity>,
     private readonly emailService: EmailService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
   ) {}
 
@@ -70,7 +70,7 @@ export class ApprovedAccessDomainService {
         firstName: sender.firstName,
         lastName: sender.lastName,
       },
-      serverUrl: this.environmentService.get('SERVER_URL'),
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
       locale: 'en' as keyof typeof APP_LOCALES,
     });
     const html = await render(emailTemplate);
@@ -79,7 +79,7 @@ export class ApprovedAccessDomainService {
     });
 
     await this.emailService.send({
-      from: `${sender.firstName} ${sender.lastName} (via Twenty) <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: `${sender.firstName} ${sender.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to,
       subject: 'Approve your access domain',
       text,
@@ -94,7 +94,7 @@ export class ApprovedAccessDomainService {
         JSON.stringify({
           id: approvedAccessDomain.id,
           domain: approvedAccessDomain.domain,
-          key: this.environmentService.get('APP_SECRET'),
+          key: this.twentyConfigService.get('APP_SECRET'),
         }),
       )
       .digest('hex');

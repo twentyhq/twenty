@@ -61,13 +61,12 @@ export const MainContextStoreProviderEffect = ({
   );
 
   useEffect(() => {
-    if (!objectMetadataItem) {
-      setContextStoreCurrentObjectMetadataItemId(undefined);
-      return;
+    if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem?.id) {
+      setContextStoreCurrentObjectMetadataItemId(objectMetadataItem?.id);
     }
 
-    if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {
-      setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
+    if (!objectMetadataItem) {
+      return;
     }
 
     setLastVisitedViewForObjectMetadataNamePlural({

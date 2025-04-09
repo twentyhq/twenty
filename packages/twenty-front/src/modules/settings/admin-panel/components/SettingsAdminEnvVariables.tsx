@@ -5,10 +5,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useGetEnvironmentVariablesGroupedQuery } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { Card, Section } from 'twenty-ui/layout';
 import { H2Title, IconHeartRateMonitor } from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
+import { useGetConfigVariablesGroupedQuery } from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledGroupContainer = styled.div``;
 
@@ -22,17 +22,17 @@ const StyledCard = styled(Card)`
 
 export const SettingsAdminEnvVariables = () => {
   const theme = useTheme();
-  const { data: environmentVariables, loading: environmentVariablesLoading } =
-    useGetEnvironmentVariablesGroupedQuery({
+  const { data: configVariables, loading: configVariablesLoading } =
+    useGetConfigVariablesGroupedQuery({
       fetchPolicy: 'network-only',
     });
 
   const visibleGroups =
-    environmentVariables?.getEnvironmentVariablesGrouped.groups.filter(
+    configVariables?.getConfigVariablesGrouped.groups.filter(
       (group) => !group.isHiddenOnLoad,
     ) ?? [];
 
-  if (environmentVariablesLoading) {
+  if (configVariablesLoading) {
     return <SettingsAdminTabSkeletonLoader />;
   }
 

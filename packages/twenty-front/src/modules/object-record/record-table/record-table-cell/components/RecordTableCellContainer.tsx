@@ -2,7 +2,6 @@ import { ReactElement, useContext } from 'react';
 
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableCellBaseContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellBaseContainer';
-import { RecordTableCellSoftFocusMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusMode';
 
 import { RecordTableCellSoftFocusModeHotkeysSetterEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusModeHotkeysSetterEffect';
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
@@ -27,19 +26,14 @@ export const RecordTableCellContainer = ({
     <RecordTableCellBaseContainer>
       {isInEditMode ? (
         <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
-      ) : hasSoftFocus ? (
-        <>
-          <RecordTableCellSoftFocusModeHotkeysSetterEffect />
-          <RecordTableCellSoftFocusMode
-            editModeContent={editModeContent}
-            nonEditModeContent={nonEditModeContent}
-          />
-        </>
       ) : (
         <RecordTableCellDisplayMode>
           {nonEditModeContent}
         </RecordTableCellDisplayMode>
       )}
+      {hasSoftFocus ? (
+        <RecordTableCellSoftFocusModeHotkeysSetterEffect />
+      ) : null}
     </RecordTableCellBaseContainer>
   );
 };

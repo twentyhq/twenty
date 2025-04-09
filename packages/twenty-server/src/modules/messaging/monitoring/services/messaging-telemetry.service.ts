@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type MessagingTelemetryTrackInput = {
   eventName: string;
@@ -16,7 +16,7 @@ type MessagingTelemetryTrackInput = {
 export class MessagingTelemetryService {
   constructor(
     private readonly analyticsService: AnalyticsService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   public async track({
