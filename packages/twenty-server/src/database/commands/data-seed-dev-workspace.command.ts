@@ -32,7 +32,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
@@ -68,7 +68,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     private readonly workspaceSchemaCache: CacheStorageService,
     private readonly seederService: SeederService,
     private readonly workspaceManagerService: WorkspaceManagerService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
   }
@@ -94,8 +94,8 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
     await rawDataSource.initialize();
 
-    const isBillingEnabled = this.environmentService.get('IS_BILLING_ENABLED');
-    const appVersion = this.environmentService.get('APP_VERSION');
+    const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
+    const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     await seedCoreSchema({
       workspaceDataSource: rawDataSource,

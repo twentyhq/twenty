@@ -22,7 +22,7 @@ import {
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class EmailVerificationService {
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly domainManagerService: DomainManagerService,
     private readonly emailService: EmailService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly userService: UserService,
     private readonly emailVerificationTokenService: EmailVerificationTokenService,
   ) {}
@@ -46,7 +46,7 @@ export class EmailVerificationService {
       | undefined,
     locale: keyof typeof APP_LOCALES,
   ) {
-    if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
+    if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
     }
 
@@ -79,9 +79,9 @@ export class EmailVerificationService {
     i18n.activate(locale);
 
     await this.emailService.send({
-      from: `${this.environmentService.get(
+      from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
-      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
       subject: t`Welcome to Twenty: Please Confirm Your Email`,
       text,
@@ -98,7 +98,7 @@ export class EmailVerificationService {
       | undefined,
     locale: keyof typeof APP_LOCALES,
   ) {
-    if (!this.environmentService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
+    if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
         'Email verification token cannot be sent because email verification is not required',
         EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED,

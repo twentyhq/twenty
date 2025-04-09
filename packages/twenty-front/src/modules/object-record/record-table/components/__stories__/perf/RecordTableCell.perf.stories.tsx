@@ -135,7 +135,6 @@ const meta: Meta = {
                             fieldDefinition: {
                               ...mockPerformance.fieldDefinition,
                             },
-                            hotkeyScope: 'hotkey-scope',
                             isReadOnly: false,
                           }}
                         >

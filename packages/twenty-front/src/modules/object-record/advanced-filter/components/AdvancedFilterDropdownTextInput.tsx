@@ -1,56 +1,35 @@
 import { useState } from 'react';
 
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
-import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { v4 } from 'uuid';
 
-export const AdvancedFilterDropdownTextInput = () => {
-  const selectedOperandInDropdown = useRecoilComponentValueV2(
-    selectedOperandInDropdownComponentState,
-  );
+type AdvancedFilterDropdownTextInputProps = {
+  recordFilter: RecordFilter;
+};
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
-
-  const selectedFilter = useRecoilComponentValueV2(
-    selectedFilterComponentState,
-  );
-
+export const AdvancedFilterDropdownTextInput = ({
+  recordFilter,
+}: AdvancedFilterDropdownTextInputProps) => {
   const { applyRecordFilter } = useApplyRecordFilter();
 
-  const [inputValue, setInputValue] = useState(
-    () => selectedFilter?.value || '',
-  );
+  const [inputValue, setInputValue] = useState(() => recordFilter?.value || '');
 
   const handleChange = (newValue: string) => {
-    if (!fieldMetadataItemUsedInDropdown || !selectedOperandInDropdown) {
-      return;
-    }
-
     setInputValue(newValue);
 
     applyRecordFilter({
-      id: selectedFilter?.id ? selectedFilter.id : v4(),
-      fieldMetadataId: fieldMetadataItemUsedInDropdown?.id ?? '',
+      id: recordFilter.id,
+      fieldMetadataId: recordFilter?.fieldMetadataId ?? '',
       value: newValue,
-      operand: selectedOperandInDropdown,
+      operand: recordFilter.operand,
       displayValue: newValue,
-      type: getFilterTypeFromFieldType(fieldMetadataItemUsedInDropdown.type),
-      label: fieldMetadataItemUsedInDropdown.label,
-      recordFilterGroupId: selectedFilter?.recordFilterGroupId,
-      positionInRecordFilterGroup: selectedFilter?.positionInRecordFilterGroup,
+      type: recordFilter.type,
+      label: recordFilter.label,
+      recordFilterGroupId: recordFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup: recordFilter?.positionInRecordFilterGroup,
     });
   };
-
-  if (!selectedOperandInDropdown || !fieldMetadataItemUsedInDropdown) {
-    return null;
-  }
 
   return (
     <TextInputV2

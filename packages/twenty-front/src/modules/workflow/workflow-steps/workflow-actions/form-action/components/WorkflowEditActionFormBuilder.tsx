@@ -100,6 +100,10 @@ const StyledAddFieldButtonContentContainer = styled.div`
   width: 100%;
 `;
 
+const StyledLabelContainer = styled.div`
+  min-height: 17px;
+`;
+
 export const WorkflowEditActionFormBuilder = ({
   action,
   actionOptions,
@@ -187,7 +191,9 @@ export const WorkflowEditActionFormBuilder = ({
       <WorkflowStepBody>
         {formData.map((field) => (
           <FormFieldInputContainer key={field.id}>
-            {field.label ? <InputLabel>{field.label}</InputLabel> : null}
+            <StyledLabelContainer>
+              <InputLabel>{field.label || ''}</InputLabel>
+            </StyledLabelContainer>
 
             <StyledRowContainer
               onMouseEnter={() => setHoveredField(field.id)}

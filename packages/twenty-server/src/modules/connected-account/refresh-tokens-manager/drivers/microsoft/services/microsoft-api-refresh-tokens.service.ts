@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { z } from 'zod';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftTokens = {
   accessToken: string;
@@ -20,14 +20,14 @@ interface MicrosoftRefreshTokenResponse {
 }
 @Injectable()
 export class MicrosoftAPIRefreshAccessTokenService {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   async refreshTokens(refreshToken: string): Promise<MicrosoftTokens> {
     const response = await axios.post<MicrosoftRefreshTokenResponse>(
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
       new URLSearchParams({
-        client_id: this.environmentService.get('AUTH_MICROSOFT_CLIENT_ID'),
-        client_secret: this.environmentService.get(
+        client_id: this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
+        client_secret: this.twentyConfigService.get(
           'AUTH_MICROSOFT_CLIENT_SECRET',
         ),
         refresh_token: refreshToken,

@@ -31,7 +31,7 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
         id: v4(),
         name: 'record',
         label: 'Record',
-        placeholder: `Select a record`,
+        placeholder: `Select a Company`,
         settings: {
           objectName: 'company',
         },

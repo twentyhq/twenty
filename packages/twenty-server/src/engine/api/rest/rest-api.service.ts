@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
 import { AxiosResponse } from 'axios';
+import { Request } from 'express';
 
 import { Query } from 'src/engine/api/rest/core/types/query.type';
-import { getServerUrl } from 'src/utils/get-server-url';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { RestApiException } from 'src/engine/api/rest/errors/RestApiException';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { getServerUrl } from 'src/utils/get-server-url';
 
 export enum GraphqlApiType {
   CORE = 'core',
@@ -17,14 +17,14 @@ export enum GraphqlApiType {
 @Injectable()
 export class RestApiService {
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly httpService: HttpService,
   ) {}
 
   async call(graphqlApiType: GraphqlApiType, request: Request, data: Query) {
     const baseUrl = getServerUrl(
       request,
-      this.environmentService.get('SERVER_URL'),
+      this.twentyConfigService.get('SERVER_URL'),
     );
     let response: AxiosResponse;
     const url = `${baseUrl}/${

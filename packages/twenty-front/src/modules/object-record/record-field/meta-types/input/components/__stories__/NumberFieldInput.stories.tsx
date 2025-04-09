@@ -8,6 +8,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -41,7 +42,7 @@ const NumberFieldInputWithContext = ({
   const setHotKeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    setHotKeyScope('hotkey-scope');
+    setHotKeyScope(DEFAULT_CELL_SCOPE.scope);
   }, [setHotKeyScope]);
 
   return (
@@ -68,7 +69,6 @@ const NumberFieldInputWithContext = ({
             },
           },
           recordId: '123',
-          hotkeyScope: 'hotkey-scope',
           isLabelIdentifier: false,
           isReadOnly: false,
         }}

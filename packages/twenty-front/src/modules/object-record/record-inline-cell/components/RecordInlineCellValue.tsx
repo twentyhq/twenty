@@ -32,7 +32,6 @@ const StyledClickableContainer = styled.div<{
 export const RecordInlineCellValue = () => {
   const {
     displayModeContent,
-    customEditHotkeyScope,
     editModeContent,
     editModeContentOnly,
     readonly,
@@ -44,7 +43,7 @@ export const RecordInlineCellValue = () => {
 
   const handleDisplayModeClick = () => {
     if (!readonly && !editModeContentOnly) {
-      openInlineCell(customEditHotkeyScope);
+      openInlineCell();
     }
   };
 

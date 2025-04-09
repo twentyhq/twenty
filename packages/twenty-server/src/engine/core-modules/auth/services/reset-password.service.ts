@@ -26,7 +26,7 @@ import { PasswordResetToken } from 'src/engine/core-modules/auth/dto/token.entit
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -34,7 +34,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 @Injectable()
 export class ResetPasswordService {
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -60,7 +60,7 @@ export class ResetPasswordService {
       );
     }
 
-    const expiresIn = this.environmentService.get(
+    const expiresIn = this.twentyConfigService.get(
       'PASSWORD_RESET_TOKEN_EXPIRES_IN',
     );
 
@@ -164,9 +164,9 @@ export class ResetPasswordService {
     i18n.activate(locale);
 
     this.emailService.send({
-      from: `${this.environmentService.get(
+      from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
-      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
       subject: t`Action Needed to Reset Password`,
       text,

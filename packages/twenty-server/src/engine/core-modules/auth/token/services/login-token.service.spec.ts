@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { LoginTokenService } from './login-token.service';
 
 describe('LoginTokenService', () => {
   let service: LoginTokenService;
   let jwtWrapperService: JwtWrapperService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,7 +24,7 @@ describe('LoginTokenService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -34,7 +34,7 @@ describe('LoginTokenService', () => {
 
     service = module.get<LoginTokenService>(LoginTokenService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 
   it('should be defined', () => {
@@ -52,7 +52,7 @@ describe('LoginTokenService', () => {
       jest
         .spyOn(jwtWrapperService, 'generateAppSecret')
         .mockReturnValue(mockSecret);
-      jest.spyOn(environmentService, 'get').mockReturnValue(mockExpiresIn);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockExpiresIn);
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
 
       const result = await service.generateLoginToken(email, workspaceId);
@@ -65,7 +65,7 @@ describe('LoginTokenService', () => {
         'LOGIN',
         workspaceId,
       );
-      expect(environmentService.get).toHaveBeenCalledWith(
+      expect(twentyConfigService.get).toHaveBeenCalledWith(
         'LOGIN_TOKEN_EXPIRES_IN',
       );
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
