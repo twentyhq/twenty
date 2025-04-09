@@ -28,6 +28,7 @@ type TabListProps = {
   className?: string;
   isInRightDrawer?: boolean;
   componentInstanceId: string;
+  initialActiveTabId?: string;
 };
 
 const StyledContainer = styled.div`
@@ -51,6 +52,7 @@ export const TabList = ({
   isInRightDrawer,
   className,
   componentInstanceId,
+  initialActiveTabId,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
@@ -59,11 +61,12 @@ export const TabList = ({
     componentInstanceId,
   );
 
-  const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
+  const computedInitialActiveTabId =
+    activeTabId || initialActiveTabId || visibleTabs[0]?.id || '';
 
   useEffect(() => {
-    setActiveTabId(initialActiveTabId);
-  }, [initialActiveTabId, setActiveTabId]);
+    setActiveTabId(computedInitialActiveTabId);
+  }, [computedInitialActiveTabId, setActiveTabId]);
 
   if (visibleTabs.length <= 1) {
     return null;
