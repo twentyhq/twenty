@@ -4,6 +4,7 @@ import { ActionListItem } from '@/action-menu/actions/display/components/ActionL
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { MessageDescriptor } from '@lingui/core';
 import { useContext } from 'react';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { IconComponent } from 'twenty-ui/display';
 import { MenuItemAccent } from 'twenty-ui/navigation';
 
@@ -38,5 +39,8 @@ export const ActionDisplay = ({ action }: { action: ActionDisplayProps }) => {
     return <ActionDropdownItem action={action} />;
   }
 
-  throw new Error(`Unsupported display type: ${displayType}`);
+  return assertUnreachable(
+    displayType,
+    `Unsupported display type: ${displayType}`,
+  );
 };
