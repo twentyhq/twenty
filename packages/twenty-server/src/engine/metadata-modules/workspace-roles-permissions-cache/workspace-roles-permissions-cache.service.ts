@@ -67,6 +67,9 @@ export class WorkspaceRolesPermissionsCacheService {
       where: {
         workspaceId,
       },
+      relations: {
+        objectPermissions: true,
+      },
     });
 
     const workspaceObjectMetadata = await this.objectMetadataRepository.find({
@@ -81,11 +84,24 @@ export class WorkspaceRolesPermissionsCacheService {
       const objectRecordsPermissions: ObjectRecordsPermissions = {};
 
       for (const objectMetadata of workspaceObjectMetadata) {
+        const objectPermission = role.objectPermissions.find(
+          (objectPermission) =>
+            objectPermission.objectMetadataId === objectMetadata.id,
+        );
+
         objectRecordsPermissions[objectMetadata.nameSingular] = {
-          canRead: role.canReadAllObjectRecords,
-          canUpdate: role.canUpdateAllObjectRecords,
-          canSoftDelete: role.canSoftDeleteAllObjectRecords,
-          canDestroy: role.canDestroyAllObjectRecords,
+          canRead:
+            objectPermission?.canReadObjectRecords ??
+            role.canReadAllObjectRecords,
+          canUpdate:
+            objectPermission?.canUpdateObjectRecords ??
+            role.canUpdateAllObjectRecords,
+          canSoftDelete:
+            objectPermission?.canSoftDeleteObjectRecords ??
+            role.canSoftDeleteAllObjectRecords,
+          canDestroy:
+            objectPermission?.canDestroyObjectRecords ??
+            role.canDestroyAllObjectRecords,
         };
       }
 
