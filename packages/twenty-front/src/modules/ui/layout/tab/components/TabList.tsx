@@ -62,7 +62,7 @@ export const TabList = ({
   );
 
   const computedInitialActiveTabId =
-    activeTabId || initialActiveTabId || visibleTabs[0]?.id || '';
+    initialActiveTabId || activeTabId || visibleTabs[0]?.id || '';
 
   useEffect(() => {
     setActiveTabId(computedInitialActiveTabId);
