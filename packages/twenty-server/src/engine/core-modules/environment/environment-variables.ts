@@ -910,7 +910,7 @@ export class EnvironmentVariables {
     description: 'Throttle limit for workflow execution',
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 500;
 
   @EnvironmentVariablesMetadata({
     group: EnvironmentVariablesGroup.RateLimiting,
