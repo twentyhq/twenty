@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SchedulerRegistry } from '@nestjs/schedule';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
 import { AnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
@@ -17,7 +17,7 @@ jest.mock('@clickhouse/client', () => ({
 
 describe('ClickhouseService', () => {
   let service: ClickhouseService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let exceptionHandlerService: ExceptionHandlerService;
   let schedulerRegistry: SchedulerRegistry;
 
@@ -51,7 +51,7 @@ describe('ClickhouseService', () => {
       providers: [
         ClickhouseService,
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn((key) => {
               if (key === 'ANALYTICS_ENABLED') return true;
@@ -80,7 +80,7 @@ describe('ClickhouseService', () => {
     }).compile();
 
     service = module.get<ClickhouseService>(ClickhouseService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
 
     exceptionHandlerService = module.get<ExceptionHandlerService>(
       ExceptionHandlerService,
@@ -94,7 +94,7 @@ describe('ClickhouseService', () => {
 
   describe('constructor', () => {
     it('should not initialize clickhouse client when analytics is disabled', async () => {
-      jest.spyOn(environmentService, 'get').mockImplementation((key) => {
+      jest.spyOn(twentyConfigService, 'get').mockImplementation((key) => {
         if (key === 'ANALYTICS_ENABLED') return false;
       });
 
@@ -102,8 +102,8 @@ describe('ClickhouseService', () => {
         providers: [
           ClickhouseService,
           {
-            provide: EnvironmentService,
-            useValue: environmentService,
+            provide: TwentyConfigService,
+            useValue: twentyConfigService,
           },
           {
             provide: ExceptionHandlerService,
@@ -137,7 +137,7 @@ describe('ClickhouseService', () => {
     });
 
     it('should not set up interval when analytics is disabled', () => {
-      jest.spyOn(environmentService, 'get').mockReturnValue(false);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
       const setIntervalSpy = jest.spyOn(global, 'setInterval');
 
       service.onModuleInit();

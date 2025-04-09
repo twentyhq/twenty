@@ -466,13 +466,13 @@ export class ConfigVariables {
   @IsString()
   @IsOptional()
   @ValidateIf((env) => env.ANALYTICS_ENABLED === true)
-  @EnvironmentVariablesMetadata({
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AnalyticsConfig,
     description: 'Clickhouse host for analytics',
   })
   CLICKHOUSE_URL: string;
 
-  @EnvironmentVariablesMetadata({
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AnalyticsConfig,
     description:
       'Flush interval in milliseconds for Clickhouse analytics buffer',

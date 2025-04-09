@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import {
   AnalyticsEvent,
   AnalyticsEventType,
@@ -13,11 +12,12 @@ import {
   makeUnknownEvent,
 } from 'src/engine/core-modules/analytics/utils/analytics.utils';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class AnalyticsService {
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly clickhouseService: ClickhouseService,
   ) {}
 
@@ -68,7 +68,7 @@ export class AnalyticsService {
   private preventAnalyticsIfDisabled(
     sendEventOrPageviewFunction: () => Promise<{ success: boolean }>,
   ) {
-    if (!this.environmentService.get('ANALYTICS_ENABLED')) {
+    if (!this.twentyConfigService.get('ANALYTICS_ENABLED')) {
       return { success: true };
     }
 

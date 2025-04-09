@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ClickhouseService } from 'src/engine/core-modules/analytics/services/clickhouse.service';
 import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -9,7 +9,7 @@ import { AnalyticsService } from './analytics.service';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let clickhouseService: ClickhouseService;
 
   beforeEach(async () => {
@@ -17,7 +17,7 @@ describe('AnalyticsService', () => {
       providers: [
         AnalyticsService,
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn().mockReturnValue(true),
           },
@@ -38,7 +38,7 @@ describe('AnalyticsService', () => {
     }).compile();
 
     service = module.get<AnalyticsService>(AnalyticsService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     clickhouseService = module.get<ClickhouseService>(ClickhouseService);
   });
 
@@ -113,7 +113,7 @@ describe('AnalyticsService', () => {
     });
 
     it('should return success when analytics are disabled', async () => {
-      jest.spyOn(environmentService, 'get').mockReturnValue(false);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
       // @ts-expect-error private function trigger an inaccurate error
       const sendEventSpy = jest.spyOn(service, 'sendEvent');
 

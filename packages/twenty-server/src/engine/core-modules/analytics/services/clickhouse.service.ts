@@ -3,7 +3,7 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 
 import { ClickHouseClient, createClient } from '@clickhouse/client';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AnalyticsPageview } from 'src/engine/core-modules/analytics/types/pageview.type';
 import { AnalyticsEvent } from 'src/engine/core-modules/analytics/types/event.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -17,17 +17,17 @@ export class ClickhouseService {
   private readonly intervalName = 'event-buffer-flush';
   private flushing = false;
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly schedulerRegistry: SchedulerRegistry,
   ) {
-    if (environmentService.get('ANALYTICS_ENABLED')) {
+    if (twentyConfigService.get('ANALYTICS_ENABLED')) {
       this.maxBufferSize = 100;
-      this.flushIntervalMs = environmentService.get(
+      this.flushIntervalMs = twentyConfigService.get(
         'ANALYTICS_FLUSH_INTERVAL_MS',
       );
       this.clickhouseClient = createClient({
-        url: environmentService.get('CLICKHOUSE_URL'),
+        url: twentyConfigService.get('CLICKHOUSE_URL'),
         compression: {
           response: true,
           request: true,
@@ -41,7 +41,7 @@ export class ClickhouseService {
   }
 
   onModuleInit() {
-    if (this.environmentService.get('ANALYTICS_ENABLED')) {
+    if (this.twentyConfigService.get('ANALYTICS_ENABLED')) {
       const interval = setInterval(() => this.flush(), this.flushIntervalMs);
 
       this.schedulerRegistry.addInterval(this.intervalName, interval);

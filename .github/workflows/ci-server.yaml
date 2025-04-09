@@ -202,8 +202,6 @@ jobs:
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
           echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
-          echo "ANALYTICS_FLUSH_INTERVAL_MS=10" >> .env.test
-          echo "ANALYTICS_ENABLED=true" >> .env.test
           echo "CLICKHOUSE_URL=http://default:${{ secrets.CLICKHOUSE_CI_PASSWORD }}@localhost:8123/twenty-test" >> .env.test
       - name: Restore server setup
         uses: ./.github/workflows/actions/restore-cache
