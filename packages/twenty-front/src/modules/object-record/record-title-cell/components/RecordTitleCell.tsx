@@ -56,11 +56,7 @@ export const RecordTitleCell = ({
     persistField();
   };
 
-  const handleClickOutside: FieldInputClickOutsideEvent = (
-    persistField,
-    event,
-  ) => {
-    event.stopImmediatePropagation();
+  const handleClickOutside: FieldInputClickOutsideEvent = (persistField) => {
     closeInlineCell();
     persistField();
   };
