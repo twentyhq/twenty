@@ -1,4 +1,4 @@
-import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
+import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -61,7 +61,7 @@ export const CommandMenuActionMenuDropdown = () => {
           {actions
             .filter((action) => action.scope === ActionScope.RecordSelection)
             .map((action) => (
-              <ActionDisplayer action={action} key={action.key} />
+              <ActionComponent action={action} key={action.key} />
             ))}
         </DropdownMenuItemsContainer>
       }

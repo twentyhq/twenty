@@ -1,4 +1,4 @@
-import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
+import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
@@ -93,7 +93,7 @@ export const CommandMenuList = ({
               items?.length ? (
                 <CommandGroup heading={heading} key={heading}>
                   {items.map((item) => (
-                    <ActionDisplayer action={item} key={item.key} />
+                    <ActionComponent action={item} key={item.key} />
                   ))}
                 </CommandGroup>
               ) : null,

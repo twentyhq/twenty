@@ -1,4 +1,4 @@
-import { ActionDisplayer } from '@/action-menu/actions/display/components/ActionDisplayer';
+import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -70,7 +70,7 @@ export const RecordIndexActionMenuDropdown = () => {
         <StyledDropdownMenuContainer className="action-menu-dropdown">
           <DropdownMenuItemsContainer>
             {recordIndexActions.map((action) => (
-              <ActionDisplayer action={action} key={action.key} />
+              <ActionComponent action={action} key={action.key} />
             ))}
             <MenuItem
               key="more-actions"
