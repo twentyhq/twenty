@@ -18,9 +18,9 @@ const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
 const TwentyConfigServiceGetAllMock = jest.fn();
 
 jest.mock(
-  '../../environment/constants/environment-variables-group-metadata',
+  'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata',
   () => ({
-    ENVIRONMENT_VARIABLES_GROUP_METADATA: {
+    CONFIG_VARIABLES_GROUP_METADATA: {
       SERVER_CONFIG: {
         position: 100,
         description: 'Server config description',
@@ -179,7 +179,7 @@ describe('AdminPanelService', () => {
           metadata: {
             group: 'SERVER_CONFIG',
             description: 'API Key',
-            sensitive: true,
+            isSensitive: true,
           },
         },
         OTHER_VAR: {
@@ -204,13 +204,13 @@ describe('AdminPanelService', () => {
                 name: 'API_KEY',
                 value: 'secret-key',
                 description: 'API Key',
-                sensitive: true,
+                isSensitive: true,
               },
               {
                 name: 'SERVER_URL',
                 value: 'http://localhost',
                 description: 'Server URL',
-                sensitive: false,
+                isSensitive: false,
               },
             ],
           },
@@ -223,7 +223,7 @@ describe('AdminPanelService', () => {
                 name: 'RATE_LIMIT_TTL',
                 value: '60',
                 description: 'Rate limit TTL',
-                sensitive: false,
+                isSensitive: false,
               },
             ],
           },
@@ -236,7 +236,7 @@ describe('AdminPanelService', () => {
                 name: 'OTHER_VAR',
                 value: 'other',
                 description: 'Other var',
-                sensitive: false,
+                isSensitive: false,
               },
             ],
           },
@@ -274,7 +274,7 @@ describe('AdminPanelService', () => {
         name: 'TEST_VAR',
         value: 'test',
         description: undefined,
-        sensitive: false,
+        isSensitive: false,
       });
     });
   });
