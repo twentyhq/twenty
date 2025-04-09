@@ -44,7 +44,7 @@ export const SettingsPermissionsGuard = (
       const hasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
-          _setting: requiredPermission,
+          setting: requiredPermission,
           workspaceId,
           isExecutedByApiKey: isDefined(ctx.getContext().req.apiKey),
         });
