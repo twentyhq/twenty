@@ -13,9 +13,7 @@ type MessagingTelemetryTrackInput = {
 
 @Injectable()
 export class MessagingTelemetryService {
-  constructor(
-    private readonly analyticsService: AnalyticsService,
-  ) {}
+  constructor(private readonly analyticsService: AnalyticsService) {}
 
   public async track({
     eventName,
